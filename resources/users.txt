@@ -1,0 +1,4 @@
+# This is the user file associated with the ESAPI library from http://www.owasp.org
+# accountName | hashedPassword | roles | locked | enabled | rememberToken | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount
+
+alice | vSBIjibTcFWbcjUEl4wClX+7ySFlWoWkDVaidABAefqTY4D+IQGcBUrgsSwxB75lpRNaFKJY+n7krmEhC21NZQ== | admin | unlocked | enabled |  | ,vSBIjibTcFWbcjUEl4wClX+7ySFlWoWkDVaidABAefqTY4D+IQGcBUrgsSwxB75lpRNaFKJY+n7krmEhC21NZQ==,vSBIjibTcFWbcjUEl4wClX+7ySFlWoWkDVaidABAefqTY4D+IQGcBUrgsSwxB75lpRNaFKJY+n7krmEhC21NZQ==,vSBIjibTcFWbcjUEl4wClX+7ySFlWoWkDVaidABAefqTY4D+IQGcBUrgsSwxB75lpRNaFKJY+n7krmEhC21NZQ== | 0:0:0:0:0:0:0:1 | 1199331706784 | 1199331706784 | 1199331706784 | 9223372036854775807 | 0

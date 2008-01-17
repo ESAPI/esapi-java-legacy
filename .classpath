@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="lib" path="lib/commons-fileupload-1.2.jar" sourcepath="lib/commons-fileupload-1.2-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/commons-io-1.3.2.jar" sourcepath="lib/commons-io-1.3.2-sources.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry exported="true" kind="lib" path="lib/antisamy-bin.1.0.jar">
+		<attributes>
+			<attribute name="org.eclipse.jst.component.dependency" value="../"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="lib/servlet-api.jar" sourcepath="C:/Users/jwilliams/Workbench/codereview/libraries/j2ee-1_4_1-src-scsl.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>
