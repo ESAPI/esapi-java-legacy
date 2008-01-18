@@ -187,7 +187,7 @@ public class User implements IUser, Serializable {
 	 */
 	User(String accountName, String password1, String password2) throws AuthenticationException {
 		
-		Authenticator.getInstance().verifyAccountNameStrength("fixme", accountName);
+		Authenticator.getInstance().verifyAccountNameStrength("Create User", accountName);
 
 		if ( password1 == null ) {
 			throw new AuthenticationCredentialsException( "Invalid account name", "Attempt to create account " + accountName + " with a null password" );
@@ -390,7 +390,7 @@ public class User implements IUser, Serializable {
 	public String getLastHostAddress() {
         HttpServletRequest request = Authenticator.getInstance().getCurrentRequest();
         if ( request != null ) {
-        	return request.getRemoteAddr();  // returning remote addr, not host, to prevent DNS lookup
+        	setLastHostAddress( request.getRemoteAddr() );  // returning remote addr, not host, to prevent DNS lookup
         }
         return lastHostAddress;
     }
@@ -747,6 +747,8 @@ public class User implements IUser, Serializable {
 		logger.logCritical(Logger.SECURITY, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
 	}
 	
+	
+	// FIXME: is this needed?
 	/**
      * Sets the last remote host address used by this User.
      * @param remoteHost
