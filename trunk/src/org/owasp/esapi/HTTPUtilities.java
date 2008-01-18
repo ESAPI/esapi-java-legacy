@@ -91,7 +91,6 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	
 	
 
-	// FIXME: Consider replacing that method that you use to add session rewriting stuff
 	// FIXME: need to make this easier to add to forms.
 	/**
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#addCSRFToken(java.lang.String)

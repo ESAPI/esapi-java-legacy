@@ -88,21 +88,21 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @return
 	 * @throws ValidationException
 	 */
-	public String getValidDataFromBrowser(String name, String type, String input) throws ValidationException {
+	public String getValidDataFromBrowser(String context, String type, String input) throws ValidationException {
 		String canonical = Encoder.getInstance().canonicalize( input );
 		
 		if ( input == null )
-			throw new ValidationException("Bad input", type + " (" + name + ") to validate was null" );
+			throw new ValidationException("Bad input", type + " (" + context + ") to validate was null" );
 		
 		if ( type == null )
-			throw new ValidationException("Bad input", type + " (" + name + ") to validate against was null" );
+			throw new ValidationException("Bad input", type + " (" + context + ") to validate against was null" );
 		
 		Pattern p = SecurityConfiguration.getInstance().getValidationPattern( type );
 		if ( p == null )
-			throw new ValidationException("Bad input", type + " (" + name + ") to validate against not configured in ESAPI.properties" );
+			throw new ValidationException("Bad input", type + " (" + context + ") to validate against not configured in ESAPI.properties" );
 				
 		if ( !p.matcher(canonical).matches() )
-			throw new ValidationException("Bad input", type + " (" + name + "=" + input + ") did not match pattern " + p );
+			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") did not match pattern " + p );
 		
 		// if everything passed, then return the canonical form
 		return canonical;
@@ -117,9 +117,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @param value
 	 * @return
 	 */
-	public boolean isValidDataFromBrowser(String name, String type, String value) {
+	public boolean isValidDataFromBrowser(String context, String type, String value) {
 		try {
-			getValidDataFromBrowser(name, type, value);
+			getValidDataFromBrowser(context, type, value);
 			return true;
 		} catch( Exception e ) {
 			return false;
@@ -146,9 +146,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidCreditCard(java.lang.String)
 	 */
-	public boolean isValidCreditCard(String name, String value) {
+	public boolean isValidCreditCard(String context, String value) {
 		try {
-			String canonical = getValidDataFromBrowser(name, "CreditCard", value);
+			String canonical = getValidDataFromBrowser(context, "CreditCard", value);
 			
 			// perform Luhn algorithm checking
 			StringBuffer digitsOnly = new StringBuffer();
@@ -192,7 +192,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidDirectoryPath(java.lang.String)
 	 */
-	public boolean isValidDirectoryPath(String name, String dirpath) {
+	public boolean isValidDirectoryPath(String context, String dirpath) {
 		String canonical = Encoder.getInstance().canonicalize(dirpath);
 		
 		try {

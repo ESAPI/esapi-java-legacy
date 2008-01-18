@@ -199,14 +199,15 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // hidden
     }
 
-    /*
-     * 
+    /**
+     * Clears all threadlocal variables from the thread. This should ONLY be called after
+     * all possible ESAPI operations have concluded. If you clear too early, many calls will
+     * fail, including logging, which requires the user identity.
      */
     public void clearCurrent() {
-    	// FIXME: don't call this too early - must be the absolute last thing that happens (even logging)
-    	// currentUser = null;
-    	// currentResponse = null;
-    	// currentRequest = null;
+    	currentUser = null;
+    	currentResponse = null;
+    	currentRequest = null;
     }
     
     /*
