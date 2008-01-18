@@ -520,6 +520,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		response.setHeader("Cache-Control", "must-revalidate");
 
 		// HTTP 1.0
+		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", -1);
 	}
 	
