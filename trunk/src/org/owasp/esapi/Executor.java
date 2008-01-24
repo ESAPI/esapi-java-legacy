@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.owasp.esapi.errors.ExecutorException;
 
@@ -71,8 +70,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
             logger.logTrace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
             Validator validator = Validator.getInstance();
 
-            // command must exactly match the canonical path and must actually
-            // exist on the file system
+            // command must exactly match the canonical path and must actually exist on the file system
             if (!executable.getCanonicalPath().equals(executable.getPath())) {
                 throw new ExecutorException("Execution failure", "Invalid path to executable file: " + executable);
             }
@@ -95,16 +93,20 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
             if (!workdir.exists()) {
                 throw new ExecutorException("Execution failure", "No such working directory for running executable: " + workdir.getPath());
             }
-
+            
             params.add(0, executable.getCanonicalPath());
-            ProcessBuilder pb = new ProcessBuilder(params);
-            Map env = pb.environment();
+            String[] command = (String[])params.toArray( new String[0] );
+            Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
+            
+            // FIXME: Future - this is how to implement this in Java 1.5+
+            // ProcessBuilder pb = new ProcessBuilder(params);
+            // Map env = pb.environment();
             // Security check - clear environment variables!
-            env.clear();
-            pb.directory(workdir);
-            pb.redirectErrorStream(true);
+            // env.clear();
+            // pb.directory(workdir);
+            // pb.redirectErrorStream(true);
             // FIXME: ENHANCE need a timer
-            Process process = pb.start();
+            // Process process = pb.start();
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             br = new BufferedReader(isr);
@@ -125,7 +127,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
             } catch (IOException e) {
                 // give up
             }
-        }
+        }        
     }
 
 }

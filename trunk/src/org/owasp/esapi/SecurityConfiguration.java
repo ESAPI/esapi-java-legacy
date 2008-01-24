@@ -16,7 +16,7 @@
 package org.owasp.esapi;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +28,8 @@ import java.util.Properties;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
+
+import org.owasp.esapi.interfaces.ISecurityConfiguration;
 
 /**
  * The SecurityConfiguration manages all the settings used by the ESAPI in a single place. Initializing the
@@ -54,7 +56,7 @@ import java.util.regex.Pattern;
 // characterSet.globalAllowedCharacterList=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890
 // characterSet.makeYourOwnName=
 // 
-public class SecurityConfiguration {
+public class SecurityConfiguration implements ISecurityConfiguration {
 
     /** The properties. */
     private Properties properties = new Properties();
@@ -206,16 +208,16 @@ public class SecurityConfiguration {
         if (file.lastModified() == lastModified)
             return;
 
-        FileReader reader = null;
+        FileInputStream fis = null;
         try {
-            reader = new FileReader(file);
-            instance.properties.load(reader);
+            fis = new FileInputStream( file );
+            instance.properties.load(fis);
             logger.logSpecial("Loaded ESAPI properties from " + file.getAbsolutePath(), null);
         } catch (Exception e) {
             logger.logSpecial("Can't load ESAPI properties from " + file.getAbsolutePath(),e);
         } finally {
             try {
-                reader.close();
+                fis.close();
             } catch (IOException e) {
                 // give up
             }

@@ -659,7 +659,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         int length = oPassword.length();
         for (int i = 0; i < length - 2; i++) {
             String sub = oPassword.substring(i, i + 3);
-            if (newPassword.contains(sub))
+            if (newPassword.indexOf(sub) > -1 )
                 throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password");
         }
 
