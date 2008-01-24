@@ -174,6 +174,13 @@ public class ValidatorTest extends TestCase {
 		assertFalse(instance.isValidNumber("alsdkf"));
 		assertFalse(instance.isValidNumber("--10"));
 		assertFalse(instance.isValidNumber("14.1414234x"));
+		assertFalse(instance.isValidNumber("Infinity"));
+		assertFalse(instance.isValidNumber("-Infinity"));
+		assertFalse(instance.isValidNumber("NaN"));
+		assertFalse(instance.isValidNumber("-NaN"));
+		assertFalse(instance.isValidNumber("+NaN"));
+		assertTrue(instance.isValidNumber("1e-6"));
+		assertTrue(instance.isValidNumber("-1e-6"));
 	}
 
 	/**

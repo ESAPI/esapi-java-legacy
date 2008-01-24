@@ -19,8 +19,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.text.Normalizer;
-import java.text.Normalizer.Form;
+import sun.text.Normalizer;   // Java 1.4
+// import java.text.Normalizer;  // Java 1.6
+// import java.text.Normalizer.Form;  // Java 1.6
 import java.util.HashMap;
 
 import org.owasp.esapi.errors.EncodingException;
@@ -204,9 +205,11 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	public String normalize(String input) {
 		// Split any special characters into two parts, the base character and
 		// the modifier
-		String separated = Normalizer.normalize(input, Form.NFD);
+		
+        String separated = Normalizer.normalize(input, Normalizer.DECOMP, 0);  // Java 1.4
+		// String separated = Normalizer.normalize(input, Form.NFD);   // Java 1.6
 
-		// remove any cswharacter that is not ASCII
+		// remove any character that is not ASCII
 		return separated.replaceAll("[^\\p{ASCII}]", "");
 	}
 
@@ -272,8 +275,8 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 		// card
 
 		String encoded = entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_HTML);
-		encoded = encoded.replace("\r", "<BR>");
-		encoded = encoded.replace("\n", "<BR>");
+		encoded = encoded.replaceAll("\r", "<BR>");
+		encoded = encoded.replaceAll("\n", "<BR>");
 		return encoded;
 	}
 
@@ -322,7 +325,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 */
 	public String encodeForSQL(String input) {
 		String canonical = Encoder.getInstance().canonicalize(input);
-		return canonical.replace("'", "''");
+		return canonical.replaceAll("'", "''");
 	}
 
 	/*
@@ -487,7 +490,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 		String b64 = base64Encoder.encode(input);
 		// remove line-feeds and carriage-returns inserted in output
 		if (!wrap) {
-			b64 = b64.replace("\r", "").replace("\n", "");
+			b64 = b64.replaceAll("\r", "").replaceAll("\n", "");
 		}
 		return b64;
 	}

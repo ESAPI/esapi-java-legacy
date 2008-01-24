@@ -547,7 +547,7 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#login(java.lang.String)
 	 */
 	public void loginWithPassword(String password) throws AuthenticationException {
-		if ( password == null || password.isEmpty() ) {
+		if ( password == null || password.equals("") ) {
 			setLastFailedLoginTime(new Date());
 			throw new AuthenticationLoginException( "Login failed", "Missing password: " + accountName  );
 		}

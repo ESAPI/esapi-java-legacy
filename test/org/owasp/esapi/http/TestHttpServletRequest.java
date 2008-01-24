@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -94,7 +93,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
         if ( old == null ) {
             old = new String[0];
         }
-        String[] updated = Arrays.copyOf(old, old.length + 1); 
+        String[] updated = new String[old.length + 1];
+        for ( int i = 0; i < old.length; i++ ) updated[i] = old[i];
         updated[old.length] = value;
         parameters.put(name, updated);
     }

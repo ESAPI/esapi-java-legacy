@@ -18,7 +18,8 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/servlet-api.jar" sourcepath="C:/Users/jwilliams/Workbench/codereview/libraries/j2ee-1_4_1-src-scsl.zip"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="lib/ant-contrib-1.0b3.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.4.2_16"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>

@@ -94,11 +94,11 @@ public class HTTPUtilitiesTest extends TestCase {
 		System.out.println("addCSRFToken");
         String csrf1=HTTPUtilities.getInstance().addCSRFToken("/test1");
         System.out.println( "CSRF1:" + csrf1);
-        assertTrue(csrf1.contains("?"));
+        assertTrue(csrf1.indexOf("?") > -1);
         
         String csrf2=HTTPUtilities.getInstance().addCSRFToken("/test1?one=two");
         System.out.println( "CSRF1:" + csrf1);
-        assertTrue(csrf2.contains("&"));
+        assertTrue(csrf2.indexOf("&") > -1);
     }
 
     /**

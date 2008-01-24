@@ -378,7 +378,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 					Rule rule = new Rule();
 					String[] parts = line.split("\\|");
 					// fix Windows paths
-					rule.path = parts[0].trim().replace("\\\\", "/");
+					rule.path = parts[0].trim().replaceAll("\\\\", "/");
 					rule.roles.add(parts[1].trim().toLowerCase());
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");

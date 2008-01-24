@@ -350,7 +350,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 						return;
 					megaBytes = mBytes;
 					progress = (long) (((double) pBytesRead / (double) pContentLength) * 100);
-					session.setAttribute("progress", Long.valueOf(progress));
+					session.setAttribute("progress", Long.toString(progress));
 					logger.logSuccess(Logger.SECURITY, "   Item " + pItems + " (" + progress + "% of " + pContentLength + " bytes]");
 				}
 			};
@@ -360,7 +360,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			Iterator i = items.iterator();
 			while (i.hasNext()) {
 				FileItem item = (FileItem) i.next();
-				if (!item.isFormField() && item.getName() != null && !item.getName().isEmpty()) {
+				if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")) ) {
 					String[] fparts = item.getName().split("[\\/\\\\]");
 					String filename = fparts[fparts.length - 1];
 
@@ -383,7 +383,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 					// delete temporary file
 					item.delete();
 					logger.logCritical(Logger.SECURITY, "File successfully uploaded: " + f);
-					session.setAttribute("progress", Long.valueOf(0));
+					session.setAttribute("progress", Long.toString(0));
 				}
 			}
 		} catch (Exception e) {

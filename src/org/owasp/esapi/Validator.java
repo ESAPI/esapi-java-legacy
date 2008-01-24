@@ -35,10 +35,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.validator.html.AntiSamy;
-import org.owasp.validator.html.CleanResults;
-import org.owasp.validator.html.PolicyException;
-import org.owasp.validator.html.ScanException;
+//import org.owasp.validator.html.AntiSamy;
+//import org.owasp.validator.html.CleanResults;
+//import org.owasp.validator.html.PolicyException;
+//import org.owasp.validator.html.ScanException;
 
 /**
  * Reference implementation of the IValidator interface. This implementation
@@ -92,17 +92,17 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		String canonical = Encoder.getInstance().canonicalize( input );
 		
 		if ( input == null )
-			throw new ValidationException("Bad input", type + " (" + context + ") to validate was null" );
+			throw new ValidationException("Bad input", type + " (" + context + ") input to validate was null" );
 		
 		if ( type == null )
-			throw new ValidationException("Bad input", type + " (" + context + ") to validate against was null" );
+			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against was null" );
 		
 		Pattern p = SecurityConfiguration.getInstance().getValidationPattern( type );
 		if ( p == null )
-			throw new ValidationException("Bad input", type + " (" + context + ") to validate against not configured in ESAPI.properties" );
+			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against not configured in ESAPI.properties" );
 				
 		if ( !p.matcher(canonical).matches() )
-			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") did not match pattern " + p );
+			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") input did not match type definition " + p );
 		
 		// if everything passed, then return the canonical form
 		return canonical;
@@ -368,11 +368,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public boolean isValidNumber(String input) {
 		try {
-			Double.parseDouble(input);
+			double d = Double.parseDouble(input);
+			return ( !Double.isInfinite( d ) && !Double.isNaN( d ) );
 		} catch (NumberFormatException e) {
 			return false;
 		}
-		return true;
 	}
 
 	/*
@@ -385,11 +385,14 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		HttpServletRequest request = Authenticator.getInstance().getCurrentRequest();
 		Set actualNames = request.getParameterMap().keySet();
 		
+		// verify ALL required parameters are present
 		Set missing = new HashSet(requiredNames);
 		missing.removeAll(actualNames);
 		if (missing.size() > 0) {
 			return false;
 		}
+		
+		// verify ONLY optional + required parameters are present
 		Set extra = new HashSet(actualNames);
 		extra.removeAll(requiredNames);
 		extra.removeAll(optionalNames);
@@ -444,7 +447,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	public boolean isValidSafeHTML(String name, String input) {
 		String canonical = Encoder.getInstance().canonicalize(input);
 		// FIXME: AAA this is just a simple blacklist test - will use Anti-SAMY
-		return !canonical.contains("<scri") && !canonical.contains("onload");
+		return !(canonical.indexOf("<scri") > -1 ) && !(canonical.indexOf("onload") > -1);
 	}
 
 	/*
@@ -453,6 +456,8 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @see org.owasp.esapi.interfaces.IValidator#getValidSafeHTML(java.lang.String)
 	 */
 	public String getValidSafeHTML( String context, String input ) throws ValidationException {
+		throw new java.lang.UnsupportedOperationException();
+		/**
 		AntiSamy as = new AntiSamy();
 		try {
 			CleanResults test = as.scan(input);
@@ -467,6 +472,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		} catch (PolicyException e) {
 			throw new ValidationException( "Invalid HTML", "HTML violates policy (" + context + "=" + input + ") ",e );
 		}
+		**/
 	}
 
 	

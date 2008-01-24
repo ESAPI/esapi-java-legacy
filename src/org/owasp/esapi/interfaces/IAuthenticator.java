@@ -19,6 +19,8 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 
 /**
@@ -79,7 +81,7 @@ public interface IAuthenticator {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	IUser login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;
+	User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;  // FIXME: Future - Should return IUser, works in Java 1.5+ but hacked here for Java 1.4
 
 	/**
 	 * Creates the user.
@@ -96,7 +98,7 @@ public interface IAuthenticator {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	IUser createUser(String accountName, String password1, String password2) throws AuthenticationException;
+	User createUser(String accountName, String password1, String password2) throws AuthenticationException;   // FIXME: Future - Should return IUser, works in Java 1.5+ but hacked here for Java 1.4
 
 	/**
 	 * Generate a strong password.
@@ -125,7 +127,7 @@ public interface IAuthenticator {
 	 * 
 	 * @return the matching User object, or null if no match exists
 	 */
-	IUser getUser(String accountName);
+	User getUser(String accountName);    // FIXME: Future - Should return IUser, works in Java 1.5+ but hacked here for Java 1.4
 
 	/**
 	 * Gets the user names.
@@ -140,7 +142,7 @@ public interface IAuthenticator {
 	 * @return the matching User object, or the Anonymous user if no match
 	 *         exists
 	 */
-	IUser getCurrentUser();
+	User getCurrentUser();  // FIXME: Future - Should return IUser, works in Java 1.5+ but hacked here for Java 1.4
 
 	/**
 	 * Sets the currently logged in User.
