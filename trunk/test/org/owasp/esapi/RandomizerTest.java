@@ -71,6 +71,7 @@ public class RandomizerTest extends TestCase {
         Randomizer instance = Randomizer.getInstance();
         for ( int i = 0; i < 100; i++ ) {
             String result = instance.getRandomString(length, Encoder.CHAR_ALPHANUMERICS );
+            // FIXME: only the set of characters should be here
             assertEquals(length, result.length());
         }
     }
