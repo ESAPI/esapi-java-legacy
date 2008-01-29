@@ -136,6 +136,11 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 		return instance;
 	}
 
+	
+	// FIXME: consider adding flag for logging
+	// FIXME: perhaps an enumeration for context (i.e. the layer the call is made from)
+	
+	
 	/*
 	 * (non-Javadoc)
 	 * 
