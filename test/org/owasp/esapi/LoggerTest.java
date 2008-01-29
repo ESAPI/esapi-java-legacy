@@ -80,8 +80,9 @@ public class LoggerTest extends TestCase {
      */
     public void testLogHTTPRequest() throws ValidationException, IOException, AuthenticationException {
         System.out.println("logHTTPRequest");
-        String[] ignore = {"password"};
+        String[] ignore = {"password","ssn","ccn"};
         TestHttpServletRequest request = new TestHttpServletRequest();
+        // FIXME: AAA modify to return the actual string logged (so we can test)
         Logger.getLogger("logger", "logger").logHTTPRequest(Logger.SECURITY, request, Arrays.asList(ignore) );
         request.addParameter("one","one");
         request.addParameter("two","two1");

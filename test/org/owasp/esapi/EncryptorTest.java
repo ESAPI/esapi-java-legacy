@@ -74,6 +74,9 @@ public class EncryptorTest extends TestCase {
         String hash1 = instance.hash("test1", "salt");
         String hash2 = instance.hash("test2", "salt");
         assertFalse(hash1.equals(hash2));
+        String hash3 = instance.hash("test", "salt1");
+        String hash4 = instance.hash("test", "salt2");
+        assertFalse(hash3.equals(hash4));
     }
 
     /**
