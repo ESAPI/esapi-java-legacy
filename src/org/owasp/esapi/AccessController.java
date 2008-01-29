@@ -15,9 +15,8 @@
  */
 package org.owasp.esapi;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +26,7 @@ import java.util.Set;
 
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
 
 /**
  * Reference implementation of the IAccessController interface. This reference
@@ -374,12 +374,13 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
 	private Map loadRules(File f) throws AccessControlException {
 		Map map = new HashMap();
-		BufferedReader reader = null;
+		FileInputStream fis = null;
 		try {
-			reader = new BufferedReader(new FileReader(f));
+			fis = new FileInputStream(f);
 			String line = "";
-			while ((line = reader.readLine()) != null) {
+			while ((line = Validator.getInstance().safeReadLine(fis, 500)) != null) {
 				if (line.length() > 0 && line.charAt(0) != '#') {
+					System.out.println( "RULE: " + line );
 					Rule rule = new Rule();
 					String[] parts = line.split("\\|");
 					// fix Windows paths
@@ -396,10 +397,13 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 			return map;
 		} catch (IOException e) {
 			throw new AccessControlException("Access control failure", "Failure loading access control file " + f, e);
+		} catch (ValidationException e1) {
+			throw new AccessControlException("Access control failure", "Failure loading access control file " + f, e1);
 		} finally {
 			try {
-				if (reader != null)
-					reader.close();
+				if (fis != null) {
+					fis.close();
+				}
 			} catch (IOException e) {
 				logger.logWarning(Logger.SECURITY, "Failure closing access control file: " + f, e);
 			}
