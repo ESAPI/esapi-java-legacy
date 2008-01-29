@@ -44,7 +44,8 @@ public interface IEncryptor {
 	 * salt. The salt helps to protect against a rainbow table attack by mixing
 	 * in some extra data with the plaintext. Some good choices for a salt might
 	 * be an account name or some other string that is known to the application
-	 * but not to an attacker.
+	 * but not to an attacker. See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">this article</a> for 
+	 * more information about hashing as it pertains to password schemes.
 	 * 
 	 * @param plaintext
 	 *            the plaintext

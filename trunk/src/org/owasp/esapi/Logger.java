@@ -257,7 +257,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @param message
      * @param throwable
      */
-    // FIXME: this needs to go
+    // FIXME: this needs to go - note potential log injection problem
     public void logSpecial(String message, Throwable throwable) {
         // String clean = Encoder.getInstance().encodeForHTML(message);
         // if (!message.equals(clean)) {
