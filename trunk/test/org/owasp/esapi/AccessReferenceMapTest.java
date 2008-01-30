@@ -110,7 +110,6 @@ public class AccessReferenceMapTest extends TestCase {
 		while ( i.hasNext() ) {
 			String userName = (String)i.next();
 			User u = Authenticator.getInstance().getUser( userName );
-			System.out.println( ">>>" + u );
 			if ( u == null ) fail();
 		}
     }

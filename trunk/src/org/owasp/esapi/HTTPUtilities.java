@@ -310,6 +310,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
     			// continue
     		}
     	}
+    	// FIXME: AAA - add a check to see if cookie length will exceed 2K limit
     	String encrypted = Encryptor.getInstance().encrypt(sb.toString());
     	this.safeAddCookie("state", encrypted, -1, null, null );
     }

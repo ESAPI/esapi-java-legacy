@@ -79,12 +79,10 @@ public class ESAPIFilter implements Filter {
 				Authenticator.getInstance().login(request, response);
 			} catch( AuthenticationException e ) {
 				Authenticator.getInstance().logout();
-				System.out.println( "Logged out" );
 				// FIXME: use safeforward!
 				// FIXME: make configurable with servletconfig
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
 				dispatcher.forward(request, response);
-				System.out.println( "Forward complete" );
 				return;
 			}
 

@@ -1046,11 +1046,11 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 		// + e5.getMessage() ); }
 		// try { System.out.println( ">>" + encoder.encodeForHTML("test &#ridi;
 		// test") ); } catch( Exception e6 ) { e6.printStackTrace() ; }
-		try {
-			System.out.println(">>" + encoder.encodeForHTML("test &#01;&#02;&#03;&#04; test"));
-		} catch (Exception e7) {
-			System.out.println("   !" + e7.getMessage());
-		}
+		//try {
+		//	System.out.println(">>" + encoder.encodeForHTML("test &#01;&#02;&#03;&#04; test"));
+		//} catch (Exception e7) {
+		//	System.out.println("   !" + e7.getMessage());
+		//}
 	}
 
 	private class EncodedStringReader {
@@ -1134,7 +1134,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 				testCharacter += 3;
 				return new EncodedCharacter("%" + possible, (char) c, PERCENT_ENCODING);
 			} catch (NumberFormatException e) {
-				System.out.println("Found % but there was no encoded character following it");
+				// System.out.println("Found % but there was no encoded character following it");
 				return null;
 			}
 		}

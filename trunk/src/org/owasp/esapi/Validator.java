@@ -498,18 +498,21 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		int count = 0;
 		int c;
 
-		// FIXME: AAA - make this method's behavior exactly match BufferedReader.readLine()
+		// FIXME: AAA - verify this method's behavior exactly matches BufferedReader.readLine()
 		// so it can be used as a drop in replacement.
 		try {
 			while (true) {
 				c = in.read();
-				if ( c == -1 ) return null;
+				if ( c == -1 ) {
+					if (sb.length() == 0) return null;
+					break;
+				}
 				if (c == '\n' || c == '\r') break;
-				sb.append((char) c);
 				count++;
 				if (count > max) {
 					throw new ValidationAvailabilityException("Invalid input", "Read more than maximum characters allowed (" + max + ")");
 				}
+				sb.append((char) c);
 			}
 			return sb.toString();
 		} catch (IOException e) {

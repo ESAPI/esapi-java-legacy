@@ -190,7 +190,6 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 		String signatureAlgorithm="SHAwithDSA";
 		try {
 			Signature signer = Signature.getInstance(signatureAlgorithm);
-			System.out.println( new String( privateKey.getEncoded() ) );
 			signer.initSign(privateKey);
 			signer.update(data.getBytes());
 			byte[] bytes = signer.sign();
