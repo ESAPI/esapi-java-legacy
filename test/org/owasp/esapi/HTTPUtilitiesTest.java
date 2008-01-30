@@ -274,11 +274,8 @@ public class HTTPUtilitiesTest extends TestCase {
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
 	        HTTPUtilities.getInstance().encryptStateInCookie(map);
-	        // String encrypted = response.getCookie("state").getValue();
-	        // System.out.println( "Encrypted: " + encrypted );
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-	        System.out.println( "Encrypted: "+ encrypted);
 	        // String encrypted = response.getCookie("state").getValue();
 	        request.setCookie( "state", encrypted );
 	        Map state = HTTPUtilities.getInstance().decryptStateFromCookie();
@@ -309,9 +306,7 @@ public class HTTPUtilitiesTest extends TestCase {
 	        HTTPUtilities.getInstance().encryptStateInCookie(map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-	        System.out.println( "Encrypted: " + encrypted );
         	String decrypted = Encryptor.getInstance().decrypt( encrypted );
-        	System.out.println( "Decrypted: " + decrypted );
         } catch( EncryptionException e ) {
         	fail();
         }

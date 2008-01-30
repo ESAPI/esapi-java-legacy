@@ -293,7 +293,6 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
 	private Rule searchForRule(Map map, Set roles, String path) throws AccessControlException {
 		String canonical = Encoder.getInstance().canonicalize(path);
-		System.out.println( "Searching for " + roles + " in " + path );
 		
 		String part = canonical;
 		while (part.endsWith("/")) {
@@ -380,7 +379,6 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 			String line = "";
 			while ((line = Validator.getInstance().safeReadLine(fis, 500)) != null) {
 				if (line.length() > 0 && line.charAt(0) != '#') {
-					System.out.println( "RULE: " + line );
 					Rule rule = new Rule();
 					String[] parts = line.split("\\|");
 					// fix Windows paths

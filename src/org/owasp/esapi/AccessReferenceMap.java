@@ -155,7 +155,6 @@ public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessRef
 		Iterator i = dtoi.entrySet().iterator();
 		while (i.hasNext()) {
 			Entry e = (Entry) i.next();
-			System.out.println("::" + e.getKey() + " -> " + e.getValue());
 		}
 		if (itod.containsKey(indirectReference)) {
 			return itod.get(indirectReference);

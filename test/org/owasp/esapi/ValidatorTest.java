@@ -312,13 +312,13 @@ public class ValidatorTest extends TestCase {
 		try {
 			v.safeReadLine(s, 4);
 			fail();
-		} catch (Exception e) {
+		} catch (ValidationException e) {
 			// Expected
 		}
 		s.reset();
 		try {
 			String u = v.safeReadLine(s, 20);
-			assertTrue(u.equals("testString"));
+			assertEquals("testString", u);
 		} catch (ValidationException e) {
 			fail();
 		}

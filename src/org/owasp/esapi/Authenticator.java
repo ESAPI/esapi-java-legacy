@@ -247,12 +247,12 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public String generateStrongPassword() {
         Randomizer r = Randomizer.getInstance();
-        String pass = r.getRandomString(8, Encoder.CHAR_PASSWORD);
+        String newPassword = r.getRandomString(8, Encoder.CHAR_PASSWORD);
         try {
-            verifyPasswordStrength(pass, "");
-            return pass;
+            verifyPasswordStrength(newPassword, "");
+            return newPassword;
         } catch (AuthenticationException e) {
-            logger.logCritical(Logger.SECURITY, "Generated strong password");
+            logger.logDebug(Logger.SECURITY, "Password generator created weak password: " + newPassword + ". Regenerating.", e);
             return generateStrongPassword();
         }
     }
@@ -618,7 +618,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#setCurrentHTTP(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
      */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
-        System.out.println(" >>>>> currentRequest: " + currentRequest );
     	currentRequest.set(request);
         currentResponse.set(response);
     }
