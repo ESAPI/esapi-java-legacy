@@ -506,14 +506,14 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             saveUsers(writer);
             writer.flush();
             logger.logCritical(Logger.SECURITY, "User file written to disk" );
-            lastModified = userDB.lastModified();
-            lastChecked = lastModified;
         } catch (IOException e) {
             logger.logSpecial( "Problem saving user file " + userDB.getAbsolutePath(), e );
             throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
         } finally {
             if (writer != null) {
                 writer.close();
+                lastModified = userDB.lastModified();
+                lastChecked = lastModified;
             }
         }
     }
