@@ -73,8 +73,17 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     /** The logger. */
     private static final Logger logger = Logger.getLogger("ESAPI", "Authenticator");
 
-    /** The last modified. */
-    private static long lastModified = 0;
+    /** The file that contains the user db */
+    private File userDB = null;
+    
+    /** How frequently to check the user db for external modifications */
+    private long checkInterval = 60 * 1000;
+
+    /** The last modified time we saw on the user db. */
+    private long lastModified = 0;
+
+    /** The last time we checked if the user db had been modified externally */
+    private long lastChecked = 0;
     
     /**
      * Gets the single instance of Authenticator. Must not log in this method because the logger calls getInstance() and
@@ -83,7 +92,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return single instance of Authenticator
      */
     public static Authenticator getInstance() {
-        instance.loadUsers();
+        instance.loadUsersIfNecessary();
         return instance;
     }
 
@@ -364,20 +373,23 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return the hash map
      * @throws AuthenticationException the authentication exception
      */
-    protected void loadUsers() {
-        File file = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
+    protected void loadUsersIfNecessary() {
+        if (userDB == null)
+            userDB = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
         
-        // FIXME: ??
-        // don't load the file if it's unchanged or if there are changes waiting to be written
-        // if (file.lastModified() == lastModified) {
-        if ( !userMap.isEmpty() ) {
-        	return;
-        }
-
+        long now = System.currentTimeMillis();
+        // We only check at most every checkInterval milliseconds
+        if (now - lastChecked < checkInterval)
+            return;
+        lastChecked = now;
+        
+        long lastModified = userDB.lastModified();
+        if (this.lastModified == lastModified)
+            return;
+        
         // file was touched so reload it
     	synchronized( this ) {
-	        logger.logSpecial("Loading users from " + file.getAbsolutePath(), null);
-	        HashMap map = new HashMap();
+	        logger.logSpecial("Loading users from " + userDB.getAbsolutePath(), null);
 	
 	        // FIXME: AAA Necessary?
 	        // add the Anonymous user to the database
@@ -385,7 +397,8 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	
 	        BufferedReader reader = null;
 	        try {
-	            reader = new BufferedReader(new FileReader(file));
+	            HashMap map = new HashMap();
+	            reader = new BufferedReader(new FileReader(userDB));
 	            String line = null;
 	            while ((line = reader.readLine()) != null) {
 	                if (line.length() > 0 && line.charAt(0) != '#') {
@@ -398,18 +411,18 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	                    }
 	                }
 	            }
+                userMap = map;
+                this.lastModified = lastModified;
+                logger.logSpecial("User file reloaded: " + map.size(), null);
 	        } catch (Exception e) {
-	            logger.logSpecial("Failure loading user file: " + file.getAbsolutePath(), e);
+	            logger.logSpecial("Failure loading user file: " + userDB.getAbsolutePath(), e);
 	        } finally {
 	            try {
 	                if (reader != null) {
 	                    reader.close();
 	                }
-	                lastModified = file.lastModified();
-	                userMap = map;
-	                logger.logSpecial("User file reloaded: " + map.size(), null);
 	            } catch (IOException e) {
-	                logger.logSpecial("Failure closing user file: " + file.getAbsolutePath(), e);
+	                logger.logSpecial("Failure closing user file: " + userDB.getAbsolutePath(), e);
 	            }
 	        }
     	}
