@@ -142,8 +142,7 @@ public class User implements IUser, Serializable {
 		// FIXME: AAA validate account name
 		this.hashedPassword = parts[1].trim();
         
-        // FIXME: ENHANCE make regex for split ignore spaces - "r1, r2, r3" doesn't work but "r1,r2,r3" does
-		this.roles.addAll(Arrays.asList(parts[2].trim().toLowerCase().split(",")));
+		this.roles.addAll(Arrays.asList(parts[2].trim().toLowerCase().split(" *, *")));
 		this.locked = !"unlocked".equalsIgnoreCase(parts[3].trim());
 		this.enabled = "enabled".equalsIgnoreCase(parts[4].trim());
 		this.rememberToken = parts[5].trim();
@@ -151,7 +150,7 @@ public class User implements IUser, Serializable {
 		// generate a new csrf token
         this.resetCSRFToken();
         
-		this.oldPasswordHashes.addAll( Arrays.asList(parts[6].trim().split(",")));
+		this.oldPasswordHashes.addAll( Arrays.asList(parts[6].trim().split(" *, *")));
         this.lastHostAddress = parts[7].trim();
         this.lastPasswordChangeTime = new Date( Long.parseLong(parts[8].trim()));
 		this.lastLoginTime = new Date( Long.parseLong(parts[9].trim()));
