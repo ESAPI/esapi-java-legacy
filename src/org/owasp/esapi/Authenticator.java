@@ -254,32 +254,35 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#generateStrongPassword(int, char[])
      */
     public String generateStrongPassword() {
-        Randomizer r = Randomizer.getInstance();
-        String newPassword = r.getRandomString(8, Encoder.CHAR_PASSWORD);
-        try {
-            verifyPasswordStrength(newPassword, "");
-            return newPassword;
-        } catch (AuthenticationException e) {
-            logger.logDebug(Logger.SECURITY, "Password generator created weak password: " + newPassword + ". Regenerating.", e);
-            return generateStrongPassword();
-        }
+        return generateStrongPassword("");
     }
 
+    private String generateStrongPassword(String oldPassword) {
+        Randomizer r = Randomizer.getInstance();
+        String newPassword = "";
+        int limit = 10;
+        for (int i=0; i<limit; i++) {
+            try {
+                newPassword = r.getRandomString(8, Encoder.CHAR_PASSWORD);
+                verifyPasswordStrength(newPassword, oldPassword);
+                return newPassword;
+            } catch (AuthenticationException e) {
+                logger.logDebug(Logger.SECURITY, "Password generator created weak password: " + newPassword + ". Regenerating.", e);
+            }
+        }
+        logger.logCritical(Logger.SECURITY, "Strong password generation failed after  " + limit + " attempts");
+        return null;
+    }
+    
     /*
      * (non-Javadoc)
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#generateStrongPassword(int, char[])
      */
     public String generateStrongPassword(String oldPassword, IUser user) {
-        String newPassword = "";
-        try {
-            newPassword = Randomizer.getInstance().getRandomString(8, Encoder.CHAR_PASSWORD);
-            verifyPasswordStrength(newPassword, oldPassword);
-        } catch (AuthenticationException e) {
-            logger.logDebug(Logger.SECURITY, "Password generator created weak password: " + newPassword + ". Regenerating.", e);
-            newPassword = generateStrongPassword(oldPassword, user);
-        }
-        logger.logCritical(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
+        String newPassword = generateStrongPassword(oldPassword);
+        if (newPassword != null)
+            logger.logCritical(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
         return newPassword;
     }
 
