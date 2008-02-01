@@ -92,7 +92,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return single instance of Authenticator
      */
     public static Authenticator getInstance() {
-        instance.loadUsersIfNecessary();
         return instance;
     }
 
@@ -225,6 +224,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#createAccount(java.lang.String, java.lang.String)
      */
     public synchronized User createUser(String accountName, String password1, String password2) throws AuthenticationException {
+        loadUsersIfNecessary();
         if (accountName == null) {
             throw new AuthenticationAccountsException("Account creation failed", "Attempt to create user with null accountName");
         }
@@ -319,6 +319,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return the user, or null if not matched.
      */
     public synchronized User getUser(String accountName) {
+        loadUsersIfNecessary();
         User user = (User) userMap.get(accountName.toLowerCase());
         return user;
     }
@@ -355,6 +356,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return list of user account names
      */
     public synchronized Set getUserNames() {
+        loadUsersIfNecessary();
     	return new HashSet(userMap.keySet());
     }
 
@@ -474,6 +476,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#removeUser(java.lang.String)
      */
     public synchronized void removeUser(String accountName) throws AuthenticationException {
+        loadUsersIfNecessary();
     	User user = getUser(accountName);
         if (user == null) {
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
