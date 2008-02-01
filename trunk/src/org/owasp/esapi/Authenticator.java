@@ -234,6 +234,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         User user = new User(accountName, password1, password2);
         userMap.put(accountName.toLowerCase(), user);
         logger.logCritical(Logger.SECURITY, "New user created: " + accountName);
+        saveUsers();
         return user;
     }
 
@@ -489,19 +490,21 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @throws AuthenticationException the authentication exception
      */
-    public synchronized void saveUsers() throws AuthenticationException {
-        File file = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
+    protected synchronized void saveUsers() throws AuthenticationException {
         PrintWriter writer = null;
         try {
-            writer = new PrintWriter(new FileWriter(file));
+            writer = new PrintWriter(new FileWriter(userDB));
             writer.println("# This is the user file associated with the ESAPI library from http://www.owasp.org");
             writer.println("# accountName | hashedPassword | roles | locked | enabled | rememberToken | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
             writer.println();
             saveUsers(writer);
             writer.flush();
             logger.logCritical(Logger.SECURITY, "User file written to disk" );
+            lastModified = userDB.lastModified();
+            lastChecked = lastModified;
         } catch (IOException e) {
-            logger.logSpecial( "Problem saving user file " + file.getAbsolutePath(), e );
+            logger.logSpecial( "Problem saving user file " + userDB.getAbsolutePath(), e );
+            throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
         } finally {
             if (writer != null) {
                 writer.close();
