@@ -136,7 +136,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     User anonymous = new User("anonymous", "anonymous");
 
     /** The user map. */
-    private Map userMap = Collections.synchronizedMap( new HashMap() );
+    private Map userMap = new HashMap();
 
     /*
      * The currentUser ThreadLocal variable is used to make the currentUser available to any call in any part of an
@@ -449,6 +449,8 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 
         // now authenticate with username and password
         if (username == null || password == null) {
+            if (username == null)
+                username = "unspecified user";
             throw new AuthenticationCredentialsException("Authentication failed", "Authentication failed for " + username + " because of null username or password");
         }
         user = getUser(username);
@@ -459,12 +461,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         return user;
     }
 
-    protected void removeAllUsers() {
-    	synchronized( userMap ) {
-    		userMap.clear();
-    	}
-    }
-    
     /*
      * (non-Javadoc)
      * 
