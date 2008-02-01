@@ -97,7 +97,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * Example: Use this to add the alice account with the admin role to the users file: 
      * <PRE>
      * 
-     * java -Dorg.owasp.esapi.resources="/path/resources" -classpath esapi.jar Authenticator alice password admin
+     * java -Dorg.owasp.esapi.resources="/path/resources" -classpath esapi.jar org.owasp.esapi.Authenticator alice password admin
      * 
      * </PRE>
      * 
