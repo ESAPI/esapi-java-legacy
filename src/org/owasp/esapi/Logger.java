@@ -215,7 +215,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
     }
 
     /**
-     * Log the message after encoding any special characters that might inject into an HTML based log viewer.
+     * Log the message after optionally encoding any special characters that might inject into an HTML based log viewer.
      * 
      * @param message the message
      * @param level the level
