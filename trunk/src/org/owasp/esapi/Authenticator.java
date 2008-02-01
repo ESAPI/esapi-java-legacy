@@ -22,9 +22,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -215,19 +215,17 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#createAccount(java.lang.String, java.lang.String)
      */
-    public User createUser(String accountName, String password1, String password2) throws AuthenticationException {
-    	synchronized( userMap ) {
-	        if (accountName == null) {
-	            throw new AuthenticationAccountsException("Account creation failed", "Attempt to create user with null accountName");
-	        }
-	        if (userMap.containsKey(accountName.toLowerCase())) {
-	            throw new AuthenticationAccountsException("Account creation failed", "Duplicate user creation denied for " + accountName);
-	        }
-	        User user = new User(accountName, password1, password2);
-	        userMap.put(accountName.toLowerCase(), user);
-	        logger.logCritical(Logger.SECURITY, "New user created: " + accountName);
-	        return user;
-    	}
+    public synchronized User createUser(String accountName, String password1, String password2) throws AuthenticationException {
+        if (accountName == null) {
+            throw new AuthenticationAccountsException("Account creation failed", "Attempt to create user with null accountName");
+        }
+        if (userMap.containsKey(accountName.toLowerCase())) {
+            throw new AuthenticationAccountsException("Account creation failed", "Duplicate user creation denied for " + accountName);
+        }
+        User user = new User(accountName, password1, password2);
+        userMap.put(accountName.toLowerCase(), user);
+        logger.logCritical(Logger.SECURITY, "New user created: " + accountName);
+        return user;
     }
 
     /*
@@ -310,11 +308,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @param accountName the account name
      * @return the user, or null if not matched.
      */
-    public User getUser(String accountName) {
-    	synchronized( userMap ) {
-	        User user = (User) userMap.get(accountName.toLowerCase());
-	        return user;
-    	}
+    public synchronized User getUser(String accountName) {
+        User user = (User) userMap.get(accountName.toLowerCase());
+        return user;
     }
 
     /*
@@ -348,11 +344,8 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @return list of user account names
      */
-    public Set getUserNames() {
-    	return userMap.keySet();
-        // Set tree = new TreeSet(userMap.keySet());
-        // tree.remove("anonymous");
-        // return tree;
+    public synchronized Set getUserNames() {
+    	return new HashSet(userMap.keySet());
     }
 
     /*
@@ -382,7 +375,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         }
 
         // file was touched so reload it
-    	synchronized( userMap ) {
+    	synchronized( this ) {
 	        logger.logSpecial("Loading users from " + file.getAbsolutePath(), null);
 	        HashMap map = new HashMap();
 	
@@ -466,17 +459,15 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#removeUser(java.lang.String)
      */
-    public void removeUser(String accountName) throws AuthenticationException {
-        synchronized( userMap ) {
-        	User user = getUser(accountName);
-	        if (user == null) {
-	            throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
-	        }
-	        userMap.remove(accountName.toLowerCase());
-	        // Beware - the logging engine might reload inadvertently reload the user file before the save completes, overwriting the change!
-	        saveUsers();
-	        logger.logCritical(Logger.SECURITY, "User " + accountName + " removed");
+    public synchronized void removeUser(String accountName) throws AuthenticationException {
+    	User user = getUser(accountName);
+        if (user == null) {
+            throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
+        userMap.remove(accountName.toLowerCase());
+        // Beware - the logging engine might reload inadvertently reload the user file before the save completes, overwriting the change!
+        saveUsers();
+        logger.logCritical(Logger.SECURITY, "User " + accountName + " removed");
     }
 
     /**
@@ -486,24 +477,22 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @throws AuthenticationException the authentication exception
      */
     public synchronized void saveUsers() throws AuthenticationException {
-        synchronized( userMap ) {
-	        File file = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
-	        PrintWriter writer = null;
-	        try {
-	            writer = new PrintWriter(new FileWriter(file));
-	            writer.println("# This is the user file associated with the ESAPI library from http://www.owasp.org");
-	            writer.println("# accountName | hashedPassword | roles | locked | enabled | rememberToken | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
-	            writer.println();
-	            saveUsers(writer);
-	            writer.flush();
-	            logger.logCritical(Logger.SECURITY, "User file written to disk" );
-	        } catch (IOException e) {
-	            logger.logSpecial( "Problem saving user file " + file.getAbsolutePath(), e );
-	        } finally {
-	            if (writer != null) {
-	                writer.close();
-	            }
-	        }
+        File file = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter(new FileWriter(file));
+            writer.println("# This is the user file associated with the ESAPI library from http://www.owasp.org");
+            writer.println("# accountName | hashedPassword | roles | locked | enabled | rememberToken | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
+            writer.println();
+            saveUsers(writer);
+            writer.flush();
+            logger.logCritical(Logger.SECURITY, "User file written to disk" );
+        } catch (IOException e) {
+            logger.logSpecial( "Problem saving user file " + file.getAbsolutePath(), e );
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
         }
     }
 
@@ -513,20 +502,18 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @param writer the writer
      * @throws IOException
      */
-    protected void saveUsers(PrintWriter writer) {
-        synchronized( userMap ) {
-	        Iterator i = getUserNames().iterator();
-	        while (i.hasNext()) {
-	            String accountName = (String) i.next();
-	            User u = getUser(accountName);
-	            if ( u != null && !u.isAnonymous() ) {
-	            	writer.println(u.save());
-	            } else {
-	            	new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName );
-	            }
-	        }
-	        logger.logSpecial("User file updated", null);
+    protected synchronized void saveUsers(PrintWriter writer) {
+        Iterator i = getUserNames().iterator();
+        while (i.hasNext()) {
+            String accountName = (String) i.next();
+            User u = getUser(accountName);
+            if ( u != null && !u.isAnonymous() ) {
+            	writer.println(u.save());
+            } else {
+            	new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName );
+            }
         }
+        logger.logSpecial("User file updated", null);
     }
 
     /**
