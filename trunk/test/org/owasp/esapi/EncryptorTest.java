@@ -68,7 +68,7 @@ public class EncryptorTest extends TestCase {
     /**
 	 * Test of hash method, of class org.owasp.esapi.Encryptor.
 	 */
-    public void testHash() {
+    public void testHash() throws EncryptionException {
         System.out.println("hash");
         Encryptor instance = Encryptor.getInstance();
         String hash1 = instance.hash("test1", "salt");

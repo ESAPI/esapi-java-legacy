@@ -119,7 +119,7 @@ public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
         return this.getRandomString(12, Encoder.CHAR_ALPHANUMERICS) + "." + extension;
     }
 
-    public String getRandomGUID() {
+    public String getRandomGUID() throws EncryptionException {
         // create random string to seed the GUID
         StringBuffer sb = new StringBuffer();
         try {

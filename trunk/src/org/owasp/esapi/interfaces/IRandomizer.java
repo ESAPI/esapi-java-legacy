@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.interfaces;
 
+import org.owasp.esapi.errors.EncryptionException;
+
 /**
  * The IRandomizer interface defines a set of methods for creating
  * cryptographically random numbers and strings. Implementers should be sure to
@@ -81,7 +83,8 @@ public interface IRandomizer {
     /**
      * Generates a random GUID.
      * @return the GUID
+     * @throws EncryptionException 
      */
-    String getRandomGUID();
+    String getRandomGUID() throws EncryptionException;
            
 }

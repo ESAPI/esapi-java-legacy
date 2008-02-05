@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * The IAuthenticator interface defines a set of methods for generating and
@@ -164,7 +165,7 @@ public interface IAuthenticator {
 	 * 
 	 * @return the string
 	 */
-	String hashPassword(String password, String accountName);
+	String hashPassword(String password, String accountName) throws EncryptionException;
 
 	/**
 	 * Removes the account.

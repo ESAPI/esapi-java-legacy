@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -74,7 +75,7 @@ public class AccessReferenceMapTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-    public void testUpdate() throws AuthenticationException {
+    public void testUpdate() throws AuthenticationException, EncryptionException {
         System.out.println("update");
     	AccessReferenceMap arm = new AccessReferenceMap();
     	String pass = Authenticator.getInstance().generateStrongPassword();

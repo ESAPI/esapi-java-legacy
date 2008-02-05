@@ -17,6 +17,8 @@ package org.owasp.esapi;
 
 import java.util.ArrayList;
 
+import org.owasp.esapi.errors.EncryptionException;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -116,7 +118,7 @@ public class RandomizerTest extends TestCase {
     /**
      * Test of getRandomGUID method, of class org.owasp.esapi.Randomizer.
      */
-    public void testGetRandomGUID() {
+    public void testGetRandomGUID() throws EncryptionException {
         System.out.println("getRandomGUID");
         Randomizer instance = Randomizer.getInstance();
         ArrayList list = new ArrayList();

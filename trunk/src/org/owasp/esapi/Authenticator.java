@@ -37,6 +37,8 @@ import org.owasp.esapi.errors.AuthenticationAccountsException;
 import org.owasp.esapi.errors.AuthenticationCredentialsException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.interfaces.IRandomizer;
 import org.owasp.esapi.interfaces.IUser;
 
 /**
@@ -258,7 +260,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     }
 
     private String generateStrongPassword(String oldPassword) {
-        Randomizer r = Randomizer.getInstance();
+        IRandomizer r = ESAPI.randomizer();
         String newPassword = "";
         int limit = 10;
         for (int i=0; i<limit; i++) {
@@ -368,9 +370,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#hashPassword(java.lang.String, java.lang.String)
      */
-    public String hashPassword(String password, String accountName) {
+    public String hashPassword(String password, String accountName) throws EncryptionException {
         String salt = accountName.toLowerCase();
-        return Encryptor.getInstance().hash(password, salt);
+        return ESAPI.encryptor().hash(password, salt);
     }
     
     /**
@@ -381,7 +383,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     protected void loadUsersIfNecessary() {
         if (userDB == null)
-            userDB = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
+            userDB = new File(((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "users.txt");
         
         long now = System.currentTimeMillis();
         // We only check at most every checkInterval milliseconds
@@ -449,8 +451,8 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // should check (if loginrequest && parameters then do
         // loginWithPassword)
 
-        String username = request.getParameter(SecurityConfiguration.getInstance().getUsernameParameterName());
-        String password = request.getParameter(SecurityConfiguration.getInstance().getPasswordParameterName());
+        String username = request.getParameter(ESAPI.securityConfiguration().getUsernameParameterName());
+        String password = request.getParameter(ESAPI.securityConfiguration().getPasswordParameterName());
 
         // if a logged-in user is requesting to login, log them out first
         User user = getCurrentUser();
@@ -554,7 +556,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     	// save the current request and response in the threadlocal variables
     	setCurrentHTTP(request, response);
     	
-        if ( !HTTPUtilities.getInstance().isSecureChannel() ) {
+        if ( !ESAPI.httpUtilities().isSecureChannel() ) {
             new AuthenticationCredentialsException( "Session exposed", "Authentication attempt made over non-SSL connection. Check web.xml and server configuration" );
         }
         User user = null;
@@ -645,7 +647,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account with a null account name");
         }
         // FIXME: ENHANCE make the lengths configurable?
-        if (!Validator.getInstance().isValidDataFromBrowser(context, "AccountName", newAccountName )) {
+        if (!ESAPI.validator().isValidDataFromBrowser(context, "AccountName", newAccountName )) {
             throw new AuthenticationCredentialsException("Invalid account name", "New account name is not valid: " + newAccountName);
         }
     }

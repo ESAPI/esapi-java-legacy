@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * The IUser interface represents an application user or user account. There is quite a lot of information that an
@@ -66,8 +67,9 @@ public interface IUser {
      * @param newPassword1 the new password1
      * @param newPassword2 the new password2
      * @throws AuthenticationException the authentication exception
+     * @throws EncryptionException 
      */
-    void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException;
+    void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException;
 
     /**
      * Disable account.
@@ -312,8 +314,9 @@ public interface IUser {
 	 * 
 	 * @param password
 	 * @return
+	 * @throws EncryptionException 
 	 */
-	public boolean verifyPassword(String password);
+	public boolean verifyPassword(String password) throws EncryptionException;
 
     
 }

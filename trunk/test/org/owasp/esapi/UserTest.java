@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 import org.owasp.esapi.http.TestHttpSession;
@@ -201,7 +202,7 @@ public class UserTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testFailedLoginLockout() throws AuthenticationException {
+	public void testFailedLoginLockout() throws AuthenticationException, EncryptionException {
 		System.out.println("failedLoginLockout");
 		Authenticator instance = Authenticator.getInstance();
 		User user = createTestUser("failedLoginLockout");
@@ -587,7 +588,7 @@ public class UserTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testResetPassword() throws AuthenticationException {
+	public void testResetPassword() throws AuthenticationException, EncryptionException {
 		System.out.println("resetPassword");
 		User user = createTestUser("resetPassword");
         for ( int i = 0; i<20; i++) {
