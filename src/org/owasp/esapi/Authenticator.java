@@ -395,7 +395,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         
         // file was touched so reload it
     	synchronized( this ) {
-	        logger.logSpecial("Loading users from " + userDB.getAbsolutePath(), null);
+	        logger.logTrace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
 	
 	        // FIXME: AAA Necessary?
 	        // add the Anonymous user to the database
@@ -411,7 +411,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	                    User user = new User(line);
 	                    if (!user.getAccountName().equals("anonymous")) {
 	                        if (map.containsKey(user.getAccountName())) {
-	                            logger.logSpecial("Problem in user file. Skipping duplicate user: " + user, null);
+	                            logger.logCritical(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
 	                        }
 	                        map.put(user.getAccountName(), user);
 	                    }
@@ -419,16 +419,16 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	            }
                 userMap = map;
                 this.lastModified = lastModified;
-                logger.logSpecial("User file reloaded: " + map.size(), null);
+                logger.logTrace(Logger.SECURITY, "User file reloaded: " + map.size(), null);
 	        } catch (Exception e) {
-	            logger.logSpecial("Failure loading user file: " + userDB.getAbsolutePath(), e);
+	            logger.logCritical(Logger.SECURITY, "Failure loading user file: " + userDB.getAbsolutePath(), e);
 	        } finally {
 	            try {
 	                if (reader != null) {
 	                    reader.close();
 	                }
 	            } catch (IOException e) {
-	                logger.logSpecial("Failure closing user file: " + userDB.getAbsolutePath(), e);
+	                logger.logCritical(Logger.SECURITY, "Failure closing user file: " + userDB.getAbsolutePath(), e);
 	            }
 	        }
     	}
@@ -507,7 +507,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             writer.flush();
             logger.logCritical(Logger.SECURITY, "User file written to disk" );
         } catch (IOException e) {
-            logger.logSpecial( "Problem saving user file " + userDB.getAbsolutePath(), e );
+            logger.logCritical(Logger.SECURITY, "Problem saving user file " + userDB.getAbsolutePath(), e );
             throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
         } finally {
             if (writer != null) {
@@ -535,7 +535,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             	new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName );
             }
         }
-        logger.logSpecial("User file updated", null);
+        logger.logTrace(Logger.SECURITY, "User file updated", null);
     }
 
     /**
