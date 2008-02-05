@@ -61,9 +61,6 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     /** The properties. */
     private Properties properties = new Properties();
 
-    /** The instance. */
-    private static SecurityConfiguration instance = new SecurityConfiguration();
-
     /** Regular expression cache */
     private Map regexMap = null;
     
@@ -120,18 +117,9 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     /**
      * Instantiates a new configuration.
      */
-    protected SecurityConfiguration() {
-        // hidden
-    }
-
-    /**
-     * Gets the instance.
-     * 
-     * @return Configuration
-     */
-    public synchronized static SecurityConfiguration getInstance() {
-        instance.loadConfiguration();
-        return instance;
+    public SecurityConfiguration() {
+        // FIXME : this should be reloaded periodically
+        loadConfiguration();
     }
 
     /**
@@ -211,7 +199,7 @@ public class SecurityConfiguration implements ISecurityConfiguration {
         FileInputStream fis = null;
         try {
             fis = new FileInputStream( file );
-            instance.properties.load(fis);
+            properties.load(fis);
             logger.logSpecial("Loaded ESAPI properties from " + file.getAbsolutePath(), null);
         } catch (Exception e) {
             logger.logSpecial("Can't load ESAPI properties from " + file.getAbsolutePath(),e);
@@ -235,10 +223,10 @@ public class SecurityConfiguration implements ISecurityConfiguration {
 		// cache regular expressions
 		regexMap = new HashMap();
 
-		Iterator regexIterator = SecurityConfiguration.getInstance().getValidationPatternNames();
+		Iterator regexIterator = getValidationPatternNames();
 		while ( regexIterator.hasNext() ) {
 			String name = (String)regexIterator.next();
-			Pattern regex = SecurityConfiguration.getInstance().getValidationPattern(name);
+			Pattern regex = getValidationPattern(name);
 			if ( name != null && regex != null ) {
 				regexMap.put( name, regex );
 			}

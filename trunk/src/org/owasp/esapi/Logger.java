@@ -54,7 +54,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
         this.moduleName = moduleName;
         this.jlogger = jlogger;
         // FIXME: AAA this causes some weird classloading problem, since SecurityConfiguration logs.
-        // jlogger.setLevel(SecurityConfiguration.getInstance().getLogLevel());
+        // jlogger.setLevel(ESAPI.securityConfiguration().getLogLevel());
         this.jlogger.setLevel( Level.ALL );
     }
 
@@ -223,11 +223,11 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @param throwable the throwable
      */
     private void log(Level level, String type, String message, Throwable throwable) {
-        User user = Authenticator.getInstance().getCurrentUser();
+        User user = ESAPI.authenticator().getCurrentUser();
         
         String clean = message;
-        if ( SecurityConfiguration.getInstance().getLogEncodingRequired() ) {
-        	clean = Encoder.getInstance().encodeForHTML(message);
+        if ( ((SecurityConfiguration)ESAPI.securityConfiguration()).getLogEncodingRequired() ) {
+        	clean = ESAPI.encoder().encodeForHTML(message);
             if (!message.equals(clean)) {
                 clean += " (Encoded)";
             }
@@ -259,7 +259,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      */
     // FIXME: this needs to go - note potential log injection problem
     public void logSpecial(String message, Throwable throwable) {
-        // String clean = Encoder.getInstance().encodeForHTML(message);
+        // String clean = ESAPI.encoder().encodeForHTML(message);
         // if (!message.equals(clean)) {
         //     clean += "(Encoded)";
         // }

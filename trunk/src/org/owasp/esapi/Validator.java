@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
 import org.owasp.esapi.errors.ValidationException;
@@ -55,27 +56,11 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class Validator implements org.owasp.esapi.interfaces.IValidator {
 
-	/** The instance. */
-	private static Validator instance = new Validator();
-
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger("ESAPI", "Validator");
 	
 	
-	/**
-	 * Gets the single instance of Validator.
-	 * 
-	 * @return single instance of Validator
-	 */
-	public static Validator getInstance() {
-		return instance;
-	}
-
-	/**
-	 * Hide the constructor for the Singleton pattern.
-	 */
-	private Validator() {
-		// hidden
+	public Validator() {
 	}
 
 	/**
@@ -89,23 +74,27 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @throws ValidationException
 	 */
 	public String getValidDataFromBrowser(String context, String type, String input) throws ValidationException {
-		String canonical = Encoder.getInstance().canonicalize( input );
-		
-		if ( input == null )
-			throw new ValidationException("Bad input", type + " (" + context + ") input to validate was null" );
-		
-		if ( type == null )
-			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against was null" );
-		
-		Pattern p = SecurityConfiguration.getInstance().getValidationPattern( type );
-		if ( p == null )
-			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against not configured in ESAPI.properties" );
-				
-		if ( !p.matcher(canonical).matches() )
-			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") input did not match type definition " + p );
-		
-		// if everything passed, then return the canonical form
-		return canonical;
+	    try {
+    		String canonical = ESAPI.encoder().canonicalize( input );
+    		
+    		if ( input == null )
+    			throw new ValidationException("Bad input", type + " (" + context + ") input to validate was null" );
+    		
+    		if ( type == null )
+    			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against was null" );
+    		
+    		Pattern p = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
+    		if ( p == null )
+    			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against not configured in ESAPI.properties" );
+    				
+    		if ( !p.matcher(canonical).matches() )
+    			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") input did not match type definition " + p );
+    		
+    		// if everything passed, then return the canonical form
+    		return canonical;
+	    } catch (EncodingException ee) {
+	        throw new ValidationException("Internal error", "Error canonicalizing user input", ee);
+	    }
 	}
 
 	/**
@@ -193,9 +182,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidDirectoryPath(java.lang.String)
 	 */
 	public boolean isValidDirectoryPath(String context, String dirpath) {
-		String canonical = Encoder.getInstance().canonicalize(dirpath);
-		
 		try {
+	        String canonical = ESAPI.encoder().canonicalize(dirpath);
+	        
 			// get the canonical path without the drive letter if present
 			String cpath = new File(canonical).getCanonicalPath().replaceAll("\\\\", "/");
 			String temp = cpath.toLowerCase();
@@ -214,6 +203,8 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			return escaped.equals(cpath.toLowerCase());
 		} catch (IOException e) {
 			return false;
+		} catch (EncodingException ee) {
+            throw new IntrusionException("Invalid directory", "Exception during directory validation", ee);
 		}
 	}
 
@@ -226,7 +217,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public boolean isValidFileContent(String context, byte[] content) {
 		// FIXME: AAA - temporary - what makes file content valid? Maybe need a parameter here?
-		long length = SecurityConfiguration.getInstance().getAllowedFileUploadSize();
+		long length = ESAPI.securityConfiguration().getAllowedFileUploadSize();
 		return (content.length < length);
 		// FIXME: log something?
 	}
@@ -243,10 +234,10 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		if (input == null || input.length() == 0)
 			return false;
 
-		String canonical = Encoder.getInstance().canonicalize(input);
-
 		// detect path manipulation
 		try {
+	        String canonical = ESAPI.encoder().canonicalize(input);
+
 			File f = new File(canonical);
 			String c = f.getCanonicalPath();
 			String cpath = c.substring(c.lastIndexOf(File.separator) + 1);
@@ -256,10 +247,12 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			}
 		} catch (IOException e) {
 			throw new IntrusionException("Invalid filename", "Exception during filename validation", e);
+		} catch (EncodingException ee) {
+            throw new IntrusionException("Invalid filename", "Exception during filename validation", ee);
 		}
 
 		// verify extensions
-		List extensions = SecurityConfiguration.getInstance().getAllowedFileExtensions();
+		List extensions = ESAPI.securityConfiguration().getAllowedFileExtensions();
 		Iterator i = extensions.iterator();
 		while (i.hasNext()) {
 			String ext = (String) i.next();
@@ -382,7 +375,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 *      java.util.Set, java.util.Set)
 	 */
 	public boolean isValidParameterSet(Set requiredNames, Set optionalNames) {
-		HttpServletRequest request = Authenticator.getInstance().getCurrentRequest();
+		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
 		Set actualNames = request.getParameterMap().keySet();
 		
 		// verify ALL required parameters are present
@@ -421,8 +414,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidPrintable(java.lang.String)
 	 */
 	public boolean isValidPrintable(String input) {
-		String canonical = Encoder.getInstance().canonicalize(input);
-		return isValidPrintable(canonical.getBytes());
+	    try {
+    		String canonical = ESAPI.encoder().canonicalize(input);
+    		return isValidPrintable(canonical.getBytes());
+	    } catch (EncodingException ee) {
+	        logger.logError(Logger.SECURITY, "Could not canonicalize user input", ee);
+	        return false;
+	    }
 	}
 
 	/**
@@ -436,7 +434,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public boolean isValidRedirectLocation(String context, String location) {
 		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
-		return Validator.getInstance().isValidDataFromBrowser(context, "Redirect", location);
+		return ESAPI.validator().isValidDataFromBrowser(context, "Redirect", location);
 	}
 
 	/*
@@ -445,9 +443,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidSafeHTML(java.lang.String)
 	 */
 	public boolean isValidSafeHTML(String name, String input) {
-		String canonical = Encoder.getInstance().canonicalize(input);
-		// FIXME: AAA this is just a simple blacklist test - will use Anti-SAMY
-		return !(canonical.indexOf("<scri") > -1 ) && !(canonical.indexOf("onload") > -1);
+	    try {
+    		String canonical = ESAPI.encoder().canonicalize(input);
+    		// FIXME: AAA this is just a simple blacklist test - will use Anti-SAMY
+    		return !(canonical.indexOf("<scri") > -1 ) && !(canonical.indexOf("onload") > -1);
+	    } catch (EncodingException ee) {
+	           throw new IntrusionException("Invalid input", "EncodingException during HTML validation", ee);
+	    }
 	}
 
 	/*

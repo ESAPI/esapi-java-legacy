@@ -57,9 +57,6 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 
 	// FIXME: AAA need global scrub of what methods need to log
 
-	/** The instance. */
-	private static Encryptor instance = new Encryptor();
-
 	PBEParameterSpec parameterSpec = null;
 	SecretKey secretKey = null;
 	String encryptAlgorithm = "PBEWithMD5AndDES";
@@ -68,27 +65,24 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	String randomAlgorithm = "SHA1PRNG";
 	String encoding = "UTF-8"; 
 		
-	/**
-	 * Hide the constructor for the Singleton pattern.
-	 */
-	private Encryptor() {
+	public Encryptor() {
 		
 		// FIXME: AAA - need support for key and salt changing. What's best interface?
-		byte[] salt = SecurityConfiguration.getInstance().getMasterSalt();
-		char[] pass = SecurityConfiguration.getInstance().getMasterPassword();
+		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
+		char[] pass = ESAPI.securityConfiguration().getMasterPassword();
 
 		// setup algorithms
-        encryptAlgorithm = SecurityConfiguration.getInstance().getEncryptionAlgorithm();
-		signatureAlgorithm = SecurityConfiguration.getInstance().getDigitalSignatureAlgorithm();
-		randomAlgorithm = SecurityConfiguration.getInstance().getRandomAlgorithm();
-		hashAlgorithm = SecurityConfiguration.getInstance().getHashAlgorithm();
+        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
+		signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
+		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
+		hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
 		
 		try {
             // Set up encryption and decryption
             parameterSpec = new javax.crypto.spec.PBEParameterSpec(salt, 20);
 			SecretKeyFactory kf = SecretKeyFactory.getInstance(encryptAlgorithm);
 			secretKey = kf.generateSecret(new javax.crypto.spec.PBEKeySpec(pass));
-			encoding = SecurityConfiguration.getInstance().getCharacterEncoding();
+			encoding = ESAPI.securityConfiguration().getCharacterEncoding();
 
 			// Set up signing keypair using the master password and salt
 			// FIXME: Enhance - make DSA configurable
@@ -107,15 +101,6 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	}
 
 	/**
-	 * Gets the single instance of Encryptor.
-	 * 
-	 * @return single instance of Encryptor
-	 */
-	public static Encryptor getInstance() {
-		return instance;
-	}
-
-	/**
 	 * Hashes the data using the specified algorithm and the Java MessageDigest class. This method
 	 * first adds the salt, then the data, and then rehashes 1024 times to help strengthen weak passwords.
 	 * 
@@ -126,7 +111,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 		try {
 			MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
 			digest.reset();
-			digest.update(SecurityConfiguration.getInstance().getMasterSalt());
+			digest.update(ESAPI.securityConfiguration().getMasterSalt());
 			digest.update(salt.getBytes());
 			digest.update(plaintext.getBytes());
 
@@ -137,7 +122,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 				digest.reset();
 				bytes = digest.digest(bytes);
 			}
-			String encoded = Encoder.getInstance().encodeForBase64(bytes,false);
+			String encoded = ESAPI.encoder().encodeForBase64(bytes,false);
 			return encoded;
 		} catch (NoSuchAlgorithmException e) {
 			throw new EncryptionException("Internal error", "Can't find hash algorithm " + hashAlgorithm, e);
@@ -156,7 +141,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			encrypter.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
 			byte[] output = plaintext.getBytes(encoding);
 			byte[] enc = encrypter.doFinal(output);
-			return Encoder.getInstance().encodeForBase64(enc,true);
+			return ESAPI.encoder().encodeForBase64(enc,true);
 		} catch (Exception e) {
 			throw new EncryptionException("Decryption failure", "Decryption problem: " + e.getMessage(), e);
 		}
@@ -172,7 +157,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 		try {
 			Cipher decrypter = Cipher.getInstance(encryptAlgorithm);
 			decrypter.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
-			byte[] dec = Encoder.getInstance().decodeFromBase64(ciphertext);
+			byte[] dec = ESAPI.encoder().decodeFromBase64(ciphertext);
 			byte[] output = decrypter.doFinal(dec);
 			return new String(output, encoding);
 		} catch (Exception e) {
@@ -192,7 +177,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			signer.initSign(privateKey);
 			signer.update(data.getBytes());
 			byte[] bytes = signer.sign();
-			return Encoder.getInstance().encodeForBase64(bytes,true);
+			return ESAPI.encoder().encodeForBase64(bytes,true);
 		} catch (Exception e) {
 			throw new EncryptionException("Signature failure", "Can't find signature algorithm " + signatureAlgorithm, e);
 		}
@@ -207,7 +192,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	 */
 	public boolean verifySignature(String signature, String data) {
 		try {
-			byte[] bytes = Encoder.getInstance().decodeFromBase64(signature);
+			byte[] bytes = ESAPI.encoder().decodeFromBase64(signature);
 			Signature signer = Signature.getInstance(signatureAlgorithm);
 			signer.initVerify(publicKey);
 			signer.update(data.getBytes());

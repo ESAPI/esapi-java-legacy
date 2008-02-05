@@ -64,7 +64,7 @@ public class EncryptedProperties implements org.owasp.esapi.interfaces.IEncrypte
 	 */
 	public synchronized String getProperty(String key) throws EncryptionException {
 		try {
-			return Encryptor.getInstance().decrypt(properties.getProperty(key));
+			return ESAPI.encryptor().decrypt(properties.getProperty(key));
 		} catch (Exception e) {
 			throw new EncryptionException("Property retrieval failure", "Couldn't decrypt property", e);
 		}
@@ -78,7 +78,7 @@ public class EncryptedProperties implements org.owasp.esapi.interfaces.IEncrypte
 	 */
 	public synchronized String setProperty(String key, String value) throws EncryptionException {
 		try {
-			return (String)properties.setProperty(key, Encryptor.getInstance().encrypt(value));
+			return (String)properties.setProperty(key, ESAPI.encryptor().encrypt(value));
 		} catch (Exception e) {
 			throw new EncryptionException("Property setting failure", "Couldn't encrypt property", e);
 		}

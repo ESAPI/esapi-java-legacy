@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
+import org.owasp.esapi.interfaces.IValidator;
 
 /**
  * The Class ValidatorTest.
@@ -81,7 +82,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidCreditCard() {
 		System.out.println("isValidCreditCard");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidCreditCard("test", "1234 9876 0000 0008"));
 		assertTrue(instance.isValidCreditCard("test", "1234987600000008"));
 		assertFalse(instance.isValidCreditCard("test", "12349876000000081"));
@@ -93,7 +94,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidDataFromBrowser() {
 		System.out.println("isValidDataFromBrowser");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidDataFromBrowser("test", "Email", "jeff.williams@aspectsecurity.com"));
 		assertFalse(instance.isValidDataFromBrowser("test", "Email", "jeff.williams@@aspectsecurity.com"));
 		assertFalse(instance.isValidDataFromBrowser("test", "Email", "jeff.williams@aspectsecurity"));
@@ -118,7 +119,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidSafeHTML() {
 		System.out.println("isValidSafeHTML");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>"));
 		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>"));
 		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>"));
@@ -130,7 +131,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testGetValidSafeHTML() throws Exception{
 		System.out.println("getValidSafeHTML");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		String test1 = "<b>Jeff</b>";
 		String result1 = instance.getValidSafeHTML("test", test1);
 		assertEquals(test1, result1);
@@ -154,7 +155,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidListItem() {
 		System.out.println("isValidListItem");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		List list = new ArrayList();
 		list.add("one");
 		list.add("two");
@@ -167,7 +168,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidNumber() {
 		System.out.println("isValidNumber");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidNumber("4"));
 		assertTrue(instance.isValidNumber("400"));
 		assertTrue(instance.isValidNumber("4000000000000"));
@@ -188,7 +189,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testGetValidDate() throws Exception {
 		System.out.println("getValidDate");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.getValidDate("test", "June 23, 1967", DateFormat.getDateInstance() ) != null);
 		try {
 			instance.getValidDate("test", "freakshow", DateFormat.getDateInstance() );
@@ -209,7 +210,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidFileName() {
 		System.out.println("isValidFileName");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileName("test", "aspect.jar"));
 		assertFalse(instance.isValidFileName("test", ""));
         try {
@@ -224,7 +225,7 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidFilePath() {
 		System.out.println("isValidFilePath");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidDirectoryPath("test", "/"));
 		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp"));
 		assertTrue(instance.isValidDirectoryPath("test", "/etc/config"));
@@ -236,7 +237,7 @@ public class ValidatorTest extends TestCase {
 
 	public void testIsValidPrintable() {
 		System.out.println("isValidPrintable");
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidPrintable("abcDEF"));
 		assertTrue(instance.isValidPrintable("!@#R()*$;><()"));
         byte[] bytes = { 0x60, (byte) 0xFF, 0x10, 0x25 };
@@ -250,7 +251,7 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidFileContent() {
 		System.out.println("isValidFileContent");
 		byte[] content = "This is some file content".getBytes();
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileContent("test", content));
 	}
 
@@ -263,7 +264,7 @@ public class ValidatorTest extends TestCase {
 		String filepath = "/etc";
 		String filename = "aspect.jar";
 		byte[] content = "Thisi is some file content".getBytes();
-		Validator instance = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileUpload("test", filepath, filename, content));
 	}
 
@@ -285,8 +286,8 @@ public class ValidatorTest extends TestCase {
 		request.addParameter("p1","value");
 		request.addParameter("p2","value");
 		request.addParameter("p3","value");
-        Authenticator.getInstance().setCurrentHTTP(request, null);
-		Validator instance = Validator.getInstance();
+        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, null);
+		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidParameterSet(requiredNames, optionalNames));
 		request.addParameter("p4","value");
 		request.addParameter("p5","value");
@@ -301,23 +302,23 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testSafeReadLine() {
 		ByteArrayInputStream s = new ByteArrayInputStream("testString".getBytes());
-		Validator v = Validator.getInstance();
+		IValidator instance = ESAPI.validator();
 		try {
-			v.safeReadLine(s, -1);
+			instance.safeReadLine(s, -1);
 			fail();
 		} catch (ValidationException e) {
 			// Expected
 		}
 		s.reset();
 		try {
-			v.safeReadLine(s, 4);
+			instance.safeReadLine(s, 4);
 			fail();
 		} catch (ValidationException e) {
 			// Expected
 		}
 		s.reset();
 		try {
-			String u = v.safeReadLine(s, 20);
+			String u = instance.safeReadLine(s, 20);
 			assertEquals("testString", u);
 		} catch (ValidationException e) {
 			fail();

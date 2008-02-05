@@ -49,7 +49,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * <pre>
  * public void doPost(ServletRequest request, ServletResponse response) {
  * try {
- * Authenticator.getInstance().authenticate(request, response, &quot;username&quot;,&quot;password&quot;);
+ * ESAPI.authenticator().authenticate(request, response, &quot;username&quot;,&quot;password&quot;);
  * // continue with authenticated user
  * } catch (AuthenticationException e) {
  * // handle failed authentication (it's already been logged)

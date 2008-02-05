@@ -93,8 +93,9 @@ public class AccessControllerTest extends TestCase {
 	public void testIsAuthorizedForURL() throws Exception {
 		System.out.println("isAuthorizedForURL");
 		IAccessController instance = ESAPI.accessController();
+		IAuthenticator auth = ESAPI.authenticator();
 		
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser1") );
+		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertFalse(instance.isAuthorizedForURL("/nobody"));
 		assertFalse(instance.isAuthorizedForURL("/test/admin"));
 		assertTrue(instance.isAuthorizedForURL("/test/user"));
@@ -103,14 +104,14 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForURL("/test/none/test.gif"));
 		assertFalse(instance.isAuthorizedForURL("/test/none/test.exe"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser2") );
+		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForURL("/nobody"));
 		assertTrue(instance.isAuthorizedForURL("/test/admin"));
 		assertFalse(instance.isAuthorizedForURL("/test/user"));
 		assertTrue(instance.isAuthorizedForURL("/test/all"));
 		assertFalse(instance.isAuthorizedForURL("/test/none"));
 		
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser3") );
+		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertFalse(instance.isAuthorizedForURL("/nobody"));
 		assertTrue(instance.isAuthorizedForURL("/test/admin"));
 		assertTrue(instance.isAuthorizedForURL("/test/user"));
@@ -125,20 +126,21 @@ public class AccessControllerTest extends TestCase {
 	public void testIsAuthorizedForFunction() {
 		System.out.println("isAuthorizedForFunction");
 		IAccessController instance = ESAPI.accessController();
+		IAuthenticator auth = ESAPI.authenticator();
 		
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser1") );
+		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForFunction("/FunctionA"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionB"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionBdeny"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser2") );
+		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForFunction("/FunctionA"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertTrue(instance.isAuthorizedForFunction("/FunctionB"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionBdeny"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser3") );
+		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForFunction("/FunctionA"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertTrue(instance.isAuthorizedForFunction("/FunctionB"));
@@ -152,18 +154,19 @@ public class AccessControllerTest extends TestCase {
 	public void testIsAuthorizedForData() {
 		System.out.println("isAuthorizedForData");
 		IAccessController instance = ESAPI.accessController();
-
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser1") );
+		IAuthenticator auth = ESAPI.authenticator();
+		
+		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForData("/Data1"));
 		assertFalse(instance.isAuthorizedForData("/Data2"));
 		assertFalse(instance.isAuthorizedForData("/not_listed"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser2") );
+		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForData("/Data1"));
 		assertTrue(instance.isAuthorizedForData("/Data2"));
 		assertFalse(instance.isAuthorizedForData("/not_listed"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser3") );
+		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForData("/Data1"));
 		assertTrue(instance.isAuthorizedForData("/Data2"));
 		assertFalse(instance.isAuthorizedForData("/not_listed"));
@@ -176,18 +179,19 @@ public class AccessControllerTest extends TestCase {
 	public void testIsAuthorizedForFile() {
 		System.out.println("isAuthorizedForFile");
 		IAccessController instance = ESAPI.accessController();
-
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser1") );
+		IAuthenticator auth = ESAPI.authenticator();
+		
+		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForFile("/Dir/File1"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/File2"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser2") );
+		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForFile("/Dir/File1"));
 		assertTrue(instance.isAuthorizedForFile("/Dir/File2"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser3") );
+		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForFile("/Dir/File1"));
 		assertTrue(instance.isAuthorizedForFile("/Dir/File2"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
@@ -200,18 +204,19 @@ public class AccessControllerTest extends TestCase {
 	public void testIsAuthorizedForBackendService() {
 		System.out.println("isAuthorizedForBackendService");
 		IAccessController instance = ESAPI.accessController();
-
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser1") );
+		IAuthenticator auth = ESAPI.authenticator();
+		
+		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForService("/services/ServiceA"));
 		assertFalse(instance.isAuthorizedForService("/services/ServiceB"));
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser2") );
+		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForService("/services/ServiceA"));
 		assertTrue(instance.isAuthorizedForService("/services/ServiceB"));
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));
 
-		Authenticator.getInstance().setCurrentUser( Authenticator.getInstance().getUser("testuser3") );
+		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForService("/services/ServiceA"));
 		assertTrue(instance.isAuthorizedForService("/services/ServiceB"));
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));

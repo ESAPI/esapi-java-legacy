@@ -70,7 +70,7 @@ public class AllTests extends TestCase {
 
         
         // clear the User file to prep for tests
-        File file = new File(SecurityConfiguration.getInstance().getResourceDirectory(), "users.txt");
+        File file = new File(((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "users.txt");
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new FileWriter(file));

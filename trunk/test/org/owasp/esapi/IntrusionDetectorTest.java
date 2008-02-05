@@ -75,17 +75,18 @@ public class IntrusionDetectorTest extends TestCase {
 	 */
 	public void testAddException() throws AuthenticationException {
 		System.out.println("addException");
-		IntrusionDetector.getInstance().addException( new IntrusionException("user message", "log message") );
-		String username = Randomizer.getInstance().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		User user = Authenticator.getInstance().createUser(username, "addException", "addException");
+		ESAPI.intrusionDetector().addException( new IntrusionException("user message", "log message") );
+		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+        Authenticator auth = (Authenticator)ESAPI.authenticator();
+		User user = auth.createUser(username, "addException", "addException");
 		user.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(request, response);
+        auth.setCurrentHTTP(request, response);
 		user.loginWithPassword("addException");
 		
 		// Now generate some exceptions to disable account
-		for ( int i = 0; i < SecurityConfiguration.getInstance().getQuota("org.owasp.esapi.errors.IntegrityException").count; i++ ) {
+		for ( int i = 0; i < ESAPI.securityConfiguration().getQuota("org.owasp.esapi.errors.IntegrityException").count; i++ ) {
             // EnterpriseSecurityExceptions are added to IntrusionDetector automatically
             new IntegrityException( "IntegrityException " + i, "IntegrityException " + i );
 		}
@@ -101,17 +102,18 @@ public class IntrusionDetectorTest extends TestCase {
      */
     public void testAddEvent() throws AuthenticationException {
         System.out.println("addEvent");
-		String username = Randomizer.getInstance().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		User user = Authenticator.getInstance().createUser(username, "addEvent", "addEvent");
+		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+        Authenticator auth = (Authenticator)ESAPI.authenticator();
+		User user = auth.createUser(username, "addEvent", "addEvent");
 		user.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(request, response);
+        auth.setCurrentHTTP(request, response);
 		user.loginWithPassword("addEvent");
         
         // Now generate some events to disable user account
-        for ( int i = 0; i < SecurityConfiguration.getInstance().getQuota("event.test").count; i++ ) {
-            IntrusionDetector.getInstance().addEvent("test");
+        for ( int i = 0; i < ESAPI.securityConfiguration().getQuota("event.test").count; i++ ) {
+            ESAPI.intrusionDetector().addEvent("test");
         }
         assertFalse( user.isEnabled() );
     }

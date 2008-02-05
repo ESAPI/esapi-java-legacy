@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -93,11 +94,8 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class AccessController implements org.owasp.esapi.interfaces.IAccessController {
 
-	/** The instance. */
-	private static AccessController instance = new AccessController();
-
 	/** The resource directory. */
-	private static final File resourceDirectory = SecurityConfiguration.getInstance().getResourceDirectory();
+	private static final File resourceDirectory = ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory();
 
 	/** The url map. */
 	private Map urlMap = new HashMap();
@@ -120,23 +118,9 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	/** The logger. */
 	private static Logger logger = Logger.getLogger("ESAPI", "AccessController");
 
-	/**
-	 * Hide the constructor for the Singleton pattern.
-	 */
-	protected AccessController() {
-		// hidden
+	public AccessController() {
 	}
 
-	/**
-	 * Gets the single instance of AccessController.
-	 * 
-	 * @return single instance of AccessController
-	 */
-	public static AccessController getInstance() {
-		return instance;
-	}
-
-	
 	// FIXME: consider adding flag for logging
 	// FIXME: perhaps an enumeration for context (i.e. the layer the call is made from)
 	
@@ -263,7 +247,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
 	private boolean matchRule(Map map, String path) throws AccessControlException {
 		// get users roles
-		User user = Authenticator.getInstance().getCurrentUser();
+		User user = ESAPI.authenticator().getCurrentUser();
 		if (user == null) {
 			return false;
         }
@@ -292,7 +276,12 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 *             the access control exception
 	 */
 	private Rule searchForRule(Map map, Set roles, String path) throws AccessControlException {
-		String canonical = Encoder.getInstance().canonicalize(path);
+		String canonical = null;
+		try {
+		    canonical = ESAPI.encoder().canonicalize(path);
+		} catch (EncodingException ee) {
+		    throw new AccessControlException("Internal error", "Failed to canonicaliize input ", ee);
+		}
 		
 		String part = canonical;
 		while (part.endsWith("/")) {
@@ -377,7 +366,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 		try {
 			fis = new FileInputStream(f);
 			String line = "";
-			while ((line = Validator.getInstance().safeReadLine(fis, 500)) != null) {
+			while ((line = ESAPI.validator().safeReadLine(fis, 500)) != null) {
 				if (line.length() > 0 && line.charAt(0) != '#') {
 					Rule rule = new Rule();
 					String[] parts = line.split("\\|");

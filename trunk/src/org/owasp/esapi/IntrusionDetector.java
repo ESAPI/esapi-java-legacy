@@ -37,32 +37,16 @@ import org.owasp.esapi.errors.IntrusionException;
  */
 public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionDetector {
 
-	/** The instance. */
-	private static IntrusionDetector instance = new IntrusionDetector();
-
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger("ESAPI", "IntrusionDetector");
 
-	/**
-	 * Hide the constructor for the Singleton pattern.
-	 */
-	private IntrusionDetector() {
-		// hidden
+	public IntrusionDetector() {
 	}
 
 	// FIXME: ENHANCE consider allowing both per-user and per-application quotas
 	// e.g. number of failed logins per hour is a per-application quota
 	
 	
-	/**
-	 * Gets the single instance of IntrusionDetector.
-	 * 
-	 * @return single instance of IntrusionDetector
-	 */
-	public static IntrusionDetector getInstance() {
-		return instance;
-	}
-
 	/**
 	 * This implementation uses an exception store in each User object to track
 	 * exceptions.
@@ -83,7 +67,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
         }
 
         // add the exception to the current user, which may trigger a detector 
-		User user = Authenticator.getInstance().getCurrentUser();
+		User user = ESAPI.authenticator().getCurrentUser();
         String eventName = e.getClass().getName();
 
         // FIXME: AAA Rethink this - IntrusionExceptions which shouldn't get added to the IntrusionDetector
@@ -95,7 +79,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
 		try {
 			user.addSecurityEvent(eventName);
 		} catch( IntrusionException ex ) {
-            Threshold quota = SecurityConfiguration.getInstance().getQuota(eventName);
+            Threshold quota = ESAPI.securityConfiguration().getQuota(eventName);
             Iterator i = quota.actions.iterator();
             while ( i.hasNext() ) {
                 String action = (String)i.next();
@@ -115,11 +99,11 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
         logger.logWarning( Logger.SECURITY, "Security event " + eventName + " received" );
 
         // add the event to the current user, which may trigger a detector 
-        User user = Authenticator.getInstance().getCurrentUser();
+        User user = ESAPI.authenticator().getCurrentUser();
         try {
             user.addSecurityEvent("event." + eventName);
         } catch( IntrusionException ex ) {
-            Threshold quota = SecurityConfiguration.getInstance().getQuota("event." + eventName);
+            Threshold quota = ESAPI.securityConfiguration().getQuota("event." + eventName);
             Iterator i = quota.actions.iterator();
             while ( i.hasNext() ) {
                 String action = (String)i.next();
@@ -138,10 +122,10 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
             logger.logCritical( Logger.SECURITY, "INTRUSION - " + message );
         }
         if ( action.equals( "disable" ) ) {
-            Authenticator.getInstance().getCurrentUser().disable();
+            ESAPI.authenticator().getCurrentUser().disable();
         }
         if ( action.equals( "logout" ) ) {
-            Authenticator.getInstance().logout();
+            ((Authenticator)ESAPI.authenticator()).logout();
         }
     }
 
