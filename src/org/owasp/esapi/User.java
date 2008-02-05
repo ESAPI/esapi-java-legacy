@@ -187,18 +187,18 @@ public class User implements IUser, Serializable {
 	 */
 	User(String accountName, String password1, String password2) throws AuthenticationException {
 		
-		Authenticator.getInstance().verifyAccountNameStrength("Create User", accountName);
+		ESAPI.authenticator().verifyAccountNameStrength("Create User", accountName);
 
 		if ( password1 == null ) {
 			throw new AuthenticationCredentialsException( "Invalid account name", "Attempt to create account " + accountName + " with a null password" );
 		}
-		Authenticator.getInstance().verifyPasswordStrength(password1, null );
+		ESAPI.authenticator().verifyPasswordStrength(password1, null );
 		
 		if (!password1.equals(password2)) throw new AuthenticationCredentialsException("Passwords do not match", "Passwords for " + accountName + " do not match");
 		
 		this.accountName = accountName.toLowerCase();
 		try {
-		    setHashedPassword( Encryptor.getInstance().hash(password1, this.accountName) );
+		    setHashedPassword( ESAPI.encryptor().hash(password1, this.accountName) );
 		} catch (EncryptionException ee) {
 		    throw new AuthenticationException("Internal error", "Error hashing password for " + this.accountName, ee);
 		}
@@ -211,7 +211,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void addRole(String role) throws AuthenticationException {
 		String roleName = role.toLowerCase();
-		if ( Validator.getInstance().isValidDataFromBrowser("addRole", "RoleName", roleName) ) {
+		if ( ESAPI.validator().isValidDataFromBrowser("addRole", "RoleName", roleName) ) {
 			roles.add(roleName);
 			logger.logCritical(Logger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
 		} else {
@@ -243,7 +243,7 @@ public class User implements IUser, Serializable {
 			events.put( eventName, event );
 		}
 
-		Threshold q = SecurityConfiguration.getInstance().getQuota( eventName );
+		Threshold q = ESAPI.securityConfiguration().getQuota( eventName );
 		if ( q.count > 0 ) {
 			event.increment(q.count, q.interval);
 		}
@@ -260,7 +260,7 @@ public class User implements IUser, Serializable {
 	 */
 	protected void changePassword(String newPassword1, String newPassword2) throws EncryptionException {
 		setLastPasswordChangeTime(new Date());
-		String newHash = Authenticator.getInstance().hashPassword(newPassword1, getAccountName() );
+		String newHash = ESAPI.authenticator().hashPassword(newPassword1, getAccountName() );
 		setHashedPassword( newHash );
 		logger.logCritical(Logger.SECURITY, "Password changed for user: " + getAccountName() );
 	}
@@ -271,15 +271,15 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#setPassword(java.lang.String, java.lang.String)
 	 */
 	public void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException {
-		if (!hashedPassword.equals(Authenticator.getInstance().hashPassword(oldPassword, getAccountName()))) {
+		if (!hashedPassword.equals(ESAPI.authenticator().hashPassword(oldPassword, getAccountName()))) {
 			throw new AuthenticationCredentialsException("Password change failed", "Authentication failed for password chanage on user: " + getAccountName() );
 		}
 		if (newPassword1 == null || newPassword2 == null || !newPassword1.equals(newPassword2)) {
 			throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + getAccountName() );
 		}
-		Authenticator.getInstance().verifyPasswordStrength(newPassword1, oldPassword);
+		ESAPI.authenticator().verifyPasswordStrength(newPassword1, oldPassword);
 		setLastPasswordChangeTime(new Date());
-		String newHash = Authenticator.getInstance().hashPassword(newPassword1, accountName);
+		String newHash = ESAPI.authenticator().hashPassword(newPassword1, accountName);
 		if (oldPasswordHashes.contains(newHash)) {
 			throw new AuthenticationCredentialsException( "Password change failed", "Password change matches a recent password for user: " + getAccountName() );
 		}
@@ -392,7 +392,7 @@ public class User implements IUser, Serializable {
 	}
 
 	public String getLastHostAddress() {
-        HttpServletRequest request = Authenticator.getInstance().getCurrentRequest();
+        HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
         if ( request != null ) {
         	setLastHostAddress( request.getRemoteAddr() );  // returning remote addr, not host, to prevent DNS lookup
         }
@@ -583,11 +583,11 @@ public class User implements IUser, Serializable {
     		if ( verifyPassword( password ) ) {
     			// FIXME: AAA verify loggedIn is properly maintained
     			loggedIn = true;
-    			HttpSession session = HTTPUtilities.getInstance().changeSessionIdentifier();
+    			HttpSession session = ((HTTPUtilities)ESAPI.httpUtilities()).changeSessionIdentifier();
     			session.setAttribute(Authenticator.USER, getAccountName());
-    			Authenticator.getInstance().setCurrentUser(this);
+    			ESAPI.authenticator().setCurrentUser(this);
     			setLastLoginTime(new Date());
-                setLastHostAddress( Authenticator.getInstance().getCurrentRequest().getRemoteHost() );
+                setLastHostAddress( ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getRemoteHost() );
     			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
     		} else {
     			throw new AuthenticationLoginException("Login failed", "Login attempt as " + getAccountName() + " failed");
@@ -604,17 +604,17 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#logout()
 	 */
 	public void logout() {
-		Authenticator authenticator = Authenticator.getInstance();
+		Authenticator authenticator = ((Authenticator)ESAPI.authenticator());
 		if ( !authenticator.getCurrentUser().isAnonymous() ) {
 			HttpServletRequest request = authenticator.getCurrentRequest();
 			HttpSession session = request.getSession(false);
 			if (session != null) {
 				session.invalidate();
 			}
-			HTTPUtilities.getInstance().killCookie("JSESSIONID");
+			ESAPI.httpUtilities().killCookie("JSESSIONID");
 			loggedIn = false;
 			logger.logSuccess(Logger.SECURITY, "Logout successful" );
-			authenticator.setCurrentUser(Authenticator.getInstance().anonymous);
+			authenticator.setCurrentUser(authenticator.anonymous);
 		}
 	}
 
@@ -641,9 +641,9 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#resetCSRFToken()
 	 */
 	public String resetCSRFToken() {
-		// user.csrfToken = Encryptor.getInstance().hash( session.getId(),user.name );
-		// user.csrfToken = Encryptor.getInstance().encrypt( address + ":" + Encryptor.getInstance().getTimeStamp();
-		csrfToken = Randomizer.getInstance().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+		// user.csrfToken = ESAPI.encryptor().hash( session.getId(),user.name );
+		// user.csrfToken = ESAPI.encryptor().encrypt( address + ":" + ESAPI.encryptor().getTimeStamp();
+		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		return csrfToken;
 	}
 
@@ -654,7 +654,7 @@ public class User implements IUser, Serializable {
 	 * @return the string
 	 */
 	public String resetPassword() throws EncryptionException {
-		String newPassword = Authenticator.getInstance().generateStrongPassword();
+		String newPassword = ESAPI.authenticator().generateStrongPassword();
 		changePassword( newPassword, newPassword );
 		return newPassword;
 	}
@@ -668,7 +668,7 @@ public class User implements IUser, Serializable {
 	 *             the authentication exception
 	 */
 	public String resetRememberToken() throws AuthenticationException {
-		rememberToken = Randomizer.getInstance().getRandomString(20, Encoder.CHAR_ALPHANUMERICS);
+		rememberToken = ESAPI.randomizer().getRandomString(20, Encoder.CHAR_ALPHANUMERICS);
 		logger.logTrace(ILogger.SECURITY, "New remember token generated for: " + getAccountName() );
 		return rememberToken;
 	}
@@ -739,7 +739,7 @@ public class User implements IUser, Serializable {
 	 */
 	void setHashedPassword(String hash) {
 		oldPasswordHashes.add( hashedPassword);
-		if (oldPasswordHashes.size() > SecurityConfiguration.getInstance().getMaxOldPasswordHashes() ) oldPasswordHashes.remove( 0 );
+		if (oldPasswordHashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes() ) oldPasswordHashes.remove( 0 );
 		hashedPassword = hash;
 		logger.logCritical(Logger.SECURITY, "New hashed password stored for " + getAccountName() );
 	}
@@ -839,7 +839,7 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#verifyPassword(java.lang.String)
 	 */
 	public boolean verifyPassword(String password) throws EncryptionException {
-		String hash = Authenticator.getInstance().hashPassword(password, accountName);
+		String hash = ESAPI.authenticator().hashPassword(password, accountName);
 		if (hash.equals(hashedPassword)) {
 			setLastLoginTime(new Date());
 			failedLoginCount = 0;
@@ -849,7 +849,7 @@ public class User implements IUser, Serializable {
 		logger.logCritical(Logger.SECURITY, "Password verification failed for " + getAccountName() );
 		setLastFailedLoginTime(new Date());
 		incrementFailedLoginCount();
-		if (getFailedLoginCount() >= SecurityConfiguration.getInstance().getAllowedLoginAttempts()) {
+		if (getFailedLoginCount() >= ESAPI.securityConfiguration().getAllowedLoginAttempts()) {
 			lock();
 		}
 		return false;

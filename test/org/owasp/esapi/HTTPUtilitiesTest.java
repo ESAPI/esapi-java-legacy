@@ -32,10 +32,13 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 import org.owasp.esapi.http.TestHttpSession;
+import org.owasp.esapi.interfaces.IAuthenticator;
+import org.owasp.esapi.interfaces.IHTTPUtilities;
 
 /**
  * The Class HTTPUtilitiesTest.
@@ -86,17 +89,17 @@ public class HTTPUtilitiesTest extends TestCase {
      * @throws AuthenticationException 
      */
     public void testAddCSRFToken() throws AuthenticationException {
-		Authenticator instance = Authenticator.getInstance();
-		String username = Randomizer.getInstance().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+        IAuthenticator instance = ESAPI.authenticator();
+		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		User user = instance.createUser(username, "addCSRFToken", "addCSRFToken");
 		instance.setCurrentUser( user );
 
 		System.out.println("addCSRFToken");
-        String csrf1=HTTPUtilities.getInstance().addCSRFToken("/test1");
+        String csrf1=ESAPI.httpUtilities().addCSRFToken("/test1");
         System.out.println( "CSRF1:" + csrf1);
         assertTrue(csrf1.indexOf("?") > -1);
         
-        String csrf2=HTTPUtilities.getInstance().addCSRFToken("/test1?one=two");
+        String csrf2=ESAPI.httpUtilities().addCSRFToken("/test1?one=two");
         System.out.println( "CSRF1:" + csrf1);
         assertTrue(csrf2.indexOf("&") > -1);
     }
@@ -108,16 +111,17 @@ public class HTTPUtilitiesTest extends TestCase {
      * @throws IOException Signals that an I/O exception has occurred.
      * @throws AuthenticationException the authentication exception
      */
-    public void testChangeSessionIdentifier() throws ValidationException, IOException, AuthenticationException {
+    public void testChangeSessionIdentifier() throws EnterpriseSecurityException {
         System.out.println("changeSessionIdentifier");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpSession session = (TestHttpSession) request.getSession();
-        Authenticator.getInstance().setCurrentHTTP(request, null);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(request, null);
         session.setAttribute("one", "one");
         session.setAttribute("two", "two");
         session.setAttribute("three", "three");
         String id1 = session.getId();
-        session = (TestHttpSession) HTTPUtilities.getInstance().changeSessionIdentifier();
+        session = (TestHttpSession) ESAPI.httpUtilities().changeSessionIdentifier();
         String id2 = session.getId();
         assertTrue(!id1.equals(id2));
         assertEquals("one", (String) session.getAttribute("one"));
@@ -129,13 +133,14 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testGetFileUploads() throws IOException {
         System.out.println("getFileUploads");
-        File home = SecurityConfiguration.getInstance().getResourceDirectory();
+        File home = ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory();
         byte[] bytes = getBytesFromFile(new File(home, "multipart.txt"));
         System.out.println( "===========\n" + new String( bytes ) + "\n===========" );
         TestHttpServletRequest request = new TestHttpServletRequest("/test", bytes);
-        Authenticator.getInstance().setCurrentHTTP(request, null);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(request, null);
         try {
-            HTTPUtilities.getInstance().getSafeFileUploads(home, home);
+            ESAPI.httpUtilities().getSafeFileUploads(home, home);
         } catch (ValidationException e) {
             fail();
         }
@@ -176,11 +181,11 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("c2", "v2"));
         list.add(new Cookie("c3", "v3"));
         request.setCookies(list);
-        assertTrue( Validator.getInstance().isValidHTTPRequest(request) );
+        assertTrue( ESAPI.validator().isValidHTTPRequest(request) );
         request.addParameter("bad_name", "bad*value");
         request.addHeader("bad_name", "bad*value");
         list.add(new Cookie("bad_name", "bad*value"));
-        assertFalse( Validator.getInstance().isValidHTTPRequest(request) );
+        assertFalse( ESAPI.validator().isValidHTTPRequest(request) );
      }
     
     
@@ -191,14 +196,15 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killAllCookies");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(request, response);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
         list.add(new Cookie("test1", "1"));
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        HTTPUtilities.getInstance().killAllCookies();
+        ESAPI.httpUtilities().killAllCookies();
         // this tests getHeaders because we're using addHeader in our setCookie method
         assertTrue(response.getHeaderNames().size() == 3);
     }
@@ -210,14 +216,15 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(request, response);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
         list.add(new Cookie("test1", "1"));
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        HTTPUtilities.getInstance().killCookie("test1");
+        ESAPI.httpUtilities().killCookie("test1");
         // this tests getHeaders because we're using addHeader in our setCookie method
         assertTrue(response.getHeaderNames().size() == 1);
     }
@@ -231,19 +238,19 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testSendSafeRedirect() throws ValidationException, IOException {
         System.out.println("sendSafeRedirect");
         try {
-            HTTPUtilities.getInstance().safeSendRedirect("test", "/test1/abcdefg");
-            HTTPUtilities.getInstance().safeSendRedirect("test", "/test2/1234567");
+            ESAPI.httpUtilities().safeSendRedirect("test", "/test1/abcdefg");
+            ESAPI.httpUtilities().safeSendRedirect("test", "/test2/1234567");
         } catch (ValidationException e) {
             fail();
         }
         try {
-            HTTPUtilities.getInstance().safeSendRedirect("test", "http://www.aspectsecurity.com");
+            ESAPI.httpUtilities().safeSendRedirect("test", "http://www.aspectsecurity.com");
             fail();
         } catch (ValidationException e) {
             // expected
         }
         try {
-            HTTPUtilities.getInstance().safeSendRedirect("test", "/ridiculous");
+            ESAPI.httpUtilities().safeSendRedirect("test", "/ridiculous");
             fail();
         } catch (ValidationException e) {
             // expected
@@ -256,10 +263,11 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testSetCookie() {
         System.out.println("setCookie");
         TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(null, response);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(null, response);
         assertTrue(response.getCookies().isEmpty());
-        HTTPUtilities.getInstance().safeAddCookie("test1", "test1", 10000, "test", "/");
-        HTTPUtilities.getInstance().safeAddCookie("test2", "test2", 10000, "test", "/");
+        ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
+        ESAPI.httpUtilities().safeAddCookie("test2", "test2", 10000, "test", "/");
         assertTrue(response.getHeaderNames().size() == 2);
     }
 
@@ -267,18 +275,19 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("getStateFromEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(request, response);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(request, response);
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        HTTPUtilities.getInstance().encryptStateInCookie(map);
+	        ESAPI.httpUtilities().encryptStateInCookie(map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
 	        // String encrypted = response.getCookie("state").getValue();
 	        request.setCookie( "state", encrypted );
-	        Map state = HTTPUtilities.getInstance().decryptStateFromCookie();
+	        Map state = ESAPI.httpUtilities().decryptStateFromCookie();
 	        Iterator i = map.entrySet().iterator();
 	        while ( i.hasNext() ) {
 	        	Map.Entry entry = (Map.Entry)i.next();
@@ -297,16 +306,17 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("saveStateInEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(request, response);
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        instance.setCurrentHTTP(request, response);
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        HTTPUtilities.getInstance().encryptStateInCookie(map);
+	        ESAPI.httpUtilities().encryptStateInCookie(map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-        	String decrypted = Encryptor.getInstance().decrypt( encrypted );
+        	String decrypted = ESAPI.encryptor().decrypt( encrypted );
         } catch( EncryptionException e ) {
         	fail();
         }
@@ -318,13 +328,14 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testSetNoCacheHeaders() {
         System.out.println("setNoCacheHeaders");
         TestHttpServletResponse response = new TestHttpServletResponse();
-        Authenticator.getInstance().setCurrentHTTP(null, response);
+        Authenticator auth = (Authenticator)ESAPI.authenticator();
+        auth.setCurrentHTTP(null, response);
         assertTrue(response.getHeaderNames().isEmpty());
         response.addHeader("test1", "1");
         response.addHeader("test2", "2");
         response.addHeader("test3", "3");
         assertFalse(response.getHeaderNames().isEmpty());
-        HTTPUtilities instance = HTTPUtilities.getInstance();
+        IHTTPUtilities instance = ESAPI.httpUtilities();
         instance.setNoCacheHeaders();
         assertTrue(response.containsHeader("Cache-Control"));
         assertTrue(response.containsHeader("Expires"));

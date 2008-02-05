@@ -23,6 +23,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.owasp.esapi.interfaces.IExecutor;
+
 /**
  * The Class ExecutorTest.
  * 
@@ -76,7 +78,7 @@ public class ExecutorTest extends TestCase {
 	 */
 	public void testExecuteSystemCommand() throws Exception {
 		System.out.println("executeSystemCommand");
-		Executor instance = Executor.getInstance();
+		IExecutor instance = ESAPI.executor();
 		File executable = new File( "C:\\Windows\\System32\\cmd.exe" );
 		File working = new File("C:\\");
 		List params = new ArrayList();

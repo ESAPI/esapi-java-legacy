@@ -30,10 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.interfaces.IHTTPUtilities;
 
 public class ESAPIFilter implements Filter {
 
@@ -76,9 +76,9 @@ public class ESAPIFilter implements Filter {
 		try {
 			// figure out who the current user is
 			try {
-				Authenticator.getInstance().login(request, response);
+				ESAPI.authenticator().login(request, response);
 			} catch( AuthenticationException e ) {
-				Authenticator.getInstance().logout();
+				((Authenticator)ESAPI.authenticator()).logout();
 				// FIXME: use safeforward!
 				// FIXME: make configurable with servletconfig
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
@@ -93,10 +93,10 @@ public class ESAPIFilter implements Filter {
 			ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());
 
 			// verify if this request meets the baseline input requirements
-			Validator.getInstance().isValidHTTPRequest(request);
+			ESAPI.validator().isValidHTTPRequest(request);
 
 			// check for CSRF attacks and set appropriate caching headers
-			HTTPUtilities utils = HTTPUtilities.getInstance();
+			IHTTPUtilities utils = ESAPI.httpUtilities();
 			// utils.checkCSRFToken();
 			utils.setNoCacheHeaders();
             utils.safeSetContentType();
@@ -109,7 +109,7 @@ public class ESAPIFilter implements Filter {
 			e.printStackTrace(response.getWriter());
 		} finally {
 			// clear out the ThreadLocal variables in the authenticator
-			Authenticator.getInstance().clearCurrent();
+			ESAPI.authenticator().clearCurrent();
 		}
 	}
 

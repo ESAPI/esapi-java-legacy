@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.errors;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.IntrusionDetector;
 import org.owasp.esapi.Logger;
 
@@ -64,7 +65,7 @@ public class EnterpriseSecurityException extends Exception {
     	
     	super(userMessage);
         this.logMessage = logMessage;
-        IntrusionDetector.getInstance().addException(this);
+        ESAPI.intrusionDetector().addException(this);
     }
 
     /**
@@ -76,7 +77,7 @@ public class EnterpriseSecurityException extends Exception {
     public EnterpriseSecurityException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
-        IntrusionDetector.getInstance().addException(this);
+        ESAPI.intrusionDetector().addException(this);
     }
 
     public String getUserMessage() {

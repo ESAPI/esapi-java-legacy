@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.interfaces.IEncryptor;
 
 /**
  * The Class EncryptorTest.
@@ -70,7 +71,7 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testHash() throws EncryptionException {
         System.out.println("hash");
-        Encryptor instance = Encryptor.getInstance();
+        IEncryptor instance = ESAPI.encryptor();
         String hash1 = instance.hash("test1", "salt");
         String hash2 = instance.hash("test2", "salt");
         assertFalse(hash1.equals(hash2));
@@ -87,7 +88,7 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testEncrypt() throws EncryptionException {
         System.out.println("encrypt");
-        Encryptor instance = Encryptor.getInstance();
+        IEncryptor instance = ESAPI.encryptor();
         String plaintext = "test123";
         String ciphertext = instance.encrypt(plaintext);
     	String result = instance.decrypt(ciphertext);
@@ -99,7 +100,7 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testDecrypt() {
         System.out.println("decrypt");
-        Encryptor instance = Encryptor.getInstance();
+        IEncryptor instance = ESAPI.encryptor();
         try {
             String plaintext = "test123";
             String ciphertext = instance.encrypt(plaintext);
@@ -120,8 +121,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testSign() throws EncryptionException {
         System.out.println("sign");        
-        Encryptor instance = Encryptor.getInstance();
-        String plaintext = Randomizer.getInstance().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        IEncryptor instance = ESAPI.encryptor();
+        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
         assertFalse( instance.verifySignature( signature, "ridiculous" ) );
@@ -136,8 +137,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testVerifySignature() throws EncryptionException {
         System.out.println("verifySignature");
-        Encryptor instance = Encryptor.getInstance();
-        String plaintext = Randomizer.getInstance().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        IEncryptor instance = ESAPI.encryptor();
+        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
     }
@@ -151,8 +152,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testSeal() throws IntegrityException {
         System.out.println("seal");
-        Encryptor instance = Encryptor.getInstance(); 
-        String plaintext = Randomizer.getInstance().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        IEncryptor instance = ESAPI.encryptor(); 
+        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
         instance.verifySeal( seal, plaintext );
     }
@@ -165,8 +166,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testVerifySeal() throws EnterpriseSecurityException {
         System.out.println("verifySeal");
-        Encryptor instance = Encryptor.getInstance(); 
-        String plaintext = Randomizer.getInstance().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        IEncryptor instance = ESAPI.encryptor(); 
+        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
         assertTrue( instance.verifySeal( seal, plaintext ) );
         assertFalse( instance.verifySeal( "ridiculous", plaintext ) );

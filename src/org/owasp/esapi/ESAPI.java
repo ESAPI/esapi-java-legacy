@@ -53,7 +53,7 @@ public class ESAPI {
      */
     public static IAccessController accessController() {
         if (ESAPI.accessController == null)
-            ESAPI.accessController = AccessController.getInstance();
+            ESAPI.accessController = new AccessController();
         return ESAPI.accessController;
     }
 
@@ -69,7 +69,7 @@ public class ESAPI {
      */
     public static  IAuthenticator authenticator() {
         if (ESAPI.authenticator == null)
-            ESAPI.authenticator = Authenticator.getInstance();
+            ESAPI.authenticator = new Authenticator();
         return ESAPI.authenticator;
     }
 
@@ -85,7 +85,7 @@ public class ESAPI {
      */
     public static  IEncoder encoder() {
         if (ESAPI.encoder == null)
-            ESAPI.encoder = Encoder.getInstance();
+            ESAPI.encoder = new Encoder();
         return ESAPI.encoder;
     }
 
@@ -101,7 +101,7 @@ public class ESAPI {
      */
     public static  IEncryptor encryptor() {
         if (ESAPI.encryptor == null)
-            ESAPI.encryptor = Encryptor.getInstance();
+            ESAPI.encryptor = new Encryptor();
         return ESAPI.encryptor;
     }
 
@@ -117,7 +117,7 @@ public class ESAPI {
      */
     public static  IExecutor executor() {
         if (ESAPI.executor == null)
-            ESAPI.executor = Executor.getInstance();
+            ESAPI.executor = new Executor();
         return ESAPI.executor;
     }
 
@@ -133,7 +133,7 @@ public class ESAPI {
      */
     public static  IHTTPUtilities httpUtilities() {
         if (ESAPI.httpUtilities == null)
-            ESAPI.httpUtilities = HTTPUtilities.getInstance();
+            ESAPI.httpUtilities = new HTTPUtilities();
         return ESAPI.httpUtilities;
     }
 
@@ -149,7 +149,7 @@ public class ESAPI {
      */
     public static  IIntrusionDetector intrusionDetector() {
         if (ESAPI.intrusionDetector == null)
-            ESAPI.intrusionDetector = IntrusionDetector.getInstance();
+            ESAPI.intrusionDetector = new IntrusionDetector();
         return ESAPI.intrusionDetector;
     }
 
@@ -181,7 +181,7 @@ public class ESAPI {
      */
     public static  IRandomizer randomizer() {
         if (ESAPI.randomizer == null)
-            ESAPI.randomizer = Randomizer.getInstance();
+            ESAPI.randomizer = new Randomizer();
         return ESAPI.randomizer;
     }
 
@@ -197,7 +197,7 @@ public class ESAPI {
      */
     public static  ISecurityConfiguration securityConfiguration() {
         if (ESAPI.securityConfiguration == null)
-            ESAPI.securityConfiguration = SecurityConfiguration.getInstance();
+            ESAPI.securityConfiguration = new SecurityConfiguration();
         return ESAPI.securityConfiguration;
     }
 
@@ -214,7 +214,7 @@ public class ESAPI {
      */
     public static  IValidator validator() {
         if (ESAPI.validator == null)
-            ESAPI.validator = Validator.getInstance();
+            ESAPI.validator = new Validator();
         return ESAPI.validator;
     }
 

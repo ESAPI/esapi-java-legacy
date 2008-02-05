@@ -22,6 +22,7 @@ import java.util.TreeSet;
 import java.util.Map.Entry;
 
 import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.interfaces.IRandomizer;
 
 /**
  * Reference implementation of the IAccessReferenceMap interface. This
@@ -44,7 +45,7 @@ public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessRef
 	HashMap dtoi = new HashMap();
 
 	/** The random. */
-	Randomizer random = Randomizer.getInstance();
+	IRandomizer random = ESAPI.randomizer();
 
 	/**
 	 * This AccessReferenceMap implementation uses short random strings to

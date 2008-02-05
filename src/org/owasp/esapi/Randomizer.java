@@ -35,9 +35,6 @@ import org.owasp.esapi.errors.EncryptionException;
  */
 public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
 
-    /** The instance. */
-    private static Randomizer instance = new Randomizer();
-
     /** The sr. */
     private SecureRandom secureRandom = null;
 
@@ -47,8 +44,8 @@ public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
     /**
      * Hide the constructor for the Singleton pattern.
      */
-    private Randomizer() {
-        String algorithm = SecurityConfiguration.getInstance().getRandomAlgorithm();
+    public Randomizer() {
+        String algorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
         try {
             secureRandom = SecureRandom.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {
@@ -56,15 +53,6 @@ public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
             // it logged and tracked
             new EncryptionException("Error creating randomizer", "Can't find random algorithm " + algorithm, e);
         }
-    }
-
-    /**
-     * Gets the single instance of Randomizer.
-     * 
-     * @return single instance of Randomizer
-     */
-    public static Randomizer getInstance() {
-        return instance;
     }
 
     /*
@@ -133,10 +121,10 @@ public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
         sb.append(this.getRandomString(20, Encoder.CHAR_ALPHANUMERICS));
 
         // hash the random string to get some random bytes
-        String hash = Encryptor.getInstance().hash(sb.toString(), "salt");
+        String hash = ESAPI.encryptor().hash(sb.toString(), "salt");
         byte[] array = null;
         try {
-            array = Encoder.getInstance().decodeFromBase64(hash);
+            array = ESAPI.encoder().decodeFromBase64(hash);
         } catch (IOException e) {
             logger.logCritical(Logger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
         }

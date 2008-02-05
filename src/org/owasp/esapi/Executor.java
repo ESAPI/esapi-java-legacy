@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.owasp.esapi.errors.ExecutorException;
+import org.owasp.esapi.interfaces.IValidator;
 
 /**
  * Reference implementation of the Executor interface. This implementation is very restrictive. Commands must exactly
@@ -36,26 +37,10 @@ import org.owasp.esapi.errors.ExecutorException;
  */
 public class Executor implements org.owasp.esapi.interfaces.IExecutor {
 
-    /** The instance. */
-    private static Executor instance = new Executor();
-
     /** The logger. */
     private static final Logger logger = Logger.getLogger("ESAPI", "Executor");
 
-    /**
-     * Hide the constructor for the Singleton pattern.
-     */
-    private Executor() {
-        // hidden
-    }
-
-    /**
-     * Gets the single instance of Executor.
-     * 
-     * @return single instance of Executor
-     */
-    public static Executor getInstance() {
-        return instance;
+    public Executor() {
     }
 
     /*
@@ -68,7 +53,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
         BufferedReader br = null;
         try {
             logger.logTrace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
-            Validator validator = Validator.getInstance();
+            IValidator validator = ESAPI.validator();
 
             // command must exactly match the canonical path and must actually exist on the file system
             if (!executable.getCanonicalPath().equals(executable.getPath())) {

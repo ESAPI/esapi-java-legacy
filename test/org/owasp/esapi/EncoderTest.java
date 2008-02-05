@@ -18,13 +18,14 @@ package org.owasp.esapi;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.interfaces.IEncoder;
 
 /**
  * The Class EncoderTest.
@@ -75,7 +76,7 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
-		Encoder instance = Encoder.getInstance();
+		IEncoder instance = ESAPI.encoder();
         assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
         try {
         	assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
@@ -97,12 +98,12 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testNormalize() throws ValidationException {
 		System.out.println("normalize");
-		assertEquals(Encoder.getInstance().normalize("é à î _ @ \" < > \u20A0"), "e a i _ @ \" < > ");
+		assertEquals(ESAPI.encoder().normalize("é à î _ @ \" < > \u20A0"), "e a i _ @ \" < > ");
 	}
 
     public void testEntityEncode() {
     	System.out.println( "entityEncode" );
-    	Encoder instance = Encoder.getInstance();
+    	IEncoder instance = ESAPI.encoder();
         assertEquals("&lt;script&gt;", instance.encodeForHTML("&lt;script&gt;"));
         assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") );
     }
@@ -112,7 +113,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForHTML() {
         System.out.println("encodeForHTML");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("", instance.encodeForHTML(null));
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
         assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
@@ -126,7 +127,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForHTMLAttribute() {
         System.out.println("encodeForHTMLAttribute");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("&lt;script&gt;", instance.encodeForHTMLAttribute("<script>"));
         assertEquals(",.-_", instance.encodeForHTMLAttribute(",.-_"));
         assertEquals("&#32;&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
@@ -137,7 +138,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForJavascript() {
         System.out.println("encodeForJavascript");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("&lt;script&gt;", instance.encodeForJavascript("<script>"));
         assertEquals(",.-_ ", instance.encodeForJavascript(",.-_ "));
         assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForJavascript("!@$%()=+{}[]"));
@@ -149,7 +150,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForVBScript() {
         System.out.println("encodeForVBScript");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("&lt;script&gt;", instance.encodeForVBScript("<script>"));
         assertEquals(",.-_ ", instance.encodeForVBScript(",.-_ "));
         assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForVBScript("!@$%()=+{}[]"));
@@ -160,7 +161,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForXPath() {
         System.out.println("encodeForXPath");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("&#39;or 1&#61;1", instance.encodeForXPath("'or 1=1"));
     }
     
@@ -171,7 +172,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForSQL() {
         System.out.println("encodeForSQL");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("Single quote", "Jeff'' or ''1''=''1", instance.encodeForSQL("Jeff' or '1'='1"));
     }
 
@@ -181,7 +182,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForLDAP() {
         System.out.println("encodeForLDAP");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("No special characters to escape", "Hi This is a test #çà", instance.encodeForLDAP("Hi This is a test #çà"));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # ç à ô", instance.encodeForLDAP("Hi (This) = is * a \\ test # ç à ô"));
@@ -192,7 +193,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForDN() {
         System.out.println("encodeForDN");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("No special characters to escape", "Helloé", instance.encodeForDN("Helloé"));
         assertEquals("leading #", "\\# Helloé", instance.encodeForDN("# Helloé"));
         assertEquals("leading space", "\\ Helloé", instance.encodeForDN(" Helloé"));
@@ -208,7 +209,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForXML() {
         System.out.println("encodeForXML");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals(" ", instance.encodeForXML(" "));
         assertEquals("&lt;script&gt;", instance.encodeForXML("<script>"));
         assertEquals(",.-_", instance.encodeForXML(",.-_"));
@@ -222,7 +223,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForXMLAttribute() {
         System.out.println("encodeForXMLAttribute");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("&#32;", instance.encodeForXMLAttribute(" "));
         assertEquals("&lt;script&gt;", instance.encodeForXMLAttribute("<script>"));
         assertEquals(",.-_", instance.encodeForXMLAttribute(",.-_"));
@@ -234,7 +235,7 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForURL() throws Exception {
         System.out.println("encodeForURL");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         assertEquals("%3Cscript%3E", instance.encodeForURL("<script>"));
     }
     
@@ -243,11 +244,11 @@ public class EncoderTest extends TestCase {
 	 */
     public void testDecodeFromURL() throws Exception {
         System.out.println("decodeFromURL");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         try {
             assertEquals("<script>", instance.decodeFromURL("%3Cscript%3E"));
             for ( int i=0; i < 100; i++ ) {
-                String r = Randomizer.getInstance().getRandomString( 20, Encoder.CHAR_PASSWORD );
+                String r = ESAPI.randomizer().getRandomString( 20, Encoder.CHAR_PASSWORD );
                 String encoded = instance.encodeForURL( r );
                 String decoded = instance.decodeFromURL( encoded );
                 assertEquals( r, decoded );
@@ -262,11 +263,11 @@ public class EncoderTest extends TestCase {
 	 */
     public void testEncodeForBase64() {
         System.out.println("encodeForBase64");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         try {
             for ( int i=0; i < 100; i++ ) {
-                byte[] r = Randomizer.getInstance().getRandomString( 20, Encoder.CHAR_SPECIALS ).getBytes();
-                String encoded = instance.encodeForBase64( r, Randomizer.getInstance().getRandomBoolean() );
+                byte[] r = ESAPI.randomizer().getRandomString( 20, Encoder.CHAR_SPECIALS ).getBytes();
+                String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
                 byte[] decoded = instance.decodeFromBase64( encoded );
                 assertTrue( Arrays.equals( r, decoded ) );
             }
@@ -280,11 +281,11 @@ public class EncoderTest extends TestCase {
 	 */
     public void testDecodeFromBase64() {
         System.out.println("decodeFromBase64");
-        Encoder instance = Encoder.getInstance();
+        IEncoder instance = ESAPI.encoder();
         for ( int i=0; i < 100; i++ ) {
             try {
-                byte[] r = Randomizer.getInstance().getRandomString( 20, Encoder.CHAR_SPECIALS ).getBytes();
-                String encoded = instance.encodeForBase64( r, Randomizer.getInstance().getRandomBoolean() );
+                byte[] r = ESAPI.randomizer().getRandomString( 20, Encoder.CHAR_SPECIALS ).getBytes();
+                String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
                 byte[] decoded = instance.decodeFromBase64( encoded );
                 assertTrue( Arrays.equals( r, decoded ) );
             } catch ( IOException e ) {
@@ -293,8 +294,8 @@ public class EncoderTest extends TestCase {
         }
         for ( int i=0; i < 100; i++ ) {
             try {
-                byte[] r = Randomizer.getInstance().getRandomString( 20, Encoder.CHAR_SPECIALS ).getBytes();
-                String encoded = Randomizer.getInstance().getRandomString(1, Encoder.CHAR_ALPHANUMERICS) + instance.encodeForBase64( r, Randomizer.getInstance().getRandomBoolean() );
+                byte[] r = ESAPI.randomizer().getRandomString( 20, Encoder.CHAR_SPECIALS ).getBytes();
+                String encoded = ESAPI.randomizer().getRandomString(1, Encoder.CHAR_ALPHANUMERICS) + instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
 	            byte[] decoded = instance.decodeFromBase64( encoded );
 	            assertFalse( Arrays.equals(r, decoded) );
             } catch ( IOException e ) {

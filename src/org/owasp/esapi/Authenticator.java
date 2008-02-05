@@ -69,9 +69,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     /** The Constant USER. */
     protected static final String USER = "ESAPIUserSessionKey";
 
-    /** The instance. */
-    private static Authenticator instance = new Authenticator();
-
     /** The logger. */
     private static final Logger logger = Logger.getLogger("ESAPI", "Authenticator");
 
@@ -87,16 +84,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     /** The last time we checked if the user db had been modified externally */
     private long lastChecked = 0;
     
-    /**
-     * Gets the single instance of Authenticator. Must not log in this method because the logger calls getInstance() and
-     * this could cause a loop.
-     * 
-     * @return single instance of Authenticator
-     */
-    public static Authenticator getInstance() {
-        return instance;
-    }
-
     /**
      * Fail safe main program to add or update an account in an emergency.
      * <P>
@@ -119,7 +106,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             System.out.println("Usage: Authenticator accountname password role");
             return;
         }
-        Authenticator auth = Authenticator.getInstance();
+        Authenticator auth = new Authenticator();
         String accountName = args[0].toLowerCase();
         String password = args[1];
         String role = args[2];
@@ -130,7 +117,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             auth.userMap.put(accountName, user);
             logger.logCritical(Logger.SECURITY, "New user created: " + accountName);
         }
-		String newHash = Authenticator.getInstance().hashPassword(password, accountName);
+		String newHash = auth.hashPassword(password, accountName);
 		user.setHashedPassword(newHash);
         user.addRole(role);
         user.enable();
@@ -202,11 +189,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     };
     
     
-    /**
-     * Hide the constructor for the Singleton pattern.
-     */
-    private Authenticator() {
-        // hidden
+    public Authenticator() {
     }
 
     /**

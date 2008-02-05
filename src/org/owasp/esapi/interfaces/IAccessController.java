@@ -35,7 +35,7 @@ package org.owasp.esapi.interfaces;
  * this interface is to centralize access control logic so that it is easy to use and easy to verify.
  * 
  * <pre>
- * if ( AccessController.getInstance().isAuthorizedForFunction( BUSINESS_FUNCTION ) ) {
+ * if ( ESAPI.accessController().isAuthorizedForFunction( BUSINESS_FUNCTION ) ) {
  * ... access is allowed
  * } else {
  * ... attack in progress
@@ -49,7 +49,7 @@ package org.owasp.esapi.interfaces;
  * repeated in both the business logic and data layers.
  * 
  * <pre>
- * &lt;% if ( AccessController.getInstance().isAuthorizedForFunction( ADMIN_FUNCTION ) ) { %&gt;
+ * &lt;% if ( ESAPI.accessController().isAuthorizedForFunction( ADMIN_FUNCTION ) ) { %&gt;
  * &lt;a href=&quot;/doAdminFunction&quot;&gt;ADMIN&lt;/a&gt;
  * &lt;% } else { %&gt;
  * &lt;a href=&quot;/doNormalFunction&quot;&gt;NORMAL&lt;/a&gt;
@@ -64,7 +64,7 @@ public interface IAccessController {
      * Checks if an account is authorized to access the referenced URL. The implementation should allow
      * access to be granted to any part of the URI. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
-     * <PRE>AccessController.getInstance().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
+     * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
      * @param uri the uri as returned by request.getRequestURI().toString()
      * @return true, if is authorized for URL

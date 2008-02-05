@@ -22,6 +22,7 @@ import java.util.Set;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.interfaces.IAuthenticator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -78,22 +79,24 @@ public class AccessReferenceMapTest extends TestCase {
     public void testUpdate() throws AuthenticationException, EncryptionException {
         System.out.println("update");
     	AccessReferenceMap arm = new AccessReferenceMap();
-    	String pass = Authenticator.getInstance().generateStrongPassword();
-    	User u = Authenticator.getInstance().createUser( "armUpdate", pass, pass );
+    	IAuthenticator auth = ESAPI.authenticator();
+    	
+    	String pass = auth.generateStrongPassword();
+    	User u = auth.createUser( "armUpdate", pass, pass );
     	
     	// test to make sure update returns something
-		arm.update(Authenticator.getInstance().getUserNames());
+		arm.update(auth.getUserNames());
 		String indirect = arm.getIndirectReference( u.getAccountName() );
 		if ( indirect == null ) fail();
 		
 		// test to make sure update removes items that are no longer in the list
-		Authenticator.getInstance().removeUser( u.getAccountName() );
-		arm.update(Authenticator.getInstance().getUserNames());
+		auth.removeUser( u.getAccountName() );
+		arm.update(auth.getUserNames());
 		indirect = arm.getIndirectReference( u.getAccountName() );
 		if ( indirect != null ) fail();
 		
 		// test to make sure old indirect reference is maintained after an update
-		arm.update(Authenticator.getInstance().getUserNames());
+		arm.update(auth.getUserNames());
 		String newIndirect = arm.getIndirectReference( u.getAccountName() );
 		assertEquals(indirect, newIndirect);
     }
@@ -105,12 +108,14 @@ public class AccessReferenceMapTest extends TestCase {
     public void testIterator() {
         System.out.println("iterator");
     	AccessReferenceMap arm = new AccessReferenceMap();
-		arm.update(Authenticator.getInstance().getUserNames());
+        IAuthenticator auth = ESAPI.authenticator();
+        
+		arm.update(auth.getUserNames());
 
 		Iterator i = arm.iterator();
 		while ( i.hasNext() ) {
 			String userName = (String)i.next();
-			User u = Authenticator.getInstance().getUser( userName );
+			User u = auth.getUser( userName );
 			if ( u == null ) fail();
 		}
     }

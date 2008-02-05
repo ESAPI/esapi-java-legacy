@@ -71,9 +71,6 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	/** The base64 decoder. */
 	private static final BASE64Decoder base64Decoder = new BASE64Decoder();
 
-	/** The instance. */
-	private static final Encoder instance = new Encoder();
-
 	/** The IMMUNE HTML. */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 
@@ -128,20 +125,8 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 
 	private static HashMap entityToCharacterMap;
 
-	/**
-	 * Hide the constructor for the Singleton pattern.
-	 */
-	private Encoder() {
+	public Encoder() {
 		initializeMaps();
-	}
-
-	/**
-	 * Gets the single instance of Encoder.
-	 * 
-	 * @return single instance of Encoder
-	 */
-	public static Encoder getInstance() {
-		return instance;
 	}
 
 	/**
@@ -324,7 +309,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForSQL(java.lang.String)
 	 */
 	public String encodeForSQL(String input) {
-		String canonical = Encoder.getInstance().canonicalize(input);
+		String canonical = canonicalize(input);
 		return canonical.replaceAll("'", "''");
 	}
 
@@ -334,7 +319,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForLDAP(java.lang.String)
 	 */
 	public String encodeForLDAP(String input) {
-		String canonical = Encoder.getInstance().canonicalize(input);
+		String canonical = canonicalize(input);
 
 		// FIXME: ENHANCE this is a negative list -- make positive?
 		StringBuffer sb = new StringBuffer();
@@ -369,7 +354,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForDN(java.lang.String)
 	 */
 	public String encodeForDN(String input) {
-		String canonical = Encoder.getInstance().canonicalize(input);
+		String canonical = canonicalize(input);
 
 		StringBuffer sb = new StringBuffer();
 		if ((canonical.length() > 0) && ((canonical.charAt(0) == ' ') || (canonical.charAt(0) == '#'))) {
@@ -454,10 +439,10 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForURL(java.lang.String)
 	 */
 	public String encodeForURL(String input) throws EncodingException {
-		String canonical = Encoder.getInstance().canonicalize(input);
+		String canonical = canonicalize(input);
 
 		try {
-			return URLEncoder.encode(canonical, SecurityConfiguration.getInstance().getCharacterEncoding());
+			return URLEncoder.encode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
 			throw new EncodingException("Encoding failure", "Encoding not supported", ex);
 		} catch (Exception e) {
@@ -471,9 +456,9 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#decodeFromURL(java.lang.String)
 	 */
 	public String decodeFromURL(String input) throws EncodingException {
-		String canonical = Encoder.getInstance().canonicalize(input);
+		String canonical = canonicalize(input);
 		try {
-			return URLDecoder.decode(canonical, SecurityConfiguration.getInstance().getCharacterEncoding());
+			return URLDecoder.decode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
 			throw new EncodingException("Decoding failed", "Encoding not supported", ex);
 		} catch (Exception e) {
