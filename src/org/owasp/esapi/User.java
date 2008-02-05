@@ -37,6 +37,7 @@ import org.owasp.esapi.errors.AuthenticationCredentialsException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.AuthenticationHostException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
+import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IUser;
@@ -196,7 +197,11 @@ public class User implements IUser, Serializable {
 		if (!password1.equals(password2)) throw new AuthenticationCredentialsException("Passwords do not match", "Passwords for " + accountName + " do not match");
 		
 		this.accountName = accountName.toLowerCase();
-		setHashedPassword( Encryptor.getInstance().hash(password1, this.accountName) );
+		try {
+		    setHashedPassword( Encryptor.getInstance().hash(password1, this.accountName) );
+		} catch (EncryptionException ee) {
+		    throw new AuthenticationException("Internal error", "Error hashing password for " + this.accountName, ee);
+		}
 		expirationTime = new Date( System.currentTimeMillis() + (long)1000 * 60 * 60 * 24 * 90 );  // 90 days
 		logger.logCritical(Logger.SECURITY, "Account created successfully: " + accountName );
 	}
@@ -253,7 +258,7 @@ public class User implements IUser, Serializable {
 	 * @param newPassword2
 	 *            the new password2
 	 */
-	protected void changePassword(String newPassword1, String newPassword2) {
+	protected void changePassword(String newPassword1, String newPassword2) throws EncryptionException {
 		setLastPasswordChangeTime(new Date());
 		String newHash = Authenticator.getInstance().hashPassword(newPassword1, getAccountName() );
 		setHashedPassword( newHash );
@@ -265,7 +270,7 @@ public class User implements IUser, Serializable {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IUser#setPassword(java.lang.String, java.lang.String)
 	 */
-	public void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException {
+	public void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException {
 		if (!hashedPassword.equals(Authenticator.getInstance().hashPassword(oldPassword, getAccountName()))) {
 			throw new AuthenticationCredentialsException("Password change failed", "Authentication failed for password chanage on user: " + getAccountName() );
 		}
@@ -574,17 +579,21 @@ public class User implements IUser, Serializable {
 			logout();
 		}
 
-		if ( verifyPassword( password ) ) {
-			// FIXME: AAA verify loggedIn is properly maintained
-			loggedIn = true;
-			HttpSession session = HTTPUtilities.getInstance().changeSessionIdentifier();
-			session.setAttribute(Authenticator.USER, getAccountName());
-			Authenticator.getInstance().setCurrentUser(this);
-			setLastLoginTime(new Date());
-            setLastHostAddress( Authenticator.getInstance().getCurrentRequest().getRemoteHost() );
-			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
-		} else {
-			throw new AuthenticationLoginException("Login failed", "Login attempt as " + getAccountName() + " failed");
+		try {
+    		if ( verifyPassword( password ) ) {
+    			// FIXME: AAA verify loggedIn is properly maintained
+    			loggedIn = true;
+    			HttpSession session = HTTPUtilities.getInstance().changeSessionIdentifier();
+    			session.setAttribute(Authenticator.USER, getAccountName());
+    			Authenticator.getInstance().setCurrentUser(this);
+    			setLastLoginTime(new Date());
+                setLastHostAddress( Authenticator.getInstance().getCurrentRequest().getRemoteHost() );
+    			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
+    		} else {
+    			throw new AuthenticationLoginException("Login failed", "Login attempt as " + getAccountName() + " failed");
+    		}
+		} catch (EncryptionException ee) {
+		    throw new AuthenticationException("Internal error", "Error verifying password for " + accountName, ee);
 		}
 	}
 
@@ -644,7 +653,7 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#setPassword(java.lang.String, java.lang.String)
 	 * @return the string
 	 */
-	public String resetPassword() {
+	public String resetPassword() throws EncryptionException {
 		String newPassword = Authenticator.getInstance().generateStrongPassword();
 		changePassword( newPassword, newPassword );
 		return newPassword;
@@ -829,7 +838,7 @@ public class User implements IUser, Serializable {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IUser#verifyPassword(java.lang.String)
 	 */
-	public boolean verifyPassword(String password) {
+	public boolean verifyPassword(String password) throws EncryptionException {
 		String hash = Authenticator.getInstance().hashPassword(password, accountName);
 		if (hash.equals(hashedPassword)) {
 			setLastLoginTime(new Date());

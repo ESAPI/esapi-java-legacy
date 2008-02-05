@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 
@@ -76,7 +77,7 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testCreateUser() throws AuthenticationException {
+	public void testCreateUser() throws AuthenticationException, EncryptionException {
 		System.out.println("createUser");
 		String accountName = Randomizer.getInstance().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		Authenticator instance = Authenticator.getInstance();
@@ -254,7 +255,7 @@ public class AuthenticatorTest extends TestCase {
 	/**
 	 * Test of hashPassword method, of class org.owasp.esapi.Authenticator.
 	 */
-	public void testHashPassword() {
+	public void testHashPassword() throws EncryptionException {
 		System.out.println("hashPassword");
 		String username = "Jeff";
 		String password = "test";

@@ -121,7 +121,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IEncryptor#hash(java.lang.String,java.lang.String)
 	 */
-	public String hash(String plaintext, String salt) {
+	public String hash(String plaintext, String salt) throws EncryptionException {
 		byte[] bytes = null;
 		try {
 			MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
@@ -140,8 +140,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			String encoded = Encoder.getInstance().encodeForBase64(bytes,false);
 			return encoded;
 		} catch (NoSuchAlgorithmException e) {
-			logger.logCritical(Logger.SECURITY, "Can't find hash algorithm " + hashAlgorithm, e);
-			return null;
+			throw new EncryptionException("Internal error", "Can't find hash algorithm " + hashAlgorithm, e);
 		}
 	}
 
