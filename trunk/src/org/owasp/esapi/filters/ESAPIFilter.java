@@ -28,8 +28,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.AccessController;
 import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Validator;
@@ -90,7 +90,7 @@ public class ESAPIFilter implements Filter {
 			logger.logHTTPRequest(Logger.SECURITY, request, Arrays.asList(ignore));
 
 			// check access to this URL
-			AccessController.getInstance().isAuthorizedForURL(request.getRequestURI().toString());
+			ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());
 
 			// verify if this request meets the baseline input requirements
 			Validator.getInstance().isValidHTTPRequest(request);
