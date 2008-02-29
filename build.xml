@@ -71,8 +71,37 @@
             />
         </zip>
     </target>
+    <target depends="clean,build" 
+        description="Build a standalone self-contained jar" 
+        name="proguard" >
+        <taskdef 
+            classpath="${proguard.location}/lib/proguard.jar" 
+            resource="proguard/ant/task.properties"
+        />
+        <!-- ProGuard is used simply to aggregate the various libraries into   -->
+        <!-- a single distributable. No shrinking, optimization or obfuscation -->
+        <!-- is performed. We ignore warnings about certain missing classes    -->
+        <!-- since they are not used/required                      -->
+        <proguard 
+            ignorewarnings="true" 
+            obfuscate="false" 
+            optimize="false" 
+            shrink="false" 
+            verbose="false"
+            printusage="false"
+        >
+            <injar name="${jar}"/>
+            <injar name="lib/antisamy-bin.1.0.jar"/>
+            <injar name="lib/commons-fileupload-1.2.jar"/>
+            <injar name="lib/commons-io-1.3.2.jar"/>
+            <libraryjar name="${java.home}/lib/rt.jar"/>
+            <libraryjar name="${java.home}/lib/jsse.jar"/>
+            <libraryjar name="lib/servlet-api.jar"/>
+            <outjar name="${dist.dir}/esapi-selfcontained-${project.version}.jar"/>
+        </proguard>
+    </target>
     <target 
-        depends="clean,source,build" 
+        depends="clean,source,build,proguard" 
         description="Build all distributables" 
         name="dist"
     />
