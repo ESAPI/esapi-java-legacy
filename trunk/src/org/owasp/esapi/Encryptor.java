@@ -141,7 +141,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			encrypter.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
 			byte[] output = plaintext.getBytes(encoding);
 			byte[] enc = encrypter.doFinal(output);
-			return ESAPI.encoder().encodeForBase64(enc,true);
+			return ESAPI.encoder().encodeForBase64(enc,false);
 		} catch (Exception e) {
 			throw new EncryptionException("Decryption failure", "Decryption problem: " + e.getMessage(), e);
 		}

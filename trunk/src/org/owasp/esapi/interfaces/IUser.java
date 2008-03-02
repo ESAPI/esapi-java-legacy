@@ -117,7 +117,7 @@ public interface IUser {
      */
     String getLastHostAddress();
 
-    /**
+	/**
      * Returns the date of the last failed login time for a user. This date should be used in a message to users after a
      * successful login, to notify them of potential attack activity on their account.
      * 

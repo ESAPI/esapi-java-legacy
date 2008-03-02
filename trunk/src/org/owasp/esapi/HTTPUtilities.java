@@ -97,13 +97,29 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	
 	/**
 	 * Adds a cookie to the HttpServletResponse that uses Secure and HttpOnly
-	 * flags.
+	 * flags. This implementation does not use the addCookie method because
+	 * it does not support HttpOnly, so it just creates a cookie header manually.
 	 * 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeAddCookie(java.lang.String,
 	 *      java.lang.String, java.util.Date, java.lang.String,
 	 *      java.lang.String, javax.servlet.http.HttpServletResponse)
 	 */
-	public void safeAddCookie(String name, String value, int maxAge, String domain, String path) {
+	public void safeAddCookie(String name, String value, int maxAge, String domain, String path) throws ValidationException {
+		// verify name matches
+		Pattern cookieName = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPCookieName");
+		if ( !cookieName.matcher(name).matches() ) {
+			throw new ValidationException("Invalid cookie", "Attempt to set a cookie name (" + name + ") that violates the global rule in ESAPI.properties (" + cookieName.pattern() + ")" );
+		}
+		
+		// verify value matches
+		Pattern cookieValue = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPCookieValue");				
+		if ( !cookieValue.matcher(value).matches() ) {
+			throw new ValidationException("Invalid cookie", "Attempt to set a cookie value (" + value + ") that violates the global rule in ESAPI.properties (" + cookieValue.pattern() + ")" );
+		}
+		
+		// FIXME: AAA need to validate domain and path! Otherwise response splitting etc..  Can use Cookie object?
+		
+		// create the special cookie header
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		// Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
 		// domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
@@ -210,6 +226,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public void verifyCSRFToken() throws IntrusionException {
 		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
 		User user = ESAPI.authenticator().getCurrentUser();
+		// FIXME: AAA this is a bad test - need a way to not enforce CSRF token on entry points
 		// if this is the first request after logging in, let them pass
 		if (user.isFirstRequest()) return;
 		
@@ -291,12 +308,16 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	    		sb.append( name + "=" + value );
 	    		if ( i.hasNext() ) sb.append( "&" );
     		} catch( EncodingException e ) {
-    			// continue
+    			logger.logError(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
     	// FIXME: AAA - add a check to see if cookie length will exceed 2K limit
     	String encrypted = ESAPI.encryptor().encrypt(sb.toString());
-    	this.safeAddCookie("state", encrypted, -1, null, null );
+    	try {
+    		this.safeAddCookie("state", encrypted, -1, null, null );
+    	} catch( ValidationException e ) {
+    		throw new EncryptionException("Error generating encrypted cookie", e.getLogMessage(), e );
+    	}
     }
 
 	/**

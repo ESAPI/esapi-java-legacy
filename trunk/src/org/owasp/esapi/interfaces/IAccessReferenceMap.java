@@ -97,13 +97,13 @@ public interface IAccessReferenceMap {
 	Object getDirectReference(String indirectReference) throws AccessControlException;
 
 	/**
-	 * FIXME
+	 * Adds a direct reference to the AccessReferenceMap and generates an associated indirect reference. 
 	 * @param direct
 	 */
 	public void addDirectReference(String direct);
 	
 	/**
-	 * FIXME
+	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
 	 * @param direct
 	 * @throws AccessControlException
 	 */

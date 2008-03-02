@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project basedir="." default="all" name="owasp-esapi-java">
+<project basedir="." default="dist" name="owasp-esapi-java">
     <target name="init">
 
         <property file="local.properties"/>

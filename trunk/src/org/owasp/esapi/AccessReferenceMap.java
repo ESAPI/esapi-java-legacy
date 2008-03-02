@@ -154,9 +154,6 @@ public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessRef
 	 */
 	public Object getDirectReference(String indirectReference) throws AccessControlException {
 		Iterator i = dtoi.entrySet().iterator();
-		while (i.hasNext()) {
-			Entry e = (Entry) i.next();
-		}
 		if (itod.containsKey(indirectReference)) {
 			return itod.get(indirectReference);
 		}
