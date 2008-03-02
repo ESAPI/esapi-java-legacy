@@ -59,7 +59,7 @@ public interface IHTTPUtilities {
      * @param response the response
      * @param maxAge the max age
      */
-    void safeAddCookie(String name, String value, int maxAge, String domain, String path);
+    void safeAddCookie(String name, String value, int maxAge, String domain, String path) throws ValidationException;
     
     /**
      * Adds a header to an HttpServletResponse after checking for special characters (such as CRLF injection) that could enable 

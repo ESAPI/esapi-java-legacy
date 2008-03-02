@@ -185,6 +185,14 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		try {
 	        String canonical = ESAPI.encoder().canonicalize(dirpath);
 	        
+			// do basic validation
+			Pattern directoryNamePattern = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("DirectoryName");
+			System.out.println( "XXXX: " + directoryNamePattern );
+			if ( !directoryNamePattern.matcher(canonical).matches() ) {
+				new ValidationException("Invalid directory name", "Attempt to use a directory name (" + canonical + ") that violates the global rule in ESAPI.properties (" + directoryNamePattern.pattern() +")" );
+				return false;
+			}
+			
 			// get the canonical path without the drive letter if present
 			String cpath = new File(canonical).getCanonicalPath().replaceAll("\\\\", "/");
 			String temp = cpath.toLowerCase();
@@ -238,12 +246,19 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		try {
 	        String canonical = ESAPI.encoder().canonicalize(input);
 
+			// do basic validation
+			Pattern fileNamePattern = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("FileName");
+			if ( !fileNamePattern.matcher(canonical).matches() ) {
+				new ValidationException("Invalid filename", "Attempt to use a filename (" + canonical + ") that violates the global rule in ESAPI.properties (" + fileNamePattern.pattern() +")" );
+				return false;
+			}
+			
 			File f = new File(canonical);
 			String c = f.getCanonicalPath();
 			String cpath = c.substring(c.lastIndexOf(File.separator) + 1);
 			if (!input.equals(cpath)) {
-				// FIXME: AAA should this validation really throw an IntrusionException?
-				throw new IntrusionException("Invalid filename", "Invalid filename (" + canonical + ") doesn't match canonical path (" + cpath + ") and could be an injection attack");
+				new ValidationException("Invalid filename", "Invalid filename (" + canonical + ") doesn't match canonical path (" + cpath + ") and could be an injection attack");
+				return false;
 			}
 		} catch (IOException e) {
 			throw new IntrusionException("Invalid filename", "Exception during filename validation", e);

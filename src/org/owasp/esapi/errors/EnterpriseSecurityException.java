@@ -55,7 +55,7 @@ public class EnterpriseSecurityException extends Exception {
     /**
      * Creates a new instance of EnterpriseSecurityException. This exception is automatically logged, so that simply by
      * using this API, applications will generate an extensive security log. In addition, this exception is
-     * automatically registrered with the IntrusionDetector, so that quotas can be checked.
+     * automatically registered with the IntrusionDetector, so that quotas can be checked.
      * 
      * @param message the message
      */

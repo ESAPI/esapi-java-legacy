@@ -392,10 +392,6 @@ public class User implements IUser, Serializable {
 	}
 
 	public String getLastHostAddress() {
-        HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
-        if ( request != null ) {
-        	setLastHostAddress( request.getRemoteAddr() );  // returning remote addr, not host, to prevent DNS lookup
-        }
         return lastHostAddress;
     }
 
@@ -756,13 +752,16 @@ public class User implements IUser, Serializable {
 	}
 	
 	
-	// FIXME: is this needed?
 	/**
      * Sets the last remote host address used by this User.
      * @param remoteHost
      */
-	protected void setLastHostAddress(String remoteHost) {
-		if ( lastHostAddress != remoteHost ) {
+	public void setLastHostAddress(String remoteHost) {
+		User user = ((Authenticator)ESAPI.authenticator()).getCurrentUser();
+		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		if ( lastHostAddress != null && lastHostAddress != remoteHost && user != null && request != null ) {
+        	// returning remote address not remote hostname to prevent DNS lookup
+        	user.setLastHostAddress( request.getRemoteAddr() );
 			new AuthenticationHostException("Host change", "User session just jumped from " + lastHostAddress + " to " + remoteHost );
 			lastHostAddress = remoteHost;
 		}

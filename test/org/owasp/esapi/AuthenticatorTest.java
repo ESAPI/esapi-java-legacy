@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -243,7 +244,10 @@ public class AuthenticatorTest extends TestCase {
 		System.out.println("getUserNames");
         IAuthenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
-		String[] testnames = { "firstUser","secondUser","thirdUser" };
+		String[] testnames = new String[10];
+		for(int i=0;i<testnames.length;i++) {
+			testnames[i] = ESAPI.randomizer().getRandomString(8,Encoder.CHAR_ALPHANUMERICS);
+		}
 		for(int i=0;i<testnames.length;i++) {
 			instance.createUser(testnames[i], password, password);
 		}
@@ -275,11 +279,12 @@ public class AuthenticatorTest extends TestCase {
 	public void testLogin() throws AuthenticationException {
 		System.out.println("login");
         IAuthenticator instance = ESAPI.authenticator();
+        String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		String password = instance.generateStrongPassword();
-		User user = instance.createUser("login", password, password);
+		User user = instance.createUser(username, password, password);
 		user.enable();
 		TestHttpServletRequest request = new TestHttpServletRequest();
-		request.addParameter("username", "login");
+		request.addParameter("username", username);
 		request.addParameter("password", password);
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		User test = instance.login( request, response);
@@ -503,14 +508,20 @@ public class AuthenticatorTest extends TestCase {
         String accountName = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
         String password = instance.generateStrongPassword();
         String role = "test";
+        
         // test wrong parameters - missing role parameter
         String[] badargs = { accountName, password };
         Authenticator.main( badargs );
+        // load users since the new user was added in another instance
+        ((Authenticator)instance).loadUsersImmediately();
         User u1 = instance.getUser(accountName);
         assertNull( u1 );
+
         // test good parameters
         String[] args = { accountName, password, role };
         Authenticator.main(args);
+        // load users since the new user was added in another instance
+        ((Authenticator)instance).loadUsersImmediately();
         User u2 = instance.getUser(accountName);
         assertNotNull( u2 );
         assertTrue( u2.isInRole(role));

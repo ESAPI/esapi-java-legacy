@@ -221,10 +221,10 @@ public class ValidatorTest extends TestCase {
 	}
 
 	/**
-	 * Test of isValidFilePath method, of class org.owasp.esapi.Validator.
+	 * Test of isValidDirectoryPath method, of class org.owasp.esapi.Validator.
 	 */
-	public void testIsValidFilePath() {
-		System.out.println("isValidFilePath");
+	public void testIsValidDirectoryPath() {
+		System.out.println("isValidDirectoryPath");
 		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidDirectoryPath("test", "/"));
 		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp"));

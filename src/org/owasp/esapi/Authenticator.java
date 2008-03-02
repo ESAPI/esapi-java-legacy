@@ -368,16 +368,21 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         if (userDB == null)
             userDB = new File(((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "users.txt");
         
-        long now = System.currentTimeMillis();
         // We only check at most every checkInterval milliseconds
-        if (now - lastChecked < checkInterval)
+        long now = System.currentTimeMillis();
+        if (now - lastChecked < checkInterval) {
             return;
+        }
         lastChecked = now;
         
         long lastModified = userDB.lastModified();
-        if (this.lastModified == lastModified)
+        if (this.lastModified == lastModified) {
             return;
-        
+        }
+        loadUsersImmediately();
+    }
+    
+    protected void loadUsersImmediately() {
         // file was touched so reload it
     	synchronized( this ) {
 	        logger.logTrace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
@@ -403,7 +408,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	                }
 	            }
                 userMap = map;
-                this.lastModified = lastModified;
+                this.lastModified = System.currentTimeMillis();
                 logger.logTrace(Logger.SECURITY, "User file reloaded: " + map.size(), null);
 	        } catch (Exception e) {
 	            logger.logCritical(Logger.SECURITY, "Failure loading user file: " + userDB.getAbsolutePath(), e);

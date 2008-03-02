@@ -266,10 +266,30 @@ public class HTTPUtilitiesTest extends TestCase {
         Authenticator instance = (Authenticator)ESAPI.authenticator();
         instance.setCurrentHTTP(null, response);
         assertTrue(response.getCookies().isEmpty());
-        ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
-        ESAPI.httpUtilities().safeAddCookie("test2", "test2", 10000, "test", "/");
-        assertTrue(response.getHeaderNames().size() == 2);
-    }
+        try {
+        	ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
+        } catch (ValidationException e) {
+        	fail();
+        }
+        try {
+        	ESAPI.httpUtilities().safeAddCookie("test2", "test2", 10000, "test", "/");
+	    } catch (ValidationException e) {
+	    	fail();
+	    }
+        try {
+        	ESAPI.httpUtilities().safeAddCookie("tes\nt3", "test3", 10000, "test", "/");
+	    	fail();
+	    } catch (ValidationException e) {
+	    	// expected
+	    }
+        try {
+        	ESAPI.httpUtilities().safeAddCookie("test3", "te\nst3", 10000, "test", "/");
+	    	fail();
+	    } catch (ValidationException e) {
+	    	// expected
+	    }
+	    assertTrue(response.getHeaderNames().size() == 2);
+	}
 
     public void testGetStateFromEncryptedCookie() {
         System.out.println("getStateFromEncryptedCookie");
@@ -318,6 +338,7 @@ public class HTTPUtilitiesTest extends TestCase {
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
         	String decrypted = ESAPI.encryptor().decrypt( encrypted );
         } catch( EncryptionException e ) {
+        	e.printStackTrace();
         	fail();
         }
     }
