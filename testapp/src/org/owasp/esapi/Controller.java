@@ -47,6 +47,16 @@ public class Controller extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
+			
+			// FIXME - this should be in ESAPI config, enforced by ESAPIFilter using isAuthorized.
+			if ( !ESAPI.authenticator().getCurrentUser().isInRole("admin")) {
+				request.setAttribute("message", "Unauthorized" );
+				// ESAPI.authenticator().logout();
+				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
+				dispatcher.forward(request, response);
+				return;
+			}
+			
 			String function = request.getParameter("function");
 			logger.logSuccess(Logger.SECURITY, "Invoking function: " + function );
 			if ( function == null ) {

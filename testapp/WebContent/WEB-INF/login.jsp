@@ -4,10 +4,10 @@
 <title>Login</title>
 </head>
 <body>
+<%@include file="menu.jsp" %>
 
-<BR>
 <hr>
-   	<FORM method="post" action=""><br>
+   	<FORM method="post" action="/ESAPITest/controller"><br>
 		username: <INPUT name="username"><br>
 		password: <INPUT type="password" name="password"><br>
 		<BUTTON type='submit'>Login</BUTTON>

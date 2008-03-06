@@ -12,15 +12,6 @@
 <ul>
 
 <%
-	String message = (String)request.getAttribute("message");
-	if ( message != null )  {
-%>
-<h3><%=message %></h3>
-<%
-	}
-%>
-
-<%
 	AccessReferenceMap usermap = (AccessReferenceMap)session.getAttribute( "usermap" );
 	
 	if ( usermap != null ) {
