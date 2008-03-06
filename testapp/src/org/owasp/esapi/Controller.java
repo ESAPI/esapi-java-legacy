@@ -81,15 +81,13 @@ public class Controller extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
+		} catch ( EnterpriseSecurityException e ) {
+			request.setAttribute("message", "SECURITY: " + e.getUserMessage() );
+		} catch ( Exception e ) {
+			request.setAttribute("message", "ERROR" );
+		} finally {
 			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
 			dispatcher.forward(request, response);
-		} catch ( EnterpriseSecurityException e ) {
-			e.printStackTrace( response.getWriter() );
-			// try {
-			//	HTTPUtilities.getInstance().sendSafeForward("Controller", "WEB-INF/security.jsp");
-			// } catch( Exception ex ) {
-			//	throw new ServletException( "FIXME" );
-			//}
 		}
 	}
 
