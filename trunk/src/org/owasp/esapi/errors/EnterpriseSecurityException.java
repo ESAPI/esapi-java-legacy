@@ -16,7 +16,6 @@
 package org.owasp.esapi.errors;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IntrusionDetector;
 import org.owasp.esapi.Logger;
 
 /**

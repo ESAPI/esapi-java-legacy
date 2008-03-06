@@ -31,7 +31,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.interfaces.IHTTPUtilities;
 

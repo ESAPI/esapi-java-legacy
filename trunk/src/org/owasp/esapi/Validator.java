@@ -171,7 +171,6 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			int modulus = sum % 10;
 			return modulus == 0;
 		} catch( Exception e ) {
-			e.printStackTrace();
 			return false;
 		}
 	}

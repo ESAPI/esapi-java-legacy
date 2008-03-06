@@ -16,7 +16,6 @@
 package org.owasp.esapi;
 
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Set;
 
 import junit.framework.Test;
