@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.Map.Entry;
 
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.interfaces.IRandomizer;
@@ -153,7 +152,6 @@ public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessRef
 	 * @see org.owasp.esapi.interfaces.IAccessReferenceMap#getDirectReference(java.lang.String)
 	 */
 	public Object getDirectReference(String indirectReference) throws AccessControlException {
-		Iterator i = dtoi.entrySet().iterator();
 		if (itod.containsKey(indirectReference)) {
 			return itod.get(indirectReference);
 		}

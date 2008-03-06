@@ -759,9 +759,9 @@ public class User implements IUser, Serializable {
 	public void setLastHostAddress(String remoteHost) {
 		User user = ((Authenticator)ESAPI.authenticator()).getCurrentUser();
 		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+    	remoteHost = request.getRemoteAddr();
 		if ( lastHostAddress != null && lastHostAddress != remoteHost && user != null && request != null ) {
         	// returning remote address not remote hostname to prevent DNS lookup
-        	user.setLastHostAddress( request.getRemoteAddr() );
 			new AuthenticationHostException("Host change", "User session just jumped from " + lastHostAddress + " to " + remoteHost );
 			lastHostAddress = remoteHost;
 		}

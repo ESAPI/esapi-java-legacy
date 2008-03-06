@@ -10,7 +10,6 @@ import org.owasp.esapi.interfaces.IEncryptor;
 import org.owasp.esapi.interfaces.IExecutor;
 import org.owasp.esapi.interfaces.IHTTPUtilities;
 import org.owasp.esapi.interfaces.IIntrusionDetector;
-import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IRandomizer;
 import org.owasp.esapi.interfaces.ISecurityConfiguration;
 import org.owasp.esapi.interfaces.IValidator;

@@ -84,6 +84,12 @@ public interface IAuthenticator {
 	 */
 	User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;  // FIXME: Future - Should return IUser, works in Java 1.5+ but hacked here for Java 1.4
 
+	
+	/**
+	 * Logs out the current user.
+	 */
+    void logout();
+
 	/**
 	 * Creates the user.
 	 * 

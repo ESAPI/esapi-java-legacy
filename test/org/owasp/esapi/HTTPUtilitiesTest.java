@@ -338,7 +338,6 @@ public class HTTPUtilitiesTest extends TestCase {
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
         	String decrypted = ESAPI.encryptor().decrypt( encrypted );
         } catch( EncryptionException e ) {
-        	e.printStackTrace();
         	fail();
         }
     }

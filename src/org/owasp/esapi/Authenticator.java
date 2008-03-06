@@ -198,9 +198,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * fail, including logging, which requires the user identity.
      */
     public void clearCurrent() {
-    	currentUser = null;
-    	currentResponse = null;
-    	currentRequest = null;
+    	currentUser.set(null);
+    	currentResponse.set(null);
+    	currentRequest.set(null);
     }
     
     /*
@@ -475,9 +475,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
         userMap.remove(accountName.toLowerCase());
-        // Beware - the logging engine might reload inadvertently reload the user file before the save completes, overwriting the change!
         saveUsers();
-        logger.logCritical(Logger.SECURITY, "User " + accountName + " removed");
     }
 
     /**

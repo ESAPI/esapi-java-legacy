@@ -6,10 +6,9 @@
 
         <buildnumber/>
         <property name="project.name" value="${ant.project.name}"/>
-        <property name="project.version" value="1.1.${build.number}"/>
-        <property name="jar" location="${basedir}/${project.name}.jar"/>
-
+        <property name="project.version" value="1.1"/>
         <property name="build.dir" location="${basedir}/build"/>
+        <property name="jar" location="${build.dir}/${project.name}-classes.jar"/>
         <property name="src.dir" location="${basedir}/src"/>
         <property name="test.dir" location="${basedir}/test"/>
         <property name="dist.dir" location="${basedir}/dist"/>
@@ -97,7 +96,7 @@
             <libraryjar name="${java.home}/lib/rt.jar"/>
             <libraryjar name="${java.home}/lib/jsse.jar"/>
             <libraryjar name="lib/servlet-api.jar"/>
-            <outjar name="${dist.dir}/esapi-selfcontained-${project.version}.jar"/>
+            <outjar name="${dist.dir}/${project.name}-all-${project.version}.jar"/>
         </proguard>
     </target>
     <target 
