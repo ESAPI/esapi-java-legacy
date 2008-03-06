@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
+import org.owasp.esapi.errors.ValidationException;
 
 /**
  * @author jwilliams
@@ -94,7 +95,10 @@ public class Controller extends HttpServlet {
 				FunctionUnlockUser.invoke();
 			} else if ( function.equalsIgnoreCase( "password" ) ) {
 				FunctionChangePassword.invoke();
+			} else {
+				throw new ValidationException( "Invalid function", "User entered an invalid function: " + function );
 			}
+			
 		} catch ( EnterpriseSecurityException e ) {
 			request.setAttribute("message", "SECURITY: " + e.getUserMessage() );
 		} catch ( Exception e ) {
