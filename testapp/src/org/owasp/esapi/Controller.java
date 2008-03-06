@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 
 /**
@@ -48,17 +49,33 @@ public class Controller extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			
+			String function = request.getParameter("function");
+			
+			if ( function != null && function.equalsIgnoreCase( "logout" ) ) {
+				FunctionLogout.invoke();
+				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
+				dispatcher.forward(request, response);
+				return;
+			}
+		
+						
+			// Functions that require admin authorization
+
+			// Perform authorization check
 			// FIXME - this should be in ESAPI config, enforced by ESAPIFilter using isAuthorized.
+			// Note: Since these are single-role functions, a centralized authorization check is appropriate.
+			// If these functions were "multi-role" then the isAuthorized call should go in each function.
+			
 			if ( !ESAPI.authenticator().getCurrentUser().isInRole("admin")) {
-				request.setAttribute("message", "Unauthorized" );
-				// ESAPI.authenticator().logout();
+				FunctionLogout.invoke();
+				request.setAttribute("message", "Authentication failed" );
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
 				dispatcher.forward(request, response);
 				return;
 			}
 			
-			String function = request.getParameter("function");
-			logger.logSuccess(Logger.SECURITY, "Invoking function: " + function );
+			
+			// Functions that do not require authorization
 			if ( function == null ) {
 				FunctionUpdateUsermap.invoke();
 			} else if ( function.equalsIgnoreCase( "create" ) ) {
@@ -67,6 +84,8 @@ public class Controller extends HttpServlet {
 				FunctionDeleteUser.invoke();
 			} else if ( function.equalsIgnoreCase( "enable" ) ) {
 				FunctionEnableUser.invoke();
+			} else if ( function.equalsIgnoreCase( "update" ) ) {
+				FunctionUpdatePassword.invoke();
 			} else if ( function.equalsIgnoreCase( "disable" ) ) {
 				FunctionDisableUser.invoke();
 			} else if ( function.equalsIgnoreCase( "lock" ) ) {
@@ -75,20 +94,22 @@ public class Controller extends HttpServlet {
 				FunctionUnlockUser.invoke();
 			} else if ( function.equalsIgnoreCase( "password" ) ) {
 				FunctionChangePassword.invoke();
-			} else if ( function.equalsIgnoreCase( "logout" ) ) {
-				FunctionLogout.invoke();
-				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
-				dispatcher.forward(request, response);
-				return;
 			}
 		} catch ( EnterpriseSecurityException e ) {
 			request.setAttribute("message", "SECURITY: " + e.getUserMessage() );
 		} catch ( Exception e ) {
+			logger.logError( Logger.SECURITY, e.getMessage(), e );
 			request.setAttribute("message", "ERROR" );
-		} finally {
-			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
-			dispatcher.forward(request, response);
 		}
+		// FIXME: this should be automatic inside Authenticator/User somehow.
+		try {
+			Authenticator auth = (Authenticator)ESAPI.authenticator();
+			auth.saveUsers();
+		} catch( AuthenticationException e ) {
+			request.setAttribute( "message", e.getUserMessage() );
+		}
+		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
+		dispatcher.forward(request, response);
 	}
 
 }

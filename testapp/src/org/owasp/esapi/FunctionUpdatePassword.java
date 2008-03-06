@@ -4,20 +4,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 
-public class FunctionChangePassword {
-
+public class FunctionUpdatePassword {
+	
 	public static void invoke() throws EnterpriseSecurityException {
 		Authenticator auth = ((Authenticator)ESAPI.authenticator());
 		HttpServletRequest request = auth.getCurrentRequest();		
 		AccessReferenceMap arm = FunctionUpdateUsermap.invoke();
-		// FIXME: add parameter set validation...
-		// Validator.isValidParameterSet( required, optional, actual );
 		String param = request.getParameter("user");
 		String accountName = (String)arm.getDirectReference(param);
-		Controller.logger.logSuccess(Logger.SECURITY, "Function: change password: " + accountName );
-		String newPassword = auth.getUser(accountName).resetPassword();
-		request.setAttribute("newPassword", newPassword);
-		request.setAttribute("passwordUserRef", arm.getIndirectReference(accountName));
+		Controller.logger.logSuccess(Logger.SECURITY, "Function: override password for user " + accountName );
+		String newpass = request.getParameter("password");
+		auth.getUser(accountName).changePassword(newpass, newpass);  // FIXME: enter twice
 	}
+	
 
 }

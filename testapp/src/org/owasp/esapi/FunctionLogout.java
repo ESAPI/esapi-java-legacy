@@ -6,7 +6,9 @@ public class FunctionLogout {
 
 	public static void invoke() throws EnterpriseSecurityException {
 		Controller.logger.logSuccess(Logger.SECURITY, "Function: logout" );
-		ESAPI.authenticator().logout();
+		Authenticator auth = (Authenticator)ESAPI.authenticator();
+		auth.getCurrentRequest().setAttribute("message", "User logged out" );
+		auth.logout();
 	}
 
 }

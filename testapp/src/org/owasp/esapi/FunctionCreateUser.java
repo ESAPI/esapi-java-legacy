@@ -29,6 +29,8 @@ public class FunctionCreateUser {
 					Set roles = new HashSet( Arrays.asList(rolelist) );
 					u.setRoles( roles );
 				}
+				AccessReferenceMap arm = FunctionUpdateUsermap.invoke();
+				request.setAttribute("passwordUserRef", arm.getIndirectReference(accountName));
 			} else {
 				// FIXME: create Controller.addMessage();
 				request.setAttribute("message", "User already exists" );

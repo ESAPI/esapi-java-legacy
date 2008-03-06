@@ -14,7 +14,7 @@
 		Last Failed Login: <%=user.getLastFailedLoginTime() %><br>
 		Current Roles: <%=user.getRoles() %><br>
 		Last Host Name: <%=user.getLastHostAddress() %><br>
-		Current Cookie: <script>document.write(document.cookie)</script>
+		Current Cookie: <script>document.write(document.cookie)</script><br>
 		<a href="controller?function=logout">Logout</a><br>
 <%
 	}

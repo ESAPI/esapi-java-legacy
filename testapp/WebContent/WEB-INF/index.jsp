@@ -79,12 +79,18 @@
 
 <%
 	String newPassword = ESAPI.encoder().encodeForHTML((String)request.getAttribute("newPassword" ));
+    String passwordUserRef=(String)request.getAttribute("passwordUserRef");
 	if ( newPassword != null && !newPassword.isEmpty() ) {
 %>
+	<FORM method="post" action="controller?function=update">
+	<input type="hidden" name="user" value="<%=passwordUserRef %>">
 	<table border=1>
 		<tr><td>New Password Generated</td></tr>
 		<tr><td><%=newPassword%></td></tr>
+		<tr><td>Manual Override: <INPUT type="password" name="password"></td></tr>
 	</table>
+	<BUTTON type="submit">update password</BUTTON>
+	</FORM>
 <%
 	}
 %>
