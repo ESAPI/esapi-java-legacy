@@ -115,11 +115,11 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 
 	// FIXME: ENHANCE make all character sets configurable
 	/**
-	 * Password character set, is alphanumerics (without i, I, o, O, and 0) +
+	 * Password character set, is alphanumerics (without l, i, I, o, O, and 0)
 	 * selected specials like + (bad for URL encoding, | is like i and 1,
 	 * etc...)
 	 */
-	final static char[] CHAR_PASSWORD = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '8', '9', '.', '!', '@', '$', '*', '=', '?' };
+	final static char[] CHAR_PASSWORD = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '8', '9', '_', '.', '!', '@', '$', '*', '=', '-', '?' };
 
 	private static HashMap characterToEntityMap;
 

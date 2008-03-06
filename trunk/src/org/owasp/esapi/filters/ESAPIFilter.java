@@ -80,6 +80,7 @@ public class ESAPIFilter implements Filter {
 				((Authenticator)ESAPI.authenticator()).logout();
 				// FIXME: use safeforward!
 				// FIXME: make configurable with servletconfig
+				request.setAttribute("message", "Authentication failed");
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
 				dispatcher.forward(request, response);
 				return;
