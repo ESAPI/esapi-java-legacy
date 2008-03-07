@@ -130,27 +130,34 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     
     /** The anonymous user */
     // FIXME: AAA is this whole anonymous user concept right?
-    User anonymous = new User("anonymous", "anonymous");
+    static User anonymous = new User("anonymous", "anonymous");
 
     /** The user map. */
     private Map userMap = new HashMap();
 
+    
     /*
      * The currentUser ThreadLocal variable is used to make the currentUser available to any call in any part of an
      * application. Otherwise, each thread would have to pass the User object through the calltree to any methods that
      * need it. Because we want exceptions and log calls to contain user data, that could be almost anywhere. Therefore,
      * the ThreadLocal approach simplifies things greatly. <P> As a possible extension, one could create a delegation
-     * framework by adding another ThreadLocal to hold the delgating user identity.
+     * framework by adding another ThreadLocal to hold the delegating user identity.
      */
-    private ThreadLocal currentUser = new ThreadLocal() {
-        private User user = anonymous;
+    private static ThreadLocalUser currentUser = new ThreadLocalUser();
 
-        public Object get() {
-            return user;
+    private static class ThreadLocalUser extends InheritableThreadLocal {
+        
+        public Object initialValue() {
+        	return anonymous;
+        }
+        
+        public IUser getUser() {
+            return (IUser)super.get();
         }
 
-        public void set(Object newValue) {
-            user = (User)newValue;
+        public void setUser(IUser newUser) {
+        	// System.out.println( "SETTING Thread: " + Thread.currentThread() + " " + (getUser() != null ? getUser().getAccountName() : "null" ) + " --> " + (newUser != null ? (newUser).getAccountName() : "null" ) );
+            super.set(newUser);
         }
     };
 
@@ -159,15 +166,20 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * application. This enables API's for actions that require the request to be much simpler. For example, the logout()
      * method in the Authenticator class requires the currentRequest to get the session in order to invalidate it.
      */
-    private ThreadLocal currentRequest = new ThreadLocal() {
-        private HttpServletRequest request = null;
+    private static ThreadLocalRequest currentRequest = new ThreadLocalRequest();
 
-        public Object get() {
-            return request;
+    private static class ThreadLocalRequest extends InheritableThreadLocal {
+        
+        public Object initialValue() {
+        	return null;
+        }
+        
+        public HttpServletRequest getRequest() {
+            return (HttpServletRequest)super.get();
         }
 
-        public void set(Object newValue) {
-            request = (HttpServletRequest)newValue;
+        public void setUser(HttpServletRequest newRequest) {
+            super.set(newRequest);
         }
     };
 
@@ -176,18 +188,24 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * application. This enables API's for actions that require the response to be much simpler. For example, the logout()
      * method in the Authenticator class requires the currentResponse to kill the JSESSIONID cookie.
      */
-    private ThreadLocal currentResponse = new ThreadLocal() {
-        private HttpServletResponse response = null;
+    private static ThreadLocalResponse currentResponse = new ThreadLocalResponse();
 
-        public Object get() {
-            return response;
+    private static class ThreadLocalResponse extends InheritableThreadLocal {
+        
+        public Object initialValue() {
+        	return null;
+        }
+        
+        public HttpServletResponse getResponse() {
+            return (HttpServletResponse)super.get();
         }
 
-        public void set(Object newValue) {
-            response = (HttpServletResponse)newValue;
+        public void setUser(HttpServletResponse newResponse) {
+            super.set(newResponse);
         }
     };
-    
+
+       
     
     public Authenticator() {
     }
@@ -198,7 +216,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * fail, including logging, which requires the user identity.
      */
     public void clearCurrent() {
-    	currentUser.set(null);
+    	currentUser.setUser(null);
     	currentResponse.set(null);
     	currentRequest.set(null);
     }
@@ -244,19 +262,13 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 
     private String generateStrongPassword(String oldPassword) {
         IRandomizer r = ESAPI.randomizer();
-        String newPassword = "";
-        int limit = 10;
-        for (int i=0; i<limit; i++) {
-            try {
-                newPassword = r.getRandomString(8, Encoder.CHAR_PASSWORD);
-                verifyPasswordStrength(newPassword, oldPassword);
-                return newPassword;
-            } catch (AuthenticationException e) {
-                logger.logDebug(Logger.SECURITY, "Password generator created weak password: " + newPassword + ". Regenerating.", e);
-            }
-        }
-        logger.logCritical(Logger.SECURITY, "Strong password generation failed after  " + limit + " attempts");
-        return null;
+        int letters = r.getRandomInteger(4, 6);  // inclusive, exclusive
+        int digits = 7-letters;
+        String passLetters = r.getRandomString(letters, Encoder.CHAR_PASSWORD_LETTERS );
+        String passDigits = r.getRandomString( digits, Encoder.CHAR_PASSWORD_DIGITS );
+        String passSpecial = r.getRandomString( 1, Encoder.CHAR_PASSWORD_SPECIALS );
+        String newPassword = passLetters + passSpecial + passDigits;
+        return newPassword;
     }
     
     /*
@@ -278,9 +290,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#getCurrentUser()
      */
     public User getCurrentUser() {
-    	if ( currentUser == null ) {
-    		return anonymous;
-    	}
         User user = (User)currentUser.get();
         if (user == null)
             user = anonymous;
@@ -323,16 +332,13 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @param request the request
      * @return the user from session
      */
-    public User getUserFromSession(HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        if (session != null) {
-            String userName = (String) session.getAttribute(USER);
-            if (userName != null) {
-                User sessionUser = this.getUser(userName);
-                if (sessionUser != null) {
-                    setCurrentUser(sessionUser);
-                    return sessionUser;
-                }
+    public User getUserFromSession() {
+        HttpSession session = getCurrentRequest().getSession();
+        String userName = (String) session.getAttribute(USER);
+        if (userName != null) {
+            User sessionUser = this.getUser(userName);
+            if (sessionUser != null) {
+                return sessionUser;
             }
         }
         return null;
@@ -523,7 +529,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             	new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName );
             }
         }
-        logger.logTrace(Logger.SECURITY, "User file updated", null);
     }
 
     /**
@@ -539,6 +544,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
+    	if ( request == null || response == null ) {
+            throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
+    	}
     	// save the current request and response in the threadlocal variables
     	setCurrentHTTP(request, response);
     	
@@ -548,7 +556,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         User user = null;
 
         // if there's a user in the session then set that and quit
-        user = getUserFromSession(request);
+        user = getUserFromSession();
         
         if ( user != null ) {
             user.setLastHostAddress( request.getRemoteHost() );
@@ -602,7 +610,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#setCurrentUser(org.owasp.esapi.User)
      */
     public void setCurrentUser(IUser user) {
-        currentUser.set(user);
+        currentUser.setUser(user);
     }
 
     /*
@@ -611,6 +619,10 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#setCurrentHTTP(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
      */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
+    	if ( request == null || response == null ) {
+            new AuthenticationCredentialsException( "Invalid request or response", "Request or response objects were null" );
+            return;
+    	}
     	currentRequest.set(request);
         currentResponse.set(response);
     }
@@ -678,8 +690,10 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
                 break;
             }
         int strength = newPassword.length() * charsets;
-        if (strength < 16)
+        if (strength < 16) {
+        	// FIXME: enhance - make password strength configurable
             throw new AuthenticationCredentialsException("Invalid password", "New password is not long and complex enough");
+        }
     }
 
 }

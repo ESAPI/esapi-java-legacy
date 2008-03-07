@@ -155,6 +155,6 @@ public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessRef
 		if (itod.containsKey(indirectReference)) {
 			return itod.get(indirectReference);
 		}
-		throw new AccessControlException("Access denied", "Request for invalid indirect reference");
+		throw new AccessControlException("Access denied", "Request for invalid indirect reference: " + indirectReference);
 	}
 }

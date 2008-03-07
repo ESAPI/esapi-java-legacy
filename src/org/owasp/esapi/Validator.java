@@ -186,7 +186,6 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	        
 			// do basic validation
 			Pattern directoryNamePattern = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("DirectoryName");
-			System.out.println( "XXXX: " + directoryNamePattern );
 			if ( !directoryNamePattern.matcher(canonical).matches() ) {
 				new ValidationException("Invalid directory name", "Attempt to use a directory name (" + canonical + ") that violates the global rule in ESAPI.properties (" + directoryNamePattern.pattern() +")" );
 				return false;

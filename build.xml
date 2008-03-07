@@ -96,7 +96,7 @@
             <libraryjar name="${java.home}/lib/rt.jar"/>
             <libraryjar name="${java.home}/lib/jsse.jar"/>
             <libraryjar name="lib/servlet-api.jar"/>
-            <outjar name="${dist.dir}/${project.name}-all-${project.version}.jar"/>
+            <outjar name="${dist.dir}/${project.name}-${project.version}.jar"/>
         </proguard>
     </target>
     <target 

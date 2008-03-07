@@ -272,7 +272,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException {
 		if (!hashedPassword.equals(ESAPI.authenticator().hashPassword(oldPassword, getAccountName()))) {
-			throw new AuthenticationCredentialsException("Password change failed", "Authentication failed for password chanage on user: " + getAccountName() );
+			throw new AuthenticationCredentialsException("Password change failed", "Authentication failed for password change on user: " + getAccountName() );
 		}
 		if (newPassword1 == null || newPassword2 == null || !newPassword1.equals(newPassword2)) {
 			throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + getAccountName() );
@@ -760,7 +760,7 @@ public class User implements IUser, Serializable {
 		User user = ((Authenticator)ESAPI.authenticator()).getCurrentUser();
 		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
     	remoteHost = request.getRemoteAddr();
-		if ( lastHostAddress != null && lastHostAddress != remoteHost && user != null && request != null ) {
+		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost) && user != null && request != null ) {
         	// returning remote address not remote hostname to prevent DNS lookup
 			new AuthenticationHostException("Host change", "User session just jumped from " + lastHostAddress + " to " + remoteHost );
 			lastHostAddress = remoteHost;

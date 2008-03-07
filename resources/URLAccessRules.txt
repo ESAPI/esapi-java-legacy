@@ -5,6 +5,7 @@
 /nobody          | any       | deny  |
 /ESAPITest       | any       | allow |
 /ESAPITest/admin | admin     | allow |
+/AspectUpload/*  | any       | allow |
 /test/admin      | admin     | allow |
 /test/user       | user      | allow |
 /test/none       | any       | deny  |

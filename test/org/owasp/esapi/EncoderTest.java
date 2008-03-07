@@ -247,12 +247,7 @@ public class EncoderTest extends TestCase {
         IEncoder instance = ESAPI.encoder();
         try {
             assertEquals("<script>", instance.decodeFromURL("%3Cscript%3E"));
-            for ( int i=0; i < 100; i++ ) {
-                String r = ESAPI.randomizer().getRandomString( 20, Encoder.CHAR_PASSWORD );
-                String encoded = instance.encodeForURL( r );
-                String decoded = instance.decodeFromURL( encoded );
-                assertEquals( r, decoded );
-            }
+            assertEquals("     ", instance.decodeFromURL("+++++") );
         } catch ( Exception e ) {
             fail();
         }
