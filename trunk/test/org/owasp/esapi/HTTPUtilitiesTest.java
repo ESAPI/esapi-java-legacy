@@ -336,7 +336,7 @@ public class HTTPUtilitiesTest extends TestCase {
 	        ESAPI.httpUtilities().encryptStateInCookie(map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-        	String decrypted = ESAPI.encryptor().decrypt( encrypted );
+        	ESAPI.encryptor().decrypt( encrypted );
         } catch( EncryptionException e ) {
         	fail();
         }

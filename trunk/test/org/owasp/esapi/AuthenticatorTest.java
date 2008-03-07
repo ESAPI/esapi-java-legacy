@@ -229,7 +229,7 @@ public class AuthenticatorTest extends TestCase {
 		request.addParameter("password", password);
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		instance.login( request, response);
-		User test = instance.getUserFromSession(request);
+		User test = instance.getUserFromSession();
 		assertEquals( user, test );
 	}
 

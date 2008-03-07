@@ -357,7 +357,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 					megaBytes = mBytes;
 					progress = (long) (((double) pBytesRead / (double) pContentLength) * 100);
 					session.setAttribute("progress", Long.toString(progress));
-					logger.logSuccess(Logger.SECURITY, "   Item " + pItems + " (" + progress + "% of " + pContentLength + " bytes]");
+					// logger.logSuccess(Logger.SECURITY, "   Item " + pItems + " (" + progress + "% of " + pContentLength + " bytes]");
 				}
 			};
 			upload.setProgressListener(progressListener);
@@ -371,7 +371,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 					String filename = fparts[fparts.length - 1];
 
 					if (!ESAPI.validator().isValidFileName("upload", filename)) {
-						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Invalid filename for upload");
+						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
 					logger.logCritical(Logger.SECURITY, "File upload requested: " + filename);
@@ -395,7 +395,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		} catch (Exception e) {
 			if (e instanceof ValidationUploadException)
 				throw (ValidationException) e;
-			throw new ValidationUploadException("Upload failure", "Problem during upload", e);
+			throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
 		}
 	}
 

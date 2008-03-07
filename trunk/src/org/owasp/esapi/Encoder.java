@@ -119,7 +119,11 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * selected specials like + (bad for URL encoding, | is like i and 1,
 	 * etc...)
 	 */
-	final static char[] CHAR_PASSWORD = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '2', '3', '4', '5', '6', '7', '8', '9', '_', '.', '!', '@', '$', '*', '=', '-', '?' };
+	final static char[] CHAR_PASSWORD_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	final static char[] CHAR_PASSWORD_DIGITS = { '2', '3', '4', '5', '6', '7', '8', '9' };
+	final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
+	final static char[] CHAR_PASSWORD_LETTERS = Randomizer.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
 
 	private static HashMap characterToEntityMap;
 
@@ -1010,7 +1014,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	}
 
 	public static void main(String[] args) {
-		Encoder encoder = new Encoder();
+		// Encoder encoder = new Encoder();
 		// try { System.out.println( ">>" + encoder.encodeForHTML("test <>
 		// test") ); } catch( Exception e1 ) { System.out.println(" !" +
 		// e1.getMessage() ); }

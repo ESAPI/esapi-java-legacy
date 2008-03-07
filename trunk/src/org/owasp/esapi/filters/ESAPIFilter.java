@@ -72,6 +72,7 @@ public class ESAPIFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
+		
 		try {
 			// figure out who the current user is
 			try {
@@ -90,10 +91,20 @@ public class ESAPIFilter implements Filter {
 			logger.logHTTPRequest(Logger.SECURITY, request, Arrays.asList(ignore));
 
 			// check access to this URL
-			ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());
+			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString()) ) {
+				request.setAttribute("message", "Unauthorized" );
+				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
+				dispatcher.forward(request, response);
+				return;
+			}
 
 			// verify if this request meets the baseline input requirements
-			ESAPI.validator().isValidHTTPRequest(request);
+			if ( !ESAPI.validator().isValidHTTPRequest(request) ) {
+				request.setAttribute("message", "Validation error" );
+				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
+				dispatcher.forward(request, response);
+				return;
+			}
 
 			// check for CSRF attacks and set appropriate caching headers
 			IHTTPUtilities utils = ESAPI.httpUtilities();
@@ -104,11 +115,12 @@ public class ESAPIFilter implements Filter {
 			// forward this request on to the web application
 			chain.doFilter(request, response);
 		} catch (Exception e) {
-			logger.logSpecial( "Security error in ESAPI Filter", e );
-			response.getWriter().println("<H1>Security Error</H1>");
-			e.printStackTrace(response.getWriter());
+			logger.logError( Logger.SECURITY, "Error in security filter: " + e.getMessage(), e );
+			request.setAttribute("message", e.getMessage() );
 		} finally {
+			// VERY IMPORTANT
 			// clear out the ThreadLocal variables in the authenticator
+			// some containers could possibly reuse this thread without clearing the User
 			ESAPI.authenticator().clearCurrent();
 		}
 	}
