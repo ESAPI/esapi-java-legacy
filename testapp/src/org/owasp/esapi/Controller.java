@@ -48,8 +48,16 @@ public class Controller extends HttpServlet {
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+		// verify there's a user logged in - double check ESAPI filter
+		User user = ESAPI.authenticator().getCurrentUser();
+		if ( user == null ) {
+			RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
+			dispatcher.forward(request, response);
+			return;
+		}
+
 		try {
-			
 			String function = request.getParameter("function");
 			
 			if ( function != null && function.equalsIgnoreCase( "logout" ) ) {
@@ -58,8 +66,7 @@ public class Controller extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-		
-						
+				
 			// Functions that require admin authorization
 
 			// Perform authorization check
@@ -74,9 +81,7 @@ public class Controller extends HttpServlet {
 				dispatcher.forward(request, response);
 				return;
 			}
-			
-			
-			// Functions that do not require authorization
+						
 			if ( function == null ) {
 				FunctionUpdateUsermap.invoke();
 			} else if ( function.equalsIgnoreCase( "create" ) ) {
@@ -85,32 +90,27 @@ public class Controller extends HttpServlet {
 				FunctionDeleteUser.invoke();
 			} else if ( function.equalsIgnoreCase( "enable" ) ) {
 				FunctionEnableUser.invoke();
-			} else if ( function.equalsIgnoreCase( "update" ) ) {
-				FunctionUpdatePassword.invoke();
 			} else if ( function.equalsIgnoreCase( "disable" ) ) {
 				FunctionDisableUser.invoke();
 			} else if ( function.equalsIgnoreCase( "lock" ) ) {
 				FunctionLockUser.invoke();
 			} else if ( function.equalsIgnoreCase( "unlock" ) ) {
 				FunctionUnlockUser.invoke();
+			} else if ( function.equalsIgnoreCase( "update" ) ) {
+				FunctionUpdatePassword.invoke();
 			} else if ( function.equalsIgnoreCase( "password" ) ) {
 				FunctionChangePassword.invoke();
 			} else {
 				throw new ValidationException( "Invalid function", "User entered an invalid function: " + function );
 			}
-			
+			// Save user file to persist any changes
+			Authenticator auth = (Authenticator)ESAPI.authenticator();
+			auth.saveUsers();
 		} catch ( EnterpriseSecurityException e ) {
 			request.setAttribute("message", "SECURITY: " + e.getUserMessage() );
 		} catch ( Exception e ) {
 			logger.logError( Logger.SECURITY, e.getMessage(), e );
 			request.setAttribute("message", "ERROR" );
-		}
-		// FIXME: this should be automatic inside Authenticator/User somehow.
-		try {
-			Authenticator auth = (Authenticator)ESAPI.authenticator();
-			auth.saveUsers();
-		} catch( AuthenticationException e ) {
-			request.setAttribute( "message", e.getUserMessage() );
 		}
 		RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
 		dispatcher.forward(request, response);
