@@ -693,10 +693,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
                 charsets++;
                 break;
             }
-        int strength = newPassword.length() * charsets;
         
-        System.out.println( " >>> PW: " + newPassword + "-->" + strength );
-        
+        // calculate and verify password strength
+        int strength = newPassword.length() * charsets;        
         if (strength < 16) {
         	// FIXME: enhance - make password strength configurable
             throw new AuthenticationCredentialsException("Invalid password", "New password is not long and complex enough");
