@@ -19,9 +19,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import sun.text.Normalizer;   // Java 1.4
-// import java.text.Normalizer;  // Java 1.6
-// import java.text.Normalizer.Form;  // Java 1.6
+import java.util.Arrays;
 import java.util.HashMap;
 
 import org.owasp.esapi.errors.EncodingException;
@@ -29,6 +27,7 @@ import org.owasp.esapi.errors.IntrusionException;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
+import sun.text.Normalizer;
 
 /**
  * Reference implementation of the IEncoder interface. This implementation takes
@@ -99,7 +98,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
 	/** The Constant CHAR_UPPERS. */
-	final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' };
+	final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 	/** The Constant CHAR_DIGITS. */
 	final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
@@ -130,6 +129,24 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	private static HashMap entityToCharacterMap;
 
 	public Encoder() {
+		Arrays.sort( Encoder.IMMUNE_HTML );
+		Arrays.sort( Encoder.IMMUNE_HTMLATTR );
+		Arrays.sort( Encoder.IMMUNE_JAVASCRIPT );
+		Arrays.sort( Encoder.IMMUNE_VBSCRIPT );
+		Arrays.sort( Encoder.IMMUNE_XML );
+		Arrays.sort( Encoder.IMMUNE_XMLATTR );
+		Arrays.sort( Encoder.IMMUNE_XPATH );
+		Arrays.sort( Encoder.CHAR_LOWERS );
+		Arrays.sort( Encoder.CHAR_UPPERS );
+		Arrays.sort( Encoder.CHAR_DIGITS );
+		Arrays.sort( Encoder.CHAR_SPECIALS );
+		Arrays.sort( Encoder.CHAR_LETTERS );
+		Arrays.sort( Encoder.CHAR_ALPHANUMERICS );
+		Arrays.sort( Encoder.CHAR_PASSWORD_LOWERS );
+		Arrays.sort( Encoder.CHAR_PASSWORD_UPPERS );
+		Arrays.sort( Encoder.CHAR_PASSWORD_DIGITS );
+		Arrays.sort( Encoder.CHAR_PASSWORD_SPECIALS );
+		Arrays.sort( Encoder.CHAR_PASSWORD_LETTERS );
 		initializeMaps();
 	}
 

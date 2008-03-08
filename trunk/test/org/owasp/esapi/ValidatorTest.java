@@ -29,6 +29,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
+import org.owasp.esapi.http.TestHttpServletResponse;
 import org.owasp.esapi.interfaces.IValidator;
 
 /**
@@ -283,10 +284,11 @@ public class ValidatorTest extends TestCase {
 		optionalNames.add("p5");
 		optionalNames.add("p6");
         TestHttpServletRequest request = new TestHttpServletRequest();
+        TestHttpServletResponse response = new TestHttpServletResponse();
 		request.addParameter("p1","value");
 		request.addParameter("p2","value");
 		request.addParameter("p3","value");
-        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, null);
+        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
 		IValidator instance = ESAPI.validator();
 		assertTrue(instance.isValidParameterSet(requiredNames, optionalNames));
 		request.addParameter("p4","value");
