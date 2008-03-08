@@ -549,28 +549,32 @@ public class User implements IUser, Serializable {
 	public void loginWithPassword(String password) throws AuthenticationException {
 		if ( password == null || password.equals("") ) {
 			setLastFailedLoginTime(new Date());
+			incrementFailedLoginCount();
 			throw new AuthenticationLoginException( "Login failed", "Missing password: " + accountName  );
 		}
 		
 		// don't let disabled users log in
 		if ( !isEnabled() ) {
 			setLastFailedLoginTime(new Date());
+			incrementFailedLoginCount();
 			throw new AuthenticationLoginException("Login failed", "Disabled user attempt to login: " + accountName );
 		}
 		
 		// don't let locked users log in
 		if ( isLocked() ) {
 			setLastFailedLoginTime(new Date());
+			incrementFailedLoginCount();
 			throw new AuthenticationLoginException("Login failed", "Locked user attempt to login: " + accountName );
 		}
 		
 		// don't let expired users log in
 		if ( isExpired() ) {
 			setLastFailedLoginTime(new Date());
+			incrementFailedLoginCount();
 			throw new AuthenticationLoginException("Login failed", "Expired user attempt to login: " + accountName );
 		}
 		
-		// if there is a user already logged in, log them out and then authenticate the new user
+		// if this user is already logged in, log them out and reauthenticate
 		if ( !isAnonymous() ) {
 			logout();
 		}
