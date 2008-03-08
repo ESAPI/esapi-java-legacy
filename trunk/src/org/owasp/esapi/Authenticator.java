@@ -555,7 +555,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         }
         User user = null;
 
-        // if there's a user in the session then set that and quit
+        // if there's a user in the session then use that
         user = getUserFromSession();
         
         if ( user != null ) {
@@ -567,25 +567,29 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             user.setFirstRequest(true);
         }
 
-        // don't let anonyous user log in
+        // don't let anonymous user log in
         if (user.isAnonymous()) {
+        	user.logout();
             throw new AuthenticationLoginException("Login failed", "Anonymous user cannot be set to current user");
         }
 
         // don't let disabled users log in
         if (!user.isEnabled()) {
+        	user.logout();
             user.setLastFailedLoginTime(new Date());
             throw new AuthenticationLoginException("Login failed", "Disabled user cannot be set to current user: " + user.getAccountName());
         }
 
         // don't let locked users log in
         if (user.isLocked()) {
+        	user.logout();
             user.setLastFailedLoginTime(new Date());
             throw new AuthenticationLoginException("Login failed", "Locked user cannot be set to current user: " + user.getAccountName());
         }
 
         // don't let expired users log in
         if (user.isExpired()) {
+        	user.logout();
             user.setLastFailedLoginTime(new Date());
             throw new AuthenticationLoginException("Login failed", "Expired user cannot be set to current user: " + user.getAccountName());
         }
