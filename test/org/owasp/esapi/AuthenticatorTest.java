@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 
@@ -125,14 +126,16 @@ public class AuthenticatorTest extends TestCase {
 	 *             the authentication exception
 	 */
 	public void testGenerateStrongPassword() throws AuthenticationException {
-		System.out.println("generateStrongPassword");
+		System.out.println("generateStrongPassword");		
 		IAuthenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
+		String newPassword = null;
 		for (int i = 0; i < 100; i++) {
             try {
-                String newPassword = instance.generateStrongPassword();
+                newPassword = instance.generateStrongPassword();
                 instance.verifyPasswordStrength(newPassword, oldPassword);
             } catch( AuthenticationException e ) {
+            	System.out.println( "  FAILED >> " + newPassword );
                 fail();
             }
 		}

@@ -114,9 +114,10 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testChangeSessionIdentifier() throws EnterpriseSecurityException {
         System.out.println("changeSessionIdentifier");
         TestHttpServletRequest request = new TestHttpServletRequest();
+        TestHttpServletResponse response = new TestHttpServletResponse();
         TestHttpSession session = (TestHttpSession) request.getSession();
         Authenticator instance = (Authenticator)ESAPI.authenticator();
-        instance.setCurrentHTTP(request, null);
+        instance.setCurrentHTTP(request, response);
         session.setAttribute("one", "one");
         session.setAttribute("two", "two");
         session.setAttribute("three", "three");
@@ -137,8 +138,9 @@ public class HTTPUtilitiesTest extends TestCase {
         byte[] bytes = getBytesFromFile(new File(home, "multipart.txt"));
         System.out.println( "===========\n" + new String( bytes ) + "\n===========" );
         TestHttpServletRequest request = new TestHttpServletRequest("/test", bytes);
+        TestHttpServletResponse response = new TestHttpServletResponse();
         Authenticator instance = (Authenticator)ESAPI.authenticator();
-        instance.setCurrentHTTP(request, null);
+        instance.setCurrentHTTP(request, response);
         try {
             ESAPI.httpUtilities().getSafeFileUploads(home, home);
         } catch (ValidationException e) {
@@ -262,9 +264,10 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSetCookie() {
         System.out.println("setCookie");
+        TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
         Authenticator instance = (Authenticator)ESAPI.authenticator();
-        instance.setCurrentHTTP(null, response);
+        instance.setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
         try {
         	ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
@@ -347,9 +350,10 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSetNoCacheHeaders() {
         System.out.println("setNoCacheHeaders");
+        TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
         Authenticator auth = (Authenticator)ESAPI.authenticator();
-        auth.setCurrentHTTP(null, response);
+        auth.setCurrentHTTP(request, response);
         assertTrue(response.getHeaderNames().isEmpty());
         response.addHeader("test1", "1");
         response.addHeader("test2", "2");
