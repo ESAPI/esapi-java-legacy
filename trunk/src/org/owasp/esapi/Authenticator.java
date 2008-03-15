@@ -143,9 +143,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * the ThreadLocal approach simplifies things greatly. <P> As a possible extension, one could create a delegation
      * framework by adding another ThreadLocal to hold the delegating user identity.
      */
-    private static ThreadLocalUser currentUser = new ThreadLocalUser();
+    private ThreadLocalUser currentUser = new ThreadLocalUser();
 
-    private static class ThreadLocalUser extends InheritableThreadLocal {
+    private class ThreadLocalUser extends InheritableThreadLocal {
         
         public Object initialValue() {
         	return anonymous;
@@ -166,9 +166,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * application. This enables API's for actions that require the request to be much simpler. For example, the logout()
      * method in the Authenticator class requires the currentRequest to get the session in order to invalidate it.
      */
-    private static ThreadLocalRequest currentRequest = new ThreadLocalRequest();
+    private ThreadLocalRequest currentRequest = new ThreadLocalRequest();
 
-    private static class ThreadLocalRequest extends InheritableThreadLocal {
+    private class ThreadLocalRequest extends InheritableThreadLocal {
         
         public Object initialValue() {
         	return null;
@@ -188,9 +188,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * application. This enables API's for actions that require the response to be much simpler. For example, the logout()
      * method in the Authenticator class requires the currentResponse to kill the JSESSIONID cookie.
      */
-    private static ThreadLocalResponse currentResponse = new ThreadLocalResponse();
+    private ThreadLocalResponse currentResponse = new ThreadLocalResponse();
 
-    private static class ThreadLocalResponse extends InheritableThreadLocal {
+    private class ThreadLocalResponse extends InheritableThreadLocal {
         
         public Object initialValue() {
         	return null;
@@ -550,9 +550,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     	// save the current request and response in the threadlocal variables
     	setCurrentHTTP(request, response);
     	
-        if ( !ESAPI.httpUtilities().isSecureChannel() ) {
-            new AuthenticationCredentialsException( "Session exposed", "Authentication attempt made over non-SSL connection. Check web.xml and server configuration" );
-        }
         User user = null;
 
         // if there's a user in the session then use that
@@ -567,31 +564,36 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             user.setFirstRequest(true);
         }
 
+        // warn if this authentication request came over a non-SSL connection, exposing credentials or session id
+        if ( !ESAPI.httpUtilities().isSecureChannel() ) {
+            new AuthenticationCredentialsException( "Session or credentials exposed", "Authentication attempt made over non-SSL connection. Check web.xml and server configuration. User: " + user.getAccountName() );
+        }
+                
         // don't let anonymous user log in
         if (user.isAnonymous()) {
         	user.logout();
-            throw new AuthenticationLoginException("Login failed", "Anonymous user cannot be set to current user");
+            throw new AuthenticationLoginException("Login failed", "Anonymous user cannot be set to current user. User: " + user.getAccountName() );
         }
 
         // don't let disabled users log in
         if (!user.isEnabled()) {
         	user.logout();
             user.setLastFailedLoginTime(new Date());
-            throw new AuthenticationLoginException("Login failed", "Disabled user cannot be set to current user: " + user.getAccountName());
+            throw new AuthenticationLoginException("Login failed", "Disabled user cannot be set to current user. User: " + user.getAccountName() );
         }
 
         // don't let locked users log in
         if (user.isLocked()) {
         	user.logout();
             user.setLastFailedLoginTime(new Date());
-            throw new AuthenticationLoginException("Login failed", "Locked user cannot be set to current user: " + user.getAccountName());
+            throw new AuthenticationLoginException("Login failed", "Locked user cannot be set to current user. User: " + user.getAccountName() );
         }
 
         // don't let expired users log in
         if (user.isExpired()) {
         	user.logout();
             user.setLastFailedLoginTime(new Date());
-            throw new AuthenticationLoginException("Login failed", "Expired user cannot be set to current user: " + user.getAccountName());
+            throw new AuthenticationLoginException("Login failed", "Expired user cannot be set to current user. User: " + user.getAccountName() );
         }
 
         setCurrentUser(user);

@@ -529,5 +529,6 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", -1);
 	}
+
 	
 }
