@@ -200,17 +200,16 @@ public interface IAuthenticator {
 	/**
 	 * Validate password strength.
 	 * 
-	 * @param oldPassword
-	 *            the old password
 	 * @param newPassword
 	 *            the new password
-	 * 
+	 * @param oldPassword
+	 *            the old password
 	 * @return true, if successful
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException;
+	void verifyPasswordStrength(String newPassword, String oldPassword) throws AuthenticationException;
 
 	/**
 	 * Verifies the account exists.
