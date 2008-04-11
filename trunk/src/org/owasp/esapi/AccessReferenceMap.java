@@ -37,6 +37,8 @@ import org.owasp.esapi.interfaces.IRandomizer;
  */
 public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessReferenceMap {
 
+	// FIXME: Create an encrypted implementation of AccessReferenceMap that has NO STATE
+	
 	/** The itod. */
 	HashMap itod = new HashMap();
 
@@ -79,26 +81,27 @@ public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessRef
 	 * Adds a direct reference and a new random indirect reference, overwriting any existing values.
 	 * @param direct
 	 */
-	public void addDirectReference(String direct) {
+	public String addDirectReference(Object direct) {
+		if ( dtoi.keySet().contains( direct ) ) {
+			return (String)dtoi.get( direct );
+		}
 		String indirect = random.getRandomString(6, Encoder.CHAR_ALPHANUMERICS);
 		itod.put(indirect, direct);
 		dtoi.put(direct, indirect);
+		return indirect;
 	}
-	
-	
-	// FIXME: add addDirectRef and removeDirectRef to IAccessReferenceMap
-	// FIXME: add test code for add/remove direct ref
 	
 	/**
 	 * Remove a direct reference and the corresponding indirect reference.
 	 * @param direct
 	 */
-	public void removeDirectReference(String direct) throws AccessControlException {
+	public String removeDirectReference(Object direct) throws AccessControlException {
 		String indirect = (String)dtoi.get(direct);
 		if ( indirect != null ) {
 			itod.remove(indirect);
 			dtoi.remove(direct);
 		}
+		return indirect;
 	}
 
 	/*

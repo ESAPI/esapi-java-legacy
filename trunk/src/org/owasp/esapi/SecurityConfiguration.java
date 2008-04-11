@@ -102,8 +102,10 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     private static final String LOG_LEVEL = "LogLevel";
 
     /**
-     * Load properties from properties file. Important: This implementation relies on a System property defined when
-     * Java is launched. Use:
+     * Load properties from properties file. Set this with setResourceDirectory
+     * from your web application or ESAPI filter. For test and non-web applications,
+     * this implementation defaults to a System property defined when Java is launched.
+     * Use:
      * <P>
      *    java -Dorg.owasp.esapi.resources="/path/resources"
      * <P>
@@ -145,19 +147,23 @@ public class SecurityConfiguration implements ISecurityConfiguration {
      * 
      * @return the resource directory
      */
-    protected File getResourceDirectory() {
-        return new File(resourceDirectory);
+    public String getResourceDirectory() {
+    	if ( resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
+    		resourceDirectory += System.getProperty("file.separator" );
+    	}
+    	return resourceDirectory;
     }
-
-    /**
-     * Sets the resource directory.
-     * 
-     * @param dir the new resource directory
-     */
-    protected void setResourceDirectory(File dir) {
-        resourceDirectory = dir.getAbsolutePath();
+        
+    
+    public void setResourceDirectory( String dir ) {
+    	resourceDirectory = dir;
+    	if ( resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
+    		resourceDirectory += System.getProperty("file.separator" );
+    	}
+    	logger.logSpecial( "ESAPI resource directory set to " + resourceDirectory, null );
+    	this.loadConfiguration();
     }
-
+    
     /**
      * Gets the master salt.
      * 

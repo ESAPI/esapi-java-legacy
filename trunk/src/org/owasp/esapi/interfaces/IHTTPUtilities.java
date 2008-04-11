@@ -72,6 +72,16 @@ public interface IHTTPUtilities {
     void safeAddHeader(String name, String value) throws ValidationException;
 
     /**
+     * Sets a header in an HttpServletResponse after checking for special characters (such as CRLF injection) that could enable 
+     * attacks like response splitting and other header-based attacks that nobody has thought of yet. 
+     * 
+     * @param name the name
+     * @param value the value
+     * @param response the response
+     */
+    void safeSetHeader(String name, String value) throws ValidationException;
+
+    /**
      * Invalidate the old session after copying all of its contents to a newly created session with a new session id.
      * Note that this is different from logging out and creating a new session identifier that does not contain the
      * existing session contents. Care should be taken to use this only when the existing session does not contain

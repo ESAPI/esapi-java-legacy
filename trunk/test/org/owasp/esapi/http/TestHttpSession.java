@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.http;
 
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,10 +36,10 @@ public class TestHttpSession implements HttpSession {
 	boolean invalidated = false;
 	
 	/** The creation time. */
-	private long creationTime=0;
+	private long creationTime=new Date().getTime();
 	
 	/** The accessed time. */
-	private long accessedTime=0;
+	private long accessedTime=new Date().getTime();
 	
 	/** The count. */
 	private static int count = 1;
@@ -197,5 +198,15 @@ public class TestHttpSession implements HttpSession {
 	public void setMaxInactiveInterval(int i) {
 		// stub
 	}
+	
+	public void setAccessedTime( long time ) {
+		this.accessedTime = time;
+	}
+
+	
+	public void setCreationTime( long time ) {
+		this.creationTime = time;
+	}
+
 }
 

@@ -88,7 +88,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
     			throw new ValidationException("Bad input", type + " (" + context + ") type to validate against not configured in ESAPI.properties" );
     				
     		if ( !p.matcher(canonical).matches() )
-    			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") input did not match type definition " + p );
+    			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") input did not match type definition " + p.pattern() );
     		
     		// if everything passed, then return the canonical form
     		return canonical;
@@ -234,7 +234,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidFileName(java.lang.String)
 	 */
 	
-	//FIXME: AAA - getValidFileName eliminates %00 and other injections.
+	//FIXME: AAA - need new method getValidFileName that eliminates %00 and other injections.
 	//FIXME: AAA - this method should check for %00 injection too
 	public boolean isValidFileName(String context, String input) {
 		if (input == null || input.length() == 0)
@@ -472,7 +472,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public String getValidSafeHTML( String context, String input ) throws ValidationException {
 		throw new java.lang.UnsupportedOperationException();
-		/**
+/**
+
+		AntiSamy code is commented out since it doesn't run under Java 1.4
+		to enable, uncomment this code and delete the throws line above
+
 		AntiSamy as = new AntiSamy();
 		try {
 			CleanResults test = as.scan(input);
@@ -487,7 +491,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		} catch (PolicyException e) {
 			throw new ValidationException( "Invalid HTML", "HTML violates policy (" + context + "=" + input + ") ",e );
 		}
-		**/
+**/
 	}
 
 	

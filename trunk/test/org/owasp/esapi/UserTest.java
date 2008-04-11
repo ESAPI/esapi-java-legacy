@@ -207,17 +207,34 @@ public class UserTest extends TestCase {
 		System.out.println("failedLoginLockout");
 		IAuthenticator instance = ESAPI.authenticator();
 		User user = createTestUser("failedLoginLockout");
-		String password = instance.generateStrongPassword();
-		user.unlock();
-		user.changePassword("failedLoginLockout", password, password);
-		user.verifyPassword(password);
-		user.verifyPassword("ridiculous");
+		user.enable();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
+        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
+        
+		user.loginWithPassword("failedLoginLockout");
+		
+		try {
+    		user.loginWithPassword("ridiculous");
+		} catch( AuthenticationException e ) { 
+    		// expected
+    	}
+ 		System.out.println("FAILED: " + user.getFailedLoginCount());
+		assertFalse(user.isLocked());
+
+		try {
+    		user.loginWithPassword("ridiculous");
+		} catch( AuthenticationException e ) { 
+    		// expected
+    	}
 		System.out.println("FAILED: " + user.getFailedLoginCount());
 		assertFalse(user.isLocked());
-		user.verifyPassword("ridiculous");
-		System.out.println("FAILED: " + user.getFailedLoginCount());
-		assertFalse(user.isLocked());
-		user.verifyPassword("ridiculous");
+
+		try {
+    		user.loginWithPassword("ridiculous");
+		} catch( AuthenticationException e ) { 
+    		// expected
+    	}
 		System.out.println("FAILED: " + user.getFailedLoginCount());
 		assertTrue(user.isLocked());
 	}
@@ -248,10 +265,18 @@ public class UserTest extends TestCase {
 		IAuthenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
 		User user = createTestUser(oldPassword);
-		user.verifyPassword("ridiculous");
+		try {
+    		user.loginWithPassword("ridiculous");
+		} catch( AuthenticationException e ) { 
+    		// expected
+    	}
 		Date llt1 = user.getLastFailedLoginTime();
 		Thread.sleep(10); // need a short delay to separate attempts
-		user.verifyPassword("ridiculous");
+		try {
+    		user.loginWithPassword("ridiculous");
+		} catch( AuthenticationException e ) { 
+    		// expected
+    	}
 		Date llt2 = user.getLastFailedLoginTime();
 		assertTrue(llt1.before(llt2));
 	}
@@ -378,27 +403,6 @@ public class UserTest extends TestCase {
 	}
 
     
-    /**
-     * Test of isFirstRequest method, of class org.owasp.esapi.User.
-     */
-    public void testIsFirstRequest() throws AuthenticationException {
-        System.out.println("isFirstRequest");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
-        IAuthenticator instance = ESAPI.authenticator();
-        String password = instance.generateStrongPassword();
-        User user = instance.createUser("isFirstRequest", password, password);
-        user.enable();
-        request.addParameter(ESAPI.securityConfiguration().getPasswordParameterName(), password );
-        request.addParameter(ESAPI.securityConfiguration().getUsernameParameterName(), "isFirstRequest" );
-        instance.login(request, response);
-        assertTrue( user.isFirstRequest() );
-        instance.login(request, response);
-        assertFalse( user.isFirstRequest() );
-        instance.login(request, response);
-        assertFalse( user.isFirstRequest() );
-    }
-    
     
 	/**
 	 * Test of isInRole method, of class org.owasp.esapi.User.
@@ -441,14 +445,29 @@ public class UserTest extends TestCase {
 	public void testIsSessionAbsoluteTimeout() throws AuthenticationException {
 		// FIXME: ENHANCE shouldn't this just be one timeout method that does both checks???
 		System.out.println("isSessionAbsoluteTimeout");
-		IAuthenticator instance = ESAPI.authenticator();
-		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+
+		/// login a user to set the lastLoginTime
+		Authenticator instance = (Authenticator)ESAPI.authenticator();
+		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+		String password = instance.generateStrongPassword();
+		User user = instance.createUser(accountName, password, password);
+		user.enable();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		request.addParameter("username", accountName);
+		request.addParameter("password", password);
+		TestHttpServletResponse response = new TestHttpServletResponse();
+		instance.login( request, response);
+				
+		// setup the test
 		long now = System.currentTimeMillis();
-		TestHttpSession s1 = new TestHttpSession(now - 1000 * 60 * 60 * 3, now);
-		assertTrue(user.isSessionAbsoluteTimeout(s1));
-		TestHttpSession s2 = new TestHttpSession(now - 1000 * 60 * 60 * 1, now);
-		assertFalse(user.isSessionAbsoluteTimeout(s2));
+		
+		// set last login -3 hours (default is 2 hour timeout)
+		user.setLastLoginTime( new Date( now - 1000 * 60 * 60 * 3 ) );
+		assertTrue(user.isSessionAbsoluteTimeout());
+		
+		// set last login -1 hour (default is 2 hour timeout)
+		user.setLastLoginTime( new Date( now - 1000 * 60 * 60 * 1 ) );
+		assertFalse(user.isSessionAbsoluteTimeout());
 	}
 
 	/**
@@ -464,10 +483,19 @@ public class UserTest extends TestCase {
 		String oldPassword = instance.generateStrongPassword();
 		User user = createTestUser(oldPassword);
 		long now = System.currentTimeMillis();
-		TestHttpSession s1 = new TestHttpSession(now - 1000 * 60 * 60 * 3, now - 1000 * 60 * 30);
-		assertTrue(user.isSessionAbsoluteTimeout(s1));
-		TestHttpSession s2 = new TestHttpSession(now - 1000 * 60 * 60 * 3, now - 1000 * 60 * 10);
-		assertFalse(user.isSessionTimeout(s2));
+		// setup request and response
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
+		((Authenticator)instance).setCurrentHTTP(request, response);
+		TestHttpSession session = (TestHttpSession)request.getSession();
+		
+		// set creation -30 mins (default is 20 min timeout)
+		session.setAccessedTime( now - 1000 * 60 * 30 );
+		assertTrue(user.isSessionTimeout());
+		
+		// set creation -1 hour (default is 20 min timeout)
+		session.setAccessedTime( now - 1000 * 60 * 10 );
+		assertFalse(user.isSessionTimeout());
 	}
 
 	/**
@@ -522,6 +550,8 @@ public class UserTest extends TestCase {
 			// expected
 		}
 		assertTrue(user.isLocked());
+		user.unlock();
+		assertTrue(user.getFailedLoginCount() == 0 );
 	}
 
 

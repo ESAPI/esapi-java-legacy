@@ -50,6 +50,13 @@ public class ESAPIFilter implements Filter {
 	 *            configuration object
 	 */
 	public void init(FilterConfig filterConfig) {
+		if ( ESAPI.securityConfiguration().getResourceDirectory() == null ) {
+			String path = filterConfig.getInitParameter("resourceDirectory");
+			// FIXME: consider allowing a per-webapp ESAPI instance
+			// String path = filterConfig.getServletContext().getRealPath("/");
+			// path += "WEB-INF/resources";
+			ESAPI.securityConfiguration().setResourceDirectory( path );
+		}
 	}
 
 	/**

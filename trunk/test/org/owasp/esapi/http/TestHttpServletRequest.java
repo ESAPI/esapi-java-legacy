@@ -39,6 +39,9 @@ import javax.servlet.http.HttpSession;
  */
 public class TestHttpServletRequest implements HttpServletRequest {
 
+	/** The requestDispatcher */
+	private RequestDispatcher requestDispatcher = new TestRequestDispatcher();
+	
     /** The session. */
     private TestHttpSession session = null;
 
@@ -476,6 +479,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
      */
     public String getParameter(String name) {
         String[] values = (String[]) parameters.get(name);
+        if ( values == null ) return null;
         return values[0];
     }
 
@@ -572,8 +576,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * @see javax.servlet.ServletRequest#getRequestDispatcher(java.lang.String)
      */
     public RequestDispatcher getRequestDispatcher(String path) {
-
-        return null;
+        return requestDispatcher;
     }
 
     /*
@@ -641,6 +644,10 @@ public class TestHttpServletRequest implements HttpServletRequest {
      */
     public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 
+    }
+
+    public void setRequestURI(String uri) throws UnsupportedEncodingException {
+    	this.uri = uri;
     }
 
 }

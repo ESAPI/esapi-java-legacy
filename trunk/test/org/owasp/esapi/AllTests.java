@@ -87,6 +87,7 @@ public class AllTests extends TestCase {
         
         TestSuite suite = new TestSuite("AllTests");
         suite.addTest(org.owasp.esapi.LoggerTest.suite());
+        suite.addTest(org.owasp.esapi.SafeFileTest.suite());
         suite.addTest(org.owasp.esapi.UserTest.suite());
         suite.addTest(org.owasp.esapi.RandomizerTest.suite());
         suite.addTest(org.owasp.esapi.AccessControllerTest.suite());
@@ -99,7 +100,12 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.EncoderTest.suite());
         suite.addTest(org.owasp.esapi.EncryptedPropertiesTest.suite());
         suite.addTest(org.owasp.esapi.AuthenticatorTest.suite());
+
+        // exceptions
         suite.addTest(org.owasp.esapi.errors.EnterpriseSecurityExceptionTest.suite());
+        
+        // filters
+        suite.addTest(org.owasp.esapi.filters.ESAPIFilterTest.suite());
         return suite;
     }
     

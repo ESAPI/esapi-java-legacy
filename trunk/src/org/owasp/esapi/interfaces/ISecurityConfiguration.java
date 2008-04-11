@@ -146,4 +146,14 @@ public interface ISecurityConfiguration {
 	 */
 	public Threshold getQuota(String eventName);
 
+	/**
+	 * Gets the ESAPI resource directory as a String.
+	 */
+	public String getResourceDirectory();
+
+	/**
+	 * Sets the ESAPI resource directory.
+	 */
+	public void setResourceDirectory(String dir);
+
 }

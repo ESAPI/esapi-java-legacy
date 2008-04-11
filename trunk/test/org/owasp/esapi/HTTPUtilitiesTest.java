@@ -134,7 +134,7 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testGetFileUploads() throws IOException {
         System.out.println("getFileUploads");
-        File home = ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory();
+        File home = new File( ESAPI.securityConfiguration().getResourceDirectory());
         byte[] bytes = getBytesFromFile(new File(home, "multipart.txt"));
         System.out.println( "===========\n" + new String( bytes ) + "\n===========" );
         TestHttpServletRequest request = new TestHttpServletRequest("/test", bytes);

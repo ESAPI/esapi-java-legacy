@@ -109,6 +109,12 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         e = new ValidationException();
         e = new ValidationException("m1","m2");
         e = new ValidationException("m1","m2",new Throwable());
+        e = new IntegrityException();
+        e = new IntegrityException("m1","m2");
+        e = new IntegrityException("m1","m2",new Throwable());
+        e = new AuthenticationHostException();
+        e = new AuthenticationHostException("m1","m2");
+        e = new AuthenticationHostException("m1","m2",new Throwable());
 
         e = new AuthenticationAccountsException();
         e = new AuthenticationAccountsException("m1","m2");

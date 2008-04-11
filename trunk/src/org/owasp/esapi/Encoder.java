@@ -95,22 +95,22 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	private static final Logger logger = Logger.getLogger("ESAPI", "Encoder");
 
 	/** The Constant CHAR_LOWERS. */
-	final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 
 	/** The Constant CHAR_UPPERS. */
-	final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	public final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 
 	/** The Constant CHAR_DIGITS. */
-	final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	public final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
 
 	/** The Constant CHAR_SPECIALS. */
-	final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
+	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
 
 	/** The Constant CHAR_LETTERS. */
-	final static char[] CHAR_LETTERS = Randomizer.union(CHAR_LOWERS, CHAR_UPPERS);
+	public final static char[] CHAR_LETTERS = Randomizer.union(CHAR_LOWERS, CHAR_UPPERS);
 
 	/** The Constant CHAR_ALPHANUMERICS. */
-	final static char[] CHAR_ALPHANUMERICS = Randomizer.union(CHAR_LETTERS, CHAR_DIGITS);
+	public final static char[] CHAR_ALPHANUMERICS = Randomizer.union(CHAR_LETTERS, CHAR_DIGITS);
 
 	// FIXME: ENHANCE make all character sets configurable
 	/**
@@ -122,7 +122,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 	final static char[] CHAR_PASSWORD_DIGITS = { '2', '3', '4', '5', '6', '7', '8', '9' };
 	final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
-	final static char[] CHAR_PASSWORD_LETTERS = Randomizer.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
+	public final static char[] CHAR_PASSWORD_LETTERS = Randomizer.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
 
 	private static HashMap characterToEntityMap;
 

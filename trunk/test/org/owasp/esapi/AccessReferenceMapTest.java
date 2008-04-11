@@ -167,4 +167,43 @@ public class AccessReferenceMapTest extends TestCase {
         }
     }
     
+    public void testAddDirectReference() throws AccessControlException {
+        System.out.println("addDirectReference");
+        
+        String directReference = "234";
+        Set list = new HashSet();
+        list.add( "123" );
+        list.add( directReference );
+        list.add( "345" );
+        AccessReferenceMap instance = new AccessReferenceMap( list );
+        
+        String newDirect = instance.addDirectReference("newDirect");
+        assertNotNull( newDirect );
+        String ind = instance.addDirectReference(directReference);
+        String dir = (String)instance.getDirectReference(ind);
+        assertEquals(directReference, dir);
+    	String newInd = instance.addDirectReference(directReference);
+    	assertEquals(ind, newInd);
+    }
+
+    public void testRemoveDirectReference() throws AccessControlException {
+        System.out.println("removeDirectReference");
+        
+        String directReference = "234";
+        Set list = new HashSet();
+        list.add( "123" );
+        list.add( directReference );
+        list.add( "345" );
+        AccessReferenceMap instance = new AccessReferenceMap( list );
+        
+        String indirect = instance.getIndirectReference(directReference);
+        assertNotNull(indirect);
+        String deleted = instance.removeDirectReference(directReference);
+        assertEquals(indirect,deleted);
+    	deleted = instance.removeDirectReference("ridiculous");
+    	assertNull(deleted);
+    }
+    
+    
+    
 }

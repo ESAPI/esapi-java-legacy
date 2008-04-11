@@ -144,7 +144,32 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeAddHeader(String name, String value) throws ValidationException {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
-		// FIXME: AAA consider using the regex for header names and header values here
+
+		Pattern headerName = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPHeaderName");
+		if ( !headerName.matcher(name).matches() ) {
+			throw new ValidationException("Invalid header", "Attempt to add a header name that violates the global rule in ESAPI.properties: " + name );
+		}
+		Pattern headerValue = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPHeaderValue");
+		if ( !headerValue.matcher(value).matches() ) {
+			throw new ValidationException("Invalid header", "Attempt to add a header value that violates the global rule in ESAPI.properties: " + value );
+		}
+		response.addHeader(name, value);
+	}
+
+	
+	/*
+	 * Sets a header in an HttpServletResponse after checking for special
+	 * characters (such as CRLF injection) that could enable attacks like
+	 * response splitting and other header-based attacks that nobody has thought
+	 * of yet.
+	 * 
+	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeAddHeader(java.lang.String,
+	 *      java.lang.String, java.lang.String,
+	 *      javax.servlet.http.HttpServletResponse)
+	 */
+	public void safeSetHeader(String name, String value) throws ValidationException {
+		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+
 		Pattern headerName = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPHeaderName");
 		if ( !headerName.matcher(name).matches() ) {
 			throw new ValidationException("Invalid header", "Attempt to set a header name that violates the global rule in ESAPI.properties: " + name );
@@ -153,9 +178,9 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		if ( !headerValue.matcher(value).matches() ) {
 			throw new ValidationException("Invalid header", "Attempt to set a header value that violates the global rule in ESAPI.properties: " + value );
 		}
-		response.addHeader(name, value);
+		response.setHeader(name, value);
 	}
-
+	
 	//FIXME: AAA add these to the interface
 	/**
 	 * Return exactly what was sent to prevent URL rewriting. URL rewriting is intended to be a session management
@@ -192,18 +217,19 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public HttpSession changeSessionIdentifier() throws AuthenticationException {
 		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
 		Map temp = new HashMap();
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession( false );
 
 		// make a copy of the session content
-		Enumeration e = session.getAttributeNames();
-		while (e != null && e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			Object value = session.getAttribute(name);
-			temp.put(name, value);
+		if ( session != null ) {
+			Enumeration e = session.getAttributeNames();
+			while (e != null && e.hasMoreElements()) {
+				String name = (String) e.nextElement();
+				Object value = session.getAttribute(name);
+				temp.put(name, value);
+			}
+			session.invalidate();
 		}
 
-		// invalidate the old session and create a new one
-		session.invalidate();
 		HttpSession newSession = request.getSession(true);
 
 		// copy back the session content
@@ -226,9 +252,6 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public void verifyCSRFToken() throws IntrusionException {
 		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
 		User user = ESAPI.authenticator().getCurrentUser();
-		// FIXME: AAA this is a bad test - need a way to not enforce CSRF token on entry points
-		// if this is the first request after logging in, let them pass
-		if (user.isFirstRequest()) return;
 		
 		if (request.getParameter(user.getCSRFToken()) == null) {
 			throw new IntrusionException("Authentication failed", "Attempt to access application without appropriate token");

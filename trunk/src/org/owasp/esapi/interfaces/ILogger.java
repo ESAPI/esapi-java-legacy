@@ -53,7 +53,7 @@ public interface ILogger {
      * 
      * @param type the type
      * @param request the request
-     * @param sensitiveParams the sensitive params
+     * @param parameterNamesToObfuscate the sensitive params
      */
     public void logHTTPRequest(String type, HttpServletRequest request, List parameterNamesToObfuscate);
 
