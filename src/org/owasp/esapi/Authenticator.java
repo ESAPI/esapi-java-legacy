@@ -557,13 +557,11 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         
         if ( user != null ) {
             user.setLastHostAddress( request.getRemoteHost() );
-            user.setFirstRequest(false);
         } else {
         	// try to verify credentials
             user = loginWithUsernameAndPassword(request, response);
-            user.setFirstRequest(true);
         }
-
+        
         // warn if this authentication request came over a non-SSL connection, exposing credentials or session id
         if ( !ESAPI.httpUtilities().isSecureChannel() ) {
             new AuthenticationCredentialsException( "Session or credentials exposed", "Authentication attempt made over non-SSL connection. Check web.xml and server configuration. User: " + user.getAccountName() );
@@ -578,6 +576,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // don't let disabled users log in
         if (!user.isEnabled()) {
         	user.logout();
+			user.incrementFailedLoginCount();
             user.setLastFailedLoginTime(new Date());
             throw new AuthenticationLoginException("Login failed", "Disabled user cannot be set to current user. User: " + user.getAccountName() );
         }
@@ -585,6 +584,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // don't let locked users log in
         if (user.isLocked()) {
         	user.logout();
+			user.incrementFailedLoginCount();
             user.setLastFailedLoginTime(new Date());
             throw new AuthenticationLoginException("Login failed", "Locked user cannot be set to current user. User: " + user.getAccountName() );
         }
@@ -592,10 +592,27 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // don't let expired users log in
         if (user.isExpired()) {
         	user.logout();
+			user.incrementFailedLoginCount();
             user.setLastFailedLoginTime(new Date());
             throw new AuthenticationLoginException("Login failed", "Expired user cannot be set to current user. User: " + user.getAccountName() );
         }
 
+        // check session inactivity timeout
+		if ( user.isSessionTimeout() ) {
+        	user.logout();
+			user.incrementFailedLoginCount();
+            user.setLastFailedLoginTime(new Date());
+			throw new AuthenticationLoginException("Login failed", "Session inactivity timeout: " + user.getAccountName() );
+		}
+				
+		// check session absolute timeout
+		if ( user.isSessionAbsoluteTimeout() ) {
+        	user.logout();
+			user.incrementFailedLoginCount();
+            user.setLastFailedLoginTime(new Date());
+			throw new AuthenticationLoginException("Login failed", "Session absolute timeout: " + user.getAccountName() );
+		}
+			
         setCurrentUser(user);
         return user;
     }
@@ -660,7 +677,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * This implementation checks: - for any 3 character substrings of the old password - for use of a length *
      * character sets > 16 (where character sets are upper, lower, digit, and special (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#validatePasswordStrength(java.lang.String)
+     * @see org.owasp.esapi.interfaces.IAuthenticator#verifyPasswordStrength(java.lang.String)
      */
     public void verifyPasswordStrength(String newPassword, String oldPassword) throws AuthenticationException {
         String oPassword = (oldPassword == null) ? "" : oldPassword;
@@ -669,8 +686,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         int length = oPassword.length();
         for (int i = 0; i < length - 2; i++) {
             String sub = oPassword.substring(i, i + 3);
-            if (newPassword.indexOf(sub) > -1 )
-                throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password");
+            if (newPassword.indexOf(sub) > -1 ) {
+                throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password" );
+            }
         }
 
         // new password must have enough character sets and length

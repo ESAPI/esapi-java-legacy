@@ -100,13 +100,13 @@ public interface IAccessReferenceMap {
 	 * Adds a direct reference to the AccessReferenceMap and generates an associated indirect reference. 
 	 * @param direct
 	 */
-	public void addDirectReference(String direct);
+	public String addDirectReference(Object direct);
 	
 	/**
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
 	 * @param direct
 	 * @throws AccessControlException
 	 */
-	public void removeDirectReference(String direct) throws AccessControlException;
+	public String removeDirectReference(Object direct) throws AccessControlException;
 
 }

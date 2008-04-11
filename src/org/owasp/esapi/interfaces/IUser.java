@@ -18,8 +18,6 @@ package org.owasp.esapi.interfaces;
 import java.util.Date;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
-
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 
@@ -197,14 +195,6 @@ public interface IUser {
     boolean isInRole(String role);
 
     /**
-     * Returns true if the request is the first one of a new login session. This is intended to be used as a flag to
-     * display a message about the user's last successful login time.
-     * 
-     * @return
-     */
-    boolean isFirstRequest();
-
-    /**
      * Checks if an account is unlocked.
      * 
      * @return true, account is unlocked
@@ -221,18 +211,16 @@ public interface IUser {
     /**
      * Tests to see if the user's session has exceeded the absolute time out.
      * 
-     * @param session the session
      * @return whether user's session has exceeded the absolute time out
      */
-    boolean isSessionAbsoluteTimeout(HttpSession session);
+    boolean isSessionAbsoluteTimeout();
 
     /**
      * Tests to see if the user's session has timed out from inactivity.
      * 
-     * @param session the session
      * @return whether user's session has timed out from inactivity
      */
-    boolean isSessionTimeout(HttpSession session);
+    boolean isSessionTimeout();
 
     /**
      * Lock the user's account.

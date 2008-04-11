@@ -58,9 +58,6 @@ public class User implements IUser, Serializable {
 
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger("ESAPI", "User");
-
-    /** true only for the first HTTP request, false afterwards */
-    private boolean isFirstRequest = true;
     
 	/** The account name. */
 	private String accountName = "";
@@ -295,7 +292,7 @@ public class User implements IUser, Serializable {
 	public void disable() {
 		// FIXME: ENHANCE what about disabling for a short time period - to address DOS attack?
 		enabled = false;
-		logger.logSpecial( "Account disabled: " + getAccountName(), null );
+		logger.logSuccess( "Account disabled: " + getAccountName(), null );
 	}
 	
 	/**
@@ -320,7 +317,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void enable() {
 		this.enabled = true;
-		logger.logSpecial( "Account enabled: " + getAccountName(), null );
+		logger.logSuccess( "Account enabled: " + getAccountName(), null );
 	}
 
 	/* (non-Javadoc)
@@ -514,8 +511,9 @@ public class User implements IUser, Serializable {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IIntrusionDetector#isSessionAbsoluteTimeout(java.lang.String)
 	 */
-	public boolean isSessionAbsoluteTimeout(HttpSession session) {
-		Date deadline = new Date(session.getCreationTime() + 1000 * 60 * 60 * 2);
+	public boolean isSessionAbsoluteTimeout() {
+		// FIXME: make configurable - currently 2 hours
+		Date deadline = new Date(getLastLoginTime().getTime() + 1000 * 60 * 60 * 2);
 		Date now = new Date();
 		return now.after(deadline);
 	}
@@ -525,9 +523,13 @@ public class User implements IUser, Serializable {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IIntrusionDetector#isSessionTimeout(java.lang.String)
 	 */
-	public boolean isSessionTimeout(HttpSession session) {
+	public boolean isSessionTimeout() {
+		HttpSession session = ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getSession();
+		// FIXME: make configurable - currently -20 minutes
 		Date deadline = new Date(session.getLastAccessedTime() + 1000 * 60 * 20);
 		Date now = new Date();
+		System.out.println( "  DEADLINE: " + deadline );
+		System.out.println( "  NOW: " + now );
 		return now.after(deadline);
 	}
 
@@ -575,25 +577,28 @@ public class User implements IUser, Serializable {
 		}
 		
 		// if this user is already logged in, log them out and reauthenticate
+		// FIXME: AAA verify loggedIn is needed???
 		if ( !isAnonymous() ) {
 			logout();
 		}
 
-		try {
-    		if ( verifyPassword( password ) ) {
-    			// FIXME: AAA verify loggedIn is properly maintained
-    			loggedIn = true;
-    			HttpSession session = ((HTTPUtilities)ESAPI.httpUtilities()).changeSessionIdentifier();
-    			session.setAttribute(Authenticator.USER, getAccountName());
-    			ESAPI.authenticator().setCurrentUser(this);
-    			setLastLoginTime(new Date());
-                setLastHostAddress( ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getRemoteHost() );
-    			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
-    		} else {
-    			throw new AuthenticationLoginException("Login failed", "Login attempt as " + getAccountName() + " failed");
-    		}
-		} catch (EncryptionException ee) {
-		    throw new AuthenticationException("Internal error", "Error verifying password for " + accountName, ee);
+		if ( verifyPassword( password ) ) {
+			// FIXME: AAA verify loggedIn is properly maintained
+			loggedIn = true;
+			HttpSession session = ((HTTPUtilities)ESAPI.httpUtilities()).changeSessionIdentifier();
+			session.setAttribute(Authenticator.USER, getAccountName());
+			ESAPI.authenticator().setCurrentUser(this);
+			setLastLoginTime(new Date());
+            setLastHostAddress( ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getRemoteHost() );
+			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
+		} else {
+			loggedIn = false;
+			setLastFailedLoginTime(new Date());
+			incrementFailedLoginCount();
+			if (getFailedLoginCount() >= ESAPI.securityConfiguration().getAllowedLoginAttempts()) {
+				lock();
+			}
+			throw new AuthenticationLoginException("Login failed", "Password error for " + getAccountName() );
 		}
 	}
 
@@ -614,7 +619,7 @@ public class User implements IUser, Serializable {
 			ESAPI.httpUtilities().killCookie("JSESSIONID");
 			loggedIn = false;
 			logger.logSuccess(Logger.SECURITY, "Logout successful" );
-			authenticator.setCurrentUser(authenticator.anonymous);
+			authenticator.setCurrentUser(Authenticator.anonymous);
 		}
 	}
 
@@ -831,7 +836,8 @@ public class User implements IUser, Serializable {
 	 */
 	public void unlock() {
 		this.locked = false;
-		logger.logSpecial("Account unlocked: " + getAccountName(), null );
+		this.failedLoginCount = 0;
+		logger.logSuccess("Account unlocked: " + getAccountName(), null );
 	}
 
 	//FIXME:Enhance - think about having a second "transaction" password for each user
@@ -841,31 +847,23 @@ public class User implements IUser, Serializable {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IUser#verifyPassword(java.lang.String)
 	 */
-	public boolean verifyPassword(String password) throws EncryptionException {
-		String hash = ESAPI.authenticator().hashPassword(password, accountName);
-		if (hash.equals(hashedPassword)) {
-			setLastLoginTime(new Date());
-			failedLoginCount = 0;
-			logger.logCritical(Logger.SECURITY, "Password verified for " + getAccountName() );
-			return true;
+	public boolean verifyPassword(String password) {
+		try {
+			String hash = ESAPI.authenticator().hashPassword(password, accountName);
+			if (hash.equals(hashedPassword)) {
+				setLastLoginTime(new Date());
+				failedLoginCount = 0;
+				logger.logCritical(Logger.SECURITY, "Password verified for " + getAccountName() );
+				return true;
+			}
+		} catch( EncryptionException e ) {
+			logger.logCritical(Logger.SECURITY, "Encryption error verifying password for " + getAccountName() );
 		}
 		logger.logCritical(Logger.SECURITY, "Password verification failed for " + getAccountName() );
-		setLastFailedLoginTime(new Date());
-		incrementFailedLoginCount();
-		if (getFailedLoginCount() >= ESAPI.securityConfiguration().getAllowedLoginAttempts()) {
-			lock();
-		}
 		return false;
 	}
 
-    protected void setFirstRequest(boolean b) {
-        isFirstRequest = b;
-    }
-
-    public boolean isFirstRequest() {
-        return isFirstRequest;
-    }
-    
+	
     // FIXME: AAA this is a strange place for the event class to live.  Move to somewhere more appropriate.
     private class Event {
         public String key;

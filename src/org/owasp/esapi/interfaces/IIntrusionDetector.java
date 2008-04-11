@@ -44,7 +44,7 @@ public interface IIntrusionDetector {
     /**
      * Adds the event to the IntrusionDetector.
      * 
-     * @param event the event
+     * @param eventName the event
      * @throws IntrusionException the intrusion exception
      */
     void addEvent(String eventName) throws IntrusionException;

@@ -95,7 +95,7 @@ import org.owasp.esapi.errors.ValidationException;
 public class AccessController implements org.owasp.esapi.interfaces.IAccessController {
 
 	/** The resource directory. */
-	private static final File resourceDirectory = ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory();
+	private static final File resourceDirectory = new File (ESAPI.securityConfiguration().getResourceDirectory());
 
 	/** The url map. */
 	private Map urlMap = new HashMap();
@@ -124,6 +124,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	// FIXME: consider adding flag for logging
 	// FIXME: perhaps an enumeration for context (i.e. the layer the call is made from)
 	
+	// FIXME: isAuthorized calls should not always log (flag? assert?)
 	
 	/*
 	 * (non-Javadoc)
@@ -314,9 +315,15 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 		if (rule != null && overlap(rule.roles, roles))
 			return rule;
 
-		// if rule has not been found, strip off the last element and recurse
+		// rule hasn't been found - if there are no more parts, return a deny
+		int slash = part.lastIndexOf('/');
+		if ( slash == -1 ) {
+			return deny;
+		}
+		
+		// if there are more parts, strip off the last part and recurse
 		part = part.substring(0, part.lastIndexOf('/'));
-
+		
 		// return default deny
 		if (part.length() <= 1) {
 			return deny;
