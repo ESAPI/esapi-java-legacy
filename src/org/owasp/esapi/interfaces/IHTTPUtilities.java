@@ -17,6 +17,7 @@ package org.owasp.esapi.interfaces;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -142,9 +143,10 @@ public interface IHTTPUtilities {
      * @param request the request
      * @param tempDir the temp dir
      * @param finalDir the final dir
+     * @return List of new File objects from upload
      * @throws ValidationException the validation exception
      */
-    void getSafeFileUploads(File tempDir, File finalDir) throws ValidationException;
+    List getSafeFileUploads(File tempDir, File finalDir) throws ValidationException;
 
     /**
      * Retrieves a map of data from the encrypted cookie. 

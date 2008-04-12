@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.Cookie;
@@ -142,7 +143,7 @@ public class HTTPUtilitiesTest extends TestCase {
         Authenticator instance = (Authenticator)ESAPI.authenticator();
         instance.setCurrentHTTP(request, response);
         try {
-            ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
         } catch (ValidationException e) {
             fail();
         }
