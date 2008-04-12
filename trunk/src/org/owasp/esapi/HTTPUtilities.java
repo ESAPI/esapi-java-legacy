@@ -17,6 +17,7 @@ package org.owasp.esapi;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -351,8 +352,12 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeGetFileUploads(javax.servlet.http.HttpServletRequest,
 	 *      java.io.File, java.io.File, int)
+	 * @return list of File objects for new files in final directory
 	 */
-	public void getSafeFileUploads(File tempDir, File finalDir) throws ValidationException {
+	public List getSafeFileUploads(File tempDir, File finalDir) throws ValidationException {
+		if ( !tempDir.exists() ) tempDir.mkdirs();
+		if ( !finalDir.exists() ) finalDir.mkdirs();
+		List newFiles = new ArrayList();
 		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
 		try {
 			final HttpSession session = request.getSession();
@@ -400,7 +405,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 					logger.logCritical(Logger.SECURITY, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
 					if (f.exists()) {
-						String[] parts = filename.split("\\.");
+						String[] parts = filename.split("\\/.");
 						String extension = "";
 						if (parts.length > 1) {
 							extension = parts[parts.length - 1];
@@ -409,6 +414,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 						f = File.createTempFile(filenm, "." + extension, finalDir);
 					}
 					item.write(f);
+					newFiles.add( f );
 					// delete temporary file
 					item.delete();
 					logger.logCritical(Logger.SECURITY, "File successfully uploaded: " + f);
@@ -420,6 +426,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 				throw (ValidationException) e;
 			throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
 		}
+		return newFiles;
 	}
 
 	/**
