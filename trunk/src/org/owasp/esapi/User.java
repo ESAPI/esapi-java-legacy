@@ -528,8 +528,6 @@ public class User implements IUser, Serializable {
 		// FIXME: make configurable - currently -20 minutes
 		Date deadline = new Date(session.getLastAccessedTime() + 1000 * 60 * 20);
 		Date now = new Date();
-		System.out.println( "  DEADLINE: " + deadline );
-		System.out.println( "  NOW: " + now );
 		return now.after(deadline);
 	}
 

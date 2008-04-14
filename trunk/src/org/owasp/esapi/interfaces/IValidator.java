@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -123,7 +121,7 @@ public interface IValidator {
      * @param request
      * @return
      */
-    boolean isValidHTTPRequest(HttpServletRequest request);
+    boolean isValidHTTPRequest();
 
 	/**
 	 * Checks if input is a valid list item.
@@ -181,6 +179,6 @@ public interface IValidator {
 	 *             the validation exception
 	 */
 	// FIXME: ENHANCE timeout too!
-	String safeReadLine(InputStream inputStream, int maxsChar) throws ValidationException;
+	String safeReadLine(InputStream inputStream, int maxChar) throws ValidationException;
 
 }

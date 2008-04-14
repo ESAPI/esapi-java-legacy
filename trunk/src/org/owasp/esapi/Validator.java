@@ -36,10 +36,11 @@ import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
 import org.owasp.esapi.errors.ValidationException;
-//import org.owasp.validator.html.AntiSamy;
-//import org.owasp.validator.html.CleanResults;
-//import org.owasp.validator.html.PolicyException;
-//import org.owasp.validator.html.ScanException;
+import org.owasp.validator.html.AntiSamy;
+import org.owasp.validator.html.CleanResults;
+import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
+import org.owasp.validator.html.ScanException;
 
 /**
  * Reference implementation of the IValidator interface. This implementation
@@ -59,6 +60,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger("ESAPI", "Validator");
 	
+	private Policy antiSamyPolicy = null;
 	
 	public Validator() {
 	}
@@ -293,9 +295,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * that all encoded characters are reduced to their simplest form, and that any
 	 * double-encoded characters are detected and throw an exception.
 	 */
-	public boolean isValidHTTPRequest(HttpServletRequest request) {
+	public boolean isValidHTTPRequest() {
 		boolean result = true;
-
+		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
 		Iterator i1 = request.getParameterMap().entrySet().iterator();
 		while (i1.hasNext()) {
 			Map.Entry entry = (Map.Entry) i1.next();
@@ -457,9 +459,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public boolean isValidSafeHTML(String context, String input) {
 		try {
-			getValidSafeHTML( context, input );
-			return true;
-		} catch (ValidationException e ) {
+			if ( antiSamyPolicy == null ) {
+				antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+			}
+			AntiSamy as = new AntiSamy();
+			CleanResults test = as.scan(input, antiSamyPolicy);
+			return(test.getErrorMessages().size() == 0);
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -470,27 +476,23 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @see org.owasp.esapi.interfaces.IValidator#getValidSafeHTML(java.lang.String)
 	 */
 	public String getValidSafeHTML( String context, String input ) throws ValidationException {
-		throw new java.lang.UnsupportedOperationException();
-/**
-
-		AntiSamy code is commented out since it doesn't run under Java 1.4
-		to enable, uncomment this code and delete the throws line above
-
-		AntiSamy as = new AntiSamy();
 		try {
-			CleanResults test = as.scan(input);
+			if ( antiSamyPolicy == null ) {
+				antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+			}
+			AntiSamy as = new AntiSamy();
+			CleanResults clean = as.scan(input, antiSamyPolicy);
 			// OutputFormat format = new OutputFormat(test.getCleanXMLDocumentFragment().getOwnerDocument());
 			// format.setLineWidth(65);
 			// format.setIndenting(true);
 			// format.setIndent(2);
 			// format.setEncoding(AntiSamyDOMScanner.ENCODING_ALGORITHM);
-			return(test.getCleanHTML().trim());
+			return(clean.getCleanHTML().trim());
 		} catch (ScanException e) {
-			throw new ValidationException( "Invalid HTML", "Problem parsing HTML (" + context + "=" + input + ") ",e );
+			throw new ValidationException( "Invalid HTML", "Problem parsing HTML (" + context + "=" + input + ")", e );
 		} catch (PolicyException e) {
-			throw new ValidationException( "Invalid HTML", "HTML violates policy (" + context + "=" + input + ") ",e );
+			throw new ValidationException( "Invalid HTML", "HTML violates policy (" + context + "=" + input + ")", e );
 		}
-**/
 	}
 
 	

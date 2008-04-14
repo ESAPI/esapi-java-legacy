@@ -27,7 +27,6 @@ import java.util.Set;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
 
 /**
  * Reference implementation of the IAccessController interface. This reference
@@ -121,10 +120,50 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	public AccessController() {
 	}
 
-	// FIXME: consider adding flag for logging
 	// FIXME: perhaps an enumeration for context (i.e. the layer the call is made from)
-	
-	// FIXME: isAuthorized calls should not always log (flag? assert?)
+		
+    public boolean isAuthorizedForURL(String url) {
+		if (urlMap.isEmpty()) {
+			urlMap = loadRules(new File(resourceDirectory, "URLAccessRules.txt"));
+		}
+		return matchRule(urlMap, url);
+    }
+    
+    public boolean isAuthorizedForFunction(String functionName) {
+    	try {
+    		assertAuthorizedForFunction( functionName );
+    		return true;
+    	} catch ( Exception e ) {
+    		return false;
+    	}
+    }
+
+    public boolean isAuthorizedForData(String key) {
+    	try {
+    		assertAuthorizedForData( key );
+    		return true;
+    	} catch ( Exception e ) {
+    		return false;
+    	}
+    }
+
+    public boolean isAuthorizedForFile(String filepath) {
+    	try {
+    		assertAuthorizedForFile( filepath );
+    		return true;
+    	} catch ( Exception e ) {
+    		return false;
+    	}
+    }
+    
+    public boolean isAuthorizedForService(String serviceName) {
+    	try {
+    		assertAuthorizedForService( serviceName );
+    		return true;
+    	} catch ( Exception e ) {
+    		return false;
+    	}
+    }
 	
 	/*
 	 * (non-Javadoc)
@@ -132,18 +171,12 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForURL(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean isAuthorizedForURL(String url) {
-		if (urlMap.isEmpty()) {
-			try {
-				urlMap = loadRules(new File(resourceDirectory, "URLAccessRules.txt"));
-			} catch (AccessControlException ex) {
-				return false;
-			}
+    public void assertAuthorizedForURL(String url) throws AccessControlException {
+		if (urlMap==null || urlMap.isEmpty()) {
+			urlMap = loadRules(new File(resourceDirectory, "URLAccessRules.txt"));
 		}
-		try {
-			return matchRule(urlMap, url);
-		} catch (AccessControlException ex) {
-			return false;
+		if ( !matchRule(urlMap, url) ) {
+			throw new AccessControlException("Not authorized for URL", "Not authorized for URL: " + url );
 		}
 	}
 
@@ -153,18 +186,12 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForFunction(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean isAuthorizedForFunction(String functionName) {
-		if (functionMap.isEmpty()) {
-			try {
-				functionMap = loadRules(new File(resourceDirectory, "FunctionAccessRules.txt"));
-			} catch (AccessControlException ex) {
-				return false;
-			}
+    public void assertAuthorizedForFunction(String functionName) throws AccessControlException {
+    	if (functionMap==null || functionMap.isEmpty()) {
+			functionMap = loadRules(new File(resourceDirectory, "FunctionAccessRules.txt"));
 		}
-		try {
-			return matchRule(functionMap, functionName);
-		} catch (AccessControlException ex) {
-			return false;
+		if ( !matchRule(functionMap, functionName) ) {
+			throw new AccessControlException("Not authorized for function", "Not authorized for function: " + functionName );
 		}
 	}
 
@@ -174,18 +201,12 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForData(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean isAuthorizedForData(String key) {
-		if (dataMap.isEmpty()) {
-			try {
-				dataMap = loadRules(new File(resourceDirectory, "DataAccessRules.txt"));
-			} catch (AccessControlException ex) {
-				return false;
-			}
+    public void assertAuthorizedForData(String key) throws AccessControlException {
+		if (dataMap==null || dataMap.isEmpty()) {
+			dataMap = loadRules(new File(resourceDirectory, "DataAccessRules.txt"));
 		}
-		try {
-			return matchRule(dataMap, key);
-		} catch (AccessControlException ex) {
-			return false;
+		if ( !matchRule(dataMap, key) ) {
+			throw new AccessControlException("Not authorized for function", "Not authorized for data: " + key );
 		}
 	}
 
@@ -195,20 +216,14 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForFile(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean isAuthorizedForFile(String filepath) {
-		if (fileMap.isEmpty()) {
-			try {
-				fileMap = loadRules(new File(resourceDirectory, "FileAccessRules.txt"));
-			} catch (AccessControlException ex) {
-				return false;
-			}
+    public void assertAuthorizedForFile(String filepath) throws AccessControlException {
+		if (fileMap==null || fileMap.isEmpty()) {
+			fileMap = loadRules(new File(resourceDirectory, "FileAccessRules.txt"));
 		}
-		try {
-			// FIXME: AAA think about canonicalization here - use Java file canonicalizer
-			// remember that Windows paths have \ instad of /
-			return matchRule(fileMap, filepath.replaceAll("\\\\", "/"));
-		} catch (AccessControlException ex) {
-			return false;
+		// FIXME: AAA think about canonicalization here - use Java file canonicalizer
+		// remember that Windows paths have \ instead of /
+		if ( !matchRule(fileMap, filepath.replaceAll("\\\\","/"))) {
+			throw new AccessControlException("Not authorized for file", "Not authorized for file: " + filepath );
 		}
 	}
 
@@ -218,18 +233,12 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForBackendService(java.lang.String,
 	 *      java.lang.String)
 	 */
-	public boolean isAuthorizedForService(String serviceName) {
-		if (serviceMap.isEmpty()) {
-			try {
-				serviceMap = loadRules(new File(resourceDirectory, "ServiceAccessRules.txt"));
-			} catch (AccessControlException ex) {
-				return false;
-			}
+    public void assertAuthorizedForService(String serviceName) throws AccessControlException {    	
+		if (serviceMap==null || serviceMap.isEmpty()) {
+			serviceMap = loadRules(new File(resourceDirectory, "ServiceAccessRules.txt"));
 		}
-		try {
-			return matchRule(serviceMap, serviceName);
-		} catch (AccessControlException ex) {
-			return false;
+		if ( !matchRule(serviceMap, serviceName ) ) {
+			throw new AccessControlException("Not authorized for service", "Not authorized for service: " + serviceName );
 		}
 	}
 
@@ -246,12 +255,9 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @throws AccessControlException
 	 *             the access control exception
 	 */
-	private boolean matchRule(Map map, String path) throws AccessControlException {
+	private boolean matchRule(Map map, String path) {
 		// get users roles
 		User user = ESAPI.authenticator().getCurrentUser();
-		if (user == null) {
-			return false;
-        }
 		Set roles = user.getRoles();
 		// search for the first rule that matches the path and rules
 		Rule rule = searchForRule(map, roles, path);
@@ -276,12 +282,12 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @throws AccessControlException
 	 *             the access control exception
 	 */
-	private Rule searchForRule(Map map, Set roles, String path) throws AccessControlException {
+	private Rule searchForRule(Map map, Set roles, String path) {
 		String canonical = null;
 		try {
 		    canonical = ESAPI.encoder().canonicalize(path);
-		} catch (EncodingException ee) {
-		    throw new AccessControlException("Internal error", "Failed to canonicaliize input ", ee);
+		} catch (EncodingException e) {
+		    logger.logWarning( Logger.SECURITY, "Failed to canonicalize input: " + path );
 		}
 		
 		String part = canonical;
@@ -367,7 +373,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @throws AccessControlException
 	 *             the access control exception
 	 */
-	private Map loadRules(File f) throws AccessControlException {
+	private Map loadRules(File f) {
 		Map map = new HashMap();
 		FileInputStream fis = null;
 		try {
@@ -383,16 +389,14 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");
 					if (map.containsKey(rule.path)) {
-						throw new AccessControlException("Access control failure", "Problem in access control file. Duplicate rule " + rule);
+						logger.logWarning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+					} else {
+						map.put(rule.path, rule);
 					}
-					map.put(rule.path, rule);
 				}
 			}
-			return map;
-		} catch (IOException e) {
-			throw new AccessControlException("Access control failure", "Failure loading access control file " + f, e);
-		} catch (ValidationException e1) {
-			throw new AccessControlException("Access control failure", "Failure loading access control file " + f, e1);
+		} catch (Exception e) {
+			logger.logWarning( Logger.SECURITY, "Problem in access control file", e );
 		} finally {
 			try {
 				if (fis != null) {
@@ -402,6 +406,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 				logger.logWarning(Logger.SECURITY, "Failure closing access control file: " + f, e);
 			}
 		}
+		return map;
 	}
 
 	/**
