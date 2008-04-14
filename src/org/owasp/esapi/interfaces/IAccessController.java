@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.interfaces;
 
+import org.owasp.esapi.errors.AccessControlException;
+
 
 /**
  * The IAccessController interface defines a set of methods that can be used in a wide variety of applications to
@@ -108,4 +110,13 @@ public interface IAccessController {
      */
     boolean isAuthorizedForService(String serviceName);
 
+    
+    // FIXME: Javadoc - these should log! isAuthorizedForXXXshould not log (for use in UI)
+    void assertAuthorizedForURL(String url) throws AccessControlException;
+    void assertAuthorizedForFunction(String functionName) throws AccessControlException;
+    void assertAuthorizedForData(String key) throws AccessControlException;
+    void assertAuthorizedForFile(String filepath) throws AccessControlException;
+    void assertAuthorizedForService(String serviceName) throws AccessControlException;
+    
+    
 }

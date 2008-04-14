@@ -19,6 +19,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.interfaces.IAccessController;
 import org.owasp.esapi.interfaces.IAuthenticator;
 
@@ -86,6 +87,11 @@ public class AccessControllerTest extends TestCase {
 		return suite;
 	}
 
+	public void testMatchRule() {
+		ESAPI.authenticator().setCurrentUser(null);
+		assertFalse(ESAPI.accessController().isAuthorizedForURL("/nobody"));
+	}
+	
 	/**
 	 * Test of isAuthorizedForURL method, of class
 	 * org.owasp.esapi.AccessController.
@@ -117,6 +123,14 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForURL("/test/user"));
 		assertTrue(instance.isAuthorizedForURL("/test/all"));
 		assertFalse(instance.isAuthorizedForURL("/test/none"));
+		
+		try {
+			instance.assertAuthorizedForURL("/test/admin");
+			instance.assertAuthorizedForURL( "/nobody" );
+			fail();
+		} catch ( AccessControlException e ) {
+			// expected
+		}
 	}
 
 	/**
@@ -145,6 +159,14 @@ public class AccessControllerTest extends TestCase {
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertTrue(instance.isAuthorizedForFunction("/FunctionB"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionBdeny"));
+
+		try {
+			instance.assertAuthorizedForFunction("/FunctionA");
+			instance.assertAuthorizedForFunction( "/FunctionAdeny" );
+			fail();
+		} catch ( AccessControlException e ) {
+			// expected
+		}
 	}
 
 	/**
@@ -170,6 +192,14 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForData("/Data1"));
 		assertTrue(instance.isAuthorizedForData("/Data2"));
 		assertFalse(instance.isAuthorizedForData("/not_listed"));
+
+		try {
+			instance.assertAuthorizedForData("/Data1");
+			instance.assertAuthorizedForData( "/not_listed" );
+			fail();
+		} catch ( AccessControlException e ) {
+			// expected
+		}
 	}
 
 	/**
@@ -195,6 +225,14 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForFile("/Dir/File1"));
 		assertTrue(instance.isAuthorizedForFile("/Dir/File2"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
+
+		try {
+			instance.assertAuthorizedForFile("/Dir/File1");
+			instance.assertAuthorizedForFile( "/Dir/ridiculous" );
+			fail();
+		} catch ( AccessControlException e ) {
+			// expected
+		}
 	}
 
 	/**
@@ -220,6 +258,14 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForService("/services/ServiceA"));
 		assertTrue(instance.isAuthorizedForService("/services/ServiceB"));
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));
+
+		try {
+			instance.assertAuthorizedForService("/services/ServiceA");
+			instance.assertAuthorizedForService( "/test/ridiculous" );
+			fail();
+		} catch ( AccessControlException e ) {
+			// expected
+		}
 	}
 
 }

@@ -15,15 +15,9 @@
  */
 package org.owasp.esapi;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.owasp.esapi.interfaces.IExecutor;
 
 /**
  * The Class ExecutorTest.

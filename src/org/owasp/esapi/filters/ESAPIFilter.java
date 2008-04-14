@@ -106,7 +106,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// verify if this request meets the baseline input requirements
-			if ( !ESAPI.validator().isValidHTTPRequest(request) ) {
+			if ( !ESAPI.validator().isValidHTTPRequest() ) {
 				request.setAttribute("message", "Validation error" );
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
 				dispatcher.forward(request, response);

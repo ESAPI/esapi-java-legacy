@@ -184,11 +184,12 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("c2", "v2"));
         list.add(new Cookie("c3", "v3"));
         request.setCookies(list);
-        assertTrue( ESAPI.validator().isValidHTTPRequest(request) );
+        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, new TestHttpServletResponse() );
+        assertTrue( ESAPI.validator().isValidHTTPRequest() );
         request.addParameter("bad_name", "bad*value");
         request.addHeader("bad_name", "bad*value");
         list.add(new Cookie("bad_name", "bad*value"));
-        assertFalse( ESAPI.validator().isValidHTTPRequest(request) );
+        assertFalse( ESAPI.validator().isValidHTTPRequest() );
      }
     
     
