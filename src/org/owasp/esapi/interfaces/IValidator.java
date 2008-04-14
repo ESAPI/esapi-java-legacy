@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -45,121 +48,241 @@ import org.owasp.esapi.errors.ValidationException;
 public interface IValidator {
 
 	/**
-	 * 
-	 * @param context
-	 * @param type
-	 * @param value
-	 * @return
-	 * @throws ValidationException
+	 * Returns true if input is valid according to the specified type. Types are referenced by name against the ESAPI configuration. Implementers
+	 * should take care to make the type storage simple to understand and configure.
 	 */
-	public String getValidDataFromBrowser(String context, String type, String value) throws ValidationException;
+	boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;
+
+	/**
+	 * Returns canonicalized and validated input as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	
 	
 	/**
-	 * Gets a valid date from the input.
+	 * Returns true if input is a valid date according to the specified date format.
 	 */
-	Date getValidDate(String context, String value, DateFormat format) throws ValidationException;	
+	boolean isValidDate(String context, String input, DateFormat format, boolean allowNull) throws IntrusionException;
+
+	/**
+	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException;	
+	
+	
 	
 	/**
-	 * Returns valid safe HTML from any input string.
+	 * Returns true if input is "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
+	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 */
-	String getValidSafeHTML(String context, String value) throws ValidationException;
+	boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input is a valid credit card.
+	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
+	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 */
-	boolean isValidCreditCard(String context, String value);
+	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws ValidationException;
+
+	
+	
+	/**
+	 * Returns true if input is a valid credit card. Maxlength is mandated by valid credit card type. 
+	 */
+	boolean isValidCreditCard(String context, String input, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input from browser is valid according to the specified type. The types are configured
-	 * as regular expressions in ESAPI.config.
+	 * Returns a canonicalized and validated credit card number as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	public boolean isValidDataFromBrowser(String name, String type, String value);
+	String getValidCreditCard(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	
+	
+	/**
+	 * Returns true if input is a valid directory path.
+	 */
+	boolean isValidDirectoryPath(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input is a valid directory path.
+	 * Returns a canonicalized and validated directory path as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidDirectoryPath(String context, String value);
+	String getValidDirectoryPath(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	
+	
+	/**
+	 * Returns true if input is a valid file name.
+	 */
+	boolean isValidFileName(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input is a valid file upload.
-	 * 
-	 * @param content
-	 *            the content
-	 * 
-	 * @return true, if is valid file upload
+	 * Returns a canonicalized and validated file name as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidFileContent(String context, byte[] content);
+	String getValidFileName(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	
+	
+	/**
+	 * Returns true if input is a valid number.
+	 */
+	boolean isValidNumber(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input is a valid file name.
-	 * 
-	 * @param input
-	 *            the input
-	 * 
-	 * @return true, if is valid file name
+	 * Returns a validated number as a double. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidFileName(String context, String input);
+	Double getValidNumber(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
-    /**
-	 * Checks whether a file upload has a valid name, path, and content.
-	 * 
-	 * @param filepath
-	 *            the filepath
-	 * @param filename
-	 *            the filename
-	 * @param content
-	 *            the content
-	 * 
-	 * @return true if the file is safe
+	
+	
+	/**
+	 * Returns true if input is a valid integer.
 	 */
-	boolean isValidFileUpload(String context, String filepath, String filename, byte[] content);
+	boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException;
 
 	/**
-     * Validate an HTTP requests by comparing parameters, headers, and cookies to a predefined whitelist of allowed
+	 * Returns a validated integer as an int. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	
+	
+	/**
+	 * Returns true if input is a valid double.
+	 */
+	boolean isValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws IntrusionException;
+
+	/**
+	 * Returns a validated real number as a double. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws ValidationException, IntrusionException;
+
+	
+	
+	/**
+	 * Returns true if input is valid file content.
+	 */
+	boolean isValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws IntrusionException;
+
+	/**
+	 * Returns validated file content as a byte array. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException;
+
+	
+	
+	/**
+	 * Returns true if a file upload has a valid name, path, and content.
+	 */
+	boolean isValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException;
+
+	/**
+	 * Validates the filepath, filename, and content of a file. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException;
+
+	
+	
+	/**
+     * Validate the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
      * characters. See the SecurityConfiguration class for the methods to retrieve the whitelists.
-     * 
-     * @param request
-     * @return
      */
-    boolean isValidHTTPRequest();
-
+	boolean isValidHTTPRequest() throws IntrusionException;
+	boolean isValidHTTPRequest(HttpServletRequest request) throws IntrusionException;
+	
 	/**
-	 * Checks if input is a valid list item.
+	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
+	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidListItem(List list, String value);
-
+	void assertIsValidHTTPRequest() throws ValidationException, IntrusionException;
+	void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException;
+	
+	
 	/**
-	 * Checks if input is a valid number.
+	 * Returns true if input is a valid list item.
 	 */
-	boolean isValidNumber(String input);
+	boolean isValidListItem(String context, String input, List list) throws IntrusionException;
 
 	/**
-	 * Checks if the supplied set of parameters matches the required parameter set, with no extra and no missing parameters.
+	 * Returns the list item that exactly matches the canonicalized input. Invalid or non-matching input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidParameterSet(Set required, Set optional);
+	String getValidListItem(String context, String input, List list) throws ValidationException, IntrusionException;
 
+	
+	
 	/**
-	 * Checks if input is valid printable ASCII characters.
+	 * Returns true if the parameters in the current request contain all required parameters and only optional ones in addition.
 	 */
-    boolean isValidPrintable(byte[] input);
+	boolean isValidHTTPRequestParameterSet(String context, Set required, Set optional) throws IntrusionException;
 
 	/**
-     * Checks if input is valid printable ASCII characters.
+	 * Validates that the parameters in the current request contain all required parameters and only optional ones in
+	 * addition. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional) throws ValidationException, IntrusionException;
+	
+	
+	
+	/**
+	 * Returns true if input is valid printable ASCII characters.
+	 */
+	boolean isValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws IntrusionException;
+
+	/**
+	 * Returns canonicalized and validated printable characters as a byte array. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws ValidationException;
+
+	
+	
+	/**
+     * Returns true if input is valid printable ASCII characters (32-126).
      */
-    boolean isValidPrintable(String input);
+	boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input is a valid redirect location.
+	 * Returns canonicalized and validated printable characters as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidRedirectLocation(String context, String location);
+	String getValidPrintable(String context, String input, int maxLength, boolean allowNull) throws ValidationException;
+
+	
+	
+	/**
+	 * Returns true if input is a valid redirect location.
+	 */
+	boolean isValidRedirectLocation(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
 	/**
-	 * Checks if input is valid safe HTML. Implementors should reference the OWASP AntiSamy project for ideas
-	 * on how to do HTML validation in a whitelist way.
+	 * Returns a canonicalized and validated redirect location as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
 	 */
-	boolean isValidSafeHTML(String context, String input);
+	String getValidRedirectLocation(String context, String input, int maxLength, boolean allowNull) throws ValidationException;
 
-   
+	
+	
 	/**
 	 * Reads from an input stream until end-of-line or a maximum number of
 	 * characters. This method protects against the inherent denial of service
@@ -167,18 +290,8 @@ public interface IValidator {
 	 * send a newline character, then a normal input stream reader will read
 	 * until all memory is exhausted and the platform throws an OutOfMemoryError
 	 * and probably terminates.
-	 * 
-	 * @param inputStream
-	 *            the InputStream
-	 * @param maxsChar
-	 *            the maxs char
-	 * 
-	 * @return the line
-	 * 
-	 * @throws ValidationException
-	 *             the validation exception
 	 */
-	// FIXME: ENHANCE timeout too!
-	String safeReadLine(InputStream inputStream, int maxChar) throws ValidationException;
+	String safeReadLine(InputStream inputStream, int maxLength) throws ValidationException;
 
 }
+
