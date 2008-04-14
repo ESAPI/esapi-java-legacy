@@ -34,24 +34,26 @@ public class SafeFile extends File {
 
 	public SafeFile(String path) throws ValidationException {
 		super(path);
-		doFileCheck(path);
+		doDirCheck(this.getParent());
+		doFileCheck(this.getName());
 	}
 
 	public SafeFile(String parent, String child) throws ValidationException {
 		super(parent, child);
-		doFileCheck(parent);
-		doFileCheck(child);
+		doDirCheck(this.getParent());
+		doFileCheck(this.getName());
 	}
 
 	public SafeFile(File parent, String child) throws ValidationException {
 		super(parent, child);
-		doFileCheck(parent.getPath());
-		doFileCheck(child);
+		doDirCheck(this.getParent());
+		doFileCheck(this.getName());
 	}
 
 	public SafeFile(URI uri) throws ValidationException {
 		super(uri);
-		doFileCheck(uri.toASCIIString());
+		doDirCheck(this.getParent());
+		doFileCheck(this.getName());
 	}
 
 //  FIXME: much stricter file validation using Validator - but won't work as drop-in replacement as well
@@ -61,13 +63,35 @@ public class SafeFile extends File {
 //		}
 //	}
 	
-	Pattern p = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");
+	Pattern percents = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");	
+	Pattern dirblacklist = Pattern.compile("([*?<>|])");
+	private void doDirCheck(String path) throws ValidationException {
+		Matcher m1 = dirblacklist.matcher( path );
+		if ( m1.find() ) {
+			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
+		}
+
+		Matcher m2 = percents.matcher( path );
+		if ( m2.find() ) {
+			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains encoded characters: " + m2.group() );
+		}
+		
+		int ch = containsUnprintableCharacters(path);
+		if (ch != -1) {
+			throw new ValidationException("Invalid directory", "Directory path (" + path + ") contains unprintable character: " + ch);
+		}
+	}
 	
-	// check for any percent-encoded characters	
+	Pattern fileblacklist = Pattern.compile("([\\\\/:*?<>|])");	
 	private void doFileCheck(String path) throws ValidationException {
-		Matcher m = p.matcher( path );
-		if ( m.find() ) {
-			throw new ValidationException( "Invalid file", "File path (" + path + ") contains encoded characters: " + m.group() );
+		Matcher m1 = fileblacklist.matcher( path );
+		if ( m1.find() ) {
+			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
+		}
+
+		Matcher m2 = percents.matcher( path );
+		if ( m2.find() ) {
+			throw new ValidationException( "Invalid file", "File path (" + path + ") contains encoded characters: " + m2.group() );
 		}
 		
 		int ch = containsUnprintableCharacters(path);

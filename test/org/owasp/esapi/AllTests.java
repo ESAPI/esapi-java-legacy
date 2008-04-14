@@ -89,6 +89,7 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.LoggerTest.suite());
         suite.addTest(org.owasp.esapi.SafeFileTest.suite());
         suite.addTest(org.owasp.esapi.UserTest.suite());
+        suite.addTest(org.owasp.esapi.ESAPITest.suite());
         suite.addTest(org.owasp.esapi.RandomizerTest.suite());
         suite.addTest(org.owasp.esapi.AccessControllerTest.suite());
         suite.addTest(org.owasp.esapi.HTTPUtilitiesTest.suite());
