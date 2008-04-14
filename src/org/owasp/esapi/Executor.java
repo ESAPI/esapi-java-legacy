@@ -39,6 +39,13 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
 
     /** The logger. */
     private static final Logger logger = Logger.getLogger("ESAPI", "Executor");
+    
+    /**
+     * TODO: Push to configuration? 
+     * Maximum legal system command size 
+     **/
+    private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
+    
 
     public Executor() {
     }
@@ -68,7 +75,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
             Iterator i = params.iterator();
             while (i.hasNext()) {
                 String param = (String) i.next();
-                if (!validator.isValidDataFromBrowser("fixme", "SystemCommand", param)) {
+                if (!validator.isValidInput("fixme", "SystemCommand", param, MAX_SYSTEM_COMMAND_LENGTH, false)) {
                     throw new ExecutorException("Execution failure", "Illegal characters in parameter to executable: " + param);
                 }
 
