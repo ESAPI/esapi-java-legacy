@@ -88,6 +88,31 @@ public class SafeFileTest extends TestCase {
 		}		
 	}
 	
+	public void testMultipleJavaFileInjection() {
+		System.out.println("testMultipleJavaFileInjection");
+		for ( int i = 0; i < 512; i++ ) {
+			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + (char)i + (char)i + (char)i;
+			File sf = new File(goodFile);
+			if ( sf.exists() ) {
+				System.out.println( "  Fail filename.txt"  + (char)i  + (char)i + (char)i + " ("+ i +") 3x" );
+			}
+			File sf2 = new File(goodFile + "test");
+			if ( sf2.exists() ) {
+				System.out.println( "  Fail c:\\filename.txt"  + (char)i + (char)i + (char)i + "test.xml ("+ i +") 3x" );
+			}
+		}		
+	}
+	
+	public void testAlternateDataStream() {
+		System.out.println("testAlternateDataStream");
+		String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties:secret.txt";
+		File sf = new File(goodFile);
+		if ( sf.exists() ) {
+			System.out.println( "  Fail:" + goodFile );
+			fail();
+		}
+	}
+	
 	public void testJavaDirInjection() {
 		System.out.println("testJavaDirInjection");
 		for ( int i = 0; i < 512; i++ ) {
@@ -125,10 +150,14 @@ public class SafeFileTest extends TestCase {
 		System.out.println("testWeirdPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc2 = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + "%u00" + toHex( (byte)i );
-			String dec2 = URLDecoder.decode(enc2);
-			File sf2 = new File(dec2);
-			if ( sf2.exists() ) {
-				System.out.println( "  Fail: " + enc2 );
+			try {
+				String dec2 = URLDecoder.decode(enc2);
+				File sf2 = new File(dec2);
+				if ( sf2.exists() ) {
+					System.out.println( "  Fail: " + enc2 );
+				}
+			} catch (Exception e ) {
+				// expected
 			}
 		}		
 	}
@@ -143,19 +172,46 @@ public class SafeFileTest extends TestCase {
 	public void testCreateSafeFile() throws Exception {
 		System.out.println("SafeFile");
 
-		// verify file exists
+		// verify file exists and test safe constructors
 		try{
 			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties";
 			File sf = new File(goodFile);
 			assertTrue( sf.exists() );
+			
+			// test string constructor
+			SafeFile sf1 = new SafeFile(goodFile);
+			assertTrue( sf1.exists() );
+			
+			// test string, string constructor
+			SafeFile sf2 = new SafeFile(ESAPI.securityConfiguration().getResourceDirectory(), "ESAPI.properties");
+			assertTrue( sf2.exists() );
+			
+			// test File, string constructor
+			SafeFile sf3 = new SafeFile(new File( ESAPI.securityConfiguration().getResourceDirectory() ), "ESAPI.properties");
+			assertTrue( sf3.exists() );
+			
+			// test URI constructor
+			String uri = "file:///" + ESAPI.securityConfiguration().getResourceDirectory().replaceAll("\\\\", "/") + "ESAPI.properties";
+			System.out.println( uri );
+			SafeFile sf4 = new SafeFile(new URI( uri ) );
+			assertTrue( sf4.exists() );			
+			
 		} catch( Exception e ) {
 			fail();
 		}
 
-		
 		// test percent encoded null byte
 		try {
 			String pathWithPercentEncodedNullByte = "/temp/file%00.txt";
+			new SafeFile( pathWithPercentEncodedNullByte );
+			fail();
+		} catch (Exception e) {
+			// expected
+		}
+
+		// test illegal characters
+		try {
+			String pathWithPercentEncodedNullByte = "/temp/file?.txt";
 			new SafeFile( pathWithPercentEncodedNullByte );
 			fail();
 		} catch (Exception e) {
@@ -192,13 +248,34 @@ public class SafeFileTest extends TestCase {
 	// test parent constructor
 	public void testCreateSafeFileParentConstructor() throws Exception {
 		System.out.println("SafeFile parent constructor");
-		File parent = new File( "/" );
 		try {
-			new SafeFile( parent, pathWithNullByte );
+			new SafeFile( new File( "/" ), pathWithNullByte );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
+		
+		try {
+			new SafeFile( new File("/%00"), "test.txt" );
+			fail();
+		} catch (ValidationException e) {
+			// expected
+		}
+		
+		try {
+			new SafeFile( new File("/\0"), "test.txt" );
+			fail();
+		} catch (ValidationException e) {
+			// expected
+		}
+		
+		try {
+			new SafeFile( new File("/|test"), "test.txt" );
+			fail();
+		} catch (ValidationException e) {
+			// expected
+		}
+		
 	}
 	
 	
