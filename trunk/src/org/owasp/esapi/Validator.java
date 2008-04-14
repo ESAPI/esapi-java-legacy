@@ -455,14 +455,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidSafeHTML(java.lang.String)
 	 */
-	public boolean isValidSafeHTML(String name, String input) {
-	    try {
-    		String canonical = ESAPI.encoder().canonicalize(input);
-    		// FIXME: AAA this is just a simple blacklist test - will use Anti-SAMY
-    		return !(canonical.indexOf("<scri") > -1 ) && !(canonical.indexOf("onload") > -1);
-	    } catch (EncodingException ee) {
-	           throw new IntrusionException("Invalid input", "EncodingException during HTML validation", ee);
-	    }
+	public boolean isValidSafeHTML(String context, String input) {
+		try {
+			getValidSafeHTML( context, input );
+			return true;
+		} catch (ValidationException e ) {
+			return false;
+		}
 	}
 
 	/*
