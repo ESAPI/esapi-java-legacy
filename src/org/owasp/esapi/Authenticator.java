@@ -85,6 +85,12 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     private long lastChecked = 0;
     
     /**
+     * TODO: Push to configuration? 
+     * Maximum legal account name size 
+     **/
+    private final int MAX_ACCOUNT_NAME_LENGTH = 250;
+    
+    /**
      * Fail safe main program to add or update an account in an emergency.
      * <P>
      * Warning: this method does not perform the level of validation and checks
@@ -668,7 +674,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account with a null account name");
         }
         // FIXME: ENHANCE make the lengths configurable?
-        if (!ESAPI.validator().isValidDataFromBrowser(context, "AccountName", newAccountName )) {
+        if (!ESAPI.validator().isValidInput(context, "AccountName", newAccountName, MAX_ACCOUNT_NAME_LENGTH, false )) {
             throw new AuthenticationCredentialsException("Invalid account name", "New account name is not valid: " + newAccountName);
         }
     }
