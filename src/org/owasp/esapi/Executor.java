@@ -75,7 +75,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
             Iterator i = params.iterator();
             while (i.hasNext()) {
                 String param = (String) i.next();
-                if (!validator.isValidInput("fixme", "SystemCommand", param, MAX_SYSTEM_COMMAND_LENGTH, false)) {
+                if (!validator.isValidInput("executeSystemCommand", "SystemCommand", param, MAX_SYSTEM_COMMAND_LENGTH, false)) {
                     throw new ExecutorException("Execution failure", "Illegal characters in parameter to executable: " + param);
                 }
 

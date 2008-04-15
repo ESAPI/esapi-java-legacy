@@ -60,7 +60,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	/** The logger. */
 	private static final Logger logger = Logger.getLogger("ESAPI", "Validator");
 	
-	/** anti-Sammy markup verification policy */
+	/** OWASP AntiSamy markup verification policy */
 	private Policy antiSamyPolicy = null;
 	
 	/** constants */
@@ -112,8 +112,8 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
     		}
     		
     		if (canonical.length() > maxLength) {
-    			//TODO - if the length is exceeded by a wide margin, throw IntrusionException?
-    			throw new ValidationException("Bad input", context + " input exceedes maxLength by " + (canonical.length()-maxLength) + " characters");
+    			//FIXME: ENHANCE if the length is exceeded by a wide margin, throw IntrusionException?
+    			throw new ValidationException("Bad input", type + " (" + context + "=" + input + ") input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters");
     		}
     		
     		if ( type == null )
@@ -173,9 +173,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {
-			getValidSafeHTML(context, input, maxLength, allowNull);
-			return true;
-		} catch( Exception e ) {
+			if ( antiSamyPolicy == null ) {
+				antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+			}
+			AntiSamy as = new AntiSamy();
+			CleanResults test = as.scan(input, antiSamyPolicy);
+			return(test.getErrorMessages().size() == 0);
+		} catch (Exception e) {
 			return false;
 		}
 	}
@@ -210,7 +214,6 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		} catch (PolicyException e) {
 			throw new ValidationException( "Invalid HTML", "HTML violates policy (" + context + "=" + input + ") ",e );
 		}
-
 	}
 
 	/*
@@ -281,9 +284,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidDirectoryPath(java.lang.String)
 	 */
-	public boolean isValidDirectoryPath(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
+	public boolean isValidDirectoryPath(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
-			getValidDirectoryPath(context, input, maxLength, allowNull);
+			getValidDirectoryPath(context, input, allowNull);
 			return true;
 		} catch( Exception e ) {
 			return false;
@@ -295,7 +298,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public String getValidDirectoryPath(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
+	public String getValidDirectoryPath(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		String canonical = "";
 		try {
 			if (isEmpty(input)) {
@@ -345,9 +348,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * FIXME: AAA - need new method getValidFileName that eliminates %00 and other injections.
 	 * FIXME: AAA - this method should check for %00 injection too
 	 */
-	public boolean isValidFileName(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
+	public boolean isValidFileName(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
-			getValidFileName(context, input, maxLength, allowNull);
+			getValidFileName(context, input, allowNull);
 			return true;
 		} catch( Exception e ) {
 			return false;
@@ -359,46 +362,48 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public String getValidFileName(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
-			if (isEmpty(input)) {
-				if (allowNull) return null;
-				throw new ValidationException("Input is required", "(" + context + ") input is required");
+	public String getValidFileName(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
+		// FIXME: check length
+		
+		if (isEmpty(input)) {
+			if (allowNull) return null;
+			throw new ValidationException("Input is required", "(" + context + ") input is required");
+		}
+		
+		String canonical = "";
+		
+		// detect path manipulation
+		try {
+	        canonical = ESAPI.encoder().canonicalize(input);
+
+			// do basic validation
+			Pattern fileNamePattern = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("FileName");
+			if ( !fileNamePattern.matcher(canonical).matches() ) {
+				throw new ValidationException("Invalid filename", "Attempt to use a filename (" + canonical + ") that violates the global rule in ESAPI.properties (" + fileNamePattern.pattern() +")" );
 			}
 			
-			String canonical = "";
-			
-			// detect path manipulation
-			try {
-		        canonical = ESAPI.encoder().canonicalize(input);
-
-				// do basic validation
-				Pattern fileNamePattern = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("FileName");
-				if ( !fileNamePattern.matcher(canonical).matches() ) {
-					throw new ValidationException("Invalid filename", "Attempt to use a filename (" + canonical + ") that violates the global rule in ESAPI.properties (" + fileNamePattern.pattern() +")" );
-				}
-				
-				File f = new File(canonical);
-				String c = f.getCanonicalPath();
-				String cpath = c.substring(c.lastIndexOf(File.separator) + 1);
-				if (!input.equals(cpath)) {
-					throw new ValidationException("Invalid filename", "Invalid filename (" + canonical + ") doesn't match canonical path (" + cpath + ") and could be an injection attack");
-				}
-			} catch (IOException e) {
-				throw new IntrusionException("Invalid filename", "Exception during filename validation", e);
-			} catch (EncodingException ee) {
-	            throw new IntrusionException("Invalid filename", "Exception during filename validation", ee);
+			File f = new File(canonical);
+			String c = f.getCanonicalPath();
+			String cpath = c.substring(c.lastIndexOf(File.separator) + 1);
+			if (!input.equals(cpath)) {
+				throw new ValidationException("Invalid filename", "Invalid filename (" + canonical + ") doesn't match canonical path (" + cpath + ") and could be an injection attack");
 			}
+		} catch (IOException e) {
+			throw new IntrusionException("Invalid filename", "Exception during filename validation", e);
+		} catch (EncodingException ee) {
+            throw new IntrusionException("Invalid filename", "Exception during filename validation", ee);
+		}
 
-			// verify extensions
-			List extensions = ESAPI.securityConfiguration().getAllowedFileExtensions();
-			Iterator i = extensions.iterator();
-			while (i.hasNext()) {
-				String ext = (String) i.next();
-				if (input.toLowerCase().endsWith(ext.toLowerCase())) {
-					return canonical;
-				}
+		// verify extensions
+		List extensions = ESAPI.securityConfiguration().getAllowedFileExtensions();
+		Iterator i = extensions.iterator();
+		while (i.hasNext()) {
+			String ext = (String) i.next();
+			if (input.toLowerCase().endsWith(ext.toLowerCase())) {
+				return canonical;
 			}
-			throw new IntrusionException("Invalid filename", "Extention does not exist in EASPI.getAllowedFileExtensions list");
+		}
+		throw new IntrusionException("Invalid filename", "Extension does not exist in EASPI.getAllowedFileExtensions list");
 	}
 	
 	/*
@@ -406,7 +411,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * 
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidNumber(java.lang.String)
 	 */
-	public boolean isValidNumber(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException {
+	public boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws IntrusionException {
 		try {
 			getValidNumber( context, input, minValue, maxValue, allowNull);
 			return true;
@@ -420,7 +425,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public Double getValidNumber(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException {
+	public Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		Double minDoubleValue = new Double(minValue);
 		Double maxDoubleValue = new Double(maxValue);
 		return getValidDouble( context, input, minDoubleValue.doubleValue(), maxDoubleValue.doubleValue(), allowNull);
@@ -448,21 +453,21 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		
 		try {
 			Double d = new Double(Double.parseDouble(input));
-			if (d.isInfinite()) throw new ValidationException("Invalid number", "Number is infinite");
-			if (d.isNaN()) throw new ValidationException("Invalid number", "Number is not a number");
-			if (d.doubleValue() < minValue) throw new ValidationException("Invalid number. Number is too small. Number must be between " + minValue + " and " + maxValue, "Invalid number. Number must be between " + minValue + " and " + maxValue);
-			if (d.doubleValue() > maxValue) throw new ValidationException("Invalid number. Number is too large. Number must be between " + minValue + " and " + maxValue, "Invalid number. Number must be between " + minValue + " and " + maxValue);
+			if (d.isInfinite()) throw new ValidationException("Invalid number", "Number (" +input+ ") is infinite");
+			if (d.isNaN()) throw new ValidationException("Invalid number", "Number (" +input+ ") is not a number");
+			if (d.doubleValue() < minValue) throw new ValidationException("Invalid number. Number is too small. Number must be between " + minValue + " and " + maxValue, "Invalid number (" +input+ "). Number must be between " + minValue + " and " + maxValue);
+			if (d.doubleValue() > maxValue) throw new ValidationException("Invalid number. Number is too large. Number must be between " + minValue + " and " + maxValue, "Invalid number (" +input+ "). Number must be between " + minValue + " and " + maxValue);
 			
 			return d;
 		} catch (NumberFormatException e) {
-			throw new ValidationException("Invalid number", "Invalid number", e);
+			throw new ValidationException("Invalid number", "Invalid number format (" +input+ ")", e);
 		}
 	}
 	
 	/*
 	 * Returns true if input is a valid number.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidNumber(java.lang.String)
+	 * @see org.owasp.esapi.interfaces.IValidator#isValidInteger(java.lang.String)
 	 */
 	public boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException {
 		try {
@@ -530,8 +535,10 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	/**
 	 * Returns true if a file upload has a valid name, path, and content.
 	 */
-	public boolean isValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException {
-		throw new java.lang.UnsupportedOperationException();
+	public boolean isValidFileUpload(String context, String directorypath, String filename, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException {
+		return( isValidFileName( context, filename, allowNull ) &&
+				isValidDirectoryPath( context, directorypath, allowNull ) &&
+				isValidFileContent( context, content, maxBytes, allowNull ) );
 	}
 
 	/**
@@ -539,8 +546,10 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException {
-		throw new java.lang.UnsupportedOperationException();
+	public void assertValidFileUpload(String context, String directorypath, String filename, byte[] content, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException {
+		getValidFileName( context, filename, allowNull );
+		getValidDirectoryPath( context, directorypath, allowNull );
+		getValidFileContent( context, content, maxBytes, allowNull );
 	}
 
 	/**
@@ -797,9 +806,10 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	/**
 	 * Returns true if input is a valid redirect location.
 	 */
-	public boolean isValidRedirectLocation(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
+	public boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException {
 		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
-		return ESAPI.validator().isValidInput(context, "Redirect", input, maxLength, allowNull);
+		// FIXME: ENHANcE - configurable redirect length
+		return ESAPI.validator().isValidInput(context, "Redirect", input, 512, allowNull);
 	}
 
 
@@ -807,9 +817,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * Returns a canonicalized and validated redirect location as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public String getValidRedirectLocation(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
+	public String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
-		return ESAPI.validator().getValidInput(context, "Redirect", input, maxLength, allowNull);
+		return ESAPI.validator().getValidInput(context, "Redirect", input, 512, allowNull);
 	}
 
 	/**
@@ -863,11 +873,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @return boolean response if input is empty or not
 	 */
 	private static final boolean isEmpty(String input) {
-		if (input==null || input.trim().length() == 0) {
-			return true;
-		} 
-		
-		return false;
+		return (input==null || input.trim().length() == 0);
 	}
 	
 	/**
@@ -877,10 +883,6 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @return boolean response if input is empty or not
 	 */
 	private static final boolean isEmpty(byte[] input) {
-		if (input==null || input.length == 0) {
-			return true;
-		} 
-		
-		return false;
+		return (input==null || input.length == 0);
 	}
 }
