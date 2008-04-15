@@ -21,8 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -105,42 +103,42 @@ public interface IValidator {
 	/**
 	 * Returns true if input is a valid directory path.
 	 */
-	boolean isValidDirectoryPath(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
+	boolean isValidDirectoryPath(String context, String input, boolean allowNull) throws IntrusionException;
 
 	/**
 	 * Returns a canonicalized and validated directory path as a String. Invalid input
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	String getValidDirectoryPath(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
+	String getValidDirectoryPath(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
 	
 	
 	
 	/**
 	 * Returns true if input is a valid file name.
 	 */
-	boolean isValidFileName(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
+	boolean isValidFileName(String context, String input, boolean allowNull) throws IntrusionException;
 
 	/**
 	 * Returns a canonicalized and validated file name as a String. Invalid input
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	String getValidFileName(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
+	String getValidFileName(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
 	
 	
 	
 	/**
 	 * Returns true if input is a valid number.
 	 */
-	boolean isValidNumber(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException;
+	boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws IntrusionException;
 
 	/**
 	 * Returns a validated number as a double. Invalid input
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	Double getValidNumber(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException;
+	Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
 	
 	
@@ -205,7 +203,6 @@ public interface IValidator {
      * characters. See the SecurityConfiguration class for the methods to retrieve the whitelists.
      */
 	boolean isValidHTTPRequest() throws IntrusionException;
-	boolean isValidHTTPRequest(HttpServletRequest request) throws IntrusionException;
 	
 	/**
 	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
@@ -213,7 +210,6 @@ public interface IValidator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	void assertIsValidHTTPRequest() throws ValidationException, IntrusionException;
-	void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException;
 	
 	
 	/**
@@ -273,13 +269,13 @@ public interface IValidator {
 	/**
 	 * Returns true if input is a valid redirect location.
 	 */
-	boolean isValidRedirectLocation(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
+	boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException;
 
 	/**
 	 * Returns a canonicalized and validated redirect location as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	String getValidRedirectLocation(String context, String input, int maxLength, boolean allowNull) throws ValidationException;
+	String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException;
 
 	
 	

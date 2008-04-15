@@ -125,9 +125,10 @@ public class ValidatorTest extends TestCase {
 		assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
 		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
 		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
+
+		// FIXME: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
-
 	}
 
 	/**
@@ -148,7 +149,7 @@ public class ValidatorTest extends TestCase {
 		String result3 = instance.getValidSafeHTML("test", test3, 100, false);
 		assertEquals("Test.", result3);
 		
-		//TODO - Jeff, do you want this turned back on?
+		// FIXME: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
 		// String result4 = instance.getValidSafeHTML("test", test4);
@@ -174,9 +175,10 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidNumber() {
 		System.out.println("isValidNumber");
 		IValidator instance = ESAPI.validator();
+		assertFalse(instance.isValidNumber("test", "-4", 1, 10, false));
 		assertTrue(instance.isValidNumber("test", "4", 1, 10, false));
 		assertTrue(instance.isValidNumber("test", "400", 1, 10000, false));
-		assertTrue(instance.isValidNumber("test", "4000000000000", 1, 400000000, false));
+		assertTrue(instance.isValidNumber("test", "400000000", 1, 400000000, false));
 		assertFalse(instance.isValidNumber("test", "4000000000000", 1, 10000, false));
 		assertFalse(instance.isValidNumber("test", "alsdkf", 10, 10000, false));
 		assertFalse(instance.isValidNumber("test", "--10", 10, 10000, false));
@@ -206,6 +208,7 @@ public class ValidatorTest extends TestCase {
 		// FIXME: AAA This test case fails due to an apparent bug in SimpleDateFormat
 		try {
 			instance.getValidDate( "test", "June 32, 2008", DateFormat.getDateInstance(), false );
+			// fail();
 		} catch( ValidationException e ) {
 			// expected
 		}
@@ -217,10 +220,10 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidFileName() {
 		System.out.println("isValidFileName");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidFileName("test", "aspect.jar", 100, false));
-		assertFalse(instance.isValidFileName("test", "", 100, false));
+		assertTrue(instance.isValidFileName("test", "aspect.jar", false));
+		assertFalse(instance.isValidFileName("test", "", false));
         try {
-            instance.isValidFileName("test", "abc/def", 100, false);
+            instance.isValidFileName("test", "abc/def", false);
         } catch( IntrusionException e ) {
             // expected
         }
@@ -232,13 +235,13 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidDirectoryPath() {
 		System.out.println("isValidDirectoryPath");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidDirectoryPath("test", "/", 100, false));
-		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp", 100, false));
-		assertTrue(instance.isValidDirectoryPath("test", "/etc/config", 100, false));
+		assertTrue(instance.isValidDirectoryPath("test", "/", false));
+		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp", false));
+		assertTrue(instance.isValidDirectoryPath("test", "/etc/config", false));
 		// FIXME: ENHANCE doesn't accept filenames, just directories - should it?
 		// assertTrue( instance.isValidDirectoryPath(
 		// "c:\\Windows\\System32\\cmd.exe" ) );
-		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", 100, false));
+		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
 	}
 
 	public void testIsValidPrintable() {

@@ -190,7 +190,7 @@ public class User implements IUser, Serializable {
 	 */
 	User(String accountName, String password1, String password2) throws AuthenticationException {
 		
-		ESAPI.authenticator().verifyAccountNameStrength("Create User", accountName);
+		ESAPI.authenticator().verifyAccountNameStrength(accountName);
 
 		if ( password1 == null ) {
 			throw new AuthenticationCredentialsException( "Invalid account name", "Attempt to create account " + accountName + " with a null password" );

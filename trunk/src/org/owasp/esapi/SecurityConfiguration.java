@@ -101,6 +101,13 @@ public class SecurityConfiguration implements ISecurityConfiguration {
 
     private static final String LOG_LEVEL = "LogLevel";
 
+    
+    // FIXME: Update to standard pattern
+    protected final int MAX_REDIRECT_LOCATION = 1000;
+    
+    protected final int MAX_FILE_NAME_LENGTH = 1000;
+    
+    
     /**
      * Load properties from properties file. Set this with setResourceDirectory
      * from your web application or ESAPI filter. For test and non-web applications,

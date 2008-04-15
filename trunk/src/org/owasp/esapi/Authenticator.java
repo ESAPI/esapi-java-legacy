@@ -669,12 +669,12 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#verifyAccountNameStrength(java.lang.String)
      */
-    public void verifyAccountNameStrength(String context, String newAccountName) throws AuthenticationException {
+    public void verifyAccountNameStrength(String newAccountName) throws AuthenticationException {
         if (newAccountName == null) {
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account with a null account name");
         }
         // FIXME: ENHANCE make the lengths configurable?
-        if (!ESAPI.validator().isValidInput(context, "AccountName", newAccountName, MAX_ACCOUNT_NAME_LENGTH, false )) {
+        if (!ESAPI.validator().isValidInput("verifyAccountNameStrength", "AccountName", newAccountName, MAX_ACCOUNT_NAME_LENGTH, false )) {
             throw new AuthenticationCredentialsException("Invalid account name", "New account name is not valid: " + newAccountName);
         }
     }

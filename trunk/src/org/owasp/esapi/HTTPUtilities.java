@@ -68,17 +68,6 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	/** The max bytes. */
 	int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
 	
-    /**
-     * TODO: Push to configuration? 
-     * Maximum legal redirect local size 
-     **/
-    private final int MAX_REDIRECT_LOCATION = 1000;
-    
-    /**
-     * TODO: Push to configuration? 
-     * Maximum legal file name size 
-     **/
-    private final int MAX_FILE_NAME_LENGTH = 1000;
 
 	public HTTPUtilities() {
 	}
@@ -410,7 +399,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 					String[] fparts = item.getName().split("[\\/\\\\]");
 					String filename = fparts[fparts.length - 1];
 
-					if (!ESAPI.validator().isValidFileName("upload", filename, MAX_FILE_NAME_LENGTH, false)) {
+					if (!ESAPI.validator().isValidFileName("upload", filename, false)) {
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
@@ -531,7 +520,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeSendRedirect(String context, String location) throws ValidationException, IOException {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
-		if (!ESAPI.validator().isValidRedirectLocation(context, location, MAX_REDIRECT_LOCATION, false)) {
+		if (!ESAPI.validator().isValidRedirectLocation(context, location, false)) {
 			throw new ValidationException("Redirect failed", "Bad redirect location: " + location);
 		}
 		response.sendRedirect(location);

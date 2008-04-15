@@ -195,7 +195,7 @@ public interface IAuthenticator {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	void verifyAccountNameStrength(String context, String accountName) throws AuthenticationException;
+	void verifyAccountNameStrength(String accountName) throws AuthenticationException;
 
 	/**
 	 * Validate password strength.
