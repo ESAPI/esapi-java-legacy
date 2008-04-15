@@ -84,35 +84,35 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidCreditCard() {
 		System.out.println("isValidCreditCard");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidCreditCard("test", "1234 9876 0000 0008"));
-		assertTrue(instance.isValidCreditCard("test", "1234987600000008"));
-		assertFalse(instance.isValidCreditCard("test", "12349876000000081"));
-		assertFalse(instance.isValidCreditCard("test", "4417 1234 5678 9112"));
+		assertTrue(instance.isValidCreditCard("test", "1234 9876 0000 0008", false));
+		assertTrue(instance.isValidCreditCard("test", "1234987600000008", false));
+		assertFalse(instance.isValidCreditCard("test", "12349876000000081", false));
+		assertFalse(instance.isValidCreditCard("test", "4417 1234 5678 9112", false));
 	}
 
 	/**
 	 * Test of isValidEmailAddress method, of class org.owasp.esapi.Validator.
 	 */
-	public void testIsValidDataFromBrowser() {
-		System.out.println("isValidDataFromBrowser");
+	public void testisValidInput() {
+		System.out.println("isValidInput");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidDataFromBrowser("test", "Email", "jeff.williams@aspectsecurity.com"));
-		assertFalse(instance.isValidDataFromBrowser("test", "Email", "jeff.williams@@aspectsecurity.com"));
-		assertFalse(instance.isValidDataFromBrowser("test", "Email", "jeff.williams@aspectsecurity"));
-		assertTrue(instance.isValidDataFromBrowser("test", "IPAddress", "123.168.100.234"));
-		assertTrue(instance.isValidDataFromBrowser("test", "IPAddress", "192.168.1.234"));
-		assertFalse(instance.isValidDataFromBrowser("test", "IPAddress", "..168.1.234"));
-		assertFalse(instance.isValidDataFromBrowser("test", "IPAddress", "10.x.1.234"));
-		assertTrue(instance.isValidDataFromBrowser("test", "URL", "http://www.aspectsecurity.com"));
-		assertFalse(instance.isValidDataFromBrowser("test", "URL", "http:///www.aspectsecurity.com"));
-		assertFalse(instance.isValidDataFromBrowser("test", "URL", "http://www.aspect security.com"));
-		assertTrue(instance.isValidDataFromBrowser("test", "SSN", "078-05-1120"));
-		assertTrue(instance.isValidDataFromBrowser("test", "SSN", "078 05 1120"));
-		assertTrue(instance.isValidDataFromBrowser("test", "SSN", "078051120"));
-		assertFalse(instance.isValidDataFromBrowser("test", "SSN", "987-65-4320"));
-		assertFalse(instance.isValidDataFromBrowser("test", "SSN", "000-00-0000"));
-		assertFalse(instance.isValidDataFromBrowser("test", "SSN", "(555) 555-5555"));
-		assertFalse(instance.isValidDataFromBrowser("test", "SSN", "test"));
+		assertTrue(instance.isValidInput("test", "Email", "jeff.williams@aspectsecurity.com", 100, false));
+		assertFalse(instance.isValidInput("test", "Email", "jeff.williams@@aspectsecurity.com", 100, false));
+		assertFalse(instance.isValidInput("test", "Email", "jeff.williams@aspectsecurity", 100, false));
+		assertTrue(instance.isValidInput("test", "IPAddress", "123.168.100.234", 100, false));
+		assertTrue(instance.isValidInput("test", "IPAddress", "192.168.1.234", 100, false));
+		assertFalse(instance.isValidInput("test", "IPAddress", "..168.1.234", 100, false));
+		assertFalse(instance.isValidInput("test", "IPAddress", "10.x.1.234", 100, false));
+		assertTrue(instance.isValidInput("test", "URL", "http://www.aspectsecurity.com", 100, false));
+		assertFalse(instance.isValidInput("test", "URL", "http:///www.aspectsecurity.com", 100, false));
+		assertFalse(instance.isValidInput("test", "URL", "http://www.aspect security.com", 100, false));
+		assertTrue(instance.isValidInput("test", "SSN", "078-05-1120", 100, false));
+		assertTrue(instance.isValidInput("test", "SSN", "078 05 1120", 100, false));
+		assertTrue(instance.isValidInput("test", "SSN", "078051120", 100, false));
+		assertFalse(instance.isValidInput("test", "SSN", "987-65-4320", 100, false));
+		assertFalse(instance.isValidInput("test", "SSN", "000-00-0000", 100, false));
+		assertFalse(instance.isValidInput("test", "SSN", "(555) 555-5555", 100, false));
+		assertFalse(instance.isValidInput("test", "SSN", "test", 100, false));
 	}
 
 	/**
@@ -121,11 +121,13 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidSafeHTML() {
 		System.out.println("isValidSafeHTML");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>"));
-		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>"));
-		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>"));
+
+		assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
+		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
+		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
+
 	}
 
 	/**
@@ -135,21 +137,22 @@ public class ValidatorTest extends TestCase {
 		System.out.println("getValidSafeHTML");
 		IValidator instance = ESAPI.validator();
 		String test1 = "<b>Jeff</b>";
-		String result1 = instance.getValidSafeHTML("test", test1);
+		String result1 = instance.getValidSafeHTML("test", test1, 100, false);
 		assertEquals(test1, result1);
 		
 		String test2 = "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>";
-		String result2 = instance.getValidSafeHTML("test", test2);
+		String result2 = instance.getValidSafeHTML("test", test2, 100, false);
 		assertEquals(test2, result2);
 		
 		String test3 = "Test. <script>alert(document.cookie)</script>";
-		String result3 = instance.getValidSafeHTML("test", test3);
+		String result3 = instance.getValidSafeHTML("test", test3, 100, false);
 		assertEquals("Test.", result3);
 		
-// FIXME: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
-//		String test4 = "\" onload=\"alert(document.cookie)\" ";
-//		String result4 = instance.getValidSafeHTML("test", test4);
-//		assertEquals("", result4);
+		//TODO - Jeff, do you want this turned back on?
+		// This would be nice to catch, but just looks like text to AntiSamy
+		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
+		// String result4 = instance.getValidSafeHTML("test", test4);
+		// assertEquals("", result4);
 	}
 
 	/**
@@ -161,8 +164,8 @@ public class ValidatorTest extends TestCase {
 		List list = new ArrayList();
 		list.add("one");
 		list.add("two");
-		assertTrue(instance.isValidListItem(list, "one"));
-		assertFalse(instance.isValidListItem(list, "three"));
+		assertTrue(instance.isValidListItem("test", "one", list));
+		assertFalse(instance.isValidListItem("test", "three", list));
 	}
 
 	/**
@@ -171,19 +174,20 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidNumber() {
 		System.out.println("isValidNumber");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidNumber("4"));
-		assertTrue(instance.isValidNumber("400"));
-		assertTrue(instance.isValidNumber("4000000000000"));
-		assertFalse(instance.isValidNumber("alsdkf"));
-		assertFalse(instance.isValidNumber("--10"));
-		assertFalse(instance.isValidNumber("14.1414234x"));
-		assertFalse(instance.isValidNumber("Infinity"));
-		assertFalse(instance.isValidNumber("-Infinity"));
-		assertFalse(instance.isValidNumber("NaN"));
-		assertFalse(instance.isValidNumber("-NaN"));
-		assertFalse(instance.isValidNumber("+NaN"));
-		assertTrue(instance.isValidNumber("1e-6"));
-		assertTrue(instance.isValidNumber("-1e-6"));
+		assertTrue(instance.isValidNumber("test", "4", 1, 10, false));
+		assertTrue(instance.isValidNumber("test", "400", 1, 10000, false));
+		assertTrue(instance.isValidNumber("test", "4000000000000", 1, 400000000, false));
+		assertFalse(instance.isValidNumber("test", "4000000000000", 1, 10000, false));
+		assertFalse(instance.isValidNumber("test", "alsdkf", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "--10", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "14.1414234x", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "Infinity", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "-Infinity", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "NaN", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "-NaN", 10, 10000, false));
+		assertFalse(instance.isValidNumber("test", "+NaN", 10, 10000, false));
+		assertTrue(instance.isValidNumber("test", "1e-6", -999999999, 999999999, false));
+		assertTrue(instance.isValidNumber("test", "-1e-6", -999999999, 999999999, false));
 	}
 
 	/**
@@ -192,16 +196,16 @@ public class ValidatorTest extends TestCase {
 	public void testGetValidDate() throws Exception {
 		System.out.println("getValidDate");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.getValidDate("test", "June 23, 1967", DateFormat.getDateInstance() ) != null);
+		assertTrue(instance.getValidDate("test", "June 23, 1967", DateFormat.getDateInstance(), false ) != null);
 		try {
-			instance.getValidDate("test", "freakshow", DateFormat.getDateInstance() );
+			instance.getValidDate("test", "freakshow", DateFormat.getDateInstance(), false );
 		} catch( ValidationException e ) {
 			// expected
 		}
 		
 		// FIXME: AAA This test case fails due to an apparent bug in SimpleDateFormat
 		try {
-			instance.getValidDate( "test", "June 32, 2008", DateFormat.getDateInstance() );
+			instance.getValidDate( "test", "June 32, 2008", DateFormat.getDateInstance(), false );
 		} catch( ValidationException e ) {
 			// expected
 		}
@@ -213,10 +217,10 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidFileName() {
 		System.out.println("isValidFileName");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidFileName("test", "aspect.jar"));
-		assertFalse(instance.isValidFileName("test", ""));
+		assertTrue(instance.isValidFileName("test", "aspect.jar", 100, false));
+		assertFalse(instance.isValidFileName("test", "", 100, false));
         try {
-            instance.isValidFileName("test", "abc/def");
+            instance.isValidFileName("test", "abc/def", 100, false);
         } catch( IntrusionException e ) {
             // expected
         }
@@ -228,23 +232,23 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidDirectoryPath() {
 		System.out.println("isValidDirectoryPath");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidDirectoryPath("test", "/"));
-		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp"));
-		assertTrue(instance.isValidDirectoryPath("test", "/etc/config"));
+		assertTrue(instance.isValidDirectoryPath("test", "/", 100, false));
+		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp", 100, false));
+		assertTrue(instance.isValidDirectoryPath("test", "/etc/config", 100, false));
 		// FIXME: ENHANCE doesn't accept filenames, just directories - should it?
 		// assertTrue( instance.isValidDirectoryPath(
 		// "c:\\Windows\\System32\\cmd.exe" ) );
-		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc"));
+		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", 100, false));
 	}
 
 	public void testIsValidPrintable() {
 		System.out.println("isValidPrintable");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidPrintable("abcDEF"));
-		assertTrue(instance.isValidPrintable("!@#R()*$;><()"));
+		assertTrue(instance.isValidPrintable("name", "abcDEF", 100, false));
+		assertTrue(instance.isValidPrintable("name", "!@#R()*$;><()", 100, false));
         byte[] bytes = { 0x60, (byte) 0xFF, 0x10, 0x25 };
-        assertFalse( instance.isValidPrintable( bytes ) );
-		assertFalse(instance.isValidPrintable("%08"));
+        assertFalse( instance.isValidPrintable("name", bytes, 100, false ) );
+		assertFalse(instance.isValidPrintable("name", "%08", 100, false));
     }
 
 	/**
@@ -254,7 +258,7 @@ public class ValidatorTest extends TestCase {
 		System.out.println("isValidFileContent");
 		byte[] content = "This is some file content".getBytes();
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidFileContent("test", content));
+		assertTrue(instance.isValidFileContent("test", content, 100, false));
 	}
 
 	/**
@@ -267,7 +271,7 @@ public class ValidatorTest extends TestCase {
 		String filename = "aspect.jar";
 		byte[] content = "Thisi is some file content".getBytes();
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidFileUpload("test", filepath, filename, content));
+		assertTrue(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
 	}
 
 	/**
@@ -291,13 +295,13 @@ public class ValidatorTest extends TestCase {
 		request.addParameter("p3","value");
         ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidParameterSet(requiredNames, optionalNames));
+		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
 		request.addParameter("p4","value");
 		request.addParameter("p5","value");
 		request.addParameter("p6","value");
-		assertTrue(instance.isValidParameterSet(requiredNames, optionalNames));
+		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
 		request.removeParameter("p1");
-		assertFalse(instance.isValidParameterSet(requiredNames, optionalNames));
+		assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
 	}
 
 	/**
