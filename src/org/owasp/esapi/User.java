@@ -120,6 +120,12 @@ public class User implements IUser, Serializable {
     //private String authenticationMethod = null;
     //
     //private String connectionChannel = null;
+	
+    /**
+     * TODO: Push to configuration? 
+     * Maximum legal role size 
+     **/
+    private final int MAX_ROLE_LENGTH = 250;
     
 	/**
 	 * Instantiates a new user.
@@ -208,7 +214,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void addRole(String role) throws AuthenticationException {
 		String roleName = role.toLowerCase();
-		if ( ESAPI.validator().isValidDataFromBrowser("addRole", "RoleName", roleName) ) {
+		if ( ESAPI.validator().isValidInput("addRole", "RoleName", roleName, MAX_ROLE_LENGTH, false) ) {
 			roles.add(roleName);
 			logger.logCritical(Logger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
 		} else {
