@@ -175,7 +175,21 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidNumber() {
 		System.out.println("isValidNumber");
 		IValidator instance = ESAPI.validator();
+		//testing negative range
 		assertFalse(instance.isValidNumber("test", "-4", 1, 10, false));
+		assertTrue(instance.isValidNumber("test", "-4", -10, 10, false));
+		//testing null value
+		assertTrue(instance.isValidNumber("test", null, -10, 10, true));
+		assertFalse(instance.isValidNumber("test", null, -10, 10, false));
+		//testing empty string
+		assertTrue(instance.isValidNumber("test", "", -10, 10, true));
+		assertFalse(instance.isValidNumber("test", "", -10, 10, false));
+		//testing improper range
+		assertFalse(instance.isValidNumber("test", "5", 10, -10, false));
+		//testing non-integers
+		assertTrue(instance.isValidNumber("test", "4.3214", -10, 10, true));
+		assertTrue(instance.isValidNumber("test", "-1.65", -10, 10, true));
+		//other testing
 		assertTrue(instance.isValidNumber("test", "4", 1, 10, false));
 		assertTrue(instance.isValidNumber("test", "400", 1, 10000, false));
 		assertTrue(instance.isValidNumber("test", "400000000", 1, 400000000, false));
@@ -190,6 +204,41 @@ public class ValidatorTest extends TestCase {
 		assertFalse(instance.isValidNumber("test", "+NaN", 10, 10000, false));
 		assertTrue(instance.isValidNumber("test", "1e-6", -999999999, 999999999, false));
 		assertTrue(instance.isValidNumber("test", "-1e-6", -999999999, 999999999, false));
+	}
+	
+	public void testIsValidInteger() {
+		System.out.println("isValidInteger");
+		IValidator instance = ESAPI.validator();
+		//testing negative range
+		assertFalse(instance.isValidInteger("test", "-4", 1, 10, false));
+		assertTrue(instance.isValidInteger("test", "-4", -10, 10, false));
+		//testing null value
+		assertTrue(instance.isValidInteger("test", null, -10, 10, true));
+		assertFalse(instance.isValidInteger("test", null, -10, 10, false));
+		//testing empty string
+		assertTrue(instance.isValidInteger("test", "", -10, 10, true));
+		assertFalse(instance.isValidInteger("test", "", -10, 10, false));
+		//testing improper range
+		assertFalse(instance.isValidInteger("test", "5", 10, -10, false));
+		//testing non-integers
+		assertFalse(instance.isValidInteger("test", "4.3214", -10, 10, true));
+		assertFalse(instance.isValidInteger("test", "-1.65", -10, 10, true));
+		//other testing
+		assertTrue(instance.isValidInteger("test", "4", 1, 10, false));
+		assertTrue(instance.isValidInteger("test", "400", 1, 10000, false));
+		assertTrue(instance.isValidInteger("test", "400000000", 1, 400000000, false));
+		assertFalse(instance.isValidInteger("test", "4000000000000", 1, 10000, false));
+		assertFalse(instance.isValidInteger("test", "alsdkf", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "--10", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "14.1414234x", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "Infinity", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "-Infinity", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "NaN", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "-NaN", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "+NaN", 10, 10000, false));
+		assertFalse(instance.isValidInteger("test", "1e-6", -999999999, 999999999, false));
+		assertFalse(instance.isValidInteger("test", "-1e-6", -999999999, 999999999, false));
+
 	}
 
 	/**
