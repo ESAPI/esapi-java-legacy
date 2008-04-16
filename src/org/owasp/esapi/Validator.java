@@ -446,9 +446,14 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	public Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws ValidationException, IntrusionException {
+		if (minValue > maxValue) {
+			//should this be a RunTime?
+			throw new ValidationException("maxValue (" + maxValue + ") must be greater than minValue (" + minValue + ") for " + context,  "maxValue (" + maxValue + ") must be greater than minValue (" + minValue + ") for " + context);
+		}
+		
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-			throw new ValidationException(context + " is required", "Input is required");
+			throw new ValidationException(context + " is required", context + " is required");
 		}
 		
 		try {
@@ -484,6 +489,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	public Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException {
+		if (minValue > maxValue) {
+			//should this be a RunTime?
+			throw new ValidationException("maxValue (" + maxValue + ") must be greater than minValue (" + minValue + ") for " + context,  "maxValue (" + maxValue + ") must be greater than minValue (" + minValue + ") for " + context);
+		}
+		
 		if (isEmpty(input)) {
 			if (allowNull) return null;
 			throw new ValidationException(context + " is required", "Input is required");
