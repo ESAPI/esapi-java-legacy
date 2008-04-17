@@ -83,12 +83,12 @@ public class LoggerTest extends TestCase {
         String[] ignore = {"password","ssn","ccn"};
         TestHttpServletRequest request = new TestHttpServletRequest();
         // FIXME: AAA modify to return the actual string logged (so we can test)
-        Logger.getLogger("logger", "logger").logHTTPRequest(Logger.SECURITY, request, Arrays.asList(ignore) );
+        Logger.getLogger("logger", "logger").logHTTPRequest( Arrays.asList(ignore) );
         request.addParameter("one","one");
         request.addParameter("two","two1");
         request.addParameter("two","two2");
         request.addParameter("password","jwilliams");
-        Logger.getLogger("logger", "logger").logHTTPRequest(Logger.SECURITY, request, Arrays.asList(ignore) );
+        Logger.getLogger("logger", "logger").logHTTPRequest( Arrays.asList(ignore) );
     }    
     
     /**

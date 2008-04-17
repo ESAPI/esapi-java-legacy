@@ -162,7 +162,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         }
 
         public void setUser(IUser newUser) {
-        	// System.out.println( "SETTING Thread: " + Thread.currentThread() + " " + (getUser() != null ? getUser().getAccountName() : "null" ) + " --> " + (newUser != null ? (newUser).getAccountName() : "null" ) );
             super.set(newUser);
         }
     };
@@ -377,8 +376,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @throws AuthenticationException the authentication exception
      */
     protected void loadUsersIfNecessary() {
-        if (userDB == null)
+        if (userDB == null) {
             userDB = new File(((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "users.txt");
+        }
         
         // We only check at most every checkInterval milliseconds
         long now = System.currentTimeMillis();
@@ -387,15 +387,14 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         }
         lastChecked = now;
         
-        long lastModified = userDB.lastModified();
-        if (this.lastModified == lastModified) {
+        if (lastModified == userDB.lastModified()) {
             return;
         }
         loadUsersImmediately();
     }
     
+    // file was touched so reload it
     protected void loadUsersImmediately() {
-        // file was touched so reload it
     	synchronized( this ) {
 	        logger.logTrace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
 	

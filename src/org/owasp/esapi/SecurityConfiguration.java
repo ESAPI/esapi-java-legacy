@@ -167,7 +167,6 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     	if ( resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
     		resourceDirectory += System.getProperty("file.separator" );
     	}
-    	logger.logSpecial( "ESAPI resource directory set to " + resourceDirectory, null );
     	this.loadConfiguration();
     }
     
