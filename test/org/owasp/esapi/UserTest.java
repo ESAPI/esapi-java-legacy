@@ -445,28 +445,22 @@ public class UserTest extends TestCase {
 	public void testIsSessionAbsoluteTimeout() throws AuthenticationException {
 		// FIXME: ENHANCE shouldn't this just be one timeout method that does both checks???
 		System.out.println("isSessionAbsoluteTimeout");
-
-		/// login a user to set the lastLoginTime
-		Authenticator instance = (Authenticator)ESAPI.authenticator();
-		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		User user = instance.createUser(accountName, password, password);
-		user.enable();
-		TestHttpServletRequest request = new TestHttpServletRequest();
-		request.addParameter("username", accountName);
-		request.addParameter("password", password);
-		TestHttpServletResponse response = new TestHttpServletResponse();
-		instance.login( request, response);
-				
-		// setup the test
+		IAuthenticator instance = ESAPI.authenticator();
+		String oldPassword = instance.generateStrongPassword();
+		User user = createTestUser(oldPassword);
 		long now = System.currentTimeMillis();
-		
-		// set last login -3 hours (default is 2 hour timeout)
-		user.setLastLoginTime( new Date( now - 1000 * 60 * 60 * 3 ) );
+		// setup request and response
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
+		((Authenticator)instance).setCurrentHTTP(request, response);
+		TestHttpSession session = (TestHttpSession)request.getSession();
+				
+		// set session creation -3 hours (default is 2 hour timeout)		
+		session.setCreationTime( now - 1000 * 60 * 60 * 3 );
 		assertTrue(user.isSessionAbsoluteTimeout());
 		
-		// set last login -1 hour (default is 2 hour timeout)
-		user.setLastLoginTime( new Date( now - 1000 * 60 * 60 * 1 ) );
+		// set session creation -1 hour (default is 2 hour timeout)
+		session.setCreationTime( now - 1000 * 60 * 60 * 1 );
 		assertFalse(user.isSessionAbsoluteTimeout());
 	}
 
