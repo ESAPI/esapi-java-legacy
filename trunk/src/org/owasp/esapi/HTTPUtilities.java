@@ -107,6 +107,11 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 *      java.lang.String, javax.servlet.http.HttpServletResponse)
 	 */
 	public void safeAddCookie(String name, String value, int maxAge, String domain, String path) throws ValidationException {
+		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		
+		// FIXME: Enhance - this most likely occurs if someone calls setNoCacheHeaders() before login
+		if ( response == null ) throw new NullPointerException( "Can't set response header until current response is set, typically via login" );
+
 		// verify name matches
 		Pattern cookieName = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPCookieName");
 		if ( !cookieName.matcher(name).matches() ) {
@@ -122,7 +127,6 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		// FIXME: AAA need to validate domain and path! Otherwise response splitting etc..  Can use Cookie object?
 		
 		// create the special cookie header
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		// Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
 		// domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
 		// FIXME: AAA test if setting a separate set-cookie header for each cookie works!
@@ -146,6 +150,9 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeAddHeader(String name, String value) throws ValidationException {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+
+		// FIXME: Enhance - this most likely occurs if someone calls setNoCacheHeaders() before login
+		if ( response == null ) throw new NullPointerException( "Can't set response header until current response is set, typically via login" );
 
 		Pattern headerName = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPHeaderName");
 		if ( !headerName.matcher(name).matches() ) {
@@ -171,6 +178,9 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeSetHeader(String name, String value) throws ValidationException {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+
+		// FIXME: Enhance - this most likely occurs if someone calls setNoCacheHeaders() before login
+		if ( response == null ) throw new NullPointerException( "Can't set response header until current response is set, typically via login" );
 
 		Pattern headerName = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern("HTTPHeaderName");
 		if ( !headerName.matcher(name).matches() ) {
@@ -256,7 +266,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		User user = ESAPI.authenticator().getCurrentUser();
 		
 		if (request.getParameter(user.getCSRFToken()) == null) {
-			throw new IntrusionException("Authentication failed", "Attempt to access application without appropriate token");
+			throw new IntrusionException("Authentication failed", "Possibly forged HTTP request without proper CSRF token detected");
 		}
 	}
     
@@ -520,6 +530,10 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeSendRedirect(String context, String location) throws ValidationException, IOException {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+
+		// FIXME: Enhance - this most likely occurs if someone calls setNoCacheHeaders() before login
+		if ( response == null ) throw new NullPointerException( "Can't set response header until current response is set, typically via login" );
+
 		if (!ESAPI.validator().isValidRedirectLocation(context, location, false)) {
 			throw new ValidationException("Redirect failed", "Bad redirect location: " + location);
 		}
@@ -539,6 +553,10 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeSetContentType() {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+
+		// FIXME: Enhance - this most likely occurs if someone calls setNoCacheHeaders() before login
+		if ( response == null ) throw new NullPointerException( "Can't set response header until current response is set, typically via login" );
+
 		response.setContentType(((SecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
@@ -550,6 +568,9 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void setNoCacheHeaders() {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		
+		// FIXME: Enhance - this most likely occurs if someone calls setNoCacheHeaders() before login
+		if ( response == null ) throw new NullPointerException( "Can't set response header until current response is set, typically via login" );
 		
 		// HTTP 1.1
 		response.setHeader("Cache-Control", "no-store");

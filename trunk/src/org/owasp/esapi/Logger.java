@@ -58,15 +58,20 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
         this.jlogger.setLevel( Level.ALL );
     }
 
+    public void logHTTPRequest() {
+    	logHTTPRequest( null );
+    }
+    
     /**
      * Formats an HTTP request into a log suitable string. This implementation logs the remote host IP address (or
      * hostname if available), the request method (GET/POST), the URL, and all the querystring and form parameters. All
-     * the paramaters are presented as though they were in the URL even if they were in a form. Any parameters that
+     * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
      * match items in the parameterNamesToObfuscate are shown as eight asterisks.
      * 
      * @see org.owasp.esapi.interfaces.ILogger#formatHttpRequestForLog(javax.servlet.http.HttpServletRequest)
      */
-    public void logHTTPRequest(String type, HttpServletRequest request, List parameterNamesToObfuscate) {
+    public void logHTTPRequest(List parameterNamesToObfuscate) {
+    	HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
         StringBuffer params = new StringBuffer();
         Iterator i = request.getParameterMap().keySet().iterator();
         while (i.hasNext()) {
@@ -74,7 +79,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
             String[] value = (String[]) request.getParameterMap().get(key);
             for (int j = 0; j < value.length; j++) {
                 params.append(key + "=");
-                if (parameterNamesToObfuscate.contains(key)) {
+                if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
                     params.append("********");
                 } else {
                     params.append(value[j]);
@@ -87,7 +92,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
                 params.append("&");
         }
         String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
-        logSuccess(type, msg);
+        logSuccess(Logger.SECURITY, msg);
     }
 
     /**

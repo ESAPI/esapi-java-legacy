@@ -519,7 +519,8 @@ public class User implements IUser, Serializable {
 	 */
 	public boolean isSessionAbsoluteTimeout() {
 		// FIXME: make configurable - currently 2 hours
-		Date deadline = new Date(getLastLoginTime().getTime() + 1000 * 60 * 60 * 2);
+		HttpSession session = ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getSession();
+		Date deadline = new Date( session.getCreationTime() + 1000 * 60 * 60 * 2);
 		Date now = new Date();
 		return now.after(deadline);
 	}
@@ -602,7 +603,7 @@ public class User implements IUser, Serializable {
 			if (getFailedLoginCount() >= ESAPI.securityConfiguration().getAllowedLoginAttempts()) {
 				lock();
 			}
-			throw new AuthenticationLoginException("Login failed", "Password error for " + getAccountName() );
+			throw new AuthenticationLoginException("Login failed", "Incorrect password provided for " + getAccountName() );
 		}
 	}
 

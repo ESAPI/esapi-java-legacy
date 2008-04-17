@@ -95,7 +95,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// log this request, obfuscating any parameter named password
-			logger.logHTTPRequest(Logger.SECURITY, request, Arrays.asList(ignore));
+			logger.logHTTPRequest(Arrays.asList(ignore));
 
 			// check access to this URL
 			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString()) ) {
