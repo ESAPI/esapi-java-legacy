@@ -619,20 +619,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		while (i1.hasNext()) {
 			Map.Entry entry = (Map.Entry) i1.next();
 			String name = (String) entry.getKey();
-			if ( !isValidInput( "http", "HTTPParameterName", name, MAX_PARAMETER_NAME_LENGTH, false ) ) {
-				// logger.logCritical(Logger.SECURITY, "Parameter name (" + name + ") violates global rule" );
-				throw new ValidationException("Invalid HTTPRequest", "Parameter name (" + name + ") violates global rule");
-			}
-
+			getValidInput( "http", "HTTPParameterName", name, MAX_PARAMETER_NAME_LENGTH, false );
 			String[] values = (String[]) entry.getValue();
 			Iterator i3 = Arrays.asList(values).iterator();
 			// FIXME:Enhance - consider throwing an exception if there are multiple parameters with the same name
 			while (i3.hasNext()) {
 				String value = (String) i3.next();
-				if ( !isValidInput( name, "HTTPParameterValue", value, MAX_PARAMETER_VALUE_LENGTH, true ) ) {
-					// logger.logCritical(Logger.SECURITY, "Parameter value (" + name + "=" + value + ") violates global rule" );
-					throw new ValidationException("Invalid HTTPRequest", "Parameter value (" + name + "=" + value + ") violates global rule");
-				}
+				getValidInput( name, "HTTPParameterValue", value, MAX_PARAMETER_VALUE_LENGTH, true );
 			}
 		}
 
@@ -641,18 +634,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			while (i2.hasNext()) {
 				Cookie cookie = (Cookie) i2.next();
 				String name = cookie.getName();
-				if ( !isValidInput( "http", "HTTPCookieName", name, MAX_PARAMETER_NAME_LENGTH, true ) ) {
-					// logger.logCritical(Logger.SECURITY, "Cookie name (" + name + ") violates global rule" );
-					throw new ValidationException("Invalid HTTPRequest", "Cookie name (" + name + ") violates global rule");
-					
-				}
-
+				getValidInput( "http", "HTTPCookieName", name, MAX_PARAMETER_NAME_LENGTH, true );
 				String value = cookie.getValue();
-				if ( !isValidInput( name, "HTTPCookieValue", value, MAX_PARAMETER_VALUE_LENGTH, true ) ) {
-					// logger.logCritical(Logger.SECURITY, "Cookie value (" + name + "=" + value + ") violates global rule" );
-					throw new ValidationException("Invalid HTTPRequest", "Cookie value (" + name + "=" + value + ") violates global rule");
-					
-				}
+				getValidInput( name, "HTTPCookieValue", value, MAX_PARAMETER_VALUE_LENGTH, true );
 			}
 		}
 
@@ -660,19 +644,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		while (e.hasMoreElements()) {
 			String name = (String) e.nextElement();
 			if (name != null && !name.equalsIgnoreCase("Cookie")) {
-				if ( !isValidInput( "http", "HTTPHeaderName", name, MAX_PARAMETER_NAME_LENGTH, true ) ) {
-					// logger.logCritical(Logger.SECURITY, "Header name (" + name + ") violates global rule" );
-					throw new ValidationException("Invalid HTTPRequest", "Header name (" + name + ") violates global rule");
-					
-				}
-				
+				getValidInput( "http", "HTTPHeaderName", name, MAX_PARAMETER_NAME_LENGTH, true );				
 				Enumeration e2 = request.getHeaders(name);
 				while (e2.hasMoreElements()) {
 					String value = (String) e2.nextElement();
-					if ( !isValidInput( name, "HTTPHeaderValue", value, MAX_PARAMETER_VALUE_LENGTH, true ) ) {
-						// logger.logCritical(Logger.SECURITY, "Header value (" + name + "=" + value + ") violates global rule" );
-						throw new ValidationException("Invalid HTTPRequest", "Header value (" + name + "=" + value + ") violates global rule");
-					}
+					getValidInput( name, "HTTPHeaderValue", value, MAX_PARAMETER_VALUE_LENGTH, true );
 				}
 			}
 		}
@@ -819,7 +795,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException {
 		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
-		// FIXME: ENHANcE - configurable redirect length
+		// FIXME: ENHANCE - configurable redirect length
 		return ESAPI.validator().isValidInput(context, "Redirect", input, 512, allowNull);
 	}
 
