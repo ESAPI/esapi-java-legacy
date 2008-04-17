@@ -25,6 +25,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
+import org.owasp.esapi.http.TestHttpServletResponse;
 
 /**
  * The Class LoggerTest.
@@ -82,6 +83,8 @@ public class LoggerTest extends TestCase {
         System.out.println("logHTTPRequest");
         String[] ignore = {"password","ssn","ccn"};
         TestHttpServletRequest request = new TestHttpServletRequest();
+        TestHttpServletResponse response = new TestHttpServletResponse();
+        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
         // FIXME: AAA modify to return the actual string logged (so we can test)
         Logger.getLogger("logger", "logger").logHTTPRequest( Arrays.asList(ignore) );
         request.addParameter("one","one");
