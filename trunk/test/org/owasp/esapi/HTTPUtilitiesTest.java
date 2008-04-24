@@ -244,19 +244,19 @@ public class HTTPUtilitiesTest extends TestCase {
         try {
             ESAPI.httpUtilities().safeSendRedirect("test", "/test1/abcdefg");
             ESAPI.httpUtilities().safeSendRedirect("test", "/test2/1234567");
-        } catch (ValidationException e) {
+        } catch (IOException e) {
             fail();
         }
         try {
             ESAPI.httpUtilities().safeSendRedirect("test", "http://www.aspectsecurity.com");
             fail();
-        } catch (ValidationException e) {
+        } catch (IOException e) {
             // expected
         }
         try {
             ESAPI.httpUtilities().safeSendRedirect("test", "/ridiculous");
             fail();
-        } catch (ValidationException e) {
+        } catch (IOException e) {
             // expected
         }
     }
@@ -271,28 +271,13 @@ public class HTTPUtilitiesTest extends TestCase {
         Authenticator instance = (Authenticator)ESAPI.authenticator();
         instance.setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
-        try {
-        	ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
-        } catch (ValidationException e) {
-        	fail();
-        }
-        try {
-        	ESAPI.httpUtilities().safeAddCookie("test2", "test2", 10000, "test", "/");
-	    } catch (ValidationException e) {
-	    	fail();
-	    }
-        try {
-        	ESAPI.httpUtilities().safeAddCookie("tes\nt3", "test3", 10000, "test", "/");
-	    	fail();
-	    } catch (ValidationException e) {
-	    	// expected
-	    }
-        try {
-        	ESAPI.httpUtilities().safeAddCookie("test3", "te\nst3", 10000, "test", "/");
-	    	fail();
-	    } catch (ValidationException e) {
-	    	// expected
-	    }
+        ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
+	    assertTrue(response.getHeaderNames().size() == 1);
+    	ESAPI.httpUtilities().safeAddCookie("test2", "test2", 10000, "test", "/");
+	    assertTrue(response.getHeaderNames().size() == 2);
+    	ESAPI.httpUtilities().safeAddCookie("tes\nt3", "test3", 10000, "test", "/");
+	    assertTrue(response.getHeaderNames().size() == 2);
+    	ESAPI.httpUtilities().safeAddCookie("test3", "te\nst3", 10000, "test", "/");
 	    assertTrue(response.getHeaderNames().size() == 2);
 	}
 

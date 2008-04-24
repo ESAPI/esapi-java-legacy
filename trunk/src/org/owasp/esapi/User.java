@@ -298,7 +298,7 @@ public class User implements IUser, Serializable {
 	public void disable() {
 		// FIXME: ENHANCE what about disabling for a short time period - to address DOS attack?
 		enabled = false;
-		logger.logSuccess( "Account disabled: " + getAccountName(), null );
+		logger.logSuccess( Logger.SECURITY, "Account disabled: " + getAccountName() );
 	}
 	
 	/**
@@ -323,7 +323,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void enable() {
 		this.enabled = true;
-		logger.logSuccess( "Account enabled: " + getAccountName(), null );
+		logger.logSuccess( Logger.SECURITY, "Account enabled: " + getAccountName() );
 	}
 
 	/* (non-Javadoc)
@@ -664,6 +664,7 @@ public class User implements IUser, Serializable {
 	 * @return the string
 	 */
 	public String resetPassword() throws EncryptionException {
+		// FIXME: set a flag to require manual reset on first login
 		String newPassword = ESAPI.authenticator().generateStrongPassword();
 		changePassword( newPassword, newPassword );
 		return newPassword;
@@ -678,6 +679,8 @@ public class User implements IUser, Serializable {
 	 *             the authentication exception
 	 */
 	public String resetRememberToken() throws AuthenticationException {
+		// FIXME: should this be a "seal" with a date to expire?  or should we store an expire?
+		// FIXME: why not have an http utility to set this as a safe cookie? Then login can access it?
 		rememberToken = ESAPI.randomizer().getRandomString(20, Encoder.CHAR_ALPHANUMERICS);
 		logger.logTrace(ILogger.SECURITY, "New remember token generated for: " + getAccountName() );
 		return rememberToken;
@@ -842,7 +845,7 @@ public class User implements IUser, Serializable {
 	public void unlock() {
 		this.locked = false;
 		this.failedLoginCount = 0;
-		logger.logSuccess("Account unlocked: " + getAccountName(), null );
+		logger.logSuccess( Logger.SECURITY, "Account unlocked: " + getAccountName() );
 	}
 
 	//FIXME:Enhance - think about having a second "transaction" password for each user
@@ -893,5 +896,11 @@ public class User implements IUser, Serializable {
         }
     }
     
+    /**
+     * Override clone and make final to prevent duplicate user objects.
+     */
+    public final Object clone() throws java.lang.CloneNotSupportedException {
+    	  throw new java.lang.CloneNotSupportedException();
+    }
     
 }

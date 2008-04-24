@@ -228,9 +228,18 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @param throwable the throwable
      */
     private void log(Level level, String type, String message, Throwable throwable) {
+    	
+    	// FIXME: Enhance - consider noting an intrusion detection event on long logs (DOS protection)
+    	
         User user = ESAPI.authenticator().getCurrentUser();
         
-        String clean = message;
+        // ensure there's something to log
+        if ( message == null ) {
+        	message = "";
+        }
+        
+        // ensure no CRLF injection into logs for forging records
+        String clean = message.replace( '\n', '_' ).replace( '\r', '_' );
         if ( ((SecurityConfiguration)ESAPI.securityConfiguration()).getLogEncodingRequired() ) {
         	clean = ESAPI.encoder().encodeForHTML(message);
             if (!message.equals(clean)) {

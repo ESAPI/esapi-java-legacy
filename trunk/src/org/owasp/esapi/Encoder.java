@@ -204,7 +204,9 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 
 	/**
 	 * Normalizes special characters down to ASCII using the Normalizer built
-	 * into Java.
+	 * into Java. Note that this method may introduce security issues if
+	 * characters are normalized into special characters that have meaning
+	 * to the destination of the data.
 	 * 
 	 * @see org.owasp.esapi.interfaces.IValidator#normalize(java.lang.String)
 	 */
@@ -254,6 +256,9 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	 * @return the string
 	 */
 	private String entityEncode(String input, char[] base, char[] immune) {
+		
+		// FIXME: Enhance - this may over-encode international data unnecessarily if charset is set properly.
+		
 		StringBuffer sb = new StringBuffer();
 		EncodedStringReader reader = new EncodedStringReader(input);
 		while (reader.hasNext()) {
@@ -279,7 +284,10 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 		// &#07; to the browser?
 		// FIXME: Enhance - Add a configuration for masking **** out SSN and credit
 		// card
-
+		// FIXME: AAA - disallow everything below 20, except CR LF TAB
+		//  See the SGML declaration - http://www.w3.org/TR/html4/sgml/sgmldecl.html
+		//  See the XML specification - see http://www.w3.org/TR/REC-xml/#charsets
+		// The question is how to proceed - strip or throw an exception?
 		String encoded = entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_HTML);
 		encoded = encoded.replaceAll("\r", "<BR>");
 		encoded = encoded.replaceAll("\n", "<BR>");

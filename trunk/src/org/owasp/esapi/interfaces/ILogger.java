@@ -17,8 +17,6 @@ package org.owasp.esapi.interfaces;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * The ILogger interface defines a set of methods that can be used to log
  * security events. Implementors should use a well established logging library

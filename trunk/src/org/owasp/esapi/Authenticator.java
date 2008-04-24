@@ -183,7 +183,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             return (HttpServletRequest)super.get();
         }
 
-        public void setUser(HttpServletRequest newRequest) {
+        public void setRequest(HttpServletRequest newRequest) {
             super.set(newRequest);
         }
     };
@@ -205,7 +205,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             return (HttpServletResponse)super.get();
         }
 
-        public void setUser(HttpServletResponse newResponse) {
+        public void setResponse(HttpServletResponse newResponse) {
             super.set(newResponse);
         }
     };
@@ -222,8 +222,8 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public void clearCurrent() {
     	currentUser.setUser(null);
-    	currentResponse.set(null);
-    	currentRequest.set(null);
+    	currentResponse.setResponse(null);
+    	currentRequest.setRequest(null);
     }
     
     /*
@@ -307,11 +307,15 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#getCurrentRequest()
      */
     public HttpServletRequest getCurrentRequest() {
-        return (HttpServletRequest)currentRequest.get();
+        HttpServletRequest request = (HttpServletRequest)currentRequest.get();
+		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set, typically via login" );
+		return request;
     }
 
     public HttpServletResponse getCurrentResponse() {
-        return (HttpServletResponse)currentResponse.get();
+        HttpServletResponse response = (HttpServletResponse)currentResponse.get();
+		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set, typically via login" );
+        return response;
     }
 
     /**
@@ -471,6 +475,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationCredentialsException("Authentication failed", "Authentication failed because user " + username + " doesn't exist");
         }
         user.loginWithPassword(password);
+        request.setAttribute(user.getCSRFToken(), "authenticated");
         return user;
     }
 

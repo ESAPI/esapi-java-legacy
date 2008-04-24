@@ -224,6 +224,9 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	 *      java.lang.String)
 	 */
 	public boolean verifySeal(String seal, String data) {
+		
+		// FIXME: AAA should return sealed data, or throw and exception if it fails or the expiry has passed
+		
 		String plaintext = null;
 		try {
 			plaintext = decrypt(seal);
