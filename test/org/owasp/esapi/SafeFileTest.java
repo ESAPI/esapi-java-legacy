@@ -134,11 +134,11 @@ public class SafeFileTest extends TestCase {
         return new String(array);
      }	
 	
-	public void testNormalPercentEncodedFileInjection() {
+	public void testNormalPercentEncodedFileInjection() throws Exception {
 		System.out.println("testNormalPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc1 = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + "%" + toHex( (byte)i );
-			String dec1 = URLDecoder.decode(enc1);
+			String dec1 = URLDecoder.decode(enc1, "UTF-8");
 			File sf = new File(dec1);
 			if ( sf.exists() ) {
 				System.out.println( "  Fail: " + enc1 );
@@ -146,12 +146,12 @@ public class SafeFileTest extends TestCase {
 		}
 	}		
 
-	public void testWeirdPercentEncodedFileInjection() {
+	public void testWeirdPercentEncodedFileInjection() throws Exception {
 		System.out.println("testWeirdPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc2 = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + "%u00" + toHex( (byte)i );
 			try {
-				String dec2 = URLDecoder.decode(enc2);
+				String dec2 = URLDecoder.decode(enc2, "UTF-8");
 				File sf2 = new File(dec2);
 				if ( sf2.exists() ) {
 					System.out.println( "  Fail: " + enc2 );
