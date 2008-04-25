@@ -155,7 +155,7 @@ public class EncryptorTest extends TestCase {
         IEncryptor instance = ESAPI.encryptor(); 
         String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
-        instance.verifySeal( seal, plaintext );
+        instance.verifySeal( seal );
     }
 
     /**
@@ -168,12 +168,12 @@ public class EncryptorTest extends TestCase {
         System.out.println("verifySeal");
         IEncryptor instance = ESAPI.encryptor(); 
         String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
-        String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
-        assertTrue( instance.verifySeal( seal, plaintext ) );
-        assertFalse( instance.verifySeal( "ridiculous", plaintext ) );
-        assertFalse( instance.verifySeal( instance.encrypt("ridiculous"), plaintext ) );
-        assertFalse( instance.verifySeal( instance.encrypt(100 + ":" + "ridiculous" ), plaintext ) );
-        assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":" + "ridiculous" ), plaintext ) );
+        String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000*60 ) );
+        assertTrue( instance.verifySeal( seal ) );
+        assertFalse( instance.verifySeal( "ridiculous" ) );
+        assertFalse( instance.verifySeal( instance.encrypt("ridiculous") ) );
+        assertFalse( instance.verifySeal( instance.encrypt(100 + ":" + "ridiculous" ) ) );
+        assertTrue( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":" + "ridiculous" ) ) );
     }
     
 }
