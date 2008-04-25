@@ -132,17 +132,35 @@ public interface IEncryptor {
 	String seal(String data, long timestamp) throws IntegrityException;
 
 	/**
+	 * Unseals data (created with the seal method) and throws an exception
+	 * describing any of the various problems that could exist with a seal, such
+	 * as an invalid seal format, expired timestamp, or decryption error.
+	 * 
+	 * @param seal
+	 *            the seal
+	 */
+	String unseal( String seal ) throws EncryptionException;
+	
+	/**
 	 * Verifies a seal (created with the seal method) and throws an exception
 	 * describing any of the various problems that could exist with a seal, such
 	 * as an invalid seal format, expired timestamp, or data mismatch.
 	 * 
 	 * @param seal
 	 *            the seal
-	 * @param data
-	 *            the data
 	 */
-	boolean verifySeal(String seal, String data);
+	boolean verifySeal(String seal);
 
+	
+	/**
+	 * Gets a timestamp representing an offset from the current time to be used by
+	 * other functions in the library.
+	 * 
+	 * @return the timestamp
+	 */
+	public long getRelativeTimeStamp( long offset );
+	
+	
 	/**
 	 * Gets a timestamp representing the current date and time to be used by
 	 * other functions in the library.

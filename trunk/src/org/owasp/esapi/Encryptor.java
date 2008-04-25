@@ -220,43 +220,48 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#verifySeal(java.lang.String,
-	 *      java.lang.String)
+	 * @see org.owasp.esapi.interfaces.IEncryptor#unseal(java.lang.String)
 	 */
-	public boolean verifySeal(String seal, String data) {
-		
-		// FIXME: AAA should return sealed data, or throw and exception if it fails or the expiry has passed
+	public String unseal(String seal) throws EncryptionException {
 		
 		String plaintext = null;
 		try {
 			plaintext = decrypt(seal);
 		} catch (EncryptionException e) {
-			new EncryptionException("Invalid seal", "Seal did not decrypt properly", e);
-			return false;
+			throw new EncryptionException("Invalid seal", "Seal did not decrypt properly", e);
 		}
 
 		int index = plaintext.indexOf(":");
 		if (index == -1) {
-			new EncryptionException("Invalid seal", "Seal did not contain properly formatted separator");
-			return false;
+			throw new EncryptionException("Invalid seal", "Seal did not contain properly formatted separator");
 		}
 
 		String timestring = plaintext.substring(0, index);
 		long now = new Date().getTime();
 		long expiration = Long.parseLong(timestring);
 		if (now > expiration) {
-			new EncryptionException("Invalid seal", "Seal expiration date has expired");
-			return false;
+			throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
 		}
 
 		String sealedValue = plaintext.substring(index + 1);
-		if (!sealedValue.equals(data)) {
-			new EncryptionException("Invalid seal", "Seal data does not match");
-			return false;
-		}
-		return true;
+		return sealedValue;
 	}
 
+	
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.owasp.esapi.interfaces.IEncryptor#verifySeal(java.lang.String)
+	 */
+	public boolean verifySeal( String seal ) {
+		try {
+			unseal( seal );
+			return true;
+		} catch( Exception e ) {
+			return false;
+		}
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -264,6 +269,15 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	 */
 	public long getTimeStamp() {
 		return new Date().getTime();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.owasp.esapi.interfaces.IEncryptor#getTimeStamp()
+	 */
+	public long getRelativeTimeStamp( long offset ) {
+		return new Date().getTime() + offset;
 	}
 
 }
