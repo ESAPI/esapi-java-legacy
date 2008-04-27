@@ -341,9 +341,6 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 
 	/**
 	 * Returns true if input is a valid file name.
-	 * 
-	 * FIXME: AAA - need new method getValidFileName that eliminates %00 and other injections.
-	 * FIXME: AAA - this method should check for %00 injection too
 	 */
 	public boolean isValidFileName(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
@@ -361,6 +358,8 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public String getValidFileName(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		String canonical = "";
+		
+		// FIXME: AAA verify no disallowed characters like %00 ? * \ / - use SafeFile?
 		
 		// detect path manipulation
 		try {
@@ -776,11 +775,10 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		String canonical = "";
 		try {
     		canonical = ESAPI.encoder().canonicalize(input);
-    		getValidPrintable(context, canonical.getBytes(), maxLength, allowNull);
+    		return new String( getValidPrintable(context, canonical.getBytes(), maxLength, allowNull) );
 	    } catch (EncodingException e) {
-	        logger.logError(Logger.SECURITY, "Could not canonicalize user input", e);
+	        throw new ValidationException( "Invalid printable input: context="+context, "Invalid encoding of printable input, context=" + context + ", input=" + input, e);
 	    }
-	    return canonical;
 	}
 
 
