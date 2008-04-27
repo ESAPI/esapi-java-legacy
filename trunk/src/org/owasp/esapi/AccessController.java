@@ -120,13 +120,13 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	public AccessController() {
 	}
 
-	// FIXME: perhaps an enumeration for context (i.e. the layer the call is made from)
-		
     public boolean isAuthorizedForURL(String url) {
-		if (urlMap.isEmpty()) {
-			urlMap = loadRules(new File(resourceDirectory, "URLAccessRules.txt"));
-		}
-		return matchRule(urlMap, url);
+    	try {
+    		assertAuthorizedForURL( url );
+    		return true;
+    	} catch ( Exception e ) {
+    		return false;
+    	}
     }
     
     public boolean isAuthorizedForFunction(String functionName) {
