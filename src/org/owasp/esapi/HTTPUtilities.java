@@ -110,8 +110,8 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public void safeAddCookie(String name, String value, int maxAge, String domain, String path) {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		try {
-			String cookieName = ESAPI.validator().getValidInput( "safeAddCookie", "HTTPCookieName", name, 50, false);
-			String cookieValue = ESAPI.validator().getValidInput( "safeAddCookie", "HTTPCookieValue", value, 5000, false);
+			String cookieName = ESAPI.validator().getValidInput( "safeAddCookie", name, "HTTPCookieName", 50, false);
+			String cookieValue = ESAPI.validator().getValidInput( "safeAddCookie", value, "HTTPCookieValue", 5000, false);
 			
 			// FIXME: AAA need to validate domain and path! Otherwise response splitting etc..  Can use Cookie object?
 			
@@ -145,8 +145,8 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		// FIXME: this isn't a drop-in replacement -- need to make safe behavior with a log message
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		try {
-			String headerName = ESAPI.validator().getValidInput( "safeAddHeader", "HTTPHeaderName", name, 50, false);
-			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", "HTTPHeaderValue", value, 500, false);
+			String headerName = ESAPI.validator().getValidInput( "safeAddHeader", name, "HTTPHeaderName", 50, false);
+			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", value, "HTTPHeaderValue", 500, false);
 			response.addHeader(headerName, headerValue);
 		} catch( ValidationException e ) {
 			logger.logWarning(Logger.SECURITY, "Attempt to set invalid header denied", e);
@@ -176,7 +176,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public void safeSetDateHeader( String name, long date ) {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		try {
-			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", "HTTPHeaderName", name, 20, false);
+			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			response.setDateHeader(safeName, date);
 		} catch (ValidationException e) {
 			logger.logWarning(Logger.SECURITY, "Attempt to set invalid date header name denied", e);
@@ -186,7 +186,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public void safeSetIntHeader( String name, int value ) {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		try {
-			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", "HTTPHeaderName", name, 20, false);
+			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			response.setIntHeader(safeName, value);
 		} catch (ValidationException e) {
 			logger.logWarning(Logger.SECURITY, "Attempt to set invalid int header name denied", e);
@@ -239,8 +239,8 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	public void safeSetHeader(String name, String value) throws ValidationException {
 		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
 		try {
-			String safeName = ESAPI.validator().getValidInput("setSafeHeader", "HTTPHeaderName", name, 20, false);
-			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", "HTTPHeaderValue", value, 500, false);
+			String safeName = ESAPI.validator().getValidInput("setSafeHeader", name, "HTTPHeaderName", 20, false);
+			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", value, "HTTPHeaderValue", 500, false);
 			response.setHeader(safeName, safeValue);
 		} catch (ValidationException e) {
 			logger.logWarning(Logger.SECURITY, "Attempt to set invalid header denied", e);

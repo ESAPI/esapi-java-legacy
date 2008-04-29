@@ -198,8 +198,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForData(java.lang.String,
-	 *      java.lang.String)
+	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForData(java.lang.String)
 	 */
     public void assertAuthorizedForData(String key) throws AccessControlException {
 		if (dataMap==null || dataMap.isEmpty()) {
