@@ -96,23 +96,23 @@ public class ValidatorTest extends TestCase {
 	public void testisValidInput() {
 		System.out.println("isValidInput");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.isValidInput("test", "Email", "jeff.williams@aspectsecurity.com", 100, false));
-		assertFalse(instance.isValidInput("test", "Email", "jeff.williams@@aspectsecurity.com", 100, false));
-		assertFalse(instance.isValidInput("test", "Email", "jeff.williams@aspectsecurity", 100, false));
-		assertTrue(instance.isValidInput("test", "IPAddress", "123.168.100.234", 100, false));
-		assertTrue(instance.isValidInput("test", "IPAddress", "192.168.1.234", 100, false));
-		assertFalse(instance.isValidInput("test", "IPAddress", "..168.1.234", 100, false));
-		assertFalse(instance.isValidInput("test", "IPAddress", "10.x.1.234", 100, false));
-		assertTrue(instance.isValidInput("test", "URL", "http://www.aspectsecurity.com", 100, false));
-		assertFalse(instance.isValidInput("test", "URL", "http:///www.aspectsecurity.com", 100, false));
-		assertFalse(instance.isValidInput("test", "URL", "http://www.aspect security.com", 100, false));
-		assertTrue(instance.isValidInput("test", "SSN", "078-05-1120", 100, false));
-		assertTrue(instance.isValidInput("test", "SSN", "078 05 1120", 100, false));
-		assertTrue(instance.isValidInput("test", "SSN", "078051120", 100, false));
-		assertFalse(instance.isValidInput("test", "SSN", "987-65-4320", 100, false));
-		assertFalse(instance.isValidInput("test", "SSN", "000-00-0000", 100, false));
-		assertFalse(instance.isValidInput("test", "SSN", "(555) 555-5555", 100, false));
-		assertFalse(instance.isValidInput("test", "SSN", "test", 100, false));
+		assertTrue(instance.isValidInput("test", "jeff.williams@aspectsecurity.com", "Email", 100, false));
+		assertFalse(instance.isValidInput("test", "jeff.williams@@aspectsecurity.com", "Email", 100, false));
+		assertFalse(instance.isValidInput("test", "jeff.williams@aspectsecurity", "Email", 100, false));
+		assertTrue(instance.isValidInput("test", "123.168.100.234", "IPAddress", 100, false));
+		assertTrue(instance.isValidInput("test", "192.168.1.234", "IPAddress", 100, false));
+		assertFalse(instance.isValidInput("test", "..168.1.234", "IPAddress", 100, false));
+		assertFalse(instance.isValidInput("test", "10.x.1.234", "IPAddress", 100, false));
+		assertTrue(instance.isValidInput("test", "http://www.aspectsecurity.com", "URL", 100, false));
+		assertFalse(instance.isValidInput("test", "http:///www.aspectsecurity.com", "URL", 100, false));
+		assertFalse(instance.isValidInput("test", "http://www.aspect security.com", "URL", 100, false));
+		assertTrue(instance.isValidInput("test", "078-05-1120", "SSN", 100, false));
+		assertTrue(instance.isValidInput("test", "078 05 1120", "SSN", 100, false));
+		assertTrue(instance.isValidInput("test", "078051120", "SSN", 100, false));
+		assertFalse(instance.isValidInput("test", "987-65-4320", "SSN", 100, false));
+		assertFalse(instance.isValidInput("test", "000-00-0000", "SSN", 100, false));
+		assertFalse(instance.isValidInput("test", "(555) 555-5555", "SSN", 100, false));
+		assertFalse(instance.isValidInput("test", "test", "SSN", 100, false));
 	}
 
 	/**
