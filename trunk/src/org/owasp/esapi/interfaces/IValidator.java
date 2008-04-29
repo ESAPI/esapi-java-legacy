@@ -46,7 +46,7 @@ import org.owasp.esapi.errors.ValidationException;
 public interface IValidator {
 
 	/**
-	 * Returns true if input is valid according to the specified type. Types are referenced by name against the ESAPI configuration. Implementers
+	 * Returns true if input is valid according to the specified type. The type parameter must be the name of a defined type in the ESAPI configuration or a valid regular expression. Implementers
 	 * should take care to make the type storage simple to understand and configure.
 	 */
 	boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;

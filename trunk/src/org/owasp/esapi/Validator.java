@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -76,15 +77,10 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	/**
 	 * Returns true if data received from browser is valid. Only URL encoding is
 	 * supported. Double encoding is treated as an attack.
-	 * 
-	 * @param name
-	 * @param type
-	 * @param value
-	 * @return
 	 */
-	public boolean isValidInput(String context, String type, String value, int maxLength, boolean allowNull) throws IntrusionException  {
+	public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException  {
 		try {
-			getValidInput(context, type, value, maxLength, allowNull);
+			getValidInput(context, input, type, maxLength, allowNull);
 			return true;
 		} catch( Exception e ) {
 			return false;
@@ -94,14 +90,8 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	/**
 	 * Validates data received from the browser and returns a safe version. Only
 	 * URL encoding is supported. Double encoding is treated as an attack.
-	 * 
-	 * @param name
-	 * @param type
-	 * @param input
-	 * @return
-	 * @throws ValidationException
 	 */
-	public String getValidInput(String context, String type, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
+	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 
 		try {
 			context = ESAPI.encoder().canonicalize( context );
@@ -117,15 +107,22 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
     			throw new ValidationException( "Input can not exceed " + maxLength + " characters: context=" + context, "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + type + "), input=" + input);
     		}
     		
-    		if ( type == null || type.length() == 0 )
+    		if ( type == null || type.length() == 0 ) {
     			throw new ValidationException("Invalid input: context=" + context, "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
+    		}
     		
     		Pattern p = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
-    		if ( p == null )
-    			throw new ValidationException("Invalid input: context=" + context, "Validation misconfiguration, type to validate against not configured in ESAPI.properties: context=" + context + ", type=" + type + "), input=" + input );
-    				
-    		if ( !p.matcher(canonical).matches() )
+    		if ( p == null ) {
+    			try {
+    				p = Pattern.compile( type );
+    			} catch( PatternSyntaxException e ) {
+    				throw new ValidationException("Invalid input: context=" + context, "Validation misconfiguration, type to validate against must be defined in ESAPI.properties or a valid regular expression: context=" + context + ", type=" + type + "), input=" + input );
+    			}
+    		}
+    		
+    		if ( !p.matcher(canonical).matches() ) {
     			throw new ValidationException("Input required: context=" + context, "Invalid input: context=" + context + ", type=" + type + "(" + p.pattern() + "), input=" + input );
+    		}
     		
     		// if everything passed, then return the canonical form
     		return canonical;
@@ -242,7 +239,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
    			throw new ValidationException( "Input credit card required: context=" + context, "Input credit card required: context=" + context + ", input=" + input );
 		}
 		
-		String canonical = getValidInput(context, "CreditCard", input, MAX_CREDIT_CARD_LENGTH, allowNull);
+		String canonical = getValidInput(context, input, "CreditCard", MAX_CREDIT_CARD_LENGTH, allowNull);
 
 		// perform Luhn algorithm checking
 		StringBuffer digitsOnly = new StringBuffer();
@@ -309,7 +306,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 						
 			// do basic validation
 			canonical = ESAPI.encoder().canonicalize(input);
-			getValidInput(context, "DirectoryName", canonical, 255, false);
+			getValidInput(context, canonical, "DirectoryName", 255, false);
 			
 			// get the canonical path without the drive letter if present
 			String cpath = new File(canonical).getCanonicalPath().replaceAll("\\\\", "/");
@@ -370,7 +367,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			
 			// do basic validation
 	        canonical = ESAPI.encoder().canonicalize(input);
-	        getValidInput(context, "FileName", input, 255, true );
+	        getValidInput(context, input, "FileName", 255, true );
 			
 			File f = new File(canonical);
 			String c = f.getCanonicalPath();
@@ -612,13 +609,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		while (i1.hasNext()) {
 			Map.Entry entry = (Map.Entry) i1.next();
 			String name = (String) entry.getKey();
-			getValidInput( "HTTP request parameter: " + name, "HTTPParameterName", name, MAX_PARAMETER_NAME_LENGTH, false );
+			getValidInput( "HTTP request parameter: " + name, name, "HTTPParameterName", MAX_PARAMETER_NAME_LENGTH, false );
 			String[] values = (String[]) entry.getValue();
 			Iterator i3 = Arrays.asList(values).iterator();
 			// FIXME:Enhance - consider throwing an exception if there are multiple parameters with the same name
 			while (i3.hasNext()) {
 				String value = (String) i3.next();
-				getValidInput( "HTTP request parameter: " + name, "HTTPParameterValue", value, MAX_PARAMETER_VALUE_LENGTH, true );
+				getValidInput( "HTTP request parameter: " + name, value, "HTTPParameterValue", MAX_PARAMETER_VALUE_LENGTH, true );
 			}
 		}
 
@@ -627,9 +624,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			while (i2.hasNext()) {
 				Cookie cookie = (Cookie) i2.next();
 				String name = cookie.getName();
-				getValidInput( "HTTP request cookie: " + name, "HTTPCookieName", name, MAX_PARAMETER_NAME_LENGTH, true );
+				getValidInput( "HTTP request cookie: " + name, name, "HTTPCookieName", MAX_PARAMETER_NAME_LENGTH, true );
 				String value = cookie.getValue();
-				getValidInput( "HTTP request cookie: " + name, "HTTPCookieValue", value, MAX_PARAMETER_VALUE_LENGTH, true );
+				getValidInput( "HTTP request cookie: " + name, value, "HTTPCookieValue", MAX_PARAMETER_VALUE_LENGTH, true );
 			}
 		}
 
@@ -637,11 +634,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		while (e.hasMoreElements()) {
 			String name = (String) e.nextElement();
 			if (name != null && !name.equalsIgnoreCase("Cookie")) {
-				getValidInput( "HTTP request header: " + name, "HTTPHeaderName", name, MAX_PARAMETER_NAME_LENGTH, true );				
+				getValidInput( "HTTP request header: " + name, name, "HTTPHeaderName", MAX_PARAMETER_NAME_LENGTH, true );				
 				Enumeration e2 = request.getHeaders(name);
 				while (e2.hasMoreElements()) {
 					String value = (String) e2.nextElement();
-					getValidInput( "HTTP request header: " + name, "HTTPHeaderValue", value, MAX_PARAMETER_VALUE_LENGTH, true );
+					getValidInput( "HTTP request header: " + name, value, "HTTPHeaderValue", MAX_PARAMETER_VALUE_LENGTH, true );
 				}
 			}
 		}
@@ -788,7 +785,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	public boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException {
 		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
 		// FIXME: ENHANCE - configurable redirect length
-		return ESAPI.validator().isValidInput(context, "Redirect", input, 512, allowNull);
+		return ESAPI.validator().isValidInput(context, input, "Redirect", 512, allowNull);
 	}
 
 
@@ -798,7 +795,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 */
 	public String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
-		return ESAPI.validator().getValidInput(context, "Redirect", input, 512, allowNull);
+		return ESAPI.validator().getValidInput(context, input, "Redirect", 512, allowNull);
 	}
 
 	/**

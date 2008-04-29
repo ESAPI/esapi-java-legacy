@@ -214,7 +214,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void addRole(String role) throws AuthenticationException {
 		String roleName = role.toLowerCase();
-		if ( ESAPI.validator().isValidInput("addRole", "RoleName", roleName, MAX_ROLE_LENGTH, false) ) {
+		if ( ESAPI.validator().isValidInput("addRole", roleName, "RoleName", MAX_ROLE_LENGTH, false) ) {
 			roles.add(roleName);
 			logger.logCritical(Logger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
 		} else {
