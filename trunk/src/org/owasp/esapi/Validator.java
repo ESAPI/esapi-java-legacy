@@ -94,34 +94,24 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 
 		try {
-			
-			//System.out.println("ESAPI Raw Input=" + input);
-			
 			context = ESAPI.encoder().canonicalize( context );
     		String canonical = ESAPI.encoder().canonicalize( input );
-    		
-    		//System.out.println("ESAPI Cannonicalizied input=" + canonical);
-    		
+
     		if (isEmpty(canonical)) {
     			if (allowNull) return null;
        			throw new ValidationException( "Input required: context=" + context, "Input required: context=" + context + ", type=" + type + "), input=" + input );
     		}
-    		
-    		//System.out.println("ESAPI allow null check passed");
-    		
+
     		if (canonical.length() > maxLength) {
     			//FIXME: ENHANCE if the length is exceeded by a wide margin, throw IntrusionException?
     			throw new ValidationException( "Input can not exceed " + maxLength + " characters: context=" + context, "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + type + "), input=" + input);
     		}
-    		
-    		//System.out.println("ESAPI maxLength check passed");
-    		
+
     		if ( type == null || type.length() == 0 ) {
     			throw new ValidationException("Invalid input: context=" + context, "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
     		}
-    		
-    		//System.out.println("ESAPI type null check passed");
-    		
+
+    		//TODO - let us know when its a ESAPI.properties config problem! This exception does not diffrentiate
     		Pattern p = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
     		if ( p == null ) {
     			try {
@@ -130,16 +120,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
     				throw new ValidationException("Invalid input: context=" + context, "Validation misconfiguration, type to validate against must be defined in ESAPI.properties or a valid regular expression: context=" + context + ", type=" + type + "), input=" + input );
     			}
     		}
-    		
-    		//System.out.println("ESAPI pattern compiles check passed for pattern ");
-    		
+
     		if ( !p.matcher(canonical).matches() ) {
     			throw new ValidationException("Invalid input: context=" + context, "Invalid input: context=" + context + ", type=" + type + "(" + p.pattern() + "), input=" + input );
     		}
     		
-    		//System.out.println("ESAPI pattern match check passed");
-    		
-    		// if everything passed, then return the canonical form
     		return canonical;
     		
 	    } catch (EncodingException e) {
