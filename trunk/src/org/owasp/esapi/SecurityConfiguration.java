@@ -202,37 +202,30 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     }
     
 	/**
-	 * 
-     * Looks up ESAPI.properties in the classpath. 
+     * Load ESAPI.properties from the classpath. 
      */
-    private static Properties loadESAPIPropertiesFromClasspath()
+    private static Properties loadConfigurationFromClasspath()
     {
     	ClassLoader loader = ClassLoader.getSystemClassLoader();
 
         Properties result = null;
         
         InputStream in = null;
-        try
-        {
+        try {
             in = loader.getResourceAsStream("ESAPI.properties");
-            if (in != null)
-            {
+            if (in != null) {
                 result = new Properties ();
                 result.load(in); // Can throw IOException
             }
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             result = null;
-        }
-        finally
-        {
+            
+        } finally {
             if (in != null) try { in.close (); } catch (Throwable ignore) {}
         }
         
-        if (result == null)
-        {
-            throw new IllegalArgumentException ("could not load [" + "ESAPI.properties" + "]"+ " as a classloader resource");
+        if (result == null) {
+            throw new IllegalArgumentException ("Can't load ESAPI.properties as a classloader resource");
         }
         
         return result;
@@ -246,8 +239,9 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     	File file = null;
     	
     	try {
-    		properties = loadESAPIPropertiesFromClasspath();
+    		properties = loadConfigurationFromClasspath();
     		logger.logSpecial("Loaded ESAPI properties from classpath", null);
+    		
     	} catch (Exception ce) {
     		logger.logSpecial("Can't load ESAPI properties from classpath, trying FileIO",ce);
     		file = new File(getResourceDirectory(), "ESAPI.properties");
