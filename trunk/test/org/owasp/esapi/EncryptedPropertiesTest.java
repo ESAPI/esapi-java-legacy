@@ -140,7 +140,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	public void testLoad() throws Exception {
 		System.out.println("load");
 		EncryptedProperties instance = new EncryptedProperties();
-		File f = new File( ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
+		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
 		instance.load( new FileInputStream( f ) );
 		assertEquals( "two", instance.getProperty("one" ) );
 		assertEquals( "three",  instance.getProperty("two" ) );
@@ -154,7 +154,7 @@ public class EncryptedPropertiesTest extends TestCase {
 		EncryptedProperties instance = new EncryptedProperties();
 		instance.setProperty("one", "two");
 		instance.setProperty("two", "three");
-		File f = new File( ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
+		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
 		instance.store(new FileOutputStream( f ), "testStore");
 	}
 
@@ -163,7 +163,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testMain() throws Exception {
 		System.out.println("main");
-		File f = new File( ((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
+		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
 		String[] args1 = { f.getAbsolutePath() };
 		InputStream orig = System.in;
 		String input = "key\r\nvalue\r\n";
