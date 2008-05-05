@@ -150,7 +150,7 @@ public class AuthenticatorTest extends TestCase {
 	 */
 	public void testGetCurrentUser() throws Exception {
 		System.out.println("getCurrentUser");
-        Authenticator instance = (Authenticator)ESAPI.authenticator();
+        IAuthenticator instance = ESAPI.authenticator();
 		String username1 = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		String username2 = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
@@ -158,7 +158,7 @@ public class AuthenticatorTest extends TestCase {
 		user1.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        instance.setCurrentHTTP(request, response);
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		user1.loginWithPassword("getCurrentUser");
 		User currentUser = instance.getCurrentUser();
 		assertEquals( currentUser, user1 );
@@ -169,7 +169,7 @@ public class AuthenticatorTest extends TestCase {
 			private int count = 1;
             private boolean result = false;
 			public void run() {
-		        Authenticator instance = (Authenticator)ESAPI.authenticator();
+		        IAuthenticator instance = ESAPI.authenticator();
 				User a = null;
 				try {
 					String password = instance.generateStrongPassword();
@@ -336,14 +336,14 @@ public class AuthenticatorTest extends TestCase {
 	 */
 	public void testSetCurrentUser() throws AuthenticationException {
 		System.out.println("setCurrentUser");
-        final Authenticator instance = (Authenticator)ESAPI.authenticator();
+        final IAuthenticator instance = ESAPI.authenticator();
 		String user1 = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_UPPERS);
 		String user2 = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_UPPERS);
 		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
 		userOne.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-		instance.setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		userOne.loginWithPassword("getCurrentUser");
 		User currentUser = instance.getCurrentUser();
 		assertEquals( currentUser, userOne );

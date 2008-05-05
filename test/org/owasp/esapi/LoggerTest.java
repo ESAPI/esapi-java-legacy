@@ -84,7 +84,7 @@ public class LoggerTest extends TestCase {
         String[] ignore = {"password","ssn","ccn"};
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
         // FIXME: AAA modify to return the actual string logged (so we can test)
         Logger.getLogger("logger", "logger").logHTTPRequest( Arrays.asList(ignore) );
         request.addParameter("one","one");

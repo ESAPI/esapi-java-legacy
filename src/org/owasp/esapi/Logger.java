@@ -71,7 +71,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#formatHttpRequestForLog(javax.servlet.http.HttpServletRequest)
      */
     public void logHTTPRequest(List parameterNamesToObfuscate) {
-    	HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+    	HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
         StringBuffer params = new StringBuffer();
         Iterator i = request.getParameterMap().keySet().iterator();
         while (i.hasNext()) {

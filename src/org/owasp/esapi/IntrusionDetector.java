@@ -125,7 +125,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
             ESAPI.authenticator().getCurrentUser().disable();
         }
         if ( action.equals( "logout" ) ) {
-            ((Authenticator)ESAPI.authenticator()).logout();
+            ESAPI.authenticator().logout();
         }
     }
 
