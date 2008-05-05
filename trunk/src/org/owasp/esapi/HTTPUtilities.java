@@ -108,7 +108,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 *      java.lang.String, javax.servlet.http.HttpServletResponse)
 	 */
 	public void safeAddCookie(String name, String value, int maxAge, String domain, String path) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		try {
 			String cookieName = ESAPI.validator().getValidInput( "safeAddCookie", name, "HTTPCookieName", 50, false);
 			String cookieValue = ESAPI.validator().getValidInput( "safeAddCookie", value, "HTTPCookieValue", 5000, false);
@@ -143,7 +143,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeAddHeader(String name, String value) {
 		// FIXME: this isn't a drop-in replacement -- need to make safe behavior with a log message
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		try {
 			String headerName = ESAPI.validator().getValidInput( "safeAddHeader", name, "HTTPHeaderName", 50, false);
 			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", value, "HTTPHeaderValue", 500, false);
@@ -156,13 +156,13 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 
 	// FIXME: make configurable
 	public void safeSendError(int sc) throws IOException {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		response.sendError(response.SC_OK, getHttpMessage(sc) );
 	}
 	
 	// FIXME: make configurable
 	public void safeSendError(int sc, String msg) throws IOException {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		// FIXME: safe msg
 		response.sendError(response.SC_OK, msg );
 	}
@@ -174,7 +174,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	}
 	
 	public void safeSetDateHeader( String name, long date ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		try {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			response.setDateHeader(safeName, date);
@@ -184,7 +184,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	}
 
 	public void safeSetIntHeader( String name, int value ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		try {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			response.setIntHeader(safeName, value);
@@ -194,35 +194,34 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	}
 
 	public void safeSetCharacterEncodingInResponse( String charset ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		response.setCharacterEncoding(charset);
 	}
 
 	public void safeAddCookie( Cookie cookie ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		response.addCookie(cookie);
 	}
 
 	public void safeSetLocale( Locale loc ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		response.setLocale(loc);
 	}
 
 	public void safeSetStatus( int sc ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		response.setStatus(sc);
 	}
 
 	public void safeSetStatus( int sc, String sm ) {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		// FIXME: safe message
 		response.setStatus(response.SC_OK, sm);
 	}
 	
 
 	public void safeSetCharacterEncodingInRequest( String env ) throws UnsupportedEncodingException {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
-		request.setCharacterEncoding(env);
+		getCurrentRequest().setCharacterEncoding(env);
 	}
 	
 	
@@ -237,7 +236,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
 	public void safeSetHeader(String name, String value) throws ValidationException {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		try {
 			String safeName = ESAPI.validator().getValidInput("setSafeHeader", name, "HTTPHeaderName", 20, false);
 			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", value, "HTTPHeaderValue", 500, false);
@@ -281,7 +280,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#changeSessionIdentifier(javax.servlet.http.HttpServletRequest)
 	 */
 	public HttpSession changeSessionIdentifier() throws AuthenticationException {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		Map temp = new HashMap();
 		HttpSession session = request.getSession( false );
 
@@ -316,7 +315,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#verifyCSRFToken()
 	 */
 	public void verifyCSRFToken() throws IntrusionException {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		User user = ESAPI.authenticator().getCurrentUser();
 		
 		if( request.getAttribute(user.getCSRFToken()) != null ) return;
@@ -354,7 +353,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
      */
     public Map decryptStateFromCookie() throws EncryptionException {
     	// FIXME: consider getEncryptedCookieValue( String name )
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		Cookie[] cookies = request.getCookies();
 		Cookie c = null;
 		for ( int i = 0; i < cookies.length; i++ ) {
@@ -427,7 +426,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		if ( !tempDir.exists() ) tempDir.mkdirs();
 		if ( !finalDir.exists() ) finalDir.mkdirs();
 		List newFiles = new ArrayList();
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		try {
 			final HttpSession session = request.getSession();
 			if (!ServletFileUpload.isMultipartContent(request)) {
@@ -504,7 +503,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * and uses the URL to determine if the request was transmitted over SSL.
 	 */
 	public boolean isSecureChannel() {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		return (request.getRequestURL().charAt(4) == 's');
 	}
 
@@ -515,7 +514,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
 	public void killAllCookies() {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
@@ -532,8 +531,8 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 *      javax.servlet.http.HttpServletResponse)
 	 */
 	public void killCookie(String name) {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletRequest request = getCurrentRequest();
+		HttpServletResponse response = getCurrentResponse();
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
@@ -572,8 +571,8 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		// FIXME: should this be configurable?  What is a good forward policy?
 		// I think not allowing forwards to public URLs is good, as it bypasses many access controls
 		
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletRequest request = getCurrentRequest();
+		HttpServletResponse response = getCurrentResponse();
 		if (!location.startsWith("WEB-INF")) {
 			throw new AccessControlException("Forward failed", "Bad forward location: " + location);
 		}
@@ -587,7 +586,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeSendRedirect(java.lang.String)
 	 */
 	public void safeSendRedirect(String context, String location) throws IOException {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		if (!ESAPI.validator().isValidRedirectLocation(context, location, false)) {
 			logger.logCritical(Logger.SECURITY, "Bad redirect location: " + location );
 			throw new IOException("Redirect failed");
@@ -607,7 +606,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeSetContentType(java.lang.String)
 	 */
 	public void safeSetContentType() {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		response.setContentType(((SecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
@@ -618,7 +617,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#setNoCacheHeaders(javax.servlet.http.HttpServletResponse)
 	 */
 	public void setNoCacheHeaders() {
-		HttpServletResponse response = ((Authenticator)ESAPI.authenticator()).getCurrentResponse();
+		HttpServletResponse response = getCurrentResponse();
 		
 		// HTTP 1.1
 		response.setHeader("Cache-Control", "no-store");
@@ -630,5 +629,75 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		response.setDateHeader("Expires", -1);
 	}
 
-	
+    /*
+     * The currentRequest ThreadLocal variable is used to make the currentRequest available to any call in any part of an
+     * application. This enables API's for actions that require the request to be much simpler. For example, the logout()
+     * method in the Authenticator class requires the currentRequest to get the session in order to invalidate it.
+     */
+    private ThreadLocalRequest currentRequest = new ThreadLocalRequest();
+
+    private class ThreadLocalRequest extends InheritableThreadLocal {
+        
+        public Object initialValue() {
+        	return null;
+        }
+        
+        public HttpServletRequest getRequest() {
+            return (HttpServletRequest)super.get();
+        }
+
+        public void setRequest(HttpServletRequest newRequest) {
+            super.set(newRequest);
+        }
+    };
+
+    /*
+     * The currentResponse ThreadLocal variable is used to make the currentResponse available to any call in any part of an
+     * application. This enables API's for actions that require the response to be much simpler. For example, the logout()
+     * method in the Authenticator class requires the currentResponse to kill the JSESSIONID cookie.
+     */
+    private ThreadLocalResponse currentResponse = new ThreadLocalResponse();
+
+    private class ThreadLocalResponse extends InheritableThreadLocal {
+        
+        public Object initialValue() {
+        	return null;
+        }
+        
+        public HttpServletResponse getResponse() {
+            return (HttpServletResponse)super.get();
+        }
+
+        public void setResponse(HttpServletResponse newResponse) {
+            super.set(newResponse);
+        }
+    };
+
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.IHTTPUtilities#getCurrentRequest()
+     */
+    public HttpServletRequest getCurrentRequest() {
+        HttpServletRequest request = (HttpServletRequest)currentRequest.get();
+		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set, typically via login" );
+		return request;
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.IHTTPUtilities#getCurrentResponse()
+     */
+    public HttpServletResponse getCurrentResponse() {
+        HttpServletResponse response = (HttpServletResponse)currentResponse.get();
+		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set, typically via login" );
+        return response;
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.IHTTPUtilities#setCurrentHttp(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
+     */
+    public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
+    	currentRequest.set(request);
+        currentResponse.set(response);
+    }
+
 }

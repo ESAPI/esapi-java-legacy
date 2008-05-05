@@ -24,6 +24,7 @@ import org.owasp.esapi.errors.IntegrityException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
+import org.owasp.esapi.interfaces.IAuthenticator;
 
 /**
  * The Class IntrusionDetectorTest.
@@ -77,12 +78,12 @@ public class IntrusionDetectorTest extends TestCase {
 		System.out.println("addException");
 		ESAPI.intrusionDetector().addException( new IntrusionException("user message", "log message") );
 		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-        Authenticator auth = (Authenticator)ESAPI.authenticator();
+        IAuthenticator auth = ESAPI.authenticator();
 		User user = auth.createUser(username, "addException", "addException");
 		user.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        auth.setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		user.loginWithPassword("addException");
 		
 		// Now generate some exceptions to disable account
@@ -103,12 +104,12 @@ public class IntrusionDetectorTest extends TestCase {
     public void testAddEvent() throws AuthenticationException {
         System.out.println("addEvent");
 		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-        Authenticator auth = (Authenticator)ESAPI.authenticator();
+        IAuthenticator auth = ESAPI.authenticator();
 		User user = auth.createUser(username, "addEvent", "addEvent");
 		user.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        auth.setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		user.loginWithPassword("addEvent");
         
         // Now generate some events to disable user account

@@ -21,9 +21,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntrusionException;
@@ -92,7 +95,7 @@ public interface IHTTPUtilities {
      * @return the http session
      * @throws EnterpriseSecurityException the enterprise security exception
      */
-    HttpSession changeSessionIdentifier() throws EnterpriseSecurityException;
+    HttpSession changeSessionIdentifier() throws AuthenticationException;
 	
 	/**
      * Checks the CSRF token in the URL (see User.getCSRFToken()) against the user's CSRF token and
@@ -254,5 +257,27 @@ public interface IHTTPUtilities {
      */
     void setNoCacheHeaders();
 
+    /**
+     * Stores the current HttpRequest and HttpResponse so that they may be readily accessed throughout
+     * ESAPI (and elsewhere)
+     * 
+     * @param request the current request
+     * @param response the current response
+     */
+    void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response);
+    
+    /**
+     * Retrieves the current HttpServletRequest
+     * 
+     * @return the current request
+     */
+    HttpServletRequest getCurrentRequest();
+    
+    /**
+     * Retrieves the current HttpServletResponse
+     * 
+     * @return the current response
+     */
+    HttpServletResponse getCurrentResponse();
     
 }

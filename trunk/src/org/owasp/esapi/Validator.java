@@ -588,7 +588,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * 
 	 */
 	public void assertIsValidHTTPRequest() throws ValidationException, IntrusionException {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
 		assertIsValidHTTPRequest(request);
 	}
 	
@@ -689,7 +689,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	public void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional) throws ValidationException, IntrusionException {
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
 		Set actualNames = request.getParameterMap().keySet();
 		
 		// verify ALL required parameters are present

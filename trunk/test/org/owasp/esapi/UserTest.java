@@ -205,12 +205,11 @@ public class UserTest extends TestCase {
 	 */
 	public void testFailedLoginLockout() throws AuthenticationException, EncryptionException {
 		System.out.println("failedLoginLockout");
-		IAuthenticator instance = ESAPI.authenticator();
 		User user = createTestUser("failedLoginLockout");
 		user.enable();
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
         
 		user.loginWithPassword("failedLoginLockout");
 		
@@ -360,7 +359,7 @@ public class UserTest extends TestCase {
 		assertEquals(0, user.getFailedLoginCount());
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-        ((Authenticator)ESAPI.authenticator()).setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		try {
 			user.loginWithPassword("ridiculous");
 		} catch (AuthenticationException e) {
@@ -452,7 +451,7 @@ public class UserTest extends TestCase {
 		// setup request and response
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-		((Authenticator)instance).setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		TestHttpSession session = (TestHttpSession)request.getSession();
 				
 		// set session creation -3 hours (default is 2 hour timeout)		
@@ -480,7 +479,7 @@ public class UserTest extends TestCase {
 		// setup request and response
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
-		((Authenticator)instance).setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		TestHttpSession session = (TestHttpSession)request.getSession();
 		
 		// set creation -30 mins (default is 20 min timeout)
@@ -562,7 +561,7 @@ public class UserTest extends TestCase {
 		TestHttpSession session = (TestHttpSession) request.getSession();
 		assertFalse(session.getInvalidated());
 		IAuthenticator instance = ESAPI.authenticator();
-		((Authenticator)instance).setCurrentHTTP(request, response);
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		String oldPassword = instance.generateStrongPassword();
 		User user = createTestUser(oldPassword);
 		user.enable();

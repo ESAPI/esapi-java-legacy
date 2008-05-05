@@ -39,6 +39,7 @@ import org.owasp.esapi.errors.AuthenticationHostException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.interfaces.IAuthenticator;
 import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IUser;
 
@@ -519,7 +520,7 @@ public class User implements IUser, Serializable {
 	 */
 	public boolean isSessionAbsoluteTimeout() {
 		// FIXME: make configurable - currently 2 hours
-		HttpSession session = ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getSession();
+		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
 		Date deadline = new Date( session.getCreationTime() + 1000 * 60 * 60 * 2);
 		Date now = new Date();
 		return now.after(deadline);
@@ -531,7 +532,7 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IIntrusionDetector#isSessionTimeout(java.lang.String)
 	 */
 	public boolean isSessionTimeout() {
-		HttpSession session = ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getSession();
+		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
 		// FIXME: make configurable - currently -20 minutes
 		Date deadline = new Date(session.getLastAccessedTime() + 1000 * 60 * 20);
 		Date now = new Date();
@@ -590,11 +591,11 @@ public class User implements IUser, Serializable {
 		if ( verifyPassword( password ) ) {
 			// FIXME: AAA verify loggedIn is properly maintained
 			loggedIn = true;
-			HttpSession session = ((HTTPUtilities)ESAPI.httpUtilities()).changeSessionIdentifier();
+			HttpSession session = ESAPI.httpUtilities().changeSessionIdentifier();
 			session.setAttribute(Authenticator.USER, getAccountName());
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
-            setLastHostAddress( ((Authenticator)ESAPI.authenticator()).getCurrentRequest().getRemoteHost() );
+            setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
 			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
 		} else {
 			loggedIn = false;
@@ -614,9 +615,9 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#logout()
 	 */
 	public void logout() {
-		Authenticator authenticator = ((Authenticator)ESAPI.authenticator());
+		IAuthenticator authenticator = ESAPI.authenticator();
 		if ( !authenticator.getCurrentUser().isAnonymous() ) {
-			HttpServletRequest request = authenticator.getCurrentRequest();
+			HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
 			HttpSession session = request.getSession(false);
 			if (session != null) {
 				session.invalidate();
@@ -774,8 +775,8 @@ public class User implements IUser, Serializable {
      * @param remoteHost
      */
 	public void setLastHostAddress(String remoteHost) {
-		User user = ((Authenticator)ESAPI.authenticator()).getCurrentUser();
-		HttpServletRequest request = ((Authenticator)ESAPI.authenticator()).getCurrentRequest();
+		User user = ESAPI.authenticator().getCurrentUser();
+		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
     	remoteHost = request.getRemoteAddr();
 		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost) && user != null && request != null ) {
         	// returning remote address not remote hostname to prevent DNS lookup

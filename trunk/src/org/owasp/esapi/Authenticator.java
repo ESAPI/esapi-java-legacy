@@ -166,52 +166,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         }
     };
 
-    /*
-     * The currentRequest ThreadLocal variable is used to make the currentRequest available to any call in any part of an
-     * application. This enables API's for actions that require the request to be much simpler. For example, the logout()
-     * method in the Authenticator class requires the currentRequest to get the session in order to invalidate it.
-     */
-    private ThreadLocalRequest currentRequest = new ThreadLocalRequest();
-
-    private class ThreadLocalRequest extends InheritableThreadLocal {
-        
-        public Object initialValue() {
-        	return null;
-        }
-        
-        public HttpServletRequest getRequest() {
-            return (HttpServletRequest)super.get();
-        }
-
-        public void setRequest(HttpServletRequest newRequest) {
-            super.set(newRequest);
-        }
-    };
-
-    /*
-     * The currentResponse ThreadLocal variable is used to make the currentResponse available to any call in any part of an
-     * application. This enables API's for actions that require the response to be much simpler. For example, the logout()
-     * method in the Authenticator class requires the currentResponse to kill the JSESSIONID cookie.
-     */
-    private ThreadLocalResponse currentResponse = new ThreadLocalResponse();
-
-    private class ThreadLocalResponse extends InheritableThreadLocal {
-        
-        public Object initialValue() {
-        	return null;
-        }
-        
-        public HttpServletResponse getResponse() {
-            return (HttpServletResponse)super.get();
-        }
-
-        public void setResponse(HttpServletResponse newResponse) {
-            super.set(newResponse);
-        }
-    };
-
-       
-    
     public Authenticator() {
     }
 
@@ -222,8 +176,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public void clearCurrent() {
     	currentUser.setUser(null);
-    	currentResponse.setResponse(null);
-    	currentRequest.setRequest(null);
+    	ESAPI.httpUtilities().setCurrentHTTP(null, null);
     }
     
     /*
@@ -301,23 +254,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         return user;
     }
 
-    /*
-     * Returns the current HttpServletRequest.
-     * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#getCurrentRequest()
-     */
-    public HttpServletRequest getCurrentRequest() {
-        HttpServletRequest request = (HttpServletRequest)currentRequest.get();
-		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set, typically via login" );
-		return request;
-    }
-
-    public HttpServletResponse getCurrentResponse() {
-        HttpServletResponse response = (HttpServletResponse)currentResponse.get();
-		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set, typically via login" );
-        return response;
-    }
-
     /**
      * Gets the user object with the matching account name or null if there is no match.
      * 
@@ -342,7 +278,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return the user from session
      */
     public User getUserFromSession() {
-        HttpSession session = getCurrentRequest().getSession();
+        HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
         String userName = (String) session.getAttribute(USER);
         if (userName != null) {
             User sessionUser = this.getUser(userName);
@@ -558,7 +494,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
     	}
     	// save the current request and response in the threadlocal variables
-    	setCurrentHTTP(request, response);
+    	ESAPI.httpUtilities().setCurrentHTTP(request, response);
     	
         User user = null;
 
@@ -646,22 +582,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         currentUser.setUser(user);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#setCurrentHTTP(javax.servlet.http.HttpServletRequest,javax.servlet.http.HttpServletResponse)
-     */
-    public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
-    	if ( request == null || response == null ) {
-            new AuthenticationCredentialsException( "Invalid request or response", "Request or response objects were null" );
-            return;
-    	}
-    	currentRequest.set(request);
-        currentResponse.set(response);
-    }
-
-    
-    
     /*
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a
      * brute force attack, however the real strength comes from the name length and complexity.
