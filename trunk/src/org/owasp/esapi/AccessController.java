@@ -18,6 +18,7 @@ package org.owasp.esapi;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -92,9 +93,6 @@ import org.owasp.esapi.errors.IntrusionException;
  * @see org.owasp.esapi.interfaces.IAccessController
  */
 public class AccessController implements org.owasp.esapi.interfaces.IAccessController {
-
-	/** The resource directory. */
-	private static final File resourceDirectory = new File (ESAPI.securityConfiguration().getResourceDirectory());
 
 	/** The url map. */
 	private Map urlMap = new HashMap();
@@ -173,7 +171,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
     public void assertAuthorizedForURL(String url) throws AccessControlException {
 		if (urlMap==null || urlMap.isEmpty()) {
-			urlMap = loadRules(new File(resourceDirectory, "URLAccessRules.txt"));
+			urlMap = loadRules("URLAccessRules.txt");
 		}
 		if ( !matchRule(urlMap, url) ) {
 			throw new AccessControlException("Not authorized for URL", "Not authorized for URL: " + url );
@@ -188,7 +186,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
     public void assertAuthorizedForFunction(String functionName) throws AccessControlException {
     	if (functionMap==null || functionMap.isEmpty()) {
-			functionMap = loadRules(new File(resourceDirectory, "FunctionAccessRules.txt"));
+			functionMap = loadRules("FunctionAccessRules.txt");
 		}
 		if ( !matchRule(functionMap, functionName) ) {
 			throw new AccessControlException("Not authorized for function", "Not authorized for function: " + functionName );
@@ -202,7 +200,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
     public void assertAuthorizedForData(String key) throws AccessControlException {
 		if (dataMap==null || dataMap.isEmpty()) {
-			dataMap = loadRules(new File(resourceDirectory, "DataAccessRules.txt"));
+			dataMap = loadRules("DataAccessRules.txt");
 		}
 		if ( !matchRule(dataMap, key) ) {
 			throw new AccessControlException("Not authorized for function", "Not authorized for data: " + key );
@@ -217,7 +215,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
     public void assertAuthorizedForFile(String filepath) throws AccessControlException {
 		if (fileMap==null || fileMap.isEmpty()) {
-			fileMap = loadRules(new File(resourceDirectory, "FileAccessRules.txt"));
+			fileMap = loadRules("FileAccessRules.txt");
 		}
 		// FIXME: AAA think about canonicalization here - use Java file canonicalizer
 		// remember that Windows paths have \ instead of /
@@ -234,7 +232,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
     public void assertAuthorizedForService(String serviceName) throws AccessControlException {    	
 		if (serviceMap==null || serviceMap.isEmpty()) {
-			serviceMap = loadRules(new File(resourceDirectory, "ServiceAccessRules.txt"));
+			serviceMap = loadRules("ServiceAccessRules.txt");
 		}
 		if ( !matchRule(serviceMap, serviceName ) ) {
 			throw new AccessControlException("Not authorized for service", "Not authorized for service: " + serviceName );
@@ -372,13 +370,13 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 * @throws AccessControlException
 	 *             the access control exception
 	 */
-	private Map loadRules(File f) {
+	private Map loadRules(String ruleset) {
 		Map map = new HashMap();
-		FileInputStream fis = null;
+		InputStream is = null;
 		try {
-			fis = new FileInputStream(f);
+			is = new FileInputStream(new File(ESAPI.securityConfiguration().getResourceDirectory(), ruleset));
 			String line = "";
-			while ((line = ESAPI.validator().safeReadLine(fis, 500)) != null) {
+			while ((line = ESAPI.validator().safeReadLine(is, 500)) != null) {
 				if (line.length() > 0 && line.charAt(0) != '#') {
 					Rule rule = new Rule();
 					String[] parts = line.split("\\|");
@@ -395,14 +393,14 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 				}
 			}
 		} catch (Exception e) {
-			logger.logWarning( Logger.SECURITY, "Problem in access control file", e );
+			logger.logWarning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
 		} finally {
 			try {
-				if (fis != null) {
-					fis.close();
+				if (is != null) {
+					is.close();
 				}
 			} catch (IOException e) {
-				logger.logWarning(Logger.SECURITY, "Failure closing access control file: " + f, e);
+				logger.logWarning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
 			}
 		}
 		return map;
