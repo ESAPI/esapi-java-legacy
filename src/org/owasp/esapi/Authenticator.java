@@ -66,8 +66,11 @@ import org.owasp.esapi.interfaces.IUser;
  */
 public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator {
 
-    /** The Constant USER. */
+    /** Key for user in session */
     protected static final String USER = "ESAPIUserSessionKey";
+
+    /** Key for remember token cookie */
+    protected static final String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
 
     /** The logger. */
     private static final Logger logger = Logger.getLogger("ESAPI", "Authenticator");
@@ -175,6 +178,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * fail, including logging, which requires the user identity.
      */
     public void clearCurrent() {
+    	// logger.logWarning(Logger.SECURITY, "************Clearing threadlocals. Thread" + Thread.currentThread().getName() );
     	currentUser.setUser(null);
     	ESAPI.httpUtilities().setCurrentHTTP(null, null);
     }
@@ -279,16 +283,64 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public User getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
-        String userName = (String) session.getAttribute(USER);
-        if (userName != null) {
-            User sessionUser = this.getUser(userName);
-            if (sessionUser != null) {
-                return sessionUser;
-            }
+        String account = (String) session.getAttribute(USER);
+        if (account != null) {
+            User user = this.getUser(account);
+            if (user != null) {
+    			logger.logSuccess( Logger.SECURITY, "Found user name in session: " + user.getAccountName() );
+                return user;
+			} else {
+				logger.logWarning( Logger.SECURITY, "Found user name in session, but no user matching " + account );
+			}
         }
         return null;
     }
 
+    /**
+     * Returns the user if a matching remember token is found, or null if the token
+     * is missing, token is corrupt, token is expired, account name does not match 
+     * and existing account, or hashed password does not match user's hashed password.
+     */
+    protected User getUserFromRememberToken() {
+    	String token = ESAPI.httpUtilities().getCookie( REMEMBER_TOKEN_COOKIE_NAME );
+    	if ( token == null ) {
+    		return null;
+    	}
+
+    	String[] data = null;
+		try {
+			data = ESAPI.encryptor().unseal( token ).split( "\\|" );
+		} catch (EncryptionException e) {			
+	    	logger.logWarning(Logger.SECURITY, "Found corrupt or expired remember token" );
+	    	return null;
+    	}
+
+		String tokenAccount = data[0];
+		String tokenHashedPassword = data[1];
+    	User user = getUser( tokenAccount );
+		if ( user == null ) {
+			logger.logWarning( Logger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
+			return null;
+		}
+		
+		if ( !user.getHashedPassword().equals( tokenHashedPassword )) {
+			logger.logWarning( Logger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
+			return null;
+		}
+
+		logger.logSuccess( Logger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
+		return user;
+    }
+
+    /**
+     * Verifies the current User's remember cookie from the current request.
+     * @return
+     */
+	public boolean verifyRememberToken() {
+		User user = getUserFromRememberToken();
+		return user != null;
+	}
+    
     /**
      * Gets the user names.
      * 
@@ -386,6 +438,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     private User loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
+    	// FIXME: Enhance - consider keeping a pointer to the session in the User object
+    	// so that if the user logs in again, the old session can be invalidated.
+    	
         // FIXME: AAA the login servlet path should also be a configuration - this
         // should check (if loginrequest && parameters then do
         // loginWithPassword)
@@ -494,6 +549,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
     	}
     	// save the current request and response in the threadlocal variables
+    	// FIXME: move this out of login
     	ESAPI.httpUtilities().setCurrentHTTP(request, response);
     	
         User user = null;
@@ -501,12 +557,18 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // if there's a user in the session then use that
         user = getUserFromSession();
         
-        if ( user != null ) {
-            user.setLastHostAddress( request.getRemoteHost() );
-        } else {
-        	// try to verify credentials
+        // else if there's a remember token then use that
+        if ( user == null ) {
+        	user = getUserFromRememberToken(); 
+        }
+        
+    	// else try to verify credentials - throws exception if login fails
+        if ( user == null ) {
             user = loginWithUsernameAndPassword(request, response);
         }
+        
+        // set last host address
+        user.setLastHostAddress( request.getRemoteHost() );
         
         // warn if this authentication request came over a non-SSL connection, exposing credentials or session id
         if ( !ESAPI.httpUtilities().isSecureChannel() ) {
@@ -581,6 +643,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     public void setCurrentUser(IUser user) {
         currentUser.setUser(user);
     }
+
 
     /*
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a

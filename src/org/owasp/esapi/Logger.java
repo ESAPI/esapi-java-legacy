@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -90,6 +91,14 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
             }
             if (i.hasNext())
                 params.append("&");
+        }
+        Cookie[] cookies = request.getCookies();
+        if ( cookies != null ) {
+	        for ( int c=0; c<cookies.length; c++ ) {
+	        	if ( !cookies[c].getName().equals("JSESSIONID")) {
+	        		params.append( "+" + cookies[c].getName() + "=" + cookies[c].getValue() );
+	        	}
+	        }
         }
         String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
         logSuccess(Logger.SECURITY, msg);

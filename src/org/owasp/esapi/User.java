@@ -38,6 +38,7 @@ import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.AuthenticationHostException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.IntegrityException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.interfaces.IAuthenticator;
 import org.owasp.esapi.interfaces.ILogger;
@@ -73,7 +74,7 @@ public class User implements IUser, Serializable {
 	private List oldPasswordHashes = new ArrayList();
 
 	/** The remember token. */
-	private String rememberToken = "";
+	protected String rememberToken = "";
 
 	/** The csrf token. */
 	private String csrfToken = "";
@@ -116,7 +117,7 @@ public class User implements IUser, Serializable {
 	private Map events = new HashMap();
 
     
-    // FIXME: ENHANCE consider adding these for access control support
+    // FIXME: ENHANCE consider adding these for authentication / access control support
     //
     //private String authenticationMethod = null;
     //
@@ -206,6 +207,10 @@ public class User implements IUser, Serializable {
 		} catch (EncryptionException ee) {
 		    throw new AuthenticationException("Internal error", "Error hashing password for " + this.accountName, ee);
 		}
+		
+		resetRememberToken();
+		
+		// FIXME: make configurable
 		expirationTime = new Date( System.currentTimeMillis() + (long)1000 * 60 * 60 * 24 * 90 );  // 90 days
 		logger.logCritical(Logger.SECURITY, "Account created successfully: " + accountName );
 	}
@@ -387,6 +392,13 @@ public class User implements IUser, Serializable {
 	}
 
 	/**
+	 * Gets the remember token for use in cookies.
+	 */
+	protected String getRememberToken() {
+		return rememberToken;
+	}
+
+	/**
 	 * Gets the last failed login time.
 	 * 
 	 * @return the lastFailedLoginTime
@@ -415,15 +427,6 @@ public class User implements IUser, Serializable {
 	 */
 	public Date getLastPasswordChangeTime() {
 		return (Date)lastPasswordChangeTime.clone();
-	}
-
-	/**
-	 * Gets the remember token.
-	 * 
-	 * @return the rememberToken
-	 */
-	public String getRememberToken() {
-		return rememberToken;
 	}
 
 	/**
@@ -615,6 +618,7 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#logout()
 	 */
 	public void logout() {
+		ESAPI.httpUtilities().killCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME );
 		IAuthenticator authenticator = ESAPI.authenticator();
 		if ( !authenticator.getCurrentUser().isAnonymous() ) {
 			HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
@@ -672,7 +676,9 @@ public class User implements IUser, Serializable {
 	}
 
 	/**
-	 * Returns new remember token.
+	 * Regenerates the user's remember token by sealing the account name and hashed password with a timestamp.
+	 * The account name is used to look up the user when the remember token is received. The hashed password
+	 * is included to allow the user to invalidate all existing remember tokens by changing their password.
 	 * 
 	 * @return the string
 	 * 
@@ -680,10 +686,17 @@ public class User implements IUser, Serializable {
 	 *             the authentication exception
 	 */
 	public String resetRememberToken() throws AuthenticationException {
-		// FIXME: should this be a "seal" with a date to expire?  or should we store an expire?
-		// FIXME: why not have an http utility to set this as a safe cookie? Then login can access it?
-		rememberToken = ESAPI.randomizer().getRandomString(20, Encoder.CHAR_ALPHANUMERICS);
-		logger.logTrace(ILogger.SECURITY, "New remember token generated for: " + getAccountName() );
+		// FIXME: make length of time configurable
+		// String random = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS );
+		long timestamp = ESAPI.encryptor().getRelativeTimeStamp( 1000 * 60 * 60 * 24 * 14 );
+		try {
+		    rememberToken = ESAPI.encryptor().seal( getAccountName() + "|" + getHashedPassword(), timestamp );
+		} catch (IntegrityException e) {
+		    throw new AuthenticationException("Internal error", "Error creating remember token for " + accountName, e);
+		}
+		
+		// FIXME: don't  log this.
+		logger.logTrace(ILogger.SECURITY, "New remember token generated for: " + getAccountName() + " = " + this.rememberToken );
 		return rememberToken;
 	}
 
@@ -851,6 +864,7 @@ public class User implements IUser, Serializable {
 
 	//FIXME:Enhance - think about having a second "transaction" password for each user
 
+	
     /*
 	 * (non-Javadoc)
 	 * 

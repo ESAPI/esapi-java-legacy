@@ -200,13 +200,13 @@ public class SecurityConfiguration implements ISecurityConfiguration {
         String bytes = properties.getProperty(MAX_UPLOAD_FILE_BYTES,"50000");
         return Integer.parseInt(bytes);
     }
-    
+
 	/**
      * Load ESAPI.properties from the classpath. 
      */
-    private static Properties loadConfigurationFromClasspath()
+    private Properties loadConfigurationFromClasspath()
     {
-    	ClassLoader loader = ClassLoader.getSystemClassLoader();
+    	ClassLoader loader = getClass().getClassLoader();
 
         Properties result = null;
         

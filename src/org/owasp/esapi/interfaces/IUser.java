@@ -140,13 +140,6 @@ public interface IUser {
     Date getLastPasswordChangeTime();
 
     /**
-     * Gets the remember token.
-     * 
-     * @return the remember token
-     */
-    String getRememberToken();
-
-    /**
      * Gets the roles assigned to a particular account.
      * 
      * @return an immutable set of roles

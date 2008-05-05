@@ -620,19 +620,7 @@ public class UserTest extends TestCase {
         }
 	}
 
-	/**
-	 * Test of generateRememberMeToken method, of class org.owasp.esapi.User.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	public void testResetRememberToken() throws AuthenticationException {
-		System.out.println("resetRememberToken");
-		User user = createTestUser("resetRememberToken");
-		String token = user.resetRememberToken();
-        assertEquals(token, user.getRememberToken() );
-	}
-
+	
 	/**
 	 * Test of setAccountName method, of class org.owasp.esapi.User.
 	 */

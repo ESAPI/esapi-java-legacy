@@ -113,6 +113,9 @@ public class ValidatorTest extends TestCase {
 		assertFalse(instance.isValidInput("test", "000-00-0000", "SSN", 100, false));
 		assertFalse(instance.isValidInput("test", "(555) 555-5555", "SSN", 100, false));
 		assertFalse(instance.isValidInput("test", "test", "SSN", 100, false));
+
+		assertTrue(instance.isValidInput("test", null, "Email", 100, true));
+		assertFalse(instance.isValidInput("test", null, "Email", 100, false));
 	}
 
 	/**

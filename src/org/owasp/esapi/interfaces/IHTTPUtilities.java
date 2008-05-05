@@ -112,15 +112,28 @@ public interface IHTTPUtilities {
 	 * @param encrypted
 	 * @return
 	 */
-	public String decryptHiddenField(String encrypted);
-    
+	String decryptHiddenField(String encrypted);
+
+	
+	/**
+	 * Set a cookie containing the current User's remember token for automatic authentication. The use of remember tokens
+	 * is not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
+	 * the user that this should only be enabled on computers where no other users will have access.
+	 * 
+	 * @param maxAge
+	 * @param domain
+	 * @param path
+	 */
+	void enableRememberToken( int maxAge, String domain, String path );
+	
+	
     /**
      * Encrypts a hidden field value for use in HTML.
      * @param value
      * @return
      * @throws EncryptionException
      */
-	public String encryptHiddenField(String value) throws EncryptionException;
+	String encryptHiddenField(String value) throws EncryptionException;
 
 
 	/**
@@ -128,14 +141,19 @@ public interface IHTTPUtilities {
 	 * @param href
 	 * @return
 	 */
-	public String encryptQueryString(String query) throws EncryptionException;
+	String encryptQueryString(String query) throws EncryptionException;
 	
 	/**
 	 * Takes an encrypted querystring and returns a Map containing the original parameters.
 	 * @param encrypted
 	 * @return
 	 */
-	public Map decryptQueryString(String encrypted) throws EncryptionException;
+	Map decryptQueryString(String encrypted) throws EncryptionException;
+
+	/**
+	 * Returns the first cookie matching the given name.
+	 */
+	String getCookie( String name );
 	
     /**
      * Extract uploaded files from a multipart HTTP requests. Implementations must check the content to ensure that it

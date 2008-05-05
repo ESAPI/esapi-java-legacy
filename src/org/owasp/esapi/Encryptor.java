@@ -208,7 +208,9 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	 */
 	public String seal(String data, long expiration) throws IntegrityException {
 		try {
-			return this.encrypt(expiration + ":" + data);
+			// mix in some random data so even identical data and timestamp produces different seals
+			String random = ESAPI.randomizer().getRandomString(10, Encoder.CHAR_ALPHANUMERICS);
+			return this.encrypt(expiration + ":" + random + ":" + data);
 		} catch( EncryptionException e ) {
 			throw new IntegrityException( e.getUserMessage(), e.getLogMessage(), e );
 		}
@@ -240,6 +242,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
 		}
 
+		index = plaintext.indexOf(":", index+1);
 		String sealedValue = plaintext.substring(index + 1);
 		return sealedValue;
 	}
