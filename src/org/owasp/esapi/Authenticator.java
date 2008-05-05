@@ -381,7 +381,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     protected void loadUsersIfNecessary() {
         if (userDB == null) {
-            userDB = new File(((SecurityConfiguration)ESAPI.securityConfiguration()).getResourceDirectory(), "users.txt");
+            userDB = new File((ESAPI.securityConfiguration()).getResourceDirectory(), "users.txt");
         }
         
         // We only check at most every checkInterval milliseconds
