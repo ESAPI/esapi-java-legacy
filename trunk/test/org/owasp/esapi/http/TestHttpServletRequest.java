@@ -130,6 +130,10 @@ public class TestHttpServletRequest implements HttpServletRequest {
     	cookies.add( c );
     }
     
+    public void clearCookies() {
+    	cookies.clear();
+    }
+    
     /*
      * (non-Javadoc)
      * 

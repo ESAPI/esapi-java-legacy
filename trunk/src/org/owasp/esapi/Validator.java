@@ -71,6 +71,9 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	}
 	
 
+	// FIXME: need to return 3 ways - safe input, safe input with message, ValidationException
+	// Going to have to implement a ValidationResult (toString should be the safe input)
+	
 	/**
 	 * Returns true if data received from browser is valid. Only URL encoding is
 	 * supported. Double encoding is treated as an attack.
@@ -119,7 +122,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
     		}
 
     		if ( !p.matcher(canonical).matches() ) {
-    			throw new ValidationException("Invalid input: context=" + context, "Invalid input: context=" + context + ", type=" + type + "(" + p.pattern() + "), input=" + input );
+    			throw new ValidationException("Invalid input must match " + p.pattern() + ": context=" + context, "Invalid input: context=" + context + ", type=" + type + "(" + p.pattern() + "), input=" + input );
     		}
     		
     		return canonical;
@@ -204,6 +207,13 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 			}
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(input, antiSamyPolicy);
+			List errors = test.getErrorMessages();
+			
+			// FIXME: AAA log detailed messages for now - would be nice to report
+			if ( errors.size() > 0 ) {
+				// just create new exception to get it logged and intrusion detected
+				new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", input=" + input + ", errors=" + errors );
+			}
 			return(test.getCleanHTML().trim());
 		} catch (ScanException e) {
 			throw new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", input=" + input, e );
@@ -847,7 +857,7 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @return boolean response if input is empty or not
 	 */
 	private static final boolean isEmpty(String input) {
-		return (input==null || input.trim().length() == 0);
+		return (input==null || input.length() == 0);
 	}
 	
 	/**
