@@ -82,7 +82,7 @@
         <!-- is performed. We ignore warnings about certain missing classes    -->
         <!-- since they are not used/required                      -->
         <proguard 
-            ignorewarnings="true" 
+            ignorewarnings="false" 
             obfuscate="false" 
             optimize="false" 
             shrink="false" 
@@ -90,12 +90,14 @@
             printusage="false"
         >
             <injar name="${jar}"/>
-            <injar name="lib/antisamy-bin.1.1.1.jar"/>
-            <injar name="lib/commons-fileupload-1.2.jar"/>
-            <injar name="lib/commons-io-1.3.2.jar"/>
+            <injar name="lib/antisamy-bin-standalone.1.1.1.jar" filter="!META-INF/*"/>
+            <injar name="lib/commons-fileupload-1.2.jar" filter="!META-INF/*"/>
+            <injar name="lib/commons-io-1.3.2.jar" filter="!META-INF/*"/>
             <libraryjar name="${java.home}/lib/rt.jar"/>
             <libraryjar name="${java.home}/lib/jsse.jar"/>
             <libraryjar name="lib/servlet-api.jar"/>
+            <libraryjar name="lib/jsp-api.jar"/>
+            <libraryjar name="lib/xml-apis-ext.jar"/>
             <outjar name="${dist.dir}/${project.name}-${project.version}.jar"/>
         </proguard>
     </target>
