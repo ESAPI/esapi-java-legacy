@@ -52,9 +52,6 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 	/** The public key. */
 	PublicKey publicKey = null;
 
-	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "Encryptor");
-
 	// FIXME: AAA need global scrub of what methods need to log
 
 	PBEParameterSpec parameterSpec = null;

@@ -59,9 +59,6 @@ import org.owasp.validator.html.ScanException;
  */
 public class Validator implements org.owasp.esapi.interfaces.IValidator {
 
-	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "Validator");
-	
 	/** OWASP AntiSamy markup verification policy */
 	private Policy antiSamyPolicy = null;
 	
