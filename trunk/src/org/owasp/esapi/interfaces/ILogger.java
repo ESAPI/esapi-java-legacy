@@ -69,6 +69,14 @@ public interface ILogger {
 	void fatal(String type, String message, Throwable throwable);
 
 	/**
+	 * Allows the caller to determine if messages logged at this level
+	 * will be discarded, to avoid performing expensive processing
+	 * 
+	 * @return true if messages will be output to the log
+	 */
+	boolean isFatalEnabled();
+
+	/**
      * Log debug.
      * 
      * @param type the type
@@ -84,6 +92,14 @@ public interface ILogger {
      * @param throwable the throwable
      */
 	void debug(String type, String message, Throwable throwable);
+
+	/**
+	 * Allows the caller to determine if messages logged at this level
+	 * will be discarded, to avoid performing expensive processing
+	 * 
+	 * @return true if messages will be output to the log
+	 */
+	boolean isDebugEnabled();
 
 	/**
      * Log error.
@@ -103,6 +119,14 @@ public interface ILogger {
 	void error(String type, String message, Throwable throwable);
 
 	/**
+	 * Allows the caller to determine if messages logged at this level
+	 * will be discarded, to avoid performing expensive processing
+	 * 
+	 * @return true if messages will be output to the log
+	 */
+	boolean isErrorEnabled();
+
+	/**
      * Log success.
      * 
      * @param type the type
@@ -118,6 +142,14 @@ public interface ILogger {
      * @param throwable the throwable
      */
 	void info(String type, String message, Throwable throwable);
+
+	/**
+	 * Allows the caller to determine if messages logged at this level
+	 * will be discarded, to avoid performing expensive processing
+	 * 
+	 * @return true if messages will be output to the log
+	 */
+	boolean isInfoEnabled();
 
 	/**
      * Log trace.
@@ -137,6 +169,14 @@ public interface ILogger {
 	void trace(String type, String message, Throwable throwable);
 
 	/**
+	 * Allows the caller to determine if messages logged at this level
+	 * will be discarded, to avoid performing expensive processing
+	 * 
+	 * @return true if messages will be output to the log
+	 */
+	boolean isTraceEnabled();
+
+	/**
      * Log warning.
      * 
      * @param type the type
@@ -152,4 +192,13 @@ public interface ILogger {
      * @param throwable the throwable
      */
 	void warning(String type, String message, Throwable throwable);
+
+	/**
+	 * Allows the caller to determine if messages logged at this level
+	 * will be discarded, to avoid performing expensive processing
+	 * 
+	 * @return true if messages will be output to the log
+	 */
+	boolean isWarningEnabled();
+
 }
