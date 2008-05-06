@@ -60,7 +60,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logTrace(short, java.lang.String, java.lang.String, java.lang.Throwable)
      */
     public void trace(String type, String message, Throwable throwable) {
-        log(Level.WARNING, type, message, throwable);
+        log(Level.FINEST, type, message, throwable);
     }
 
     /*
@@ -69,7 +69,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logTrace(java.lang.String, java.lang.String)
      */
     public void trace(String type, String message) {
-        log(Level.WARNING, type, message, null);
+        log(Level.FINEST, type, message, null);
     }
 
     /*
@@ -78,7 +78,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logDebug(short, java.lang.String, java.lang.String, java.lang.Throwable)
      */
     public void debug(String type, String message, Throwable throwable) {
-        log(Level.CONFIG, type, message, throwable);
+        log(Level.FINE, type, message, throwable);
     }
 
     /*
@@ -87,7 +87,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logDebug(java.lang.String, java.lang.String)
      */
     public void debug(String type, String message) {
-        log(Level.CONFIG, type, message, null);
+        log(Level.FINE, type, message, null);
     }
 
     /*
@@ -96,7 +96,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logError(short, java.lang.String, java.lang.String, java.lang.Throwable)
      */
     public void error(String type, String message, Throwable throwable) {
-        log(Level.WARNING, type, message, throwable);
+        log(Level.SEVERE, type, message, throwable);
     }
 
     /*
@@ -105,7 +105,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logError(java.lang.String, java.lang.String)
      */
     public void error(String type, String message) {
-        log(Level.WARNING, type, message, null);
+        log(Level.SEVERE, type, message, null);
     }
 
     /*
@@ -226,6 +226,48 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
         // }
         String msg = "SECURITY" + ": " + "esapi" + "/" + "none" + " -- " + message;
         jlogger.logp(Level.WARNING, applicationName, moduleName, msg, throwable);
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ILogger#isDebugEnabled()
+     */
+    public boolean isDebugEnabled() {
+	    return jlogger.isLoggable(Level.FINE);
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ILogger#isErrorEnabled()
+     */
+    public boolean isErrorEnabled() {
+	    return jlogger.isLoggable(Level.SEVERE);
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ILogger#isFatalEnabled()
+     */
+    public boolean isFatalEnabled() {
+	    return jlogger.isLoggable(Level.SEVERE);
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ILogger#isInfoEnabled()
+     */
+    public boolean isInfoEnabled() {
+	    return jlogger.isLoggable(Level.INFO);
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ILogger#isTraceEnabled()
+     */
+    public boolean isTraceEnabled() {
+	    return jlogger.isLoggable(Level.FINEST);
+    }
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ILogger#isWarningEnabled()
+     */
+    public boolean isWarningEnabled() {
+	    return jlogger.isLoggable(Level.WARNING);
     }
 
 }
