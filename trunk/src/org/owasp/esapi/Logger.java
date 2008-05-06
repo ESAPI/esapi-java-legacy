@@ -15,13 +15,9 @@
  */
 package org.owasp.esapi;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * Reference implementation of the ILogger interface. This implementation uses the Java logging package, and marks each
  * log message with the currently logged in user and the word "SECURITY" for security related events.
@@ -44,76 +40,18 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
     private String moduleName = null;
     
     /**
-     * Hide the constructor.
+     * Public constructor should only ever be called via the appropriate LogFactory
      * 
      * @param applicationName the application name
      * @param moduleName the module name
-     * @param jlogger the jlogger
      */
-    private Logger(String applicationName, String moduleName, java.util.logging.Logger jlogger) {
+    public Logger(String applicationName, String moduleName) {
         this.applicationName = applicationName;
         this.moduleName = moduleName;
-        this.jlogger = jlogger;
+        this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
         // FIXME: AAA this causes some weird classloading problem, since SecurityConfiguration logs.
         // jlogger.setLevel(ESAPI.securityConfiguration().getLogLevel());
         this.jlogger.setLevel( Level.ALL );
-    }
-
-    public void logHTTPRequest() {
-    	logHTTPRequest( null );
-    }
-    
-    /**
-     * Formats an HTTP request into a log suitable string. This implementation logs the remote host IP address (or
-     * hostname if available), the request method (GET/POST), the URL, and all the querystring and form parameters. All
-     * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
-     * match items in the parameterNamesToObfuscate are shown as eight asterisks.
-     * 
-     * @see org.owasp.esapi.interfaces.ILogger#formatHttpRequestForLog(javax.servlet.http.HttpServletRequest)
-     */
-    public void logHTTPRequest(List parameterNamesToObfuscate) {
-    	HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-        StringBuffer params = new StringBuffer();
-        Iterator i = request.getParameterMap().keySet().iterator();
-        while (i.hasNext()) {
-            String key = (String) i.next();
-            String[] value = (String[]) request.getParameterMap().get(key);
-            for (int j = 0; j < value.length; j++) {
-                params.append(key + "=");
-                if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
-                    params.append("********");
-                } else {
-                    params.append(value[j]);
-                }
-                if (j < value.length - 1) {
-                    params.append("&");
-                }
-            }
-            if (i.hasNext())
-                params.append("&");
-        }
-        Cookie[] cookies = request.getCookies();
-        if ( cookies != null ) {
-	        for ( int c=0; c<cookies.length; c++ ) {
-	        	if ( !cookies[c].getName().equals("JSESSIONID")) {
-	        		params.append( "+" + cookies[c].getName() + "=" + cookies[c].getValue() );
-	        	}
-	        }
-        }
-        String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
-        logSuccess(Logger.SECURITY, msg);
-    }
-
-    /**
-     * Gets the logger.
-     * 
-     * @param applicationName the application name
-     * @param moduleName the module name
-     * @return the logger
-     */
-    public static Logger getLogger(String applicationName, String moduleName) {
-        java.util.logging.Logger jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
-        return new Logger(applicationName, moduleName, jlogger);
     }
 
     /*
@@ -121,7 +59,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logTrace(short, java.lang.String, java.lang.String, java.lang.Throwable)
      */
-    public void logTrace(String type, String message, Throwable throwable) {
+    public void trace(String type, String message, Throwable throwable) {
         log(Level.WARNING, type, message, throwable);
     }
 
@@ -130,7 +68,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logTrace(java.lang.String, java.lang.String)
      */
-    public void logTrace(String type, String message) {
+    public void trace(String type, String message) {
         log(Level.WARNING, type, message, null);
     }
 
@@ -139,7 +77,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logDebug(short, java.lang.String, java.lang.String, java.lang.Throwable)
      */
-    public void logDebug(String type, String message, Throwable throwable) {
+    public void debug(String type, String message, Throwable throwable) {
         log(Level.CONFIG, type, message, throwable);
     }
 
@@ -148,7 +86,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logDebug(java.lang.String, java.lang.String)
      */
-    public void logDebug(String type, String message) {
+    public void debug(String type, String message) {
         log(Level.CONFIG, type, message, null);
     }
 
@@ -157,7 +95,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logError(short, java.lang.String, java.lang.String, java.lang.Throwable)
      */
-    public void logError(String type, String message, Throwable throwable) {
+    public void error(String type, String message, Throwable throwable) {
         log(Level.WARNING, type, message, throwable);
     }
 
@@ -166,7 +104,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logError(java.lang.String, java.lang.String)
      */
-    public void logError(String type, String message) {
+    public void error(String type, String message) {
         log(Level.WARNING, type, message, null);
     }
 
@@ -176,7 +114,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logSuccess(short, java.lang.String, java.lang.String,
      * java.lang.Throwable)
      */
-    public void logSuccess(String type, String message) {
+    public void info(String type, String message) {
         log(Level.INFO, type, message, null);
     }
 
@@ -186,7 +124,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logSuccess(short, java.lang.String, java.lang.String,
      * java.lang.Throwable)
      */
-    public void logSuccess(String type, String message, Throwable throwable) {
+    public void info(String type, String message, Throwable throwable) {
         log(Level.INFO, type, message, throwable);
     }
 
@@ -196,7 +134,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logWarning(short, java.lang.String, java.lang.String,
      * java.lang.Throwable)
      */
-    public void logWarning(String type, String message, Throwable throwable) {
+    public void warning(String type, String message, Throwable throwable) {
         log(Level.WARNING, type, message, throwable);
     }
 
@@ -205,7 +143,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logWarning(java.lang.String, java.lang.String)
      */
-    public void logWarning(String type, String message) {
+    public void warning(String type, String message) {
         log(Level.WARNING, type, message, null);
     }
 
@@ -215,7 +153,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * @see org.owasp.esapi.interfaces.ILogger#logCritical(short, java.lang.String, java.lang.String,
      * java.lang.Throwable)
      */
-    public void logCritical(String type, String message, Throwable throwable) {
+    public void fatal(String type, String message, Throwable throwable) {
         log(Level.SEVERE, type, message, throwable);
     }
 
@@ -224,7 +162,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
      * 
      * @see org.owasp.esapi.interfaces.ILogger#logCritical(java.lang.String, java.lang.String)
      */
-    public void logCritical(String type, String message) {
+    public void fatal(String type, String message) {
         log(Level.SEVERE, type, message, null);
     }
 

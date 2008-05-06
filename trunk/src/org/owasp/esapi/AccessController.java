@@ -28,6 +28,7 @@ import java.util.Set;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.interfaces.ILogger;
 
 /**
  * Reference implementation of the IAccessController interface. This reference
@@ -113,7 +114,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	private Rule deny = new Rule();
 
 	/** The logger. */
-	private static Logger logger = Logger.getLogger("ESAPI", "AccessController");
+	private static ILogger logger = ESAPI.getLogger("AccessController");
 
 	public AccessController() {
 	}
@@ -284,7 +285,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 		try {
 		    canonical = ESAPI.encoder().canonicalize(path);
 		} catch (EncodingException e) {
-		    logger.logWarning( Logger.SECURITY, "Failed to canonicalize input: " + path );
+		    logger.warning( Logger.SECURITY, "Failed to canonicalize input: " + path );
 		}
 		
 		String part = canonical;
@@ -386,21 +387,21 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");
 					if (map.containsKey(rule.path)) {
-						logger.logWarning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+						logger.warning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
 					} else {
 						map.put(rule.path, rule);
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.logWarning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
+			logger.warning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
 		} finally {
 			try {
 				if (is != null) {
 					is.close();
 				}
 			} catch (IOException e) {
-				logger.logWarning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
+				logger.warning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
 			}
 		}
 		return map;

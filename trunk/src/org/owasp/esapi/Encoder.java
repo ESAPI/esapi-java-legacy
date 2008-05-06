@@ -24,6 +24,7 @@ import java.util.HashMap;
 
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.interfaces.ILogger;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -92,7 +93,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "Encoder");
+	private static final ILogger logger = ESAPI.getLogger("Encoder");
 
 	/** The Constant CHAR_LOWERS. */
 	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
@@ -1186,7 +1187,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 							return new EncodedCharacter("&#" + (char) c + ";", (char) c, ENTITY_ENCODING);
 						} catch (NumberFormatException e) {
 							// invalid character - return null
-							logger.logWarning(Logger.SECURITY, "Invalid numeric entity encoding &" + possible + ";");
+							logger.warning(Logger.SECURITY, "Invalid numeric entity encoding &" + possible + ";");
 						}
 					}
 				}

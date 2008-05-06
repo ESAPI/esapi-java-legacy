@@ -19,6 +19,7 @@ import java.util.Iterator;
 
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.interfaces.ILogger;
 
 /**
  * Reference implementation of the IIntrusionDetector interface. This
@@ -38,7 +39,7 @@ import org.owasp.esapi.errors.IntrusionException;
 public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionDetector {
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "IntrusionDetector");
+	private static final ILogger logger = ESAPI.getLogger("IntrusionDetector");
 
 	public IntrusionDetector() {
 	}
@@ -61,9 +62,9 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
 	 */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
-            logger.logWarning( Logger.SECURITY, ((EnterpriseSecurityException)e).getLogMessage(), e );
+            logger.warning( Logger.SECURITY, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
-            logger.logWarning( Logger.SECURITY, e.getMessage(), e );
+            logger.warning( Logger.SECURITY, e.getMessage(), e );
         }
 
         // add the exception to the current user, which may trigger a detector 
@@ -96,7 +97,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
      * @throws IntrusionException the intrusion exception
      */
     public void addEvent(String eventName) throws IntrusionException {
-        logger.logWarning( Logger.SECURITY, "Security event " + eventName + " received" );
+        logger.warning( Logger.SECURITY, "Security event " + eventName + " received" );
 
         // add the event to the current user, which may trigger a detector 
         User user = ESAPI.authenticator().getCurrentUser();
@@ -119,7 +120,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
      */
     private void takeSecurityAction( String action, String message ) {
         if ( action.equals( "log" ) ) {
-            logger.logCritical( Logger.SECURITY, "INTRUSION - " + message );
+            logger.fatal( Logger.SECURITY, "INTRUSION - " + message );
         }
         if ( action.equals( "disable" ) ) {
             ESAPI.authenticator().getCurrentUser().disable();

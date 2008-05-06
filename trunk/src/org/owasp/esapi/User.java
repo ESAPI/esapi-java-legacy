@@ -59,7 +59,7 @@ public class User implements IUser, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "User");
+	private static final ILogger logger = ESAPI.getLogger("User");
     
 	/** The account name. */
 	private String accountName = "";
@@ -212,7 +212,7 @@ public class User implements IUser, Serializable {
 		
 		// FIXME: make configurable
 		expirationTime = new Date( System.currentTimeMillis() + (long)1000 * 60 * 60 * 24 * 90 );  // 90 days
-		logger.logCritical(Logger.SECURITY, "Account created successfully: " + accountName );
+		logger.fatal(Logger.SECURITY, "Account created successfully: " + accountName );
 	}
 
 	/* (non-Javadoc)
@@ -222,7 +222,7 @@ public class User implements IUser, Serializable {
 		String roleName = role.toLowerCase();
 		if ( ESAPI.validator().isValidInput("addRole", roleName, "RoleName", MAX_ROLE_LENGTH, false) ) {
 			roles.add(roleName);
-			logger.logCritical(Logger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
+			logger.fatal(Logger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
 		} else {
 			throw new AuthenticationAccountsException( "Add role failed", "Attempt to add invalid role " + roleName + " to " + getAccountName() );
 		}
@@ -271,7 +271,7 @@ public class User implements IUser, Serializable {
 		setLastPasswordChangeTime(new Date());
 		String newHash = ESAPI.authenticator().hashPassword(newPassword1, getAccountName() );
 		setHashedPassword( newHash );
-		logger.logCritical(Logger.SECURITY, "Password changed for user: " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Password changed for user: " + getAccountName() );
 	}
 
 	/*
@@ -293,7 +293,7 @@ public class User implements IUser, Serializable {
 			throw new AuthenticationCredentialsException( "Password change failed", "Password change matches a recent password for user: " + getAccountName() );
 		}
 		setHashedPassword( newHash );
-		logger.logCritical(Logger.SECURITY, "Password changed for user: " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Password changed for user: " + getAccountName() );
 	}
 
 	/*
@@ -304,7 +304,7 @@ public class User implements IUser, Serializable {
 	public void disable() {
 		// FIXME: ENHANCE what about disabling for a short time period - to address DOS attack?
 		enabled = false;
-		logger.logSuccess( Logger.SECURITY, "Account disabled: " + getAccountName() );
+		logger.info( Logger.SECURITY, "Account disabled: " + getAccountName() );
 	}
 	
 	/**
@@ -329,7 +329,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void enable() {
 		this.enabled = true;
-		logger.logSuccess( Logger.SECURITY, "Account enabled: " + getAccountName() );
+		logger.info( Logger.SECURITY, "Account enabled: " + getAccountName() );
 	}
 
 	/* (non-Javadoc)
@@ -549,7 +549,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void lock() {
 		this.locked = true;
-		logger.logCritical(Logger.SECURITY, "Account locked: " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Account locked: " + getAccountName() );
 	}
 
     /*
@@ -599,7 +599,7 @@ public class User implements IUser, Serializable {
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
             setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
-			logger.logTrace(ILogger.SECURITY, "User logged in: " + accountName );
+			logger.trace(ILogger.SECURITY, "User logged in: " + accountName );
 		} else {
 			loggedIn = false;
 			setLastFailedLoginTime(new Date());
@@ -628,7 +628,7 @@ public class User implements IUser, Serializable {
 			}
 			ESAPI.httpUtilities().killCookie("JSESSIONID");
 			loggedIn = false;
-			logger.logSuccess(Logger.SECURITY, "Logout successful" );
+			logger.info(Logger.SECURITY, "Logout successful" );
 			authenticator.setCurrentUser(Authenticator.anonymous);
 		}
 	}
@@ -640,7 +640,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void removeRole(String role) {
 		roles.remove(role.toLowerCase());
-		logger.logTrace(ILogger.SECURITY, "Role " + role + " removed from " + getAccountName() );
+		logger.trace(ILogger.SECURITY, "Role " + role + " removed from " + getAccountName() );
 	}
 
 	/**
@@ -696,7 +696,7 @@ public class User implements IUser, Serializable {
 		}
 		
 		// FIXME: don't  log this.
-		logger.logTrace(ILogger.SECURITY, "New remember token generated for: " + getAccountName() + " = " + this.rememberToken );
+		logger.trace(ILogger.SECURITY, "New remember token generated for: " + getAccountName() + " = " + this.rememberToken );
 		return rememberToken;
 	}
 
@@ -744,7 +744,7 @@ public class User implements IUser, Serializable {
 	public void setAccountName(String accountName) {
 		String old = accountName;
 		this.accountName = accountName.toLowerCase();
-		logger.logCritical(Logger.SECURITY, "Account name changed from " + old + " to " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Account name changed from " + old + " to " + getAccountName() );
 	}
 
 	/**
@@ -755,7 +755,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = new Date( expirationTime.getTime() );
-		logger.logCritical(Logger.SECURITY, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -768,7 +768,7 @@ public class User implements IUser, Serializable {
 		oldPasswordHashes.add( hashedPassword);
 		if (oldPasswordHashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes() ) oldPasswordHashes.remove( 0 );
 		hashedPassword = hash;
-		logger.logCritical(Logger.SECURITY, "New hashed password stored for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "New hashed password stored for " + getAccountName() );
 	}
 	
 	/**
@@ -779,7 +779,7 @@ public class User implements IUser, Serializable {
 	 */
 	protected void setLastFailedLoginTime(Date lastFailedLoginTime) {
 		this.lastFailedLoginTime = lastFailedLoginTime;
-		logger.logCritical(Logger.SECURITY, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
 	}
 	
 	
@@ -806,7 +806,7 @@ public class User implements IUser, Serializable {
 	 */
 	protected void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
-		logger.logCritical(Logger.SECURITY, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -817,7 +817,7 @@ public class User implements IUser, Serializable {
 	 */
 	protected void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
 		this.lastPasswordChangeTime = lastPasswordChangeTime;
-		logger.logCritical(Logger.SECURITY, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -829,7 +829,7 @@ public class User implements IUser, Serializable {
 	public void setRoles(Set roles) throws AuthenticationException {
 		this.roles = new HashSet();
 		addRoles(roles);
-		logger.logCritical(Logger.SECURITY, "Adding roles " + roles + " to " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Adding roles " + roles + " to " + getAccountName() );
 	}
 
 	/*
@@ -839,7 +839,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
-		logger.logCritical(Logger.SECURITY, "ScreenName changed to " + screenName + " for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "ScreenName changed to " + screenName + " for " + getAccountName() );
 	}
 
 	/*
@@ -859,7 +859,7 @@ public class User implements IUser, Serializable {
 	public void unlock() {
 		this.locked = false;
 		this.failedLoginCount = 0;
-		logger.logSuccess( Logger.SECURITY, "Account unlocked: " + getAccountName() );
+		logger.info( Logger.SECURITY, "Account unlocked: " + getAccountName() );
 	}
 
 	//FIXME:Enhance - think about having a second "transaction" password for each user
@@ -876,13 +876,13 @@ public class User implements IUser, Serializable {
 			if (hash.equals(hashedPassword)) {
 				setLastLoginTime(new Date());
 				failedLoginCount = 0;
-				logger.logCritical(Logger.SECURITY, "Password verified for " + getAccountName() );
+				logger.fatal(Logger.SECURITY, "Password verified for " + getAccountName() );
 				return true;
 			}
 		} catch( EncryptionException e ) {
-			logger.logCritical(Logger.SECURITY, "Encryption error verifying password for " + getAccountName() );
+			logger.fatal(Logger.SECURITY, "Encryption error verifying password for " + getAccountName() );
 		}
-		logger.logCritical(Logger.SECURITY, "Password verification failed for " + getAccountName() );
+		logger.fatal(Logger.SECURITY, "Password verification failed for " + getAccountName() );
 		return false;
 	}
 

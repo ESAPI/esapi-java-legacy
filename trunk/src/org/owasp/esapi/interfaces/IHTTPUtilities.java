@@ -298,4 +298,24 @@ public interface IHTTPUtilities {
      */
     HttpServletResponse getCurrentResponse();
     
+    /**
+     * Format the Source IP address, URL, URL parameters, and all form
+     * parameters into a string suitable for the log file. Be careful not
+     * to log sensitive information, and consider masking with the
+     * logHTTPRequest( List parameterNamesToObfuscate ) method.
+     */
+    public void logHTTPRequest(ILogger logger);
+
+    /**
+     * Format the Source IP address, URL, URL parameters, and all form
+     * parameters into a string suitable for the log file. The list of parameters to
+     * obfuscate should be specified in order to prevent sensitive information
+     * from being logged. If a null list is provided, then all parameters will
+     * be logged.
+     * 
+     * @param parameterNamesToObfuscate the sensitive params
+     */
+    public void logHTTPRequest(ILogger logger, List parameterNamesToObfuscate);
+
+
 }

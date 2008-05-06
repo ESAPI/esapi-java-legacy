@@ -86,69 +86,70 @@ public class LoggerTest extends TestCase {
         TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         // FIXME: AAA modify to return the actual string logged (so we can test)
-        Logger.getLogger("logger", "logger").logHTTPRequest( Arrays.asList(ignore) );
+        Logger logger = new Logger("logger", "logger");
+        ESAPI.httpUtilities().logHTTPRequest( logger, Arrays.asList(ignore) );
         request.addParameter("one","one");
         request.addParameter("two","two1");
         request.addParameter("two","two2");
         request.addParameter("password","jwilliams");
-        Logger.getLogger("logger", "logger").logHTTPRequest( Arrays.asList(ignore) );
+        ESAPI.httpUtilities().logHTTPRequest( logger, Arrays.asList(ignore) );
     }    
     
     /**
 	 * Test of logSuccess method, of class org.owasp.esapi.Logger.
 	 */
-    public void testLogSuccess() {
-        System.out.println("logSuccess");
-        Logger.getLogger( "app", "mod" ).logSuccess(Logger.SECURITY, "test message" );
-        Logger.getLogger( "app", "mod" ).logSuccess(Logger.SECURITY, "test message", null );
-        Logger.getLogger( "app", "mod" ).logSuccess(Logger.SECURITY, "%3escript%3f test message", null );
-        Logger.getLogger( "app", "mod" ).logSuccess(Logger.SECURITY, "<script> test message", null );
+    public void testInfo() {
+        System.out.println("info");
+        new Logger( "app", "mod" ).info(Logger.SECURITY, "test message" );
+        new Logger( "app", "mod" ).info(Logger.SECURITY, "test message", null );
+        new Logger( "app", "mod" ).info(Logger.SECURITY, "%3escript%3f test message", null );
+        new Logger( "app", "mod" ).info(Logger.SECURITY, "<script> test message", null );
     }
 
 
     /**
 	 * Test of logTrace method, of class org.owasp.esapi.Logger.
 	 */
-    public void testLogTrace() {
-        System.out.println("logTrace");
-        Logger.getLogger( "app", "mod" ).logTrace(Logger.SECURITY, "test message" );
-        Logger.getLogger( "app", "mod" ).logTrace(Logger.SECURITY, "test message", null );
+    public void testTrace() {
+        System.out.println("trace");
+        new Logger( "app", "mod" ).trace(Logger.SECURITY, "test message" );
+        new Logger( "app", "mod" ).trace(Logger.SECURITY, "test message", null );
     }
 
     /**
 	 * Test of logDebug method, of class org.owasp.esapi.Logger.
 	 */
-    public void testLogDebug() {
-        System.out.println("logDebug");
-        Logger.getLogger( "app", "mod" ).logDebug(Logger.SECURITY, "test message" );
-        Logger.getLogger( "app", "mod" ).logDebug(Logger.SECURITY, "test message", null );
+    public void testDebug() {
+        System.out.println("debug");
+        new Logger( "app", "mod" ).debug(Logger.SECURITY, "test message" );
+        new Logger( "app", "mod" ).debug(Logger.SECURITY, "test message", null );
     }
 
     /**
 	 * Test of logError method, of class org.owasp.esapi.Logger.
 	 */
-    public void testLogError() {
-        System.out.println("logError");
-        Logger.getLogger( "app", "mod" ).logError(Logger.SECURITY, "test message" );
-        Logger.getLogger( "app", "mod" ).logError(Logger.SECURITY, "test message", null );
+    public void testError() {
+        System.out.println("error");
+        new Logger( "app", "mod" ).error(Logger.SECURITY, "test message" );
+        new Logger( "app", "mod" ).error(Logger.SECURITY, "test message", null );
     }
 
     /**
 	 * Test of logWarning method, of class org.owasp.esapi.Logger.
 	 */
-    public void testLogWarning() {
-        System.out.println("logWarning");
-        Logger.getLogger( "app", "mod" ).logWarning(Logger.SECURITY, "test message" );
-        Logger.getLogger( "app", "mod" ).logWarning(Logger.SECURITY, "test message", null );
+    public void testWarning() {
+        System.out.println("warning");
+        new Logger( "app", "mod" ).warning(Logger.SECURITY, "test message" );
+        new Logger( "app", "mod" ).warning(Logger.SECURITY, "test message", null );
     }
 
     /**
 	 * Test of logCritical method, of class org.owasp.esapi.Logger.
 	 */
-    public void testLogCritical() {
-        System.out.println("logCritical");
-        Logger.getLogger( "app", "mod" ).logCritical(Logger.SECURITY, "test message" );
-        Logger.getLogger( "app", "mod" ).logCritical(Logger.SECURITY, "test message", null );
+    public void testFatal() {
+        System.out.println("fatal");
+        new Logger( "app", "mod" ).fatal(Logger.SECURITY, "test message" );
+        new Logger( "app", "mod" ).fatal(Logger.SECURITY, "test message", null );
     }
     
 }

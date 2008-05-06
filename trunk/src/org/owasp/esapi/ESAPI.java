@@ -22,6 +22,8 @@ import org.owasp.esapi.interfaces.IEncryptor;
 import org.owasp.esapi.interfaces.IExecutor;
 import org.owasp.esapi.interfaces.IHTTPUtilities;
 import org.owasp.esapi.interfaces.IIntrusionDetector;
+import org.owasp.esapi.interfaces.ILogFactory;
+import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IRandomizer;
 import org.owasp.esapi.interfaces.ISecurityConfiguration;
 import org.owasp.esapi.interfaces.IValidator;
@@ -47,7 +49,9 @@ public class ESAPI {
 
 	private static IIntrusionDetector intrusionDetector = null;
 
-	// private static ILogger logger = null;
+	private static ILogFactory logFactory = null;
+	
+	private static ILogger defaultLogger = null;
 
 	private static IRandomizer randomizer = null;
 
@@ -180,22 +184,39 @@ public class ESAPI {
 		ESAPI.intrusionDetector = intrusionDetector;
 	}
 
-	// /**
-	// * @return the logger
-	// */
-	// public static ILogger getLogger() {
-	// if (ESAPI.logger == null)
-	// return Logger();
-	// return ESAPI.logger;
-	// }
-	//
-	// /**
-	// * @param logger the logger to set
-	// */
-	// public static void setLogger(ILogger logger) {
-	// ESAPI.logger = logger;
-	// }
-	//
+	private static ILogFactory logFactory() {
+		if (logFactory == null)
+			logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
+		return logFactory;
+	}
+	
+	/**
+	 * 
+	 */
+	public static ILogger getLogger(Class clazz) {
+		return logFactory().getLogger(clazz);
+	}
+	
+	/**
+	 * 
+	 */
+	public static ILogger getLogger(String name) {
+		return logFactory().getLogger(name);
+	}
+	
+	public static ILogger log() {
+		if (defaultLogger == null)
+			defaultLogger = logFactory().getLogger("");
+		return defaultLogger;
+	}
+	
+	 /**
+	 * @param factory the log factory to set
+	 */
+	 public static void setLogger(ILogFactory factory) {
+		 ESAPI.logFactory = factory;
+	 }
+	
 	/**
 	 * @return the randomizer
 	 */

@@ -26,7 +26,9 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
+
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.interfaces.ILogger;
 
 /**
  * Reference implementation of the IEncryptedProperties interface. This
@@ -48,7 +50,7 @@ public class EncryptedProperties implements org.owasp.esapi.interfaces.IEncrypte
 	private final Properties properties = new Properties();
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "EncryptedProperties");
+	private static final ILogger logger = ESAPI.getLogger("EncryptedProperties");
 
 	/**
 	 * Instantiates a new encrypted properties.
@@ -104,7 +106,7 @@ public class EncryptedProperties implements org.owasp.esapi.interfaces.IEncrypte
 	 */
 	public void load(InputStream in) throws IOException {
 		properties.load(in);
-		logger.logTrace(Logger.SECURITY, "Encrypted properties loaded successfully");
+		logger.trace(Logger.SECURITY, "Encrypted properties loaded successfully");
 	}
 
 	/**
@@ -134,9 +136,9 @@ public class EncryptedProperties implements org.owasp.esapi.interfaces.IEncrypte
 	public static void main(String[] args) throws Exception {
 		// FIXME: AAA verify that this still works
 		File f = new File(args[0]);
-		Logger.getLogger( "EncryptedProperties", "main" ).logDebug(Logger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
+		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
 		if ( !f.exists() ) throw new IOException( "Properties file not found: " + f.getAbsolutePath() );
-		Logger.getLogger( "EncryptedProperties", "main" ).logDebug(Logger.SECURITY, "Encrypted properties found in " + f.getAbsolutePath() );
+		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Encrypted properties found in " + f.getAbsolutePath() );
 		EncryptedProperties ep = new EncryptedProperties();
 		FileInputStream in = new FileInputStream(f);
 		ep.load(in);
