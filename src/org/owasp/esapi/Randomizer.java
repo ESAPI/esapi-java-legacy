@@ -23,9 +23,10 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.interfaces.ILogger;
 
 /**
- * Reference implemenation of the IRandomizer interface. This implementation builds on the JCE provider to provide a
+ * Reference implementation of the IRandomizer interface. This implementation builds on the JCE provider to provide a
  * cryptographically strong source of entropy. The specific algorithm used is configurable in ESAPI.properties.
  * 
  * @author Jeff Williams
@@ -39,7 +40,7 @@ public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
     private SecureRandom secureRandom = null;
 
     /** The logger. */
-    private static final Logger logger = Logger.getLogger("ESAPI", "Randomizer");
+    private static final ILogger logger = ESAPI.getLogger("Randomizer");
 
     /**
      * Hide the constructor for the Singleton pattern.
@@ -126,7 +127,7 @@ public class Randomizer implements org.owasp.esapi.interfaces.IRandomizer {
         try {
             array = ESAPI.encoder().decodeFromBase64(hash);
         } catch (IOException e) {
-            logger.logCritical(Logger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
+            logger.fatal(Logger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
         }
         
         // convert to printable hexadecimal characters 

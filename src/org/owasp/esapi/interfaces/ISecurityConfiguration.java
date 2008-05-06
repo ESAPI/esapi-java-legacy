@@ -46,6 +46,13 @@ public interface ISecurityConfiguration {
 	// See java.util.Properties
 
 	/**
+	 * Gets the application name, used for logging
+	 * 
+	 * @return the application name
+	 */
+	public String getApplicationName();
+	
+	/**
 	 * Gets the master password.
 	 * 
 	 * @return the master password

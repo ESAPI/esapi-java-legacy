@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.owasp.esapi.errors.ExecutorException;
+import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IValidator;
 
 /**
@@ -38,7 +39,7 @@ import org.owasp.esapi.interfaces.IValidator;
 public class Executor implements org.owasp.esapi.interfaces.IExecutor {
 
     /** The logger. */
-    private static final Logger logger = Logger.getLogger("ESAPI", "Executor");
+    private static final ILogger logger = ESAPI.getLogger("Executor");
     
     /**
      * TODO: Push to configuration? 
@@ -59,7 +60,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
     public String executeSystemCommand(File executable, List params, File workdir, int timeoutSeconds) throws ExecutorException {
         BufferedReader br = null;
         try {
-            logger.logTrace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            logger.trace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
             IValidator validator = ESAPI.validator();
 
             // command must exactly match the canonical path and must actually exist on the file system
@@ -107,7 +108,7 @@ public class Executor implements org.owasp.esapi.interfaces.IExecutor {
             while ((line = br.readLine()) != null) {
                 sb.append(line + "\n");
             }
-            logger.logTrace(Logger.SECURITY, "System command successful: " + params);
+            logger.trace(Logger.SECURITY, "System command successful: " + params);
             return sb.toString();
         } catch (Exception e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);

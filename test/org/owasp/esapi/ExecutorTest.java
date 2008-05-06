@@ -88,7 +88,7 @@ public class ExecutorTest extends TestCase {
 			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, 10);
 			assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			fail();
+			fail(e.getMessage());
 		}
 		try {
 			File exec2 = new File( executable.getPath() + ";inject.exe" );

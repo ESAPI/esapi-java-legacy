@@ -65,12 +65,11 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     /** Regular expression cache */
     private Map regexMap = null;
     
-    /** The logger. */
-    private static final Logger logger = Logger.getLogger("ESAPI", "SecurityConfiguration");
-
     public static final String RESOURCE_DIRECTORY = "org.owasp.esapi.resources";
 
     private static final String ALLOWED_LOGIN_ATTEMPTS = "AllowedLoginAttempts";
+
+    private static final String APPLICATION_NAME = "ApplicationName";
 
     private static final String MASTER_PASSWORD = "MasterPassword";
 
@@ -132,7 +131,14 @@ public class SecurityConfiguration implements ISecurityConfiguration {
         loadConfiguration();
     }
 
-    /**
+    /* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.ISecurityConfiguration#getApplicationName()
+     */
+    public String getApplicationName() {
+    	return properties.getProperty(APPLICATION_NAME);
+    }
+
+	/**
      * Gets the master password.
      * 
      * @return the master password
@@ -240,10 +246,10 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     	
     	try {
     		properties = loadConfigurationFromClasspath();
-    		logger.logSpecial("Loaded ESAPI properties from classpath", null);
+    		logSpecial("Loaded ESAPI properties from classpath", null);
     		
     	} catch (Exception ce) {
-    		logger.logSpecial("Can't load ESAPI properties from classpath, trying FileIO",ce);
+    		logSpecial("Can't load ESAPI properties from classpath, trying FileIO",ce);
     		file = new File(getResourceDirectory(), "ESAPI.properties");
 	        if (file.lastModified() == lastModified)
 	            return;
@@ -252,9 +258,9 @@ public class SecurityConfiguration implements ISecurityConfiguration {
 	        try {
 	            fis = new FileInputStream( file );
 	            properties.load(fis);
-	            logger.logSpecial("Loaded ESAPI properties from " + file.getAbsolutePath(), null);
+	            logSpecial("Loaded ESAPI properties from " + file.getAbsolutePath(), null);
 	        } catch (Exception e) {
-	            logger.logSpecial("Can't load ESAPI properties from " + file.getAbsolutePath(),e);
+	            logSpecial("Can't load ESAPI properties from " + file.getAbsolutePath(),e);
 	        } finally {
 	            try {
 	                fis.close();
@@ -264,15 +270,15 @@ public class SecurityConfiguration implements ISecurityConfiguration {
 	        }
     	}
 
-        logger.logSpecial("  ========Master Configuration========", null);
+        logSpecial("  ========Master Configuration========", null);
         Iterator i = new TreeSet( properties.keySet() ).iterator();
         while (i.hasNext()) {
             String key = (String) i.next();
-            logger.logSpecial("  |   " + key + "=" + properties.get(key),null);
+            logSpecial("  |   " + key + "=" + properties.get(key),null);
         }
         
         if (file != null) {
-        	logger.logSpecial("  ========Master Configuration========", null);
+        	logSpecial("  ========Master Configuration========", null);
         	lastModified = file.lastModified();
         }
         	
@@ -290,6 +296,10 @@ public class SecurityConfiguration implements ISecurityConfiguration {
         
     }
 
+    private void logSpecial(String message, Throwable e) {
+		System.out.println(message);
+    }
+    
     /**
      * Gets the password parameter name.
      * 

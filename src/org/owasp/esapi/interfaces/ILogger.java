@@ -15,7 +15,6 @@
  */
 package org.owasp.esapi.interfaces;
 
-import java.util.List;
 
 /**
  * The ILogger interface defines a set of methods that can be used to log
@@ -24,6 +23,16 @@ import java.util.List;
  * <P>
  * <img src="doc-files/Logger.jpg" height="600">
  * <P>
+ * 
+ * The order of logging levels is:
+ * <ul>
+ * <li>trace</li>
+ * <li>debug</li>
+ * <li>info</li>
+ * <li>warn</li>
+ * <li>error</li>
+ * <li>fatal (the most serious)</li>
+ * </ul>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  * href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -42,33 +51,13 @@ public interface ILogger {
 	/** The PERFORMANCE. */
 	String PERFORMANCE = "PERFORMANCE";
 
-    /**
-     * Format the Source IP address, URL, URL parameters, and all form
-     * parameters into a string suitable for the log file. Be careful not
-     * to log sensitive information, and consider masking with the
-     * logHTTPRequest( List parameterNamesToObfuscate ) method.
-     */
-    public void logHTTPRequest();
-
-    /**
-     * Format the Source IP address, URL, URL parameters, and all form
-     * parameters into a string suitable for the log file. The list of parameters to
-     * obfuscate should be specified in order to prevent sensitive information
-     * from being logged. If a null list is provided, then all parameters will
-     * be logged.
-     * 
-     * @param parameterNamesToObfuscate the sensitive params
-     */
-    public void logHTTPRequest(List parameterNamesToObfuscate);
-
-
 	/**
      * Log critical.
      * 
      * @param type the type
      * @param message the message
      */
-	void logCritical(String type, String message);
+	void fatal(String type, String message);
 	
 	/**
      * Log critical.
@@ -77,7 +66,7 @@ public interface ILogger {
      * @param message the message
      * @param throwable the throwable
      */
-	void logCritical(String type, String message, Throwable throwable);
+	void fatal(String type, String message, Throwable throwable);
 
 	/**
      * Log debug.
@@ -85,7 +74,7 @@ public interface ILogger {
      * @param type the type
      * @param message the message
      */
-	void logDebug(String type, String message);
+	void debug(String type, String message);
 	
 	/**
      * Log debug.
@@ -94,7 +83,7 @@ public interface ILogger {
      * @param message the message
      * @param throwable the throwable
      */
-	void logDebug(String type, String message, Throwable throwable);
+	void debug(String type, String message, Throwable throwable);
 
 	/**
      * Log error.
@@ -102,7 +91,7 @@ public interface ILogger {
      * @param type the type
      * @param message the message
      */
-	void logError(String type, String message);
+	void error(String type, String message);
 	
 	/**
      * Log error.
@@ -111,7 +100,7 @@ public interface ILogger {
      * @param message the message
      * @param throwable the throwable
      */
-	void logError(String type, String message, Throwable throwable);
+	void error(String type, String message, Throwable throwable);
 
 	/**
      * Log success.
@@ -119,7 +108,7 @@ public interface ILogger {
      * @param type the type
      * @param message the message
      */
-	void logSuccess(String type, String message);
+	void info(String type, String message);
 	
 	/**
      * Log success.
@@ -128,7 +117,7 @@ public interface ILogger {
      * @param message the message
      * @param throwable the throwable
      */
-	void logSuccess(String type, String message, Throwable throwable);
+	void info(String type, String message, Throwable throwable);
 
 	/**
      * Log trace.
@@ -136,7 +125,7 @@ public interface ILogger {
      * @param type the type
      * @param message the message
      */
-	void logTrace(String type, String message);
+	void trace(String type, String message);
 	
 	/**
      * Log trace.
@@ -145,7 +134,7 @@ public interface ILogger {
      * @param message the message
      * @param throwable the throwable
      */
-	void logTrace(String type, String message, Throwable throwable);
+	void trace(String type, String message, Throwable throwable);
 
 	/**
      * Log warning.
@@ -153,7 +142,7 @@ public interface ILogger {
      * @param type the type
      * @param message the message
      */
-	void logWarning(String type, String message);
+	void warning(String type, String message);
 	
 	/**
      * Log warning.
@@ -162,5 +151,5 @@ public interface ILogger {
      * @param message the message
      * @param throwable the throwable
      */
-	void logWarning(String type, String message, Throwable throwable);
+	void warning(String type, String message, Throwable throwable);
 }

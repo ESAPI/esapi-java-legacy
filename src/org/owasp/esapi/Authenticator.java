@@ -38,6 +38,7 @@ import org.owasp.esapi.errors.AuthenticationCredentialsException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IRandomizer;
 import org.owasp.esapi.interfaces.IUser;
 
@@ -73,7 +74,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     protected static final String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
 
     /** The logger. */
-    private static final Logger logger = Logger.getLogger("ESAPI", "Authenticator");
+    private static final ILogger logger = ESAPI.getLogger("Authenticator");
 
     /** The file that contains the user db */
     private File userDB = null;
@@ -124,7 +125,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             user = new User();
             user.setAccountName(accountName);
             auth.userMap.put(accountName, user);
-            logger.logCritical(Logger.SECURITY, "New user created: " + accountName);
+            logger.fatal(Logger.SECURITY, "New user created: " + accountName);
         }
 		String newHash = auth.hashPassword(password, accountName);
 		user.setHashedPassword(newHash);
@@ -198,7 +199,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         }
         User user = new User(accountName, password1, password2);
         userMap.put(accountName.toLowerCase(), user);
-        logger.logCritical(Logger.SECURITY, "New user created: " + accountName);
+        logger.fatal(Logger.SECURITY, "New user created: " + accountName);
         saveUsers();
         return user;
     }
@@ -241,7 +242,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     public String generateStrongPassword(String oldPassword, IUser user) {
         String newPassword = generateStrongPassword(oldPassword);
         if (newPassword != null)
-            logger.logCritical(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
+            logger.fatal(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
         return newPassword;
     }
 
@@ -287,10 +288,10 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         if (account != null) {
             User user = this.getUser(account);
             if (user != null) {
-    			logger.logSuccess( Logger.SECURITY, "Found user name in session: " + user.getAccountName() );
+    			logger.info( Logger.SECURITY, "Found user name in session: " + user.getAccountName() );
                 return user;
 			} else {
-				logger.logWarning( Logger.SECURITY, "Found user name in session, but no user matching " + account );
+				logger.warning( Logger.SECURITY, "Found user name in session, but no user matching " + account );
 			}
         }
         return null;
@@ -311,7 +312,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 		try {
 			data = ESAPI.encryptor().unseal( token ).split( "\\|" );
 		} catch (EncryptionException e) {			
-	    	logger.logWarning(Logger.SECURITY, "Found corrupt or expired remember token" );
+	    	logger.warning(Logger.SECURITY, "Found corrupt or expired remember token" );
 	    	return null;
     	}
 
@@ -319,16 +320,16 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 		String tokenHashedPassword = data[1];
     	User user = getUser( tokenAccount );
 		if ( user == null ) {
-			logger.logWarning( Logger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
+			logger.warning( Logger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
 			return null;
 		}
 		
 		if ( !user.getHashedPassword().equals( tokenHashedPassword )) {
-			logger.logWarning( Logger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
+			logger.warning( Logger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
 			return null;
 		}
 
-		logger.logSuccess( Logger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
+		logger.warning( Logger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
 		return user;
     }
 
@@ -388,7 +389,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     // file was touched so reload it
     protected void loadUsersImmediately() {
     	synchronized( this ) {
-	        logger.logTrace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
+	        logger.trace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
 	
 	        // FIXME: AAA Necessary?
 	        // add the Anonymous user to the database
@@ -404,7 +405,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	                    User user = new User(line);
 	                    if (!user.getAccountName().equals("anonymous")) {
 	                        if (map.containsKey(user.getAccountName())) {
-	                            logger.logCritical(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
+	                            logger.fatal(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
 	                        }
 	                        map.put(user.getAccountName(), user);
 	                    }
@@ -412,16 +413,16 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	            }
                 userMap = map;
                 this.lastModified = System.currentTimeMillis();
-                logger.logTrace(Logger.SECURITY, "User file reloaded: " + map.size(), null);
+                logger.trace(Logger.SECURITY, "User file reloaded: " + map.size(), null);
 	        } catch (Exception e) {
-	            logger.logCritical(Logger.SECURITY, "Failure loading user file: " + userDB.getAbsolutePath(), e);
+	            logger.fatal(Logger.SECURITY, "Failure loading user file: " + userDB.getAbsolutePath(), e);
 	        } finally {
 	            try {
 	                if (reader != null) {
 	                    reader.close();
 	                }
 	            } catch (IOException e) {
-	                logger.logCritical(Logger.SECURITY, "Failure closing user file: " + userDB.getAbsolutePath(), e);
+	                logger.fatal(Logger.SECURITY, "Failure closing user file: " + userDB.getAbsolutePath(), e);
 	            }
 	        }
     	}
@@ -451,7 +452,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // if a logged-in user is requesting to login, log them out first
         User user = getCurrentUser();
         if (user != null && !user.isAnonymous()) {
-            logger.logWarning(Logger.SECURITY, "User requested relogin. Performing logout then authentication" );
+            logger.warning(Logger.SECURITY, "User requested relogin. Performing logout then authentication" );
             user.logout();
         }
 
@@ -500,9 +501,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             writer.println();
             saveUsers(writer);
             writer.flush();
-            logger.logCritical(Logger.SECURITY, "User file written to disk" );
+            logger.fatal(Logger.SECURITY, "User file written to disk" );
         } catch (IOException e) {
-            logger.logCritical(Logger.SECURITY, "Problem saving user file " + userDB.getAbsolutePath(), e );
+            logger.fatal(Logger.SECURITY, "Problem saving user file " + userDB.getAbsolutePath(), e );
             throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
         } finally {
             if (writer != null) {

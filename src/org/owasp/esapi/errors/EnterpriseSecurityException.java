@@ -16,7 +16,7 @@
 package org.owasp.esapi.errors;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Logger;
+import org.owasp.esapi.interfaces.ILogger;
 
 /**
  * EnterpriseSecurityException is the base class for all security related exceptions. You should pass in the root cause
@@ -40,7 +40,7 @@ public class EnterpriseSecurityException extends Exception {
     private static final long serialVersionUID = 1L;
 
     /** The logger. */
-    protected static final Logger logger = Logger.getLogger("ESAPI", "EnterpriseSecurityException");
+    protected static final ILogger logger = ESAPI.getLogger("EnterpriseSecurityException");
 
     protected String logMessage = null;
 

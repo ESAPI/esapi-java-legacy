@@ -45,6 +45,7 @@ import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.ValidationUploadException;
+import org.owasp.esapi.interfaces.ILogger;
 
 /**
  * Reference implementation of the IHTTPUtilities interface. This implementation
@@ -64,7 +65,7 @@ import org.owasp.esapi.errors.ValidationUploadException;
 public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities {
 
 	/** The logger. */
-	private static final Logger logger = Logger.getLogger("ESAPI", "HTTPUtilities");
+	private static final ILogger logger = ESAPI.getLogger("HTTPUtilities");
 
 	/** The max bytes. */
 	int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
@@ -110,9 +111,9 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			killCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME);
 			String token = user.resetRememberToken();
 			safeAddCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME, token, maxAge, domain, path );
-			logger.logSuccess(Logger.SECURITY, "Enabled remember token for " + user.getAccountName() );
+			logger.info(Logger.SECURITY, "Enabled remember token for " + user.getAccountName() );
 		} catch( AuthenticationException e ) {
-			logger.logWarning(Logger.SECURITY, "Attempt to set remember token failed for " + user.getAccountName(), e );
+			logger.warning(Logger.SECURITY, "Attempt to set remember token failed for " + user.getAccountName(), e );
 		}
 	}
 	
@@ -146,7 +147,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			getCurrentResponse().addHeader("Set-Cookie", header);
 			
 		} catch( ValidationException e ) {
-			logger.logWarning(Logger.SECURITY, "Attempt to set invalid cookie denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid cookie denied", e);
 		}
 	}
 	
@@ -166,7 +167,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", value, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().addHeader(headerName, headerValue);
 		} catch( ValidationException e ) {
-			logger.logWarning(Logger.SECURITY, "Attempt to set invalid header denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
 		}
 	}
 
@@ -209,7 +210,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			getCurrentResponse().setDateHeader(safeName, date);
 		} catch (ValidationException e) {
-			logger.logWarning(Logger.SECURITY, "Attempt to set invalid date header name denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid date header name denied", e);
 		}
 	}
 
@@ -218,7 +219,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			getCurrentResponse().setIntHeader(safeName, value);
 		} catch (ValidationException e) {
-			logger.logWarning(Logger.SECURITY, "Attempt to set invalid int header name denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid int header name denied", e);
 		}
 	}
 
@@ -266,7 +267,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", value, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().setHeader(safeName, safeValue);
 		} catch (ValidationException e) {
-			logger.logWarning(Logger.SECURITY, "Attempt to set invalid header denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
 		}
 	}
 	
@@ -427,7 +428,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	    		sb.append( name + "=" + value );
 	    		if ( i.hasNext() ) sb.append( "&" );
     		} catch( EncodingException e ) {
-    			logger.logError(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
+    			logger.error(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
     	// FIXME: AAA - add a check to see if cookie length will exceed 2K limit
@@ -493,7 +494,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
-					logger.logCritical(Logger.SECURITY, "File upload requested: " + filename);
+					logger.fatal(Logger.SECURITY, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
 					if (f.exists()) {
 						String[] parts = filename.split("\\/.");
@@ -508,7 +509,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 					newFiles.add( f );
 					// delete temporary file
 					item.delete();
-					logger.logCritical(Logger.SECURITY, "File successfully uploaded: " + f);
+					logger.fatal(Logger.SECURITY, "File successfully uploaded: " + f);
 					session.setAttribute("progress", Long.toString(0));
 				}
 			}
@@ -607,7 +608,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 */
 	public void safeSendRedirect(String context, String location) throws IOException {
 		if (!ESAPI.validator().isValidRedirectLocation(context, location, false)) {
-			logger.logCritical(Logger.SECURITY, "Bad redirect location: " + location );
+			logger.fatal(Logger.SECURITY, "Bad redirect location: " + location );
 			throw new IOException("Redirect failed");
 		}
 		getCurrentResponse().sendRedirect(location);
@@ -716,6 +717,51 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
     	currentRequest.set(request);
         currentResponse.set(response);
+    }
+
+    public void logHTTPRequest(ILogger logger) {
+    	logHTTPRequest( logger, null );
+    }
+    
+    /**
+     * Formats an HTTP request into a log suitable string. This implementation logs the remote host IP address (or
+     * hostname if available), the request method (GET/POST), the URL, and all the querystring and form parameters. All
+     * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
+     * match items in the parameterNamesToObfuscate are shown as eight asterisks.
+     * 
+     * @see org.owasp.esapi.interfaces.ILogger#formatHttpRequestForLog(javax.servlet.http.HttpServletRequest)
+     */
+    public void logHTTPRequest(ILogger logger, List parameterNamesToObfuscate) {
+        HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+        StringBuffer params = new StringBuffer();
+        Iterator i = request.getParameterMap().keySet().iterator();
+        while (i.hasNext()) {
+            String key = (String) i.next();
+            String[] value = (String[]) request.getParameterMap().get(key);
+            for (int j = 0; j < value.length; j++) {
+                params.append(key + "=");
+                if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
+                    params.append("********");
+                } else {
+                    params.append(value[j]);
+                }
+                if (j < value.length - 1) {
+                    params.append("&");
+                }
+            }
+            if (i.hasNext())
+                params.append("&");
+        }
+        Cookie[] cookies = request.getCookies();
+        if ( cookies != null ) {
+                for ( int c=0; c<cookies.length; c++ ) {
+                        if ( !cookies[c].getName().equals("JSESSIONID")) {
+                                params.append( "+" + cookies[c].getName() + "=" + cookies[c].getValue() );
+                        }
+                }
+        }
+        String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
+        logger.info(Logger.SECURITY, msg);
     }
 
 }

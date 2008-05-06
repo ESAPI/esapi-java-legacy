@@ -28,15 +28,15 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.interfaces.IHTTPUtilities;
+import org.owasp.esapi.interfaces.ILogger;
 
 public class ESAPIFilter implements Filter {
 
-	private static final Logger logger = Logger.getLogger("ESAPIFilter", "ESAPIFilter");
+	private static final ILogger logger = ESAPI.getLogger("ESAPIFilter");
 
 	private static final String[] ignore = { "password" };
 
@@ -95,7 +95,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// log this request, obfuscating any parameter named password
-			logger.logHTTPRequest(Arrays.asList(ignore));
+			ESAPI.httpUtilities().logHTTPRequest(logger, Arrays.asList(ignore));
 
 			// check access to this URL
 			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString()) ) {
@@ -123,7 +123,7 @@ public class ESAPIFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.logError( Logger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
+			logger.error( Logger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
 		} finally {
 			// VERY IMPORTANT
