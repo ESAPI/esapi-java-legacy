@@ -150,7 +150,7 @@ public class EncryptedProperties implements org.owasp.esapi.interfaces.IEncrypte
 			key = br.readLine();
 			System.out.print("Enter value: ");
 			String value = br.readLine();
-			if (key != null && key.length() > 0 && value.length() > 0) {
+			if (key != null && key.length() > 0 && value != null && value.length() > 0) {
 				ep.setProperty(key, value);
 			}
 		} while (key != null && key.length() > 0);
