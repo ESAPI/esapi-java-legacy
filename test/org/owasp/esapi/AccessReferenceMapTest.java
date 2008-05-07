@@ -19,14 +19,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.interfaces.IAuthenticator;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.owasp.esapi.interfaces.IUser;
 
 /**
  * The Class AccessReferenceMapTest.
@@ -82,7 +83,7 @@ public class AccessReferenceMapTest extends TestCase {
     	IAuthenticator auth = ESAPI.authenticator();
     	
     	String pass = auth.generateStrongPassword();
-    	User u = auth.createUser( "armUpdate", pass, pass );
+    	IUser u = auth.createUser( "armUpdate", pass, pass );
     	
     	// test to make sure update returns something
 		arm.update(auth.getUserNames());
@@ -115,7 +116,7 @@ public class AccessReferenceMapTest extends TestCase {
 		Iterator i = arm.iterator();
 		while ( i.hasNext() ) {
 			String userName = (String)i.next();
-			User u = auth.getUser( userName );
+			IUser u = auth.getUser( userName );
 			if ( u == null ) fail();
 		}
     }

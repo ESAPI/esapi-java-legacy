@@ -29,6 +29,7 @@ import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.interfaces.ILogger;
+import org.owasp.esapi.interfaces.IUser;
 
 /**
  * Reference implementation of the IAccessController interface. This reference
@@ -255,7 +256,7 @@ public class AccessController implements org.owasp.esapi.interfaces.IAccessContr
 	 */
 	private boolean matchRule(Map map, String path) {
 		// get users roles
-		User user = ESAPI.authenticator().getCurrentUser();
+		IUser user = ESAPI.authenticator().getCurrentUser();
 		Set roles = user.getRoles();
 		// search for the first rule that matches the path and rules
 		Rule rule = searchForRule(map, roles, path);

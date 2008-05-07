@@ -29,6 +29,7 @@ import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 import org.owasp.esapi.http.TestHttpSession;
 import org.owasp.esapi.interfaces.IAuthenticator;
+import org.owasp.esapi.interfaces.IUser;
 
 /**
  * The Class UserTest.
@@ -70,7 +71,7 @@ public class UserTest extends TestCase {
 	 */
 	private User createTestUser(String password) throws AuthenticationException {
 		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		User user = ESAPI.authenticator().createUser(username, password, password);
+		User user = (User) ESAPI.authenticator().createUser(username, password, password);
 		return user;
 	}
 
@@ -97,7 +98,7 @@ public class UserTest extends TestCase {
 		String accountName = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		String password = ESAPI.authenticator().generateStrongPassword();
 		String role = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_LOWERS);
-		User user = instance.createUser(accountName, password, password);
+		IUser user = instance.createUser(accountName, password, password);
 		user.addRole(role);
 		assertTrue(user.isInRole(role));
 		assertFalse(user.isInRole("ridiculous"));
@@ -325,7 +326,7 @@ public class UserTest extends TestCase {
 		String accountName = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 		String password = ESAPI.authenticator().generateStrongPassword();
 		String role = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_LOWERS);
-		User user = instance.createUser(accountName, password, password);
+		IUser user = instance.createUser(accountName, password, password);
 		user.addRole(role);
 		Set roles = user.getRoles();
 		assertTrue(roles.size() > 0);

@@ -17,6 +17,7 @@ package org.owasp.esapi;
 
 import java.util.logging.Level;
 
+import org.owasp.esapi.interfaces.IUser;
 /**
  * Reference implementation of the ILogger interface. This implementation uses the Java logging package, and marks each
  * log message with the currently logged in user and the word "SECURITY" for security related events.
@@ -177,7 +178,7 @@ public class Logger implements org.owasp.esapi.interfaces.ILogger {
     	
     	// FIXME: Enhance - consider noting an intrusion detection event on long logs (DOS protection)
     	
-        User user = ESAPI.authenticator().getCurrentUser();
+        IUser user = ESAPI.authenticator().getCurrentUser();
         
         // ensure there's something to log
         if ( message == null ) {

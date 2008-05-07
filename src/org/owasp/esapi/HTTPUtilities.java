@@ -46,6 +46,7 @@ import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.ValidationUploadException;
 import org.owasp.esapi.interfaces.ILogger;
+import org.owasp.esapi.interfaces.IUser;
 
 /**
  * Reference implementation of the IHTTPUtilities interface. This implementation
@@ -84,7 +85,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#addCSRFToken(java.lang.String)
 	 */
 	public String addCSRFToken(String href) {
-		User user = ESAPI.authenticator().getCurrentUser();		
+		IUser user = ESAPI.authenticator().getCurrentUser();		
 		
 		// FIXME: AAA getCurrentUser should never return null
 		if (user.isAnonymous() || user == null) {
@@ -106,7 +107,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * Authenticator.logout method is called, which will destroy the cookie.
 	 */
 	public void enableRememberToken( int maxAge, String domain, String path ) {
-		User user = ESAPI.authenticator().getCurrentUser();
+		IUser user = ESAPI.authenticator().getCurrentUser();
 		try {
 			killCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME);
 			String token = user.resetRememberToken();
@@ -339,7 +340,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#verifyCSRFToken()
 	 */
 	public void verifyCSRFToken() throws IntrusionException {
-		User user = ESAPI.authenticator().getCurrentUser();		
+		IUser user = ESAPI.authenticator().getCurrentUser();		
 		if( getCurrentRequest().getAttribute(user.getCSRFToken()) != null ) {
 			return;
 		}

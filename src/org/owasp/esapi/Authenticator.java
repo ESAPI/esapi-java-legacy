@@ -22,6 +22,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -120,7 +121,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         String accountName = args[0].toLowerCase();
         String password = args[1];
         String role = args[2];
-        User user = auth.getUser(args[0]);
+        User user = (User) auth.getUser(args[0]);
         if (user == null) {
             user = new User();
             user.setAccountName(accountName);
@@ -138,10 +139,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 
     // FIXME: ENHANCE consider an impersonation feature
     
-    /** The anonymous user */
-    // FIXME: AAA is this whole anonymous user concept right?
-    static User anonymous = new User("anonymous", "anonymous");
-
     /** The user map. */
     private Map userMap = new HashMap();
 
@@ -158,7 +155,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     private class ThreadLocalUser extends InheritableThreadLocal {
         
         public Object initialValue() {
-        	return anonymous;
+        	return IUser.ANONYMOUS;
         }
         
         public IUser getUser() {
@@ -189,7 +186,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#createAccount(java.lang.String, java.lang.String)
      */
-    public synchronized User createUser(String accountName, String password1, String password2) throws AuthenticationException {
+    public synchronized IUser createUser(String accountName, String password1, String password2) throws AuthenticationException {
         loadUsersIfNecessary();
         if (accountName == null) {
             throw new AuthenticationAccountsException("Account creation failed", "Attempt to create user with null accountName");
@@ -210,8 +207,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @see org.owasp.esapi.interfaces.IAuthenticator#exists(java.lang.String)
      */
     public boolean exists(String accountName) {
-        User user = getUser(accountName);
-        return user != null;
+        return getUser(accountName) != null;
     }
 
     /*
@@ -252,10 +248,10 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#getCurrentUser()
      */
-    public User getCurrentUser() {
-        User user = (User)currentUser.get();
+    public IUser getCurrentUser() {
+        IUser user = (IUser) currentUser.get();
         if (user == null)
-            user = anonymous;
+            user = IUser.ANONYMOUS;
         return user;
     }
 
@@ -265,9 +261,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @param accountName the account name
      * @return the user, or null if not matched.
      */
-    public synchronized User getUser(String accountName) {
+    public synchronized IUser getUser(String accountName) {
         loadUsersIfNecessary();
-        User user = (User) userMap.get(accountName.toLowerCase());
+        IUser user = (IUser) userMap.get(accountName.toLowerCase());
         return user;
     }
 
@@ -282,7 +278,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @param request the request
      * @return the user from session
      */
-    public User getUserFromSession() {
+    public IUser getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
         return (User)session.getAttribute(USER);
     }
@@ -308,7 +304,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 
 		String tokenAccount = data[0];
 		String tokenHashedPassword = data[1];
-    	User user = getUser( tokenAccount );
+    	User user = (User) getUser( tokenAccount );
 		if ( user == null ) {
 			logger.warning( Logger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
 			return null;
@@ -381,10 +377,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     	synchronized( this ) {
 	        logger.trace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
 	
-	        // FIXME: AAA Necessary?
-	        // add the Anonymous user to the database
-	        // map.put(anonymous.getAccountName(), anonymous);
-	
 	        BufferedReader reader = null;
 	        try {
 	            HashMap map = new HashMap();
@@ -392,14 +384,12 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 	            String line = null;
 	            while ((line = reader.readLine()) != null) {
 	                if (line.length() > 0 && line.charAt(0) != '#') {
-	                    User user = new User(line);
-	                    if (!user.getAccountName().equals("anonymous")) {
-	                        if (map.containsKey(user.getAccountName())) {
-	                            logger.fatal(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
-	                        }
-	                        map.put(user.getAccountName(), user);
-	                    }
-	                }
+	                    User user = createUser(line);
+                        if (map.containsKey(user.getAccountName())) {
+                            logger.fatal(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
+                        }
+                        map.put(user.getAccountName(), user);
+                    }
 	            }
                 userMap = map;
                 this.lastModified = System.currentTimeMillis();
@@ -418,6 +408,40 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     	}
     }
 
+	private User createUser(String line) throws AuthenticationException {
+		String[] parts = line.split("\\|");
+		User user = new User();
+		user.setAccountName(parts[0].trim().toLowerCase());
+		// FIXME: AAA validate account name
+		user.setHashedPassword(parts[1].trim());
+        
+		String[] roles = parts[2].trim().toLowerCase().split(" *, *");
+		for (int i=0; i<roles.length; i++) 
+			user.addRole(roles[i]);
+		if (!"unlocked".equalsIgnoreCase(parts[3].trim()))
+			user.lock();
+		if ("enabled".equalsIgnoreCase(parts[4].trim())) {
+			user.enable();
+		} else {
+			user.disable();
+		}
+		
+		// FIXME! User doesn't have a setRememberToken method
+		// this.rememberToken = parts[5].trim();
+
+		// generate a new csrf token
+        user.resetCSRFToken();
+        
+        user.setOldPasswordHashes(Arrays.asList(parts[6].trim().split(" *, *")));
+        user.setLastHostAddress(parts[7].trim());
+        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[8].trim())));
+		user.setLastLoginTime(new Date( Long.parseLong(parts[9].trim())));
+		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[10].trim())));
+		user.setExpirationTime(new Date( Long.parseLong(parts[11].trim())));
+		user.setFailedLoginCount(Integer.parseInt(parts[12].trim()));
+		return user;
+	}
+	
     /**
      * Utility method to extract credentials and verify them.
      * 
@@ -427,7 +451,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @throws AuthenticationException
      * @throws
      */
-    private User loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    private IUser loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
     	// FIXME: Enhance - consider keeping a pointer to the session in the User object
     	// so that if the user logs in again, the old session can be invalidated.
@@ -440,7 +464,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         String password = request.getParameter(ESAPI.securityConfiguration().getPasswordParameterName());
 
         // if a logged-in user is requesting to login, log them out first
-        User user = getCurrentUser();
+        IUser user = getCurrentUser();
         if (user != null && !user.isAnonymous()) {
             logger.warning(Logger.SECURITY, "User requested relogin. Performing logout then authentication" );
             user.logout();
@@ -469,7 +493,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public synchronized void removeUser(String accountName) throws AuthenticationException {
         loadUsersIfNecessary();
-    	User user = getUser(accountName);
+    	IUser user = getUser(accountName);
         if (user == null) {
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
@@ -515,14 +539,64 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         Iterator i = getUserNames().iterator();
         while (i.hasNext()) {
             String accountName = (String) i.next();
-            User u = getUser(accountName);
+            User u = (User) getUser(accountName);
             if ( u != null && !u.isAnonymous() ) {
-            	writer.println(u.save());
+            	writer.println(save(u));
             } else {
             	new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName );
             }
         }
     }
+
+	/**
+	 * Save.
+	 * 
+	 * @return the string
+	 */
+	private String save(User user) {
+		StringBuffer sb = new StringBuffer();
+		sb.append( user.getAccountName() );
+		sb.append( " | " );
+		sb.append( user.getHashedPassword() );
+		sb.append( " | " );
+		sb.append( dump(user.getRoles()) );
+		sb.append( " | " );
+		sb.append( user.isLocked() ? "locked" : "unlocked" );
+		sb.append( " | " );
+		sb.append( user.isEnabled() ? "enabled" : "disabled" );
+		sb.append( " | " );
+		sb.append( user.getRememberToken() );
+		sb.append( " | " );
+		sb.append( dump(user.getOldPasswordHashes()) );
+        sb.append( " | " );
+        sb.append( user.getLastHostAddress() );
+        sb.append( " | " );
+        sb.append( user.getLastPasswordChangeTime().getTime() );
+		sb.append( " | " );
+		sb.append( user.getLastLoginTime().getTime() );
+		sb.append( " | " );
+		sb.append( user.getLastFailedLoginTime().getTime() );
+		sb.append( " | " );
+		sb.append( user.getExpirationTime().getTime() );
+		sb.append( " | " );
+		sb.append( user.getFailedLoginCount() );
+		return sb.toString();
+	}
+
+	/**
+	 * Dump a collection as a comma-separated list.
+	 * @return the string
+	 */
+	private String dump( Collection c ) {
+		StringBuffer sb = new StringBuffer();
+		Iterator i = c.iterator();
+		while ( i.hasNext() ) {
+			String s = (String)i.next();
+			sb.append( s );
+			if ( i.hasNext() ) sb.append( ",");
+		}
+		return sb.toString();
+	}
 
     /**
      * This method should be called for every HTTP request, to login the current user either from the session of HTTP
@@ -535,16 +609,14 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * @return the user
      * @throws AuthenticationException the authentication exception
      */
-    public User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    public IUser login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
     	if ( request == null || response == null ) {
             throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
     	}
     	
-        User user = null;
-
         // if there's a user in the session then use that
-        user = getUserFromSession();
+        User user = (User) getUserFromSession();
         
         // else if there's a remember token then use that
         if ( user == null ) {
@@ -553,7 +625,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         
     	// else try to verify credentials - throws exception if login fails
         if ( user == null ) {
-            user = loginWithUsernameAndPassword(request, response);
+            user = (User) loginWithUsernameAndPassword(request, response);
         }
         
         // set last host address
@@ -620,7 +692,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * Log out the current user.
      */
     public void logout() {
-    	User user = getCurrentUser();
+    	IUser user = getCurrentUser();
         user.logout();
     }
     
