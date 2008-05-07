@@ -284,17 +284,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      */
     public User getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
-        String account = (String) session.getAttribute(USER);
-        if (account != null) {
-            User user = this.getUser(account);
-            if (user != null) {
-    			logger.info( Logger.SECURITY, "Found user name in session: " + user.getAccountName() );
-                return user;
-			} else {
-				logger.warning( Logger.SECURITY, "Found user name in session, but no user matching " + account );
-			}
-        }
-        return null;
+        return (User)session.getAttribute(USER);
     }
 
     /**
@@ -458,8 +448,9 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 
         // now authenticate with username and password
         if (username == null || password == null) {
-            if (username == null)
+            if (username == null) {
                 username = "unspecified user";
+            }
             throw new AuthenticationCredentialsException("Authentication failed", "Authentication failed for " + username + " because of null username or password");
         }
         user = getUser(username);
@@ -549,9 +540,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     	if ( request == null || response == null ) {
             throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
     	}
-    	// save the current request and response in the threadlocal variables
-    	// FIXME: move this out of login
-    	ESAPI.httpUtilities().setCurrentHTTP(request, response);
     	
         User user = null;
 
@@ -622,6 +610,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 			throw new AuthenticationLoginException("Login failed", "Session absolute timeout: " + user.getAccountName() );
 		}
 			
+		request.getSession().setAttribute(USER, user);
         setCurrentUser(user);
         return user;
     }

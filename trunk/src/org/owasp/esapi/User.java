@@ -595,7 +595,6 @@ public class User implements IUser, Serializable {
 			// FIXME: AAA verify loggedIn is properly maintained
 			loggedIn = true;
 			HttpSession session = ESAPI.httpUtilities().changeSessionIdentifier();
-			session.setAttribute(Authenticator.USER, getAccountName());
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
             setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
