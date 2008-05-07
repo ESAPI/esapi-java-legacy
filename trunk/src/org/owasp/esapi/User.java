@@ -17,17 +17,12 @@ package org.owasp.esapi;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,8 +34,6 @@ import org.owasp.esapi.errors.AuthenticationHostException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
-import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.interfaces.IAuthenticator;
 import org.owasp.esapi.interfaces.ILogger;
 import org.owasp.esapi.interfaces.IUser;
 
@@ -113,10 +106,6 @@ public class User implements IUser, Serializable {
 	/** The failed login count. */
 	private int failedLoginCount = 0;
     
-	/** Intrusion detection events */
-	private Map events = new HashMap();
-
-    
     // FIXME: ENHANCE consider adding these for authentication / access control support
     //
     //private String authenticationMethod = null;
@@ -136,47 +125,15 @@ public class User implements IUser, Serializable {
 		// hidden
 	}
 
-	/**
-	 * Instantiates a new user.
-	 * 
-	 * @param line
-	 *            the line
-	 */
-	protected User(String line) {
-		String[] parts = line.split("\\|");
-		this.accountName = parts[0].trim().toLowerCase();
-		// FIXME: AAA validate account name
-		this.hashedPassword = parts[1].trim();
-        
-		this.roles.addAll(Arrays.asList(parts[2].trim().toLowerCase().split(" *, *")));
-		this.locked = !"unlocked".equalsIgnoreCase(parts[3].trim());
-		this.enabled = "enabled".equalsIgnoreCase(parts[4].trim());
-		this.rememberToken = parts[5].trim();
-
-		// generate a new csrf token
-        this.resetCSRFToken();
-        
-		this.oldPasswordHashes.addAll( Arrays.asList(parts[6].trim().split(" *, *")));
-        this.lastHostAddress = parts[7].trim();
-        this.lastPasswordChangeTime = new Date( Long.parseLong(parts[8].trim()));
-		this.lastLoginTime = new Date( Long.parseLong(parts[9].trim()));
-		this.lastFailedLoginTime = new Date( Long.parseLong(parts[10].trim()));
-		this.expirationTime = new Date( Long.parseLong(parts[11].trim()));
-		this.failedLoginCount = Integer.parseInt(parts[12].trim());
+	void setOldPasswordHashes(List hashes) {
+		oldPasswordHashes.clear();
+		oldPasswordHashes.addAll(hashes);
 	}
-
-	/**
-	 * Only for use in creating the Anonymous user.
-	 * 
-	 * @param accountName
-	 *            the account name
-	 * @param password
-	 *            the password
-	 */
-	protected User( String accountName, String password ) {
-		this.accountName = accountName.toLowerCase();
+	
+	List getOldPasswordHashes() {
+		return Collections.unmodifiableList(oldPasswordHashes);
 	}
-
+	
 	/**
 	 * Instantiates a new user.
 	 * 
@@ -240,24 +197,6 @@ public class User implements IUser, Serializable {
 		}
 	}
 
-	 /**
-	 * Adds a security event to the user.
-	 * 
-	 * @param event the event
-	 */
-	public void addSecurityEvent(String eventName) throws IntrusionException {
-		Event event = (Event)events.get( eventName );
-		if ( event == null ) {
-			event = new Event( eventName );
-			events.put( eventName, event );
-		}
-
-		Threshold q = ESAPI.securityConfiguration().getQuota( eventName );
-		if ( q.count > 0 ) {
-			event.increment(q.count, q.interval);
-		}
-	}
-
 	// FIXME: ENHANCE - make admin only methods separate from public API
 	/**
 	 * Change password.
@@ -307,21 +246,6 @@ public class User implements IUser, Serializable {
 		logger.info( Logger.SECURITY, "Account disabled: " + getAccountName() );
 	}
 	
-	/**
-	 * Dump a collection as a comma-separated list.
-	 * @return the string
-	 */
-	protected String dump( Collection c ) {
-		StringBuffer sb = new StringBuffer();
-		Iterator i = c.iterator();
-		while ( i.hasNext() ) {
-			String s = (String)i.next();
-			sb.append( s );
-			if ( i.hasNext() ) sb.append( ",");
-		}
-		return sb.toString();
-	}
-
 	/**
 	 * Enable the account
 	 * 
@@ -380,6 +304,10 @@ public class User implements IUser, Serializable {
 	 */
 	public int getFailedLoginCount() {
 		return failedLoginCount;
+	}
+	
+	void setFailedLoginCount(int count) {
+		failedLoginCount = count;
 	}
 	
 	/*
@@ -465,7 +393,9 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#isAnonymous()
 	 */
 	public boolean isAnonymous() {
-		return getAccountName().equals( "anonymous" );
+		// User cannot be anonymous, since we have a special IUser.ANONYMOUS instance
+		// for the anonymous user
+		return false;
 	}
 
 	/**
@@ -585,11 +515,7 @@ public class User implements IUser, Serializable {
 			throw new AuthenticationLoginException("Login failed", "Expired user attempt to login: " + accountName );
 		}
 		
-		// if this user is already logged in, log them out and reauthenticate
-		// FIXME: AAA verify loggedIn is needed???
-		if ( !isAnonymous() ) {
-			logout();
-		}
+		logout();
 
 		if ( verifyPassword( password ) ) {
 			// FIXME: AAA verify loggedIn is properly maintained
@@ -618,18 +544,16 @@ public class User implements IUser, Serializable {
 	 */
 	public void logout() {
 		ESAPI.httpUtilities().killCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME );
-		IAuthenticator authenticator = ESAPI.authenticator();
-		if ( !authenticator.getCurrentUser().isAnonymous() ) {
-			HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-			HttpSession session = request.getSession(false);
-			if (session != null) {
-				session.invalidate();
-			}
-			ESAPI.httpUtilities().killCookie("JSESSIONID");
-			loggedIn = false;
-			logger.info(Logger.SECURITY, "Logout successful" );
-			authenticator.setCurrentUser(Authenticator.anonymous);
+		
+		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+		HttpSession session = request.getSession(false);
+		if (session != null) {
+			session.invalidate();
 		}
+		ESAPI.httpUtilities().killCookie("JSESSIONID");
+		loggedIn = false;
+		logger.info(Logger.SECURITY, "Logout successful" );
+		ESAPI.authenticator().setCurrentUser(IUser.ANONYMOUS);
 	}
 
 	/*
@@ -700,41 +624,6 @@ public class User implements IUser, Serializable {
 	}
 
 	/**
-	 * Save.
-	 * 
-	 * @return the string
-	 */
-	protected String save() {
-		StringBuffer sb = new StringBuffer();
-		sb.append( accountName );
-		sb.append( " | " );
-		sb.append( getHashedPassword() );
-		sb.append( " | " );
-		sb.append( dump(getRoles()) );
-		sb.append( " | " );
-		sb.append( isLocked() ? "locked" : "unlocked" );
-		sb.append( " | " );
-		sb.append( isEnabled() ? "enabled" : "disabled" );
-		sb.append( " | " );
-		sb.append( getRememberToken() );
-		sb.append( " | " );
-		sb.append( dump(oldPasswordHashes) );
-        sb.append( " | " );
-        sb.append( getLastHostAddress() );
-        sb.append( " | " );
-        sb.append( getLastPasswordChangeTime().getTime() );
-		sb.append( " | " );
-		sb.append( getLastLoginTime().getTime() );
-		sb.append( " | " );
-		sb.append( getLastFailedLoginTime().getTime() );
-		sb.append( " | " );
-		sb.append( getExpirationTime().getTime() );
-		sb.append( " | " );
-		sb.append( failedLoginCount );
-		return sb.toString();
-	}
-
-	/**
 	 * Sets the account name.
 	 * 
 	 * @param accountName
@@ -787,14 +676,11 @@ public class User implements IUser, Serializable {
      * @param remoteHost
      */
 	public void setLastHostAddress(String remoteHost) {
-		User user = ESAPI.authenticator().getCurrentUser();
-		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-    	remoteHost = request.getRemoteAddr();
-		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost) && user != null && request != null ) {
+		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost)) {
         	// returning remote address not remote hostname to prevent DNS lookup
 			new AuthenticationHostException("Host change", "User session just jumped from " + lastHostAddress + " to " + remoteHost );
-			lastHostAddress = remoteHost;
 		}
+		lastHostAddress = remoteHost;
     }
 
 	/**
@@ -884,31 +770,6 @@ public class User implements IUser, Serializable {
 		logger.fatal(Logger.SECURITY, "Password verification failed for " + getAccountName() );
 		return false;
 	}
-
-	
-    // FIXME: AAA this is a strange place for the event class to live.  Move to somewhere more appropriate.
-    private class Event {
-        public String key;
-        public Stack times = new Stack();
-        public long count = 0;
-        public Event( String key ) {
-            this.key = key;
-        }
-        public void increment(int count, long interval) throws IntrusionException {
-            Date now = new Date();
-            times.add( 0, now );
-            while ( times.size() > count ) times.remove( times.size()-1 );
-            if ( times.size() == count ) {
-                Date past = (Date)times.get( count-1 );
-                long plong = past.getTime();
-                long nlong = now.getTime(); 
-                if ( nlong - plong < interval * 1000 ) {
-                    // FIXME: ENHANCE move all this event stuff inside IntrusionDetector?
-                    throw new IntrusionException();
-                }
-            }
-        }
-    }
     
     /**
      * Override clone and make final to prevent duplicate user objects.

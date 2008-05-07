@@ -15,11 +15,17 @@
  */
 package org.owasp.esapi;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Stack;
+import java.util.WeakHashMap;
 
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.interfaces.ILogger;
+import org.owasp.esapi.interfaces.IUser;
 
 /**
  * Reference implementation of the IIntrusionDetector interface. This
@@ -41,6 +47,9 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
 	/** The logger. */
 	private static final ILogger logger = ESAPI.getLogger("IntrusionDetector");
 
+	// FIXME: There is probably a better data structure for this
+	private Map userEvents = new WeakHashMap();
+	
 	public IntrusionDetector() {
 	}
 
@@ -68,7 +77,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
         }
 
         // add the exception to the current user, which may trigger a detector 
-		User user = ESAPI.authenticator().getCurrentUser();
+		IUser user = ESAPI.authenticator().getCurrentUser();
         String eventName = e.getClass().getName();
 
         // FIXME: AAA Rethink this - IntrusionExceptions which shouldn't get added to the IntrusionDetector
@@ -78,7 +87,7 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
         
         // add the exception to the user's store, handle IntrusionException if thrown
 		try {
-			user.addSecurityEvent(eventName);
+			addSecurityEvent(user, eventName);
 		} catch( IntrusionException ex ) {
             Threshold quota = ESAPI.securityConfiguration().getQuota(eventName);
             Iterator i = quota.actions.iterator();
@@ -100,9 +109,9 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
         logger.warning( Logger.SECURITY, "Security event " + eventName + " received" );
 
         // add the event to the current user, which may trigger a detector 
-        User user = ESAPI.authenticator().getCurrentUser();
+        IUser user = ESAPI.authenticator().getCurrentUser();
         try {
-            user.addSecurityEvent("event." + eventName);
+            addSecurityEvent(user, "event." + eventName);
         } catch( IntrusionException ex ) {
             Threshold quota = ESAPI.securityConfiguration().getQuota("event." + eventName);
             Iterator i = quota.actions.iterator();
@@ -122,12 +131,60 @@ public class IntrusionDetector implements org.owasp.esapi.interfaces.IIntrusionD
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY, "INTRUSION - " + message );
         }
+        IUser user = ESAPI.authenticator().getCurrentUser();
+        if (user == IUser.ANONYMOUS)
+        	return;
         if ( action.equals( "disable" ) ) {
-            ESAPI.authenticator().getCurrentUser().disable();
+            user.disable();
         }
         if ( action.equals( "logout" ) ) {
-            ESAPI.authenticator().logout();
+            user.logout();
         }
     }
 
+	 /**
+	 * Adds a security event to the user.
+	 * 
+	 * @param event the event
+	 */
+	private void addSecurityEvent(IUser user, String eventName) throws IntrusionException {
+		Map events = (Map) userEvents.get(user.getAccountName());
+		if (events == null) {
+			events = new HashMap();
+			userEvents.put(user.getAccountName(), events);
+		}
+		Event event = (Event)events.get( eventName );
+		if ( event == null ) {
+			event = new Event( eventName );
+			events.put( eventName, event );
+		}
+
+		Threshold q = ESAPI.securityConfiguration().getQuota( eventName );
+		if ( q.count > 0 ) {
+			event.increment(q.count, q.interval);
+		}
+	}
+
+    private static class Event {
+        public String key;
+        public Stack times = new Stack();
+        public long count = 0;
+        public Event( String key ) {
+            this.key = key;
+        }
+        public void increment(int count, long interval) throws IntrusionException {
+            Date now = new Date();
+            times.add( 0, now );
+            while ( times.size() > count ) times.remove( times.size()-1 );
+            if ( times.size() == count ) {
+                Date past = (Date)times.get( count-1 );
+                long plong = past.getTime();
+                long nlong = now.getTime(); 
+                if ( nlong - plong < interval * 1000 ) {
+                    // FIXME: ENHANCE move all this event stuff inside IntrusionDetector?
+                    throw new IntrusionException();
+                }
+            }
+        }
+    }
 }

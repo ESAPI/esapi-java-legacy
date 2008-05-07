@@ -22,6 +22,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.interfaces.IAccessController;
 import org.owasp.esapi.interfaces.IAuthenticator;
+import org.owasp.esapi.interfaces.IUser;
 
 /**
  * The Class AccessControllerTest.
@@ -42,21 +43,21 @@ public class AccessControllerTest extends TestCase {
 		String password = authenticator.generateStrongPassword();
 
 		// create a user with the "user" role for this test
-		User alice = authenticator.getUser("testuser1");
+		IUser alice = authenticator.getUser("testuser1");
 		if ( alice == null ) {
 			alice = authenticator.createUser( "testuser1", password, password);
 		}
 		alice.addRole("user");		
 
 		// create a user with the "admin" role for this test
-		User bob = authenticator.getUser("testuser2");
+		IUser bob = authenticator.getUser("testuser2");
 		if ( bob == null ) {
 			bob = authenticator.createUser( "testuser2", password, password);
 		}
 		bob.addRole("admin");
 		
 		// create a user with the "user" and "admin" roles for this test
-		User mitch = authenticator.getUser("testuser3");
+		IUser mitch = authenticator.getUser("testuser3");
 		if ( mitch == null ) {
 			mitch = authenticator.createUser( "testuser3", password, password);
 		}
