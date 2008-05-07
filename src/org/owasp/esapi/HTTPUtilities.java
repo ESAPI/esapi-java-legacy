@@ -698,7 +698,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
      */
     public HttpServletRequest getCurrentRequest() {
         HttpServletRequest request = (HttpServletRequest)currentRequest.get();
-		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set, typically via login" );
+		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set with HTTPUtilities.setCurrentHTTP()" );
 		return request;
     }
 
@@ -707,7 +707,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
      */
     public HttpServletResponse getCurrentResponse() {
         HttpServletResponse response = (HttpServletResponse)currentResponse.get();
-		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set, typically via login" );
+		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set with HTTPUtilities.setCurrentHTTP()" );
         return response;
     }
 

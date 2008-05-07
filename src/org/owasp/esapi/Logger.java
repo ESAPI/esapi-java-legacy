@@ -17,7 +17,6 @@ package org.owasp.esapi;
 
 import java.util.logging.Level;
 
-import javax.servlet.http.Cookie;
 /**
  * Reference implementation of the ILogger interface. This implementation uses the Java logging package, and marks each
  * log message with the currently logged in user and the word "SECURITY" for security related events.

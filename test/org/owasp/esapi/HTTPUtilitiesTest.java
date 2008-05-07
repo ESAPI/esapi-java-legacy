@@ -141,6 +141,11 @@ public class HTTPUtilitiesTest extends TestCase {
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         try {
             List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            Iterator i = list.iterator();
+            while ( i.hasNext() ) {
+            	File f = (File)i.next();
+            	System.out.println( "  " + f.getAbsolutePath() );
+            }
         } catch (ValidationException e) {
             fail();
         }

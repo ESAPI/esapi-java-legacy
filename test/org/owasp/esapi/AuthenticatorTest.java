@@ -233,6 +233,7 @@ public class AuthenticatorTest extends TestCase {
 		}
 
 		request = new TestHttpServletRequest();
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		String newToken = user.resetRememberToken();
 		request.clearCookies();
 		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, newToken );
@@ -311,6 +312,7 @@ public class AuthenticatorTest extends TestCase {
 		request.addParameter("username", accountName);
 		request.addParameter("password", password);
 		TestHttpServletResponse response = new TestHttpServletResponse();
+		ESAPI.httpUtilities().setCurrentHTTP( request, response );
 		instance.login( request, response);
 		User test = instance.getUserFromSession();
 		assertEquals( user, test );
