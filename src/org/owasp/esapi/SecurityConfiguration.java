@@ -208,7 +208,8 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     }
 
 	/**
-     * Load ESAPI.properties from the classpath. 
+     * Load ESAPI.properties from the classpath. For easy deployment, 
+     * place your ESAPI.properties file in WEB-INF/classes
      */
     private Properties loadConfigurationFromClasspath()
     {
