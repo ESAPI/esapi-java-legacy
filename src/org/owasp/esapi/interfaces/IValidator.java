@@ -50,12 +50,12 @@ public interface IValidator {
 	 * of a defined type in the ESAPI configuration or a valid regular expression. Implementers should take 
 	 * care to make the type storage simple to understand and configure.
 	 * 
-	 * @param context A descriptive name for the field to validate. This is used for both error facing validation messages as well as 
-	 * @param input The actual user input data to validation
-	 * @param type The regular expression name while maps to the actual regular expression from ESAPI.properties
+	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
+	 * @param input The actual user input data to validate.
+	 * @param type The regular expression name while maps to the actual regular expression from "ESAPI.properties".
 	 * @param maxLength The maximum post-canonicalized String length allowed.
 	 * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
-	 * @return The canonicalized user input
+	 * @return The canonicalized user input.
 	 * @throws IntrusionException
 	 */
 	boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;
@@ -64,12 +64,12 @@ public interface IValidator {
 	 * Returns canonicalized and validated input as a String. Invalid input will generate a descriptive ValidationException, 
 	 * and input that is clearly an attack will generate a descriptive IntrusionException. 
 	 * 
-	 * @param context A descriptive name for the field to validate. This is used for both error facing validation messages as well as 
-	 * @param input The actual user input data to validation
-	 * @param type The regular expression name while maps to the actual regular expression from ESAPI.properties
+	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
+	 * @param input The actual user input data to validate.
+	 * @param type The regular expression name while maps to the actual regular expression from "ESAPI.properties".
 	 * @param maxLength The maximum post-canonicalized String length allowed.
 	 * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
-	 * @return The canonicalized user input
+	 * @return The canonicalized user input.
 	 * @throws ValidationException
 	 * @throws IntrusionException
 	 */
