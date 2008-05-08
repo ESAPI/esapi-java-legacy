@@ -886,6 +886,6 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 	 * @return boolean response if input is empty or not
 	 */
 	private static final boolean isEmpty(byte[] input) {
-		return (input==null || input.toString().trim().length() == 0);
+		return (input==null || input.length == 0);
 	}
 }
