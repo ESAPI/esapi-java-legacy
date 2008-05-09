@@ -419,7 +419,7 @@ public class Encoder implements org.owasp.esapi.interfaces.IEncoder {
 			}
 		}
 		// add the trailing backslash if needed
-		if ((canonical.length() > 1) && (canonical.charAt(input.length() - 1) == ' ')) {
+		if ((canonical.length() > 1) && (canonical.charAt(canonical.length() - 1) == ' ')) {
 			sb.insert(sb.length() - 1, '\\');
 		}
 		return sb.toString();

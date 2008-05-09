@@ -135,11 +135,21 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testGetFileUploads() throws IOException {
         System.out.println("getFileUploads");
         File home = new File( ESAPI.securityConfiguration().getResourceDirectory());
-        byte[] bytes = getBytesFromFile(new File(home, "multipart.txt"));
-        System.out.println( "===========\n" + new String( bytes ) + "\n===========" );
-        TestHttpServletRequest request = new TestHttpServletRequest("/test", bytes);
+        String content = "--ridiculous\r\nContent-Disposition: form-data; name=\"upload\"; filename=\"testupload.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nThis is a test of the multipart broadcast system.\r\nThis is only a test.\r\nStop.\r\n\r\n--ridiculous\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\nSubmit Query\r\n--ridiculous--\r\nEpilogue";
+        
+        TestHttpServletRequest request1 = new TestHttpServletRequest("/test", content.getBytes());
         TestHttpServletResponse response = new TestHttpServletResponse();
-        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        ESAPI.httpUtilities().setCurrentHTTP(request1, response);
+        try {
+            List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            fail();
+        } catch( ValidationException e ) {
+        	// expected
+        }
+        
+        TestHttpServletRequest request2 = new TestHttpServletRequest("/test", content.getBytes());
+        request2.setContentType( "multipart/form-data; boundary=ridiculous");
+        ESAPI.httpUtilities().setCurrentHTTP(request2, response);
         try {
             List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
             Iterator i = list.iterator();
@@ -147,9 +157,21 @@ public class HTTPUtilitiesTest extends TestCase {
             	File f = (File)i.next();
             	System.out.println( "  " + f.getAbsolutePath() );
             }
+            assertTrue( list.size() > 0 );
         } catch (ValidationException e) {
             fail();
         }
+        
+        TestHttpServletRequest request3 = new TestHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes());
+        request3.setContentType( "multipart/form-data; boundary=ridiculous");
+        ESAPI.httpUtilities().setCurrentHTTP(request3, response);
+        try {
+            List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            fail();
+        } catch (ValidationException e) {
+        	// expected
+        }
+
     }
 
     private byte[] getBytesFromFile(File file) throws IOException {
@@ -188,6 +210,11 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("c3", "v3"));
         request.setCookies(list);
         ESAPI.httpUtilities().setCurrentHTTP(request, new TestHttpServletResponse() );
+        request.setMethod("JEFF");
+        assertFalse( ESAPI.validator().isValidHTTPRequest() );
+        request.setMethod("POST");
+        assertTrue( ESAPI.validator().isValidHTTPRequest() );
+        request.setMethod("GET");
         assertTrue( ESAPI.validator().isValidHTTPRequest() );
         request.addParameter("bad_name", "bad*value");
         request.addHeader("bad_name", "bad*value");

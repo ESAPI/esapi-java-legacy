@@ -58,6 +58,10 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     private String uri = null;
 
+    private String contentType = null;
+    
+    private String method = "POST";
+    
     public TestHttpServletRequest() {
     }
 
@@ -202,9 +206,13 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * @see javax.servlet.http.HttpServletRequest#getMethod()
      */
     public String getMethod() {
-        return "POST";
+        return method;
     }
 
+    public void setMethod( String value ) {
+    	method = value;
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -414,9 +422,13 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * @see javax.servlet.ServletRequest#getContentType()
      */
     public String getContentType() {
-        return "multipart/form-data; boundary=xxx";
+        return contentType;
     }
 
+    public void setContentType( String value ) {
+    	contentType = value;
+    }
+    
     /*
      * (non-Javadoc)
      * 
