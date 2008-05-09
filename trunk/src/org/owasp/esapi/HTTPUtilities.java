@@ -287,6 +287,14 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	}
 	
 	/**
+	 * Overloads the deprecated response method. 
+	 * @deprecated
+	 */
+	public String safeEncodeUrl( String url ) {
+		return url;
+	}
+	
+	/**
 	 * Return exactly what was sent to prevent URL rewriting. URL rewriting is intended to be a session management
 	 * scheme that doesn't require cookies, but exposes the sessionid in many places, including the URL bar,
 	 * favorites, HTML files in cache, logs, and cut-and-paste links. For these reasons, session rewriting is
@@ -299,6 +307,13 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		return url;
 	}
 	
+	/**
+	 * Overloads the deprecated response method. 
+	 * @deprecated
+	 */
+	public String safeEncodeRedirectUrl( String url ) {
+		return url;
+	}
 	
     /*
 	 * (non-Javadoc)
@@ -515,8 +530,9 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 				}
 			}
 		} catch (Exception e) {
-			if (e instanceof ValidationUploadException)
+			if (e instanceof ValidationUploadException) {
 				throw (ValidationException) e;
+			}
 			throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
 		}
 		return newFiles;

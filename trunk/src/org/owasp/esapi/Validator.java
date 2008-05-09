@@ -631,6 +631,11 @@ public class Validator implements org.owasp.esapi.interfaces.IValidator {
 		if (request == null) {
    			throw new ValidationException( "Input required: HTTP request is null", "Input required: HTTP request is null" );
 		}
+
+		// FIXME: make allowed methods configurable
+		if ( !request.getMethod().equals( "GET") && !request.getMethod().equals("POST") ) {
+   			throw new IntrusionException( "Bad HTTP method received", "Bad HTTP method received: " + request.getMethod() );
+		}
 		
 		Iterator i1 = request.getParameterMap().entrySet().iterator();
 		while (i1.hasNext()) {
