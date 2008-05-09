@@ -656,9 +656,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		HttpServletResponse response = getCurrentResponse();
 		
 		// HTTP 1.1
-		response.setHeader("Cache-Control", "no-store");
 		response.setHeader("Cache-Control", "no-cache");
-		response.setHeader("Cache-Control", "must-revalidate");
 
 		// HTTP 1.0
 		response.setHeader("Pragma","no-cache");
