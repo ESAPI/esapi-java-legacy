@@ -118,6 +118,23 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 		}
 	}
 	
+	
+	/**
+	 * Checks the method of the current request. For example, any application logic that
+	 * uses sensitive data from a web form should call ESAPI.httpUtilities().assertMethod("POST");
+	 * @param method
+	 * @throws AccessControlException
+	 */
+	public void assertSecureRequest() throws AccessControlException {
+		// FIXME: RESEARCH - getMethod() is rumored to lie in some cases, for example, a JEFF request may return GET
+		String requiredMethod = "POST";
+		String receivedMethod = getCurrentRequest().getMethod();
+		if ( !receivedMethod.equals( requiredMethod ) ) {
+			throw new AccessControlException( "Insecure request received", "Received request using " + receivedMethod + " when only " + requiredMethod + " is allowed" );
+		}
+	}
+	
+	
 	/**
 	 * Adds a cookie to the HttpServletResponse that uses Secure and HttpOnly
 	 * flags. This implementation does not use the addCookie method because
@@ -653,16 +670,12 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#setNoCacheHeaders(javax.servlet.http.HttpServletResponse)
 	 */
 	public void setNoCacheHeaders() {
-		HttpServletResponse response = getCurrentResponse();
-		
 		// HTTP 1.1
-		response.addHeader("Cache-Control", "no-store");
-		response.addHeader("Cache-Control", "no-cache");
-		response.addHeader("Cache-Control", "must-revalidate");
+		getCurrentResponse().setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
 		// HTTP 1.0
-		response.addHeader("Pragma","no-cache");
-		response.setDateHeader("Expires", -1);
+		getCurrentResponse().setHeader("Pragma","no-cache");
+		getCurrentResponse().setDateHeader("Expires", -1);
 	}
 
     /*
