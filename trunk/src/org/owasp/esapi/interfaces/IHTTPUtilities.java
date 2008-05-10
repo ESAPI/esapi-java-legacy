@@ -44,6 +44,17 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public interface IHTTPUtilities {
 
+	
+	/**
+	 * Ensures that the current request uses SSL and POST to protect any sensitive parameters
+	 * in the querystring from being sniffed or logged. For example, this method should
+	 * be called from any method that uses sensitive data from a web form.
+	 * @param requiredMethod
+	 * @throws AccessControlException
+	 */
+	void assertSecureRequest() throws AccessControlException;
+
+    
     /**
      * Adds the current user's CSRF token (see User.getCSRFToken()) to the URL for purposes of preventing CSRF attacks.
      * This method should be used on all URLs to be put into all links and forms the application generates.
@@ -173,18 +184,6 @@ public interface IHTTPUtilities {
      * Retrieves a map of data from the encrypted cookie. 
      */
     Map decryptStateFromCookie() throws EncryptionException ;
-
-    /**
-     * Returns true if the request and response are using an SSL-enabled connection. This check should be made on
-     * every request from the login page through the logout confirmation page. Essentially, any page that uses the
-     * Authenticator.login() call should call this. Implementers should consider calling this method directly in
-     * their Authenticator.login() method. If this method returns true for a page that requires SSL, there must be a
-     * misconfiguration, an AuthenticationException is warranted. 
-     * 
-     * @param request
-     * @return
-     */
-    boolean isSecureChannel();
 
     /**
      * Kill all cookies received in the last request from the browser. Note that new cookies set by the application in
