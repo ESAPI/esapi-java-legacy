@@ -34,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationAccountsException;
 import org.owasp.esapi.errors.AuthenticationCredentialsException;
 import org.owasp.esapi.errors.AuthenticationException;
@@ -631,9 +632,11 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         // set last host address
         user.setLastHostAddress( request.getRemoteHost() );
         
-        // warn if this authentication request came over a non-SSL connection, exposing credentials or session id
-        if ( !ESAPI.httpUtilities().isSecureChannel() ) {
-            new AuthenticationCredentialsException( "Session or credentials exposed", "Authentication attempt made over non-SSL connection. Check web.xml and server configuration. User: " + user.getAccountName() );
+        // warn if this authentication request was not POST or non-SSL connection, exposing credentials or session id
+        try {
+        	ESAPI.httpUtilities().assertSecureRequest();
+        } catch( AccessControlException e ) {
+        	throw new AuthenticationException( "Attempt to login with an insecure request", e.getLogMessage(), e );
         }
                 
         // don't let anonymous user log in
