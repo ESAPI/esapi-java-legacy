@@ -24,7 +24,7 @@ import java.util.Arrays;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.ILogger;
+import org.owasp.esapi.Logger;
 
 /**
  * Reference implementation of the IRandomizer interface. This implementation builds on the JCE provider to provide a
@@ -33,20 +33,20 @@ import org.owasp.esapi.ILogger;
  * @author Jeff Williams
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IRandomizer
+ * @see org.owasp.esapi.Randomizer
  */
-public class Randomizer implements org.owasp.esapi.IRandomizer {
+public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
 
     /** The sr. */
     private SecureRandom secureRandom = null;
 
     /** The logger. */
-    private static final ILogger logger = ESAPI.getLogger("Randomizer");
+    private static final Logger logger = ESAPI.getLogger("Randomizer");
 
     /**
      * Hide the constructor for the Singleton pattern.
      */
-    public Randomizer() {
+    public DefaultRandomizer() {
         String algorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
         try {
             secureRandom = SecureRandom.getInstance(algorithm);
@@ -86,7 +86,7 @@ public class Randomizer implements org.owasp.esapi.IRandomizer {
      * FIXME: ENHANCE document whether this is inclusive or not
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.IRandomizer#getRandomInteger(int, int)
+     * @see org.owasp.esapi.Randomizer#getRandomInteger(int, int)
      */
     public int getRandomInteger(int min, int max) {
         return secureRandom.nextInt(max - min) + min;
@@ -106,7 +106,7 @@ public class Randomizer implements org.owasp.esapi.IRandomizer {
      * Returns an unguessable random filename with the specified extension.
      */
     public String getRandomFilename(String extension) {
-        return this.getRandomString(12, Encoder.CHAR_ALPHANUMERICS) + "." + extension;
+        return this.getRandomString(12, DefaultEncoder.CHAR_ALPHANUMERICS) + "." + extension;
     }
 
     public String getRandomGUID() throws EncryptionException {
@@ -120,7 +120,7 @@ public class Randomizer implements org.owasp.esapi.IRandomizer {
         sb.append(":");
         sb.append(Long.toString(System.currentTimeMillis()));
         sb.append(":");
-        sb.append(this.getRandomString(20, Encoder.CHAR_ALPHANUMERICS));
+        sb.append(this.getRandomString(20, DefaultEncoder.CHAR_ALPHANUMERICS));
 
         // hash the random string to get some random bytes
         String hash = ESAPI.encryptor().hash(sb.toString(), "salt");
@@ -128,7 +128,7 @@ public class Randomizer implements org.owasp.esapi.IRandomizer {
         try {
             array = ESAPI.encoder().decodeFromBase64(hash);
         } catch (IOException e) {
-            logger.fatal(Logger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
+            logger.fatal(JavaLogger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
         }
         
         // convert to printable hexadecimal characters 

@@ -35,7 +35,7 @@ import java.util.List;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IExecutor {
+public interface Executor {
 
 	/**
 	 * Executes a system command after checking that the executable exists and

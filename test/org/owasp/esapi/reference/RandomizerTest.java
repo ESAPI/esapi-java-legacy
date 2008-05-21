@@ -23,7 +23,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.IRandomizer;
+import org.owasp.esapi.Randomizer;
 
 /**
  * The Class RandomizerTest.
@@ -72,9 +72,9 @@ public class RandomizerTest extends TestCase {
     public void testGetRandomString() {
         System.out.println("getRandomString");
         int length = 20;
-        IRandomizer instance = ESAPI.randomizer();
+        Randomizer instance = ESAPI.randomizer();
         for ( int i = 0; i < 100; i++ ) {
-            String result = instance.getRandomString(length, Encoder.CHAR_ALPHANUMERICS );
+            String result = instance.getRandomString(length, DefaultEncoder.CHAR_ALPHANUMERICS );
             // FIXME: only the set of characters should be here
             assertEquals(length, result.length());
         }
@@ -87,7 +87,7 @@ public class RandomizerTest extends TestCase {
         System.out.println("getRandomInteger");        
         int min = -20;
         int max = 100;
-        IRandomizer instance = ESAPI.randomizer();        
+        Randomizer instance = ESAPI.randomizer();        
         int minResult = ( max - min ) / 2;
         int maxResult = ( max - min ) / 2;
         for ( int i = 0; i < 100; i++ ) {
@@ -105,7 +105,7 @@ public class RandomizerTest extends TestCase {
         System.out.println("getRandomReal");
         float min = -20.5234F;
         float max = 100.12124F;
-        IRandomizer instance = ESAPI.randomizer();
+        Randomizer instance = ESAPI.randomizer();
         float minResult = ( max - min ) / 2;
         float maxResult = ( max - min ) / 2;
         for ( int i = 0; i < 100; i++ ) {
@@ -122,7 +122,7 @@ public class RandomizerTest extends TestCase {
      */
     public void testGetRandomGUID() throws EncryptionException {
         System.out.println("getRandomGUID");
-        IRandomizer instance = ESAPI.randomizer();
+        Randomizer instance = ESAPI.randomizer();
         ArrayList list = new ArrayList();
         for ( int i = 0; i < 100; i++ ) {
             String guid = instance.getRandomGUID();

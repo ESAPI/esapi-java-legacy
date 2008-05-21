@@ -24,8 +24,8 @@ import java.util.WeakHashMap;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EnterpriseSecurityException;
-import org.owasp.esapi.ILogger;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.User;
 import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.Threshold;
 
@@ -42,17 +42,17 @@ import org.owasp.esapi.Threshold;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IIntrusionDetector
+ * @see org.owasp.esapi.IntrusionDetector
  */
-public class IntrusionDetector implements org.owasp.esapi.IIntrusionDetector {
+public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetector {
 
 	/** The logger. */
-	private static final ILogger logger = ESAPI.getLogger("IntrusionDetector");
+	private static final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
 	// FIXME: There is probably a better data structure for this
 	private Map userEvents = new WeakHashMap();
 	
-	public IntrusionDetector() {
+	public DefaultIntrusionDetector() {
 	}
 
 	// FIXME: ENHANCE consider allowing both per-user and per-application quotas
@@ -69,17 +69,17 @@ public class IntrusionDetector implements org.owasp.esapi.IIntrusionDetector {
 	 * @throws IntrusionException
 	 *             the intrusion exception
 	 * 
-	 * @see org.owasp.esapi.IIntrusionDetector#addException(org.owasp.esapi.EnterpriseSecurityException)
+	 * @see org.owasp.esapi.IntrusionDetector#addException(org.owasp.esapi.EnterpriseSecurityException)
 	 */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
-            logger.warning( Logger.SECURITY, ((EnterpriseSecurityException)e).getLogMessage(), e );
+            logger.warning( JavaLogger.SECURITY, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
-            logger.warning( Logger.SECURITY, e.getMessage(), e );
+            logger.warning( JavaLogger.SECURITY, e.getMessage(), e );
         }
 
         // add the exception to the current user, which may trigger a detector 
-		IUser user = ESAPI.authenticator().getCurrentUser();
+		User user = ESAPI.authenticator().getCurrentUser();
         String eventName = e.getClass().getName();
 
         // FIXME: AAA Rethink this - IntrusionExceptions which shouldn't get added to the IntrusionDetector
@@ -108,10 +108,10 @@ public class IntrusionDetector implements org.owasp.esapi.IIntrusionDetector {
      * @throws IntrusionException the intrusion exception
      */
     public void addEvent(String eventName) throws IntrusionException {
-        logger.warning( Logger.SECURITY, "Security event " + eventName + " received" );
+        logger.warning( JavaLogger.SECURITY, "Security event " + eventName + " received" );
 
         // add the event to the current user, which may trigger a detector 
-        IUser user = ESAPI.authenticator().getCurrentUser();
+        User user = ESAPI.authenticator().getCurrentUser();
         try {
             addSecurityEvent(user, "event." + eventName);
         } catch( IntrusionException ex ) {
@@ -131,10 +131,10 @@ public class IntrusionDetector implements org.owasp.esapi.IIntrusionDetector {
      */
     private void takeSecurityAction( String action, String message ) {
         if ( action.equals( "log" ) ) {
-            logger.fatal( Logger.SECURITY, "INTRUSION - " + message );
+            logger.fatal( JavaLogger.SECURITY, "INTRUSION - " + message );
         }
-        IUser user = ESAPI.authenticator().getCurrentUser();
-        if (user == IUser.ANONYMOUS)
+        User user = ESAPI.authenticator().getCurrentUser();
+        if (user == User.ANONYMOUS)
         	return;
         if ( action.equals( "disable" ) ) {
             user.disable();
@@ -149,7 +149,7 @@ public class IntrusionDetector implements org.owasp.esapi.IIntrusionDetector {
 	 * 
 	 * @param event the event
 	 */
-	private void addSecurityEvent(IUser user, String eventName) throws IntrusionException {
+	private void addSecurityEvent(User user, String eventName) throws IntrusionException {
 		Map events = (Map) userEvents.get(user.getAccountName());
 		if (events == null) {
 			events = new HashMap();

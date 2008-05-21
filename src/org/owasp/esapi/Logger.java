@@ -38,7 +38,7 @@ package org.owasp.esapi;
  * href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface ILogger {
+public interface Logger {
 
 	// FIXME: ENHANCE Is this type approach right? Should it be configurable somehow?
 

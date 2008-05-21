@@ -37,7 +37,7 @@ import java.util.List;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface ISecurityConfiguration {
+public interface SecurityConfiguration {
 
 	// FIXME: SecurityConfiguration should be hierarchical in nature,
 	// so that e.g. we can have a site wide file containing some input validation rules,

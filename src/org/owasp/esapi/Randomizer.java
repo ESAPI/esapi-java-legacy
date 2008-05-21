@@ -29,7 +29,7 @@ package org.owasp.esapi;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IRandomizer {
+public interface Randomizer {
 
 	/**
 	 * Gets the random string.

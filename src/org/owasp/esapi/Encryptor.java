@@ -35,7 +35,7 @@ package org.owasp.esapi;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IEncryptor {
+public interface Encryptor {
 
 	/**
 	 * Returns a string representation of the hash of the provided plaintext and

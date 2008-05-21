@@ -26,8 +26,8 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.IAuthenticator;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.User;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 import org.owasp.esapi.http.TestHttpSession;
@@ -70,11 +70,11 @@ public class UserTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	private User createTestUser(String password) throws AuthenticationException {
-		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+	private DefaultUser createTestUser(String password) throws AuthenticationException {
+		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		Exception e = new Exception();
 		System.out.println("Creating user " + username + " for " + e.getStackTrace()[1].getMethodName());
-		User user = (User) ESAPI.authenticator().createUser(username, password, password);
+		DefaultUser user = (DefaultUser) ESAPI.authenticator().createUser(username, password, password);
 		return user;
 	}
 
@@ -97,11 +97,11 @@ public class UserTest extends TestCase {
 	 */
 	public void testAddRole() throws Exception {
 		System.out.println("addRole");
-		IAuthenticator instance = ESAPI.authenticator();
-		String accountName = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+		Authenticator instance = ESAPI.authenticator();
+		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		String password = ESAPI.authenticator().generateStrongPassword();
-		String role = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_LOWERS);
-		IUser user = instance.createUser(accountName, password, password);
+		String role = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_LOWERS);
+		User user = instance.createUser(accountName, password, password);
 		user.addRole(role);
 		assertTrue(user.isInRole(role));
 		assertFalse(user.isInRole("ridiculous"));
@@ -115,9 +115,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testAddRoles() throws AuthenticationException {
 		System.out.println("addRoles");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		Set set = new HashSet();
 		set.add("rolea");
 		set.add("roleb");
@@ -135,17 +135,17 @@ public class UserTest extends TestCase {
 	 */
 	public void testChangePassword() throws Exception {
 		System.out.println("changePassword");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = "Password12!@";
-		User user = createTestUser(oldPassword);
-		System.out.println("Hash of " + oldPassword + " = " + ((Authenticator)instance).getHashedPassword(user));
+		DefaultUser user = createTestUser(oldPassword);
+		System.out.println("Hash of " + oldPassword + " = " + ((FileBasedAuthenticator)instance).getHashedPassword(user));
 		String password1 = "SomethingElse34#$";
 		user.changePassword(oldPassword, password1, password1);
-		System.out.println("Hash of " + password1 + " = " + ((Authenticator)instance).getHashedPassword(user));
+		System.out.println("Hash of " + password1 + " = " + ((FileBasedAuthenticator)instance).getHashedPassword(user));
 		assertTrue(user.verifyPassword(password1));
 		String password2 = "YetAnother56%^";
 		user.changePassword(password1, password2, password2);
-		System.out.println("Hash of " + password2 + " = " + ((Authenticator)instance).getHashedPassword(user));
+		System.out.println("Hash of " + password2 + " = " + ((FileBasedAuthenticator)instance).getHashedPassword(user));
 		try {
 			user.changePassword(password2, password1, password1);
 			fail("Shouldn't be able to reuse a password");
@@ -164,9 +164,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testDisable() throws AuthenticationException {
 		System.out.println("disable");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		user.enable();
 		assertTrue(user.isEnabled());
 		user.disable();
@@ -181,9 +181,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testEnable() throws AuthenticationException {
 		System.out.println("enable");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		user.enable();
 		assertTrue(user.isEnabled());
 		user.disable();
@@ -198,7 +198,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testFailedLoginLockout() throws AuthenticationException, EncryptionException {
 		System.out.println("failedLoginLockout");
-		User user = createTestUser("failedLoginLockout");
+		DefaultUser user = createTestUser("failedLoginLockout");
 		user.enable();
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
@@ -239,8 +239,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testGetAccountName() throws AuthenticationException {
 		System.out.println("getAccountName");
-		User user = createTestUser("getAccountName");
-		String accountName = ESAPI.randomizer().getRandomString(7, Encoder.CHAR_ALPHANUMERICS);
+		DefaultUser user = createTestUser("getAccountName");
+		String accountName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
 		user.setAccountName(accountName);
 		assertEquals(accountName.toLowerCase(), user.getAccountName());
 		assertFalse("ridiculous".equals(user.getAccountName()));
@@ -254,9 +254,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testGetLastFailedLoginTime() throws Exception {
 		System.out.println("getLastLoginTime");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		try {
     		user.loginWithPassword("ridiculous");
 		} catch( AuthenticationException e ) { 
@@ -281,9 +281,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testGetLastLoginTime() throws Exception {
 		System.out.println("getLastLoginTime");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		user.verifyPassword(oldPassword);
 		Date llt1 = user.getLastLoginTime();
 		Thread.sleep(10); // need a short delay to separate attempts
@@ -300,7 +300,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testGetLastPasswordChangeTime() throws Exception {
 		System.out.println("getLastPasswordChangeTime");
-		User user = createTestUser("getLastPasswordChangeTime");
+		DefaultUser user = createTestUser("getLastPasswordChangeTime");
 		Date t1 = user.getLastPasswordChangeTime();
 		Thread.sleep(10); // need a short delay to separate attempts
 		String newPassword = ESAPI.authenticator().generateStrongPassword("getLastPasswordChangeTime", user);
@@ -314,11 +314,11 @@ public class UserTest extends TestCase {
 	 */
 	public void testGetRoles() throws Exception {
 		System.out.println("getRoles");
-		IAuthenticator instance = ESAPI.authenticator();
-		String accountName = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+		Authenticator instance = ESAPI.authenticator();
+		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		String password = ESAPI.authenticator().generateStrongPassword();
-		String role = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_LOWERS);
-		IUser user = instance.createUser(accountName, password, password);
+		String role = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_LOWERS);
+		User user = instance.createUser(accountName, password, password);
 		user.addRole(role);
 		Set roles = user.getRoles();
 		assertTrue(roles.size() > 0);
@@ -332,8 +332,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testGetScreenName() throws AuthenticationException {
 		System.out.println("getScreenName");
-		User user = createTestUser("getScreenName");
-		String screenName = ESAPI.randomizer().getRandomString(7, Encoder.CHAR_ALPHANUMERICS);
+		DefaultUser user = createTestUser("getScreenName");
+		String screenName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
 		user.setScreenName(screenName);
 		assertEquals(screenName, user.getScreenName());
 		assertFalse("ridiculous".equals(user.getScreenName()));
@@ -347,7 +347,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testIncrementFailedLoginCount() throws AuthenticationException {
 		System.out.println("incrementFailedLoginCount");
-		User user = createTestUser("incrementFailedLoginCount");
+		DefaultUser user = createTestUser("incrementFailedLoginCount");
 		user.enable();
 		assertEquals(0, user.getFailedLoginCount());
 		TestHttpServletRequest request = new TestHttpServletRequest();
@@ -387,7 +387,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testIsEnabled() throws AuthenticationException {
 		System.out.println("isEnabled");
-		User user = createTestUser("isEnabled");
+		DefaultUser user = createTestUser("isEnabled");
 		user.disable();
 		assertFalse(user.isEnabled());
 		user.enable();
@@ -404,7 +404,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testIsInRole() throws AuthenticationException {
 		System.out.println("isInRole");
-		User user = createTestUser("isInRole");
+		DefaultUser user = createTestUser("isInRole");
 		String role = "TestRole";
 		assertFalse(user.isInRole(role));
 		user.addRole(role);
@@ -420,7 +420,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testIsLocked() throws AuthenticationException {
 		System.out.println("isLocked");
-		User user = createTestUser("isLocked");
+		DefaultUser user = createTestUser("isLocked");
 		user.lock();
 		assertTrue(user.isLocked());
 		user.unlock();
@@ -437,9 +437,9 @@ public class UserTest extends TestCase {
 	public void testIsSessionAbsoluteTimeout() throws AuthenticationException {
 		// FIXME: ENHANCE shouldn't this just be one timeout method that does both checks???
 		System.out.println("isSessionAbsoluteTimeout");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		long now = System.currentTimeMillis();
 		// setup request and response
 		TestHttpServletRequest request = new TestHttpServletRequest();
@@ -465,9 +465,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testIsSessionTimeout() throws AuthenticationException {
 		System.out.println("isSessionTimeout");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		long now = System.currentTimeMillis();
 		// setup request and response
 		TestHttpServletRequest request = new TestHttpServletRequest();
@@ -492,9 +492,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testLock() throws AuthenticationException {
 		System.out.println("lock");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		user.lock();
 		assertTrue(user.isLocked());
 		user.unlock();
@@ -512,7 +512,7 @@ public class UserTest extends TestCase {
 		TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpSession session = (TestHttpSession) request.getSession();
 		assertFalse(session.getInvalidated());
-		User user = createTestUser("loginWithPassword");
+		DefaultUser user = createTestUser("loginWithPassword");
 		user.enable();
 		user.loginWithPassword("loginWithPassword");
 		assertTrue(user.isLoggedIn());
@@ -553,10 +553,10 @@ public class UserTest extends TestCase {
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		TestHttpSession session = (TestHttpSession) request.getSession();
 		assertFalse(session.getInvalidated());
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		user.enable();
 		System.out.println(user.getLastLoginTime());
 		user.loginWithPassword(oldPassword);
@@ -577,8 +577,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testRemoveRole() throws AuthenticationException {
 		System.out.println("removeRole");
-		String role = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_LOWERS);
-		User user = createTestUser("removeRole");
+		String role = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_LOWERS);
+		DefaultUser user = createTestUser("removeRole");
 		user.addRole(role);
 		assertTrue(user.isInRole(role));
 		user.removeRole(role);
@@ -593,7 +593,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testResetCSRFToken() throws AuthenticationException {
 		System.out.println("resetCSRFToken");
-		User user = createTestUser("resetCSRFToken");
+		DefaultUser user = createTestUser("resetCSRFToken");
         String token1 = user.resetCSRFToken();
         String token2 = user.resetCSRFToken();
         assertFalse( token1.equals( token2 ) );
@@ -604,8 +604,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testSetAccountName() throws AuthenticationException {
 		System.out.println("setAccountName");
-		User user = createTestUser("setAccountName");
-		String accountName = ESAPI.randomizer().getRandomString(7, Encoder.CHAR_ALPHANUMERICS);
+		DefaultUser user = createTestUser("setAccountName");
+		String accountName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
 		user.setAccountName(accountName);
 		assertEquals(accountName.toLowerCase(), user.getAccountName());
 		assertFalse("ridiculous".equals(user.getAccountName()));
@@ -616,8 +616,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testSetExpirationTime() throws Exception {
 		System.out.println("setAccountName");
-		String password=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		User user = createTestUser(password);
+		String password=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		DefaultUser user = createTestUser(password);
 		user.setExpirationTime(new Date(0));
 		assertTrue( user.isExpired() );
 	}
@@ -631,7 +631,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testSetRoles() throws AuthenticationException {
 		System.out.println("setRoles");
-		User user = createTestUser("setRoles");
+		DefaultUser user = createTestUser("setRoles");
 		user.addRole("user");
 		assertTrue(user.isInRole("user"));
 		Set set = new HashSet();
@@ -652,8 +652,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testSetScreenName() throws AuthenticationException {
 		System.out.println("setScreenName");
-		User user = createTestUser("setScreenName");
-		String screenName = ESAPI.randomizer().getRandomString(7, Encoder.CHAR_ALPHANUMERICS);
+		DefaultUser user = createTestUser("setScreenName");
+		String screenName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
 		user.setScreenName(screenName);
 		assertEquals(screenName, user.getScreenName());
 		assertFalse("ridiculous".equals(user.getScreenName()));
@@ -667,9 +667,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testUnlock() throws AuthenticationException {
 		System.out.println("unlockAccount");
-		IAuthenticator instance = ESAPI.authenticator();
+		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();
-		User user = createTestUser(oldPassword);
+		DefaultUser user = createTestUser(oldPassword);
 		user.lock();
 		assertTrue(user.isLocked());
 		user.unlock();

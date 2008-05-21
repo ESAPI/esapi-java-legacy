@@ -30,13 +30,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IHTTPUtilities;
-import org.owasp.esapi.ILogger;
-import org.owasp.esapi.reference.Logger;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.reference.JavaLogger;
 
 public class ESAPIFilter implements Filter {
 
-	private static final ILogger logger = ESAPI.getLogger("ESAPIFilter");
+	private static final Logger logger = ESAPI.getLogger("ESAPIFilter");
 
 	private static final String[] ignore = { "password" };
 
@@ -114,7 +114,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// check for CSRF attacks and set appropriate caching headers
-			IHTTPUtilities utils = ESAPI.httpUtilities();
+			HTTPUtilities utils = ESAPI.httpUtilities();
 			// utils.checkCSRFToken();
 			utils.setNoCacheHeaders();
             utils.safeSetContentType();
@@ -123,7 +123,7 @@ public class ESAPIFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error( Logger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
+			logger.error( JavaLogger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
 		} finally {
 			// VERY IMPORTANT

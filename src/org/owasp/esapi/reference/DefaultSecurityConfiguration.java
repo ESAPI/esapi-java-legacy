@@ -30,7 +30,7 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
-import org.owasp.esapi.ISecurityConfiguration;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.Threshold;
 
 /**
@@ -58,7 +58,7 @@ import org.owasp.esapi.Threshold;
 // characterSet.globalAllowedCharacterList=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890
 // characterSet.makeYourOwnName=
 // 
-public class SecurityConfiguration implements ISecurityConfiguration {
+public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /** The properties. */
     private Properties properties = new Properties();
@@ -127,7 +127,7 @@ public class SecurityConfiguration implements ISecurityConfiguration {
     /**
      * Instantiates a new configuration.
      */
-    public SecurityConfiguration() {
+    public DefaultSecurityConfiguration() {
         // FIXME : this should be reloaded periodically
         loadConfiguration();
     }

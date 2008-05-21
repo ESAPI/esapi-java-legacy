@@ -24,7 +24,7 @@ import java.util.HashMap;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncodingException;
-import org.owasp.esapi.ILogger;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.IntrusionException;
 
 import sun.misc.BASE64Decoder;
@@ -56,9 +56,9 @@ import sun.text.Normalizer;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IEncoder
+ * @see org.owasp.esapi.Encoder
  */
-public class Encoder implements org.owasp.esapi.IEncoder {
+public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	/** Encoding types */
 	public static final int NO_ENCODING = 0;
@@ -94,7 +94,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
 	/** The logger. */
-	private static final ILogger logger = ESAPI.getLogger("Encoder");
+	private static final Logger logger = ESAPI.getLogger("Encoder");
 
 	/** The Constant CHAR_LOWERS. */
 	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
@@ -109,10 +109,10 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
 
 	/** The Constant CHAR_LETTERS. */
-	public final static char[] CHAR_LETTERS = Randomizer.union(CHAR_LOWERS, CHAR_UPPERS);
+	public final static char[] CHAR_LETTERS = DefaultRandomizer.union(CHAR_LOWERS, CHAR_UPPERS);
 
 	/** The Constant CHAR_ALPHANUMERICS. */
-	public final static char[] CHAR_ALPHANUMERICS = Randomizer.union(CHAR_LETTERS, CHAR_DIGITS);
+	public final static char[] CHAR_ALPHANUMERICS = DefaultRandomizer.union(CHAR_LETTERS, CHAR_DIGITS);
 
 	// FIXME: ENHANCE make all character sets configurable
 	/**
@@ -124,31 +124,31 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 	final static char[] CHAR_PASSWORD_DIGITS = { '2', '3', '4', '5', '6', '7', '8', '9' };
 	final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
-	public final static char[] CHAR_PASSWORD_LETTERS = Randomizer.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
+	public final static char[] CHAR_PASSWORD_LETTERS = DefaultRandomizer.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
 
 	private static HashMap characterToEntityMap;
 
 	private static HashMap entityToCharacterMap;
 
-	public Encoder() {
-		Arrays.sort( Encoder.IMMUNE_HTML );
-		Arrays.sort( Encoder.IMMUNE_HTMLATTR );
-		Arrays.sort( Encoder.IMMUNE_JAVASCRIPT );
-		Arrays.sort( Encoder.IMMUNE_VBSCRIPT );
-		Arrays.sort( Encoder.IMMUNE_XML );
-		Arrays.sort( Encoder.IMMUNE_XMLATTR );
-		Arrays.sort( Encoder.IMMUNE_XPATH );
-		Arrays.sort( Encoder.CHAR_LOWERS );
-		Arrays.sort( Encoder.CHAR_UPPERS );
-		Arrays.sort( Encoder.CHAR_DIGITS );
-		Arrays.sort( Encoder.CHAR_SPECIALS );
-		Arrays.sort( Encoder.CHAR_LETTERS );
-		Arrays.sort( Encoder.CHAR_ALPHANUMERICS );
-		Arrays.sort( Encoder.CHAR_PASSWORD_LOWERS );
-		Arrays.sort( Encoder.CHAR_PASSWORD_UPPERS );
-		Arrays.sort( Encoder.CHAR_PASSWORD_DIGITS );
-		Arrays.sort( Encoder.CHAR_PASSWORD_SPECIALS );
-		Arrays.sort( Encoder.CHAR_PASSWORD_LETTERS );
+	public DefaultEncoder() {
+		Arrays.sort( DefaultEncoder.IMMUNE_HTML );
+		Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
+		Arrays.sort( DefaultEncoder.IMMUNE_JAVASCRIPT );
+		Arrays.sort( DefaultEncoder.IMMUNE_VBSCRIPT );
+		Arrays.sort( DefaultEncoder.IMMUNE_XML );
+		Arrays.sort( DefaultEncoder.IMMUNE_XMLATTR );
+		Arrays.sort( DefaultEncoder.IMMUNE_XPATH );
+		Arrays.sort( DefaultEncoder.CHAR_LOWERS );
+		Arrays.sort( DefaultEncoder.CHAR_UPPERS );
+		Arrays.sort( DefaultEncoder.CHAR_DIGITS );
+		Arrays.sort( DefaultEncoder.CHAR_SPECIALS );
+		Arrays.sort( DefaultEncoder.CHAR_LETTERS );
+		Arrays.sort( DefaultEncoder.CHAR_ALPHANUMERICS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LOWERS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_UPPERS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_DIGITS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_SPECIALS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
 		initializeMaps();
 	}
 
@@ -190,7 +190,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * by the browser, so this routine allows a single level of decoding.
 	 * 
 	 * @throws IntrusionException
-	 * @see org.owasp.esapi.IValidator#canonicalize(java.lang.String)
+	 * @see org.owasp.esapi.Validator#canonicalize(java.lang.String)
 	 */
 	public String canonicalize(String input) {
 		StringBuffer sb = new StringBuffer();
@@ -210,7 +210,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * characters are normalized into special characters that have meaning
 	 * to the destination of the data.
 	 * 
-	 * @see org.owasp.esapi.IValidator#normalize(java.lang.String)
+	 * @see org.owasp.esapi.Validator#normalize(java.lang.String)
 	 */
 	public String normalize(String input) {
 		// Split any special characters into two parts, the base character and
@@ -290,7 +290,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 		//  See the SGML declaration - http://www.w3.org/TR/html4/sgml/sgmldecl.html
 		//  See the XML specification - see http://www.w3.org/TR/REC-xml/#charsets
 		// The question is how to proceed - strip or throw an exception?
-		String encoded = entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_HTML);
+		String encoded = entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_HTML);
 		encoded = encoded.replaceAll("\r", "<BR>");
 		encoded = encoded.replaceAll("\n", "<BR>");
 		return encoded;
@@ -302,7 +302,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForHTMLAttribute(java.lang.String)
 	 */
 	public String encodeForHTMLAttribute(String input) {
-		return entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR);
+		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR);
 	}
 
 	/*
@@ -311,7 +311,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForJavaScript(java.lang.String)
 	 */
 	public String encodeForJavascript(String input) {
-		return entityEncode(input, Encoder.CHAR_ALPHANUMERICS, Encoder.IMMUNE_JAVASCRIPT);
+		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, DefaultEncoder.IMMUNE_JAVASCRIPT);
 	}
 
 	/*
@@ -320,7 +320,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForVisualBasicScript(java.lang.String)
 	 */
 	public String encodeForVBScript(String input) {
-		return entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT);
+		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT);
 	}
 
 	/**
@@ -337,7 +337,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @param input
 	 *            the input
 	 * @return the string
-	 * @see org.owasp.esapi.IEncoder#encodeForSQL(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForSQL(java.lang.String)
 	 */
 	public String encodeForSQL(String input) {
 		String canonical = canonicalize(input);
@@ -440,10 +440,10 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @param input
 	 *            the input
 	 * @return the string
-	 * @see org.owasp.esapi.IEncoder#encodeForXPath(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForXPath(java.lang.String)
 	 */
 	public String encodeForXPath(String input) {
-		return entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_XPATH);
+		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_XPATH);
 	}
 
 	/*
@@ -452,7 +452,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForXML(java.lang.String)
 	 */
 	public String encodeForXML(String input) {
-		return entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_XML);
+		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_XML);
 	}
 
 	/*
@@ -461,7 +461,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForXMLAttribute(java.lang.String)
 	 */
 	public String encodeForXMLAttribute(String input) {
-		return entityEncode(input, Encoder.CHAR_ALPHANUMERICS, IMMUNE_XMLATTR);
+		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_XMLATTR);
 	}
 
 	/*
@@ -1188,7 +1188,7 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 							return new EncodedCharacter("&#" + (char) c + ";", (char) c, ENTITY_ENCODING);
 						} catch (NumberFormatException e) {
 							// invalid character - return null
-							logger.warning(Logger.SECURITY, "Invalid numeric entity encoding &" + possible + ";");
+							logger.warning(JavaLogger.SECURITY, "Invalid numeric entity encoding &" + possible + ";");
 						}
 					}
 				}
@@ -1227,18 +1227,18 @@ public class Encoder implements org.owasp.esapi.IEncoder {
 
 		public String getEncoded(int encoding) {
 			switch (encoding) {
-			case Encoder.NO_ENCODING:
+			case DefaultEncoder.NO_ENCODING:
 				return "" + character;
-			case Encoder.URL_ENCODING:
+			case DefaultEncoder.URL_ENCODING:
 				// FIXME: look up rules
 				if (Character.isWhitespace(character))
 					return "+";
 				if (Character.isLetterOrDigit(character))
 					return "" + character;
 				return "%" + (int) character;
-			case Encoder.PERCENT_ENCODING:
+			case DefaultEncoder.PERCENT_ENCODING:
 				return "%" + (int) character;
-			case Encoder.ENTITY_ENCODING:
+			case DefaultEncoder.ENTITY_ENCODING:
 				String entityName = (String) characterToEntityMap.get(new Character(character));
 				if (entityName != null)
 					return "&" + entityName + ";";

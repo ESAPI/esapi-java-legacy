@@ -25,8 +25,8 @@ import java.util.List;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.ExecutorException;
-import org.owasp.esapi.ILogger;
-import org.owasp.esapi.IValidator;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.Validator;
 
 /**
  * Reference implementation of the Executor interface. This implementation is very restrictive. Commands must exactly
@@ -35,12 +35,12 @@ import org.owasp.esapi.IValidator;
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IExecutor
+ * @see org.owasp.esapi.Executor
  */
-public class Executor implements org.owasp.esapi.IExecutor {
+public class DefaultExecutor implements org.owasp.esapi.Executor {
 
     /** The logger. */
-    private static final ILogger logger = ESAPI.getLogger("Executor");
+    private static final Logger logger = ESAPI.getLogger("Executor");
     
     /**
      * TODO: Push to configuration? 
@@ -49,7 +49,7 @@ public class Executor implements org.owasp.esapi.IExecutor {
     private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
     
 
-    public Executor() {
+    public DefaultExecutor() {
     }
 
     /*
@@ -61,8 +61,8 @@ public class Executor implements org.owasp.esapi.IExecutor {
     public String executeSystemCommand(File executable, List params, File workdir, int timeoutSeconds) throws ExecutorException {
         BufferedReader br = null;
         try {
-            logger.trace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
-            IValidator validator = ESAPI.validator();
+            logger.trace(JavaLogger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            Validator validator = ESAPI.validator();
 
             // command must exactly match the canonical path and must actually exist on the file system
             if (!executable.getCanonicalPath().equals(executable.getPath())) {
@@ -109,7 +109,7 @@ public class Executor implements org.owasp.esapi.IExecutor {
             while ((line = br.readLine()) != null) {
                 sb.append(line + "\n");
             }
-            logger.trace(Logger.SECURITY, "System command successful: " + params);
+            logger.trace(JavaLogger.SECURITY, "System command successful: " + params);
             return sb.toString();
         } catch (Exception e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);

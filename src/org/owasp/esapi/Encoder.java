@@ -36,7 +36,7 @@ import java.io.IOException;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IEncoder {
+public interface Encoder {
 
 	/**
 	 * This method performs canonicalization on data received to ensure that it

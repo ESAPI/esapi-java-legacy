@@ -28,8 +28,8 @@ import java.util.Set;
 import org.owasp.esapi.AccessControlException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncodingException;
-import org.owasp.esapi.ILogger;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.User;
 import org.owasp.esapi.IntrusionException;
 
 /**
@@ -93,9 +93,9 @@ import org.owasp.esapi.IntrusionException;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @since June 1, 2007
- * @see org.owasp.esapi.IAccessController
+ * @see org.owasp.esapi.AccessController
  */
-public class AccessController implements org.owasp.esapi.IAccessController {
+public class FileBasedAccessController implements org.owasp.esapi.AccessController {
 
 	/** The url map. */
 	private Map urlMap = new HashMap();
@@ -116,9 +116,9 @@ public class AccessController implements org.owasp.esapi.IAccessController {
 	private Rule deny = new Rule();
 
 	/** The logger. */
-	private static ILogger logger = ESAPI.getLogger("AccessController");
+	private static Logger logger = ESAPI.getLogger("AccessController");
 
-	public AccessController() {
+	public FileBasedAccessController() {
 	}
 
     public boolean isAuthorizedForURL(String url) {
@@ -257,7 +257,7 @@ public class AccessController implements org.owasp.esapi.IAccessController {
 	 */
 	private boolean matchRule(Map map, String path) {
 		// get users roles
-		IUser user = ESAPI.authenticator().getCurrentUser();
+		User user = ESAPI.authenticator().getCurrentUser();
 		Set roles = user.getRoles();
 		// search for the first rule that matches the path and rules
 		Rule rule = searchForRule(map, roles, path);
@@ -287,7 +287,7 @@ public class AccessController implements org.owasp.esapi.IAccessController {
 		try {
 		    canonical = ESAPI.encoder().canonicalize(path);
 		} catch (EncodingException e) {
-		    logger.warning( Logger.SECURITY, "Failed to canonicalize input: " + path );
+		    logger.warning( JavaLogger.SECURITY, "Failed to canonicalize input: " + path );
 		}
 		
 		String part = canonical;
@@ -389,21 +389,21 @@ public class AccessController implements org.owasp.esapi.IAccessController {
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");
 					if (map.containsKey(rule.path)) {
-						logger.warning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+						logger.warning( JavaLogger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
 					} else {
 						map.put(rule.path, rule);
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.warning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
+			logger.warning( JavaLogger.SECURITY, "Problem in access control file : " + ruleset, e );
 		} finally {
 			try {
 				if (is != null) {
 					is.close();
 				}
 			} catch (IOException e) {
-				logger.warning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
+				logger.warning(JavaLogger.SECURITY, "Failure closing access control file : " + ruleset, e);
 			}
 		}
 		return map;

@@ -180,21 +180,21 @@ public class SafeFileTest extends TestCase {
 			assertTrue( sf.exists() );
 			
 			// test string constructor
-			SafeFile sf1 = new SafeFile(goodFile);
+			DefaultSafeFile sf1 = new DefaultSafeFile(goodFile);
 			assertTrue( sf1.exists() );
 			
 			// test string, string constructor
-			SafeFile sf2 = new SafeFile(ESAPI.securityConfiguration().getResourceDirectory(), "ESAPI.properties");
+			DefaultSafeFile sf2 = new DefaultSafeFile(ESAPI.securityConfiguration().getResourceDirectory(), "ESAPI.properties");
 			assertTrue( sf2.exists() );
 			
 			// test File, string constructor
-			SafeFile sf3 = new SafeFile(new File( ESAPI.securityConfiguration().getResourceDirectory() ), "ESAPI.properties");
+			DefaultSafeFile sf3 = new DefaultSafeFile(new File( ESAPI.securityConfiguration().getResourceDirectory() ), "ESAPI.properties");
 			assertTrue( sf3.exists() );
 			
 			// test URI constructor
 			String uri = "file:///" + ESAPI.securityConfiguration().getResourceDirectory().replaceAll("\\\\", "/") + "ESAPI.properties";
 			System.out.println( uri );
-			SafeFile sf4 = new SafeFile(new URI( uri ) );
+			DefaultSafeFile sf4 = new DefaultSafeFile(new URI( uri ) );
 			assertTrue( sf4.exists() );			
 			
 		} catch( Exception e ) {
@@ -204,7 +204,7 @@ public class SafeFileTest extends TestCase {
 		// test percent encoded null byte
 		try {
 			String pathWithPercentEncodedNullByte = "/temp/file%00.txt";
-			new SafeFile( pathWithPercentEncodedNullByte );
+			new DefaultSafeFile( pathWithPercentEncodedNullByte );
 			fail();
 		} catch (Exception e) {
 			// expected
@@ -213,7 +213,7 @@ public class SafeFileTest extends TestCase {
 		// test illegal characters
 		try {
 			String pathWithPercentEncodedNullByte = "/temp/file?.txt";
-			new SafeFile( pathWithPercentEncodedNullByte );
+			new DefaultSafeFile( pathWithPercentEncodedNullByte );
 			fail();
 		} catch (Exception e) {
 			// expected
@@ -222,7 +222,7 @@ public class SafeFileTest extends TestCase {
 		// test safe file exists
 		try {
 			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties";
-			File sf = new SafeFile(goodFile);
+			File sf = new DefaultSafeFile(goodFile);
 			assertTrue( sf.exists() );
 		} catch( ValidationException e ) {
 			// expected
@@ -230,7 +230,7 @@ public class SafeFileTest extends TestCase {
 		
 		// test null byte
 		try {
-			new SafeFile( pathWithNullByte );
+			new DefaultSafeFile( pathWithNullByte );
 			fail();
 		} catch (ValidationException e) {
 			// expected
@@ -239,7 +239,7 @@ public class SafeFileTest extends TestCase {
 		// test high byte
 		try {
 			String pathWithHighByte = "/temp/file.txt" + (char)160;
-			new SafeFile( pathWithHighByte );
+			new DefaultSafeFile( pathWithHighByte );
 			fail();
 		} catch (ValidationException e) {
 			// expected
@@ -250,28 +250,28 @@ public class SafeFileTest extends TestCase {
 	public void testCreateSafeFileParentConstructor() throws Exception {
 		System.out.println("SafeFile parent constructor");
 		try {
-			new SafeFile( new File( "/" ), pathWithNullByte );
+			new DefaultSafeFile( new File( "/" ), pathWithNullByte );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
 		
 		try {
-			new SafeFile( new File("/%00"), "test.txt" );
+			new DefaultSafeFile( new File("/%00"), "test.txt" );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
 		
 		try {
-			new SafeFile( new File("/\0"), "test.txt" );
+			new DefaultSafeFile( new File("/\0"), "test.txt" );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
 		
 		try {
-			new SafeFile( new File("/|test"), "test.txt" );
+			new DefaultSafeFile( new File("/|test"), "test.txt" );
 			fail();
 		} catch (ValidationException e) {
 			// expected
@@ -285,7 +285,7 @@ public class SafeFileTest extends TestCase {
 		System.out.println("SafeFile URI constructor");
 		try {
 			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties";
-			File sf = new SafeFile(new URI("file:///" + goodFile ));
+			File sf = new DefaultSafeFile(new URI("file:///" + goodFile ));
 			assertTrue( sf.exists() );
 		} catch (Exception e) {
 			// pass
@@ -293,7 +293,7 @@ public class SafeFileTest extends TestCase {
 	
 		// test uri constructor with null byte
 		try {
-			new SafeFile(new URI("file:///test" + (char)0 + ".xml"));
+			new DefaultSafeFile(new URI("file:///test" + (char)0 + ".xml"));
 			fail();
 		} catch (Exception e) {
 			// pass
@@ -301,7 +301,7 @@ public class SafeFileTest extends TestCase {
 				
 		// test http uri
 		try {
-			new SafeFile(new URI("http://localserver/test" + (char)0 + ".xml"));
+			new DefaultSafeFile(new URI("http://localserver/test" + (char)0 + ".xml"));
 			fail();
 		} catch (Exception e) {
 			// pass

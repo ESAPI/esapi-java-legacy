@@ -58,9 +58,9 @@ import org.owasp.validator.html.ScanException;
  * @author Jim Manico (jim.manico .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  *
  * @since June 1, 2007
- * @see org.owasp.esapi.IValidator
+ * @see org.owasp.esapi.Validator
  */
-public class Validator implements org.owasp.esapi.IValidator {
+public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	/** OWASP AntiSamy markup verification policy */
 	private Policy antiSamyPolicy = null;
@@ -70,7 +70,7 @@ public class Validator implements org.owasp.esapi.IValidator {
 	private static final int MAX_PARAMETER_NAME_LENGTH = 100;
 	private static final int MAX_PARAMETER_VALUE_LENGTH = 65535; //max length of MySQL "text" column type
 	
-	public Validator() {
+	public DefaultValidator() {
 	}
 
 	// FIXME: need to return 3 ways - safe input, safe input with message, ValidationException
@@ -132,7 +132,7 @@ public class Validator implements org.owasp.esapi.IValidator {
     		}
 
     		//TODO - let us know when its a ESAPI.properties config problem! This exception does not diffrentiate
-    		Pattern p = ((SecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
+    		Pattern p = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
     		if ( p == null ) {
     			try {
     				p = Pattern.compile( type );
@@ -308,7 +308,7 @@ public class Validator implements org.owasp.esapi.IValidator {
 	/**
 	 * Returns true if the directory path (not including a filename) is valid.
 	 * 
-	 * @see org.owasp.esapi.IValidator#isValidDirectoryPath(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidDirectoryPath(java.lang.String)
 	 */
 	public boolean isValidDirectoryPath(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
@@ -748,7 +748,7 @@ public class Validator implements org.owasp.esapi.IValidator {
 	 * Checks that all bytes are valid ASCII characters (between 33 and 126
 	 * inclusive). This implementation does no decoding. http://en.wikipedia.org/wiki/ASCII. (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.IValidator#isValidASCIIFileContent(byte[])
+	 * @see org.owasp.esapi.Validator#isValidASCIIFileContent(byte[])
 	 */
 	public boolean isValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {
@@ -842,7 +842,7 @@ public class Validator implements org.owasp.esapi.IValidator {
 	 * @return the string
 	 * @throws ValidationException
 	 *             the validation exception
-	 * @see org.owasp.esapi.IValidator#safeReadLine(java.io.InputStream,
+	 * @see org.owasp.esapi.Validator#safeReadLine(java.io.InputStream,
 	 *      int)
 	 */
 	public String safeReadLine(InputStream in, int max) throws ValidationException {
