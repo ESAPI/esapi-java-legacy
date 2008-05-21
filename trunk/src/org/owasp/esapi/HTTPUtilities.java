@@ -100,24 +100,24 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 	}
 
 
-	// FIXME: move this to User/Authenticator?
-	/**
-	 * Save the user's remember me token in a cookie. Old remember me cookies should be
-	 * destroyed first. Setting this cookie will keep the user logged in until the
-	 * Authenticator.logout method is called, which will destroy the cookie.
-	 */
-	public void enableRememberToken( int maxAge, String domain, String path ) {
-		IUser user = ESAPI.authenticator().getCurrentUser();
-		try {
-			killCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME);
-			String token = user.resetRememberToken();
-			safeAddCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME, token, maxAge, domain, path );
-			logger.info(Logger.SECURITY, "Enabled remember token for " + user.getAccountName() );
-		} catch( AuthenticationException e ) {
-			logger.warning(Logger.SECURITY, "Attempt to set remember token failed for " + user.getAccountName(), e );
-		}
-	}
-	
+//	// FIXME: move this to User/Authenticator?
+//	/**
+//	 * Save the user's remember me token in a cookie. Old remember me cookies should be
+//	 * destroyed first. Setting this cookie will keep the user logged in until the
+//	 * Authenticator.logout method is called, which will destroy the cookie.
+//	 */
+//	public void enableRememberToken( int maxAge, String domain, String path ) {
+//		IUser user = ESAPI.authenticator().getCurrentUser();
+//		try {
+//			killCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME);
+//			String token = user.resetRememberToken();
+//			safeAddCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME, token, maxAge, domain, path );
+//			logger.info(Logger.SECURITY, "Enabled remember token for " + user.getAccountName() );
+//		} catch( AuthenticationException e ) {
+//			logger.warning(Logger.SECURITY, "Attempt to set remember token failed for " + user.getAccountName(), e );
+//		}
+//	}
+//	
 	
 	/**
 	 * Checks the method of the current request. For example, any application logic that
@@ -527,7 +527,7 @@ public class HTTPUtilities implements org.owasp.esapi.interfaces.IHTTPUtilities 
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
-					logger.fatal(Logger.SECURITY, "File upload requested: " + filename);
+					logger.info(Logger.SECURITY, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
 					if (f.exists()) {
 						String[] parts = filename.split("\\/.");

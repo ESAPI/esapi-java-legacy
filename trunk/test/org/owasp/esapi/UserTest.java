@@ -71,6 +71,8 @@ public class UserTest extends TestCase {
 	 */
 	private User createTestUser(String password) throws AuthenticationException {
 		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+		Exception e = new Exception();
+		System.out.println("Creating user " + username + " for " + e.getStackTrace()[1].getMethodName());
 		User user = (User) ESAPI.authenticator().createUser(username, password, password);
 		return user;
 	}
@@ -133,15 +135,19 @@ public class UserTest extends TestCase {
 	public void testChangePassword() throws Exception {
 		System.out.println("changePassword");
 		IAuthenticator instance = ESAPI.authenticator();
-		String oldPassword = instance.generateStrongPassword();
+		String oldPassword = "Password12!@";
 		User user = createTestUser(oldPassword);
-		String password1 = instance.generateStrongPassword();
+		System.out.println("Hash of " + oldPassword + " = " + ((Authenticator)instance).getHashedPassword(user));
+		String password1 = "SomethingElse34#$";
 		user.changePassword(oldPassword, password1, password1);
+		System.out.println("Hash of " + password1 + " = " + ((Authenticator)instance).getHashedPassword(user));
 		assertTrue(user.verifyPassword(password1));
-		String password2 = instance.generateStrongPassword();
+		String password2 = "YetAnother56%^";
 		user.changePassword(password1, password2, password2);
+		System.out.println("Hash of " + password2 + " = " + ((Authenticator)instance).getHashedPassword(user));
 		try {
 			user.changePassword(password2, password1, password1);
+			fail("Shouldn't be able to reuse a password");
 		} catch( AuthenticationException e ) {
 			// expected
 		}
@@ -183,21 +189,6 @@ public class UserTest extends TestCase {
 		assertFalse(user.isEnabled());
 	}
 
-	/**
-	 * Test equals.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	public void testEquals() throws AuthenticationException {
-		IAuthenticator instance = ESAPI.authenticator();
-		String password = instance.generateStrongPassword();
-		User a = new User("userA",password,password);
-		User b = new User("userA","differentPass","differentPass");
-		a.enable();
-		assertTrue(a.equals(b));
-	}
-	
 	/**
 	 * Test of failedLoginCount lockout, of class org.owasp.esapi.User.
 	 * 
@@ -271,7 +262,7 @@ public class UserTest extends TestCase {
     		// expected
     	}
 		Date llt1 = user.getLastFailedLoginTime();
-		Thread.sleep(10); // need a short delay to separate attempts
+		Thread.sleep(100); // need a short delay to separate attempts
 		try {
     		user.loginWithPassword("ridiculous");
 		} catch( AuthenticationException e ) { 
@@ -606,21 +597,6 @@ public class UserTest extends TestCase {
         String token2 = user.resetCSRFToken();
         assertFalse( token1.equals( token2 ) );
 	}
-	
-	/**
-	 * Test reset password.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	public void testResetPassword() throws AuthenticationException, EncryptionException {
-		System.out.println("resetPassword");
-		User user = createTestUser("resetPassword");
-        for ( int i = 0; i<20; i++) {
-            assertTrue(user.verifyPassword(user.resetPassword()));
-        }
-	}
-
 	
 	/**
 	 * Test of setAccountName method, of class org.owasp.esapi.User.

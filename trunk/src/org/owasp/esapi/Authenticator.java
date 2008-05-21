@@ -21,12 +21,16 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -124,25 +128,67 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         String role = args[2];
         User user = (User) auth.getUser(args[0]);
         if (user == null) {
-            user = new User();
-            user.setAccountName(accountName);
+            user = new User(accountName);
+    		String newHash = auth.hashPassword(password, accountName);
+    		auth.setHashedPassword(user, newHash);
+            user.addRole(role);
+            user.enable();
+            user.unlock();
             auth.userMap.put(accountName, user);
-            logger.fatal(Logger.SECURITY, "New user created: " + accountName);
+            logger.info(Logger.SECURITY, "New user created: " + accountName);
+            auth.saveUsers();
+            System.out.println("User account " + user.getAccountName() + " updated");
+        } else {
+        	System.err.println("User account " + user.getAccountName() + " already exists!");
         }
-		String newHash = auth.hashPassword(password, accountName);
-		user.setHashedPassword(newHash);
-        user.addRole(role);
-        user.enable();
-        user.unlock();
-        auth.saveUsers();
-        System.out.println("User account " + user.getAccountName() + " updated");
     }
 
+    private void setHashedPassword(IUser user, String hash) {
+    	List hashes = getAllHashedPasswords(user, true);
+		hashes.add( 0, hash);
+		if (hashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes() ) 
+			hashes.remove( hashes.size() - 1 );
+		logger.info(Logger.SECURITY, "New hashed password stored for " + user.getAccountName() );
+    }
+    
+    String getHashedPassword(IUser user) {
+    	List hashes = getAllHashedPasswords(user, false);
+    	return (String) hashes.get(0);
+    }
+    
+    void setOldPasswordHashes(IUser user, List oldHashes) {
+    	List hashes = getAllHashedPasswords(user, true);
+    	if (hashes.size() > 1)
+    		hashes.removeAll(hashes.subList(1, hashes.size()-1));
+    	hashes.addAll(oldHashes);
+    }
+    
+    List getAllHashedPasswords(IUser user, boolean create) {
+    	List hashes = (List) passwordMap.get(user);
+    	if (hashes != null)
+    		return hashes;
+    	if (create) {
+    		hashes = new ArrayList();
+    		passwordMap.put(user, hashes);
+    		return hashes;
+    	}
+    	throw new RuntimeException("No hashes found for " + user.getAccountName() + ". Is User.hashcode() and equals() implemented correctly?");
+    }
+    
+    List getOldPasswordHashes(IUser user) {
+    	List hashes = getAllHashedPasswords(user, false);
+    	if (hashes.size() > 1)
+    		return Collections.unmodifiableList(hashes.subList(1, hashes.size()-1));
+    	return Collections.EMPTY_LIST;
+    }
+    
     // FIXME: ENHANCE consider an impersonation feature
     
     /** The user map. */
     private Map userMap = new HashMap();
 
+    // Map<User, List<String>>, where the strings are password hashes, with the current hash in entry 0
+    private Map passwordMap = new Hashtable();
     
     /*
      * The currentUser ThreadLocal variable is used to make the currentUser available to any call in any part of an
@@ -194,9 +240,24 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         if (userMap.containsKey(accountName.toLowerCase())) {
             throw new AuthenticationAccountsException("Account creation failed", "Duplicate user creation denied for " + accountName);
         }
-        User user = new User(accountName, password1, password2);
+        
+		verifyAccountNameStrength(accountName);
+
+		if ( password1 == null ) {
+			throw new AuthenticationCredentialsException( "Invalid account name", "Attempt to create account " + accountName + " with a null password" );
+		}
+		verifyPasswordStrength(null, password1);
+		
+		if (!password1.equals(password2)) throw new AuthenticationCredentialsException("Passwords do not match", "Passwords for " + accountName + " do not match");
+
+        User user = new User(accountName);
+		try {
+		    setHashedPassword( user, hashPassword(password1, accountName) );
+		} catch (EncryptionException ee) {
+		    throw new AuthenticationException("Internal error", "Error hashing password for " + accountName, ee);
+		}
         userMap.put(accountName.toLowerCase(), user);
-        logger.fatal(Logger.SECURITY, "New user created: " + accountName);
+        logger.info(Logger.SECURITY, "New user created: " + accountName);
         saveUsers();
         return user;
     }
@@ -229,8 +290,59 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
         String newPassword = passLetters + passSpecial + passDigits;
         return newPassword;
     }
+
+    /* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.IAuthenticator#changePassword(org.owasp.esapi.interfaces.IUser, java.lang.String, java.lang.String, java.lang.String)
+     */
+    public void changePassword(IUser user, String currentPassword,
+            String newPassword, String newPassword2)
+            throws AuthenticationException {
+    	String accountName = user.getAccountName();
+    	try {
+        	String currentHash = getHashedPassword(user);
+        	String verifyHash = hashPassword(currentPassword, accountName);
+    		if (!currentHash.equals(verifyHash)) {
+    			throw new AuthenticationCredentialsException("Password change failed", "Authentication failed for password change on user: " + accountName );
+    		}
+    		if (newPassword == null || newPassword2 == null || !newPassword.equals(newPassword2)) {
+    			throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + accountName );
+    		}
+    		verifyPasswordStrength(currentPassword, newPassword);
+    		((User)user).setLastPasswordChangeTime(new Date());
+    		String newHash = hashPassword(newPassword, accountName);
+    		if (getOldPasswordHashes(user).contains(newHash)) {
+    			throw new AuthenticationCredentialsException( "Password change failed", "Password change matches a recent password for user: " + accountName );
+    		}
+    		setHashedPassword(user, newHash);
+    		logger.info(Logger.SECURITY, "Password changed for user: " + accountName );
+    	} catch (EncryptionException ee) {
+    		throw new AuthenticationException("Password change failed", "Encryption exception changing password for " + accountName, ee);
+    	}
+    }
+
     
-    /*
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.interfaces.IAuthenticator#verifyPassword(org.owasp.esapi.interfaces.IUser, java.lang.String)
+     */
+    public boolean verifyPassword(IUser user, String password) {
+		String accountName = user.getAccountName();
+		try {
+			String hash = hashPassword(password, accountName);
+			String currentHash = getHashedPassword(user);
+			if (hash.equals(currentHash)) {
+				((User)user).setLastLoginTime(new Date());
+				((User)user).setFailedLoginCount(0);
+				logger.info(Logger.SECURITY, "Password verified for " + accountName );
+				return true;
+			}
+		} catch( EncryptionException e ) {
+			logger.fatal(Logger.SECURITY, "Encryption error verifying password for " + accountName );
+		}
+		logger.fatal(Logger.SECURITY, "Password verification failed for " + accountName );
+		return false;
+    }
+
+	/*
      * (non-Javadoc)
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#generateStrongPassword(int, char[])
@@ -238,7 +350,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     public String generateStrongPassword(String oldPassword, IUser user) {
         String newPassword = generateStrongPassword(oldPassword);
         if (newPassword != null)
-            logger.fatal(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
+            logger.info(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
         return newPassword;
     }
 
@@ -310,7 +422,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 			return null;
 		}
 		
-		if ( !user.getHashedPassword().equals( tokenHashedPassword )) {
+		if ( !getHashedPassword(user).equals( tokenHashedPassword )) {
 			logger.warning( Logger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
 			return null;
 		}
@@ -409,18 +521,18 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     }
 
 	private User createUser(String line) throws AuthenticationException {
-		String[] parts = line.split("\\|");
-		User user = new User();
-		user.setAccountName(parts[0].trim().toLowerCase());
+		String[] parts = line.split(" *\\| *");
+		User user = new User(parts[0]);
 		// FIXME: AAA validate account name
-		user.setHashedPassword(parts[1].trim());
+		setHashedPassword(user, parts[1]);
         
-		String[] roles = parts[2].trim().toLowerCase().split(" *, *");
+		String[] roles = parts[2].toLowerCase().split(" *, *");
 		for (int i=0; i<roles.length; i++) 
-			user.addRole(roles[i]);
-		if (!"unlocked".equalsIgnoreCase(parts[3].trim()))
+			if (!"".equals(roles[i]))
+					user.addRole(roles[i]);
+		if (!"unlocked".equalsIgnoreCase(parts[3]))
 			user.lock();
-		if ("enabled".equalsIgnoreCase(parts[4].trim())) {
+		if ("enabled".equalsIgnoreCase(parts[4])) {
 			user.enable();
 		} else {
 			user.disable();
@@ -432,13 +544,13 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 		// generate a new csrf token
         user.resetCSRFToken();
         
-        user.setOldPasswordHashes(Arrays.asList(parts[6].trim().split(" *, *")));
-        user.setLastHostAddress(parts[7].trim());
-        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[8].trim())));
-		user.setLastLoginTime(new Date( Long.parseLong(parts[9].trim())));
-		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[10].trim())));
-		user.setExpirationTime(new Date( Long.parseLong(parts[11].trim())));
-		user.setFailedLoginCount(Integer.parseInt(parts[12].trim()));
+        setOldPasswordHashes(user, Arrays.asList(parts[6].split(" *, *")));
+        user.setLastHostAddress("null".equals(parts[7]) ? null : parts[7]);
+        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[8])));
+		user.setLastLoginTime(new Date( Long.parseLong(parts[9])));
+		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[10])));
+		user.setExpirationTime(new Date( Long.parseLong(parts[11])));
+		user.setFailedLoginCount(Integer.parseInt(parts[12]));
 		return user;
 	}
 	
@@ -498,6 +610,8 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
         userMap.remove(accountName.toLowerCase());
+        System.out.println("Removing user " +user.getAccountName());
+        passwordMap.remove(user.getAccountName());
         saveUsers();
     }
 
@@ -516,7 +630,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
             writer.println();
             saveUsers(writer);
             writer.flush();
-            logger.fatal(Logger.SECURITY, "User file written to disk" );
+            logger.info(Logger.SECURITY, "User file written to disk" );
         } catch (IOException e) {
             logger.fatal(Logger.SECURITY, "Problem saving user file " + userDB.getAbsolutePath(), e );
             throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
@@ -557,7 +671,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 		StringBuffer sb = new StringBuffer();
 		sb.append( user.getAccountName() );
 		sb.append( " | " );
-		sb.append( user.getHashedPassword() );
+		sb.append( getHashedPassword(user) );
 		sb.append( " | " );
 		sb.append( dump(user.getRoles()) );
 		sb.append( " | " );
@@ -567,7 +681,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
 		sb.append( " | " );
 		sb.append( user.getRememberToken() );
 		sb.append( " | " );
-		sb.append( dump(user.getOldPasswordHashes()) );
+		sb.append( dump(getOldPasswordHashes(user)) );
         sb.append( " | " );
         sb.append( user.getLastHostAddress() );
         sb.append( " | " );
@@ -736,7 +850,7 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#verifyPasswordStrength(java.lang.String)
      */
-    public void verifyPasswordStrength(String newPassword, String oldPassword) throws AuthenticationException {
+    public void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException {
         String oPassword = (oldPassword == null) ? "" : oldPassword;
 
         // can't change to a password that contains any 3 character substring of old password

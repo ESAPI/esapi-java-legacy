@@ -83,6 +83,16 @@ public interface IAuthenticator {
 	 */
 	IUser login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;
 
+	/**
+	 * Verify that the supplied password matches the password for this user. This method
+	 * is typically used for "reauthentication" for the most sensitive functions, such
+	 * as transactions, changing email address, and changing other account information.
+	 * 
+	 * @param user the user
+	 * @param password the password
+	 * @return
+	 */
+	boolean verifyPassword(IUser user, String password);
 	
 	/**
 	 * Logs out the current user.
@@ -125,6 +135,19 @@ public interface IAuthenticator {
 	 */
 	String generateStrongPassword(String oldPassword, IUser user);
 
+	/**
+	 * Changes the password for the specified user. This requires the current password, as well as 
+	 * the password to replace it with. This new password must be repeated to ensure that the user has
+	 * typed it in correctly.
+	 * 
+	 * @param user the user to change the password for
+	 * @param currentPassword the current password for the specified user
+	 * @param newPassword the new password to use
+	 * @param newPassword2 a verification copy of the new password
+	 * @throws AuthenticationException if any errors occur
+	 */
+	void changePassword(IUser user, String currentPassword, String newPassword, String newPassword2) throws AuthenticationException;
+	
 	/**
 	 * Returns the User matching the provided accountName.
 	 * 
