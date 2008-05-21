@@ -179,7 +179,6 @@ public class Authenticator implements org.owasp.esapi.interfaces.IAuthenticator 
     public void clearCurrent() {
     	// logger.logWarning(Logger.SECURITY, "************Clearing threadlocals. Thread" + Thread.currentThread().getName() );
     	currentUser.setUser(null);
-    	ESAPI.httpUtilities().setCurrentHTTP(null, null);
     }
     
     /*
