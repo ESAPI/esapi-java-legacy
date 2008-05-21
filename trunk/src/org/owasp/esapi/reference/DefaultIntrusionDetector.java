@@ -24,10 +24,10 @@ import java.util.WeakHashMap;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EnterpriseSecurityException;
+import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
-import org.owasp.esapi.IntrusionException;
-import org.owasp.esapi.Threshold;
+import org.owasp.esapi.SecurityConfiguration.Threshold;
 
 /**
  * Reference implementation of the IIntrusionDetector interface. This

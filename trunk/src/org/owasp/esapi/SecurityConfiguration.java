@@ -167,4 +167,17 @@ public interface SecurityConfiguration {
 	 */
 	public void setResourceDirectory(String dir);
 
+	public static class Threshold {
+		public String name = null;
+		public int count = 0;
+		public long interval = 0;
+		public List actions = null;
+
+		public Threshold(String name, int count, long interval, List actions) {
+			this.name = name;
+			this.count = count;
+			this.interval = interval;
+			this.actions = actions;
+		}
+	}
 }
