@@ -21,14 +21,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Encoder;
-import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.IAuthenticator;
+import org.owasp.esapi.IUser;
 import org.owasp.esapi.http.TestFilterChain;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
-import org.owasp.esapi.interfaces.IAuthenticator;
-import org.owasp.esapi.interfaces.IUser;
+import org.owasp.esapi.reference.Encoder;
 
 /**
  * The Class AccessReferenceMapTest.

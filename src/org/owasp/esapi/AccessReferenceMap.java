@@ -20,8 +20,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.interfaces.IRandomizer;
+import org.owasp.esapi.reference.Encoder;
 
 /**
  * Reference implementation of the IAccessReferenceMap interface. This
@@ -33,9 +32,9 @@ import org.owasp.esapi.interfaces.IRandomizer;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @since June 1, 2007
- * @see org.owasp.esapi.interfaces.IAccessReferenceMap
+ * @see org.owasp.esapi.IAccessReferenceMap
  */
-public class AccessReferenceMap implements org.owasp.esapi.interfaces.IAccessReferenceMap {
+public class AccessReferenceMap implements org.owasp.esapi.IAccessReferenceMap {
 
 	// FIXME: Create an encrypted implementation of AccessReferenceMap that has NO STATE
 	

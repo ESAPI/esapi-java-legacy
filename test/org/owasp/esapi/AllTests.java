@@ -86,24 +86,24 @@ public class AllTests extends TestCase {
         }
         
         TestSuite suite = new TestSuite("AllTests");
-        suite.addTest(org.owasp.esapi.LoggerTest.suite());
-        suite.addTest(org.owasp.esapi.SafeFileTest.suite());
-        suite.addTest(org.owasp.esapi.UserTest.suite());
+        suite.addTest(org.owasp.esapi.reference.LoggerTest.suite());
+        suite.addTest(org.owasp.esapi.reference.SafeFileTest.suite());
+        suite.addTest(org.owasp.esapi.reference.UserTest.suite());
         suite.addTest(org.owasp.esapi.ESAPITest.suite());
-        suite.addTest(org.owasp.esapi.RandomizerTest.suite());
-        suite.addTest(org.owasp.esapi.AccessControllerTest.suite());
-        suite.addTest(org.owasp.esapi.HTTPUtilitiesTest.suite());
-        suite.addTest(org.owasp.esapi.ValidatorTest.suite());
-        suite.addTest(org.owasp.esapi.EncryptorTest.suite());
-        suite.addTest(org.owasp.esapi.IntrusionDetectorTest.suite());
+        suite.addTest(org.owasp.esapi.reference.RandomizerTest.suite());
+        suite.addTest(org.owasp.esapi.reference.AccessControllerTest.suite());
+        suite.addTest(org.owasp.esapi.reference.HTTPUtilitiesTest.suite());
+        suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite());
+        suite.addTest(org.owasp.esapi.reference.EncryptorTest.suite());
+        suite.addTest(org.owasp.esapi.reference.IntrusionDetectorTest.suite());
         suite.addTest(org.owasp.esapi.AccessReferenceMapTest.suite());
-        suite.addTest(org.owasp.esapi.ExecutorTest.suite());
-        suite.addTest(org.owasp.esapi.EncoderTest.suite());
-        suite.addTest(org.owasp.esapi.EncryptedPropertiesTest.suite());
-        suite.addTest(org.owasp.esapi.AuthenticatorTest.suite());
+        suite.addTest(org.owasp.esapi.reference.ExecutorTest.suite());
+        suite.addTest(org.owasp.esapi.reference.EncoderTest.suite());
+        suite.addTest(org.owasp.esapi.reference.EncryptedPropertiesTest.suite());
+        suite.addTest(org.owasp.esapi.reference.AuthenticatorTest.suite());
 
         // exceptions
-        suite.addTest(org.owasp.esapi.errors.EnterpriseSecurityExceptionTest.suite());
+        suite.addTest(org.owasp.esapi.EnterpriseSecurityExceptionTest.suite());
         
         // filters
         suite.addTest(org.owasp.esapi.filters.ESAPIFilterTest.suite());

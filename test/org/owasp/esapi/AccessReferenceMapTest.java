@@ -23,11 +23,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.interfaces.IAuthenticator;
-import org.owasp.esapi.interfaces.IUser;
 
 /**
  * The Class AccessReferenceMapTest.
