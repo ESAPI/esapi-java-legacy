@@ -73,9 +73,9 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
-            logger.warning( JavaLogger.SECURITY, ((EnterpriseSecurityException)e).getLogMessage(), e );
+            logger.warning( Logger.SECURITY, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
-            logger.warning( JavaLogger.SECURITY, e.getMessage(), e );
+            logger.warning( Logger.SECURITY, e.getMessage(), e );
         }
 
         // add the exception to the current user, which may trigger a detector 
@@ -108,7 +108,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * @throws IntrusionException the intrusion exception
      */
     public void addEvent(String eventName) throws IntrusionException {
-        logger.warning( JavaLogger.SECURITY, "Security event " + eventName + " received" );
+        logger.warning( Logger.SECURITY, "Security event " + eventName + " received" );
 
         // add the event to the current user, which may trigger a detector 
         User user = ESAPI.authenticator().getCurrentUser();
@@ -131,7 +131,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
     private void takeSecurityAction( String action, String message ) {
         if ( action.equals( "log" ) ) {
-            logger.fatal( JavaLogger.SECURITY, "INTRUSION - " + message );
+            logger.fatal( Logger.SECURITY, "INTRUSION - " + message );
         }
         User user = ESAPI.authenticator().getCurrentUser();
         if (user == User.ANONYMOUS)

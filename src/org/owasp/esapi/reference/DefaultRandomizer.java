@@ -128,7 +128,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         try {
             array = ESAPI.encoder().decodeFromBase64(hash);
         } catch (IOException e) {
-            logger.fatal(JavaLogger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
+            logger.fatal(Logger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
         }
         
         // convert to printable hexadecimal characters 

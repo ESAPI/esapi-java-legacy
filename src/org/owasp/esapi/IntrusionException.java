@@ -15,8 +15,6 @@
  */
 package org.owasp.esapi;
 
-import org.owasp.esapi.reference.JavaLogger;
-
 /**
  * An IntrusionException should be thrown anytime an error condition arises that is likely to be the result of an attack
  * in progress. IntrusionExceptions are handled specially by the IntrusionDetector, which is equipped to respond by
@@ -54,7 +52,7 @@ public class IntrusionException extends RuntimeException {
     public IntrusionException(String userMessage, String logMessage) {
         super(userMessage);
         this.logMessage = logMessage;
-        logger.error(JavaLogger.SECURITY, "INTRUSION - " + logMessage);
+        logger.error(Logger.SECURITY, "INTRUSION - " + logMessage);
     }
 
     /**
@@ -66,7 +64,7 @@ public class IntrusionException extends RuntimeException {
     public IntrusionException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
-        logger.error(JavaLogger.SECURITY, "INTRUSION - " + logMessage, cause);
+        logger.error(Logger.SECURITY, "INTRUSION - " + logMessage, cause);
     }
 
     public String getUserMessage() {

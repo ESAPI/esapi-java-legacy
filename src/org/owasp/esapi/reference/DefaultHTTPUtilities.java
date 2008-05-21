@@ -166,7 +166,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			getCurrentResponse().addHeader("Set-Cookie", header);
 			
 		} catch( ValidationException e ) {
-			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid cookie denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid cookie denied", e);
 		}
 	}
 	
@@ -186,7 +186,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", value, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().addHeader(headerName, headerValue);
 		} catch( ValidationException e ) {
-			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid header denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
 		}
 	}
 
@@ -229,7 +229,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			getCurrentResponse().setDateHeader(safeName, date);
 		} catch (ValidationException e) {
-			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid date header name denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid date header name denied", e);
 		}
 	}
 
@@ -238,7 +238,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			getCurrentResponse().setIntHeader(safeName, value);
 		} catch (ValidationException e) {
-			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid int header name denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid int header name denied", e);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", value, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().setHeader(safeName, safeValue);
 		} catch (ValidationException e) {
-			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid header denied", e);
+			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
 		}
 	}
 	
@@ -462,7 +462,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	    		sb.append( name + "=" + value );
 	    		if ( i.hasNext() ) sb.append( "&" );
     		} catch( EncodingException e ) {
-    			logger.error(JavaLogger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
+    			logger.error(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
     	// FIXME: AAA - add a check to see if cookie length will exceed 2K limit
@@ -528,7 +528,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
-					logger.info(JavaLogger.SECURITY, "File upload requested: " + filename);
+					logger.info(Logger.SECURITY, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
 					if (f.exists()) {
 						String[] parts = filename.split("\\/.");
@@ -543,7 +543,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 					newFiles.add( f );
 					// delete temporary file
 					item.delete();
-					logger.fatal(JavaLogger.SECURITY, "File successfully uploaded: " + f);
+					logger.fatal(Logger.SECURITY, "File successfully uploaded: " + f);
 					session.setAttribute("progress", Long.toString(0));
 				}
 			}
@@ -643,7 +643,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public void safeSendRedirect(String context, String location) throws IOException {
 		if (!ESAPI.validator().isValidRedirectLocation(context, location, false)) {
-			logger.fatal(JavaLogger.SECURITY, "Bad redirect location: " + location );
+			logger.fatal(Logger.SECURITY, "Bad redirect location: " + location );
 			throw new IOException("Redirect failed");
 		}
 		getCurrentResponse().sendRedirect(location);
@@ -792,7 +792,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
                 }
         }
         String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
-        logger.info(JavaLogger.SECURITY, msg);
+        logger.info(Logger.SECURITY, msg);
     }
 
 }

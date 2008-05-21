@@ -136,7 +136,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             user.enable();
             user.unlock();
             auth.userMap.put(accountName, user);
-            logger.info(JavaLogger.SECURITY, "New user created: " + accountName);
+            logger.info(Logger.SECURITY, "New user created: " + accountName);
             auth.saveUsers();
             System.out.println("User account " + user.getAccountName() + " updated");
         } else {
@@ -149,7 +149,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		hashes.add( 0, hash);
 		if (hashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes() ) 
 			hashes.remove( hashes.size() - 1 );
-		logger.info(JavaLogger.SECURITY, "New hashed password stored for " + user.getAccountName() );
+		logger.info(Logger.SECURITY, "New hashed password stored for " + user.getAccountName() );
     }
     
     String getHashedPassword(User user) {
@@ -258,7 +258,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		    throw new AuthenticationException("Internal error", "Error hashing password for " + accountName, ee);
 		}
         userMap.put(accountName.toLowerCase(), user);
-        logger.info(JavaLogger.SECURITY, "New user created: " + accountName);
+        logger.info(Logger.SECURITY, "New user created: " + accountName);
         saveUsers();
         return user;
     }
@@ -315,7 +315,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     			throw new AuthenticationCredentialsException( "Password change failed", "Password change matches a recent password for user: " + accountName );
     		}
     		setHashedPassword(user, newHash);
-    		logger.info(JavaLogger.SECURITY, "Password changed for user: " + accountName );
+    		logger.info(Logger.SECURITY, "Password changed for user: " + accountName );
     	} catch (EncryptionException ee) {
     		throw new AuthenticationException("Password change failed", "Encryption exception changing password for " + accountName, ee);
     	}
@@ -333,13 +333,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 			if (hash.equals(currentHash)) {
 				((DefaultUser)user).setLastLoginTime(new Date());
 				((DefaultUser)user).setFailedLoginCount(0);
-				logger.info(JavaLogger.SECURITY, "Password verified for " + accountName );
+				logger.info(Logger.SECURITY, "Password verified for " + accountName );
 				return true;
 			}
 		} catch( EncryptionException e ) {
-			logger.fatal(JavaLogger.SECURITY, "Encryption error verifying password for " + accountName );
+			logger.fatal(Logger.SECURITY, "Encryption error verifying password for " + accountName );
 		}
-		logger.fatal(JavaLogger.SECURITY, "Password verification failed for " + accountName );
+		logger.fatal(Logger.SECURITY, "Password verification failed for " + accountName );
 		return false;
     }
 
@@ -351,7 +351,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     public String generateStrongPassword(String oldPassword, User user) {
         String newPassword = generateStrongPassword(oldPassword);
         if (newPassword != null)
-            logger.info(JavaLogger.SECURITY, "Generated strong password for " + user.getAccountName());
+            logger.info(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
         return newPassword;
     }
 
@@ -411,7 +411,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		try {
 			data = ESAPI.encryptor().unseal( token ).split( "\\|" );
 		} catch (EncryptionException e) {			
-	    	logger.warning(JavaLogger.SECURITY, "Found corrupt or expired remember token" );
+	    	logger.warning(Logger.SECURITY, "Found corrupt or expired remember token" );
 	    	return null;
     	}
 
@@ -419,16 +419,16 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		String tokenHashedPassword = data[1];
     	DefaultUser user = (DefaultUser) getUser( tokenAccount );
 		if ( user == null ) {
-			logger.warning( JavaLogger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
+			logger.warning( Logger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
 			return null;
 		}
 		
 		if ( !getHashedPassword(user).equals( tokenHashedPassword )) {
-			logger.warning( JavaLogger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
+			logger.warning( Logger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
 			return null;
 		}
 
-		logger.warning( JavaLogger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
+		logger.warning( Logger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
 		return user;
     }
 
@@ -488,7 +488,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     // file was touched so reload it
     protected void loadUsersImmediately() {
     	synchronized( this ) {
-	        logger.trace(JavaLogger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
+	        logger.trace(Logger.SECURITY, "Loading users from " + userDB.getAbsolutePath(), null);
 	
 	        BufferedReader reader = null;
 	        try {
@@ -499,23 +499,23 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	                if (line.length() > 0 && line.charAt(0) != '#') {
 	                    DefaultUser user = createUser(line);
                         if (map.containsKey(user.getAccountName())) {
-                            logger.fatal(JavaLogger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
+                            logger.fatal(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
                         }
                         map.put(user.getAccountName(), user);
                     }
 	            }
                 userMap = map;
                 this.lastModified = System.currentTimeMillis();
-                logger.trace(JavaLogger.SECURITY, "User file reloaded: " + map.size(), null);
+                logger.trace(Logger.SECURITY, "User file reloaded: " + map.size(), null);
 	        } catch (Exception e) {
-	            logger.fatal(JavaLogger.SECURITY, "Failure loading user file: " + userDB.getAbsolutePath(), e);
+	            logger.fatal(Logger.SECURITY, "Failure loading user file: " + userDB.getAbsolutePath(), e);
 	        } finally {
 	            try {
 	                if (reader != null) {
 	                    reader.close();
 	                }
 	            } catch (IOException e) {
-	                logger.fatal(JavaLogger.SECURITY, "Failure closing user file: " + userDB.getAbsolutePath(), e);
+	                logger.fatal(Logger.SECURITY, "Failure closing user file: " + userDB.getAbsolutePath(), e);
 	            }
 	        }
     	}
@@ -579,7 +579,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         // if a logged-in user is requesting to login, log them out first
         User user = getCurrentUser();
         if (user != null && !user.isAnonymous()) {
-            logger.warning(JavaLogger.SECURITY, "User requested relogin. Performing logout then authentication" );
+            logger.warning(Logger.SECURITY, "User requested relogin. Performing logout then authentication" );
             user.logout();
         }
 
@@ -631,9 +631,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             writer.println();
             saveUsers(writer);
             writer.flush();
-            logger.info(JavaLogger.SECURITY, "User file written to disk" );
+            logger.info(Logger.SECURITY, "User file written to disk" );
         } catch (IOException e) {
-            logger.fatal(JavaLogger.SECURITY, "Problem saving user file " + userDB.getAbsolutePath(), e );
+            logger.fatal(Logger.SECURITY, "Problem saving user file " + userDB.getAbsolutePath(), e );
             throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
         } finally {
             if (writer != null) {
