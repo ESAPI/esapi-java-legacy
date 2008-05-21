@@ -32,7 +32,6 @@ import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.reference.JavaLogger;
 
 public class ESAPIFilter implements Filter {
 
@@ -123,7 +122,7 @@ public class ESAPIFilter implements Filter {
 			chain.doFilter(request, response);
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error( JavaLogger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
+			logger.error( Logger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
 		} finally {
 			// VERY IMPORTANT

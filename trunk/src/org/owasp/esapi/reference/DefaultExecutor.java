@@ -61,7 +61,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     public String executeSystemCommand(File executable, List params, File workdir, int timeoutSeconds) throws ExecutorException {
         BufferedReader br = null;
         try {
-            logger.trace(JavaLogger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            logger.trace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
             Validator validator = ESAPI.validator();
 
             // command must exactly match the canonical path and must actually exist on the file system
@@ -109,7 +109,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             while ((line = br.readLine()) != null) {
                 sb.append(line + "\n");
             }
-            logger.trace(JavaLogger.SECURITY, "System command successful: " + params);
+            logger.trace(Logger.SECURITY, "System command successful: " + params);
             return sb.toString();
         } catch (Exception e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);

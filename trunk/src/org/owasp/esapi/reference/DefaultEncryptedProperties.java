@@ -107,7 +107,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 */
 	public void load(InputStream in) throws IOException {
 		properties.load(in);
-		logger.trace(JavaLogger.SECURITY, "Encrypted properties loaded successfully");
+		logger.trace(Logger.SECURITY, "Encrypted properties loaded successfully");
 	}
 
 	/**
@@ -137,9 +137,9 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	public static void main(String[] args) throws Exception {
 		// FIXME: AAA verify that this still works
 		File f = new File(args[0]);
-		ESAPI.getLogger( "EncryptedProperties.main" ).debug(JavaLogger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
+		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
 		if ( !f.exists() ) throw new IOException( "Properties file not found: " + f.getAbsolutePath() );
-		ESAPI.getLogger( "EncryptedProperties.main" ).debug(JavaLogger.SECURITY, "Encrypted properties found in " + f.getAbsolutePath() );
+		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Encrypted properties found in " + f.getAbsolutePath() );
 		DefaultEncryptedProperties ep = new DefaultEncryptedProperties();
 		FileInputStream in = new FileInputStream(f);
 		ep.load(in);

@@ -1188,7 +1188,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 							return new EncodedCharacter("&#" + (char) c + ";", (char) c, ENTITY_ENCODING);
 						} catch (NumberFormatException e) {
 							// invalid character - return null
-							logger.warning(JavaLogger.SECURITY, "Invalid numeric entity encoding &" + possible + ";");
+							logger.warning(Logger.SECURITY, "Invalid numeric entity encoding &" + possible + ";");
 						}
 					}
 				}

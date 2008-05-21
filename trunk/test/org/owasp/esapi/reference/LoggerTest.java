@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
@@ -87,7 +88,7 @@ public class LoggerTest extends TestCase {
         TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         // FIXME: AAA modify to return the actual string logged (so we can test)
-        JavaLogger logger = new JavaLogger("logger", "logger");
+        Logger logger = ESAPI.getLogger("logger");
         ESAPI.httpUtilities().logHTTPRequest( logger, Arrays.asList(ignore) );
         request.addParameter("one","one");
         request.addParameter("two","two1");
@@ -101,10 +102,10 @@ public class LoggerTest extends TestCase {
 	 */
     public void testInfo() {
         System.out.println("info");
-        new JavaLogger( "app", "mod" ).info(JavaLogger.SECURITY, "test message" );
-        new JavaLogger( "app", "mod" ).info(JavaLogger.SECURITY, "test message", null );
-        new JavaLogger( "app", "mod" ).info(JavaLogger.SECURITY, "%3escript%3f test message", null );
-        new JavaLogger( "app", "mod" ).info(JavaLogger.SECURITY, "<script> test message", null );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "test message" );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "%3escript%3f test message", null );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "<script> test message", null );
     }
 
 
@@ -113,8 +114,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testTrace() {
         System.out.println("trace");
-        new JavaLogger( "app", "mod" ).trace(JavaLogger.SECURITY, "test message" );
-        new JavaLogger( "app", "mod" ).trace(JavaLogger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, "test message" );
+        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, "test message", null );
     }
 
     /**
@@ -122,8 +123,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testDebug() {
         System.out.println("debug");
-        new JavaLogger( "app", "mod" ).debug(JavaLogger.SECURITY, "test message" );
-        new JavaLogger( "app", "mod" ).debug(JavaLogger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, "test message" );
+        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, "test message", null );
     }
 
     /**
@@ -131,8 +132,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testError() {
         System.out.println("error");
-        new JavaLogger( "app", "mod" ).error(JavaLogger.SECURITY, "test message" );
-        new JavaLogger( "app", "mod" ).error(JavaLogger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, "test message" );
+        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, "test message", null );
     }
 
     /**
@@ -140,8 +141,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testWarning() {
         System.out.println("warning");
-        new JavaLogger( "app", "mod" ).warning(JavaLogger.SECURITY, "test message" );
-        new JavaLogger( "app", "mod" ).warning(JavaLogger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, "test message" );
+        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, "test message", null );
     }
 
     /**
@@ -149,8 +150,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testFatal() {
         System.out.println("fatal");
-        new JavaLogger( "app", "mod" ).fatal(JavaLogger.SECURITY, "test message" );
-        new JavaLogger( "app", "mod" ).fatal(JavaLogger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, "test message" );
+        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, "test message", null );
     }
     
 }

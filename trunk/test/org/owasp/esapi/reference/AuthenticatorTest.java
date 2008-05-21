@@ -23,9 +23,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.AuthenticationException;
+import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
@@ -444,7 +445,7 @@ public class AuthenticatorTest extends TestCase {
 					String password = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 					u = instance.createUser("test" + count++, password, password);
 					instance.setCurrentUser(u);
-					ESAPI.getLogger("test").info( JavaLogger.SECURITY, "Got current user" );
+					ESAPI.getLogger("test").info( Logger.SECURITY, "Got current user" );
 					// ESAPI.authenticator().removeUser( u.getAccountName() );
 				} catch (AuthenticationException e) {
 					e.printStackTrace();

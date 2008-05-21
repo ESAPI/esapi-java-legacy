@@ -287,7 +287,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		try {
 		    canonical = ESAPI.encoder().canonicalize(path);
 		} catch (EncodingException e) {
-		    logger.warning( JavaLogger.SECURITY, "Failed to canonicalize input: " + path );
+		    logger.warning( Logger.SECURITY, "Failed to canonicalize input: " + path );
 		}
 		
 		String part = canonical;
@@ -389,21 +389,21 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");
 					if (map.containsKey(rule.path)) {
-						logger.warning( JavaLogger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+						logger.warning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
 					} else {
 						map.put(rule.path, rule);
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.warning( JavaLogger.SECURITY, "Problem in access control file : " + ruleset, e );
+			logger.warning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
 		} finally {
 			try {
 				if (is != null) {
 					is.close();
 				}
 			} catch (IOException e) {
-				logger.warning(JavaLogger.SECURITY, "Failure closing access control file : " + ruleset, e);
+				logger.warning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
 			}
 		}
 		return map;
