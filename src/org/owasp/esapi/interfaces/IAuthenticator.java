@@ -62,7 +62,7 @@ import org.owasp.esapi.errors.EncryptionException;
 public interface IAuthenticator {
 
 	/**
-	 * Clear the current user, request, and response. This allows the thread to be reused safely.
+	 * Clear the current user. This allows the thread to be reused safely.
 	 */
 	void clearCurrent();
 
@@ -198,17 +198,17 @@ public interface IAuthenticator {
 
 	/**
 	 * Validate password strength.
-	 * 
-	 * @param newPassword
-	 *            the new password
 	 * @param oldPassword
 	 *            the old password
+	 * @param newPassword
+	 *            the new password
+	 * 
 	 * @return true, if successful
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	void verifyPasswordStrength(String newPassword, String oldPassword) throws AuthenticationException;
+	void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException;
 
 	/**
 	 * Verifies the account exists.

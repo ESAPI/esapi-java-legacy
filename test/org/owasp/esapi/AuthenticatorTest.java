@@ -133,7 +133,7 @@ public class AuthenticatorTest extends TestCase {
 		for (int i = 0; i < 100; i++) {
             try {
                 newPassword = instance.generateStrongPassword();
-                instance.verifyPasswordStrength(newPassword, oldPassword);
+                instance.verifyPasswordStrength(oldPassword, newPassword);
             } catch( AuthenticationException e ) {
             	System.out.println( "  FAILED >> " + newPassword + " : " + e.getLogMessage());
                 fail();
@@ -513,25 +513,25 @@ public class AuthenticatorTest extends TestCase {
 
 		// should fail
 		try {
-			instance.verifyPasswordStrength("jeff", "password");
+			instance.verifyPasswordStrength("password", "jeff");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("same123string", "diff123bang");
+			instance.verifyPasswordStrength("diff123bang", "same123string");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("JEFF", "password");
+			instance.verifyPasswordStrength("password", "JEFF");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("1234", "password");
+			instance.verifyPasswordStrength("password", "1234");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
@@ -543,29 +543,29 @@ public class AuthenticatorTest extends TestCase {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("-1", "password");
+			instance.verifyPasswordStrength("password", "-1");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password123", "password");
+			instance.verifyPasswordStrength("password", "password123");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("test123", "password");
+			instance.verifyPasswordStrength("password", "test123");
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 
 		// should pass
-		instance.verifyPasswordStrength("jeffJEFF12!", "password");
-		instance.verifyPasswordStrength("super calif ragil istic", "password");
-		instance.verifyPasswordStrength("TONYTONYTONYTONY", "password");
-		instance.verifyPasswordStrength(instance.generateStrongPassword(), "password");
+		instance.verifyPasswordStrength("password", "jeffJEFF12!");
+		instance.verifyPasswordStrength("password", "super calif ragil istic");
+		instance.verifyPasswordStrength("password", "TONYTONYTONYTONY");
+		instance.verifyPasswordStrength("password", instance.generateStrongPassword());
 	}
 
 	/**
