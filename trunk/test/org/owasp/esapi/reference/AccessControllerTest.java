@@ -21,9 +21,9 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.AccessControlException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IAccessController;
-import org.owasp.esapi.IAuthenticator;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.AccessController;
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.User;
 
 
 /**
@@ -41,25 +41,25 @@ public class AccessControllerTest extends TestCase {
 	 */
 	public AccessControllerTest(String testName) throws Exception {
 		super(testName);
-		IAuthenticator authenticator = ESAPI.authenticator();
+		Authenticator authenticator = ESAPI.authenticator();
 		String password = authenticator.generateStrongPassword();
 
 		// create a user with the "user" role for this test
-		IUser alice = authenticator.getUser("testuser1");
+		User alice = authenticator.getUser("testuser1");
 		if ( alice == null ) {
 			alice = authenticator.createUser( "testuser1", password, password);
 		}
 		alice.addRole("user");		
 
 		// create a user with the "admin" role for this test
-		IUser bob = authenticator.getUser("testuser2");
+		User bob = authenticator.getUser("testuser2");
 		if ( bob == null ) {
 			bob = authenticator.createUser( "testuser2", password, password);
 		}
 		bob.addRole("admin");
 		
 		// create a user with the "user" and "admin" roles for this test
-		IUser mitch = authenticator.getUser("testuser3");
+		User mitch = authenticator.getUser("testuser3");
 		if ( mitch == null ) {
 			mitch = authenticator.createUser( "testuser3", password, password);
 		}
@@ -101,8 +101,8 @@ public class AccessControllerTest extends TestCase {
 	 */
 	public void testIsAuthorizedForURL() throws Exception {
 		System.out.println("isAuthorizedForURL");
-		IAccessController instance = ESAPI.accessController();
-		IAuthenticator auth = ESAPI.authenticator();
+		AccessController instance = ESAPI.accessController();
+		Authenticator auth = ESAPI.authenticator();
 		
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertFalse(instance.isAuthorizedForURL("/nobody"));
@@ -142,8 +142,8 @@ public class AccessControllerTest extends TestCase {
 	 */
 	public void testIsAuthorizedForFunction() {
 		System.out.println("isAuthorizedForFunction");
-		IAccessController instance = ESAPI.accessController();
-		IAuthenticator auth = ESAPI.authenticator();
+		AccessController instance = ESAPI.accessController();
+		Authenticator auth = ESAPI.authenticator();
 		
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForFunction("/FunctionA"));
@@ -178,8 +178,8 @@ public class AccessControllerTest extends TestCase {
 	 */
 	public void testIsAuthorizedForData() {
 		System.out.println("isAuthorizedForData");
-		IAccessController instance = ESAPI.accessController();
-		IAuthenticator auth = ESAPI.authenticator();
+		AccessController instance = ESAPI.accessController();
+		Authenticator auth = ESAPI.authenticator();
 		
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForData("/Data1"));
@@ -211,8 +211,8 @@ public class AccessControllerTest extends TestCase {
 	 */
 	public void testIsAuthorizedForFile() {
 		System.out.println("isAuthorizedForFile");
-		IAccessController instance = ESAPI.accessController();
-		IAuthenticator auth = ESAPI.authenticator();
+		AccessController instance = ESAPI.accessController();
+		Authenticator auth = ESAPI.authenticator();
 		
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForFile("/Dir/File1"));
@@ -244,8 +244,8 @@ public class AccessControllerTest extends TestCase {
 	 */
 	public void testIsAuthorizedForBackendService() {
 		System.out.println("isAuthorizedForBackendService");
-		IAccessController instance = ESAPI.accessController();
-		IAuthenticator auth = ESAPI.authenticator();
+		AccessController instance = ESAPI.accessController();
+		Authenticator auth = ESAPI.authenticator();
 		
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForService("/services/ServiceA"));

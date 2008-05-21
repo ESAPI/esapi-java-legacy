@@ -8,7 +8,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IEncoder;
+import org.owasp.esapi.Encoder;
 
 public class EncodeForHTMLTag extends BodyTagSupport {
 
@@ -38,7 +38,7 @@ public class EncodeForHTMLTag extends BodyTagSupport {
 			String content = body.getString();
 			JspWriter out = body.getEnclosingWriter();
 			
-			IEncoder e = ESAPI.encoder();
+			Encoder e = ESAPI.encoder();
 			
 			out.println( e.encodeForHTML(content) );
 			body.clearBody();

@@ -15,17 +15,17 @@
  */
 package org.owasp.esapi;
 
-import org.owasp.esapi.reference.AccessController;
-import org.owasp.esapi.reference.Authenticator;
-import org.owasp.esapi.reference.Encoder;
-import org.owasp.esapi.reference.Encryptor;
-import org.owasp.esapi.reference.Executor;
-import org.owasp.esapi.reference.HTTPUtilities;
-import org.owasp.esapi.reference.IntrusionDetector;
+import org.owasp.esapi.reference.FileBasedAccessController;
+import org.owasp.esapi.reference.FileBasedAuthenticator;
+import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.reference.JSEEncryptor;
+import org.owasp.esapi.reference.DefaultExecutor;
+import org.owasp.esapi.reference.DefaultHTTPUtilities;
+import org.owasp.esapi.reference.DefaultIntrusionDetector;
 import org.owasp.esapi.reference.JavaLogFactory;
-import org.owasp.esapi.reference.Randomizer;
-import org.owasp.esapi.reference.SecurityConfiguration;
-import org.owasp.esapi.reference.Validator;
+import org.owasp.esapi.reference.DefaultRandomizer;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.reference.DefaultValidator;
 
 /**
  * ESAPI locator class to make it easy to get a concrete implementation of the
@@ -34,29 +34,29 @@ import org.owasp.esapi.reference.Validator;
  */
 public class ESAPI {
 
-	private static IAccessController accessController = null;
+	private static AccessController accessController = null;
 
-	private static IAuthenticator authenticator = null;
+	private static Authenticator authenticator = null;
 
-	private static IEncoder encoder = null;
+	private static Encoder encoder = null;
 
-	private static IEncryptor encryptor = null;
+	private static Encryptor encryptor = null;
 
-	private static IExecutor executor = null;
+	private static Executor executor = null;
 
-	private static IHTTPUtilities httpUtilities = null;
+	private static HTTPUtilities httpUtilities = null;
 
-	private static IIntrusionDetector intrusionDetector = null;
+	private static IntrusionDetector intrusionDetector = null;
 
-	private static ILogFactory logFactory = null;
+	private static LogFactory logFactory = null;
 	
-	private static ILogger defaultLogger = null;
+	private static Logger defaultLogger = null;
 
-	private static IRandomizer randomizer = null;
+	private static Randomizer randomizer = null;
 
-	private static ISecurityConfiguration securityConfiguration = null;
+	private static SecurityConfiguration securityConfiguration = null;
 
-	private static IValidator validator = null;
+	private static Validator validator = null;
 
 	/**
 	 * prevent instantiation of this class
@@ -67,9 +67,9 @@ public class ESAPI {
 	/**
 	 * @return the accessController
 	 */
-	public static IAccessController accessController() {
+	public static AccessController accessController() {
 		if (ESAPI.accessController == null)
-			ESAPI.accessController = new AccessController();
+			ESAPI.accessController = new FileBasedAccessController();
 		return ESAPI.accessController;
 	}
 
@@ -77,16 +77,16 @@ public class ESAPI {
 	 * @param accessController
 	 *            the accessController to set
 	 */
-	public static void setAccessController(IAccessController accessController) {
+	public static void setAccessController(AccessController accessController) {
 		ESAPI.accessController = accessController;
 	}
 
 	/**
 	 * @return the authenticator
 	 */
-	public static IAuthenticator authenticator() {
+	public static Authenticator authenticator() {
 		if (ESAPI.authenticator == null)
-			ESAPI.authenticator = new Authenticator();
+			ESAPI.authenticator = new FileBasedAuthenticator();
 		return ESAPI.authenticator;
 	}
 
@@ -94,16 +94,16 @@ public class ESAPI {
 	 * @param authenticator
 	 *            the authenticator to set
 	 */
-	public static void setAuthenticator(IAuthenticator authenticator) {
+	public static void setAuthenticator(Authenticator authenticator) {
 		ESAPI.authenticator = authenticator;
 	}
 
 	/**
 	 * @return the encoder
 	 */
-	public static IEncoder encoder() {
+	public static Encoder encoder() {
 		if (ESAPI.encoder == null)
-			ESAPI.encoder = new Encoder();
+			ESAPI.encoder = new DefaultEncoder();
 		return ESAPI.encoder;
 	}
 
@@ -111,16 +111,16 @@ public class ESAPI {
 	 * @param encoder
 	 *            the encoder to set
 	 */
-	public static void setEncoder(IEncoder encoder) {
+	public static void setEncoder(Encoder encoder) {
 		ESAPI.encoder = encoder;
 	}
 
 	/**
 	 * @return the encryptor
 	 */
-	public static IEncryptor encryptor() {
+	public static Encryptor encryptor() {
 		if (ESAPI.encryptor == null)
-			ESAPI.encryptor = new Encryptor();
+			ESAPI.encryptor = new JSEEncryptor();
 		return ESAPI.encryptor;
 	}
 
@@ -128,16 +128,16 @@ public class ESAPI {
 	 * @param encryptor
 	 *            the encryptor to set
 	 */
-	public static void setEncryptor(IEncryptor encryptor) {
+	public static void setEncryptor(Encryptor encryptor) {
 		ESAPI.encryptor = encryptor;
 	}
 
 	/**
 	 * @return the executor
 	 */
-	public static IExecutor executor() {
+	public static Executor executor() {
 		if (ESAPI.executor == null)
-			ESAPI.executor = new Executor();
+			ESAPI.executor = new DefaultExecutor();
 		return ESAPI.executor;
 	}
 
@@ -145,16 +145,16 @@ public class ESAPI {
 	 * @param executor
 	 *            the executor to set
 	 */
-	public static void setExecutor(IExecutor executor) {
+	public static void setExecutor(Executor executor) {
 		ESAPI.executor = executor;
 	}
 
 	/**
 	 * @return the httpUtilities
 	 */
-	public static IHTTPUtilities httpUtilities() {
+	public static HTTPUtilities httpUtilities() {
 		if (ESAPI.httpUtilities == null)
-			ESAPI.httpUtilities = new HTTPUtilities();
+			ESAPI.httpUtilities = new DefaultHTTPUtilities();
 		return ESAPI.httpUtilities;
 	}
 
@@ -162,16 +162,16 @@ public class ESAPI {
 	 * @param httpUtilities
 	 *            the httpUtilities to set
 	 */
-	public static void setHttpUtilities(IHTTPUtilities httpUtilities) {
+	public static void setHttpUtilities(HTTPUtilities httpUtilities) {
 		ESAPI.httpUtilities = httpUtilities;
 	}
 
 	/**
 	 * @return the intrusionDetector
 	 */
-	public static IIntrusionDetector intrusionDetector() {
+	public static IntrusionDetector intrusionDetector() {
 		if (ESAPI.intrusionDetector == null)
-			ESAPI.intrusionDetector = new IntrusionDetector();
+			ESAPI.intrusionDetector = new DefaultIntrusionDetector();
 		return ESAPI.intrusionDetector;
 	}
 
@@ -179,11 +179,11 @@ public class ESAPI {
 	 * @param intrusionDetector
 	 *            the intrusionDetector to set
 	 */
-	public static void setIntrusionDetector(IIntrusionDetector intrusionDetector) {
+	public static void setIntrusionDetector(IntrusionDetector intrusionDetector) {
 		ESAPI.intrusionDetector = intrusionDetector;
 	}
 
-	private static ILogFactory logFactory() {
+	private static LogFactory logFactory() {
 		if (logFactory == null)
 			logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
 		return logFactory;
@@ -192,18 +192,18 @@ public class ESAPI {
 	/**
 	 * 
 	 */
-	public static ILogger getLogger(Class clazz) {
+	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
 	
 	/**
 	 * 
 	 */
-	public static ILogger getLogger(String name) {
+	public static Logger getLogger(String name) {
 		return logFactory().getLogger(name);
 	}
 	
-	public static ILogger log() {
+	public static Logger log() {
 		if (defaultLogger == null)
 			defaultLogger = logFactory().getLogger("");
 		return defaultLogger;
@@ -212,16 +212,16 @@ public class ESAPI {
 	 /**
 	 * @param factory the log factory to set
 	 */
-	 public static void setLogger(ILogFactory factory) {
+	 public static void setLogger(LogFactory factory) {
 		 ESAPI.logFactory = factory;
 	 }
 	
 	/**
 	 * @return the randomizer
 	 */
-	public static IRandomizer randomizer() {
+	public static Randomizer randomizer() {
 		if (ESAPI.randomizer == null)
-			ESAPI.randomizer = new Randomizer();
+			ESAPI.randomizer = new DefaultRandomizer();
 		return ESAPI.randomizer;
 	}
 
@@ -229,16 +229,16 @@ public class ESAPI {
 	 * @param randomizer
 	 *            the randomizer to set
 	 */
-	public static void setRandomizer(IRandomizer randomizer) {
+	public static void setRandomizer(Randomizer randomizer) {
 		ESAPI.randomizer = randomizer;
 	}
 
 	/**
 	 * @return the securityConfiguration
 	 */
-	public static ISecurityConfiguration securityConfiguration() {
+	public static SecurityConfiguration securityConfiguration() {
 		if (ESAPI.securityConfiguration == null)
-			ESAPI.securityConfiguration = new SecurityConfiguration();
+			ESAPI.securityConfiguration = new DefaultSecurityConfiguration();
 		return ESAPI.securityConfiguration;
 	}
 
@@ -247,16 +247,16 @@ public class ESAPI {
 	 *            the securityConfiguration to set
 	 */
 	public static void setSecurityConfiguration(
-			ISecurityConfiguration securityConfiguration) {
+			SecurityConfiguration securityConfiguration) {
 		ESAPI.securityConfiguration = securityConfiguration;
 	}
 
 	/**
 	 * @return the validator
 	 */
-	public static IValidator validator() {
+	public static Validator validator() {
 		if (ESAPI.validator == null)
-			ESAPI.validator = new Validator();
+			ESAPI.validator = new DefaultValidator();
 		return ESAPI.validator;
 	}
 
@@ -264,7 +264,7 @@ public class ESAPI {
 	 * @param validator
 	 *            the validator to set
 	 */
-	public static void setValidator(IValidator validator) {
+	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
 	}
 

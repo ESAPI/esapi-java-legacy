@@ -43,9 +43,9 @@ import org.owasp.esapi.IntegrityException;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IEncryptor
+ * @see org.owasp.esapi.Encryptor
  */
-public class Encryptor implements org.owasp.esapi.IEncryptor {
+public class JSEEncryptor implements org.owasp.esapi.Encryptor {
 
 	/** The private key. */
 	PrivateKey privateKey = null;
@@ -63,7 +63,7 @@ public class Encryptor implements org.owasp.esapi.IEncryptor {
 	String randomAlgorithm = "SHA1PRNG";
 	String encoding = "UTF-8"; 
 		
-	public Encryptor() {
+	public JSEEncryptor() {
 		
 		// FIXME: AAA - need support for key and salt changing. What's best interface?
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
@@ -102,7 +102,7 @@ public class Encryptor implements org.owasp.esapi.IEncryptor {
 	 * Hashes the data using the specified algorithm and the Java MessageDigest class. This method
 	 * first adds the salt, a separator (":"), and the data, and then rehashes 1024 times to help strengthen weak passwords.
 	 * 
-	 * @see org.owasp.esapi.IEncryptor#hash(java.lang.String,java.lang.String)
+	 * @see org.owasp.esapi.Encryptor#hash(java.lang.String,java.lang.String)
 	 */
 	public String hash(String plaintext, String salt) throws EncryptionException {
 		byte[] bytes = null;
@@ -211,7 +211,7 @@ public class Encryptor implements org.owasp.esapi.IEncryptor {
 	public String seal(String data, long expiration) throws IntegrityException {
 		try {
 			// mix in some random data so even identical data and timestamp produces different seals
-			String random = ESAPI.randomizer().getRandomString(10, Encoder.CHAR_ALPHANUMERICS);
+			String random = ESAPI.randomizer().getRandomString(10, DefaultEncoder.CHAR_ALPHANUMERICS);
 			return this.encrypt(expiration + ":" + random + ":" + data);
 		} catch( EncryptionException e ) {
 			throw new IntegrityException( e.getUserMessage(), e.getLogMessage(), e );

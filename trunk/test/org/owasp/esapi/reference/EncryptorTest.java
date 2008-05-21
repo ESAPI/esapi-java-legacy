@@ -22,7 +22,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.EnterpriseSecurityException;
-import org.owasp.esapi.IEncryptor;
+import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.IntegrityException;
 
 /**
@@ -72,7 +72,7 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testHash() throws EncryptionException {
         System.out.println("hash");
-        IEncryptor instance = ESAPI.encryptor();
+        Encryptor instance = ESAPI.encryptor();
         String hash1 = instance.hash("test1", "salt");
         String hash2 = instance.hash("test2", "salt");
         assertFalse(hash1.equals(hash2));
@@ -89,7 +89,7 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testEncrypt() throws EncryptionException {
         System.out.println("encrypt");
-        IEncryptor instance = ESAPI.encryptor();
+        Encryptor instance = ESAPI.encryptor();
         String plaintext = "test123";
         String ciphertext = instance.encrypt(plaintext);
     	String result = instance.decrypt(ciphertext);
@@ -101,7 +101,7 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testDecrypt() {
         System.out.println("decrypt");
-        IEncryptor instance = ESAPI.encryptor();
+        Encryptor instance = ESAPI.encryptor();
         try {
             String plaintext = "test123";
             String ciphertext = instance.encrypt(plaintext);
@@ -122,8 +122,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testSign() throws EncryptionException {
         System.out.println("sign");        
-        IEncryptor instance = ESAPI.encryptor();
-        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        Encryptor instance = ESAPI.encryptor();
+        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
         assertFalse( instance.verifySignature( signature, "ridiculous" ) );
@@ -138,8 +138,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testVerifySignature() throws EncryptionException {
         System.out.println("verifySignature");
-        IEncryptor instance = ESAPI.encryptor();
-        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        Encryptor instance = ESAPI.encryptor();
+        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
     }
@@ -153,8 +153,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testSeal() throws IntegrityException {
         System.out.println("seal");
-        IEncryptor instance = ESAPI.encryptor(); 
-        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        Encryptor instance = ESAPI.encryptor(); 
+        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
         instance.verifySeal( seal );
     }
@@ -167,8 +167,8 @@ public class EncryptorTest extends TestCase {
 	 */
     public void testVerifySeal() throws EnterpriseSecurityException {
         System.out.println("verifySeal");
-        IEncryptor instance = ESAPI.encryptor(); 
-        String plaintext = ESAPI.randomizer().getRandomString( 32, Encoder.CHAR_ALPHANUMERICS );
+        Encryptor instance = ESAPI.encryptor(); 
+        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000*60 ) );
         assertTrue( instance.verifySeal( seal ) );
         assertFalse( instance.verifySeal( "ridiculous" ) );

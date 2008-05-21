@@ -30,7 +30,7 @@ package org.owasp.esapi;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IIntrusionDetector {
+public interface IntrusionDetector {
 
     /**
      * Adds the exception to the IntrusionDetector.

@@ -21,8 +21,8 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IAuthenticator;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.User;
 import org.owasp.esapi.IntegrityException;
 import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.http.TestHttpServletRequest;
@@ -79,9 +79,9 @@ public class IntrusionDetectorTest extends TestCase {
 	public void testAddException() throws AuthenticationException {
 		System.out.println("addException");
 		ESAPI.intrusionDetector().addException( new IntrusionException("user message", "log message") );
-		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-        IAuthenticator auth = ESAPI.authenticator();
-		IUser user = auth.createUser(username, "addException", "addException");
+		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+        Authenticator auth = ESAPI.authenticator();
+		User user = auth.createUser(username, "addException", "addException");
 		user.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();
@@ -105,9 +105,9 @@ public class IntrusionDetectorTest extends TestCase {
      */
     public void testAddEvent() throws AuthenticationException {
         System.out.println("addEvent");
-		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-        IAuthenticator auth = ESAPI.authenticator();
-		IUser user = auth.createUser(username, "addEvent", "addEvent");
+		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+        Authenticator auth = ESAPI.authenticator();
+		User user = auth.createUser(username, "addEvent", "addEvent");
 		user.enable();
 	    TestHttpServletRequest request = new TestHttpServletRequest();
 		TestHttpServletResponse response = new TestHttpServletResponse();

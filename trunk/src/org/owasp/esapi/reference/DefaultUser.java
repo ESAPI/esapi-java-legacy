@@ -31,8 +31,8 @@ import org.owasp.esapi.AuthenticationHostException;
 import org.owasp.esapi.AuthenticationLoginException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.ILogger;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.User;
 
 /**
  * Reference implementation of the IUser interface. This implementation is serialized into a flat file in a simple format.
@@ -40,16 +40,16 @@ import org.owasp.esapi.IUser;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IUser
+ * @see org.owasp.esapi.User
  */
-public class User implements IUser, Serializable {
+public class DefaultUser implements User, Serializable {
 
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/** The logger. */
-	private static final ILogger logger = ESAPI.getLogger("User");
+	private static final Logger logger = ESAPI.getLogger("User");
     
 	/** The account name. */
 	private String accountName = "";
@@ -112,7 +112,7 @@ public class User implements IUser, Serializable {
 	/**
 	 * Instantiates a new user.
 	 */
-	User(String accountName) {
+	DefaultUser(String accountName) {
 		setAccountName(accountName);
 	}
 
@@ -123,7 +123,7 @@ public class User implements IUser, Serializable {
 		String roleName = role.toLowerCase();
 		if ( ESAPI.validator().isValidInput("addRole", roleName, "RoleName", MAX_ROLE_LENGTH, false) ) {
 			roles.add(roleName);
-			logger.info(Logger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
+			logger.info(JavaLogger.SECURITY, "Role " + roleName + " added to " + getAccountName() );
 		} else {
 			throw new AuthenticationAccountsException( "Add role failed", "Attempt to add invalid role " + roleName + " to " + getAccountName() );
 		}
@@ -158,17 +158,17 @@ public class User implements IUser, Serializable {
 	public void disable() {
 		// FIXME: ENHANCE what about disabling for a short time period - to address DOS attack?
 		enabled = false;
-		logger.info( Logger.SECURITY, "Account disabled: " + getAccountName() );
+		logger.info( JavaLogger.SECURITY, "Account disabled: " + getAccountName() );
 	}
 	
 	/**
 	 * Enable the account
 	 * 
-	 * @see org.owasp.esapi.IUser#enable()
+	 * @see org.owasp.esapi.User#enable()
 	 */
 	public void enable() {
 		this.enabled = true;
-		logger.info( Logger.SECURITY, "Account enabled: " + getAccountName() );
+		logger.info( JavaLogger.SECURITY, "Account enabled: " + getAccountName() );
 	}
 
 	/**
@@ -364,7 +364,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void lock() {
 		this.locked = true;
-		logger.info(Logger.SECURITY, "Account locked: " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "Account locked: " + getAccountName() );
 	}
 
     /*
@@ -409,7 +409,7 @@ public class User implements IUser, Serializable {
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
             setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
-			logger.trace(ILogger.SECURITY, "User logged in: " + accountName );
+			logger.trace(Logger.SECURITY, "User logged in: " + accountName );
 		} else {
 			loggedIn = false;
 			setLastFailedLoginTime(new Date());
@@ -428,7 +428,7 @@ public class User implements IUser, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#logout()
 	 */
 	public void logout() {
-		ESAPI.httpUtilities().killCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME );
+		ESAPI.httpUtilities().killCookie( FileBasedAuthenticator.REMEMBER_TOKEN_COOKIE_NAME );
 		
 		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
 		HttpSession session = request.getSession(false);
@@ -437,8 +437,8 @@ public class User implements IUser, Serializable {
 		}
 		ESAPI.httpUtilities().killCookie("JSESSIONID");
 		loggedIn = false;
-		logger.info(Logger.SECURITY, "Logout successful" );
-		ESAPI.authenticator().setCurrentUser(IUser.ANONYMOUS);
+		logger.info(JavaLogger.SECURITY, "Logout successful" );
+		ESAPI.authenticator().setCurrentUser(User.ANONYMOUS);
 	}
 
 	/*
@@ -448,7 +448,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void removeRole(String role) {
 		roles.remove(role.toLowerCase());
-		logger.trace(ILogger.SECURITY, "Role " + role + " removed from " + getAccountName() );
+		logger.trace(Logger.SECURITY, "Role " + role + " removed from " + getAccountName() );
 	}
 
 	/**
@@ -461,12 +461,12 @@ public class User implements IUser, Serializable {
 	 * 
 	 * @return the string
 	 * 
-	 * @see org.owasp.esapi.IUser#resetCSRFToken()
+	 * @see org.owasp.esapi.User#resetCSRFToken()
 	 */
 	public String resetCSRFToken() {
 		// user.csrfToken = ESAPI.encryptor().hash( session.getId(),user.name );
 		// user.csrfToken = ESAPI.encryptor().encrypt( address + ":" + ESAPI.encryptor().getTimeStamp();
-		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+		csrfToken = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		return csrfToken;
 	}
 
@@ -480,7 +480,7 @@ public class User implements IUser, Serializable {
 		String old = getAccountName();
 		this.accountName = accountName.toLowerCase();
 		if (old != null)
-			logger.info(Logger.SECURITY, "Account name changed from " + old + " to " + getAccountName() );
+			logger.info(JavaLogger.SECURITY, "Account name changed from " + old + " to " + getAccountName() );
 	}
 
 	/**
@@ -491,7 +491,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = new Date( expirationTime.getTime() );
-		logger.info(Logger.SECURITY, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -502,7 +502,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setLastFailedLoginTime(Date lastFailedLoginTime) {
 		this.lastFailedLoginTime = lastFailedLoginTime;
-		logger.info(Logger.SECURITY, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
 	}
 	
 	
@@ -526,7 +526,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
-		logger.info(Logger.SECURITY, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -537,7 +537,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
 		this.lastPasswordChangeTime = lastPasswordChangeTime;
-		logger.info(Logger.SECURITY, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -549,7 +549,7 @@ public class User implements IUser, Serializable {
 	public void setRoles(Set roles) throws AuthenticationException {
 		this.roles = new HashSet();
 		addRoles(roles);
-		logger.info(Logger.SECURITY, "Adding roles " + roles + " to " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "Adding roles " + roles + " to " + getAccountName() );
 	}
 
 	/*
@@ -559,7 +559,7 @@ public class User implements IUser, Serializable {
 	 */
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
-		logger.info(Logger.SECURITY, "ScreenName changed to " + screenName + " for " + getAccountName() );
+		logger.info(JavaLogger.SECURITY, "ScreenName changed to " + screenName + " for " + getAccountName() );
 	}
 
 	/*
@@ -579,7 +579,7 @@ public class User implements IUser, Serializable {
 	public void unlock() {
 		this.locked = false;
 		this.failedLoginCount = 0;
-		logger.info( Logger.SECURITY, "Account unlocked: " + getAccountName() );
+		logger.info( JavaLogger.SECURITY, "Account unlocked: " + getAccountName() );
 	}
 
 	//FIXME:Enhance - think about having a second "transaction" password for each user

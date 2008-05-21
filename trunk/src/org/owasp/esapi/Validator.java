@@ -41,7 +41,7 @@ import java.util.Set;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IValidator {
+public interface Validator {
 
 	/**
 	 * Returns true if input is valid according to the specified type. The type parameter must be the name 

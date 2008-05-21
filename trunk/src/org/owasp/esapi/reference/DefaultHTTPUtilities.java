@@ -43,8 +43,8 @@ import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncodingException;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.ILogger;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.User;
 import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.ValidationException;
 import org.owasp.esapi.ValidationUploadException;
@@ -62,18 +62,18 @@ import org.owasp.esapi.ValidationUploadException;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IHTTPUtilities
+ * @see org.owasp.esapi.HTTPUtilities
  */
-public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
+public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/** The logger. */
-	private static final ILogger logger = ESAPI.getLogger("HTTPUtilities");
+	private static final Logger logger = ESAPI.getLogger("HTTPUtilities");
 
 	/** The max bytes. */
 	int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
 	
 
-	public HTTPUtilities() {
+	public DefaultHTTPUtilities() {
 	}
 
 	// FIXME: Enhance - consider adding addQueryChecksum(String href) that would just verify that none of the parameters in the querystring have changed.  Could do the same for forms.
@@ -83,10 +83,10 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 
 	// FIXME: need to make this easier to add to forms.
 	/**
-	 * @see org.owasp.esapi.IHTTPUtilities#addCSRFToken(java.lang.String)
+	 * @see org.owasp.esapi.HTTPUtilities#addCSRFToken(java.lang.String)
 	 */
 	public String addCSRFToken(String href) {
-		IUser user = ESAPI.authenticator().getCurrentUser();		
+		User user = ESAPI.authenticator().getCurrentUser();		
 		
 		// FIXME: AAA getCurrentUser should never return null
 		if (user.isAnonymous() || user == null) {
@@ -141,7 +141,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 	 * flags. This implementation does not use the addCookie method because
 	 * it does not support HttpOnly, so it just creates a cookie header manually.
 	 * 
-	 * @see org.owasp.esapi.IHTTPUtilities#safeAddCookie(java.lang.String,
+	 * @see org.owasp.esapi.HTTPUtilities#safeAddCookie(java.lang.String,
 	 *      java.lang.String, java.util.Date, java.lang.String,
 	 *      java.lang.String, javax.servlet.http.HttpServletResponse)
 	 * 
@@ -166,7 +166,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 			getCurrentResponse().addHeader("Set-Cookie", header);
 			
 		} catch( ValidationException e ) {
-			logger.warning(Logger.SECURITY, "Attempt to set invalid cookie denied", e);
+			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid cookie denied", e);
 		}
 	}
 	
@@ -186,7 +186,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", value, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().addHeader(headerName, headerValue);
 		} catch( ValidationException e ) {
-			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
+			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid header denied", e);
 		}
 	}
 
@@ -229,7 +229,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			getCurrentResponse().setDateHeader(safeName, date);
 		} catch (ValidationException e) {
-			logger.warning(Logger.SECURITY, "Attempt to set invalid date header name denied", e);
+			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid date header name denied", e);
 		}
 	}
 
@@ -238,7 +238,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
 			getCurrentResponse().setIntHeader(safeName, value);
 		} catch (ValidationException e) {
-			logger.warning(Logger.SECURITY, "Attempt to set invalid int header name denied", e);
+			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid int header name denied", e);
 		}
 	}
 
@@ -286,7 +286,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", value, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().setHeader(safeName, safeValue);
 		} catch (ValidationException e) {
-			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
+			logger.warning(JavaLogger.SECURITY, "Attempt to set invalid header denied", e);
 		}
 	}
 	
@@ -373,7 +373,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#verifyCSRFToken()
 	 */
 	public void verifyCSRFToken() throws IntrusionException {
-		IUser user = ESAPI.authenticator().getCurrentUser();		
+		User user = ESAPI.authenticator().getCurrentUser();		
 		if( getCurrentRequest().getAttribute(user.getCSRFToken()) != null ) {
 			return;
 		}
@@ -407,7 +407,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 
 	/**
 	 * @throws EncryptionException 
-     * @see org.owasp.esapi.IHTTPUtilities#decryptStateFromCookie()
+     * @see org.owasp.esapi.HTTPUtilities#decryptStateFromCookie()
      */
     public Map decryptStateFromCookie() throws EncryptionException {
     	// FIXME: consider getEncryptedCookieValue( String name )
@@ -449,7 +449,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 
 	/**
 	 * @throws EncryptionException 
-     * @see org.owasp.esapi.IHTTPUtilities#encryptStateInCookie(java.util.Map)
+     * @see org.owasp.esapi.HTTPUtilities#encryptStateInCookie(java.util.Map)
      */
     public void encryptStateInCookie(Map cleartext) throws EncryptionException {
     	StringBuffer sb = new StringBuffer();    	
@@ -462,7 +462,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 	    		sb.append( name + "=" + value );
 	    		if ( i.hasNext() ) sb.append( "&" );
     		} catch( EncodingException e ) {
-    			logger.error(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
+    			logger.error(JavaLogger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
     	// FIXME: AAA - add a check to see if cookie length will exceed 2K limit
@@ -476,7 +476,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 	 * put into a session attribute, where it can be retrieved with a simple
 	 * JSP.
 	 * 
-	 * @see org.owasp.esapi.IHTTPUtilities#safeGetFileUploads(javax.servlet.http.HttpServletRequest,
+	 * @see org.owasp.esapi.HTTPUtilities#safeGetFileUploads(javax.servlet.http.HttpServletRequest,
 	 *      java.io.File, java.io.File, int)
 	 * @return list of File objects for new files in final directory
 	 */
@@ -528,7 +528,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
-					logger.info(Logger.SECURITY, "File upload requested: " + filename);
+					logger.info(JavaLogger.SECURITY, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
 					if (f.exists()) {
 						String[] parts = filename.split("\\/.");
@@ -543,7 +543,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 					newFiles.add( f );
 					// delete temporary file
 					item.delete();
-					logger.fatal(Logger.SECURITY, "File successfully uploaded: " + f);
+					logger.fatal(JavaLogger.SECURITY, "File successfully uploaded: " + f);
 					session.setAttribute("progress", Long.toString(0));
 				}
 			}
@@ -643,7 +643,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 	 */
 	public void safeSendRedirect(String context, String location) throws IOException {
 		if (!ESAPI.validator().isValidRedirectLocation(context, location, false)) {
-			logger.fatal(Logger.SECURITY, "Bad redirect location: " + location );
+			logger.fatal(JavaLogger.SECURITY, "Bad redirect location: " + location );
 			throw new IOException("Redirect failed");
 		}
 		getCurrentResponse().sendRedirect(location);
@@ -658,17 +658,17 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
 	 * HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
 	 * information about character encoding and MIME.
 	 * 
-	 * @see org.owasp.esapi.IHTTPUtilities#safeSetContentType(java.lang.String)
+	 * @see org.owasp.esapi.HTTPUtilities#safeSetContentType(java.lang.String)
 	 */
 	public void safeSetContentType() {
-		getCurrentResponse().setContentType(((SecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
+		getCurrentResponse().setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
 	/**
 	 * Set headers to protect sensitive information against being cached in the
 	 * browser.
 	 * 
-	 * @see org.owasp.esapi.IHTTPUtilities#setNoCacheHeaders(javax.servlet.http.HttpServletResponse)
+	 * @see org.owasp.esapi.HTTPUtilities#setNoCacheHeaders(javax.servlet.http.HttpServletResponse)
 	 */
 	public void setNoCacheHeaders() {
 		// HTTP 1.1
@@ -750,7 +750,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
         currentResponse.set(response);
     }
 
-    public void logHTTPRequest(ILogger logger) {
+    public void logHTTPRequest(Logger logger) {
     	logHTTPRequest( logger, null );
     }
     
@@ -760,9 +760,9 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
      * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
      * match items in the parameterNamesToObfuscate are shown as eight asterisks.
      * 
-     * @see org.owasp.esapi.ILogger#formatHttpRequestForLog(javax.servlet.http.HttpServletRequest)
+     * @see org.owasp.esapi.Logger#formatHttpRequestForLog(javax.servlet.http.HttpServletRequest)
      */
-    public void logHTTPRequest(ILogger logger, List parameterNamesToObfuscate) {
+    public void logHTTPRequest(Logger logger, List parameterNamesToObfuscate) {
         HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
         StringBuffer params = new StringBuffer();
         Iterator i = request.getParameterMap().keySet().iterator();
@@ -792,7 +792,7 @@ public class HTTPUtilities implements org.owasp.esapi.IHTTPUtilities {
                 }
         }
         String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
-        logger.info(Logger.SECURITY, msg);
+        logger.info(JavaLogger.SECURITY, msg);
     }
 
 }

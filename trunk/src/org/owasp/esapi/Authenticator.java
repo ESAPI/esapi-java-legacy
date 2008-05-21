@@ -57,7 +57,7 @@ import javax.servlet.http.HttpServletResponse;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IAuthenticator {
+public interface Authenticator {
 
 	/**
 	 * Clear the current user. This allows the thread to be reused safely.
@@ -79,7 +79,7 @@ public interface IAuthenticator {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	IUser login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;
+	User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;
 
 	/**
 	 * Verify that the supplied password matches the password for this user. This method
@@ -90,7 +90,7 @@ public interface IAuthenticator {
 	 * @param password the password
 	 * @return
 	 */
-	boolean verifyPassword(IUser user, String password);
+	boolean verifyPassword(User user, String password);
 	
 	/**
 	 * Logs out the current user.
@@ -112,7 +112,7 @@ public interface IAuthenticator {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	IUser createUser(String accountName, String password1, String password2) throws AuthenticationException;
+	User createUser(String accountName, String password1, String password2) throws AuthenticationException;
 
 	/**
 	 * Generate a strong password.
@@ -131,7 +131,7 @@ public interface IAuthenticator {
 	 * 
 	 * @return the string
 	 */
-	String generateStrongPassword(String oldPassword, IUser user);
+	String generateStrongPassword(String oldPassword, User user);
 
 	/**
 	 * Changes the password for the specified user. This requires the current password, as well as 
@@ -144,7 +144,7 @@ public interface IAuthenticator {
 	 * @param newPassword2 a verification copy of the new password
 	 * @throws AuthenticationException if any errors occur
 	 */
-	void changePassword(IUser user, String currentPassword, String newPassword, String newPassword2) throws AuthenticationException;
+	void changePassword(User user, String currentPassword, String newPassword, String newPassword2) throws AuthenticationException;
 	
 	/**
 	 * Returns the User matching the provided accountName.
@@ -154,7 +154,7 @@ public interface IAuthenticator {
 	 * 
 	 * @return the matching User object, or null if no match exists
 	 */
-	IUser getUser(String accountName);
+	User getUser(String accountName);
 
 	/**
 	 * Gets the user names.
@@ -169,7 +169,7 @@ public interface IAuthenticator {
 	 * @return the matching User object, or the Anonymous user if no match
 	 *         exists
 	 */
-	IUser getCurrentUser();
+	User getCurrentUser();
 
 	/**
 	 * Sets the currently logged in User.
@@ -177,7 +177,7 @@ public interface IAuthenticator {
 	 * @param user
 	 *            the current user
 	 */
-	void setCurrentUser(IUser user);
+	void setCurrentUser(User user);
 
 	/**
 	 * Returns a string representation of the hashed password, using the

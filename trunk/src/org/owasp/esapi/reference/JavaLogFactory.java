@@ -3,14 +3,14 @@
  */
 package org.owasp.esapi.reference;
 
-import org.owasp.esapi.ILogFactory;
-import org.owasp.esapi.ILogger;
+import org.owasp.esapi.LogFactory;
+import org.owasp.esapi.Logger;
 
 /**
  * @author rdawes
  *
  */
-public class JavaLogFactory implements ILogFactory {
+public class JavaLogFactory implements LogFactory {
 
 	private String applicationName;
 	
@@ -21,15 +21,15 @@ public class JavaLogFactory implements ILogFactory {
 	/* (non-Javadoc)
      * @see org.owasp.esapi.interfaces.ILogFactory#getLogger(java.lang.Class)
      */
-    public ILogger getLogger(Class clazz) {
-	    return new Logger(applicationName, clazz.getName());
+    public Logger getLogger(Class clazz) {
+	    return new JavaLogger(applicationName, clazz.getName());
     }
 
 	/* (non-Javadoc)
      * @see org.owasp.esapi.interfaces.ILogFactory#getLogger(java.lang.String)
      */
-    public ILogger getLogger(String name) {
-    	return new Logger(applicationName, name);
+    public Logger getLogger(String name) {
+    	return new JavaLogger(applicationName, name);
     }
 
 }

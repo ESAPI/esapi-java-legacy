@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.owasp.esapi.reference.Encoder;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
  * The IUser iimport org.owasp.esapi.reference.Encoder;
@@ -40,7 +40,7 @@ nterface represents an application user or user account. There is quite a lot of
  * @since June 1, 2007
  */
 
-public interface IUser {
+public interface User {
 
     /**
      * Adds a role to an account.
@@ -291,7 +291,7 @@ public interface IUser {
 	 */
 	public boolean verifyPassword(String password) throws EncryptionException;
 
-    public final IUser ANONYMOUS = new IUser() {
+    public final User ANONYMOUS = new User() {
 
     	private String csrfToken = "";
     	
@@ -491,7 +491,7 @@ public interface IUser {
          * @see org.owasp.esapi.interfaces.IUser#resetCSRFToken()
          */
         public String resetCSRFToken() throws AuthenticationException {
-    		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+    		csrfToken = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
     		return csrfToken;
         }
 

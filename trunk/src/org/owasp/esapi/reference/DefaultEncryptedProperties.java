@@ -29,7 +29,7 @@ import java.util.Set;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.ILogger;
+import org.owasp.esapi.Logger;
 
 /**
  * Reference implementation of the IEncryptedProperties interface. This
@@ -43,20 +43,20 @@ import org.owasp.esapi.ILogger;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.IEncryptedProperties
+ * @see org.owasp.esapi.EncryptedProperties
  */
-public class EncryptedProperties implements org.owasp.esapi.IEncryptedProperties {
+public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProperties {
 
 	/** The properties. */
 	private final Properties properties = new Properties();
 
 	/** The logger. */
-	private static final ILogger logger = ESAPI.getLogger("EncryptedProperties");
+	private static final Logger logger = ESAPI.getLogger("EncryptedProperties");
 
 	/**
 	 * Instantiates a new encrypted properties.
 	 */
-	public EncryptedProperties() {
+	public DefaultEncryptedProperties() {
 		// hidden
 	}
 
@@ -107,7 +107,7 @@ public class EncryptedProperties implements org.owasp.esapi.IEncryptedProperties
 	 */
 	public void load(InputStream in) throws IOException {
 		properties.load(in);
-		logger.trace(Logger.SECURITY, "Encrypted properties loaded successfully");
+		logger.trace(JavaLogger.SECURITY, "Encrypted properties loaded successfully");
 	}
 
 	/**
@@ -137,10 +137,10 @@ public class EncryptedProperties implements org.owasp.esapi.IEncryptedProperties
 	public static void main(String[] args) throws Exception {
 		// FIXME: AAA verify that this still works
 		File f = new File(args[0]);
-		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
+		ESAPI.getLogger( "EncryptedProperties.main" ).debug(JavaLogger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
 		if ( !f.exists() ) throw new IOException( "Properties file not found: " + f.getAbsolutePath() );
-		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Encrypted properties found in " + f.getAbsolutePath() );
-		EncryptedProperties ep = new EncryptedProperties();
+		ESAPI.getLogger( "EncryptedProperties.main" ).debug(JavaLogger.SECURITY, "Encrypted properties found in " + f.getAbsolutePath() );
+		DefaultEncryptedProperties ep = new DefaultEncryptedProperties();
 		FileInputStream in = new FileInputStream(f);
 		ep.load(in);
 

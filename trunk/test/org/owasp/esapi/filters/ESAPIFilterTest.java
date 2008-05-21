@@ -23,12 +23,12 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IAuthenticator;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.User;
 import org.owasp.esapi.http.TestFilterChain;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
-import org.owasp.esapi.reference.Encoder;
+import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
  * The Class AccessReferenceMapTest.
@@ -84,10 +84,10 @@ public class ESAPIFilterTest extends TestCase {
         System.out.println(">>>" + ESAPI.securityConfiguration().getResourceDirectory() );
         
         // setup the user in session
-		String accountName = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		IAuthenticator instance = ESAPI.authenticator();
+		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
-		IUser user = instance.createUser(accountName, password, password);
+		User user = instance.createUser(accountName, password, password);
 		instance.setCurrentUser(user);
 		user.enable();
    	    TestHttpServletRequest request = new TestHttpServletRequest();

@@ -18,16 +18,16 @@ package org.owasp.esapi.reference;
 import java.util.logging.Level;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.User;
 /**
  * Reference implementation of the ILogger interface. This implementation uses the Java logging package, and marks each
  * log message with the currently logged in user and the word "SECURITY" for security related events.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * @see org.owasp.esapi.ILogger
+ * @see org.owasp.esapi.Logger
  */
-public class Logger implements org.owasp.esapi.ILogger {
+public class JavaLogger implements org.owasp.esapi.Logger {
 
     // FIXME: ENHANCE somehow make configurable so that successes and failures are logged according to a configuration.
 
@@ -46,7 +46,7 @@ public class Logger implements org.owasp.esapi.ILogger {
      * @param applicationName the application name
      * @param moduleName the module name
      */
-    public Logger(String applicationName, String moduleName) {
+    public JavaLogger(String applicationName, String moduleName) {
         this.applicationName = applicationName;
         this.moduleName = moduleName;
         this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
@@ -179,7 +179,7 @@ public class Logger implements org.owasp.esapi.ILogger {
     	
     	// FIXME: Enhance - consider noting an intrusion detection event on long logs (DOS protection)
     	
-        IUser user = ESAPI.authenticator().getCurrentUser();
+        User user = ESAPI.authenticator().getCurrentUser();
         
         // ensure there's something to log
         if ( message == null ) {
@@ -188,7 +188,7 @@ public class Logger implements org.owasp.esapi.ILogger {
         
         // ensure no CRLF injection into logs for forging records
         String clean = message.replace( '\n', '_' ).replace( '\r', '_' );
-        if ( ((SecurityConfiguration)ESAPI.securityConfiguration()).getLogEncodingRequired() ) {
+        if ( ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogEncodingRequired() ) {
         	clean = ESAPI.encoder().encodeForHTML(message);
             if (!message.equals(clean)) {
                 clean += " (Encoded)";

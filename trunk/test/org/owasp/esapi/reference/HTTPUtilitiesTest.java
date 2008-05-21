@@ -35,8 +35,8 @@ import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.EnterpriseSecurityException;
-import org.owasp.esapi.IAuthenticator;
-import org.owasp.esapi.IUser;
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.User;
 import org.owasp.esapi.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
@@ -91,9 +91,9 @@ public class HTTPUtilitiesTest extends TestCase {
      * @throws AuthenticationException 
      */
     public void testAddCSRFToken() throws AuthenticationException {
-        IAuthenticator instance = ESAPI.authenticator();
-		String username = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		IUser user = instance.createUser(username, "addCSRFToken", "addCSRFToken");
+        Authenticator instance = ESAPI.authenticator();
+		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		User user = instance.createUser(username, "addCSRFToken", "addCSRFToken");
 		instance.setCurrentUser( user );
 
 		System.out.println("addCSRFToken");

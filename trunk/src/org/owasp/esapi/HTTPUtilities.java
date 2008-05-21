@@ -36,7 +36,7 @@ import javax.servlet.http.HttpSession;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IHTTPUtilities {
+public interface HTTPUtilities {
 
 	
 	/**
@@ -297,7 +297,7 @@ public interface IHTTPUtilities {
      * to log sensitive information, and consider masking with the
      * logHTTPRequest( List parameterNamesToObfuscate ) method.
      */
-    public void logHTTPRequest(ILogger logger);
+    public void logHTTPRequest(Logger logger);
 
     /**
      * Format the Source IP address, URL, URL parameters, and all form
@@ -308,7 +308,7 @@ public interface IHTTPUtilities {
      * 
      * @param parameterNamesToObfuscate the sensitive params
      */
-    public void logHTTPRequest(ILogger logger, List parameterNamesToObfuscate);
+    public void logHTTPRequest(Logger logger, List parameterNamesToObfuscate);
 
 
 }

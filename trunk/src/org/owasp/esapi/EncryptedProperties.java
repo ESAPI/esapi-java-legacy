@@ -27,7 +27,7 @@ package org.owasp.esapi;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface IEncryptedProperties {
+public interface EncryptedProperties {
 
 	/**
 	 * Gets the property value from the encrypted store, decrypts it, and returns the plaintext value to the caller.

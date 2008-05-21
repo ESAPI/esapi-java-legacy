@@ -59,7 +59,7 @@ package org.owasp.esapi;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public interface IAccessController {
+public interface AccessController {
 
     /**
      * Checks if an account is authorized to access the referenced URL. The implementation should allow

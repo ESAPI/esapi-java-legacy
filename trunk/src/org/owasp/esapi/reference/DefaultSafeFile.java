@@ -28,29 +28,29 @@ import org.owasp.esapi.ValidationException;
  * causing problems in path lookups. This does _not_ prevent against
  * directory traversal attacks.
  */
-public class SafeFile extends File {
+public class DefaultSafeFile extends File {
 
 	private static final long serialVersionUID = 1L;
 
-	public SafeFile(String path) throws ValidationException {
+	public DefaultSafeFile(String path) throws ValidationException {
 		super(path);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-	public SafeFile(String parent, String child) throws ValidationException {
+	public DefaultSafeFile(String parent, String child) throws ValidationException {
 		super(parent, child);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-	public SafeFile(File parent, String child) throws ValidationException {
+	public DefaultSafeFile(File parent, String child) throws ValidationException {
 		super(parent, child);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-	public SafeFile(URI uri) throws ValidationException {
+	public DefaultSafeFile(URI uri) throws ValidationException {
 		super(uri);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());

@@ -79,7 +79,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testGetProperty() throws EncryptionException {
 		System.out.println("getProperty");
-		EncryptedProperties instance = new EncryptedProperties();
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		String name = "name";
 		String value = "value";
 		instance.setProperty(name, value);
@@ -101,7 +101,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testSetProperty() throws EncryptionException {
 		System.out.println("setProperty");
-		EncryptedProperties instance = new EncryptedProperties();
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		String name = "name";
 		String value = "value";
 		instance.setProperty(name, value);
@@ -121,7 +121,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testKeySet() throws Exception {
 		System.out.println("keySet");
-		EncryptedProperties instance = new EncryptedProperties();
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		instance.setProperty("one", "two");
 		instance.setProperty("two", "three");
 		Iterator i = instance.keySet().iterator();
@@ -140,7 +140,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testLoad() throws Exception {
 		System.out.println("load");
-		EncryptedProperties instance = new EncryptedProperties();
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
 		instance.load( new FileInputStream( f ) );
 		assertEquals( "two", instance.getProperty("one" ) );
@@ -152,7 +152,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testStore() throws Exception {
 		System.out.println("store");
-		EncryptedProperties instance = new EncryptedProperties();
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		instance.setProperty("one", "two");
 		instance.setProperty("two", "three");
 		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
@@ -169,11 +169,11 @@ public class EncryptedPropertiesTest extends TestCase {
 		InputStream orig = System.in;
 		String input = "key\r\nvalue\r\n";
 		System.setIn( new StringBufferInputStream( input ) );
-		EncryptedProperties.main(args1);
+		DefaultEncryptedProperties.main(args1);
 		System.setIn( orig );
 		String[] args2 = { "ridiculous.properties" };
 		try {
-			EncryptedProperties.main(args2);
+			DefaultEncryptedProperties.main(args2);
 			fail();
 		} catch( Exception e ) {
 			// expected

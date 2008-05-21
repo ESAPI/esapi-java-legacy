@@ -74,11 +74,11 @@ public class AccessReferenceMapTest extends TestCase {
 	 */
     public void testUpdate() throws AuthenticationException, EncryptionException {
         System.out.println("update");
-    	AccessReferenceMap arm = new AccessReferenceMap();
-    	IAuthenticator auth = ESAPI.authenticator();
+    	RandomAccessReferenceMap arm = new RandomAccessReferenceMap();
+    	Authenticator auth = ESAPI.authenticator();
     	
     	String pass = auth.generateStrongPassword();
-    	IUser u = auth.createUser( "armUpdate", pass, pass );
+    	User u = auth.createUser( "armUpdate", pass, pass );
     	
     	// test to make sure update returns something
 		arm.update(auth.getUserNames());
@@ -103,15 +103,15 @@ public class AccessReferenceMapTest extends TestCase {
 	 */
     public void testIterator() {
         System.out.println("iterator");
-    	AccessReferenceMap arm = new AccessReferenceMap();
-        IAuthenticator auth = ESAPI.authenticator();
+    	RandomAccessReferenceMap arm = new RandomAccessReferenceMap();
+        Authenticator auth = ESAPI.authenticator();
         
 		arm.update(auth.getUserNames());
 
 		Iterator i = arm.iterator();
 		while ( i.hasNext() ) {
 			String userName = (String)i.next();
-			IUser u = auth.getUser( userName );
+			User u = auth.getUser( userName );
 			if ( u == null ) fail();
 		}
     }
@@ -128,7 +128,7 @@ public class AccessReferenceMapTest extends TestCase {
         list.add( "123" );
         list.add( directReference );
         list.add( "345" );
-        AccessReferenceMap instance = new AccessReferenceMap( list );
+        RandomAccessReferenceMap instance = new RandomAccessReferenceMap( list );
         
         String expResult = directReference;
         String result = instance.getIndirectReference(directReference);
@@ -150,7 +150,7 @@ public class AccessReferenceMapTest extends TestCase {
         list.add( "123" );
         list.add( directReference );
         list.add( "345" );
-        AccessReferenceMap instance = new AccessReferenceMap( list );
+        RandomAccessReferenceMap instance = new RandomAccessReferenceMap( list );
         
         String ind = instance.getIndirectReference(directReference);
         String dir = (String)instance.getDirectReference(ind);
@@ -171,7 +171,7 @@ public class AccessReferenceMapTest extends TestCase {
         list.add( "123" );
         list.add( directReference );
         list.add( "345" );
-        AccessReferenceMap instance = new AccessReferenceMap( list );
+        RandomAccessReferenceMap instance = new RandomAccessReferenceMap( list );
         
         String newDirect = instance.addDirectReference("newDirect");
         assertNotNull( newDirect );
@@ -190,7 +190,7 @@ public class AccessReferenceMapTest extends TestCase {
         list.add( "123" );
         list.add( directReference );
         list.add( "345" );
-        AccessReferenceMap instance = new AccessReferenceMap( list );
+        RandomAccessReferenceMap instance = new RandomAccessReferenceMap( list );
         
         String indirect = instance.getIndirectReference(directReference);
         assertNotNull(indirect);
