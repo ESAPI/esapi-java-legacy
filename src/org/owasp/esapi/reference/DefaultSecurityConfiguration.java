@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.Threshold;
 
 /**
  * The SecurityConfiguration manages all the settings used by the ESAPI in a single place. Initializing the
