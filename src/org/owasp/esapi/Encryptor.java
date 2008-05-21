@@ -110,7 +110,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			digest.reset();
 			digest.update(ESAPI.securityConfiguration().getMasterSalt());
 			digest.update(salt.getBytes());
-			digest.update(":".getBytes());
+//			digest.update(":".getBytes());
 			digest.update(plaintext.getBytes());
 
 			// rehash a number of times to help strengthen weak passwords

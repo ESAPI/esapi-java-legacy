@@ -214,86 +214,86 @@ public class AuthenticatorTest extends TestCase {
 		assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS) ));
 	}
 	
-	public void testGetUserFromRememberToken() throws AuthenticationException {
-		System.out.println("getUserFromRememberToken");
-        IAuthenticator instance = ESAPI.authenticator();
-        instance.logout();  // in case anyone is logged in
-		String password = instance.generateStrongPassword();
-		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		IUser user = instance.createUser(accountName, password, password);
-		user.enable();
-		TestHttpServletRequest request = new TestHttpServletRequest();
-		TestHttpServletResponse response = new TestHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		
-		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
-		try {
-			instance.login( request, response );  // wrong cookie will fail
-		} catch( AuthenticationException e ) {
-			// expected
-		}
-
-		request = new TestHttpServletRequest();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		String newToken = user.resetRememberToken();
-		request.clearCookies();
-		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, newToken );
-		IUser test2 = instance.login( request, response );
-		assertSame( user, test2 );
-	}
-	
-	
-
-	/**
-	 * Test of resetRememberToken method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	public void testResetRememberToken() throws AuthenticationException {
-		System.out.println("resetRememberToken");
-        IAuthenticator instance = ESAPI.authenticator();
-        instance.logout();  // in case anyone is logged in
-		String password = instance.generateStrongPassword();
-		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		IUser user = instance.createUser(accountName, password, password);
-		user.enable();
-		TestHttpServletRequest request = new TestHttpServletRequest();
-		TestHttpServletResponse response = new TestHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-
-		assertFalse( ((Authenticator)instance).verifyRememberToken() );
-		String token = user.resetRememberToken();
-		
-		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, token );
-		assertTrue( ((Authenticator)instance).verifyRememberToken() );
-		
-		request.clearCookies();
-		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
-		assertFalse( ((Authenticator)instance).verifyRememberToken() );
-	}
-
-
-	// FIXME: move to httputilities
-	public void testEnableRememberToken() throws AuthenticationException {
-		System.out.println("enableRememberToken");
-        Authenticator instance = (Authenticator)ESAPI.authenticator();
-		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		IUser user = instance.createUser(accountName, password, password);
-		user.enable();
-		TestHttpServletRequest request = new TestHttpServletRequest();
-		request.addParameter("username", accountName);
-		request.addParameter("password", password);
-		TestHttpServletResponse response = new TestHttpServletResponse();
-		instance.login( request, response);
-
-		int maxAge = ( 60 * 60 * 24 * 14 );
-		ESAPI.httpUtilities().enableRememberToken( maxAge, "domain", "/" );
-		// Can't test this because we're using safeSetCookie, which sets a header, not a real cookie!
-		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
-	    // assertEquals( user.getRememberToken(), value );
-	}
+//	public void testGetUserFromRememberToken() throws AuthenticationException {
+//		System.out.println("getUserFromRememberToken");
+//        IAuthenticator instance = ESAPI.authenticator();
+//        instance.logout();  // in case anyone is logged in
+//		String password = instance.generateStrongPassword();
+//		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+//		IUser user = instance.createUser(accountName, password, password);
+//		user.enable();
+//		TestHttpServletRequest request = new TestHttpServletRequest();
+//		TestHttpServletResponse response = new TestHttpServletResponse();
+//		ESAPI.httpUtilities().setCurrentHTTP(request, response);
+//		
+//		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
+//		try {
+//			instance.login( request, response );  // wrong cookie will fail
+//		} catch( AuthenticationException e ) {
+//			// expected
+//		}
+//
+//		request = new TestHttpServletRequest();
+//		ESAPI.httpUtilities().setCurrentHTTP(request, response);
+//		String newToken = user.resetRememberToken();
+//		request.clearCookies();
+//		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, newToken );
+//		IUser test2 = instance.login( request, response );
+//		assertSame( user, test2 );
+//	}
+//	
+//	
+//
+//	/**
+//	 * Test of resetRememberToken method, of class org.owasp.esapi.Authenticator.
+//	 * 
+//	 * @throws AuthenticationException
+//	 *             the authentication exception
+//	 */
+//	public void testResetRememberToken() throws AuthenticationException {
+//		System.out.println("resetRememberToken");
+//        IAuthenticator instance = ESAPI.authenticator();
+//        instance.logout();  // in case anyone is logged in
+//		String password = instance.generateStrongPassword();
+//		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+//		IUser user = instance.createUser(accountName, password, password);
+//		user.enable();
+//		TestHttpServletRequest request = new TestHttpServletRequest();
+//		TestHttpServletResponse response = new TestHttpServletResponse();
+//		ESAPI.httpUtilities().setCurrentHTTP(request, response);
+//
+//		assertFalse( ((Authenticator)instance).verifyRememberToken() );
+//		String token = user.resetRememberToken();
+//		
+//		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, token );
+//		assertTrue( ((Authenticator)instance).verifyRememberToken() );
+//		
+//		request.clearCookies();
+//		request.setCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
+//		assertFalse( ((Authenticator)instance).verifyRememberToken() );
+//	}
+//
+//
+//	// FIXME: move to httputilities
+//	public void testEnableRememberToken() throws AuthenticationException {
+//		System.out.println("enableRememberToken");
+//        Authenticator instance = (Authenticator)ESAPI.authenticator();
+//		String accountName=ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+//		String password = instance.generateStrongPassword();
+//		IUser user = instance.createUser(accountName, password, password);
+//		user.enable();
+//		TestHttpServletRequest request = new TestHttpServletRequest();
+//		request.addParameter("username", accountName);
+//		request.addParameter("password", password);
+//		TestHttpServletResponse response = new TestHttpServletResponse();
+//		instance.login( request, response);
+//
+//		int maxAge = ( 60 * 60 * 24 * 14 );
+//		ESAPI.httpUtilities().enableRememberToken( maxAge, "domain", "/" );
+//		// Can't test this because we're using safeSetCookie, which sets a header, not a real cookie!
+//		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
+//	    // assertEquals( user.getRememberToken(), value );
+//	}
 	
 	/**
 	 * Test get user from session.
@@ -443,7 +443,7 @@ public class AuthenticatorTest extends TestCase {
 					String password = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
 					u = instance.createUser("test" + count++, password, password);
 					instance.setCurrentUser(u);
-					ESAPI.getLogger("test").fatal( Logger.SECURITY, "Got current user" );
+					ESAPI.getLogger("test").info( Logger.SECURITY, "Got current user" );
 					// ESAPI.authenticator().removeUser( u.getAccountName() );
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
@@ -611,7 +611,7 @@ public class AuthenticatorTest extends TestCase {
         User u2 = (User) instance.getUser(accountName);
         assertNotNull( u2 );
         assertTrue( u2.isInRole(role));
-        assertEquals( instance.hashPassword(password, accountName), u2.getHashedPassword() );
+        assertEquals( instance.hashPassword(password, accountName), ((Authenticator)instance).getHashedPassword(u2) );
     }
     
     

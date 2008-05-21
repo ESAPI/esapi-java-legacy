@@ -126,16 +126,16 @@ public interface IHTTPUtilities {
 	String decryptHiddenField(String encrypted);
 
 	
-	/**
-	 * Set a cookie containing the current User's remember token for automatic authentication. The use of remember tokens
-	 * is not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
-	 * the user that this should only be enabled on computers where no other users will have access.
-	 * 
-	 * @param maxAge
-	 * @param domain
-	 * @param path
-	 */
-	void enableRememberToken( int maxAge, String domain, String path );
+//	/**
+//	 * Set a cookie containing the current User's remember token for automatic authentication. The use of remember tokens
+//	 * is not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
+//	 * the user that this should only be enabled on computers where no other users will have access.
+//	 * 
+//	 * @param maxAge
+//	 * @param domain
+//	 * @param path
+//	 */
+//	void enableRememberToken( int maxAge, String domain, String path );
 	
 	
     /**

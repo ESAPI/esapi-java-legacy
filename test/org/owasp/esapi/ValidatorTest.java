@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import junit.framework.Test;
@@ -250,7 +251,7 @@ public class ValidatorTest extends TestCase {
 	public void testGetValidDate() throws Exception {
 		System.out.println("getValidDate");
 		IValidator instance = ESAPI.validator();
-		assertTrue(instance.getValidDate("test", "June 23, 1967", DateFormat.getDateInstance(), false ) != null);
+		assertTrue(instance.getValidDate("test", "June 23, 1967", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US), false ) != null);
 		try {
 			instance.getValidDate("test", "freakshow", DateFormat.getDateInstance(), false );
 		} catch( ValidationException e ) {

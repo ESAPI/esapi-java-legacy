@@ -257,15 +257,6 @@ public interface IUser {
     String resetCSRFToken() throws AuthenticationException;
 
     /**
-     * Returns a token to be used as a "remember me" cookie. The cookie is not seen by the user and can be fairly long,
-     * at least 20 digits is suggested to prevent brute force attacks. See loginWithRememberToken.
-     * 
-     * @return the string
-     * @throws AuthenticationException the authentication exception
-     */
-    String resetRememberToken() throws AuthenticationException;
-
-    /**
      * Sets the account name.
      * 
      * @param accountName the new account name
@@ -504,13 +495,6 @@ public interface IUser {
         public String resetCSRFToken() throws AuthenticationException {
     		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
     		return csrfToken;
-        }
-
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.interfaces.IUser#resetRememberToken()
-         */
-        public String resetRememberToken() throws AuthenticationException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
 		/* (non-Javadoc)
