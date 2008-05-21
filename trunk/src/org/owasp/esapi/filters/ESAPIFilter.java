@@ -130,6 +130,7 @@ public class ESAPIFilter implements Filter {
 			// clear out the ThreadLocal variables in the authenticator
 			// some containers could possibly reuse this thread without clearing the User
 			ESAPI.authenticator().clearCurrent();
+			ESAPI.httpUtilities().setCurrentHTTP(null, null);
 		}
 	}
 
