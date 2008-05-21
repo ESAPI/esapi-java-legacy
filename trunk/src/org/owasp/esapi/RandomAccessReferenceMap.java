@@ -23,7 +23,7 @@ import java.util.TreeSet;
 import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
- * Reference implementation of the IAccessReferenceMap interface. This
+ * Reference implementation of the AccessReferenceMap interface. This
  * implementation generates random 6 character alphanumeric strings for indirect
  * references. It is possible to use simple integers as indirect references, but
  * the random string approach provides a certain level of protection from CSRF
@@ -34,7 +34,7 @@ import org.owasp.esapi.reference.DefaultEncoder;
  * @since June 1, 2007
  * @see org.owasp.esapi.AccessReferenceMap
  */
-public class RandomAccessReferenceMap implements org.owasp.esapi.AccessReferenceMap {
+public class RandomAccessReferenceMap implements AccessReferenceMap {
 
 	// FIXME: Create an encrypted implementation of AccessReferenceMap that has NO STATE
 	
@@ -69,7 +69,7 @@ public class RandomAccessReferenceMap implements org.owasp.esapi.AccessReference
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessReferenceMap#iterator()
+	 * @see org.owasp.esapi.AccessReferenceMap#iterator()
 	 */
 	public Iterator iterator() {
 		TreeSet sorted = new TreeSet(dtoi.keySet());
@@ -103,14 +103,11 @@ public class RandomAccessReferenceMap implements org.owasp.esapi.AccessReference
 		return indirect;
 	}
 
-	/*
+	/**
 	 * This preserves any existing mappings for items that are still in the new
 	 * list. You could regenerate new indirect references every time, but that
 	 * might mess up anything that previously used an indirect reference, such
 	 * as a URL parameter.
-	 */
-	/**
-	 * Update.
 	 * 
 	 * @param directReferences
 	 *            the direct references

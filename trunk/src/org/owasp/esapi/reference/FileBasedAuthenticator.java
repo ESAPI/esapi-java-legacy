@@ -45,6 +45,7 @@ import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.AuthenticationLoginException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
+import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.User;
@@ -76,9 +77,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
     /** Key for user in session */
     protected static final String USER = "ESAPIUserSessionKey";
-
-    /** Key for remember token cookie */
-    protected static final String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
 
     /** The logger. */
     private static final Logger logger = ESAPI.getLogger("Authenticator");
@@ -401,46 +399,41 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * is missing, token is corrupt, token is expired, account name does not match 
      * and existing account, or hashed password does not match user's hashed password.
      */
-    protected DefaultUser getUserFromRememberToken() {
-    	String token = ESAPI.httpUtilities().getCookie( REMEMBER_TOKEN_COOKIE_NAME );
+    protected DefaultUser getUserFromRememberToken()  {
+    	String token = ESAPI.httpUtilities().getCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
     	if ( token == null ) {
     		return null;
     	}
 
     	String[] data = null;
 		try {
-			data = ESAPI.encryptor().unseal( token ).split( "\\|" );
+			data = ESAPI.encryptor().unseal( token ).split( ":" );
 		} catch (EncryptionException e) {			
 	    	logger.warning(Logger.SECURITY, "Found corrupt or expired remember token" );
+	    	ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 	    	return null;
     	}
 
-		String tokenAccount = data[0];
-		String tokenHashedPassword = data[1];
-    	DefaultUser user = (DefaultUser) getUser( tokenAccount );
+		// data[0] is a random nonce, which can be ignored
+		String username = data[1];
+		String password = data[2];
+    	DefaultUser user = (DefaultUser) getUser( username );
 		if ( user == null ) {
-			logger.warning( Logger.SECURITY, "Found valid remember token but no user matching " + tokenAccount );
+			logger.warning( Logger.SECURITY, "Found valid remember token but no user matching " + username );
 			return null;
 		}
 		
-		if ( !getHashedPassword(user).equals( tokenHashedPassword )) {
-			logger.warning( Logger.SECURITY, "Found valid remember token and matching user, but hashed password did not match for " + user.getAccountName() );
+		logger.warning( Logger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
+		try {
+			user.loginWithPassword(password);
+		} catch (AuthenticationException ae) {
+			logger.warning( Logger.SECURITY, "Login via remember me cookie failed for user " + username, ae);
+	    	ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 			return null;
 		}
-
-		logger.warning( Logger.SECURITY, "Logging in user with remember token: " + user.getAccountName() );
 		return user;
     }
 
-    /**
-     * Verifies the current User's remember cookie from the current request.
-     * @return
-     */
-	public boolean verifyRememberToken() {
-		DefaultUser user = getUserFromRememberToken();
-		return user != null;
-	}
-    
     /**
      * Gets the user names.
      * 
@@ -539,8 +532,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 			user.disable();
 		}
 		
-		// FIXME! User doesn't have a setRememberToken method
-		// this.rememberToken = parts[5].trim();
+		// FIXME: remove "parts[5]", and move remaining fields up
+		// parts[5] used to be a remember me token, which is no longer stored in the DB
 
 		// generate a new csrf token
         user.resetCSRFToken();

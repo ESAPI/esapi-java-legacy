@@ -17,7 +17,7 @@ package org.owasp.esapi;
 
 
 /**
- * The IEncryptedProperties interface is a properties file where all the data is
+ * The EncryptedProperties interface represents a properties file where all the data is
  * encrypted before it is added, and decrypted when it retrieved.
  * <P>
  * <img src="doc-files/EncryptedProperties.jpg" height="600">
@@ -26,6 +26,9 @@ package org.owasp.esapi;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
+ * 
+ * FIXME RD: would it not make more sense to extend {@link java.util.Properties} and encrypt/decrypt
+ * transparently when saving/loading?
  */
 public interface EncryptedProperties {
 

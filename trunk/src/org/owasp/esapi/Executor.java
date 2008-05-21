@@ -20,7 +20,7 @@ import java.util.List;
 
 
 /**
- * The Executor interface is used to run an OS command with less security risk.
+ * The Executor interface is used to run an OS command with reduced security risk.
  * Implementations should do as much as possible to minimize the risk of
  * injection into either the command or parameters. In addition, implementations
  * should timeout after a specified time period in order to help prevent denial
@@ -49,9 +49,9 @@ public interface Executor {
 	 * @param params
 	 *            the params
 	 * @param workdir
-	 *            the workdir
+	 *            the working directory
 	 * @param timeoutSeconds
-	 *            the timeout seconds
+	 *            the amount of time to allow this process to run
 	 * 
 	 * @return the string
 	 * 

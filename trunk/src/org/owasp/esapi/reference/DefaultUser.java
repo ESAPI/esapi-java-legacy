@@ -31,6 +31,7 @@ import org.owasp.esapi.AuthenticationHostException;
 import org.owasp.esapi.AuthenticationLoginException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncryptionException;
+import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 
@@ -428,7 +429,7 @@ public class DefaultUser implements User, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#logout()
 	 */
 	public void logout() {
-		ESAPI.httpUtilities().killCookie( FileBasedAuthenticator.REMEMBER_TOKEN_COOKIE_NAME );
+		ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 		
 		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
 		HttpSession session = request.getSession(false);

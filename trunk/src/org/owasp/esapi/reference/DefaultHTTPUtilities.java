@@ -43,9 +43,10 @@ import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncodingException;
 import org.owasp.esapi.EncryptionException;
+import org.owasp.esapi.IntegrityException;
+import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
-import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.ValidationException;
 import org.owasp.esapi.ValidationUploadException;
 
@@ -100,25 +101,24 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 	}
 
-
-//	// FIXME: move this to User/Authenticator?
-//	/**
-//	 * Save the user's remember me token in a cookie. Old remember me cookies should be
-//	 * destroyed first. Setting this cookie will keep the user logged in until the
-//	 * Authenticator.logout method is called, which will destroy the cookie.
-//	 */
-//	public void enableRememberToken( int maxAge, String domain, String path ) {
-//		IUser user = ESAPI.authenticator().getCurrentUser();
-//		try {
-//			killCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME);
-//			String token = user.resetRememberToken();
-//			safeAddCookie(Authenticator.REMEMBER_TOKEN_COOKIE_NAME, token, maxAge, domain, path );
-//			logger.info(Logger.SECURITY, "Enabled remember token for " + user.getAccountName() );
-//		} catch( AuthenticationException e ) {
-//			logger.warning(Logger.SECURITY, "Attempt to set remember token failed for " + user.getAccountName(), e );
-//		}
-//	}
-//	
+	/**
+	 * Save the user's remember me token in a cookie. Old remember me cookies should be
+	 * destroyed first. Setting this cookie will keep the user logged in until the
+	 * maxAge passes, the password is changed, or the cookie is deleted.
+	 */
+	public void setRememberToken( String username, String password, int maxAge, String domain, String path ) {
+		try {
+			killCookie(REMEMBER_TOKEN_COOKIE_NAME);
+			String random = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+			String clearToken = random + ":" + ":" + username + ":" + password;
+			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
+			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
+			safeAddCookie(REMEMBER_TOKEN_COOKIE_NAME, cryptToken, maxAge, domain, path );
+			logger.info(Logger.SECURITY, "Enabled remember me token for " + username );
+		} catch( IntegrityException e ) {
+			logger.warning(Logger.SECURITY, "Attempt to set remember me token failed for " + username, e );
+		}
+	}
 	
 	/**
 	 * Checks the method of the current request. For example, any application logic that
@@ -614,6 +614,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 				String value = ESAPI.encoder().decodeFromURL(nvpair[1]);
 				map.put( name, value);
 			} catch( EncodingException e ) {
+				// FIXME RD: Is this a good idea, to ignore encoding errors?
 				// skip and continue
 			}
 		}

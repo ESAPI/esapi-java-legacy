@@ -17,7 +17,7 @@ package org.owasp.esapi;
 
 
 /**
- * The ILogger interface defines a set of methods that can be used to log
+ * The Logger interface defines a set of methods that can be used to log
  * security events. Implementors should use a well established logging library
  * as it is quite difficult to create a high-performance logger.
  * <P>
