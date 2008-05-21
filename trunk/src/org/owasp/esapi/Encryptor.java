@@ -99,7 +99,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 
 	/**
 	 * Hashes the data using the specified algorithm and the Java MessageDigest class. This method
-	 * first adds the salt, then the data, and then rehashes 1024 times to help strengthen weak passwords.
+	 * first adds the salt, a separator (":"), and the data, and then rehashes 1024 times to help strengthen weak passwords.
 	 * 
 	 * @see org.owasp.esapi.interfaces.IEncryptor#hash(java.lang.String,java.lang.String)
 	 */
@@ -110,6 +110,7 @@ public class Encryptor implements org.owasp.esapi.interfaces.IEncryptor {
 			digest.reset();
 			digest.update(ESAPI.securityConfiguration().getMasterSalt());
 			digest.update(salt.getBytes());
+			digest.update(":".getBytes());
 			digest.update(plaintext.getBytes());
 
 			// rehash a number of times to help strengthen weak passwords
