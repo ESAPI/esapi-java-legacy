@@ -28,11 +28,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Logger;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.interfaces.IHTTPUtilities;
-import org.owasp.esapi.interfaces.ILogger;
+import org.owasp.esapi.IHTTPUtilities;
+import org.owasp.esapi.ILogger;
+import org.owasp.esapi.reference.Logger;
 
 public class ESAPIFilter implements Filter {
 

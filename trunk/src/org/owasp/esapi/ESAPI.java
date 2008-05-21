@@ -15,18 +15,17 @@
  */
 package org.owasp.esapi;
 
-import org.owasp.esapi.interfaces.IAccessController;
-import org.owasp.esapi.interfaces.IAuthenticator;
-import org.owasp.esapi.interfaces.IEncoder;
-import org.owasp.esapi.interfaces.IEncryptor;
-import org.owasp.esapi.interfaces.IExecutor;
-import org.owasp.esapi.interfaces.IHTTPUtilities;
-import org.owasp.esapi.interfaces.IIntrusionDetector;
-import org.owasp.esapi.interfaces.ILogFactory;
-import org.owasp.esapi.interfaces.ILogger;
-import org.owasp.esapi.interfaces.IRandomizer;
-import org.owasp.esapi.interfaces.ISecurityConfiguration;
-import org.owasp.esapi.interfaces.IValidator;
+import org.owasp.esapi.reference.AccessController;
+import org.owasp.esapi.reference.Authenticator;
+import org.owasp.esapi.reference.Encoder;
+import org.owasp.esapi.reference.Encryptor;
+import org.owasp.esapi.reference.Executor;
+import org.owasp.esapi.reference.HTTPUtilities;
+import org.owasp.esapi.reference.IntrusionDetector;
+import org.owasp.esapi.reference.JavaLogFactory;
+import org.owasp.esapi.reference.Randomizer;
+import org.owasp.esapi.reference.SecurityConfiguration;
+import org.owasp.esapi.reference.Validator;
 
 /**
  * ESAPI locator class to make it easy to get a concrete implementation of the

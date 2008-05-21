@@ -8,7 +8,7 @@ import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.interfaces.IEncoder;
+import org.owasp.esapi.IEncoder;
 
 public class EncodeForHTMLJavaScriptTag extends BodyTagSupport {
 
