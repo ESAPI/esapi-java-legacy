@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 
 
 /**
- * The IHTTPUtilities interface is a collection of methods that provide additional security related to HTTP requests,
+ * The HTTPUtilities interface is a collection of methods that provide additional security related to HTTP requests,
  * responses, sessions, cookies, headers, and logging.
  * <P>
  * <img src="doc-files/HTTPUtilities.jpg" height="600">
@@ -38,12 +38,16 @@ import javax.servlet.http.HttpSession;
  */
 public interface HTTPUtilities {
 
-	
+    /** Key for remember token cookie */
+	// FIXME: Make this configurable via SecurityConfiguration
+    public final static String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
+
 	/**
 	 * Ensures that the current request uses SSL and POST to protect any sensitive parameters
 	 * in the querystring from being sniffed or logged. For example, this method should
 	 * be called from any method that uses sensitive data from a web form.
-	 * @param requiredMethod
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the current {@link HttpServletRequest} object 
 	 * @throws AccessControlException
 	 */
 	void assertSecureRequest() throws AccessControlException;
@@ -53,40 +57,43 @@ public interface HTTPUtilities {
      * Adds the current user's CSRF token (see User.getCSRFToken()) to the URL for purposes of preventing CSRF attacks.
      * This method should be used on all URLs to be put into all links and forms the application generates.
      * 
-     * @param url
-     * @return the updated href with the CSRF token parameter
+     * @param href
+     * @return the updated href with the CSRF token parameter added
      */
     String addCSRFToken(String href);
 
     /**
      * Adds a cookie to the specified HttpServletResponse and adds the Http-Only flag.
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the current {@link HttpServletResponse} object 
      * 
-     * @param name the name
-     * @param value the value
-     * @param domain the domain
-     * @param path the path
-     * @param response the response
-     * @param maxAge the max age
+     * @param name the cookie name
+     * @param value the cookie value
+     * @param domain the domain to restrict the cookie to, or null
+     * @param path the path to restrict the cookie to, or null
+     * @param maxAge the max age in relative seconds that the cookie should be valid for
      */
     void safeAddCookie(String name, String value, int maxAge, String domain, String path);
     
     /**
      * Adds a header to an HttpServletResponse after checking for special characters (such as CRLF injection) that could enable 
      * attacks like response splitting and other header-based attacks that nobody has thought of yet. 
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the current {@link HttpServletResponse} object 
      * 
      * @param name the name
      * @param value the value
-     * @param response the response
      */
     void safeAddHeader(String name, String value) throws ValidationException;
 
     /**
      * Sets a header in an HttpServletResponse after checking for special characters (such as CRLF injection) that could enable 
      * attacks like response splitting and other header-based attacks that nobody has thought of yet. 
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the current {@link HttpServletResponse} object 
      * 
      * @param name the name
      * @param value the value
-     * @param response the response
      */
     void safeSetHeader(String name, String value) throws ValidationException;
 
@@ -95,9 +102,10 @@ public interface HTTPUtilities {
      * Note that this is different from logging out and creating a new session identifier that does not contain the
      * existing session contents. Care should be taken to use this only when the existing session does not contain
      * hazardous contents.
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the current {@link HttpSession} object 
      * 
-     * @param request the request
-     * @return the http session
+     * @return the new http session
      * @throws EnterpriseSecurityException the enterprise security exception
      */
     HttpSession changeSessionIdentifier() throws AuthenticationException;
@@ -106,7 +114,8 @@ public interface HTTPUtilities {
      * Checks the CSRF token in the URL (see User.getCSRFToken()) against the user's CSRF token and
 	 * throws an IntrusionException if it is missing.
 	 * 
-	 * @param request
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the current url
+     * 
 	 * @throws IntrusionException
 	 */
     void verifyCSRFToken() throws IntrusionException;
@@ -114,29 +123,34 @@ public interface HTTPUtilities {
     /**
 	 * Decrypts an encrypted hidden field value and returns the cleartest. If the field does not decrypt properly,
 	 * an IntrusionException is thrown to indicate tampering.
-	 * @param encrypted
-	 * @return
+	 * @param the encrypted field value
+	 * @return the decrypted value
+	 * @throws an IntrusionException if the encrypted value cannot be decrypted
+	 * 
+	 * FIXME RD: What value does this offer over {@link Encryptor#decrypt(String)} ?
 	 */
 	String decryptHiddenField(String encrypted);
 
-	
-//	/**
-//	 * Set a cookie containing the current User's remember token for automatic authentication. The use of remember tokens
-//	 * is not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
-//	 * the user that this should only be enabled on computers where no other users will have access.
-//	 * 
-//	 * @param maxAge
-//	 * @param domain
-//	 * @param path
-//	 */
-//	void enableRememberToken( int maxAge, String domain, String path );
-	
-	
+	/**
+	 * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
+	 * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
+	 * the user that this should only be enabled on computers where no other users will have access.
+	 * 
+	 * @param user the username
+	 * @param password the user's password
+	 * @param maxAge the length of time that the token should be valid for in relative seconds
+	 * @param domain the domain to restrict the token to or null
+	 * @param path the path to restrict the token to or null
+	 */
+	void setRememberToken( String user, String password, int maxAge, String domain, String path );
+
     /**
      * Encrypts a hidden field value for use in HTML.
-     * @param value
-     * @return
+     * @param value the cleartext value
+     * @return the encrypted value
      * @throws EncryptionException
+     * 
+	 * FIXME RD: What value does this offer over {@link Encryptor#encrypt(String)} ?
      */
 	String encryptHiddenField(String value) throws EncryptionException;
 
@@ -145,6 +159,8 @@ public interface HTTPUtilities {
 	 * Takes a querystring (i.e. everything after the ? in the URL) and returns an encrypted string containing the parameters.
 	 * @param href
 	 * @return
+	 * 
+	 * FIXME RD: What value does this offer over {@link Encryptor#encrypt(String)} ?
 	 */
 	String encryptQueryString(String query) throws EncryptionException;
 	
@@ -152,21 +168,29 @@ public interface HTTPUtilities {
 	 * Takes an encrypted querystring and returns a Map containing the original parameters.
 	 * @param encrypted
 	 * @return
+	 * 
+	 * FIXME RD: What value does this offer over {@link Encryptor#decrypt(String)} ? 
+	 * FIXME RD: Is it really valid to return a Map, if the parameter names can be duplicated? e.g. ?a=1&a=2
 	 */
 	Map decryptQueryString(String encrypted) throws EncryptionException;
 
 	/**
 	 * Returns the first cookie matching the given name.
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
+     * 
+     * @param the name of the desired cookie
 	 */
 	String getCookie( String name );
 	
     /**
      * Extract uploaded files from a multipart HTTP requests. Implementations must check the content to ensure that it
      * is safe before making a permanent copy on the local filesystem. Checks should include length and content checks,
-     * possibly virus checking, and path and name checks. Refer to the file checking methods in IValidator for more
+     * possibly virus checking, and path and name checks. Refer to the file checking methods in Validator for more
      * information.
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
      * 
-     * @param request the request
      * @param tempDir the temp dir
      * @param finalDir the final dir
      * @return List of new File objects from upload
@@ -176,27 +200,37 @@ public interface HTTPUtilities {
 
     /**
      * Retrieves a map of data from the encrypted cookie. 
+     * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResquest()} to obtain the {@link HttpServletRequest} object
+     * 
+     * FIXME RD: More information needed about why this may be useful
      */
     Map decryptStateFromCookie() throws EncryptionException ;
 
     /**
      * Kill all cookies received in the last request from the browser. Note that new cookies set by the application in
      * this response may not be killed by this method.
-     * 
-     * @param request the request
-     * @param response the response
+	 * 
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletRequest} object
      */
     void killAllCookies();
     
     /**
      * Kills the specified cookie by setting a new cookie that expires immediately.
      * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
      * @param name the cookie name
      */
     void killCookie(String name);
 
     /**
      * Stores a Map of data in an encrypted cookie.
+     * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
+     * FIXME RD: More information needed about why this may be useful
      */
     void encryptStateInCookie(Map cleartext) throws EncryptionException;
 
@@ -206,8 +240,10 @@ public interface HTTPUtilities {
      * Importantly, redirect requests can be modified by attackers, so do not rely information contained within redirect
      * requests, and do not include sensitive information in a redirect.
      * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
+	 * @param context
      * @param location the URL to redirect to
-     * @param response the current HttpServletResponse
      * @throws IOException Signals that an I/O exception has occurred.
      */
     void safeSendRedirect(String context, String location) throws IOException;
@@ -217,7 +253,9 @@ public interface HTTPUtilities {
      * publically accessible resources can be dangerous, as the request will have already passed the URL
      * based access control check. This method ensures that you can only forward to non-publically
      * accessible resources.
-     *  
+     * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
      * @param context
      * @param location
      * @throws AccessControlException
@@ -231,7 +269,8 @@ public interface HTTPUtilities {
      * Sets the content type on each HTTP response, to help protect against cross-site scripting attacks and other types
      * of injection into HTML documents.
      * 
-     * @param response
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
      */
     void safeSetContentType();
 
@@ -264,7 +303,8 @@ public interface HTTPUtilities {
      * <LI><a href="http://www.mozilla.org/quality/networking/docs/netprefs.html">Mozilla</a>
      * </UL>
      * 
-     * @param response the current HttpServletResponse
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
      */
     void setNoCacheHeaders();
 
@@ -296,8 +336,12 @@ public interface HTTPUtilities {
      * parameters into a string suitable for the log file. Be careful not
      * to log sensitive information, and consider masking with the
      * logHTTPRequest( List parameterNamesToObfuscate ) method.
+     * 
+	 * This method uses {@ink HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
+	 * 
+	 * @param logger the logger to write the request to
      */
-    public void logHTTPRequest(Logger logger);
+    void logHTTPRequest(Logger logger);
 
     /**
      * Format the Source IP address, URL, URL parameters, and all form
@@ -306,9 +350,14 @@ public interface HTTPUtilities {
      * from being logged. If a null list is provided, then all parameters will
      * be logged.
      * 
+	 * This method uses {@ink HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
+	 * 
+	 * @param logger the logger to write the request to
      * @param parameterNamesToObfuscate the sensitive params
+     * 
+     * FIXME RD: Would it not make sense to have the list of parameters to obfuscate configured in the SecurityConfiguration file, and eliminate this method completely?
      */
-    public void logHTTPRequest(Logger logger, List parameterNamesToObfuscate);
+    void logHTTPRequest(Logger logger, List parameterNamesToObfuscate);
 
 
 }

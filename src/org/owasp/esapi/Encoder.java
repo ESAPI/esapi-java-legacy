@@ -19,7 +19,7 @@ import java.io.IOException;
 
 
 /**
- * The IEncoder interface contains a number of methods related to encoding input
+ * The Encoder interface contains a number of methods related to encoding input
  * so that it will be safe for a variety of interpreters. To prevent
  * double-encoding, all encoding methods should first check to see that the
  * input does not already contain encoded characters. There are a few methods
@@ -101,8 +101,8 @@ public interface Encoder {
 	String normalize(String input);
 
 	/**
-	 * Encode data for use in HTML content. This method first canonicalizes and
-	 * detects any double-encoding. If this check passes, then the data is
+	 * Encode data for use in HTML content. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is
 	 * entity-encoded using a whitelist.
 	 * 
 	 * @param input
@@ -112,8 +112,8 @@ public interface Encoder {
 	String encodeForHTML(String input);
 
 	/**
-	 * Encode data for use in HTML attributes. This method first canonicalizes
-	 * and detects any double-encoding. If this check passes, then the data is
+	 * Encode data for use in HTML attributes. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is
 	 * entity-encoded using a whitelist.
 	 * 
 	 * @param input
@@ -123,8 +123,8 @@ public interface Encoder {
 	String encodeForHTMLAttribute(String input);
 
 	/**
-	 * Encode for javascript. This method first canonicalizes and detects any
-	 * double-encoding. If this check passes, then the data is encoded using a
+	 * Encode for javascript. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is encoded using a
 	 * whitelist.
 	 * 
 	 * @param input
@@ -134,9 +134,8 @@ public interface Encoder {
 	String encodeForJavascript(String input);
 
 	/**
-	 * Encode data for use in visual basic script. This method first
-	 * canonicalizes and detects any double-encoding. If this check passes, then
-	 * the data is encoded using a whitelist.
+	 * Encode data for use in visual basic script. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is encoded using a whitelist.
 	 * 
 	 * @param input
 	 *            the input
@@ -145,8 +144,8 @@ public interface Encoder {
 	String encodeForVBScript(String input);
 
 	/**
-	 * Encode for SQL. This method first canonicalizes and detects any
-	 * double-encoding. If this check passes, then the data is encoded using a
+	 * Encode for SQL. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is encoded using a
 	 * whitelist.
 	 * 
 	 * @param input
@@ -156,8 +155,8 @@ public interface Encoder {
 	String encodeForSQL(String input);
 
 	/**
-	 * Encode data for use in LDAP queries. This method first canonicalizes and
-	 * detects any double-encoding. If this check passes, then the data is
+	 * Encode data for use in LDAP queries. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is
 	 * encoded using a whitelist.
 	 * 
 	 * @param input
@@ -167,9 +166,8 @@ public interface Encoder {
 	String encodeForLDAP(String input);
 
 	/**
-	 * Encode data for use in an LDAP distinguished name. This method first
-	 * canonicalizes and detects any double-encoding. If this check passes, then
-	 * the data is encoded using a whitelist.
+	 * Encode data for use in an LDAP distinguished name. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is encoded using a whitelist.
 	 * 
 	 * @param input
 	 *            the input
@@ -178,8 +176,8 @@ public interface Encoder {
 	String encodeForDN(String input);
 
 	/**
-	 * Encode data for use in an XPath query. This method first canonicalizes
-	 * and detects any double-encoding. If this check passes, then the data is
+	 * Encode data for use in an XPath query. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is
 	 * encoded using a whitelist.
 	 * 
 	 * @param input
@@ -189,8 +187,8 @@ public interface Encoder {
 	String encodeForXPath(String input);
 
 	/**
-	 * Encode data for use in an XML element. This method first canonicalizes
-	 * and detects any double-encoding. If this check passes, then the data is
+	 * Encode data for use in an XML element. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is
 	 * encoded using a whitelist. The implementation should follow the <a
 	 * href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding
 	 * Standard</a> from the W3C.
@@ -209,8 +207,8 @@ public interface Encoder {
 	/**
 	 * Encode data for use in an XML attribute. The implementation should follow
 	 * the <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding
-	 * Standard</a> from the W3C. This method first canonicalizes and detects
-	 * any double-encoding. If this check passes, then the data is encoded using
+	 * Standard</a> from the W3C. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is encoded using
 	 * a whitelist.
 	 * <p>
 	 * The use of a real XML parser is highly encouraged. However, in the
@@ -227,8 +225,8 @@ public interface Encoder {
 	/**
 	 * Encode for use in a URL. This method performs <a
 	 * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding"</a>
-	 * on the entire string. This method first canonicalizes and detects any
-	 * double-encoding. If this check passes, then the data is encoded using a
+	 * on the entire string. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is encoded using a
 	 * whitelist.
 	 * 
 	 * @param input
@@ -238,8 +236,8 @@ public interface Encoder {
 	String encodeForURL(String input) throws EncodingException;
 
 	/**
-	 * Decode from URL. This method first canonicalizes and detects any
-	 * double-encoding. If this check passes, then the data is decoded using URL
+	 * Decode from URL. Implementations should first canonicalize and
+	 * detect any double-encoding. If this check passes, then the data is decoded using URL
 	 * decoding.
 	 * 
 	 * @param input
@@ -254,11 +252,12 @@ public interface Encoder {
 	 * Encode for base64.
 	 * <p>
 	 * Beware double-encoding, as this will corrupt the results and could
-	 * possibly cause a downstream security mechansim to make a mistake.
+	 * possibly cause a downstream security mechanism to make a mistake.
 	 * 
 	 * @param input
 	 *            the input
-	 * @return the string
+	 * @param wrap if the result should be wrapped every 76 characters
+	 * @return the Base64 encoded string
 	 */
 	String encodeForBase64(byte[] input, boolean wrap);
 

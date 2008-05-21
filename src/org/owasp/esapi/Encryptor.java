@@ -17,7 +17,7 @@ package org.owasp.esapi;
 
 
 /**
- * The IEncryptor interface provides a set of methods for performing common
+ * The Encryptor interface provides a set of methods for performing common
  * encryption, random number, and hashing operations. Implementations should
  * rely on a strong cryptographic implementation, such as JCE or BouncyCastle.
  * Implementors should take care to ensure that they initialize their
@@ -115,12 +115,12 @@ public interface Encryptor {
 	boolean verifySignature(String signature, String data);
 
 	/**
-	 * Creates a seal that binds a set of data and an expiration timestamp.
+	 * Creates a seal that binds a set of data and includes an expiration timestamp.
 	 * 
 	 * @param data
 	 *            the data
 	 * @param timestamp
-	 *            the timestamp of the expiration date of the data.
+	 *            the absolute expiration date of the data, expressed as seconds since the epoch
 	 * 
 	 * @return the string
 	 * 
@@ -135,7 +135,9 @@ public interface Encryptor {
 	 * as an invalid seal format, expired timestamp, or decryption error.
 	 * 
 	 * @param seal
-	 *            the seal
+	 *            the sealed data
+	 * @return the original data
+	 * @throws ExcryptionException if the unsealed data cannot be retrieved for any reason
 	 */
 	String unseal( String seal ) throws EncryptionException;
 	
@@ -146,15 +148,16 @@ public interface Encryptor {
 	 * 
 	 * @param seal
 	 *            the seal
+	 * @return true if the seal is valid
 	 */
 	boolean verifySeal(String seal);
 
 	
 	/**
-	 * Gets a timestamp representing an offset from the current time to be used by
+	 * Gets an absolute timestamp representing an offset from the current time to be used by
 	 * other functions in the library.
 	 * 
-	 * @return the timestamp
+	 * @return the absolute timestamp
 	 */
 	public long getRelativeTimeStamp( long offset );
 	

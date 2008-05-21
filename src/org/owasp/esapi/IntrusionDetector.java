@@ -17,7 +17,7 @@ package org.owasp.esapi;
 
 
 /**
- * The IIntrusionDetector interface is intended to track security relevant events and identify attack behavior. The
+ * The IntrusionDetector interface is intended to track security relevant events and identify attack behavior. The
  * implementation can use as much state as necessary to detect attacks, but note that storing too much state will burden
  * your system.
  * <P>

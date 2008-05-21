@@ -36,9 +36,10 @@ package org.owasp.esapi;
  * this interface is to centralize access control logic so that it is easy to use and easy to verify.
  * 
  * <pre>
- * if ( ESAPI.accessController().isAuthorizedForFunction( BUSINESS_FUNCTION ) ) {
- * ... access is allowed
- * } else {
+ * try {
+ *     ESAPI.accessController().assertAuthorizedForFunction( BUSINESS_FUNCTION );
+ *     // execute BUSINESS_FUNCTION
+ * } catch (AccessControlException ace) {
  * ... attack in progress
  * }
  * </pre>
@@ -63,7 +64,7 @@ public interface AccessController {
 
     /**
      * Checks if an account is authorized to access the referenced URL. The implementation should allow
-     * access to be granted to any part of the URI. Generally, this method should be invoked in the
+     * access to be granted to any part of the URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
@@ -95,6 +96,8 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced file. The implementation should be extremely careful
      * about canonicalization.
      * 
+     * @see org.owasp.esapi.Encoder#canonicalize(String)
+     *   
      * @param filepath the filepath
      * @return true, if is authorized for file
      */
@@ -109,12 +112,53 @@ public interface AccessController {
      */
     boolean isAuthorizedForService(String serviceName);
 
-    
-    // FIXME: Javadoc - these should log! isAuthorizedForXXXshould not log (for use in UI)
+    /**
+     * Checks if an account is authorized to access the referenced URL. The implementation should allow
+     * access to be granted to any part of the URL. Generally, this method should be invoked in the
+     * application's controller or a filter as follows:
+     * <PRE>ESAPI.accessController().assertAuthorizedForURL(request.getRequestURI().toString());</PRE>
+     * 
+     * @param url the url as returned by request.getRequestURI().toString()
+     * @throws AccessControlException if access is not permitted
+     */
     void assertAuthorizedForURL(String url) throws AccessControlException;
+    
+    /**
+     * Checks if an account is authorized to access the referenced function. The implementation should define the
+     * function "namespace" to be enforced. Choosing something simple like the classname of action classes or menu item
+     * names will make this implementation easier to use.
+     * 
+     * @param functionName the function name
+     * @throws AccessControlException if access is not permitted
+     */
     void assertAuthorizedForFunction(String functionName) throws AccessControlException;
+    
+    /**
+     * Checks if an account is authorized to access the referenced data. The implementation should define the data
+     * "namespace" to be enforced.
+     * 
+     * @param key the key
+     * @throws AccessControlException is access is not permitted
+     */
     void assertAuthorizedForData(String key) throws AccessControlException;
+    
+    /**
+     * Checks if an account is authorized to access the referenced file. The implementation should be extremely careful
+     * about canonicalization.
+     * 
+     * @see org.owasp.esapi.Encoder#canonicalize(String)
+     * @param filepath the filepath
+     * @throws AccessControlException is access is not permitted
+     */
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
+    
+    /**
+     * Checks if an account is authorized to access the referenced service. This can be used in applications that
+     * provide access to a variety of backend services.
+     * 
+     * @param serviceName the service name
+     * @throws AccessControlException
+     */
     void assertAuthorizedForService(String serviceName) throws AccessControlException;
     
     

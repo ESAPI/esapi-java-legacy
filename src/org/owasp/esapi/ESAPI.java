@@ -29,7 +29,7 @@ import org.owasp.esapi.reference.DefaultValidator;
 
 /**
  * ESAPI locator class to make it easy to get a concrete implementation of the
- * various ESAPI classes. Use the setters to override the reference implemnentations
+ * various ESAPI classes. Use the setters to override the reference implementations
  * with instances of any custom ESAPI implementations.
  */
 public class ESAPI {

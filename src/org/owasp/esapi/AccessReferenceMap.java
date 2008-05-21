@@ -19,9 +19,9 @@ import java.util.Iterator;
 
 
 /**
- * The IAccessReferenceMap interface is used to map from a set of internal
+ * The AccessReferenceMap interface is used to map from a set of internal
  * direct object references to a set of indirect references that are safe to
- * disclose publically. This can be used to help protect database keys,
+ * disclose publicly. This can be used to help protect database keys,
  * filenames, and other types of direct object references. As a rule, developers
  * should not expose their direct object references as it enables attackers to
  * attempt to manipulate them.
@@ -42,7 +42,7 @@ import java.util.Iterator;
  * 
  * <pre>
  * Set fileSet = new HashSet();
- * fileSet.addAll(...);
+ * fileSet.addAll(...); // add direct references (e.g. File objects)
  * AccessReferenceMap map = new AccessReferenceMap( fileSet );
  * // store the map somewhere safe - like the session!
  * String indRef = map.getIndirectReference( file1 );
@@ -59,7 +59,8 @@ import java.util.Iterator;
 public interface AccessReferenceMap {
 
 	/**
-	 * Get an iterator through the direct object references.
+	 * Get an iterator through the direct object references. No guarantee is made as 
+	 * to the order of items returned.
 	 * 
 	 * @return the iterator
 	 */
@@ -80,8 +81,8 @@ public interface AccessReferenceMap {
 
 	/**
 	 * Get the original direct object reference from an indirect reference.
-	 * Developers should use this when they get an indirect reference from an
-	 * HTTP request to translate it back into the real direct reference. If an
+	 * Developers should use this when they get an indirect reference from a
+	 * request to translate it back into the real direct reference. If an
 	 * invalid indirectReference is requested, then an AccessControlException is
 	 * thrown.
 	 * 
@@ -90,21 +91,24 @@ public interface AccessReferenceMap {
 	 * 
 	 * @return the direct reference
 	 * 
-	 * @throws AccessControlException
-	 *             the access control exception
+	 * @throws AccessControlException if no direct reference exists for the 
+	 * 				specified indirect reference
 	 */
 	Object getDirectReference(String indirectReference) throws AccessControlException;
 
 	/**
 	 * Adds a direct reference to the AccessReferenceMap and generates an associated indirect reference. 
-	 * @param direct
+	 * @param direct the direct reference
+	 * @return the corresponding indirect reference
 	 */
 	public String addDirectReference(Object direct);
 	
 	/**
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
-	 * @param direct
-	 * @throws AccessControlException
+	 * @param direct the direct reference to remove
+	 * @return the corresponding indirect reference
+	 * @throws AccessControlException 
+	 * FIXME Why might we throw an ACE here?
 	 */
 	public String removeDirectReference(Object direct) throws AccessControlException;
 

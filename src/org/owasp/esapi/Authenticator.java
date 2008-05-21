@@ -22,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * The IAuthenticator interface defines a set of methods for generating and
+ * The Authenticator interface defines a set of methods for generating and
  * handling account credentials and session identifiers. The goal of this
  * interface is to encourage developers to protect credentials from disclosure
  * to the maximum extent possible.
@@ -46,7 +46,7 @@ import javax.servlet.http.HttpServletResponse;
  * <pre>
  * public void doPost(ServletRequest request, ServletResponse response) {
  * try {
- * ESAPI.authenticator().authenticate(request, response, &quot;username&quot;,&quot;password&quot;);
+ * User user = ESAPI.authenticator().login(request, response);
  * // continue with authenticated user
  * } catch (AuthenticationException e) {
  * // handle failed authentication (it's already been logged)
@@ -88,7 +88,7 @@ public interface Authenticator {
 	 * 
 	 * @param user the user
 	 * @param password the password
-	 * @return
+	 * @return true if the password is correct for the specified user
 	 */
 	boolean verifyPassword(User user, String password);
 	
@@ -111,6 +111,8 @@ public interface Authenticator {
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
+	 * FIXME RD: We should throw a specific exception if the account name already exists
+	 * Also, should callers synchronize while checking exists() and calling createUser()?
 	 */
 	User createUser(String accountName, String password1, String password2) throws AuthenticationException;
 
@@ -129,7 +131,8 @@ public interface Authenticator {
 	 * @param user
 	 *            the user
 	 * 
-	 * @return the string
+	 * @return the new password
+	 * FIXME RD: Change the order of these parameters
 	 */
 	String generateStrongPassword(String oldPassword, User user);
 
@@ -157,7 +160,7 @@ public interface Authenticator {
 	User getUser(String accountName);
 
 	/**
-	 * Gets the user names.
+	 * Gets a collection containing all the existing user names.
 	 * 
 	 * @return the user names
 	 */
@@ -189,7 +192,9 @@ public interface Authenticator {
 	 * @param accountName
 	 *            the account name
 	 * 
-	 * @return the string
+	 * @return the hashed password
+	 * FIXME RD: What is the value of this method, over {@link Encryptor#hash(String, String)}? 
+	 * Does it really deserve special treatment? 
 	 */
 	String hashPassword(String password, String accountName) throws EncryptionException;
 
@@ -205,7 +210,7 @@ public interface Authenticator {
 	void removeUser(String accountName) throws AuthenticationException;
 
 	/**
-	 * Validate password strength.
+	 * Ensures that the account name passes site-specific complexity requirements.
 	 * 
 	 * @param accountName
 	 *            the account name
@@ -218,7 +223,7 @@ public interface Authenticator {
 	void verifyAccountNameStrength(String accountName) throws AuthenticationException;
 
 	/**
-	 * Validate password strength.
+	 * Ensures that the password meets site-specific complexity requirements.
 	 * @param oldPassword
 	 *            the old password
 	 * @param newPassword
@@ -228,16 +233,18 @@ public interface Authenticator {
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
+	 * FIXME RD: rather pass the User here, so the Authenticator implementation can
+	 * consider however many old passwords have been retained in the decision
 	 */
 	void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException;
 
 	/**
-	 * Verifies the account exists.
+	 * Determine if the account already exists.
 	 * 
 	 * @param accountName
 	 *            the account name
 	 * 
-	 * @return true, if successful
+	 * @return true, if the account exists
 	 */
 	boolean exists(String accountName);
 
