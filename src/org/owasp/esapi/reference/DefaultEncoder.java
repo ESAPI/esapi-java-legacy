@@ -184,7 +184,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * not known are simply removed.
 	 * 
 	 * Note that most data from the browser is likely to be encoded with URL
-	 * encoding (FIXME: RFC). The web server will decode the URL and form data
+	 * encoding (RFC 3986). The web server will decode the URL and form data
 	 * once, so most encoded data received in the application must have been
 	 * double-encoded by the attacker. However, some HTTP inputs are not decoded
 	 * by the browser, so this routine allows a single level of decoding.
