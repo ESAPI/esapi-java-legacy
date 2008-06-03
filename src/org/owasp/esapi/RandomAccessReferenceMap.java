@@ -38,10 +38,10 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 
 	// FIXME: Create an encrypted implementation of AccessReferenceMap that has NO STATE
 	
-	/** The itod. */
+	/** The itod (indirect to direct) */
 	HashMap itod = new HashMap();
 
-	/** The dtoi. */
+	/** The dtoi (direct to indirect) */
 	HashMap dtoi = new HashMap();
 
 	/** The random. */
