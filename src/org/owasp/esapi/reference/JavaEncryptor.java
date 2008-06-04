@@ -31,8 +31,8 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEParameterSpec;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.IntegrityException;
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.IntegrityException;
 
 /**
  * Reference implementation of the Encryptor interface. This implementation

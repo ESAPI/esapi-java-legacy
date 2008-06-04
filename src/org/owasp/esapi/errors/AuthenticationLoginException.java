@@ -13,7 +13,7 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
  * An AuthenticationException should be thrown when anything goes wrong during
@@ -22,7 +22,7 @@ package org.owasp.esapi;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class AuthenticationAccountsException extends AuthenticationException {
+public class AuthenticationLoginException extends AuthenticationException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -30,7 +30,7 @@ public class AuthenticationAccountsException extends AuthenticationException {
 	/**
 	 * Instantiates a new authentication exception.
 	 */
-	protected AuthenticationAccountsException() {
+	protected AuthenticationLoginException() {
 		// hidden
 	}
 
@@ -40,7 +40,7 @@ public class AuthenticationAccountsException extends AuthenticationException {
 	 * @param message
 	 *            the message
 	 */
-	public AuthenticationAccountsException(String userMessage, String logMessage) {
+	public AuthenticationLoginException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
 	}
 
@@ -52,7 +52,7 @@ public class AuthenticationAccountsException extends AuthenticationException {
 	 * @param cause
 	 *            the cause
 	 */
-	public AuthenticationAccountsException(String userMessage, String logMessage, Throwable cause) {
+	public AuthenticationLoginException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
 	}
 

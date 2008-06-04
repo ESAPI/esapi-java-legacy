@@ -38,17 +38,17 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.owasp.esapi.AccessControlException;
-import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncodingException;
-import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.IntegrityException;
-import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
-import org.owasp.esapi.ValidationException;
-import org.owasp.esapi.ValidationUploadException;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.errors.ValidationUploadException;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation

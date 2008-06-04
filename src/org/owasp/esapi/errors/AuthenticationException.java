@@ -13,46 +13,47 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An AvailabilityException should be thrown when the availability of a limited
- * resource is in jeopardy. For example, if a database connection pool runs out
- * of connections, an availability exception should be thrown.
+ * An AuthenticationException should be thrown when anything goes wrong during
+ * login or logout. They are also appropriate for any problems related to
+ * identity management.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class IntegrityException extends EnterpriseSecurityException {
+public class AuthenticationException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new availability exception.
+	 * Instantiates a new authentication exception.
 	 */
-	protected IntegrityException() {
+	protected AuthenticationException() {
 		// hidden
 	}
 
     /**
-     * Creates a new instance of IntegrityException.
+     * Creates a new instance of EnterpriseSecurityException.
      * 
      * @param message
      *            the message
      */
-    public IntegrityException(String userMessage, String logMessage) {
+    public AuthenticationException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
     }
 
     /**
-     * Instantiates a new IntegrityException.
+     * Instantiates a new authentication exception.
      * 
      * @param message
      *            the message
      * @param cause
      *            the cause
      */
-    public IntegrityException(String userMessage, String logMessage, Throwable cause) {
+    public AuthenticationException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, logMessage, cause);
     }
+
 }

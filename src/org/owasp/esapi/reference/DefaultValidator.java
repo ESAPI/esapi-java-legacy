@@ -36,10 +36,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncodingException;
-import org.owasp.esapi.IntrusionException;
-import org.owasp.esapi.ValidationAvailabilityException;
-import org.owasp.esapi.ValidationException;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationAvailabilityException;
+import org.owasp.esapi.errors.ValidationException;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;

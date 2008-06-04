@@ -21,6 +21,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
+
 
 /**
  * The Validator interface defines a set of methods for canonicalizing and

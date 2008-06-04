@@ -13,46 +13,46 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An ExecutorException should be thrown for any problems that arise during the
- * execution of a system executable.
+ * An AvailabilityException should be thrown when the availability of a limited
+ * resource is in jeopardy. For example, if a database connection pool runs out
+ * of connections, an availability exception should be thrown.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ExecutorException extends EnterpriseSecurityException {
+public class AvailabilityException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new ExecutorException.
+	 * Instantiates a new availability exception.
 	 */
-	protected ExecutorException() {
+	protected AvailabilityException() {
 		// hidden
 	}
 
     /**
-     * Creates a new instance of ExecutorException.
+     * Creates a new instance of AvailabilityException.
      * 
      * @param message
      *            the message
      */
-    public ExecutorException(String userMessage, String logMessage) {
+    public AvailabilityException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
     }
 
     /**
-     * Instantiates a new ExecutorException.
+     * Instantiates a new AvailabilityException.
      * 
      * @param message
      *            the message
      * @param cause
      *            the cause
      */
-    public ExecutorException(String userMessage, String logMessage, Throwable cause) {
+    public AvailabilityException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, logMessage, cause);
     }
-
 }

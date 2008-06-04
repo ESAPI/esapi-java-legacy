@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.IntrusionException;
+
 
 /**
  * The IntrusionDetector interface is intended to track security relevant events and identify attack behavior. The

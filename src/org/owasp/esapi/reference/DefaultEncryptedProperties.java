@@ -28,8 +28,8 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * Reference implementation of the EncryptedProperties interface. This

@@ -15,6 +15,9 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.IntegrityException;
+
 
 /**
  * The Encryptor interface provides a set of methods for performing common

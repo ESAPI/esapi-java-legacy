@@ -17,6 +17,9 @@ package org.owasp.esapi;
 
 import java.io.IOException;
 
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.IntrusionException;
+
 
 /**
  * The Encoder interface contains a number of methods related to encoding input

@@ -13,46 +13,45 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An AuthenticationException should be thrown when anything goes wrong during
- * login or logout. They are also appropriate for any problems related to
- * identity management.
+ * An ExecutorException should be thrown for any problems that arise during the
+ * execution of a system executable.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class AuthenticationException extends EnterpriseSecurityException {
+public class ExecutorException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new authentication exception.
+	 * Instantiates a new ExecutorException.
 	 */
-	protected AuthenticationException() {
+	protected ExecutorException() {
 		// hidden
 	}
 
     /**
-     * Creates a new instance of EnterpriseSecurityException.
+     * Creates a new instance of ExecutorException.
      * 
      * @param message
      *            the message
      */
-    public AuthenticationException(String userMessage, String logMessage) {
+    public ExecutorException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
     }
 
     /**
-     * Instantiates a new authentication exception.
+     * Instantiates a new ExecutorException.
      * 
      * @param message
      *            the message
      * @param cause
      *            the cause
      */
-    public AuthenticationException(String userMessage, String logMessage, Throwable cause) {
+    public ExecutorException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, logMessage, cause);
     }
 

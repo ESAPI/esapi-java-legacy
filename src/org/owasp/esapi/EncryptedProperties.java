@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.EncryptionException;
+
 
 /**
  * The EncryptedProperties interface represents a properties file where all the data is

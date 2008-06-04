@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.AccessControlException;
+
 
 
 /**

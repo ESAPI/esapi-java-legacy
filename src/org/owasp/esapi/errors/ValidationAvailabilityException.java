@@ -13,45 +13,41 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An EncryptionException should be thrown for any problems related to
- * encryption, hashing, or digital signatures.
- * 
+ * FIXME: DOC.
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class EncryptionException extends EnterpriseSecurityException {
+public class ValidationAvailabilityException extends ValidationException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new EncryptionException.
+	 * Instantiates a new validation exception.
 	 */
-	protected EncryptionException() {
+	protected ValidationAvailabilityException() {
 		// hidden
 	}
 
     /**
-     * Creates a new instance of EncryptionException.
-     * 
-     * @param message
-     *            the message
+     * Create a new ValidationException
+     * @param userMessage
+     * @param logMessage
      */
-    public EncryptionException(String userMessage, String logMessage) {
-        super(userMessage, logMessage);
-    }
+	public ValidationAvailabilityException(String userMessage, String logMessage) {
+		super(userMessage, logMessage);
+	}
 
     /**
-     * Instantiates a new EncryptionException.
-     * 
-     * @param message
-     *            the message
+     * Create a new ValidationException
+     * @param userMessage
+     * @param logMessage
      * @param cause
-     *            the cause
      */
-    public EncryptionException(String userMessage, String logMessage, Throwable cause) {
-        super(userMessage, logMessage, cause);
-    }
+	public ValidationAvailabilityException(String userMessage, String logMessage, Throwable cause) {
+		super(userMessage, logMessage, cause);
+	}
+
 }

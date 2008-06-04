@@ -13,46 +13,45 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An ExecutorException should be thrown for any problems that occur when
- * encoding or decoding data.
+ * An EncryptionException should be thrown for any problems related to
+ * encryption, hashing, or digital signatures.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class EncodingException extends EnterpriseSecurityException {
+public class EncryptionException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new service exception.
+	 * Instantiates a new EncryptionException.
 	 */
-	protected EncodingException() {
+	protected EncryptionException() {
 		// hidden
 	}
 
-       /**
-     * Creates a new instance of EncodingException.
+    /**
+     * Creates a new instance of EncryptionException.
      * 
      * @param message
      *            the message
      */
-    public EncodingException(String userMessage, String logMessage) {
+    public EncryptionException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
     }
 
     /**
-     * Instantiates a new EncodingException.
+     * Instantiates a new EncryptionException.
      * 
      * @param message
      *            the message
      * @param cause
      *            the cause
      */
-    public EncodingException(String userMessage, String logMessage, Throwable cause) {
+    public EncryptionException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, logMessage, cause);
     }
-
 }

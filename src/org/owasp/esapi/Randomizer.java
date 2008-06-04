@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.EncryptionException;
+
 
 /**
  * The IRandomizer interface defines a set of methods for creating

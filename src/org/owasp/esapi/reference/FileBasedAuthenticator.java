@@ -38,17 +38,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.owasp.esapi.AccessControlException;
-import org.owasp.esapi.AuthenticationAccountsException;
-import org.owasp.esapi.AuthenticationCredentialsException;
-import org.owasp.esapi.AuthenticationException;
-import org.owasp.esapi.AuthenticationLoginException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.User;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationAccountsException;
+import org.owasp.esapi.errors.AuthenticationCredentialsException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.AuthenticationLoginException;
+import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * Reference implementation of the Authenticator interface. This reference implementation is backed by a simple text

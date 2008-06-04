@@ -13,45 +13,42 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An AuthenticationHostException should be thrown when there is a problem with
- * the host involved with authentication, particularly if the host changes unexpectedly.
+ * An AccessControlException should be thrown when a user attempts to access a
+ * resource that they are not authorized for.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class AuthenticationHostException extends AuthenticationException {
+public class AccessControlException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new authentication exception.
+	 * Instantiates a new access control exception.
 	 */
-	protected AuthenticationHostException() {
+	protected AccessControlException() {
 		// hidden
 	}
 
 	/**
-	 * Creates a new instance of AuthenticationHostException.
-	 * 
-	 * @param message
-	 *            the message
+	 * Creates a new instance of EnterpriseSecurityException.
 	 */
-	public AuthenticationHostException(String userMessage, String logMessage) {
+	public AccessControlException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
 	}
 
 	/**
-	 * Instantiates a new authentication exception.
+	 * Instantiates a new access control exception.
 	 * 
 	 * @param message
 	 *            the message
 	 * @param cause
 	 *            the cause
 	 */
-	public AuthenticationHostException(String userMessage, String logMessage, Throwable cause) {
+	public AccessControlException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
 	}
 

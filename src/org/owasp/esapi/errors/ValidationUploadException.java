@@ -13,46 +13,40 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * An AuthenticationException should be thrown when anything goes wrong during
- * login or logout. They are also appropriate for any problems related to
- * identity management.
- * 
+ * FIXME: DOC.
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class AuthenticationLoginException extends AuthenticationException {
+public class ValidationUploadException extends ValidationException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new authentication exception.
+	 * Instantiates a new validation exception.
 	 */
-	protected AuthenticationLoginException() {
+	protected ValidationUploadException() {
 		// hidden
 	}
 
-	/**
-	 * Creates a new instance of EnterpriseSecurityException.
-	 * 
-	 * @param message
-	 *            the message
-	 */
-	public AuthenticationLoginException(String userMessage, String logMessage) {
+    /**
+     * Create a new ValidationException
+     * @param userMessage
+     * @param logMessage
+     */
+	public ValidationUploadException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
 	}
 
-	/**
-	 * Instantiates a new authentication exception.
-	 * 
-	 * @param message
-	 *            the message
-	 * @param cause
-	 *            the cause
-	 */
-	public AuthenticationLoginException(String userMessage, String logMessage, Throwable cause) {
+    /**
+     * Create a new ValidationException
+     * @param userMessage
+     * @param logMessage
+     * @param cause
+     */
+	public ValidationUploadException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
 	}
 

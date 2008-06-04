@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.ValidationException;
+import org.owasp.esapi.errors.ValidationException;
 
 /**
  * The Class ExecutorTest.

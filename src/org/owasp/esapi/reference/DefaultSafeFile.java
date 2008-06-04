@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.owasp.esapi.ValidationException;
+import org.owasp.esapi.errors.ValidationException;
 
 /**
  * Extension to java.io.File to prevent against null byte injections and

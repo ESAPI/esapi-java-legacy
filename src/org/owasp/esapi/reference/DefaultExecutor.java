@@ -24,9 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.ExecutorException;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.ExecutorException;
 
 /**
  * Reference implementation of the Executor interface. This implementation is very restrictive. Commands must exactly
