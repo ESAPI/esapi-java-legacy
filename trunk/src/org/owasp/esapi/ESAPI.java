@@ -18,7 +18,7 @@ package org.owasp.esapi;
 import org.owasp.esapi.reference.FileBasedAccessController;
 import org.owasp.esapi.reference.FileBasedAuthenticator;
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.reference.JSEEncryptor;
+import org.owasp.esapi.reference.JavaEncryptor;
 import org.owasp.esapi.reference.DefaultExecutor;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
 import org.owasp.esapi.reference.DefaultIntrusionDetector;
@@ -120,7 +120,7 @@ public class ESAPI {
 	 */
 	public static Encryptor encryptor() {
 		if (ESAPI.encryptor == null)
-			ESAPI.encryptor = new JSEEncryptor();
+			ESAPI.encryptor = new JavaEncryptor();
 		return ESAPI.encryptor;
 	}
 
