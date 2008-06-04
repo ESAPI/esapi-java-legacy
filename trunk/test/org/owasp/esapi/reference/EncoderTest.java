@@ -23,10 +23,10 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncodingException;
 import org.owasp.esapi.Encoder;
-import org.owasp.esapi.IntrusionException;
-import org.owasp.esapi.ValidationException;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
 
 /**
  * The Class EncoderTest.

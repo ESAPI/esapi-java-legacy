@@ -13,45 +13,46 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * A CertificateException should be thrown for any problems that arise during
- * processing of digital certificates.
+ * An AvailabilityException should be thrown when the availability of a limited
+ * resource is in jeopardy. For example, if a database connection pool runs out
+ * of connections, an availability exception should be thrown.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class CertificateException extends EnterpriseSecurityException {
+public class IntegrityException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new certificate exception.
+	 * Instantiates a new availability exception.
 	 */
-	protected CertificateException() {
+	protected IntegrityException() {
 		// hidden
 	}
 
     /**
-     * Creates a new instance of CertificateException.
+     * Creates a new instance of IntegrityException.
      * 
      * @param message
      *            the message
      */
-    public CertificateException(String userMessage, String logMessage) {
+    public IntegrityException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
     }
 
     /**
-     * Instantiates a new CertificateException.
+     * Instantiates a new IntegrityException.
      * 
      * @param message
      *            the message
      * @param cause
      *            the cause
      */
-    public CertificateException(String userMessage, String logMessage, Throwable cause) {
+    public IntegrityException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, logMessage, cause);
     }
 }

@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.reference.DefaultEncoder;
 
 /**

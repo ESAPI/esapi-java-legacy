@@ -13,7 +13,10 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
+
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
 
 
 /**

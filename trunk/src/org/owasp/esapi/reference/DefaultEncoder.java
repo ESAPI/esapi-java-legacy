@@ -23,9 +23,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncodingException;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.IntrusionException;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.IntrusionException;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;

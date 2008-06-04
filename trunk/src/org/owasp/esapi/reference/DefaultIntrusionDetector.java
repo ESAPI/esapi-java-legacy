@@ -23,11 +23,11 @@ import java.util.Stack;
 import java.util.WeakHashMap;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EnterpriseSecurityException;
-import org.owasp.esapi.IntrusionException;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 import org.owasp.esapi.SecurityConfiguration.Threshold;
+import org.owasp.esapi.errors.EnterpriseSecurityException;
+import org.owasp.esapi.errors.IntrusionException;
 
 /**
  * Reference implementation of the IntrusionDetector interface. This
@@ -69,7 +69,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * @throws IntrusionException
 	 *             the intrusion exception
 	 * 
-	 * @see org.owasp.esapi.IntrusionDetector#addException(org.owasp.esapi.EnterpriseSecurityException)
+	 * @see org.owasp.esapi.IntrusionDetector#addException(org.owasp.esapi.errors.EnterpriseSecurityException)
 	 */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {

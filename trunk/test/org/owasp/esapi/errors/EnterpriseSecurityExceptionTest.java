@@ -13,25 +13,25 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
-import org.owasp.esapi.AccessControlException;
-import org.owasp.esapi.AuthenticationAccountsException;
-import org.owasp.esapi.AuthenticationCredentialsException;
-import org.owasp.esapi.AuthenticationException;
-import org.owasp.esapi.AuthenticationHostException;
-import org.owasp.esapi.AuthenticationLoginException;
-import org.owasp.esapi.AvailabilityException;
-import org.owasp.esapi.CertificateException;
-import org.owasp.esapi.EncodingException;
-import org.owasp.esapi.EncryptionException;
-import org.owasp.esapi.EnterpriseSecurityException;
-import org.owasp.esapi.ExecutorException;
-import org.owasp.esapi.IntegrityException;
-import org.owasp.esapi.IntrusionException;
-import org.owasp.esapi.ValidationAvailabilityException;
-import org.owasp.esapi.ValidationException;
-import org.owasp.esapi.ValidationUploadException;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationAccountsException;
+import org.owasp.esapi.errors.AuthenticationCredentialsException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.AuthenticationHostException;
+import org.owasp.esapi.errors.AuthenticationLoginException;
+import org.owasp.esapi.errors.AvailabilityException;
+import org.owasp.esapi.errors.CertificateException;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.EnterpriseSecurityException;
+import org.owasp.esapi.errors.ExecutorException;
+import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationAvailabilityException;
+import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.errors.ValidationUploadException;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

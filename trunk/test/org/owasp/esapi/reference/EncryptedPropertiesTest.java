@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncryptionException;
+import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * The Class EncryptedPropertiesTest.

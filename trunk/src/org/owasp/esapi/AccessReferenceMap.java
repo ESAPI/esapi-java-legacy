@@ -17,6 +17,8 @@ package org.owasp.esapi;
 
 import java.util.Iterator;
 
+import org.owasp.esapi.errors.AccessControlException;
+
 
 /**
  * The AccessReferenceMap interface is used to map from a set of internal

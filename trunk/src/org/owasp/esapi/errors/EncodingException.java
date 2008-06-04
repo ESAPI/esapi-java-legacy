@@ -13,41 +13,46 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.errors;
 
 /**
- * FIXME: DOC.
+ * An ExecutorException should be thrown for any problems that occur when
+ * encoding or decoding data.
+ * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ValidationAvailabilityException extends ValidationException {
+public class EncodingException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Instantiates a new validation exception.
+	 * Instantiates a new service exception.
 	 */
-	protected ValidationAvailabilityException() {
+	protected EncodingException() {
 		// hidden
 	}
 
-    /**
-     * Create a new ValidationException
-     * @param userMessage
-     * @param logMessage
+       /**
+     * Creates a new instance of EncodingException.
+     * 
+     * @param message
+     *            the message
      */
-	public ValidationAvailabilityException(String userMessage, String logMessage) {
-		super(userMessage, logMessage);
-	}
+    public EncodingException(String userMessage, String logMessage) {
+        super(userMessage, logMessage);
+    }
 
     /**
-     * Create a new ValidationException
-     * @param userMessage
-     * @param logMessage
+     * Instantiates a new EncodingException.
+     * 
+     * @param message
+     *            the message
      * @param cause
+     *            the cause
      */
-	public ValidationAvailabilityException(String userMessage, String logMessage, Throwable cause) {
-		super(userMessage, logMessage, cause);
-	}
+    public EncodingException(String userMessage, String logMessage, Throwable cause) {
+        super(userMessage, logMessage, cause);
+    }
 
 }

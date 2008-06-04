@@ -103,7 +103,7 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.reference.AuthenticatorTest.suite());
 
         // exceptions
-        suite.addTest(org.owasp.esapi.EnterpriseSecurityExceptionTest.suite());
+        suite.addTest(org.owasp.esapi.errors.EnterpriseSecurityExceptionTest.suite());
         
         // filters
         suite.addTest(org.owasp.esapi.filters.ESAPIFilterTest.suite());

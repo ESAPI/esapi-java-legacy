@@ -23,8 +23,8 @@ import java.security.SecureRandom;
 import java.util.Arrays;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * Reference implementation of the Randomizer interface. This implementation builds on the JCE provider to provide a

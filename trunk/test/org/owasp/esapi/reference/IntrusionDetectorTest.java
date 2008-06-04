@@ -19,12 +19,12 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.User;
-import org.owasp.esapi.IntegrityException;
-import org.owasp.esapi.IntrusionException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 

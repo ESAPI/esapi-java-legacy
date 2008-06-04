@@ -18,6 +18,8 @@ package org.owasp.esapi;
 import java.io.File;
 import java.util.List;
 
+import org.owasp.esapi.errors.ExecutorException;
+
 
 /**
  * The Executor interface is used to run an OS command with reduced security risk.
