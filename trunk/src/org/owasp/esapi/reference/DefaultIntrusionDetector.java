@@ -105,10 +105,11 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * Adds the event to the IntrusionDetector.
      * 
      * @param event the event
+     * @param logMessage the message to log
      * @throws IntrusionException the intrusion exception
      */
-    public void addEvent(String eventName) throws IntrusionException {
-        logger.warning( Logger.SECURITY, "Security event " + eventName + " received" );
+    public void addEvent(String eventName, String logMessage) throws IntrusionException {
+        logger.warning( Logger.SECURITY, "Security event " + eventName + " received : " + logMessage );
 
         // add the event to the current user, which may trigger a detector 
         User user = ESAPI.authenticator().getCurrentUser();
