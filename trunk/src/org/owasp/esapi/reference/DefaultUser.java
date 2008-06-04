@@ -36,7 +36,7 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 
 /**
- * Reference implementation of the IUser interface. This implementation is serialized into a flat file in a simple format.
+ * Reference implementation of the User interface. This implementation is serialized into a flat file in a simple format.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -50,7 +50,7 @@ public class DefaultUser implements User, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** The logger. */
-	private static final Logger logger = ESAPI.getLogger("User");
+	private final Logger logger = ESAPI.getLogger("User");
     
 	/** The account name. */
 	private String accountName = "";

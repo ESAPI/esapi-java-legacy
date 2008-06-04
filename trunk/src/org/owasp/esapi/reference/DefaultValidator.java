@@ -47,7 +47,7 @@ import org.owasp.validator.html.PolicyException;
 import org.owasp.validator.html.ScanException;
 
 /**
- * Reference implementation of the IValidator interface. This implementation
+ * Reference implementation of the Validator interface. This implementation
  * relies on the ESAPI Encoder, Java Pattern (regex), Date,
  * and several other classes to provide basic validation functions. This library
  * has a heavy emphasis on whitelist validation and canonicalization. All double-encoded
@@ -882,7 +882,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @param input string input value
 	 * @return boolean response if input is empty or not
 	 */
-	private static final boolean isEmpty(String input) {
+	private final boolean isEmpty(String input) {
 		return (input==null || input.trim().length() == 0);
 	}
 	
@@ -892,7 +892,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @param input string input value
 	 * @return boolean response if input is empty or not
 	 */
-	private static final boolean isEmpty(byte[] input) {
+	private final boolean isEmpty(byte[] input) {
 		return (input==null || input.length == 0);
 	}
 }
