@@ -3,11 +3,11 @@
  * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
- * http://www.owasp.org/esapi.
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
  * 
- * The ESAPI is published by OWASP under the LGPL. You should read and accept the
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -346,7 +346,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * 
      * @see org.owasp.esapi.interfaces.IAuthenticator#generateStrongPassword(int, char[])
      */
-    public String generateStrongPassword(String oldPassword, User user) {
+    public String generateStrongPassword(User user, String oldPassword) {
         String newPassword = generateStrongPassword(oldPassword);
         if (newPassword != null)
             logger.info(Logger.SECURITY, "Generated strong password for " + user.getAccountName());
@@ -361,8 +361,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      */
     public User getCurrentUser() {
         User user = (User) currentUser.get();
-        if (user == null)
+        if (user == null) {
             user = User.ANONYMOUS;
+        }
         return user;
     }
 
@@ -373,6 +374,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @return the user, or null if not matched.
      */
     public synchronized User getUser(String accountName) {
+    	if ( accountName == null ) {
+    		return User.ANONYMOUS;
+    	}
         loadUsersIfNecessary();
         User user = (User) userMap.get(accountName.toLowerCase());
         return user;
@@ -391,7 +395,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      */
     public User getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
-        return (DefaultUser)session.getAttribute(USER);
+        return (User)session.getAttribute(USER);
     }
 
     /**
@@ -400,6 +404,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * and existing account, or hashed password does not match user's hashed password.
      */
     protected DefaultUser getUserFromRememberToken()  {
+    	
+    	// FIXME: AAA - this code is tied to HTTPUtilties.setRememberToken()
     	String token = ESAPI.httpUtilities().getCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
     	if ( token == null ) {
     		return null;
@@ -414,6 +420,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	    	return null;
     	}
 
+		if ( data.length != 3 ) {
+			return null;
+		}
 		// data[0] is a random nonce, which can be ignored
 		String username = data[1];
 		String password = data[2];
@@ -588,6 +597,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             throw new AuthenticationCredentialsException("Authentication failed", "Authentication failed because user " + username + " doesn't exist");
         }
         user.loginWithPassword(password);
+        
+        // FIXME: AAA set attribute indicating that user just authenticated. Means no CSRF protection is required.
         request.setAttribute(user.getCSRFToken(), "authenticated");
         return user;
     }
@@ -723,8 +734,11 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
     	}
     	
+    	// FIXME: AAA remove all Default stuff from here.
+    	
+    	
         // if there's a user in the session then use that
-        DefaultUser user = (DefaultUser) getUserFromSession();
+        DefaultUser user = (DefaultUser)getUserFromSession();
         
         // else if there's a remember token then use that
         if ( user == null ) {
@@ -733,7 +747,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         
     	// else try to verify credentials - throws exception if login fails
         if ( user == null ) {
-            user = (DefaultUser) loginWithUsernameAndPassword(request, response);
+            user = (DefaultUser)loginWithUsernameAndPassword(request, response);
         }
         
         // set last host address

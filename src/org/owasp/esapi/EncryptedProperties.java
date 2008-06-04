@@ -3,11 +3,11 @@
  * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
- * http://www.owasp.org/esapi.
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
  * 
- * The ESAPI is published by OWASP under the LGPL. You should read and accept the
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -18,7 +18,9 @@ package org.owasp.esapi;
 
 /**
  * The EncryptedProperties interface represents a properties file where all the data is
- * encrypted before it is added, and decrypted when it retrieved.
+ * encrypted before it is added, and decrypted when it retrieved. This interface can be
+ * implemented in a number of ways, the simplest being extending Properties and overloading
+ * the getProperty and setProperty methods.
  * <P>
  * <img src="doc-files/EncryptedProperties.jpg" height="600">
  * <P>
@@ -26,9 +28,6 @@ package org.owasp.esapi;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * 
- * FIXME RD: would it not make more sense to extend {@link java.util.Properties} and encrypt/decrypt
- * transparently when saving/loading?
  */
 public interface EncryptedProperties {
 

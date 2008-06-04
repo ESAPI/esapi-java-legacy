@@ -3,11 +3,11 @@
  * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
- * http://www.owasp.org/esapi.
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
  * 
- * The ESAPI is published by OWASP under the LGPL. You should read and accept the
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -116,17 +116,20 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * destroyed first. Setting this cookie will keep the user logged in until the
 	 * maxAge passes, the password is changed, or the cookie is deleted.
 	 */
-	public void setRememberToken( String username, String password, int maxAge, String domain, String path ) {
+	public String setRememberToken( String password, int maxAge, String domain, String path ) {
+		User user = ESAPI.authenticator().getCurrentUser();		
 		try {
 			killCookie(REMEMBER_TOKEN_COOKIE_NAME);
 			String random = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
-			String clearToken = random + ":" + ":" + username + ":" + password;
+			String clearToken = random + ":" + user.getAccountName() + ":" + password;
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
 			safeAddCookie(REMEMBER_TOKEN_COOKIE_NAME, cryptToken, maxAge, domain, path );
-			logger.info(Logger.SECURITY, "Enabled remember me token for " + username );
+			logger.info(Logger.SECURITY, "Enabled remember me token for " + user.getAccountName() );
+			return cryptToken;
 		} catch( IntegrityException e ) {
-			logger.warning(Logger.SECURITY, "Attempt to set remember me token failed for " + username, e );
+			logger.warning(Logger.SECURITY, "Attempt to set remember me token failed for " + user.getAccountName(), e );
+			return null;
 		}
 	}
 	
@@ -383,7 +386,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#verifyCSRFToken()
 	 */
 	public void verifyCSRFToken() throws IntrusionException {
-		User user = ESAPI.authenticator().getCurrentUser();		
+		User user = ESAPI.authenticator().getCurrentUser();
+		
+		// check if user authenticated with this request - no CSRF protection required
 		if( getCurrentRequest().getAttribute(user.getCSRFToken()) != null ) {
 			return;
 		}
@@ -624,8 +629,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 				String value = ESAPI.encoder().decodeFromURL(nvpair[1]);
 				map.put( name, value);
 			} catch( EncodingException e ) {
-				// FIXME RD: Is this a good idea, to ignore encoding errors?
-				// skip and continue
+				// skip the nvpair with the encoding problem - note this is already logged.
 			}
 		}
 		return map;
