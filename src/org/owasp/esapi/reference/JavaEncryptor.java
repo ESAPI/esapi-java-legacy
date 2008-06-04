@@ -45,7 +45,7 @@ import org.owasp.esapi.IntegrityException;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encryptor
  */
-public class JSEEncryptor implements org.owasp.esapi.Encryptor {
+public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
 	/** The private key. */
 	PrivateKey privateKey = null;
@@ -63,7 +63,7 @@ public class JSEEncryptor implements org.owasp.esapi.Encryptor {
 	String randomAlgorithm = "SHA1PRNG";
 	String encoding = "UTF-8"; 
 		
-	public JSEEncryptor() {
+	public JavaEncryptor() {
 		
 		// FIXME: AAA - need support for key and salt changing. What's best interface?
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
