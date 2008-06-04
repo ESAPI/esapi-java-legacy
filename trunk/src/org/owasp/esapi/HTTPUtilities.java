@@ -61,6 +61,14 @@ public interface HTTPUtilities {
      * @return the updated href with the CSRF token parameter added
      */
     String addCSRFToken(String href);
+    
+    /**
+     * Returns the current user's CSRF token. If there is no current user then return null.
+     * 
+     * @param href
+     * @return the current users CSRF token
+     */
+    String getCSRFToken();
 
     /**
      * Adds a cookie to the specified HttpServletResponse and adds the Http-Only flag.

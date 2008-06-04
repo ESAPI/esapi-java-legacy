@@ -102,6 +102,16 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 	/**
+	 * @see org.owasp.esapi.HTTPUtilities#getCSRFToken()
+	 */
+	public String getCSRFToken() {
+		User user = ESAPI.authenticator().getCurrentUser();		
+		
+		if (user == null) return null;
+		return user.getCSRFToken();
+	}
+	
+	/**
 	 * Save the user's remember me token in a cookie. Old remember me cookies should be
 	 * destroyed first. Setting this cookie will keep the user logged in until the
 	 * maxAge passes, the password is changed, or the cookie is deleted.
