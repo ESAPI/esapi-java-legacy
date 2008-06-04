@@ -33,7 +33,7 @@ import org.owasp.esapi.User;
 import org.owasp.esapi.IntrusionException;
 
 /**
- * Reference implementation of the IAccessController interface. This reference
+ * Reference implementation of the AccessController interface. This reference
  * implementation uses a simple model for specifying a set of access control
  * rules. Many organizations will want to create their own implementation of the
  * methods provided in the IAccessController interface.
@@ -116,7 +116,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	private Rule deny = new Rule();
 
 	/** The logger. */
-	private static Logger logger = ESAPI.getLogger("AccessController");
+	private Logger logger = ESAPI.getLogger("AccessController");
 
 	public FileBasedAccessController() {
 	}

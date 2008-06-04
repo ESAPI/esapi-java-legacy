@@ -32,7 +32,7 @@ import sun.misc.BASE64Encoder;
 import sun.text.Normalizer;
 
 /**
- * Reference implementation of the IEncoder interface. This implementation takes
+ * Reference implementation of the Encoder interface. This implementation takes
  * a whitelist approach, encoding everything not specifically identified in a
  * list of "immune" characters. Several methods follow the approach in the <a
  * href="http://www.microsoft.com/downloads/details.aspx?familyid=efb9c819-53ff-4f82-bfaf-e11625130c25&displaylang=en">Microsoft
@@ -67,10 +67,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	public static final int ENTITY_ENCODING = 3;
 
 	/** The base64 encoder. */
-	private static final BASE64Encoder base64Encoder = new BASE64Encoder();
+	private final BASE64Encoder base64Encoder = new BASE64Encoder();
 
 	/** The base64 decoder. */
-	private static final BASE64Decoder base64Decoder = new BASE64Decoder();
+	private final BASE64Decoder base64Decoder = new BASE64Decoder();
 
 	/** The IMMUNE HTML. */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
@@ -94,7 +94,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
 	/** The logger. */
-	private static final Logger logger = ESAPI.getLogger("Encoder");
+	private final Logger logger = ESAPI.getLogger("Encoder");
 
 	/** The Constant CHAR_LOWERS. */
 	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
@@ -109,10 +109,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
 
 	/** The Constant CHAR_LETTERS. */
-	public final static char[] CHAR_LETTERS = DefaultRandomizer.union(CHAR_LOWERS, CHAR_UPPERS);
+	public final static char[] CHAR_LETTERS = union(CHAR_LOWERS, CHAR_UPPERS);
 
 	/** The Constant CHAR_ALPHANUMERICS. */
-	public final static char[] CHAR_ALPHANUMERICS = DefaultRandomizer.union(CHAR_LETTERS, CHAR_DIGITS);
+	public final static char[] CHAR_ALPHANUMERICS = union(CHAR_LETTERS, CHAR_DIGITS);
 
 	// FIXME: ENHANCE make all character sets configurable
 	/**
@@ -124,7 +124,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
 	final static char[] CHAR_PASSWORD_DIGITS = { '2', '3', '4', '5', '6', '7', '8', '9' };
 	final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
-	public final static char[] CHAR_PASSWORD_LETTERS = DefaultRandomizer.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
+	public final static char[] CHAR_PASSWORD_LETTERS = union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
 
 	private static HashMap characterToEntityMap;
 
@@ -1251,4 +1251,41 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 	}
 
+    /**
+     * Union two character arrays.
+     * 
+     * @param c1 the c1
+     * @param c2 the c2
+     * @return the char[]
+     */
+    private static char[] union(char[] c1, char[] c2) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < c1.length; i++) {
+            if (!contains(sb, c1[i]))
+                sb.append(c1[i]);
+        }
+        for (int i = 0; i < c2.length; i++) {
+            if (!contains(sb, c2[i]))
+                sb.append(c2[i]);
+        }
+        char[] c3 = new char[sb.length()];
+        sb.getChars(0, sb.length(), c3, 0);
+        Arrays.sort(c3);
+        return c3;
+    }
+
+    /**
+     * Contains.
+     * 
+     * @param sb the sb
+     * @param c the c
+     * @return true, if successful
+     */
+    private static boolean contains(StringBuffer sb, char c) {
+        for (int i = 0; i < sb.length(); i++) {
+            if (sb.charAt(i) == c)
+                return true;
+        }
+        return false;
+    }
 }

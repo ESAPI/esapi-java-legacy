@@ -51,7 +51,7 @@ import org.owasp.esapi.ValidationException;
 import org.owasp.esapi.ValidationUploadException;
 
 /**
- * Reference implementation of the IHTTPUtilities interface. This implementation
+ * Reference implementation of the HTTPUtilities interface. This implementation
  * uses the Apache Commons FileUploader library, which in turn uses the Apache
  * Commons IO library.
  * <P>
@@ -68,7 +68,7 @@ import org.owasp.esapi.ValidationUploadException;
 public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/** The logger. */
-	private static final Logger logger = ESAPI.getLogger("HTTPUtilities");
+	private final Logger logger = ESAPI.getLogger("HTTPUtilities");
 
 	/** The max bytes. */
 	int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();

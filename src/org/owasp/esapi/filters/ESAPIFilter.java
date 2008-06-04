@@ -34,7 +34,7 @@ import org.owasp.esapi.Logger;
 
 public class ESAPIFilter implements Filter {
 
-	private static final Logger logger = ESAPI.getLogger("ESAPIFilter");
+	private final Logger logger = ESAPI.getLogger("ESAPIFilter");
 
 	private static final String[] ignore = { "password" };
 

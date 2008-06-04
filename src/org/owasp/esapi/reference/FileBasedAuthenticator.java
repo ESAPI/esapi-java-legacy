@@ -51,7 +51,7 @@ import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.User;
 
 /**
- * Reference implementation of the IAuthenticator interface. This reference implementation is backed by a simple text
+ * Reference implementation of the Authenticator interface. This reference implementation is backed by a simple text
  * file that contains serialized information about users. Many organizations will want to create their own
  * implementation of the methods provided in the IAuthenticator interface backed by their own user repository. This
  * reference implementation captures information about users in a simple text file format that contains user information
@@ -79,7 +79,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     protected static final String USER = "ESAPIUserSessionKey";
 
     /** The logger. */
-    private static final Logger logger = ESAPI.getLogger("Authenticator");
+    private final Logger logger = ESAPI.getLogger("Authenticator");
 
     /** The file that contains the user db */
     private File userDB = null;
@@ -134,7 +134,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             user.enable();
             user.unlock();
             auth.userMap.put(accountName, user);
-            logger.info(Logger.SECURITY, "New user created: " + accountName);
+            System.out.println("New user created: " + accountName);
             auth.saveUsers();
             System.out.println("User account " + user.getAccountName() + " updated");
         } else {

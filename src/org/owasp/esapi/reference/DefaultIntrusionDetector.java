@@ -30,7 +30,7 @@ import org.owasp.esapi.User;
 import org.owasp.esapi.SecurityConfiguration.Threshold;
 
 /**
- * Reference implementation of the IIntrusionDetector interface. This
+ * Reference implementation of the IntrusionDetector interface. This
  * implementation monitors EnterpriseSecurityExceptions to see if any user
  * exceeds a configurable threshold in a configurable time period. For example,
  * it can monitor to see if a user exceeds 10 input validation issues in a 1
@@ -47,7 +47,7 @@ import org.owasp.esapi.SecurityConfiguration.Threshold;
 public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetector {
 
 	/** The logger. */
-	private static final Logger logger = ESAPI.getLogger("IntrusionDetector");
+	private final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
 	// FIXME: There is probably a better data structure for this
 	private Map userEvents = new WeakHashMap();

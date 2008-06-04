@@ -35,7 +35,7 @@ import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.IntegrityException;
 
 /**
- * Reference implementation of the IEncryptor interface. This implementation
+ * Reference implementation of the Encryptor interface. This implementation
  * layers on the JCE provided cryptographic package. Algorithms used are
  * configurable in the ESAPI.properties file.
  * 

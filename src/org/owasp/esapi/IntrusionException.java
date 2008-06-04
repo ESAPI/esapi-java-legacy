@@ -31,7 +31,7 @@ public class IntrusionException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     /** The logger. */
-    protected static final Logger logger = ESAPI.getLogger("IntrusionException");
+    protected final Logger logger = ESAPI.getLogger("IntrusionException");
 
     protected String logMessage = null;
 

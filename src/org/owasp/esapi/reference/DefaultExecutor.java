@@ -40,7 +40,7 @@ import org.owasp.esapi.Validator;
 public class DefaultExecutor implements org.owasp.esapi.Executor {
 
     /** The logger. */
-    private static final Logger logger = ESAPI.getLogger("Executor");
+    private final Logger logger = ESAPI.getLogger("Executor");
     
     /**
      * TODO: Push to configuration? 

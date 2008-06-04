@@ -32,7 +32,7 @@ import org.owasp.esapi.EncryptionException;
 import org.owasp.esapi.Logger;
 
 /**
- * Reference implementation of the IEncryptedProperties interface. This
+ * Reference implementation of the EncryptedProperties interface. This
  * implementation wraps a normal properties file, and creates surrogates for the
  * getProperty and setProperty methods that perform encryption and decryption based on the Encryptor.
  * A very simple main program is provided that can be used to create an
@@ -51,7 +51,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	private final Properties properties = new Properties();
 
 	/** The logger. */
-	private static final Logger logger = ESAPI.getLogger("EncryptedProperties");
+	private final Logger logger = ESAPI.getLogger("EncryptedProperties");
 
 	/**
 	 * Instantiates a new encrypted properties.
