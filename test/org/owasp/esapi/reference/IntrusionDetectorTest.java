@@ -116,7 +116,7 @@ public class IntrusionDetectorTest extends TestCase {
         
         // Now generate some events to disable user account
         for ( int i = 0; i < ESAPI.securityConfiguration().getQuota("event.test").count; i++ ) {
-            ESAPI.intrusionDetector().addEvent("test");
+            ESAPI.intrusionDetector().addEvent("test", "test message");
         }
         assertFalse( user.isEnabled() );
     }
