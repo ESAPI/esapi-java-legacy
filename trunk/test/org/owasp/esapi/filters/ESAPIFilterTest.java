@@ -3,11 +3,11 @@
  * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
- * http://www.owasp.org/esapi.
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
  * 
- * The ESAPI is published by OWASP under the LGPL. You should read and accept the
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -94,7 +94,7 @@ public class ESAPIFilterTest extends TestCase {
 		TestHttpServletResponse response = new TestHttpServletResponse();
 		TestFilterChain chain = new TestFilterChain();
         HttpSession session = request.getSession();
-        session.setAttribute("ESAPIUserSessionKey", accountName);
+        session.setAttribute("ESAPIUserSessionKey", user);
 		
         // setup the URI
         request.setRequestURI("/test/all");
@@ -107,14 +107,13 @@ public class ESAPIFilterTest extends TestCase {
         filter.doFilter(request, response, chain);
     
         // access control test
-        request.setRequestURI( "ridiculous" );
+        request.setRequestURI( "/ridiculous" );
         filter.doFilter(request, response, chain);
     
         // authentication test
         // FIXME: why isn't this invoking the authentication code
         session.removeAttribute("ESAPIUserSessionKey");
         filter.doFilter(request, response, chain);
-    
     }
     
 }

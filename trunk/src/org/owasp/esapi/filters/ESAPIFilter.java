@@ -3,11 +3,11 @@
  * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
- * http://www.owasp.org/esapi.
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
  * 
- * The ESAPI is published by OWASP under the LGPL. You should read and accept the
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.AuthenticationException;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 
 public class ESAPIFilter implements Filter {
@@ -78,6 +77,7 @@ public class ESAPIFilter implements Filter {
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		
 		try {
 			// figure out who the current user is
@@ -112,18 +112,25 @@ public class ESAPIFilter implements Filter {
 				return;
 			}
 
-			// check for CSRF attacks and set appropriate caching headers
-			HTTPUtilities utils = ESAPI.httpUtilities();
+			// check for CSRF attacks
 			// utils.checkCSRFToken();
-			utils.setNoCacheHeaders();
-            utils.safeSetContentType();
-
+			
 			// forward this request on to the web application
 			chain.doFilter(request, response);
+
+			// set up response with content type
+			ESAPI.httpUtilities().safeSetContentType();
+
+            // set no-cache headers on every response
+            // only do this if the entire site should not be cached
+            // otherwise you should do this strategically in your controller or actions
+			ESAPI.httpUtilities().setNoCacheHeaders();
+            
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error( Logger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
+			
 		} finally {
 			// VERY IMPORTANT
 			// clear out the ThreadLocal variables in the authenticator
