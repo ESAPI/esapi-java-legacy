@@ -142,7 +142,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     		}
 
     		if ( !p.matcher(canonical).matches() ) {
-    			throw new ValidationException( context + ": Invalid input" + context, "Invalid input: context=" + context + ", type=" + type + "( " + p.pattern() + "), input=" + input );
+    			throw new ValidationException( context + ": Invalid input", "Invalid input: context=" + context + ", type=" + type + "( " + p.pattern() + "), input=" + input );
     		}
     		
     		return canonical;
