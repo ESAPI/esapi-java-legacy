@@ -50,6 +50,9 @@ public interface Logger {
 
 	/** The PERFORMANCE. */
 	String PERFORMANCE = "PERFORMANCE";
+	
+	/** The FUNCTIONALITY. */
+	String FUNCTIONALITY = "FUNCTIONALITY";
 
 	/**
      * Log critical.
