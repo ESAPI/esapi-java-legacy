@@ -512,7 +512,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		if (minValue > maxValue) {
 			//should this be a RunTime?
-			throw new ValidationException( context + ": Invalid integer input", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context );
+			throw new ValidationException( context + ": Invalid Integer", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context );
 		}
 		
 		if (isEmpty(input)) {
@@ -522,7 +522,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		
 		try {
 			int i = Integer.parseInt(input);
-			if (i < minValue || i > maxValue ) throw new ValidationException( "Invalid int input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid int input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input );
+			if (i < minValue || i > maxValue ) throw new ValidationException( context + ": Invalid Integer. Value must be between " + minValue + " and " + maxValue, "Invalid int input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input );
 			return new Integer(i);
 		} catch (NumberFormatException e) {
 			throw new ValidationException( context + ": Invalid integer input", "Invalid int input: context=" + context + ", input=" + input, e);
