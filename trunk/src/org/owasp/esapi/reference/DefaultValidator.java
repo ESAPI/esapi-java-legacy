@@ -192,10 +192,35 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @see org.owasp.esapi.interfaces.IValidator#isValidSafeHTML(java.lang.String)
 	 */
 	public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
+		
+		System.out.println("isValidSafeHTML: " + ESAPI.securityConfiguration().getResourceDirectory());
+		
 		try {
 			if ( antiSamyPolicy == null ) {
 				if (ESAPI.securityConfiguration().getResourceDirectory() == null) {
-					//TODO - load via classpath - AntiSamy does not support this yet
+					
+					//load via classpath
+			    	ClassLoader loader = getClass().getClassLoader();
+
+			        Properties result = null;
+			        
+			        InputStream in = null;
+			        try {
+			            in = loader.getResourceAsStream("antisamy-esapi.xml");
+			            if (in != null) {
+			            	antiSamyPolicy = Policy.getInstance(in);
+			            }
+			        } catch (Exception e) {
+			            result = null;
+			            
+			        } finally {
+			            if (in != null) try { in.close (); } catch (Throwable ignore) {}
+			        }
+			        
+			        if (result == null) {
+			            throw new IllegalArgumentException ("Can't load ESAPI.properties as a classloader resource");
+			        }
+			        
 				} else {
 					//load via fileio
 					antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
@@ -217,6 +242,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public String getValidSafeHTML( String context, String input, int maxLength, boolean allowNull ) throws ValidationException, IntrusionException {
 		
+		System.out.println("getValidSafeHTML: getResourceDirectory=" + ESAPI.securityConfiguration().getResourceDirectory());
+		
 		if (isEmpty(input)) {
 			if (allowNull) return null;
    			throw new ValidationException( context + ": Input HTML required", "Input HTML required: context=" + context + ", input=" + input );
@@ -229,11 +256,47 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		
 		try {
 			if ( antiSamyPolicy == null ) {
-				antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+				if (ESAPI.securityConfiguration().getResourceDirectory() == null) {
+					
+					//load via classpath
+					System.out.println("a");
+			    	ClassLoader loader = getClass().getClassLoader();
+			    	System.out.println("b");
+			        
+			        InputStream in = null;
+			        try {
+			        	System.out.println("c");
+			            in = loader.getResourceAsStream("antisamy-esapi.xml");
+			            System.out.println("d");
+			            if (in != null) {
+			            	System.out.println("e");
+			            	antiSamyPolicy = Policy.getInstance(in);
+			            	System.out.println("f");
+			            }
+			        } catch (Exception e) {
+			        	antiSamyPolicy = null;
+			            
+			        } finally {
+			            if (in != null) try { in.close (); } catch (Throwable ignore) {}
+			        }
+			        
+			        if (antiSamyPolicy == null) {
+			            throw new IllegalArgumentException ("Can't load antisamy-esapi.xml as a classloader resource");
+			        }
+			        System.out.println("g=good");
+			        
+				} else {
+					//load via fileio
+					antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+				}
 			}
+			System.out.println("e " + antiSamyPolicy);
 			AntiSamy as = new AntiSamy();
+			System.out.println("f");
 			CleanResults test = as.scan(input, antiSamyPolicy);
+			System.out.println("g");
 			List errors = test.getErrorMessages();
+			System.out.println("h");
 			
 			// FIXME: AAA log detailed messages for now - would be nice to report
 			// FIXME: Enhance - antisamy has html markup in error messages - not perfect for log
@@ -241,6 +304,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				// just create new exception to get it logged and intrusion detected
 				new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", errors=" + errors );
 			}
+			System.out.println("i");
+			
 			return(test.getCleanHTML().trim());
 		} catch (ScanException e) {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e );

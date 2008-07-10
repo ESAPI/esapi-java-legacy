@@ -90,7 +90,7 @@
             printusage="false"
         >
             <injar name="${jar}"/>
-            <injar name="lib/antisamy-bin-standalone.1.1.1.jar" filter="!META-INF/*"/>
+            <injar name="lib/antisamy-bin.1.2.jar" filter="!META-INF/*"/>
             <injar name="lib/commons-fileupload-1.2.jar" filter="!META-INF/*"/>
             <injar name="lib/commons-io-1.3.2.jar" filter="!META-INF/*"/>
             <libraryjar name="${java.home}/lib/rt.jar"/>
