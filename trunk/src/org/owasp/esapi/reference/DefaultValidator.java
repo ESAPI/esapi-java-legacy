@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -193,7 +194,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {
 			if ( antiSamyPolicy == null ) {
-				antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+				if (ESAPI.securityConfiguration().getResourceDirectory() == null) {
+					//TODO - load via classpath - AntiSamy does not support this yet
+				} else {
+					//load via fileio
+					antiSamyPolicy = Policy.getInstance( ESAPI.securityConfiguration().getResourceDirectory() + "antisamy-esapi.xml");
+				}
 			}
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(input, antiSamyPolicy);
