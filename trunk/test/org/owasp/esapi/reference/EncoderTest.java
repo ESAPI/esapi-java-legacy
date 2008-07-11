@@ -71,14 +71,41 @@ public class EncoderTest extends TestCase {
     
 
 	/**
-	 * Test of canonicalize method, of class org.owasp.esapi.Validator.
+	 * Test of canonicalize method, of class org.owasp.esapi.Encoder.
 	 * 
-	 * @throws ValidationException
+	 * @throws EncodingException
 	 */
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
 		Encoder instance = ESAPI.encoder();
         assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
+
+        assertEquals( "%", instance.canonicalize("%25"));
+        assertEquals( "%F", instance.canonicalize("%25F"));
+        assertEquals( "<", instance.canonicalize("%3c"));
+        assertEquals( "<", instance.canonicalize("%3C"));
+        assertEquals( "%X1", instance.canonicalize("%X1"));
+
+        assertEquals( "<", instance.canonicalize("&lt"));
+        assertEquals( "<", instance.canonicalize("&LT"));
+        assertEquals( "<", instance.canonicalize("&lt;"));
+        assertEquals( "<", instance.canonicalize("&LT;"));
+        
+        assertEquals( "%", instance.canonicalize("&#37;"));
+        assertEquals( "%", instance.canonicalize("&#37"));
+        assertEquals( "%b", instance.canonicalize("&#37b"));
+
+        assertEquals( "<", instance.canonicalize("&#x3c"));
+        assertEquals( "<", instance.canonicalize("&#x3c;"));
+        assertEquals( "<", instance.canonicalize("&#x3C"));
+        assertEquals( "<", instance.canonicalize("&#X3c"));
+        assertEquals( "<", instance.canonicalize("&#X3C"));
+        assertEquals( "<", instance.canonicalize("&#X3C;"));
+
+        // FIXME: add a canonicalize flag that doesn't throw this exception!
+        String test1 = "%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e";
+		String test2 = "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B";
+
         try {
         	assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
         } catch( IntrusionException e ) {

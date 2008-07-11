@@ -13,47 +13,39 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.reference;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.owasp.esapi.AccessReferenceMap;
 import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
  * Reference implementation of the AccessReferenceMap interface. This
- * implementation generates random 6 character alphanumeric strings for indirect
- * references. It is possible to use simple integers as indirect references, but
- * the random string approach provides a certain level of protection from CSRF
- * attacks, because an attacker would have difficulty guessing the indirect
- * reference.
+ * implementation generates integers for indirect references.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @since June 1, 2007
  * @see org.owasp.esapi.AccessReferenceMap
  */
-public class RandomAccessReferenceMap implements AccessReferenceMap {
+public class IntegerAccessReferenceMap implements AccessReferenceMap {
 
-	// FIXME: Create an encrypted implementation of AccessReferenceMap that has NO STATE
-	
 	/** The itod (indirect to direct) */
 	HashMap itod = new HashMap();
 
 	/** The dtoi (direct to indirect) */
 	HashMap dtoi = new HashMap();
 
-	/** The random. */
-	Randomizer random = ESAPI.randomizer();
-
+	int count = 1;
+	
 	/**
-	 * This AccessReferenceMap implementation uses short random strings to
-	 * create a layer of indirection. Other possible implementations would use
-	 * simple integers as indirect references.
+	 * This AccessReferenceMap implementation uses integers to
+	 * create a layer of indirection.
 	 */
-	public RandomAccessReferenceMap() {
+	public IntegerAccessReferenceMap() {
 		// call update to set up the references
 	}
 
@@ -63,7 +55,7 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	 * @param directReferences
 	 *            the direct references
 	 */
-	public RandomAccessReferenceMap(Set directReferences) {
+	public IntegerAccessReferenceMap(Set directReferences) {
 		update(directReferences);
 	}
 
@@ -78,17 +70,21 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	}
 	
 	/**
-	 * Adds a direct reference and a new random indirect reference, overwriting any existing values.
+	 * Adds a direct reference and a new indirect reference, overwriting any existing values.
 	 * @param direct
 	 */
 	public String addDirectReference(Object direct) {
 		if ( dtoi.keySet().contains( direct ) ) {
 			return (String)dtoi.get( direct );
 		}
-		String indirect = random.getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String indirect = getUniqueReference();
 		itod.put(indirect, direct);
 		dtoi.put(direct, indirect);
 		return indirect;
+	}
+	
+	private synchronized String getUniqueReference() {
+		return "" + count++;  // returns a string version of the counter
 	}
 	
 	/**
@@ -128,9 +124,7 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 			// if the old reference is null, then create a new one that doesn't
 			// collide with any existing indirect references
 			if (indirect == null) {
-				do {
-					indirect = random.getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
-				} while (itod.keySet().contains(indirect));
+				indirect = getUniqueReference();
 			}
 			itod.put(indirect, direct);
 			dtoi.put(direct, indirect);
