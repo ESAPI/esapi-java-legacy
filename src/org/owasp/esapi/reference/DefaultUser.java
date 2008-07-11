@@ -406,7 +406,7 @@ public class DefaultUser implements User, Serializable {
 		if ( verifyPassword( password ) ) {
 			// FIXME: AAA verify loggedIn is properly maintained
 			loggedIn = true;
-			HttpSession session = ESAPI.httpUtilities().changeSessionIdentifier();
+			ESAPI.httpUtilities().changeSessionIdentifier();
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
             setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );

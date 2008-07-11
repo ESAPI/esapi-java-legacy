@@ -96,7 +96,8 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite());
         suite.addTest(org.owasp.esapi.reference.EncryptorTest.suite());
         suite.addTest(org.owasp.esapi.reference.IntrusionDetectorTest.suite());
-        suite.addTest(org.owasp.esapi.AccessReferenceMapTest.suite());
+        suite.addTest(org.owasp.esapi.reference.AccessReferenceMapTest.suite());
+        suite.addTest(org.owasp.esapi.reference.IntegerAccessReferenceMapTest.suite());
         suite.addTest(org.owasp.esapi.reference.ExecutorTest.suite());
         suite.addTest(org.owasp.esapi.reference.EncoderTest.suite());
         suite.addTest(org.owasp.esapi.reference.EncryptedPropertiesTest.suite());

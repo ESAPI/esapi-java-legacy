@@ -13,19 +13,22 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi;
+package org.owasp.esapi.reference;
 
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncryptionException;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.User;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 
 
 /**
@@ -33,7 +36,7 @@ import junit.framework.TestSuite;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class AccessReferenceMapTest extends TestCase {
+public class IntegerAccessReferenceMapTest extends TestCase {
     
     /**
 	 * Instantiates a new access reference map test.
@@ -41,7 +44,7 @@ public class AccessReferenceMapTest extends TestCase {
 	 * @param testName
 	 *            the test name
 	 */
-    public AccessReferenceMapTest(String testName) {
+    public IntegerAccessReferenceMapTest(String testName) {
         super(testName);
     }
 
@@ -65,7 +68,7 @@ public class AccessReferenceMapTest extends TestCase {
 	 * @return the test
 	 */
     public static Test suite() {
-        TestSuite suite = new TestSuite(AccessReferenceMapTest.class);
+        TestSuite suite = new TestSuite(IntegerAccessReferenceMapTest.class);
         return suite;
     }
 

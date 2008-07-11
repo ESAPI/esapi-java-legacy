@@ -137,6 +137,7 @@ public class AuthenticatorTest extends TestCase {
                 newPassword = instance.generateStrongPassword();
                 instance.verifyPasswordStrength(oldPassword, newPassword);
             } catch( AuthenticationException e ) {
+            	// FIXME: this fails occasionally so the generate and verify are out of sync a tiny bit
             	System.out.println( "  FAILED >> " + newPassword + " : " + e.getLogMessage());
                 fail();
             }

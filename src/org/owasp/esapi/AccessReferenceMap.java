@@ -50,6 +50,9 @@ import org.owasp.esapi.errors.AccessControlException;
  * String indRef = map.getIndirectReference( file1 );
  * String href = &quot;http://www.aspectsecurity.com/esapi?file=&quot; + indRef );
  * ...
+ * // if the indirect reference doesn't exist, it's likely an attack
+ * // getDirectReference throws an AccessControlException
+ * // you should handle as appropriate
  * String indref = request.getParameter( &quot;file&quot; );
  * File file = (File)map.getDirectReference( indref );
  * </pre>
