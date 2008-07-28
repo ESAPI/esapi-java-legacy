@@ -18,21 +18,14 @@ package org.owasp.esapi.codecs;
 import java.util.HashMap;
 
 /**
- * Reference implementation of the Encoder interface. This implementation takes
- * 
- * 
- * 
+ * Implementation of the Codec interface for HTML entity encoding.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class HTMLEntityCodec extends Codec {
-
-	
-	// FIXME: 00–08, 0B–0C, 0E–1F, 7F, and 80–9F Cannot be used in HTML!
-	// http://en.wikipedia.org/wiki/Character_encodings_in_HTML
+public class HTMLEntityCodec implements Codec {
 	
 	private static HashMap characterToEntityMap;
 
@@ -45,12 +38,14 @@ public class HTMLEntityCodec extends Codec {
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
-			sb.append( encode( new Character( input.charAt(i) ) ) );
+			char c = input.charAt(i);
+			sb.append( encodeCharacter( new Character( input.charAt(i) ) ) );
 		}
 		return sb.toString();
 	}
-	
-	public String encode( Character c ) {
+
+
+	public String encodeCharacter( Character c ) {
 		String entityName = (String) characterToEntityMap.get(c);
 		if (entityName != null) {
 			return "&" + entityName + ";";
@@ -58,16 +53,15 @@ public class HTMLEntityCodec extends Codec {
 		return "&#" + (int)c.charValue() + ";";
 	}
 	
+	
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
 		while ( pbs.hasNext() ) {
-			pbs.mark();
-			Character c = getDecodedCharacter( pbs );
+			Character c = decodeCharacter( pbs );
 			if ( c != null ) {
 				sb.append( c );
 			} else {
-				pbs.reset();
 				sb.append( pbs.next() );
 			}
 		}
@@ -85,25 +79,38 @@ public class HTMLEntityCodec extends Codec {
 	 *   &#xhhhh;
 	 *   &name;
 	 */
-	public Character getDecodedCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackString input ) {
+		input.mark();
 		Character first = input.next();
-		if ( first == null ) return null;
+		if ( first == null ) {
+			input.reset();
+			return null;
+		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '&' ) return null;
+		if ( first.charValue() != '&' ) {
+			input.reset();
+			return null;
+		}
 		
 		// test for numeric encodings
 		Character second = input.next();
-		if ( second == null ) return null;
+		if ( second == null ) {
+			input.reset();
+			return null;
+		}
 		
 		if ( second.charValue() == '#' ) {
 			// handle numbers
-			return getNumericEntity( input );
+			Character c = getNumericEntity( input );
+			if ( c != null ) return c;
 		} else if ( Character.isLetter( second.charValue() ) ) {
 			// handle entities
 			input.pushback( second );
-			return getNamedEntity( input );
+			Character c = getNamedEntity( input );
+			if ( c != null ) return c;
 		}
+		input.reset();
 		return null;
 	}
 	

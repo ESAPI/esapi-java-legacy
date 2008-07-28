@@ -15,33 +15,16 @@
  */
 package org.owasp.esapi.codecs;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Logger;
-import org.owasp.esapi.codecs.Base64;
-import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.errors.IntrusionException;
-
-import sun.text.Normalizer;
 
 /**
- * Reference implementation of the Encoder interface. This implementation takes
- * 
- * 
- * 
+ * Implementation of the Codec interface for percent encoding (aka URL encoding).
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class PercentCodec extends Codec {
+public class PercentCodec implements Codec {
 
 	public PercentCodec() {
 	}
@@ -50,16 +33,18 @@ public class PercentCodec extends Codec {
 		return null;
 	}
 	
+	public String encodeCharacter( Character c ) {
+		return null;
+	}
+	
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
 		while ( pbs.hasNext() ) {
-			pbs.mark();
-			Character c = getDecodedCharacter( pbs );
+			Character c = decodeCharacter( pbs );
 			if ( c != null ) {
 				sb.append( c );
 			} else {
-				pbs.reset();
 				sb.append( pbs.next() );
 			}
 		}
@@ -70,50 +55,43 @@ public class PercentCodec extends Codec {
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
-	 * Formats all are legal both with and without semi-colon, upper/lower case:
-	 *   &#dddd;
-	 *   &#xhhhh;
-	 *   &name;
+	 * Formats all are legal both upper/lower case:
+	 *   %hh;
 	 */
-	public Character getDecodedCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackString input ) {
+		input.mark();
 		Character first = input.next();
-		if ( first == null ) return null;
-		
-		// if this is not an encoded character, return null
-		if ( first.charValue() != '%' ) return null;
-				
-		// Search for exactly 2 hex digits following %
-		StringBuffer sb = new StringBuffer();
-		if ( input.hasNext() ) {
-			Character c = input.next();
-			if ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 ) {
-				sb.append( c );
-			} else return null;
-		} else return null;
-		if ( input.hasNext() ) {
-			Character c = input.next();
-			if ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 ) {
-				sb.append( c );
-			} else return null;
-		} else return null;
-		
-		// parse the hex digit and create a character
-		try {
-			int i = Integer.parseInt(sb.toString(), 16);
-			// FIXME: in Java 1.5 you can test whether this is a valid code point
-			// with Character.isValidCodePoint() et al.
-			return new Character( (char)i );
-		} catch( NumberFormatException e ) {
-			// throw an exception for malformed entity?
+		if ( first == null ) {
+			input.reset();
 			return null;
 		}
-	}
-	
 		
-	public static void main( String[] args ) {
-		PercentCodec codec = new PercentCodec();
-		String test = "%2526 %3cscript%3e";
-		System.out.println( "Original: " + test );
-		System.out.println( "Decoded: " + codec.decode( test ) );
+		// if this is not an encoded character, return null
+		if ( first.charValue() != '%' ) {
+			input.reset();
+			return null;
+		}
+				
+		// Search for exactly 2 hex digits following
+		StringBuffer sb = new StringBuffer();
+		for ( int i=0; i<2; i++ ) {
+			Character c = input.nextHex();
+			if ( c != null ) sb.append( c );
+		}
+		if ( sb.length() == 2 ) {
+			try {
+				// parse the hex digit and create a character
+				int i = Integer.parseInt(sb.toString(), 16);
+				// FIXME: in Java 1.5 you can test whether this is a valid code point
+				// with Character.isValidCodePoint() et al.
+				return new Character( (char)i );
+			} catch( NumberFormatException e ) {
+				// throw an exception for malformed entity?
+				// just continue which will reset and return null
+			}
+		}
+		input.reset();
+		return null;
 	}
+
 }

@@ -17,39 +17,32 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Base Codec class.
- * 
- * 
- * 
+ * The Codec interface defines a set of methods for encoding and decoding application level encoding schemes,
+ * such as HTML entity encoding and percent encoding (aka URL encoding). Codecs are used in output encoding
+ * and canonicalization.  The design of these codecs allows for character-by-character decoding, which is
+ * necessary to detect double-encoding and the use of multiple encoding schemes, both of which are techniques
+ * used by attackers to bypass validation and bury encoded attacks in data.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class Codec {
+public interface Codec {
 
-	public Codec() {
-	}
 
-	public String getEncodedString( String input ) {
-		return null;
-	}
+	String encode( String input );
 	
-	public String getDecodedString( String input ) {
-		return null;
-	}
+	String encodeCharacter( Character c );
+	
+	String decode( String input );
 	
 
 	/**
-	 * Returns the decoded version of the character at index if it is encoded using
-	 * this encoder's scheme, otherwise returns null.
+	 * Returns the decoded version of the next character from the input string and advances the
+	 * current character in the PushbackString.  If the current character is not encoded, this 
+	 * method MUST reset the PushbackString.
 	 */
-	public Character getDecodedCharacter( PushbackString input ) {
-		return null;
-	}
-
-	public String getEncodedCharacter( Character c ) {
-		return null;
-	}
+	public Character decodeCharacter( PushbackString input );
+	
 }

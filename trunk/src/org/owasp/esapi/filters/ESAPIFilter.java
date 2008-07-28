@@ -36,7 +36,7 @@ public class ESAPIFilter implements Filter {
 
 	private final Logger logger = ESAPI.getLogger("ESAPIFilter");
 
-	private static final String[] ignore = { "password" };
+	private static final String[] obfuscate = { "password" };
 
 	/**
 	 * Called by the web container to indicate to a filter that it is being
@@ -94,7 +94,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// log this request, obfuscating any parameter named password
-			ESAPI.httpUtilities().logHTTPRequest(logger, Arrays.asList(ignore));
+			ESAPI.httpUtilities().logHTTPRequest(logger, Arrays.asList(obfuscate));
 
 			// check access to this URL
 			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString()) ) {
