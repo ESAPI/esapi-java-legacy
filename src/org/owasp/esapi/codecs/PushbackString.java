@@ -17,10 +17,8 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Base Codec class.
- * 
- * 
- * 
+ * The pushback string is used by Codecs to allow them to push decoded characters back onto a string
+ * for further decoding. This is necessary to detect double-encoding.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -61,6 +59,15 @@ public class PushbackString {
 		if ( input.length() == 0 ) return null;
 		if ( index >= input.length() ) return null;		
 		return new Character( input.charAt(index++) );
+	}
+	
+	public Character nextHex() {
+		Character c = next();
+		if ( c == null ) return null;
+		if ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 ) {
+			return c;
+		}
+		return null;
 	}
 	
 	public Character peek() {

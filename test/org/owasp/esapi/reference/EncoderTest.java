@@ -78,7 +78,6 @@ public class EncoderTest extends TestCase {
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
 		Encoder instance = ESAPI.encoder();
-        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
 
         assertEquals( "%", instance.canonicalize("%25"));
         assertEquals( "%F", instance.canonicalize("%25F"));
@@ -102,9 +101,32 @@ public class EncoderTest extends TestCase {
         assertEquals( "<", instance.canonicalize("&#X3C"));
         assertEquals( "<", instance.canonicalize("&#X3C;"));
 
-        // FIXME: add a canonicalize flag that doesn't throw this exception!
-        String test1 = "%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e";
-		String test2 = "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B";
+        assertEquals( "<", instance.canonicalize("\\x3c"));        
+        assertEquals( "<", instance.canonicalize("\\X3c"));        
+        assertEquals( "<", instance.canonicalize("\\x3C"));        
+        assertEquals( "<", instance.canonicalize("\\X3C"));        
+        assertEquals( "<", instance.canonicalize("\\u003c"));        
+        assertEquals( "<", instance.canonicalize("\\U003c"));        
+        assertEquals( "<", instance.canonicalize("\\u003C"));        
+        assertEquals( "<", instance.canonicalize("\\U003C"));        
+
+        assertEquals( "\0", instance.canonicalize("\\0"));
+        assertEquals( "\b", instance.canonicalize("\\b"));
+        assertEquals( "\t", instance.canonicalize("\\t"));
+        assertEquals( "\n", instance.canonicalize("\\n"));
+        assertEquals( ""+(char)0x0b, instance.canonicalize("\\v"));
+        assertEquals( "\f", instance.canonicalize("\\f"));
+        assertEquals( "\r", instance.canonicalize("\\r"));
+        assertEquals( "\'", instance.canonicalize("\\'"));
+        assertEquals( "\"", instance.canonicalize("\\\""));
+        assertEquals( "\\", instance.canonicalize("\\\\"));
+
+        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
+        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript\\x3Ealert%28%22hello\\U0022%29%3B%3C%2Fscript%3E") );
+        
+        // multiple encoding tests, note this uses strict=false flag
+        assertEquals( "% & <script> <script>", instance.canonicalize( "%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false ) );
+        assertEquals( "< < < < <; <; <;", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", false ) );
 
         try {
         	assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
@@ -129,23 +151,19 @@ public class EncoderTest extends TestCase {
 		assertEquals(ESAPI.encoder().normalize("é à î _ @ \" < > \u20A0"), "e a i _ @ \" < > ");
 	}
 
-    public void testEntityEncode() {
-    	System.out.println( "entityEncode" );
-    	Encoder instance = ESAPI.encoder();
-        assertEquals("&lt;script&gt;", instance.encodeForHTML("&lt;script&gt;"));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") );
-    }
-    
+	
     /**
 	 * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
 	 */
     public void testEncodeForHTML() {
         System.out.println("encodeForHTML");
         Encoder instance = ESAPI.encoder();
-        assertEquals("", instance.encodeForHTML(null));
+        assertEquals(null, instance.encodeForHTML(null));
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
-        assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
+        assertEquals("&lt;script&gt;", instance.encodeForHTML("&lt;script&gt;"));
         assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("!@$%()=+{}[]"));
+        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") );
+        assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
         assertEquals("dir&amp;", instance.encodeForHTML("dir&"));
         assertEquals("one&amp;two", instance.encodeForHTML("one&two"));
     }
@@ -161,15 +179,36 @@ public class EncoderTest extends TestCase {
         assertEquals("&#32;&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
     }
     
+    
+    public void testEncodeForCSS() {
+    	fail();
+    }
+    
+    
+    public void testEncodeForHTMLURI() {
+    	fail();
+    }
+    
+    
     /**
 	 * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
 	 */
     public void testEncodeForJavascript() {
         System.out.println("encodeForJavascript");
         Encoder instance = ESAPI.encoder();
-        assertEquals("&lt;script&gt;", instance.encodeForJavascript("<script>"));
+        assertEquals("\\x3Cscript\\x3E", instance.encodeForJavascript("<script>"));
         assertEquals(",.-_ ", instance.encodeForJavascript(",.-_ "));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForJavascript("!@$%()=+{}[]"));
+        assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavascript("!@$%()=+{}[]"));
+        assertEquals( "\\0", instance.encodeForJavascript("\0"));
+        assertEquals( "\\b", instance.encodeForJavascript("\b"));
+        assertEquals( "\\t", instance.encodeForJavascript("\t"));
+        assertEquals( "\\n", instance.encodeForJavascript("\n"));
+        assertEquals( "\\v", instance.encodeForJavascript("" + (char)0x0b));
+        assertEquals( "\\f", instance.encodeForJavascript("\f"));
+        assertEquals( "\\r", instance.encodeForJavascript("\r"));
+        assertEquals( "\\'", instance.encodeForJavascript("\'"));
+        assertEquals( "\\\"", instance.encodeForJavascript("\""));
+        assertEquals( "\\\\", instance.encodeForJavascript("\\"));
     }
     
     /**
@@ -179,9 +218,9 @@ public class EncoderTest extends TestCase {
     public void testEncodeForVBScript() {
         System.out.println("encodeForVBScript");
         Encoder instance = ESAPI.encoder();
-        assertEquals("&lt;script&gt;", instance.encodeForVBScript("<script>"));
-        assertEquals(",.-_ ", instance.encodeForVBScript(",.-_ "));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForVBScript("!@$%()=+{}[]"));
+        assertEquals("\\x3Cscript\\x3E", instance.encodeForJavascript("<script>"));
+        assertEquals(",.-_ ", instance.encodeForJavascript(",.-_ "));
+        assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavascript("!@$%()=+{}[]"));
     }
     
     /**

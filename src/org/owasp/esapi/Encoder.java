@@ -92,6 +92,8 @@ public interface Encoder {
 	 *             if there is a canonicalization problem
 	 */
 	String canonicalize(String input) throws EncodingException;
+	
+	String canonicalize(String input, boolean strict) throws EncodingException;
 
 	/**
 	 * Reduce all non-ascii characters to their ASCII form so that simpler
@@ -126,9 +128,8 @@ public interface Encoder {
 	String encodeForHTMLAttribute(String input);
 
 	/**
-	 * Encode for javascript. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is encoded using a
-	 * whitelist.
+	 * Encode data for insertion inside a data value inside a JavaScript. Putting user data directly
+	 * inside a JavaScript is one of the most dangerous HTML contexts.
 	 * 
 	 * @param input
 	 *            the input

@@ -16,9 +16,7 @@
 package org.owasp.esapi.reference;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,8 +29,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;

@@ -26,6 +26,7 @@ import java.util.List;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.codecs.BackslashCodec;
 import org.owasp.esapi.codecs.Base64;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
@@ -52,11 +53,15 @@ import sun.text.Normalizer;
  * a bit aggressive as some double-encoded characters may be sent by ordinary users
  * through cut-and-paste.
  * <p>
- * If an encoded character is recognized, but does not parse properly, the response is
- * to eat the character, stripping it from the input.
+ * The encoding methods also attempt to prevent double encoding, by canonicalizing strings
+ * that are passed to them for encoding.
  * <p>
  * Currently the implementation supports:
- * <ul><li>HTML Entity Encoding (including non-terminated)</li><li>Percent Encoding</li></ul>
+ * <ul>
+ * <li>HTML Entity Encoding (including non-terminated)</li>
+ * <li>Percent Encoding</li>
+ * <li>Backslash Encoding</li>
+ * </ul>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -67,62 +72,34 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	// Codecs
 	List codecs = new ArrayList();
-
-	/** Encoding types */
-	public static final int NO_ENCODING = 0;
-	public static final int URL_ENCODING = 1;
-	public static final int PERCENT_ENCODING = 2;
-	public static final int ENTITY_ENCODING = 3;
-
-	/** The base64 encoder. */
-	//private final BASE64Encoder base64Encoder = new BASE64Encoder();
+	private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+	private PercentCodec percentCodec = new PercentCodec();
+	private BackslashCodec backslashCodec = new BackslashCodec();
 	
-	/** The base64 decoder. */
-	//private final BASE64Decoder base64Decoder = new BASE64Decoder();
-
-	/** The IMMUNE HTML. */
-	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
-
-	/** The IMMUNE HTMLATTR. */
-	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
-
-	/** The IMMUNE JAVASCRIPT. */
-	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
-
-	/** The IMMUNE VBSCRIPT. */
-	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '-', '_', ' ' };
-
-	/** The IMMUNE XML. */
-	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
-
-	/** The IMMUNE XMLATTR. */
-	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
-
-	/** The IMMUNE XPATH. */
-	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
-
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("Encoder");
-
-	/** The Constant CHAR_LOWERS. */
-	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-
-	/** The Constant CHAR_UPPERS. */
-	public final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-
-	/** The Constant CHAR_DIGITS. */
-	public final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-
-	/** The Constant CHAR_SPECIALS. */
-	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
-
-	/** The Constant CHAR_LETTERS. */
-	public final static char[] CHAR_LETTERS = union(CHAR_LOWERS, CHAR_UPPERS);
-
-	/** The Constant CHAR_ALPHANUMERICS. */
-	public final static char[] CHAR_ALPHANUMERICS = union(CHAR_LETTERS, CHAR_DIGITS);
+	
+	/** Character sets that define characters immune from encoding in various formats */
+	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
+	private final static char[] IMMUNE_HTMLURI = { ',', '.', '-', '_' }; // FIXME: not sure
+	private final static char[] IMMUNE_CSS = { ',', '.', '-', '_' }; // FIXME: not sure
+	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
+	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
 	// FIXME: ENHANCE make all character sets configurable
+
+	/** Standard character sets */
+	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	public final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	public final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
+	public final static char[] CHAR_LETTERS = union(CHAR_LOWERS, CHAR_UPPERS);
+	public final static char[] CHAR_ALPHANUMERICS = union(CHAR_LETTERS, CHAR_DIGITS);
+
 	/**
 	 * Password character set, is alphanumerics (without l, i, I, o, O, and 0)
 	 * selected specials like + (bad for URL encoding, | is like i and 1,
@@ -134,9 +111,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
 	public final static char[] CHAR_PASSWORD_LETTERS = union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
 
+
 	public DefaultEncoder() {
-		codecs.add( new HTMLEntityCodec() );
-		codecs.add( new PercentCodec() );
+		// initialize the codec list to use for canonicalization
+		codecs.add( htmlCodec );
+		codecs.add( percentCodec );
+		codecs.add( backslashCodec );
 		
 		Arrays.sort( DefaultEncoder.IMMUNE_HTML );
 		Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
@@ -159,7 +139,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * Simplifies percent-encoded and entity-encoded characters to their
+	 * Simplifies encoded characters to their
 	 * simplest form so that they can be properly validated. Attackers
 	 * frequently use encoding schemes to disguise their attacks and bypass
 	 * validation routines.
@@ -199,6 +179,13 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.Validator#canonicalize(java.lang.String)
 	 */
 	public String canonicalize( String input ) {
+		return canonicalize( input, true );
+	}
+	
+	/**
+	 * 
+	 */
+	public String canonicalize( String input, boolean strict ) {
 		if ( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
@@ -214,7 +201,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			if ( found ) {
 				// if double encoding throw exception
 				if ( last ) {
-					throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
+					if ( strict ) {
+						throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
+					} else {
+						logger.warning( Logger.SECURITY, "Double encoding detected in " + input );
+					}
 				}
 				pbs.pushback( ch );
 				last = true;
@@ -228,13 +219,20 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 	
+	/**
+	 * Helper method to iterate through codecs to see if the current character
+	 * is an encoded character in any of them. If the current character is
+	 * encoded, then it is decoded and pushed back onto the string, and this
+	 * method returns true.  If the current character is not encoded, then the
+	 * pushback stream is reset to its original state and this method returns false.
+	 */
 	private boolean decodeAttempt( PushbackString pbs ) {
 		Iterator i = codecs.iterator();
 		pbs.mark();
 		while ( i.hasNext() ) {
 			pbs.reset();
 			Codec codec = (Codec)i.next();
-			Character decoded = codec.getDecodedCharacter(pbs);
+			Character decoded = codec.decodeCharacter(pbs);
 			if ( decoded != null ) {
 				pbs.pushback( decoded );
 				return true;
@@ -264,171 +262,125 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return separated.replaceAll("[^\\p{ASCII}]", "");
 	}
 
-	/**
-	 * Checks if the character is contained in the provided array of characters.
-	 * 
-	 * @param array
-	 *            the array
-	 * @param element
-	 *            the element
-	 * @return true, if is contained
-	 */
-	private boolean isContained(char[] array, char element) {
-		for (int i = 0; i < array.length; i++) {
-			if (element == array[i])
-				return true;
-		}
-		return false;
-
-		// FIXME: ENHANCE Performance enhancement here but character arrays must
-		// be sorted, which they're currently not.
-		// return( Arrays.binarySearch(array, element) >= 0 );
-	}
 
 	/**
-	 * HTML Entity encode utility method. To avoid double-encoding, this method
-	 * logs a warning if HTML entity encoded characters are passed in as input.
-	 * Double-encoded characters in the input cause an exception to be thrown.
-	 * 
-	 * @param input
-	 *            the input
-	 * @param immune
-	 *            the immune
-	 * @param base
-	 *            the base
-	 * @return the string
+	 * Encoding utility method. It is strongly recommended that you
+	 * canonicalize input before calling this method to prevent double-encoding.
 	 */
-	private String entityEncode(String input, char[] base, char[] immune) {
-		
-		// FIXME: Enhance - this may over-encode international data unnecessarily if charset is set properly.
-		HTMLEntityCodec codec = new HTMLEntityCodec();
-		StringBuffer sb = new StringBuffer();
-		PushbackString psb = new PushbackString( input );
-		
-		// EncodedStringReader reader = new EncodedStringReader(input);
-		while (psb.hasNext()) {
-			// get decoded characters to prevent double encoding
-			psb.mark();
-			Character c = codec.getDecodedCharacter( psb );
-			if (c == null) {
-				psb.reset();
-				c = psb.next();
-			}
-			if (isContained(base, c.charValue()) || isContained(immune, c.charValue())) {
-				sb.append( c );
-			} else {
-				sb.append( codec.encode( c ) );
-			}
+	private String encode( char c, Codec codec, char[] baseImmune, char[] specialImmune ) {
+		if (isContained(baseImmune, c) || isContained(specialImmune, c)) {
+			return ""+c;
+		} else {
+			return codec.encodeCharacter( new Character( c ) );
 		}
-		return sb.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
+	
+	
+	/**
+	 * Encode the input string using HTML entity encoding.  Note that the following characters:
+	 * 00–08, 0B–0C, 0E–1F, and 7F–9F Cannot be used in HTML. See http://en.wikipedia.org/wiki/Character_encodings_in_HTML
+	 * for more information.
+	 * See the SGML declaration - http://www.w3.org/TR/html4/sgml/sgmldecl.html
+	 * See the XML specification - see http://www.w3.org/TR/REC-xml/#charsets
+	 * FIXME: Enhance - Add a configuration for masking **** out SSN and credit card
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForHTML(java.lang.String)
 	 */
 	public String encodeForHTML(String input) {
-		// FIXME: ENHANCE - should this just strip out nonprintables? Why send
-		// &#07; to the browser?
-		// FIXME: Enhance - Add a configuration for masking **** out SSN and credit
-		// card
-		// FIXME: AAA - disallow everything below 20, except CR LF TAB
-		//  See the SGML declaration - http://www.w3.org/TR/html4/sgml/sgmldecl.html
-		//  See the XML specification - see http://www.w3.org/TR/REC-xml/#charsets
-		// The question is how to proceed - strip or throw an exception?
-		String encoded = entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_HTML);
-		
-		// FIXME: AAA this handling is broken - some systems use CRLF as a single terminator 
-		encoded = encoded.replaceAll("\r", "<BR>");
-		encoded = encoded.replaceAll("\n", "<BR>");
-		return encoded;
-	}
-
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			if ( c == '\t' || c == '\n' || c == '\r' ) {
+				sb.append( c );
+			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
+				logger.warning( Logger.SECURITY, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
+			} else {
+				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTML ) );
+			}
+		}
+		return sb.toString();
+	 }
+	 
+	 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForHTMLAttribute(java.lang.String)
 	 */
 	public String encodeForHTMLAttribute(String input) {
-		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR);
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR ) );
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * FIXME
+	 */
+	public String encodeForHTMLURI(String input) {
+
+		// ASCII only
+		// %HH encode only
+		
+		if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, null, CHAR_ALPHANUMERICS, IMMUNE_HTMLURI  ) );
+		}
+		return sb.toString();
+	}
+
+	/**
+	 * http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
+	 */
+	public String encodeForCSS(String input) {
+	    if( input == null ) return null;
+	    
+	    // replace any backslash-newline combinations with nothing
+	    
+	    // use backslash on any special characters
+	    
+	    // unicode codepoint zero should be removed
+	    
+	    // canonicalize - \HHHHHH - up to six hex characters
+	    // one whitespace (CR CRLF LF TAB FF ignored after \escape
+	    // cannot be \CR \LF \FF \0-9a-f
+	    
+	    // THINK - rule is that a double-quoted string cannot contain a single quote and vice-versa
+	    // need new encoding method?
+	    
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, null, CHAR_ALPHANUMERICS, IMMUNE_CSS ) );
+		}
+		return sb.toString();
 	}
 
 	
-	//FIXME
-	public String encodeForHTMLURI(String input) {
-		return null;
-	}
-
-	//FIXME
-	public String encodeForCSS(String input) {
-		return null;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForJavaScript(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForJavaScript(java.lang.String)
 	 */
 	public String encodeForJavascript(String input) {
-	    if(null == input) {
-	        return null;
-	    }
-
-	    StringBuffer buf = new StringBuffer(input.length() + 2);
-	    int len = input.length();
-
-	    for(int x = 0; x < len; x++) {
-// FIXME	        int value = input.codePointAt(x);
-	    	int value = (int)input.charAt(x);
-	        if(isJavaScriptStringSafe(value)) {
-// FIXME	            buf.append(Character.toChars(value));
-	        } else {
-	            switch (value) {
-	                case 0x0A: // newline
-	                    buf.append("\\n");
-	                    break;
-
-	                case 0x09: // tab
-	                    buf.append("\\t");
-	                    break;
-
-	                case 0x22: // Double-quote
-	                    buf.append("\\\"");
-	                    break;
-
-	                case 0x27: // single-quote
-	                    buf.append("\\'");
-	                    break;
-
-	                case 0x5C: // backslash
-	                    buf.append("\\\\");
-	                    break;
-
-	                default:
-// FIXME	                    buf.append(String.format("\\u%1$04X", value));
-	            }
-	        }
-	    }
-
-	    return buf.toString();
-	}
-
-	private static final String javaScriptStringSafeOther = ".,;: ()?!_-+*&{}[]@#";
-
-	private static boolean isJavaScriptStringSafe(int codepoint) {
-// FIXME: cast to character is wrong
-	    if(Character.isLetterOrDigit((char)codepoint))
-	        return true;
-
-	    int len = javaScriptStringSafeOther.length();
-	    // Check the whitelisted special characters
-	    for(int x = 0; x < len; x++)
-// FIXME:	        if(codepoint == javaScriptStringSafeOther.codePointAt(x))
-	    	if ( codepoint == javaScriptStringSafeOther.charAt(x))
-	            return true;
-
-	    return false;
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, backslashCodec, CHAR_ALPHANUMERICS, IMMUNE_JAVASCRIPT ) );
+		}
+		return sb.toString();
 	}
 
 	/*
@@ -437,7 +389,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForVisualBasicScript(java.lang.String)
 	 */
 	public String encodeForVBScript(String input) {
-		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT);
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, backslashCodec, CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT ) );
+		}
+		return sb.toString();
 	}
 
 	/**
@@ -486,7 +445,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			case ')':
 				sb.append("\\29");
 				break;
-			case '\u0000':
+			case '\0':
 				sb.append("\\00");
 				break;
 			default:
@@ -560,7 +519,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.Encoder#encodeForXPath(java.lang.String)
 	 */
 	public String encodeForXPath(String input) {
-		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_XPATH);
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XPATH ) );
+		}
+		return sb.toString();
 	}
 
 	/*
@@ -569,7 +535,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForXML(java.lang.String)
 	 */
 	public String encodeForXML(String input) {
-		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_XML);
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XML ) );
+		}
+		return sb.toString();
 	}
 
 	/*
@@ -578,7 +551,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForXMLAttribute(java.lang.String)
 	 */
 	public String encodeForXMLAttribute(String input) {
-		return entityEncode(input, DefaultEncoder.CHAR_ALPHANUMERICS, IMMUNE_XMLATTR);
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		String canonical = canonicalize( input );
+		for ( int i=0; i<canonical.length(); i++ ) {
+			char c = canonical.charAt(i);
+			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XMLATTR ) );
+		}
+		return sb.toString();
 	}
 
 	/*
@@ -625,13 +605,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			options |= Base64.DONT_BREAK_LINES;
 		}
 		return Base64.encodeBytes(input, options);
-		
-		// String b64 = base64Encoder.encode(input);
-		// remove line-feeds and carriage-returns inserted in output
-		// if (!wrap) {
-		// 	b64 = b64.replaceAll("\r", "").replaceAll("\n", "");
-		// }
-		// return b64;
 	}
 
 	/*
@@ -640,7 +613,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.interfaces.IEncoder#decodeFromBase64(java.lang.String)
 	 */
 	public byte[] decodeFromBase64(String input) throws IOException {
-		// return base64Decoder.decodeBuffer(input);
 		return Base64.decode( input );
 	}
 
@@ -668,17 +640,33 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
     }
 
     /**
-     * Contains.
-     * 
-     * @param sb the sb
-     * @param c the c
-     * @return true, if successful
+     * Returns true if the character is contained in the provided StringBuffer.
      */
-    private static boolean contains(StringBuffer sb, char c) {
-        for (int i = 0; i < sb.length(); i++) {
-            if (sb.charAt(i) == c)
+    private static boolean contains(StringBuffer haystack, char c) {
+        for (int i = 0; i < haystack.length(); i++) {
+            if (haystack.charAt(i) == c)
                 return true;
         }
         return false;
     }
+    
+
+	
+	/**
+	 * Returns true if the character is contained in the provided array of characters.
+	 */
+	private boolean isContained(char[] haystack, char c) {
+		for (int i = 0; i < haystack.length; i++) {
+			if (c == haystack[i])
+				return true;
+		}
+		return false;
+
+		// FIXME: ENHANCE Performance enhancement here but character arrays must
+		// be sorted, which they're currently not.
+		// return( Arrays.binarySearch(array, element) >= 0 );
+	}
+
+
+    
 }

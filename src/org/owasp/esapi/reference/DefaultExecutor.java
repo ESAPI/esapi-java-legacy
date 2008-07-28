@@ -65,7 +65,8 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             Validator validator = ESAPI.validator();
 
             // command must exactly match the canonical path and must actually exist on the file system
-            if (!executable.getCanonicalPath().equals(executable.getPath())) {
+            // using equalsIgnoreCase for Windows, although this isn't quite as strong as it should be
+            if (!executable.getCanonicalPath().equalsIgnoreCase(executable.getPath())) {
                 throw new ExecutorException("Execution failure", "Invalid path to executable file: " + executable);
             }
             if (!executable.exists()) {
