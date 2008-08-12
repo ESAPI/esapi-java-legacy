@@ -64,10 +64,12 @@ public class PushbackString {
 	public Character nextHex() {
 		Character c = next();
 		if ( c == null ) return null;
-		if ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 ) {
-			return c;
-		}
+		if ( isHexDigit( c ) ) return c;
 		return null;
+	}
+
+	public boolean isHexDigit( Character c ) {
+		return ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 );
 	}
 	
 	public Character peek() {
