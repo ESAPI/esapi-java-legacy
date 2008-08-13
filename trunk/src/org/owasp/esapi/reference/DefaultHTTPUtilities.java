@@ -188,6 +188,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * characters (such as CRLF injection) that could enable attacks like
 	 * response splitting and other header-based attacks that nobody has thought
 	 * of yet.
+	 * "A recipient MAY replace any linear white space with a single SP before 
+	 * interpreting the field value or forwarding the message downstream."
+	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
 	 * 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeAddHeader(java.lang.String,
 	 *      java.lang.String, java.lang.String,
@@ -195,8 +198,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public void safeAddHeader(String name, String value) {
 		try {
+			String strippedValue = value.replaceAll( "\\s+", "" );
 			String headerName = ESAPI.validator().getValidInput( "safeAddHeader", name, "HTTPHeaderName", 50, false);
-			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", value, "HTTPHeaderValue", 500, false);
+			String headerValue = ESAPI.validator().getValidInput( "safeAddHeader", strippedValue, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().addHeader(headerName, headerValue);
 		} catch( ValidationException e ) {
 			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);
@@ -204,15 +208,12 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 
-	// FIXME: make configurable
 	public void safeSendError(int sc) throws IOException {
 		getCurrentResponse().sendError(HttpServletResponse.SC_OK, getHttpMessage(sc) );
 	}
 	
-	// FIXME: make configurable
 	public void safeSendError(int sc, String msg) throws IOException {
-		// FIXME: safe msg
-		getCurrentResponse().sendError(HttpServletResponse.SC_OK, msg );
+		getCurrentResponse().sendError(HttpServletResponse.SC_OK, ESAPI.encoder().encodeForHTML(msg) );
 	}
 
 	/**
@@ -249,6 +250,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	public void safeSetIntHeader( String name, int value ) {
 		try {
 			String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
+			// FIxME: validate against infinity and NaN?
 			getCurrentResponse().setIntHeader(safeName, value);
 		} catch (ValidationException e) {
 			logger.warning(Logger.SECURITY, "Attempt to set invalid int header name denied", e);
@@ -271,9 +273,16 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		getCurrentResponse().setStatus(sc);
 	}
 
+	/**
+	 * This method is deprecated, so we redirect it to the safeSendError method as
+	 * suggested in the servlet API.
+	 */
 	public void safeSetStatus( int sc, String sm ) {
-		// FIXME: safe message
-		getCurrentResponse().setStatus(HttpServletResponse.SC_OK, sm);
+		try {
+			safeSendError(HttpServletResponse.SC_OK, sm );
+		} catch (IOException e ) {
+			logger.warning(Logger.SECURITY, "Attempt to set response status failed", e);
+		}
 	}
 	
 
@@ -288,6 +297,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * characters (such as CRLF injection) that could enable attacks like
 	 * response splitting and other header-based attacks that nobody has thought
 	 * of yet.
+	 * "A recipient MAY replace any linear white space with a single SP before 
+	 * interpreting the field value or forwarding the message downstream."
+	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
 	 * 
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeAddHeader(java.lang.String,
 	 *      java.lang.String, java.lang.String,
@@ -295,8 +307,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public void safeSetHeader(String name, String value) throws ValidationException {
 		try {
+			String strippedValue = value.replaceAll( "\\s+", "" );
 			String safeName = ESAPI.validator().getValidInput("setSafeHeader", name, "HTTPHeaderName", 20, false);
-			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", value, "HTTPHeaderValue", 500, false);
+			String safeValue = ESAPI.validator().getValidInput("setSafeHeader", strippedValue, "HTTPHeaderValue", 500, false);
 			getCurrentResponse().setHeader(safeName, safeValue);
 		} catch (ValidationException e) {
 			logger.warning(Logger.SECURITY, "Attempt to set invalid header denied", e);

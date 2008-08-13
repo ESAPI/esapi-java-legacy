@@ -15,18 +15,21 @@
  */
 package org.owasp.esapi.codecs;
 
+import org.owasp.esapi.errors.EncodingException;
+
 
 /**
- * Implementation of the Codec interface for backslash encoding frequently used in JavaScript.
+ * Implementation of the Codec interface for Oracle strings. See http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm
+ * for more information.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class CSSCodec implements Codec {
+public class OracleCodec implements Codec {
 
-	public CSSCodec() {
+	public OracleCodec() {
 	}
 
 	public String encode( String input ) {
@@ -39,22 +42,13 @@ public class CSSCodec implements Codec {
 	}
 
 	/**
-	 * Returns backslash encoded character. This implementation does not support
-	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
+	 * Returns quote-encoded character
 	 */
 	public String encodeCharacter( Character c ) {
-		char ch = c.charValue();
-
-		// encode up to 256 \x syntax
- 		if ( ch <= 256 ) {
-	        return "\\" + ch;
-		}
-
-		// otherwise encode with \\HHHHHH 
-        String temp = Integer.toHexString((int)ch);
-        return "\\" + temp.toUpperCase() + " ";
+		return "\\" + c;
 	}
 	
+		
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
@@ -74,9 +68,8 @@ public class CSSCodec implements Codec {
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
-	 * Formats all are legal both upper/lower case:
-	 *   \\x - special characters
-	 *   \\HHHH
+	 * Formats all are legal
+	 *   \c decodes to c
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
@@ -87,7 +80,7 @@ public class CSSCodec implements Codec {
 		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '\\' ) {
+		if ( first.charValue() != '\'' ) {
 			input.reset();
 			return null;
 		}
@@ -98,34 +91,12 @@ public class CSSCodec implements Codec {
 			return null;
 		}
 		
-		// look for \HHH format
-		if ( input.isHexDigit( second ) ) {
-			// Search for up to 6 hex digits following until a space
-			StringBuffer sb = new StringBuffer();
-			sb.append( second );
-			for ( int i=0; i<5; i++ ) {
-				Character c = input.next();
-				if ( c == null || c.charValue() == 0x20 ) break;
-				if ( input.isHexDigit(c) ) {
-					sb.append( c );
-				} else {
-					input.pushback( c );
-					break;
-				}
-			}
-			try {
-				// parse the hex digit and create a character
-				int i = Integer.parseInt(sb.toString(), 16);
-				// FIXME: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return new Character( (char)i );
-			} catch( NumberFormatException e ) {
-				// throw an exception for malformed entity?
-				// just continue which will reset and return null
-			}
+		// if this is not an encoded character, return null
+		if ( second.charValue() != '\'' ) {
+			input.reset();
+			return null;
 		}
-
-		return second;
+		return( new Character( '\'' ) );
 	}
 
 }

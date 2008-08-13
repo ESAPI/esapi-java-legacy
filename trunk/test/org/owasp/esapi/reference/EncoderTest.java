@@ -24,6 +24,9 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.MySQLCodec;
+import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
@@ -155,14 +158,14 @@ public class EncoderTest extends TestCase {
     /**
 	 * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
 	 */
-    public void testEncodeForHTML() {
+    public void testEncodeForHTML() throws Exception {
         System.out.println("encodeForHTML");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForHTML(null));
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
-        assertEquals("&lt;script&gt;", instance.encodeForHTML("&lt;script&gt;"));
+        assertEquals("&amp;lt&#59;script&amp;gt&#59;", instance.encodeForHTML("&lt;script&gt;"));
         assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("!@$%()=+{}[]"));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") );
+        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML(instance.canonicalize("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") ) );
         assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
         assertEquals("dir&amp;", instance.encodeForHTML("dir&"));
         assertEquals("one&amp;two", instance.encodeForHTML("one&two"));
@@ -181,14 +184,13 @@ public class EncoderTest extends TestCase {
     
     
     public void testEncodeForCSS() {
-    	fail();
+        System.out.println("encodeForCSS");
+        Encoder instance = ESAPI.encoder();
+        assertEquals("\\<script\\>", instance.encodeForCSS("<script>"));
+        assertEquals(" \\!\\@\\$\\%\\(\\)\\=\\+\\{\\}\\[\\]\\\"", instance.encodeForCSS(" !@$%()=+{}[]\""));
     }
     
-    
-    public void testEncodeForHTMLURI() {
-    	fail();
-    }
-    
+
     
     /**
 	 * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
@@ -196,33 +198,28 @@ public class EncoderTest extends TestCase {
     public void testEncodeForJavascript() {
         System.out.println("encodeForJavascript");
         Encoder instance = ESAPI.encoder();
-        assertEquals("\\x3Cscript\\x3E", instance.encodeForJavascript("<script>"));
-        assertEquals(",.-_ ", instance.encodeForJavascript(",.-_ "));
-        assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavascript("!@$%()=+{}[]"));
-        assertEquals( "\\0", instance.encodeForJavascript("\0"));
-        assertEquals( "\\b", instance.encodeForJavascript("\b"));
-        assertEquals( "\\t", instance.encodeForJavascript("\t"));
-        assertEquals( "\\n", instance.encodeForJavascript("\n"));
-        assertEquals( "\\v", instance.encodeForJavascript("" + (char)0x0b));
-        assertEquals( "\\f", instance.encodeForJavascript("\f"));
-        assertEquals( "\\r", instance.encodeForJavascript("\r"));
-        assertEquals( "\\'", instance.encodeForJavascript("\'"));
-        assertEquals( "\\\"", instance.encodeForJavascript("\""));
-        assertEquals( "\\\\", instance.encodeForJavascript("\\"));
+        assertEquals("\\x3Cscript\\x3E", instance.encodeForJavaScript("<script>"));
+        assertEquals(",.-_ ", instance.encodeForJavaScript(",.-_ "));
+        assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavaScript("!@$%()=+{}[]"));
+        assertEquals( "\\0", instance.encodeForJavaScript("\0"));
+        assertEquals( "\\b", instance.encodeForJavaScript("\b"));
+        assertEquals( "\\t", instance.encodeForJavaScript("\t"));
+        assertEquals( "\\n", instance.encodeForJavaScript("\n"));
+        assertEquals( "\\v", instance.encodeForJavaScript("" + (char)0x0b));
+        assertEquals( "\\f", instance.encodeForJavaScript("\f"));
+        assertEquals( "\\r", instance.encodeForJavaScript("\r"));
+        assertEquals( "\\'", instance.encodeForJavaScript("\'"));
+        assertEquals( "\\\"", instance.encodeForJavaScript("\""));
+        assertEquals( "\\\\", instance.encodeForJavaScript("\\"));
     }
-    
-    /**
-	 * Test of encodeForVisualBasicScript method, of class
-	 * org.owasp.esapi.Encoder.
-	 */
+        
     public void testEncodeForVBScript() {
         System.out.println("encodeForVBScript");
         Encoder instance = ESAPI.encoder();
-        assertEquals("\\x3Cscript\\x3E", instance.encodeForJavascript("<script>"));
-        assertEquals(",.-_ ", instance.encodeForJavascript(",.-_ "));
-        assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavascript("!@$%()=+{}[]"));
+        assertEquals("\"<script\">", instance.encodeForVBScript("<script>"));
+        assertEquals(" \"!\"@\"$\"%\"(\")\"=\"+\"{\"}\"[\"]\"\"", instance.encodeForVBScript(" !@$%()=+{}[]\""));
     }
-    
+        
     /**
 	 * Test of encodeForXPath method, of class org.owasp.esapi.Encoder.
 	 */
@@ -240,7 +237,15 @@ public class EncoderTest extends TestCase {
     public void testEncodeForSQL() {
         System.out.println("encodeForSQL");
         Encoder instance = ESAPI.encoder();
-        assertEquals("Single quote", "Jeff'' or ''1''=''1", instance.encodeForSQL("Jeff' or '1'='1"));
+        
+        Codec mySQL1 = new MySQLCodec( MySQLCodec.ANSI_MODE );
+        assertEquals("ANSI_MODE", "Jeff'' or ''1''=''1", instance.encodeForSQL(mySQL1, "Jeff' or '1'='1"));
+        
+        Codec mySQL2 = new MySQLCodec( MySQLCodec.MYSQL_MODE );
+        assertEquals("MYSQL_MODE", "Jeff\\' or \\'1\\'\\=\\'1", instance.encodeForSQL(mySQL2, "Jeff' or '1'='1"));
+
+        Codec oracle = new OracleCodec();
+        assertEquals("Oracle", "Jeff\\' or \\'1\\'\\=\\'1", instance.encodeForSQL(oracle, "Jeff' or '1'='1"));
     }
 
     

@@ -202,12 +202,12 @@ public class HTMLEntityCodec implements Codec {
 	 */
 	private Character getNamedEntity( PushbackString input ) {
 		// search through the rest of the string up to 6 characters
-		System.out.println( "REM: " + input.remainder() );
+		// System.out.println( "REM: " + input.remainder() );
 		StringBuffer possible = new StringBuffer();
 		int len = Math.min( input.remainder().length(), 7 );
 		for ( int i=0; i<len; i++ ) {
 			possible.append( Character.toLowerCase(input.next().charValue()) );
-			System.out.println( "             >> " + possible );
+			// System.out.println( "             >> " + possible );
 			Character entity = (Character) entityToCharacterMap.get(possible.toString());
 			if ( entity != null ) {
 				// eat any trailing semicolons

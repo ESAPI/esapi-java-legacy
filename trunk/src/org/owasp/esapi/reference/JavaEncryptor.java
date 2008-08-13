@@ -111,7 +111,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			digest.reset();
 			digest.update(ESAPI.securityConfiguration().getMasterSalt());
 			digest.update(salt.getBytes());
-//			digest.update(":".getBytes());
 			digest.update(plaintext.getBytes());
 
 			// rehash a number of times to help strengthen weak passwords

@@ -41,6 +41,13 @@ public class PushbackString {
 		pushback = c;
 	}
 	
+	/*
+	 * Get the current index of the PushbackString. Typically used in error messages.
+	 */
+	public int index() {
+		return index;
+	}
+	
 	public boolean hasNext() {
 		if ( pushback != null ) return true;
 		if ( input == null ) return false;
@@ -87,6 +94,10 @@ public class PushbackString {
 		if ( index >= input.length() ) return false;		
 		return input.charAt(index) == c;
 	}	
+	
+	public boolean isPushback() {
+		return ( pushback != null );
+	}
 	
 	public void mark() {
 		temp = pushback;

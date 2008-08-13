@@ -26,12 +26,14 @@ import java.util.List;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.codecs.BackslashCodec;
 import org.owasp.esapi.codecs.Base64;
+import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.PushbackString;
+import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
@@ -39,19 +41,18 @@ import sun.text.Normalizer;
 
 /**
  * Reference implementation of the Encoder interface. This implementation takes
- * a whitelist approach, encoding everything not specifically identified in a
- * list of "immune" characters. Several methods follow the approach in the <a
+ * a whitelist approach to encoding, meaning that everything not specifically identified in a
+ * list of "immune" characters is encoded. Several methods follow the approach in the <a
  * href="http://www.microsoft.com/downloads/details.aspx?familyid=efb9c819-53ff-4f82-bfaf-e11625130c25&displaylang=en">Microsoft
  * AntiXSS Library</a>.
  * <p>
+ * The Encoder performs two key functions
  * The canonicalization algorithm is complex, as it has to be able to recognize
  * encoded characters that might affect downstream interpreters without being
  * told what encodings are possible. The stream is read one character at a time.
  * If an encoded character is encountered, it is canonicalized and pushed back
  * onto the stream. If the next character is encoded, then a intrusion exception
- * is thrown for the double-encoding which is assumed to be an attack. This assumption is
- * a bit aggressive as some double-encoded characters may be sent by ordinary users
- * through cut-and-paste.
+ * is thrown for the double-encoding which is assumed to be an attack.
  * <p>
  * The encoding methods also attempt to prevent double encoding, by canonicalizing strings
  * that are passed to them for encoding.
@@ -74,7 +75,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	List codecs = new ArrayList();
 	private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
 	private PercentCodec percentCodec = new PercentCodec();
-	private BackslashCodec backslashCodec = new BackslashCodec();
+	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
+	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
+	private CSSCodec cssCodec = new CSSCodec();
 	
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("Encoder");
@@ -82,11 +85,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/** Character sets that define characters immune from encoding in various formats */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
-	private final static char[] IMMUNE_HTMLURI = { ',', '.', '-', '_' }; // FIXME: not sure
-	private final static char[] IMMUNE_CSS = { ',', '.', '-', '_' }; // FIXME: not sure
+	private final static char[] IMMUNE_CSS = { ' ' };  // FIXME: check
 	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
-	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // FIXME: check
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_SQL = { ' ' };
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
@@ -116,7 +119,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		// initialize the codec list to use for canonicalization
 		codecs.add( htmlCodec );
 		codecs.add( percentCodec );
-		codecs.add( backslashCodec );
+		codecs.add( javaScriptCodec );
+		codecs.add( cssCodec );
+
+		// leave this out because it eats " characters
+		// codecs.add( vbScriptCodec );
 		
 		Arrays.sort( DefaultEncoder.IMMUNE_HTML );
 		Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
@@ -179,41 +186,43 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.Validator#canonicalize(java.lang.String)
 	 */
 	public String canonicalize( String input ) {
+		if ( input == null ) return null;
 		return canonicalize( input, true );
 	}
 	
 	/**
-	 * 
+	 * Strict mode throws an exception when any double encoded data is detected.
 	 */
 	public String canonicalize( String input, boolean strict ) {
 		if ( input == null ) return null;
+		String candidate = canonicalizeOnce( input );
+		String canary = canonicalizeOnce( candidate );
+		if ( !candidate.equals( canary ) ) {
+			if ( strict ) {
+				throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
+			} else {
+				logger.warning( Logger.SECURITY, "Double encoding detected in " + input );
+			}
+		}
+		return candidate;
+	}
+	
+	private String canonicalizeOnce( String input ) {
+		if ( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
-		boolean last = false;
 		while ( pbs.hasNext() ) {
 			// test for encoded character and pushback if found
-			boolean found = decodeAttempt( pbs );
+			boolean encoded = decodeNext( pbs );
 
 			// get the next character and do something with it
 			Character ch = pbs.next();
 			
-			// if a decoded character is found, push it back
-			if ( found ) {
-				// if double encoding throw exception
-				if ( last ) {
-					if ( strict ) {
-						throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
-					} else {
-						logger.warning( Logger.SECURITY, "Double encoding detected in " + input );
-					}
-				}
+			// if an encoded character is found, push it back
+			if ( encoded ) {
 				pbs.pushback( ch );
-				last = true;
-				
-			// otherwise just append the character
 			} else {
 				sb.append( ch );
-				last = false;
 			}
 		}
 		return sb.toString();
@@ -226,7 +235,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * method returns true.  If the current character is not encoded, then the
 	 * pushback stream is reset to its original state and this method returns false.
 	 */
-	private boolean decodeAttempt( PushbackString pbs ) {
+	private boolean decodeNext( PushbackString pbs ) {
 		Iterator i = codecs.iterator();
 		pbs.mark();
 		while ( i.hasNext() ) {
@@ -268,6 +277,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * canonicalize input before calling this method to prevent double-encoding.
 	 */
 	private String encode( char c, Codec codec, char[] baseImmune, char[] specialImmune ) {
+		// FIXME: a recommendation to make this Unicode aware
+		// Character.getType( codepoint ) in Java 1.5 for better international support
+		// encode should take the Character type instead of char
 		if (isContained(baseImmune, c) || isContained(specialImmune, c)) {
 			return ""+c;
 		} else {
@@ -283,15 +295,13 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * for more information.
 	 * See the SGML declaration - http://www.w3.org/TR/html4/sgml/sgmldecl.html
 	 * See the XML specification - see http://www.w3.org/TR/REC-xml/#charsets
-	 * FIXME: Enhance - Add a configuration for masking **** out SSN and credit card
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForHTML(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForHTML(java.lang.String)
 	 */
 	public String encodeForHTML(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
 			if ( c == '\t' || c == '\n' || c == '\r' ) {
 				sb.append( c );
 			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
@@ -307,61 +317,30 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForHTMLAttribute(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForHTMLAttribute(java.lang.String)
 	 */
 	public String encodeForHTMLAttribute(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
 			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR ) );
 		}
 		return sb.toString();
 	}
 
-	/**
-	 * FIXME
-	 */
-	public String encodeForHTMLURI(String input) {
-
-		// ASCII only
-		// %HH encode only
-		
-		if( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
-			sb.append( encode( c, null, CHAR_ALPHANUMERICS, IMMUNE_HTMLURI  ) );
-		}
-		return sb.toString();
-	}
-
+	
 	/**
 	 * http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
 	 */
 	public String encodeForCSS(String input) {
 	    if( input == null ) return null;
-	    
-	    // replace any backslash-newline combinations with nothing
-	    
-	    // use backslash on any special characters
-	    
-	    // unicode codepoint zero should be removed
-	    
-	    // canonicalize - \HHHHHH - up to six hex characters
-	    // one whitespace (CR CRLF LF TAB FF ignored after \escape
-	    // cannot be \CR \LF \FF \0-9a-f
-	    
-	    // THINK - rule is that a double-quoted string cannot contain a single quote and vice-versa
-	    // need new encoding method?
-	    
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
-			sb.append( encode( c, null, CHAR_ALPHANUMERICS, IMMUNE_CSS ) );
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			if ( c != 0 ) {
+				sb.append( encode( c, cssCodec, CHAR_ALPHANUMERICS, IMMUNE_CSS ) );
+			}
 		}
 		return sb.toString();
 	}
@@ -372,13 +351,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForJavaScript(java.lang.String)
 	 */
-	public String encodeForJavascript(String input) {
+	public String encodeForJavaScript(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
-			sb.append( encode( c, backslashCodec, CHAR_ALPHANUMERICS, IMMUNE_JAVASCRIPT ) );
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			sb.append( encode( c, javaScriptCodec, CHAR_ALPHANUMERICS, IMMUNE_JAVASCRIPT ) );
 		}
 		return sb.toString();
 	}
@@ -386,15 +364,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForVisualBasicScript(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForVisualBasicScript(java.lang.String)
 	 */
 	public String encodeForVBScript(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
-			sb.append( encode( c, backslashCodec, CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT ) );
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			sb.append( encode( c, vbScriptCodec, CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT ) );
 		}
 		return sb.toString();
 	}
@@ -415,23 +392,27 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @return the string
 	 * @see org.owasp.esapi.Encoder#encodeForSQL(java.lang.String)
 	 */
-	public String encodeForSQL(String input) {
-		String canonical = canonicalize(input);
-		return canonical.replaceAll("'", "''");
+	public String encodeForSQL(Codec codec, String input) {
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			sb.append( encode( c, codec, CHAR_ALPHANUMERICS, IMMUNE_SQL ) );
+		}
+		return sb.toString();
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForLDAP(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForLDAP(java.lang.String)
 	 */
 	public String encodeForLDAP(String input) {
-		String canonical = canonicalize(input);
-
 		// FIXME: ENHANCE this is a negative list -- make positive?
+		// FIXME: use an ldap codec?
 		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < canonical.length(); i++) {
-			char c = canonical.charAt(i);
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
 			switch (c) {
 			case '\\':
 				sb.append("\\5c");
@@ -458,17 +439,15 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForDN(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForDN(java.lang.String)
 	 */
 	public String encodeForDN(String input) {
-		String canonical = canonicalize(input);
-
 		StringBuffer sb = new StringBuffer();
-		if ((canonical.length() > 0) && ((canonical.charAt(0) == ' ') || (canonical.charAt(0) == '#'))) {
+		if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
 			sb.append('\\'); // add the leading backslash if needed
 		}
-		for (int i = 0; i < canonical.length(); i++) {
-			char c = canonical.charAt(i);
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
 			switch (c) {
 			case '\\':
 				sb.append("\\\\");
@@ -496,7 +475,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			}
 		}
 		// add the trailing backslash if needed
-		if ((canonical.length() > 1) && (canonical.charAt(canonical.length() - 1) == ' ')) {
+		if ((input.length() > 1) && (input.charAt(input.length() - 1) == ' ')) {
 			sb.insert(sb.length() - 1, '\\');
 		}
 		return sb.toString();
@@ -521,9 +500,8 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	public String encodeForXPath(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
 			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XPATH ) );
 		}
 		return sb.toString();
@@ -532,14 +510,13 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForXML(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForXML(java.lang.String)
 	 */
 	public String encodeForXML(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
 			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XML ) );
 		}
 		return sb.toString();
@@ -548,14 +525,13 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForXMLAttribute(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForXMLAttribute(java.lang.String)
 	 */
 	public String encodeForXMLAttribute(String input) {
 	    if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
-		String canonical = canonicalize( input );
-		for ( int i=0; i<canonical.length(); i++ ) {
-			char c = canonical.charAt(i);
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
 			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XMLATTR ) );
 		}
 		return sb.toString();
@@ -564,13 +540,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForURL(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForURL(java.lang.String)
 	 */
 	public String encodeForURL(String input) throws EncodingException {
-		String canonical = canonicalize(input);
-
 		try {
-			return URLEncoder.encode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
+			return URLEncoder.encode(input, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
 			throw new EncodingException("Encoding failure", "Encoding not supported", ex);
 		} catch (Exception e) {
@@ -581,7 +555,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#decodeFromURL(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#decodeFromURL(java.lang.String)
 	 */
 	public String decodeFromURL(String input) throws EncodingException {
 		String canonical = canonicalize(input);
@@ -597,7 +571,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#encodeForBase64(byte[])
+	 * @see org.owasp.esapi.Encoder#encodeForBase64(byte[])
 	 */
 	public String encodeForBase64(byte[] input, boolean wrap) {
 		int options = 0;
@@ -610,7 +584,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncoder#decodeFromBase64(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#decodeFromBase64(java.lang.String)
 	 */
 	public byte[] decodeFromBase64(String input) throws IOException {
 		return Base64.decode( input );

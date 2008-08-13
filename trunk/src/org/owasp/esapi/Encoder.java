@@ -17,8 +17,8 @@ package org.owasp.esapi;
 
 import java.io.IOException;
 
+import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.errors.IntrusionException;
 
 
 /**
@@ -82,14 +82,6 @@ public interface Encoder {
 	 * For more information on form encoding, please refer to the <a
 	 * href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C
 	 * specifications</a>.
-	 * 
-	 * @param input
-	 *            unvalidated input from an HTTP request
-	 * 
-	 * @return the canonicalized string
-	 * 
-	 * @throws IntrusionException
-	 *             if there is a canonicalization problem
 	 */
 	String canonicalize(String input) throws EncodingException;
 	
@@ -99,101 +91,60 @@ public interface Encoder {
 	 * Reduce all non-ascii characters to their ASCII form so that simpler
 	 * validation rules can be applied. For example, an accented-e character
 	 * will be changed into a regular ASCII e character.
-	 * 
-	 * @param input
-	 * @return
 	 */
 	String normalize(String input);
 
 	/**
-	 * Encode data for use in HTML content. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is
-	 * entity-encoded using a whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for use in Cascading Style Sheets (CSS) content.
+	 */
+	String encodeForCSS(String input);
+
+	/**
+	 * Encode data for use in HTML content.
 	 */
 	String encodeForHTML(String input);
 
 	/**
-	 * Encode data for use in HTML attributes. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is
-	 * entity-encoded using a whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for use in HTML attributes.
 	 */
 	String encodeForHTMLAttribute(String input);
 
 	/**
-	 * Encode data for insertion inside a data value inside a JavaScript. Putting user data directly
-	 * inside a JavaScript is one of the most dangerous HTML contexts.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for insertion inside a data value in a JavaScript. Putting user data directly
+	 * inside a script is quite dangerous. Great care must be taken to prevent putting user data
+	 * directly into script code itself, as no amount of encoding will prevent attacks there.
 	 */
-	String encodeForJavascript(String input);
+	String encodeForJavaScript(String input);
 
 	/**
-	 * Encode data for use in visual basic script. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is encoded using a whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for insertion inside a data value in a visual basic script. Putting user data directly
+	 * inside a script is quite dangerous. Great care must be taken to prevent putting user data
+	 * directly into script code itself, as no amount of encoding will prevent attacks there.
 	 */
 	String encodeForVBScript(String input);
 
 	/**
-	 * Encode for SQL. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is encoded using a
-	 * whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode for SQL according to the selected codec.
 	 */
-	String encodeForSQL(String input);
+	String encodeForSQL(Codec codec, String input);
 
 	/**
-	 * Encode data for use in LDAP queries. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is
-	 * encoded using a whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for use in LDAP queries.
 	 */
 	String encodeForLDAP(String input);
 
 	/**
-	 * Encode data for use in an LDAP distinguished name. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is encoded using a whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for use in an LDAP distinguished name. 
 	 */
 	String encodeForDN(String input);
 
 	/**
-	 * Encode data for use in an XPath query. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is
-	 * encoded using a whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * Encode data for use in an XPath query.
 	 */
 	String encodeForXPath(String input);
 
 	/**
-	 * Encode data for use in an XML element. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is
-	 * encoded using a whitelist. The implementation should follow the <a
+	 * Encode data for use in an XML element. The implementation should follow the <a
 	 * href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding
 	 * Standard</a> from the W3C.
 	 * <p>
@@ -211,9 +162,7 @@ public interface Encoder {
 	/**
 	 * Encode data for use in an XML attribute. The implementation should follow
 	 * the <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding
-	 * Standard</a> from the W3C. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is encoded using
-	 * a whitelist.
+	 * Standard</a> from the W3C.
 	 * <p>
 	 * The use of a real XML parser is highly encouraged. However, in the
 	 * hopefully rare case that you need to make sure that data is safe for
@@ -229,13 +178,8 @@ public interface Encoder {
 	/**
 	 * Encode for use in a URL. This method performs <a
 	 * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding"</a>
-	 * on the entire string. Implementations should first canonicalize and
-	 * detect any double-encoding. If this check passes, then the data is encoded using a
-	 * whitelist.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
+	 * on the entire string.
+	 * FIXME: URL for special rules here - about & = and other specials in URL context?
 	 */
 	String encodeForURL(String input) throws EncodingException;
 
@@ -243,39 +187,16 @@ public interface Encoder {
 	 * Decode from URL. Implementations should first canonicalize and
 	 * detect any double-encoding. If this check passes, then the data is decoded using URL
 	 * decoding.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	String decodeFromURL(String input) throws EncodingException;
 
 	/**
-	 * Encode for base64.
-	 * <p>
-	 * Beware double-encoding, as this will corrupt the results and could
-	 * possibly cause a downstream security mechanism to make a mistake.
-	 * 
-	 * @param input
-	 *            the input
-	 * @param wrap if the result should be wrapped every 76 characters
-	 * @return the Base64 encoded string
+	 * Encode for Base64.
 	 */
 	String encodeForBase64(byte[] input, boolean wrap);
 
 	/**
 	 * Decode data encoded with BASE-64 encoding.
-	 * <p>
-	 * Beware double-encoded data, as the results of this method could still
-	 * contain encoded characters as part of attacks.
-	 * 
-	 * @param input
-	 *            the input
-	 * @return the byte[]
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
 	 */
 	byte[] decodeFromBase64(String input) throws IOException;
 
