@@ -39,11 +39,6 @@ import java.util.List;
  */
 public interface SecurityConfiguration {
 
-	// FIXME: SecurityConfiguration should be hierarchical in nature,
-	// so that e.g. we can have a site wide file containing some input validation rules,
-	// and an application specific one that can override settings as necessary
-	// See java.util.Properties
-
 	/**
 	 * Gets the application name, used for logging
 	 * 

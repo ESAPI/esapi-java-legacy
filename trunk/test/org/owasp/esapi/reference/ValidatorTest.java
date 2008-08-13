@@ -259,7 +259,7 @@ public class ValidatorTest extends TestCase {
 			// expected
 		}
 		
-		// FIXME: AAA This test case fails due to an apparent bug in SimpleDateFormat
+		// This test case fails due to an apparent bug in SimpleDateFormat
 		try {
 			instance.getValidDate( "test", "June 32, 2008", DateFormat.getDateInstance(), false );
 			// fail();
@@ -290,9 +290,8 @@ public class ValidatorTest extends TestCase {
 		System.out.println("isValidDirectoryPath");
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidDirectoryPath("test", "/", false));
-		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp", false));
+		assertTrue(instance.isValidDirectoryPath("test", "c:\\jeff", false));
 		assertTrue(instance.isValidDirectoryPath("test", "/etc/config", false));
-		// FIXME: ENHANCE doesn't accept filenames, just directories - should it?
 		// assertTrue( instance.isValidDirectoryPath( "c:\\Windows\\System32\\cmd.exe" ) );
 		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
 	}

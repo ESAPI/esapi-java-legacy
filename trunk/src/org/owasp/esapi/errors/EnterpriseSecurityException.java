@@ -60,9 +60,6 @@ public class EnterpriseSecurityException extends Exception {
      * @param message the message
      */
     public EnterpriseSecurityException(String userMessage, String logMessage) {
-
-    	// FIXME: AAA - add log level to exception to tell intrusion detector how to log it
-    	
     	super(userMessage);
         this.logMessage = logMessage;
         ESAPI.intrusionDetector().addException(this);

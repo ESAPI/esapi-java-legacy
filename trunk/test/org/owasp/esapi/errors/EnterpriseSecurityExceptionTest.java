@@ -140,7 +140,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         e = new ValidationUploadException("m1","m2");
         e = new ValidationUploadException("m1","m2",new Throwable());
 
-        IntrusionException ex = new IntrusionException();
+        IntrusionException ex = new IntrusionException( "test", "test details");
         ex = new IntrusionException("m1","m2");
         ex = new IntrusionException("m1","m2", new Throwable());
         assertEquals( ex.getUserMessage(), "m1" );

@@ -135,7 +135,6 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 *             the exception
 	 */
 	public static void main(String[] args) throws Exception {
-		// FIXME: AAA verify that this still works
 		File f = new File(args[0]);
 		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY, "Loading encrypted properties from " + f.getAbsolutePath() );
 		if ( !f.exists() ) throw new IOException( "Properties file not found: " + f.getAbsolutePath() );

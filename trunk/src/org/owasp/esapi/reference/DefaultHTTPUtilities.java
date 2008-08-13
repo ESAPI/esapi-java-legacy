@@ -77,19 +77,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	public DefaultHTTPUtilities() {
 	}
 
-	// FIXME: Enhance - consider adding addQueryChecksum(String href) that would just verify that none of the parameters in the querystring have changed.  Could do the same for forms.
-	// FIXME: Enhance - also verifyQueryChecksum()
-	
-	
-
-	// FIXME: need to make this easier to add to forms.
 	/**
 	 * @see org.owasp.esapi.HTTPUtilities#addCSRFToken(java.lang.String)
 	 */
 	public String addCSRFToken(String href) {
 		User user = ESAPI.authenticator().getCurrentUser();		
-		
-		// FIXME: AAA getCurrentUser should never return null
 		if (user.isAnonymous() || user == null) {
 			return href;
 		}
@@ -140,7 +132,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @throws AccessControlException
 	 */
 	public void assertSecureRequest() throws AccessControlException {
-		// FIXME: RESEARCH - getMethod() is rumored to lie in some cases, for example, a JEFF request may return GET
 		String requiredMethod = "POST";
 		String receivedMethod = getCurrentRequest().getMethod();
 		if ( !receivedMethod.equals( requiredMethod ) ) {
@@ -164,13 +155,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		try {
 			String cookieName = ESAPI.validator().getValidInput( "safeAddCookie", name, "HTTPCookieName", 50, false);
 			String cookieValue = ESAPI.validator().getValidInput( "safeAddCookie", value, "HTTPCookieValue", 5000, false);
-			
-			// FIXME: AAA need to validate domain and path! Otherwise response splitting etc..  Can use Cookie object?
-			
+						
 			// create the special cookie header
 			// Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
 			// domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
-			// FIXME: AAA test if setting a separate set-cookie header for each cookie works!
 			String header = cookieName + "=" + cookieValue;
 			if ( maxAge != -1 ) header += "; Max-Age=" + maxAge;
 			if ( domain != null ) header += "; Domain=" + domain;
@@ -232,9 +220,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		return null;
 	}
 	
-	/* returns a text message for the http response code */
+	/**
+	 *  returns a text message for the HTTP response code
+	 */
 	private String getHttpMessage( int sc ) {
-		// FIXME: implement
+		// TODO: provide better messages for each error code
 		return "HTTP error code: " + sc;
 	}
 	
@@ -316,7 +306,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 	}
 	
-	//FIXME: AAA add these to the interface
 	/**
 	 * Return exactly what was sent to prevent URL rewriting. URL rewriting is intended to be a session management
 	 * scheme that doesn't require cookies, but exposes the sessionid in many places, including the URL bar,
@@ -392,7 +381,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	
 	
-	// FIXME: ENHANCE - add configuration for entry pages that don't require a token 
 	/*
 	 * This implementation uses the parameter name to store the token.
 	 * (non-Javadoc)
@@ -428,7 +416,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#decryptQuueryString(java.lang.String)
 	 */
 	public Map decryptQueryString(String encrypted) throws EncryptionException {
-		// FIXME: AAA needs test cases
 		String plaintext = ESAPI.encryptor().decrypt(encrypted);
 		return queryToMap(plaintext);
 	}
@@ -438,7 +425,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @see org.owasp.esapi.HTTPUtilities#decryptStateFromCookie()
      */
     public Map decryptStateFromCookie() throws EncryptionException {
-    	// FIXME: consider getEncryptedCookieValue( String name )
 		HttpServletRequest request = getCurrentRequest();
 		Cookie[] cookies = request.getCookies();
 		Cookie c = null;
@@ -458,9 +444,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#encryptHiddenField(java.lang.String)
 	 */
 	public String encryptHiddenField(String value) throws EncryptionException {
-		// FIXME: this needs better support
-		// like cookie with name-value pairs
-		// and an easy way to decrypt to a hashmap
     	return ESAPI.encryptor().encrypt(value);
 	}
 	
@@ -469,9 +452,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#encryptQueryString(java.lang.String)
 	 */
 	public String encryptQueryString(String query) throws EncryptionException {
-		// FIXME: this needs better support
-		// like cookie with name-value pairs
-		// and an easy way to decrypt to a hashmap
 		return ESAPI.encryptor().encrypt( query );
 	}
 
@@ -493,7 +473,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     			logger.error(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
-    	// FIXME: AAA - add a check to see if cookie length will exceed 2K limit
     	String encrypted = ESAPI.encryptor().encrypt(sb.toString());
     	this.safeAddCookie("state", encrypted, -1, null, null );
     }
@@ -654,9 +633,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @see org.owasp.esapi.interfaces.IHTTPUtilities#safeSendForward(java.lang.String)
 	 */
 	public void safeSendForward(String context, String location) throws AccessControlException,ServletException,IOException {
-		// FIXME: should this be configurable?  What is a good forward policy?
-		// I think not allowing forwards to public URLs is good, as it bypasses many access controls
-		
 		if (!location.startsWith("WEB-INF")) {
 			throw new AccessControlException("Forward failed", "Bad forward location: " + location);
 		}

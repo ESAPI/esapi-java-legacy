@@ -51,12 +51,6 @@ import org.owasp.esapi.SecurityConfiguration;
  * @author jwilliams
  */
 
-// FIXME: ENHANCE make a getCharacterSet( name );
-// FIXME: ENHANCE make character sets configurable
-// characterSet.password
-// characterSet.globalAllowedCharacterList=abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890
-// characterSet.makeYourOwnName=
-// 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /** The properties. */
@@ -102,7 +96,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String LOG_LEVEL = "LogLevel";
 
     
-    // FIXME: Update to standard pattern
     protected final int MAX_REDIRECT_LOCATION = 1000;
     
     protected final int MAX_FILE_NAME_LENGTH = 1000;
@@ -127,7 +120,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * Instantiates a new configuration.
      */
     public DefaultSecurityConfiguration() {
-        // FIXME : this should be reloaded periodically
         loadConfiguration();
     }
 
@@ -384,9 +376,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return Integer.parseInt(max);
     }
 
-    // FIXME: ENHANCE should read these quotas into a map and cache them
+    
     public Threshold getQuota(String eventName) {
-
         int count = 0;
         String countString = properties.getProperty(eventName + ".count");
         if (countString != null) {
@@ -410,7 +401,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return q;
     }
 
-    // FIXME: ENHANCE integrate log level configuration
     public Level getLogLevel() {
         String level = properties.getProperty(LOG_LEVEL);
         if (level.equalsIgnoreCase("TRACE"))

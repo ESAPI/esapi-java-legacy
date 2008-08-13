@@ -49,15 +49,10 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
-	// FIXME: There is probably a better data structure for this
 	private Map userEvents = new WeakHashMap();
 	
 	public DefaultIntrusionDetector() {
 	}
-
-	// FIXME: ENHANCE consider allowing both per-user and per-application quotas
-	// e.g. number of failed logins per hour is a per-application quota
-	
 	
 	/**
 	 * This implementation uses an exception store in each User object to track
@@ -82,7 +77,6 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 		User user = ESAPI.authenticator().getCurrentUser();
         String eventName = e.getClass().getName();
 
-        // FIXME: AAA Rethink this - IntrusionExceptions which shouldn't get added to the IntrusionDetector
         if ( e instanceof IntrusionException) {
             return;
         }
@@ -127,9 +121,6 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
     }
 
     
-    /*
-     * FIXME: Enhance - future actions might include SNMP traps, email, pager, etc...
-     */
     private void takeSecurityAction( String action, String message ) {
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY, "INTRUSION - " + message );
@@ -184,8 +175,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
                 long plong = past.getTime();
                 long nlong = now.getTime(); 
                 if ( nlong - plong < interval * 1000 ) {
-                    // FIXME: ENHANCE move all this event stuff inside IntrusionDetector?
-                    throw new IntrusionException();
+                    throw new IntrusionException( "Threshold exceeded", "Exceeded threshold for " + key );
                 }
             }
         }

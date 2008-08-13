@@ -148,7 +148,7 @@ public class HTMLEntityCodec implements Codec {
 		}
 		try {
 			int i = Integer.parseInt(sb.toString());
-			// FIXME: in Java 1.5 you can test whether this is a valid code point
+			// TODO: in Java 1.5 you can test whether this is a valid code point
 			// with Character.isValidCodePoint() et al.
 			return new Character( (char)i );
 		} catch( NumberFormatException e ) {
@@ -179,7 +179,7 @@ public class HTMLEntityCodec implements Codec {
 		}
 		try {
 			int i = Integer.parseInt(sb.toString(), 16);
-			// FIXME: in Java 1.5 you can test whether this is a valid code point
+			// TODO: in Java 1.5 you can test whether this is a valid code point
 			// with Character.isValidCodePoint() et al.
 			return new Character( (char)i );
 		} catch( NumberFormatException e ) {
@@ -230,8 +230,6 @@ public class HTMLEntityCodec implements Codec {
 	}
 	
 		
-	// FIXME: ENHANCE - change formatting here to more like -- "quot", "34", //
-	// quotation mark
 	private void initializeMaps() {
 		String[] entityNames = { "quot"
 		/* 34 : quotation mark */, "amp"

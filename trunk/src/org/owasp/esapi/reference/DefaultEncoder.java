@@ -93,8 +93,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
-	// FIXME: ENHANCE make all character sets configurable
-
 	/** Standard character sets */
 	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
 	public final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
@@ -120,7 +118,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		codecs.add( htmlCodec );
 		codecs.add( percentCodec );
 		codecs.add( javaScriptCodec );
-		codecs.add( cssCodec );
+
+		// leave this out because it eats / characters
+		// codecs.add( cssCodec );
 
 		// leave this out because it eats " characters
 		// codecs.add( vbScriptCodec );
@@ -277,9 +277,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * canonicalize input before calling this method to prevent double-encoding.
 	 */
 	private String encode( char c, Codec codec, char[] baseImmune, char[] specialImmune ) {
-		// FIXME: a recommendation to make this Unicode aware
-		// Character.getType( codepoint ) in Java 1.5 for better international support
-		// encode should take the Character type instead of char
 		if (isContained(baseImmune, c) || isContained(specialImmune, c)) {
 			return ""+c;
 		} else {
@@ -408,8 +405,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.Encoder#encodeForLDAP(java.lang.String)
 	 */
 	public String encodeForLDAP(String input) {
-		// FIXME: ENHANCE this is a negative list -- make positive?
-		// FIXME: use an ldap codec?
+		// TODO: replace with LDAP codec
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
@@ -629,15 +625,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/**
 	 * Returns true if the character is contained in the provided array of characters.
 	 */
-	private boolean isContained(char[] haystack, char c) {
+	protected boolean isContained(char[] haystack, char c) {
 		for (int i = 0; i < haystack.length; i++) {
 			if (c == haystack[i])
 				return true;
 		}
 		return false;
-
-		// FIXME: ENHANCE Performance enhancement here but character arrays must
-		// be sorted, which they're currently not.
+		
+		// If sorted arrays are guaranteed, this is faster
 		// return( Arrays.binarySearch(array, element) >= 0 );
 	}
 

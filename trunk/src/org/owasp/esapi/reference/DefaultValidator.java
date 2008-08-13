@@ -73,10 +73,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public DefaultValidator() {
 	}
 
-	// FIXME: need to return 3 ways - safe input, safe input with message, ValidationException
-	// Going to have to implement a ValidationResult (toString should be the safe input)
-	// FIXME: Why do we need "safe input with message?"
-	
 	/**
 	 * Returns true if data received from browser is valid. Only URL encoding is
 	 * supported. Double encoding is treated as an attack.
@@ -123,7 +119,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     		}
 
     		if (canonical.length() > maxLength) {
-    			//FIXME: ENHANCE if the length is exceeded by a wide margin, throw IntrusionException?
     			throw new ValidationException( context + ": Input can not exceed " + maxLength + " characters", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + type + "), input=" + input);
     		}
 
@@ -131,7 +126,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     			throw new ValidationException( context + ": Invalid input", "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
     		}
 
-    		//TODO - let us know when its a ESAPI.properties config problem! This exception does not differentiate
     		Pattern p = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
     		if ( p == null ) {
     			try {
@@ -243,7 +237,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		
 		if (input.length() > maxLength) {
-			//TODO - if the length is exceeded by a wide margin, throw IntrusionException?
 			throw new ValidationException( context + ": Invalid HTML input can not exceed " + maxLength + " characters", context + " input exceedes maxLength by " + (input.length()-maxLength) + " characters");
 		}
 		
@@ -280,8 +273,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			CleanResults test = as.scan(input, antiSamyPolicy);
 			List errors = test.getErrorMessages();
 			
-			// FIXME: AAA log detailed messages for now - would be nice to report
-			// FIXME: Enhance - antisamy has html markup in error messages - not perfect for log
 			if ( errors.size() > 0 ) {
 				// just create new exception to get it logged and intrusion detected
 				new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", errors=" + errors );
@@ -378,7 +369,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	public String getValidDirectoryPath(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
-		String canonical = "";
 		try {
 			if (isEmpty(input)) {
 				if (allowNull) return null;
@@ -386,8 +376,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			}
 						
 			// do basic validation
-			canonical = ESAPI.encoder().canonicalize(input);
-			getValidInput( context, canonical, "DirectoryName", 255, false);
+			String canonical = getValidInput( context, input, "DirectoryName", 255, false);
 			
 			// get the canonical path without the drive letter if present
 			String cpath = new File(canonical).getCanonicalPath().replaceAll( "\\\\", "/");
@@ -407,13 +396,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			if (!escaped.equals(cpath.toLowerCase())) {
 				throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical );
 			}
-
+			return canonical; 
 		} catch (IOException e) {
-			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", canonical=" + canonical, e );
-		} catch (EncodingException ee) {
-            throw new IntrusionException( context + ": Invalid directory name", "Invalid directory name: context=" + context + ", canonical=" + canonical, ee );
+			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input, e );
 		}
-		return canonical;
 	}
 
 
@@ -436,9 +422,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public String getValidFileName(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		String canonical = "";
-		
-		// FIXME: AAA verify no disallowed characters like %00 ? * \ / - use SafeFile?
-		
 		// detect path manipulation
 		try {
 			if (isEmpty(input)) {
@@ -604,7 +587,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
    			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input );
 		}
 		
-		// FIXME: AAA - temporary - what makes file content valid? Maybe need a parameter here?
 		long esapiMaxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
 		if (input.length > esapiMaxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + esapiMaxBytes + " bytes", "Exceeded ESAPI max length");
 		if (input.length > maxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + maxBytes + " bytes", "Exceeded maxBytes ( " + input.length + ")");
@@ -686,7 +668,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
    			throw new ValidationException( "Input required: HTTP request is null", "Input required: HTTP request is null" );
 		}
 
-		// FIXME: make allowed methods configurable
 		if ( !request.getMethod().equals( "GET") && !request.getMethod().equals("POST") ) {
    			throw new IntrusionException( "Bad HTTP method received", "Bad HTTP method received: " + request.getMethod() );
 		}
@@ -698,7 +679,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			getValidInput( "HTTP request parameter: " + name, name, "HTTPParameterName", MAX_PARAMETER_NAME_LENGTH, false );
 			String[] values = (String[]) entry.getValue();
 			Iterator i3 = Arrays.asList(values).iterator();
-			// FIXME:Enhance - consider throwing an exception if there are multiple parameters with the same name
 			while (i3.hasNext()) {
 				String value = (String) i3.next();
 				getValidInput( "HTTP request parameter: " + name, value, "HTTPParameterValue", MAX_PARAMETER_VALUE_LENGTH, true );
@@ -784,7 +764,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		Set missing = new HashSet(required);
 		missing.removeAll(actualNames);
 		if (missing.size() > 0) {
-			//TODO - we need to know WHICH element is missing
 			throw new ValidationException( context + ": Invalid HTTP request missing parameters", "Invalid HTTP request missing parameters " + missing + ": context=" + context );
 		}
 		
@@ -869,8 +848,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns true if input is a valid redirect location.
 	 */
 	public boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException {
-		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
-		// FIXME: ENHANCE - configurable redirect length
 		return ESAPI.validator().isValidInput( context, input, "Redirect", 512, allowNull);
 	}
 
@@ -880,7 +857,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	public String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
-		// FIXME: ENHANCE - it's too hard to put valid locations in as regex
 		return ESAPI.validator().getValidInput( context, input, "Redirect", 512, allowNull);
 	}
 
@@ -906,8 +882,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		int count = 0;
 		int c;
 
-		// FIXME: AAA - verify this method's behavior exactly matches BufferedReader.readLine()
-		// so it can be used as a drop in replacement.
 		try {
 			while (true) {
 				c = in.read();
@@ -918,7 +892,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				if (c == '\n' || c == '\r') break;
 				count++;
 				if (count > max) {
-					throw new ValidationAvailabilityException( "Invalid input", "Invalid readLine. Read more than maximum characters allowed ( " + max + ")");
+					throw new ValidationAvailabilityException( "Invalid input", "Invalid readLine. Read more than maximum characters allowed (" + max + ")");
 				}
 				sb.append((char) c);
 			}

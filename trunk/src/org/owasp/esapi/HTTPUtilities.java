@@ -46,7 +46,6 @@ import org.owasp.esapi.errors.ValidationException;
 public interface HTTPUtilities {
 
     /** Key for remember token cookie */
-	// FIXME: Make this configurable via SecurityConfiguration
     public final static String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
 
 	/**
@@ -138,8 +137,6 @@ public interface HTTPUtilities {
     /**
 	 * Decrypts an encrypted hidden field value and returns the cleartext. If the field does not decrypt properly,
 	 * an IntrusionException is thrown to indicate tampering.
-	 * 
-	 * FIXME RD: What value does this offer over {@link Encryptor#decrypt(String)} ?
 	 */
 	String decryptHiddenField(String encrypted);
 
@@ -161,8 +158,6 @@ public interface HTTPUtilities {
      * @param value the cleartext value
      * @return the encrypted value
      * @throws EncryptionException
-     * 
-	 * FIXME RD: What value does this offer over {@link Encryptor#encrypt(String)} ?
      */
 	String encryptHiddenField(String value) throws EncryptionException;
 
@@ -171,18 +166,11 @@ public interface HTTPUtilities {
 	 * Takes a querystring (i.e. everything after the ? in the URL) and returns an encrypted string containing the parameters.
 	 * @param href
 	 * @return
-	 * 
-	 * FIXME RD: What value does this offer over {@link Encryptor#encrypt(String)} ?
 	 */
 	String encryptQueryString(String query) throws EncryptionException;
 	
 	/**
 	 * Takes an encrypted querystring and returns a Map containing the original parameters.
-	 * @param encrypted
-	 * @return
-	 * 
-	 * FIXME RD: What value does this offer over {@link Encryptor#decrypt(String)} ? 
-	 * FIXME RD: Is it really valid to return a Map, if the parameter names can be duplicated? e.g. ?a=1&a=2
 	 */
 	Map decryptQueryString(String encrypted) throws EncryptionException;
 
@@ -214,8 +202,6 @@ public interface HTTPUtilities {
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
      * 
 	 * This method uses {@link HTTPUtilities#getCurrentResquest()} to obtain the {@link HttpServletRequest} object
-     * 
-     * FIXME RD: More information needed about why this may be useful
      */
     Map decryptStateFromCookie() throws EncryptionException ;
 

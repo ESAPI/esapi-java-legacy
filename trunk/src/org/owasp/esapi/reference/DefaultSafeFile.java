@@ -56,12 +56,6 @@ public class DefaultSafeFile extends File {
 		doFileCheck(this.getName());
 	}
 
-//  FIXME: much stricter file validation using Validator - but won't work as drop-in replacement as well
-//	private void doFileCheck( String path ) throws ValidationException{
-//		if ( !ESAPI.validator().isValidFileName( "SafeFile constructor", path ) ) {
-//			throw new ValidationException("Invalid file", "File path (" + path + ") is invalid" );
-//		}
-//	}
 	
 	Pattern percents = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");	
 	Pattern dirblacklist = Pattern.compile("([*?<>|])");
@@ -101,7 +95,6 @@ public class DefaultSafeFile extends File {
 	}
 
 	private int containsUnprintableCharacters(String s) {
-		// FIXME: use Validator.isValidPrintable( s );
 		for (int i = 0; i < s.length(); i++) {
 			char ch = s.charAt(i);
 			if (((int) ch) < 32 || ((int) ch) > 126) {

@@ -179,7 +179,6 @@ public interface Encoder {
 	 * Encode for use in a URL. This method performs <a
 	 * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding"</a>
 	 * on the entire string.
-	 * FIXME: URL for special rules here - about & = and other specials in URL context?
 	 */
 	String encodeForURL(String input) throws EncodingException;
 

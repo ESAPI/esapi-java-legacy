@@ -75,7 +75,11 @@ public class RandomizerTest extends TestCase {
         Randomizer instance = ESAPI.randomizer();
         for ( int i = 0; i < 100; i++ ) {
             String result = instance.getRandomString(length, DefaultEncoder.CHAR_ALPHANUMERICS );
-            // FIXME: only the set of characters should be here
+            for ( int j=0;j<result.length();j++ ) {
+            	if ( !((DefaultEncoder)ESAPI.encoder()).isContained(DefaultEncoder.CHAR_ALPHANUMERICS, result.charAt(j))) {
+            		fail();
+            	}
+            }
             assertEquals(length, result.length());
         }
     }

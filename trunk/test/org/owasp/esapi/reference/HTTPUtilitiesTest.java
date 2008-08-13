@@ -31,6 +31,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
@@ -356,4 +357,25 @@ public class HTTPUtilitiesTest extends TestCase {
         assertTrue(response.containsHeader("Expires"));
     }
 
+	public void testSetRememberToken() throws AuthenticationException {
+		System.out.println("setRememberToken");
+        Authenticator instance = (Authenticator)ESAPI.authenticator();
+		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String password = instance.generateStrongPassword();
+		User user = instance.createUser(accountName, password, password);
+		user.enable();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		request.addParameter("username", accountName);
+		request.addParameter("password", password);
+		TestHttpServletResponse response = new TestHttpServletResponse();
+		instance.login( request, response);
+
+		int maxAge = ( 60 * 60 * 24 * 14 );
+		ESAPI.httpUtilities().setRememberToken( password, maxAge, "domain", "/" );
+		// Can't test this because we're using safeSetCookie, which sets a header, not a real cookie!
+		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
+	    // assertEquals( user.getRememberToken(), value );
+	}
+    
+    
 }
