@@ -87,7 +87,6 @@ public class LoggerTest extends TestCase {
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
-        // FIXME: AAA modify to return the actual string logged (so we can test)
         Logger logger = ESAPI.getLogger("logger");
         ESAPI.httpUtilities().logHTTPRequest( logger, Arrays.asList(ignore) );
         request.addParameter("one","one");

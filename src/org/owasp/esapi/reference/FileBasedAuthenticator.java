@@ -59,10 +59,10 @@ import org.owasp.esapi.errors.EncryptionException;
  * 
  * <PRE>
  * 
- * account name | hashed password | roles | lockout | status | remember token | old password hashes | last
+ * account name | hashed password | roles | lockout | status | old password hashes | last
  * hostname | last change | last login | last failed | expiration | failed
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * mitch | 44k/NAzQUlrCq9musTGGkcMNmdzEGJ8w8qZTLzpxLuQ= | admin,user | unlocked | enabled | token |
+ * mitch | 44k/NAzQUlrCq9musTGGkcMNmdzEGJ8w8qZTLzpxLuQ= | admin,user | unlocked | enabled |
  * u10dW4vTo3ZkoM5xP+blayWCz7KdPKyKUojOn9GJobg= | 192.168.1.255 | 1187201000926 | 1187200991568 | 1187200605330 |
  * 2187200605330 | 1
  * 
@@ -180,8 +180,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     		return Collections.unmodifiableList(hashes.subList(1, hashes.size()-1));
     	return Collections.EMPTY_LIST;
     }
-    
-    // FIXME: ENHANCE consider an impersonation feature
     
     /** The user map. */
     private Map userMap = new HashMap();
@@ -404,8 +402,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * and existing account, or hashed password does not match user's hashed password.
      */
     protected DefaultUser getUserFromRememberToken()  {
-    	
-    	// FIXME: AAA - this code is tied to HTTPUtilties.setRememberToken()
     	String token = ESAPI.httpUtilities().getCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
     	if ( token == null ) {
     		return null;
@@ -419,7 +415,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	    	ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 	    	return null;
     	}
-
+		
+		for (int i=0; i<data.length; i++ )
+			System.out.println( ">>>>>>>>>" + data[i] );
+		
 		if ( data.length != 3 ) {
 			return null;
 		}
@@ -525,9 +524,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
 	private DefaultUser createUser(String line) throws AuthenticationException {
 		String[] parts = line.split(" *\\| *");
-		DefaultUser user = new DefaultUser(parts[0]);
-		// FIXME: AAA validate account name
-		setHashedPassword(user, parts[1]);
+		String accountName = parts[0];
+		verifyAccountNameStrength( accountName );
+		DefaultUser user = new DefaultUser( accountName );
+
+		String password = parts[1];
+		verifyPasswordStrength(null, password);
+		setHashedPassword(user, password);
         
 		String[] roles = parts[2].toLowerCase().split(" *, *");
 		for (int i=0; i<roles.length; i++) 
@@ -540,20 +543,17 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		} else {
 			user.disable();
 		}
-		
-		// FIXME: remove "parts[5]", and move remaining fields up
-		// parts[5] used to be a remember me token, which is no longer stored in the DB
 
 		// generate a new csrf token
         user.resetCSRFToken();
         
-        setOldPasswordHashes(user, Arrays.asList(parts[6].split(" *, *")));
-        user.setLastHostAddress("null".equals(parts[7]) ? null : parts[7]);
-        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[8])));
-		user.setLastLoginTime(new Date( Long.parseLong(parts[9])));
-		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[10])));
-		user.setExpirationTime(new Date( Long.parseLong(parts[11])));
-		user.setFailedLoginCount(Integer.parseInt(parts[12]));
+        setOldPasswordHashes(user, Arrays.asList(parts[5].split(" *, *")));
+        user.setLastHostAddress("null".equals(parts[6]) ? null : parts[7]);
+        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[7])));
+		user.setLastLoginTime(new Date( Long.parseLong(parts[8])));
+		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[9])));
+		user.setExpirationTime(new Date( Long.parseLong(parts[10])));
+		user.setFailedLoginCount(Integer.parseInt(parts[11]));
 		return user;
 	}
 	
@@ -567,13 +567,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @throws
      */
     private User loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
-    	// FIXME: Enhance - consider keeping a pointer to the session in the User object
-    	// so that if the user logs in again, the old session can be invalidated.
-    	
-        // FIXME: AAA the login servlet path should also be a configuration - this
-        // should check (if loginrequest && parameters then do
-        // loginWithPassword)
 
         String username = request.getParameter(ESAPI.securityConfiguration().getUsernameParameterName());
         String password = request.getParameter(ESAPI.securityConfiguration().getPasswordParameterName());
@@ -598,7 +591,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
         user.loginWithPassword(password);
         
-        // FIXME: AAA set attribute indicating that user just authenticated. Means no CSRF protection is required.
         request.setAttribute(user.getCSRFToken(), "authenticated");
         return user;
     }
@@ -631,7 +623,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         try {
             writer = new PrintWriter(new FileWriter(userDB));
             writer.println("# This is the user file associated with the ESAPI library from http://www.owasp.org");
-            writer.println("# accountName | hashedPassword | roles | locked | enabled | rememberToken | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
+            writer.println("# accountName | hashedPassword | roles | locked | enabled | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
             writer.println();
             saveUsers(writer);
             writer.flush();
@@ -684,8 +676,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		sb.append( " | " );
 		sb.append( user.isEnabled() ? "enabled" : "disabled" );
 		sb.append( " | " );
-		sb.append( user.getRememberToken() );
-		sb.append( " | " );
 		sb.append( dump(getOldPasswordHashes(user)) );
         sb.append( " | " );
         sb.append( user.getLastHostAddress() );
@@ -733,10 +723,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     	if ( request == null || response == null ) {
             throw new AuthenticationCredentialsException( "Invalid request", "Request or response objects were null" );
     	}
-    	
-    	// FIXME: AAA remove all Default stuff from here.
-    	
-    	
+
         // if there's a user in the session then use that
         DefaultUser user = (DefaultUser)getUserFromSession();
         
@@ -817,7 +804,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      */
     public void logout() {
     	User user = getCurrentUser();
-        user.logout();
+        if ( user != null && !user.isAnonymous() ) {
+        	user.logout();
+        }
     }
     
     
@@ -846,7 +835,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         if (newAccountName == null) {
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account with a null account name");
         }
-        // FIXME: ENHANCE make the lengths configurable?
         if (!ESAPI.validator().isValidInput("verifyAccountNameStrength", newAccountName, "AccountName", MAX_ACCOUNT_NAME_LENGTH, false )) {
             throw new AuthenticationCredentialsException("Invalid account name", "New account name is not valid: " + newAccountName);
         }
@@ -859,12 +847,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @see org.owasp.esapi.interfaces.IAuthenticator#verifyPasswordStrength(java.lang.String)
      */
     public void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException {
-        String oPassword = (oldPassword == null) ? "" : oldPassword;
+        if ( oldPassword == null ) oldPassword = "";
+        if ( newPassword == null ) throw new AuthenticationCredentialsException("Invalid password", "New password cannot be null" );
 
         // can't change to a password that contains any 3 character substring of old password
-        int length = oPassword.length();
+        int length = oldPassword.length();
         for (int i = 0; i < length - 2; i++) {
-            String sub = oPassword.substring(i, i + 3);
+            String sub = oldPassword.substring(i, i + 3);
             if (newPassword.indexOf(sub) > -1 ) {
                 throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password" );
             }
@@ -896,7 +885,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         // calculate and verify password strength
         int strength = newPassword.length() * charsets;        
         if (strength < 16) {
-        	// FIXME: enhance - make password strength configurable
             throw new AuthenticationCredentialsException("Invalid password", "New password is not long and complex enough");
         }
     }

@@ -50,9 +50,7 @@ public class ESAPIFilter implements Filter {
 	public void init(FilterConfig filterConfig) {
 		if ( ESAPI.securityConfiguration().getResourceDirectory() == null ) {
 			String path = filterConfig.getInitParameter("resourceDirectory");
-			// FIXME: consider allowing a per-webapp ESAPI instance
-			// String path = filterConfig.getServletContext().getRealPath("/");
-			// path += "WEB-INF/resources";
+			// String path = filterConfig.getServletContext().getRealPath("/")+ "WEB-INF/resources";
 			ESAPI.securityConfiguration().setResourceDirectory( path );
 		}
 	}
@@ -85,8 +83,6 @@ public class ESAPIFilter implements Filter {
 				ESAPI.authenticator().login(request, response);
 			} catch( AuthenticationException e ) {
 				ESAPI.authenticator().logout();
-				// FIXME: use safeforward!
-				// FIXME: make configurable with servletconfig
 				request.setAttribute("message", "Authentication failed");
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
 				dispatcher.forward(request, response);

@@ -82,7 +82,6 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     
     
     /**
-     * FIXME: ENHANCE document whether this is inclusive or not
      * (non-Javadoc)
      * 
      * @see org.owasp.esapi.Randomizer#getRandomInteger(int, int)

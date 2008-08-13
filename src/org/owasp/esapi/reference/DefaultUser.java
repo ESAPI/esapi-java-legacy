@@ -58,9 +58,6 @@ public class DefaultUser implements User, Serializable {
 	/** The screen name. */
 	private String screenName = "";
 
-	// FIXME: remove this (may change users.txt) - remember token is now calculated
-	protected String rememberToken = "";
-
 	/** The csrf token. */
 	private String csrfToken = "";
 
@@ -92,22 +89,11 @@ public class DefaultUser implements User, Serializable {
 	private Date expirationTime = new Date(Long.MAX_VALUE);
 
 	/** A flag to indicate that the password must be changed before the account can be used. */
-	// FIXME: ENHANCE enable this required password change feature?
 	// private boolean requiresPasswordChange = true;
 	
 	/** The failed login count. */
 	private int failedLoginCount = 0;
     
-    // FIXME: ENHANCE consider adding these for authentication / access control support
-    //
-    //private String authenticationMethod = null;
-    //
-    //private String connectionChannel = null;
-	
-    /**
-     * TODO: Push to configuration? 
-     * Maximum legal role size 
-     **/
     private final int MAX_ROLE_LENGTH = 250;
     
 	/**
@@ -157,7 +143,6 @@ public class DefaultUser implements User, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#disable()
 	 */
 	public void disable() {
-		// FIXME: ENHANCE what about disabling for a short time period - to address DOS attack?
 		enabled = false;
 		logger.info( Logger.SECURITY, "Account disabled: " + getAccountName() );
 	}
@@ -210,13 +195,6 @@ public class DefaultUser implements User, Serializable {
 	
 	void setFailedLoginCount(int count) {
 		failedLoginCount = count;
-	}
-	
-	/**
-	 * Gets the remember token for use in cookies.
-	 */
-	protected String getRememberToken() {
-		return rememberToken;
 	}
 
 	/**
@@ -299,12 +277,12 @@ public class DefaultUser implements User, Serializable {
 	public boolean isExpired() {
 		return getExpirationTime().before( new Date() );
 
-// FIXME: ENHANCE should expiration happen automatically?  Or based on lastPasswordChangeTime?
-//		long from = lastPasswordChangeTime.getTime();
-//		long to = new Date().getTime();
-//		double difference = to - from;
-//		long days = Math.round((difference / (1000 * 60 * 60 * 24)));
-//		return days > 60;
+		// If expiration should happen automatically or based on lastPasswordChangeTime?
+		//		long from = lastPasswordChangeTime.getTime();
+		//		long to = new Date().getTime();
+		//		double difference = to - from;
+		//		long days = Math.round((difference / (1000 * 60 * 60 * 24)));
+		//		return days > 60;
 	}
 
 	/*
@@ -338,7 +316,6 @@ public class DefaultUser implements User, Serializable {
 	 * @see org.owasp.esapi.interfaces.IIntrusionDetector#isSessionAbsoluteTimeout(java.lang.String)
 	 */
 	public boolean isSessionAbsoluteTimeout() {
-		// FIXME: make configurable - currently 2 hours
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
 		Date deadline = new Date( session.getCreationTime() + 1000 * 60 * 60 * 2);
 		Date now = new Date();
@@ -352,7 +329,6 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public boolean isSessionTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
-		// FIXME: make configurable - currently -20 minutes
 		Date deadline = new Date(session.getLastAccessedTime() + 1000 * 60 * 20);
 		Date now = new Date();
 		return now.after(deadline);
@@ -404,7 +380,6 @@ public class DefaultUser implements User, Serializable {
 		logout();
 
 		if ( verifyPassword( password ) ) {
-			// FIXME: AAA verify loggedIn is properly maintained
 			loggedIn = true;
 			ESAPI.httpUtilities().changeSessionIdentifier();
 			ESAPI.authenticator().setCurrentUser(this);
@@ -582,9 +557,6 @@ public class DefaultUser implements User, Serializable {
 		this.failedLoginCount = 0;
 		logger.info( Logger.SECURITY, "Account unlocked: " + getAccountName() );
 	}
-
-	//FIXME:Enhance - think about having a second "transaction" password for each user
-
 	
     /*
 	 * (non-Javadoc)

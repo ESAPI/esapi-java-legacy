@@ -112,8 +112,6 @@ public interface AccessReferenceMap {
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
 	 * @param direct the direct reference to remove
 	 * @return the corresponding indirect reference
-	 * @throws AccessControlException 
-	 * FIXME Why might we throw an ACE here?
 	 */
 	public String removeDirectReference(Object direct) throws AccessControlException;
 

@@ -53,8 +53,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/** The public key. */
 	PublicKey publicKey = null;
 
-	// FIXME: AAA need global scrub of what methods need to log
-
 	PBEParameterSpec parameterSpec = null;
 	SecretKey secretKey = null;
 	String encryptAlgorithm = "PBEWithMD5AndDES";
@@ -64,8 +62,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	String encoding = "UTF-8"; 
 		
 	public JavaEncryptor() {
-		
-		// FIXME: AAA - need support for key and salt changing. What's best interface?
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
 		char[] pass = ESAPI.securityConfiguration().getMasterPassword();
 
@@ -83,7 +79,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			encoding = ESAPI.securityConfiguration().getCharacterEncoding();
 
 			// Set up signing keypair using the master password and salt
-			// FIXME: Enhance - make DSA configurable
 			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
 			SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
 			byte[] seed = hash(new String(pass),new String(salt)).getBytes();
@@ -114,7 +109,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			digest.update(plaintext.getBytes());
 
 			// rehash a number of times to help strengthen weak passwords
-			// FIXME: ENHANCE make iterations configurable
 			bytes = digest.digest();
 			for (int i = 0; i < 1024; i++) {
 				digest.reset();

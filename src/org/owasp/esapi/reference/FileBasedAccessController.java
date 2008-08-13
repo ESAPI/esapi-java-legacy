@@ -220,8 +220,6 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		if (fileMap==null || fileMap.isEmpty()) {
 			fileMap = loadRules("FileAccessRules.txt");
 		}
-		// FIXME: AAA think about canonicalization here - use Java file canonicalizer
-		// remember that Windows paths have \ instead of /
 		if ( !matchRule(fileMap, filepath.replaceAll("\\\\","/"))) {
 			throw new AccessControlException("Not authorized for file", "Not authorized for file: " + filepath );
 		}

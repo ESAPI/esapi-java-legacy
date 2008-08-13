@@ -40,18 +40,9 @@ package org.owasp.esapi;
  */
 public interface Logger {
 
-	// FIXME: ENHANCE Is this type approach right? Should it be configurable somehow?
-
-	/** The SECURITY. */
 	String SECURITY = "SECURITY";
-
-	/** The USABILITY. */
 	String USABILITY = "USABILITY";
-
-	/** The PERFORMANCE. */
 	String PERFORMANCE = "PERFORMANCE";
-	
-	/** The FUNCTIONALITY. */
 	String FUNCTIONALITY = "FUNCTIONALITY";
 
 	/**

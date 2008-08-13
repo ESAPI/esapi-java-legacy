@@ -42,8 +42,6 @@ public class JavaLogFactory implements LogFactory {
 
     private static class JavaLogger implements org.owasp.esapi.Logger {
 
-        // FIXME: ENHANCE somehow make configurable so that successes and failures are logged according to a configuration.
-
         /** The jlogger. */
         private java.util.logging.Logger jlogger = null;
 
@@ -63,8 +61,7 @@ public class JavaLogFactory implements LogFactory {
             this.applicationName = applicationName;
             this.moduleName = moduleName;
             this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
-            // FIXME: AAA this causes some weird classloading problem, since SecurityConfiguration logs.
-            // jlogger.setLevel(ESAPI.securityConfiguration().getLogLevel());
+            // Beware getting info from SecurityConfiguration, since it logs.
             this.jlogger.setLevel( Level.ALL );
         }
 
@@ -189,9 +186,6 @@ public class JavaLogFactory implements LogFactory {
          * @param throwable the throwable
          */
         private void log(Level level, String type, String message, Throwable throwable) {
-        	
-        	// FIXME: Enhance - consider noting an intrusion detection event on long logs (DOS protection)
-        	
             User user = ESAPI.authenticator().getCurrentUser();
             
             // ensure there's something to log
@@ -219,27 +213,8 @@ public class JavaLogFactory implements LogFactory {
             	msg = type + ": " + user.getAccountName() + "/" + user.getLastHostAddress() + " -- " + clean;
             }
             
-            // FIXME: AAA need to configure Java logger not to show throwables
             // jlogger.logp(level, applicationName, moduleName, msg, throwable);
             jlogger.logp(level, applicationName, moduleName, msg);
-        }
-
-        /**
-         * This special method doesn't include the current user's identity, and is only used during system initialization to
-         * prevent loops with the Authenticator.
-         * 
-         * @param level
-         * @param message
-         * @param throwable
-         */
-        // FIXME: this needs to go - note potential log injection problem
-        public void logSpecial(String message, Throwable throwable) {
-            // String clean = ESAPI.encoder().encodeForHTML(message);
-            // if (!message.equals(clean)) {
-            //     clean += "(Encoded)";
-            // }
-            String msg = "SECURITY" + ": " + "esapi" + "/" + "none" + " -- " + message;
-            jlogger.logp(Level.WARNING, applicationName, moduleName, msg, throwable);
         }
 
     	/* (non-Javadoc)

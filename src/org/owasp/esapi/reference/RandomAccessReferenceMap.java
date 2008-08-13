@@ -38,9 +38,6 @@ import org.owasp.esapi.errors.AccessControlException;
  * @see org.owasp.esapi.AccessReferenceMap
  */
 public class RandomAccessReferenceMap implements AccessReferenceMap {
-
-	// FIXME: Create an encrypted implementation of AccessReferenceMap that has NO STATE
-	// FIXME: Move to reference implementation package?
 	
 	/** The itod (indirect to direct) */
 	HashMap itod = new HashMap();

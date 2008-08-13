@@ -16,7 +16,6 @@
 package org.owasp.esapi.errors;
 
 /**
- * FIXME: DOC.
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class ValidationUploadException extends ValidationException {

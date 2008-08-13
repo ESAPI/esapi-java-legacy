@@ -42,8 +42,7 @@ public class IntrusionException extends RuntimeException {
      * Internal classes may throw an IntrusionException to the IntrusionDetector, which generates the appropriate log
      * message.
      */
-    public IntrusionException() {
-        // FIXME: AAA this shouldn't be public
+    private IntrusionException() {
         super();
     }
 

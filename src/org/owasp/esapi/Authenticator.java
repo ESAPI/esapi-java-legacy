@@ -101,40 +101,23 @@ public interface Authenticator {
     void logout();
 
 	/**
-	 * Creates the user.
-	 * 
-	 * @param accountName
-	 *            the account name
-	 * @param password1
-	 *            the password
-	 * @param password2
-	 *            copy of the password
-	 * 
-	 * @return the new User object
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 * FIXME RD: We should throw a specific exception if the account name already exists
-	 * Also, should callers synchronize while checking exists() and calling createUser()?
+	 * Creates a new User with the information provided. Implementations should check the
+	 * accountName and password for proper format and strength against brute force attacks.
+	 * Two copies of the new password are required to encourage user interface designers to
+	 * include two fields in their forms. Implementations should verify that both are the
+	 * same. 
 	 */
 	User createUser(String accountName, String password1, String password2) throws AuthenticationException;
 
 	/**
-	 * Generate a strong password.
-	 * 
-	 * @return the string
+	 * Generate a strong password. Implementations should use a large character set that does not
+	 * include confusing characters, such as i I 1 l 0 o and O.  There are many algorithms to
+	 * generate strong memorable passwords that have been studied in the past.
 	 */
 	String generateStrongPassword();
 
 	/**
 	 * Generate strong password that takes into account the user's information and old password.
-	 * 
-	 * @param oldPassword
-	 *            the old password
-	 * @param user
-	 *            the user
-	 * 
-	 * @return the new password
 	 */
 	String generateStrongPassword(User user, String oldPassword);
 

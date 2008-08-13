@@ -82,7 +82,7 @@ public class PercentCodec implements Codec {
 			try {
 				// parse the hex digit and create a character
 				int i = Integer.parseInt(sb.toString(), 16);
-				// FIXME: in Java 1.5 you can test whether this is a valid code point
+				// TODO: in Java 1.5 you can test whether this is a valid code point
 				// with Character.isValidCodePoint() et al.
 				return new Character( (char)i );
 			} catch( NumberFormatException e ) {

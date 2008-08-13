@@ -435,7 +435,6 @@ public class UserTest extends TestCase {
 	 *             the authentication exception
 	 */
 	public void testIsSessionAbsoluteTimeout() throws AuthenticationException {
-		// FIXME: ENHANCE shouldn't this just be one timeout method that does both checks???
 		System.out.println("isSessionAbsoluteTimeout");
 		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = instance.generateStrongPassword();

@@ -74,7 +74,6 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             }
 
             // parameters must only contain alphanumerics, dash, and forward slash
-            // FIXME: ENHANCE make configurable regexes? Update comments!
             Iterator i = params.iterator();
             while (i.hasNext()) {
                 String param = (String) i.next();
@@ -93,15 +92,15 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             String[] command = (String[])params.toArray( new String[0] );
             Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
             
-            // FIXME: Future - this is how to implement this in Java 1.5+
+            // Future - this is how to implement this in Java 1.5+
             // ProcessBuilder pb = new ProcessBuilder(params);
             // Map env = pb.environment();
             // Security check - clear environment variables!
             // env.clear();
             // pb.directory(workdir);
             // pb.redirectErrorStream(true);
-            // FIXME: ENHANCE need a timer
             // Process process = pb.start();
+
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             br = new BufferedReader(isr);
