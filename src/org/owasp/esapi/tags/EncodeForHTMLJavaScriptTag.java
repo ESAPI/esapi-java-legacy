@@ -41,7 +41,7 @@ public class EncodeForHTMLJavaScriptTag extends BodyTagSupport {
 			
 			Encoder e = ESAPI.encoder();
 			
-			out.println( e.encodeForJavascript(content) );
+			out.println( e.encodeForJavaScript(content) );
 			body.clearBody();
 			
 			return EVAL_PAGE;

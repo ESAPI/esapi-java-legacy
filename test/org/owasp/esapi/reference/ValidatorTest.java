@@ -293,8 +293,7 @@ public class ValidatorTest extends TestCase {
 		assertTrue(instance.isValidDirectoryPath("test", "c:\\temp", false));
 		assertTrue(instance.isValidDirectoryPath("test", "/etc/config", false));
 		// FIXME: ENHANCE doesn't accept filenames, just directories - should it?
-		// assertTrue( instance.isValidDirectoryPath(
-		// "c:\\Windows\\System32\\cmd.exe" ) );
+		// assertTrue( instance.isValidDirectoryPath( "c:\\Windows\\System32\\cmd.exe" ) );
 		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
 	}
 
