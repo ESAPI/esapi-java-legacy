@@ -131,7 +131,7 @@ public class ValidatorTest extends TestCase {
 		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
 		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
 
-		// FIXME: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
+		// TODO: waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
 	}
@@ -154,7 +154,7 @@ public class ValidatorTest extends TestCase {
 		String result3 = instance.getValidSafeHTML("test", test3, 100, false);
 		assertEquals("Test.", result3);
 		
-		// FIXME: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
+		// TODO: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
 		// String result4 = instance.getValidSafeHTML("test", test4);

@@ -117,7 +117,9 @@ public interface Authenticator {
 	String generateStrongPassword();
 
 	/**
-	 * Generate strong password that takes into account the user's information and old password.
+	 * Generate strong password that takes into account the user's information and old password. Implementations
+	 * should verify that the new password does not include information such as the username, fragments of the
+	 * old password, and other information that could be used to weaken the strength of the password.
 	 */
 	String generateStrongPassword(User user, String oldPassword);
 

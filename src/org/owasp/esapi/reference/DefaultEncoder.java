@@ -85,9 +85,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/** Character sets that define characters immune from encoding in various formats */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
-	private final static char[] IMMUNE_CSS = { ' ' };  // FIXME: check
+	private final static char[] IMMUNE_CSS = { ' ' };  // TODO: check
 	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
-	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // FIXME: check
+	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // TODO: check
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_SQL = { ' ' };
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };

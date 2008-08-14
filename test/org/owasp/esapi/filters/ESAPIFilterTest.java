@@ -111,7 +111,7 @@ public class ESAPIFilterTest extends TestCase {
         filter.doFilter(request, response, chain);
     
         // authentication test
-        // FIXME: why isn't this invoking the authentication code
+        // TODO: why isn't this invoking the authentication code
         session.removeAttribute("ESAPIUserSessionKey");
         filter.doFilter(request, response, chain);
     }
