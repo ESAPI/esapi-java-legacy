@@ -93,10 +93,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /** The last time we checked if the user db had been modified externally */
     private long lastChecked = 0;
     
-    /**
-     * TODO: Push to configuration? 
-     * Maximum legal account name size 
-     **/
     private final int MAX_ACCOUNT_NAME_LENGTH = 250;
     
     /**
