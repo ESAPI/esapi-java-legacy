@@ -36,13 +36,6 @@ import org.owasp.esapi.errors.ValidationException;
 public interface ValidatorErrorList {
 
 	/**
-	 * Return new empty ValidatorErrorList.
-	 * 
-	 * @return ValidatorErrorList
-	 */
-    public ValidatorErrorList createValidatorErrorList();
-
-	/**
 	 * Returns true if this list of empty.
 	 * 
 	 * @return boolean
