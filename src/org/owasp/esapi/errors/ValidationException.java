@@ -26,6 +26,13 @@ public class ValidationException extends EnterpriseSecurityException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	
+	/** The UI reference that caused this ValidationException */
+	private String context;
+
+	public static long getSerialVersionUID() {
+		return serialVersionUID;
+	}
 
 	/**
 	 * Instantiates a new validation exception.
@@ -55,4 +62,50 @@ public class ValidationException extends EnterpriseSecurityException {
     public ValidationException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, logMessage, cause);
     }
+    
+    /**
+     * Creates a new instance of ValidationException.
+     * 
+     * @param message
+     *            the message
+    * @param context
+     *            the source that caused this exception
+     */
+    public ValidationException(String userMessage, String logMessage, String context) {
+        super(userMessage, logMessage);
+        setContext(context);
+    }
+    
+    /**
+     * Instantiates a new ValidationException.
+     * 
+     * @param message
+     *            the message
+     * @param cause
+     *            the cause
+     * @param context
+     *            the source that caused this exception
+     */
+    public ValidationException(String userMessage, String logMessage, Throwable cause, String context) {
+        super(userMessage, logMessage, cause);
+    	setContext(context);
+    }
+    
+	/**
+	 * Returns the UI reference that caused this ValidationException
+	 *  
+	 * @return
+	 */
+	public String getContext() {
+		return context;
+	}
+
+	/**
+	 * Set's the UI reference that caused this ValidationException
+	 *  
+	 * @param cause
+	 */
+	public void setContext(String context) {
+		this.context = context;
+	}
 }
