@@ -120,14 +120,14 @@ public interface Validator {
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 */
-	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws ValidationException, IntrusionException;
+	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 
 	/**
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem. Instead of
 	 * throwing a ValidationException on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
+	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
 
 	/**
 	 * Returns true if input is a valid credit card. Maxlength is mandated by valid credit card type. 
