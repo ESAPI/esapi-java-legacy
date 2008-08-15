@@ -15,7 +15,6 @@
  */
 package org.owasp.esapi;
 
-import org.owasp.esapi.reference.DefaultValidatorErrorList;
 import org.owasp.esapi.reference.FileBasedAccessController;
 import org.owasp.esapi.reference.FileBasedAuthenticator;
 import org.owasp.esapi.reference.DefaultEncoder;

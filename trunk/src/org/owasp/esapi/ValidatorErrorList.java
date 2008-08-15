@@ -24,8 +24,10 @@ import java.util.List;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
- * The ValidatorErrorList interface defines a collection of ValidationExceptions
- * so that groups of validation functions can be called in a non-blocking fashion.
+ * The ValidatorErrorList class defines a well-formed collection of 
+ * ValidationExceptions so that groups of validation functions can be 
+ * called in a non-blocking fashion.
+ * 
  * <P>
  * <img src="doc-files/Validator.jpg" height="600">
  * <P>
