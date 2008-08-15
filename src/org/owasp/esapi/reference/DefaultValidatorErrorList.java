@@ -21,7 +21,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.owasp.esapi.ValidatorErrorList;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -54,15 +53,6 @@ public class DefaultValidatorErrorList implements org.owasp.esapi.ValidatorError
 		if ((context != null) && (ve != null)) {
 			errorList.put(context, ve);
 		}
-	}
-
-	/**
-	 * Return new empty ValidatorErrorList.
-	 * 
-	 * @return ValidatorErrorList
-	 */
-	public ValidatorErrorList createValidatorErrorList() {
-		return new DefaultValidatorErrorList();
 	}
 
 	/**

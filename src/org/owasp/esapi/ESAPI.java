@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.reference.DefaultValidatorErrorList;
 import org.owasp.esapi.reference.FileBasedAccessController;
 import org.owasp.esapi.reference.FileBasedAuthenticator;
 import org.owasp.esapi.reference.DefaultEncoder;
@@ -266,6 +267,19 @@ public class ESAPI {
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
+	}
+	
+	
+	/**
+	 * Please note this function does not return a static
+	 * library, but a new empty ValidatorErrorList. Continues
+	 * calls to createValidatorErrorList will create a new
+	 * empty instance of ValidatorErrorList.
+	 * 
+	 * @return the validatorErrorList
+	 */
+	public static ValidatorErrorList createValidatorErrorList() {
+		return new DefaultValidatorErrorList();
 	}
 
 }
