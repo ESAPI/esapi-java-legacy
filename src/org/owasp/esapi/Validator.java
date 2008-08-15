@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.owasp.esapi.ValidatorErrorList;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -76,7 +77,20 @@ public interface Validator {
 	 */
 	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
 	
-	
+	/**
+	 * Returns canonicalized and validated input as a String. Invalid input will generate a descriptive ValidationException, 
+	 * and input that is clearly an attack will generate a descriptive IntrusionException. 
+	 * 
+	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
+	 * @param input The actual user input data to validate.
+	 * @param type The regular expression name while maps to the actual regular expression from "ESAPI.properties".
+	 * @param maxLength The maximum post-canonicalized String length allowed.
+	 * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 * @param errorList If validation is in error, resulting error will be stored in the errorList by context
+	 * @return The canonicalized user input.
+	 * @throws IntrusionException
+	 */
+	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 	
 	/**
 	 * Returns true if input is a valid date according to the specified date format.
@@ -89,6 +103,11 @@ public interface Validator {
 	 */
 	Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException;	
 	
+	/**
+	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException and store it inside of 
+	 * the errorList argument, and input that is clearly an attack will generate a descriptive IntrusionException. 
+	 */
+	Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;	
 	
 	
 	/**
@@ -101,10 +120,15 @@ public interface Validator {
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 */
-	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws ValidationException;
+	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws ValidationException, IntrusionException;
 
-	
-	
+	/**
+	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
+	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem. Instead of
+	 * throwing a ValidationException on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
+
 	/**
 	 * Returns true if input is a valid credit card. Maxlength is mandated by valid credit card type. 
 	 */
@@ -116,6 +140,14 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	String getValidCreditCard(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	/**
+	 * Returns a canonicalized and validated credit card number as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidCreditCard(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 	
 	
 	
@@ -131,6 +163,13 @@ public interface Validator {
 	 */
 	String getValidDirectoryPath(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
 	
+	/**
+	 * Returns a canonicalized and validated directory path as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidDirectoryPath(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 	
 	
 	/**
@@ -144,6 +183,14 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	String getValidFileName(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
+	
+	/**
+	 * Returns a canonicalized and validated file name as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidFileName(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 	
 	
 	
@@ -159,7 +206,14 @@ public interface Validator {
 	 */
 	Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
-	
+	/**
+	 * Returns a validated number as a double. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+
 	
 	/**
 	 * Returns true if input is a valid integer.
@@ -173,6 +227,13 @@ public interface Validator {
 	 */
 	Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 	
+	/**
+	 * Returns a validated integer as an int. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 	
 	
 	/**
@@ -186,6 +247,14 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws ValidationException, IntrusionException;
+
+	/**
+	 * Returns a validated real number as a double. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 
 	
 	
@@ -201,7 +270,14 @@ public interface Validator {
 	 */
 	byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException;
 
-	
+	/**
+	 * Returns validated file content as a byte array. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+
 	
 	/**
 	 * Returns true if a file upload has a valid name, path, and content.
@@ -215,7 +291,14 @@ public interface Validator {
 	 */
 	void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException;
 
-	
+	/**
+	 * Validates the filepath, filename, and content of a file. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+
 	
 	/**
      * Validate the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
@@ -243,6 +326,14 @@ public interface Validator {
 	 */
 	String getValidListItem(String context, String input, List list) throws ValidationException, IntrusionException;
 
+	/**
+	 * Returns the list item that exactly matches the canonicalized input. Invalid or non-matching input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidListItem(String context, String input, List list, ValidatorErrorList errorList) throws IntrusionException;
+
 	
 	
 	/**
@@ -257,6 +348,14 @@ public interface Validator {
 	 */
 	void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional) throws ValidationException, IntrusionException;
 	
+	/**
+	 * Validates that the parameters in the current request contain all required parameters and only optional ones in
+	 * addition. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException on error, 
+	 * this variant will store the exception inside of the ValidationErrorList.
+	 */
+	void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional, ValidatorErrorList errorList) throws IntrusionException;
+	
 	
 	
 	/**
@@ -270,7 +369,13 @@ public interface Validator {
 	 */
 	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws ValidationException;
 
-	
+	/**
+	 * Returns canonicalized and validated printable characters as a byte array. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException on error, 
+	 * this variant will store the exception inside of the ValidationErrorList.
+	 */
+	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+
 	
 	/**
      * Returns true if input is valid printable ASCII characters (32-126).
@@ -283,7 +388,14 @@ public interface Validator {
 	 */
 	String getValidPrintable(String context, String input, int maxLength, boolean allowNull) throws ValidationException;
 
-	
+	/**
+	 * Returns canonicalized and validated printable characters as a String. Invalid input will generate 
+	 * a descriptive ValidationException, and input that is clearly an attack will generate a 
+	 * descriptive IntrusionException. Instead of throwing a ValidationException on error, 
+	 * this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+
 	
 	/**
 	 * Returns true if input is a valid redirect location.
@@ -294,7 +406,14 @@ public interface Validator {
 	 * Returns a canonicalized and validated redirect location as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException;
+	String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
+
+	/**
+	 * Returns a canonicalized and validated redirect location as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
+	 * on error, this variant will store the exception inside of the ValidationErrorList.
+	 */
+	String getValidRedirectLocation(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
 
 	
 	
