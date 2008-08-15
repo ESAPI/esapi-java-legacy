@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Validator;
 import org.owasp.esapi.ValidatorErrorList;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
@@ -146,6 +148,30 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	        throw new ValidationException( context + ": Invalid input", "Error canonicalizing user input", e);
 	    }
 	}
+	
+	/**
+	 * Validates data received from the browser and returns a safe version. Only
+	 * URL encoding is supported. Double encoding is treated as an attack.
+	 * 
+	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
+	 * @param input The actual user input data to validate.
+	 * @param type The regular expression name while maps to the actual regular expression from "ESAPI.properties".
+	 * @param maxLength The maximum post-canonicalized String length allowed.
+	 * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 * @param errors If ValidationException is thrown, then add to error list instead of throwing out to caller
+	 * @return The canonicalized user input.
+	 * @throws IntrusionException
+	 */
+	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+		
+		Validator validator = ESAPI.validator();
+		try {
+			return validator.getValidInput(context,  input,  type,  maxLength,  allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
+	}
 
 	/**
 	 * Returns true if input is a valid date according to the specified date format.
@@ -177,6 +203,22 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (Exception e) {
 			throw new ValidationException( context + ": Invalid date must follow " + format + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input,e );
 		}
+	}
+	
+	/*
+	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, 
+	 * and input that is clearly an attack will generate a descriptive IntrusionException.
+	 * 
+	 * @see org.owasp.esapi.interfaces.IValidator#getValidDate(java.lang.String)
+	 */
+	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidDate(context, input, format, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return null;
 	}
 	
 	/*
@@ -286,6 +328,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e );
 		}
 	}
+	
+	/**
+	 * ValidatorErrorList variant of getValidSafeHTML
+	 */
+	public String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidSafeHTML(context, input, maxLength, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
+	}
 
 	/*
 	 * Returns true if input is a valid credit card. Maxlength is mandated by valid credit card type.
@@ -349,6 +404,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		return canonical;
 
 	}
+	
+	/**
+	 * ValidatorErrorList variant of getValidCreditCard
+	 */
+	public String getValidCreditCard(String context, String input, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidCreditCard(context, input, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
+	}
 
 	/**
 	 * Returns true if the directory path (not including a filename) is valid.
@@ -401,6 +469,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (IOException e) {
 			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input, e );
 		}
+	}
+	
+	/**
+	 * ValidatorErrorList variant of getValidDirectoryPath
+	 */
+	public String getValidDirectoryPath(String context, String input, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidDirectoryPath(context, input, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
 	}
 
 
@@ -463,6 +544,21 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+")", "Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+"): context=" + context+", input=" + input);
 	}
 	
+	/**
+	 * Returns a canonicalized and validated file name as a String. Invalid input
+	 * will generate a descriptive ValidationException, and input that is clearly an attack
+	 * will generate a descriptive IntrusionException. 
+	 */
+	public String getValidFileName(String context, String input, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidFileName(context, input, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
+	}
+	
 	/*
 	 * Returns true if input is a valid number.
 	 * 
@@ -470,7 +566,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws IntrusionException {
 		try {
-			getValidNumber( context, input, minValue, maxValue, allowNull);
+			getValidNumber(context, input, minValue, maxValue, allowNull);
 			return true;
 		} catch( Exception e ) {
 			return false;
@@ -485,7 +581,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		Double minDoubleValue = new Double(minValue);
 		Double maxDoubleValue = new Double(maxValue);
-		return getValidDouble( context, input, minDoubleValue.doubleValue(), maxDoubleValue.doubleValue(), allowNull);
+		return getValidDouble(context, input, minDoubleValue.doubleValue(), maxDoubleValue.doubleValue(), allowNull);
+	}
+	
+	public Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidNumber(context, input, minValue, maxValue, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		
+		//not sure what to return on error
+		return new Double(0);
 	}
 	
 	/*
@@ -524,6 +632,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (NumberFormatException e) {
 			throw new ValidationException( context + ": Invalid double input", "Invalid double input format: context=" + context + ", input=" + input, e);
 		}
+	}
+	
+	public Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidDouble(context, input, minValue, maxValue, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		
+		//not sure what to return on error
+		return new Double(0);
 	}
 	
 	/*
@@ -565,6 +685,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 	}
 	
+	public Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidInteger(context, input, minValue, maxValue, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		
+		//not sure what to return on error
+		return new Integer(0);
+	}
+	
 	/**
 	 * Returns true if input is valid file content.
 	 */
@@ -595,6 +727,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		return input;
 	}
 	
+	public byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidFileContent(context, input, maxBytes, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		
+		//not sure what to return on error
+		return input;
+	}
+	
 	/**
 	 * Returns true if a file upload has a valid name, path, and content.
 	 */
@@ -613,6 +757,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		getValidFileName( context, filename, allowNull );
 		getValidDirectoryPath( context, directorypath, allowNull );
 		getValidFileContent( context, content, maxBytes, allowNull );
+	}
+	
+
+	/**
+	 * ValidatorErrorList variant of assertValidFileUpload
+	 */
+	public void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull, ValidatorErrorList errors) 
+		throws IntrusionException {
+		try {
+			assertValidFileUpload(context, filepath, filename, content, maxBytes, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
 	}
 
 	/**
@@ -736,6 +893,20 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		
 		throw new ValidationException( context + ": Invalid list item", "Invalid list item: context=" + context + ", input=" + input );
 	}
+	
+
+	/**
+	 * ValidatorErrorList variant of getValidListItem
+	 */
+	public String getValidListItem(String context, String input, List list, ValidatorErrorList errors) throws IntrusionException {
+		
+		try {
+			return getValidListItem(context, input, list);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
+	}
 
 	/*
 	 * Returns true if the parameters in the current request contain all required parameters and only optional ones in addition.
@@ -778,6 +949,17 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	/**
+	 * ValidatorErrorList variant of assertIsValidHTTPRequestParameterSet
+	 */
+	public void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional, ValidatorErrorList errors) throws IntrusionException {
+		try {
+			assertIsValidHTTPRequestParameterSet(context, required, optional);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+	}
+	
+	/**
 	 * Checks that all bytes are valid ASCII characters (between 33 and 126
 	 * inclusive). This implementation does no decoding. http://en.wikipedia.org/wiki/ASCII. (non-Javadoc)
 	 * 
@@ -799,23 +981,36 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input bytes required", "Input bytes required: HTTP request is null" );
+   			throw new ValidationException(context + ": Input bytes required", "Input bytes required: HTTP request is null" );
 		}
 
 		if (input.length > maxLength) {
-			throw new ValidationException( context + ": Input bytes can not exceed " + maxLength + " bytes", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length-maxLength) + " bytes: context=" + context + ", input=" + input);
+			throw new ValidationException(context + ": Input bytes can not exceed " + maxLength + " bytes", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length-maxLength) + " bytes: context=" + context + ", input=" + input);
 		}
 		
 		for (int i = 0; i < input.length; i++) {
 			if (input[i] < 33 || input[i] > 126) {
-				throw new ValidationException( context + ": Invalid input bytes: context=" + context, "Invalid non-ASCII input bytes, context=" + context + ", input=" + input );
+				throw new ValidationException(context + ": Invalid input bytes: context=" + context, "Invalid non-ASCII input bytes, context=" + context + ", input=" + input);
 			}
+		}
+		return input;
+	}
+	
+	/**
+	 * ValidatorErrorList variant of getValidPrintable
+	 */
+	public byte[] getValidPrintable(String context, byte[] input,int maxLength, boolean allowNull, ValidatorErrorList errors)
+		throws IntrusionException {
+	
+		try {
+			return getValidPrintable(context, input, maxLength, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
 		}
 		return input;
 	}
 
 	
-
 	/*
 	 * Returns true if input is valid printable ASCII characters (32-126).
 	 * 
@@ -843,6 +1038,20 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	        throw new ValidationException( context + ": Invalid printable input", "Invalid encoding of printable input, context=" + context + ", input=" + input, e);
 	    }
 	}
+	
+	/**
+	 * ValidatorErrorList variant of getValidPrintable
+	 */
+	public String getValidPrintable(String context, String input,int maxLength, boolean allowNull, ValidatorErrorList errors)
+		throws IntrusionException {
+	
+		try {
+			return getValidPrintable(context, input, maxLength, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
+	}
 
 
 	/**
@@ -859,6 +1068,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		return ESAPI.validator().getValidInput( context, input, "Redirect", 512, allowNull);
+	}
+	
+	/**
+	 * ValidatorErrorList variant of getValidRedirectLocation
+	 */
+	public String getValidRedirectLocation(String context, String input, boolean allowNull, ValidatorErrorList errors) throws IntrusionException {
+
+		try {
+			return getValidRedirectLocation(context, input, allowNull);
+		} catch (ValidationException e) {
+			errors.addError(context, e);
+		}
+		return input;
 	}
 
 	/**
@@ -904,7 +1126,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	/**
-	 * helper function to check if a string is empty
+	 * Helper function to check if a String is empty
 	 * 
 	 * @param input string input value
 	 * @return boolean response if input is empty or not
@@ -914,123 +1136,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	/**
-	 * helper function to check if a byte is empty
+	 * Helper function to check if a byte array is empty
 	 * 
 	 * @param input string input value
 	 * @return boolean response if input is empty or not
 	 */
 	private final boolean isEmpty(byte[] input) {
 		return (input==null || input.length == 0);
-	}
-
-	public void assertIsValidHTTPRequestParameterSet(String context,
-			Set required, Set optional, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void assertValidFileUpload(String context, String filepath,
-			String filename, byte[] content, int maxBytes, boolean allowNull,
-			ValidatorErrorList errorList) throws IntrusionException {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public String getValidCreditCard(String context, String input,
-			boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Date getValidDate(String context, String input, DateFormat format,
-			boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidDirectoryPath(String context, String input,
-			boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Double getValidDouble(String context, String input, double minValue,
-			double maxValue, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public byte[] getValidFileContent(String context, byte[] input,
-			int maxBytes, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidFileName(String context, String input,
-			boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidInput(String context, String input, String type,
-			int maxLength, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Integer getValidInteger(String context, String input, int minValue,
-			int maxValue, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidListItem(String context, String input, List list,
-			ValidatorErrorList errorList) throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public Double getValidNumber(String context, String input, long minValue,
-			long maxValue, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public byte[] getValidPrintable(String context, byte[] input,
-			int maxLength, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidPrintable(String context, String input,
-			int maxLength, boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidRedirectLocation(String context, String input,
-			boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public String getValidSafeHTML(String context, String input, int maxLength,
-			boolean allowNull, ValidatorErrorList errorList)
-			throws IntrusionException {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
