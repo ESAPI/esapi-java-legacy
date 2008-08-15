@@ -46,6 +46,13 @@ import org.owasp.esapi.errors.ValidationException;
  * @since June 1, 2007
  */
 public interface Validator {
+	
+	/**
+	 * Returns the ThreadLocal instance of the ValidatorErrorList which can be called 
+	 * anywhere in the application without needing to pass the list around.
+	 * @return
+	 */
+	public ValidatorErrorList getValidatorErrorList();
 
 	/**
 	 * Returns true if input is valid according to the specified type. The type parameter must be the name 

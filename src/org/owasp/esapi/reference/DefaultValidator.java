@@ -71,6 +71,30 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	private static final int MAX_CREDIT_CARD_LENGTH = 19;
 	private static final int MAX_PARAMETER_NAME_LENGTH = 100;
 	private static final int MAX_PARAMETER_VALUE_LENGTH = 65535; //max length of MySQL "text" column type
+
+	/** list of errors collection class */
+    private ThreadLocalValidatorErrorList validatorErrorList = new ThreadLocalValidatorErrorList();
+
+    private class ThreadLocalValidatorErrorList extends InheritableThreadLocal {
+        
+        public ValidatorErrorList getValidatorErrorList() {
+        	if ((ValidatorErrorList)super.get() == null) {
+        		super.set(new DefaultValidatorErrorList());
+        	}
+            return (ValidatorErrorList)super.get();
+        }
+
+        public void setValidatorErrorList(ValidatorErrorList validatorErrorList) {
+            super.set(validatorErrorList);
+        }
+    };
+	
+	/**
+	 * @return the validatorErrorList
+	 */
+	public ValidatorErrorList getValidatorErrorList() {
+		return (ValidatorErrorList)validatorErrorList.get();
+	}
 	
 	public DefaultValidator() {
 	}
