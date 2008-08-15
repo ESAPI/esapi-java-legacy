@@ -36,6 +36,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.ValidatorErrorList;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
@@ -920,5 +921,116 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	private final boolean isEmpty(byte[] input) {
 		return (input==null || input.length == 0);
+	}
+
+	public void assertIsValidHTTPRequestParameterSet(String context,
+			Set required, Set optional, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void assertValidFileUpload(String context, String filepath,
+			String filename, byte[] content, int maxBytes, boolean allowNull,
+			ValidatorErrorList errorList) throws IntrusionException {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public String getValidCreditCard(String context, String input,
+			boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Date getValidDate(String context, String input, DateFormat format,
+			boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidDirectoryPath(String context, String input,
+			boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double getValidDouble(String context, String input, double minValue,
+			double maxValue, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public byte[] getValidFileContent(String context, byte[] input,
+			int maxBytes, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidFileName(String context, String input,
+			boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidInput(String context, String input, String type,
+			int maxLength, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Integer getValidInteger(String context, String input, int minValue,
+			int maxValue, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidListItem(String context, String input, List list,
+			ValidatorErrorList errorList) throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Double getValidNumber(String context, String input, long minValue,
+			long maxValue, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public byte[] getValidPrintable(String context, byte[] input,
+			int maxLength, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidPrintable(String context, String input,
+			int maxLength, boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidRedirectLocation(String context, String input,
+			boolean allowNull, ValidatorErrorList errorList)
+			throws IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getValidSafeHTML(String context, String input, int maxLength,
+			boolean allowNull, ValidatorErrorList errorList)
+			throws ValidationException, IntrusionException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
