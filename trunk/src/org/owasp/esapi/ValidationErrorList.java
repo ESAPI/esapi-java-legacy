@@ -64,6 +64,7 @@ public class ValidationErrorList {
 	 */
 	public List errors() {
 		ArrayList validationExceptionList = new ArrayList(errorList.size());
+		
 		for (Enumeration e = errorList.elements() ; e.hasMoreElements() ;) {
 			validationExceptionList.add((ValidationException)e.nextElement());
 	     }
@@ -72,13 +73,13 @@ public class ValidationErrorList {
 	}
 
 	/**
-	 * Retrieves error for given context if one exists.
+	 * Retrieves ValidationException for given context if one exists.
 	 * 
 	 * @param context unique name for each error
 	 * @return ValidationException or null for given context
 	 */
 	public ValidationException getError(String context) {
-		if (errorList == null || context == null) return null;
+		if (context == null) return null;
 		
 		Object returnValue = errorList.get(context);
 		if (returnValue == null) return null;
@@ -87,12 +88,21 @@ public class ValidationErrorList {
 	}
 
 	/**
-	 * Returns true if this list of empty.
+	 * Returns true if no error are present.
 	 * 
 	 * @return boolean
 	 */
 	public boolean isEmpty() {
-		if ((errorList == null) || (errorList.size() == 0)) return true;
+		if (errorList.size() == 0) return true;
 		return false;
+	}
+	
+	/**
+	 * Returns the numbers of errors present.
+	 * 
+	 * @return boolean
+	 */
+	public int size() {
+		return errorList.size();
 	}
 }
