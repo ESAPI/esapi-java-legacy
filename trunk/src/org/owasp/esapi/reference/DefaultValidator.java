@@ -93,7 +93,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @return the validatorErrorList
 	 */
 	public ValidatorErrorList getValidatorErrorList() {
-		return (ValidatorErrorList)validatorErrorList.get();
+		return (ValidatorErrorList)validatorErrorList.getValidatorErrorList();
 	}
 	
 	public DefaultValidator() {
