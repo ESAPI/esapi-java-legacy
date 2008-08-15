@@ -269,7 +269,6 @@ public class ESAPI {
 		ESAPI.validator = validator;
 	}
 	
-	
 	/**
 	 * Please note this function does not return a static
 	 * library, but a new empty ValidatorErrorList. Continues
@@ -281,5 +280,4 @@ public class ESAPI {
 	public static ValidatorErrorList createValidatorErrorList() {
 		return new DefaultValidatorErrorList();
 	}
-
 }
