@@ -31,24 +31,45 @@ import org.owasp.esapi.errors.ValidationException;
  * 
  * @author Jim Manico (jim.manico .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
- * @since June 1, 2007
+ * @since August 15, 2008
  */
 public interface ValidatorErrorList {
 
-    //build an empty ValidationErrorList
+	/**
+	 * Return new empty ValidatorErrorList.
+	 * 
+	 * @return ValidatorErrorList
+	 */
     public ValidatorErrorList createValidatorErrorList();
 
-    //verify if errorList is empty
+	/**
+	 * Returns true if this list of empty.
+	 * 
+	 * @return boolean
+	 */
     public boolean isEmpty();
 
-    //returns list of ValidationException or an empty list (never null)
+	/**
+	 * Returns list of ValidationException, or empty list of no errors exist.
+	 * 
+	 * @return List
+	 */
     public List errors();
     
-    //returns null if error does not exist for given context
+	/**
+	 * Retrieves error for given context if one exists.
+	 * 
+	 * @param context unique name for each error
+	 * @return ValidationException or null for given context
+	 */
     public ValidationException getError(String context);
 
-    //adds new error to list with a unique named context
-    //does nothing if either element is null
+	/**
+	 * Adds a new error to list with a unique named context.
+	 * 
+	 * @param context unique named context for this ValidationErrorList
+	 * @param ve
+	 */
     public void addError(String context, ValidationException ve);
 }
 
