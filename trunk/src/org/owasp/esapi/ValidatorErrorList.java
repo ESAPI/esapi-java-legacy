@@ -64,5 +64,10 @@ public interface ValidatorErrorList {
 	 * @param ve
 	 */
     public void addError(String context, ValidationException ve);
+    
+	/**
+	 * Removes all errors from error list.
+	 */
+    public void clearErrors();
 }
 

@@ -93,4 +93,8 @@ public class DefaultValidatorErrorList implements org.owasp.esapi.ValidatorError
 		if ((errorList == null) || (errorList.size() == 0)) return true;
 		return false;
 	}
+
+	public void clearErrors() {
+		errorList.clear();
+	}
 }

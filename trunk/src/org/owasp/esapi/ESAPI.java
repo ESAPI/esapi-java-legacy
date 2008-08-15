@@ -58,8 +58,6 @@ public class ESAPI {
 	private static SecurityConfiguration securityConfiguration = null;
 
 	private static Validator validator = null;
-	
-	private static ValidatorErrorList validatorErrorList = null;
 
 	/**
 	 * prevent instantiation of this class
@@ -269,14 +267,5 @@ public class ESAPI {
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
-	}
-	
-	/**
-	 * @return the validatorErrorList
-	 */
-	public static ValidatorErrorList validatorErrorList() {
-		if (ESAPI.validatorErrorList == null)
-			ESAPI.validatorErrorList = new DefaultValidatorErrorList();
-		return ESAPI.validatorErrorList;
 	}
 }
