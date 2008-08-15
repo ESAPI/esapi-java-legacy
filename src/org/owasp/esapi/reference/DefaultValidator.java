@@ -1029,7 +1029,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	public String getValidSafeHTML(String context, String input, int maxLength,
 			boolean allowNull, ValidatorErrorList errorList)
-			throws ValidationException, IntrusionException {
+			throws IntrusionException {
 		// TODO Auto-generated method stub
 		return null;
 	}
