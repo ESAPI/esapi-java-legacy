@@ -36,7 +36,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Validator;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
@@ -115,17 +114,17 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			context = ESAPI.encoder().canonicalize( context );
     		String canonical = ESAPI.encoder().canonicalize( input );
 
+    		if ( type == null || type.length() == 0 ) {
+    			throw new RuntimeException( "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
+    		}
+    		
     		if (isEmpty(canonical)) {
     			if (allowNull) return null;
-       			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", type=" + type + "), input=" + input );
+       			throw new ValidationException( context + ": Input required.", "Input required: context=" + context + ", type=" + type + "), input=" + input, context );
     		}
 
     		if (canonical.length() > maxLength) {
-    			throw new ValidationException( context + ": Input can not exceed " + maxLength + " characters", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + type + "), input=" + input);
-    		}
-
-    		if ( type == null || type.length() == 0 ) {
-    			throw new ValidationException( context + ": Invalid input", "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
+    			throw new ValidationException( context + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + type + "), input=" + input, context );
     		}
 
     		Pattern p = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
@@ -133,18 +132,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     			try {
     				p = Pattern.compile( type );
     			} catch( PatternSyntaxException e ) {
-    				throw new ValidationException( context + ": Invalid input", "Validation misconfiguration, type to validate against must be defined in ESAPI.properties or a valid regular expression: context=" + context + ", type=" + type + "), input=" + input );
-    			}
+    				throw new RuntimeException( "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
+    	    	}
     		}
 
     		if ( !p.matcher(canonical).matches() ) {
-    			throw new ValidationException( context + ": Invalid input", "Invalid input: context=" + context + ", type=" + type + "( " + p.pattern() + "), input=" + input );
+    			throw new ValidationException( context + ": Invalid input. Please conform to: " + p.pattern() + " with a maximum length of " + maxLength, "Invalid input: context=" + context + ", type=" + type + "( " + p.pattern() + "), input=" + input, context );
     		}
     		
     		return canonical;
     		
 	    } catch (EncodingException e) {
-	        throw new ValidationException( context + ": Invalid input", "Error canonicalizing user input", e);
+	        throw new ValidationException( context + ": Invalid input. An encoding error occurred.", "Error canonicalizing user input", e, context);
 	    }
 	}
 	
@@ -163,9 +162,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 		
-		Validator validator = ESAPI.validator();
 		try {
-			return validator.getValidInput(context,  input,  type,  maxLength,  allowNull);
+			return getValidInput(context,  input,  type,  maxLength,  allowNull);
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
@@ -194,13 +192,13 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		try {
 			if (isEmpty(input)) {
     			if (allowNull) return null;
-       			throw new ValidationException( context + ": Input date required", "Input date required: context=" + context + ", input=" + input );
+       			throw new ValidationException( context + ": Input date required", "Input date required: context=" + context + ", input=" + input, context );
     		}
 			
 			Date date = format.parse(input);
 			return date;
 		} catch (Exception e) {
-			throw new ValidationException( context + ": Invalid date must follow " + format + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input,e );
+			throw new ValidationException( context + ": Invalid date must follow " + format + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input, e, context);
 		}
 	}
 	
@@ -275,11 +273,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input HTML required", "Input HTML required: context=" + context + ", input=" + input );
+   			throw new ValidationException( context + ": Input HTML required", "Input HTML required: context=" + context + ", input=" + input, context );
 		}
 		
 		if (input.length() > maxLength) {
-			throw new ValidationException( context + ": Invalid HTML input can not exceed " + maxLength + " characters", context + " input exceedes maxLength by " + (input.length()-maxLength) + " characters");
+			throw new ValidationException( context + ": Invalid HTML input can not exceed " + maxLength + " characters", context + " input exceedes maxLength by " + (input.length()-maxLength) + " characters", context);
 		}
 		
 		try {
@@ -317,14 +315,16 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			
 			if ( errors.size() > 0 ) {
 				// just create new exception to get it logged and intrusion detected
-				new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", errors=" + errors );
+				new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", errors=" + errors, context );
 			}
 			
 			return(test.getCleanHTML().trim());
+		
 		} catch (ScanException e) {
-			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e );
+			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
+		
 		} catch (PolicyException e) {
-			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e );
+			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e, context );
 		}
 	}
 	
@@ -363,7 +363,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public String getValidCreditCard(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input credit card required", "Input credit card required: context=" + context + ", input=" + input );
+   			throw new ValidationException( context + ": Input credit card required", "Input credit card required: context=" + context + ", input=" + input, context );
 		}
 		
 		String canonical = getValidInput( context, input, "CreditCard", MAX_CREDIT_CARD_LENGTH, allowNull);
@@ -398,7 +398,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 	
 		int modulus = sum % 10;
-		if (modulus != 0) throw new ValidationException( context + ": Invalid credit card input", "Invalid credit card input: context=" + context );
+		if (modulus != 0) throw new ValidationException( context + ": Invalid credit card input", "Invalid credit card input: context=" + context, context );
 			
 		return canonical;
 
@@ -440,7 +440,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		try {
 			if (isEmpty(input)) {
 				if (allowNull) return null;
-       			throw new ValidationException( context + ": Input directory path required", "Input directory path required: context=" + context + ", input=" + input );
+       			throw new ValidationException( context + ": Input directory path required", "Input directory path required: context=" + context + ", input=" + input, context );
 			}
 						
 			// do basic validation
@@ -462,11 +462,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			
 			// the path is valid if the input matches the canonical path
 			if (!escaped.equals(cpath.toLowerCase())) {
-				throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical );
+				throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical, context );
 			}
 			return canonical; 
 		} catch (IOException e) {
-			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input, e );
+			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input, e, context );
 		}
 	}
 	
@@ -507,7 +507,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		try {
 			if (isEmpty(input)) {
 				if (allowNull) return null;
-	   			throw new ValidationException( context + ": Input file name required", "Input required: context=" + context + ", input=" + input );
+	   			throw new ValidationException( context + ": Input file name required", "Input required: context=" + context + ", input=" + input, context );
 			}
 			
 			// do basic validation
@@ -521,11 +521,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			
 			// the path is valid if the input matches the canonical path
 			if (!input.equals(cpath.toLowerCase())) {
-				throw new ValidationException( context + ": Invalid file name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical );
+				throw new ValidationException( context + ": Invalid file name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical, context );
 			}
 
 		} catch (IOException e) {
-			throw new ValidationException( context + ": Invalid file name", "Invalid file name does not exist: context=" + context + ", canonical=" + canonical, e );
+			throw new ValidationException( context + ": Invalid file name", "Invalid file name does not exist: context=" + context + ", canonical=" + canonical, e, context );
 		} catch (EncodingException ee) {
             throw new IntrusionException( context + ": Invalid file name", "Invalid file name: context=" + context + ", canonical=" + canonical, ee );
 		}
@@ -540,7 +540,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				return canonical;
 			}
 		}
-		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+")", "Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+"): context=" + context+", input=" + input);
+		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+")", "Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+"): context=" + context+", input=" + input, context );
 	}
 	
 	/**
@@ -612,24 +612,24 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		if (minValue > maxValue) {
 			//should this be a RunTime?
-			throw new ValidationException( context + ": Invalid double input: context", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context );
+			throw new ValidationException( context + ": Invalid double input: context", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
 		}
 		
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required: context", "Input required: context=" + context + ", input=" + input );
+   			throw new ValidationException( context + ": Input required: context", "Input required: context=" + context + ", input=" + input, context );
 		}
 		
 		try {
 			Double d = new Double(Double.parseDouble(input));
-			if (d.isInfinite()) throw new ValidationException( "Invalid double input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input );
-			if (d.isNaN()) throw new ValidationException( "Invalid double input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input );
-			if (d.doubleValue() < minValue) throw new ValidationException( "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input );
-			if (d.doubleValue() > maxValue) throw new ValidationException( "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input );
+			if (d.isInfinite()) throw new ValidationException( "Invalid double input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input, context );
+			if (d.isNaN()) throw new ValidationException( "Invalid double input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input, context );
+			if (d.doubleValue() < minValue) throw new ValidationException( "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
+			if (d.doubleValue() > maxValue) throw new ValidationException( "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
 			
 			return d;
 		} catch (NumberFormatException e) {
-			throw new ValidationException( context + ": Invalid double input", "Invalid double input format: context=" + context + ", input=" + input, e);
+			throw new ValidationException( context + ": Invalid double input", "Invalid double input format: context=" + context + ", input=" + input, e, context);
 		}
 	}
 	
@@ -667,20 +667,20 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		if (minValue > maxValue) {
 			//should this be a RunTime?
-			throw new ValidationException( context + ": Invalid Integer", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context );
+			throw new ValidationException( context + ": Invalid Integer", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
 		}
 		
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input );
+   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input, context );
 		}
 		
 		try {
 			int i = Integer.parseInt(input);
-			if (i < minValue || i > maxValue ) throw new ValidationException( context + ": Invalid Integer. Value must be between " + minValue + " and " + maxValue, "Invalid int input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input );
+			if (i < minValue || i > maxValue ) throw new ValidationException( context + ": Invalid Integer. Value must be between " + minValue + " and " + maxValue, "Invalid int input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
 			return new Integer(i);
 		} catch (NumberFormatException e) {
-			throw new ValidationException( context + ": Invalid integer input", "Invalid int input: context=" + context + ", input=" + input, e);
+			throw new ValidationException( context + ": Invalid integer input", "Invalid int input: context=" + context + ", input=" + input, e, context );
 		}
 	}
 	
@@ -716,12 +716,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input );
+   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input, context );
 		}
 		
 		long esapiMaxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
-		if (input.length > esapiMaxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + esapiMaxBytes + " bytes", "Exceeded ESAPI max length");
-		if (input.length > maxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + maxBytes + " bytes", "Exceeded maxBytes ( " + input.length + ")");
+		if (input.length > esapiMaxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + esapiMaxBytes + " bytes", "Exceeded ESAPI max length", context );
+		if (input.length > maxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + maxBytes + " bytes", "Exceeded maxBytes ( " + input.length + ")", context );
 		
 		return input;
 	}
@@ -890,7 +890,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public String getValidListItem(String context, String input, List list) throws ValidationException, IntrusionException {
 		if (list.contains(input)) return input;
 		
-		throw new ValidationException( context + ": Invalid list item", "Invalid list item: context=" + context + ", input=" + input );
+		throw new ValidationException( context + ": Invalid list item", "Invalid list item: context=" + context + ", input=" + input, context );
 	}
 	
 
@@ -935,7 +935,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		Set missing = new HashSet(required);
 		missing.removeAll(actualNames);
 		if (missing.size() > 0) {
-			throw new ValidationException( context + ": Invalid HTTP request missing parameters", "Invalid HTTP request missing parameters " + missing + ": context=" + context );
+			throw new ValidationException( context + ": Invalid HTTP request missing parameters", "Invalid HTTP request missing parameters " + missing + ": context=" + context, context );
 		}
 		
 		// verify ONLY optional + required parameters are present
@@ -943,7 +943,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		extra.removeAll(required);
 		extra.removeAll(optional);
 		if (extra.size() > 0) {
-			throw new ValidationException( context + ": Invalid HTTP request extra parameters " + extra, "Invalid HTTP request extra parameters " + extra + ": context=" + context );
+			throw new ValidationException( context + ": Invalid HTTP request extra parameters " + extra, "Invalid HTTP request extra parameters " + extra + ": context=" + context, context );
 		}
 	}
 	
@@ -980,16 +980,16 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException(context + ": Input bytes required", "Input bytes required: HTTP request is null" );
+   			throw new ValidationException(context + ": Input bytes required", "Input bytes required: HTTP request is null", context );
 		}
 
 		if (input.length > maxLength) {
-			throw new ValidationException(context + ": Input bytes can not exceed " + maxLength + " bytes", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length-maxLength) + " bytes: context=" + context + ", input=" + input);
+			throw new ValidationException(context + ": Input bytes can not exceed " + maxLength + " bytes", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length-maxLength) + " bytes: context=" + context + ", input=" + input, context);
 		}
 		
 		for (int i = 0; i < input.length; i++) {
 			if (input[i] < 33 || input[i] > 126) {
-				throw new ValidationException(context + ": Invalid input bytes: context=" + context, "Invalid non-ASCII input bytes, context=" + context + ", input=" + input);
+				throw new ValidationException(context + ": Invalid input bytes: context=" + context, "Invalid non-ASCII input bytes, context=" + context + ", input=" + input, context);
 			}
 		}
 		return input;
@@ -1034,7 +1034,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     		canonical = ESAPI.encoder().canonicalize(input);
     		return new String( getValidPrintable( context, canonical.getBytes(), maxLength, allowNull) );
 	    } catch (EncodingException e) {
-	        throw new ValidationException( context + ": Invalid printable input", "Invalid encoding of printable input, context=" + context + ", input=" + input, e);
+	        throw new ValidationException( context + ": Invalid printable input", "Invalid encoding of printable input, context=" + context + ", input=" + input, e, context);
 	    }
 	}
 	
