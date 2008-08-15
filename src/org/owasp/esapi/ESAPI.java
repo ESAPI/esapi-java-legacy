@@ -58,6 +58,8 @@ public class ESAPI {
 	private static SecurityConfiguration securityConfiguration = null;
 
 	private static Validator validator = null;
+	
+	private static ValidatorErrorList validatorErrorList = null;
 
 	/**
 	 * prevent instantiation of this class
@@ -270,14 +272,11 @@ public class ESAPI {
 	}
 	
 	/**
-	 * Please note this function does not return a static
-	 * library, but a new empty ValidatorErrorList. Continues
-	 * calls to createValidatorErrorList will create a new
-	 * empty instance of ValidatorErrorList.
-	 * 
 	 * @return the validatorErrorList
 	 */
-	public static ValidatorErrorList createValidatorErrorList() {
-		return new DefaultValidatorErrorList();
+	public static ValidatorErrorList validatorErrorList() {
+		if (ESAPI.validatorErrorList == null)
+			ESAPI.validatorErrorList = new DefaultValidatorErrorList();
+		return ESAPI.validatorErrorList;
 	}
 }
