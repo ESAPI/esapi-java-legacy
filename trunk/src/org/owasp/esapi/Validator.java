@@ -21,7 +21,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.owasp.esapi.ValidatorErrorList;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -90,7 +89,7 @@ public interface Validator {
 	 * @return The canonicalized user input.
 	 * @throws IntrusionException
 	 */
-	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 	
 	/**
 	 * Returns true if input is a valid date according to the specified date format.
@@ -107,7 +106,7 @@ public interface Validator {
 	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException and store it inside of 
 	 * the errorList argument, and input that is clearly an attack will generate a descriptive IntrusionException. 
 	 */
-	Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;	
+	Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;	
 	
 	
 	/**
@@ -120,7 +119,7 @@ public interface Validator {
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 */
-	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	/**
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
@@ -147,7 +146,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidCreditCard(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidCreditCard(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 	
 	
 	
@@ -169,7 +168,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidDirectoryPath(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidDirectoryPath(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 	
 	
 	/**
@@ -190,7 +189,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidFileName(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidFileName(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 	
 	
 	
@@ -212,7 +211,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	/**
@@ -233,7 +232,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 	
 	
 	/**
@@ -254,7 +253,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	
@@ -276,7 +275,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	/**
@@ -297,7 +296,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	/**
@@ -332,7 +331,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidListItem(String context, String input, List list, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidListItem(String context, String input, List list, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	
@@ -354,7 +353,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException on error, 
 	 * this variant will store the exception inside of the ValidationErrorList.
 	 */
-	void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional, ValidatorErrorList errorList) throws IntrusionException;
+	void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional, ValidationErrorList errorList) throws IntrusionException;
 	
 	
 	
@@ -374,7 +373,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException on error, 
 	 * this variant will store the exception inside of the ValidationErrorList.
 	 */
-	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	/**
@@ -394,7 +393,7 @@ public interface Validator {
 	 * descriptive IntrusionException. Instead of throwing a ValidationException on error, 
 	 * this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	/**
@@ -413,7 +412,7 @@ public interface Validator {
 	 * will generate a descriptive IntrusionException. Instead of throwing a ValidationException 
 	 * on error, this variant will store the exception inside of the ValidationErrorList.
 	 */
-	String getValidRedirectLocation(String context, String input, boolean allowNull, ValidatorErrorList errorList) throws IntrusionException;
+	String getValidRedirectLocation(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	

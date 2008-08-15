@@ -24,7 +24,7 @@ import java.util.List;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
- * The ValidatorErrorList class defines a well-formed collection of 
+ * The ValidationErrorList class defines a well-formed collection of 
  * ValidationExceptions so that groups of validation functions can be 
  * called in a non-blocking fashion.
  * 
@@ -36,7 +36,7 @@ import org.owasp.esapi.errors.ValidationException;
  * 		   <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since August 15, 2008
  */
-public class ValidatorErrorList {
+public class ValidationErrorList {
 
 	/**
 	 * Error list of ValidationException's
