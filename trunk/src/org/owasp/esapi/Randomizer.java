@@ -63,6 +63,15 @@ public interface Randomizer {
 	 */
 	int getRandomInteger(int min, int max);
 
+	
+	/**
+	 * Gets the random long.
+	 * 
+	 * @return the random long
+	 */
+    public long getRandomLong();
+	
+	
     /**
      * Returns an unguessable random filename with the specified extension.
      */

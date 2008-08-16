@@ -59,10 +59,10 @@ import org.owasp.esapi.errors.EncryptionException;
  * 
  * <PRE>
  * 
- * account name | hashed password | roles | lockout | status | old password hashes | last
+ * account id | account name | hashed password | roles | lockout | status | old password hashes | last
  * hostname | last change | last login | last failed | expiration | failed
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
- * mitch | 44k/NAzQUlrCq9musTGGkcMNmdzEGJ8w8qZTLzpxLuQ= | admin,user | unlocked | enabled |
+ * 1203123710837 | mitch | 44k/NAzQUlrCq9musTGGkcMNmdzEGJ8w8qZTLzpxLuQ= | admin,user | unlocked | enabled |
  * u10dW4vTo3ZkoM5xP+blayWCz7KdPKyKUojOn9GJobg= | 192.168.1.255 | 1187201000926 | 1187200991568 | 1187200605330 |
  * 2187200605330 | 1
  * 
@@ -129,7 +129,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             user.addRole(role);
             user.enable();
             user.unlock();
-            auth.userMap.put(accountName, user);
+            auth.userMap.put(new Long(user.getAccountId()), user);
             System.out.println("New user created: " + accountName);
             auth.saveUsers();
             System.out.println("User account " + user.getAccountName() + " updated");
@@ -230,7 +230,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         if (accountName == null) {
             throw new AuthenticationAccountsException("Account creation failed", "Attempt to create user with null accountName");
         }
-        if (userMap.containsKey(accountName.toLowerCase())) {
+        if (getUser(accountName) != null) {
             throw new AuthenticationAccountsException("Account creation failed", "Duplicate user creation denied for " + accountName);
         }
         
@@ -249,7 +249,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		} catch (EncryptionException ee) {
 		    throw new AuthenticationException("Internal error", "Error hashing password for " + accountName, ee);
 		}
-        userMap.put(accountName.toLowerCase(), user);
+        userMap.put(new Long( user.getAccountId() ), user);
         logger.info(Logger.SECURITY, "New user created: " + accountName);
         saveUsers();
         return user;
@@ -361,6 +361,22 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
+    
+    /**
+     * Gets the user object with the matching account name or null if there is no match.
+     * 
+     * @param accountName the account name
+     * @return the user, or null if not matched.
+     */
+    public synchronized User getUser(long accountId) {
+    	if ( accountId == 0 ) {
+    		return User.ANONYMOUS;
+    	}
+        loadUsersIfNecessary();
+        User user = (User) userMap.get(new Long( accountId ));
+        return user;
+    }
+
     /**
      * Gets the user object with the matching account name or null if there is no match.
      * 
@@ -372,8 +388,12 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     		return User.ANONYMOUS;
     	}
         loadUsersIfNecessary();
-        User user = (User) userMap.get(accountName.toLowerCase());
-        return user;
+        Iterator i = userMap.values().iterator();
+        while( i.hasNext() ) {
+        	User u = (User)i.next();
+        	if ( u.getAccountName().equalsIgnoreCase(accountName) ) return u;
+        }
+        return null;
     }
 
     /*
@@ -445,7 +465,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      */
     public synchronized Set getUserNames() {
         loadUsersIfNecessary();
-    	return new HashSet(userMap.keySet());
+    	HashSet results = new HashSet();
+    	Iterator i = userMap.values().iterator();
+    	while( i.hasNext() ) {
+    		User u = (User)i.next();
+    		results.add( u.getAccountName() );
+    	}
+    	return results;
     }
 
     /*
@@ -495,10 +521,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	            while ((line = reader.readLine()) != null) {
 	                if (line.length() > 0 && line.charAt(0) != '#') {
 	                    DefaultUser user = createUser(line);
-                        if (map.containsKey(user.getAccountName())) {
+                        if (map.containsKey( new Long( user.getAccountId()))) {
                             logger.fatal(Logger.SECURITY, "Problem in user file. Skipping duplicate user: " + user, null);
                         }
-                        map.put(user.getAccountName(), user);
+                        map.put( new Long( user.getAccountId() ), user);
                     }
 	            }
                 userMap = map;
@@ -520,21 +546,25 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
 	private DefaultUser createUser(String line) throws AuthenticationException {
 		String[] parts = line.split(" *\\| *");
-		String accountName = parts[0];
+		String accountIdString = parts[0];
+		long accountId = Long.parseLong(accountIdString);
+		String accountName = parts[1];
+		
 		verifyAccountNameStrength( accountName );
 		DefaultUser user = new DefaultUser( accountName );
-
-		String password = parts[1];
+		user.accountId = accountId;
+		
+		String password = parts[2];
 		verifyPasswordStrength(null, password);
 		setHashedPassword(user, password);
         
-		String[] roles = parts[2].toLowerCase().split(" *, *");
+		String[] roles = parts[3].toLowerCase().split(" *, *");
 		for (int i=0; i<roles.length; i++) 
 			if (!"".equals(roles[i]))
 					user.addRole(roles[i]);
-		if (!"unlocked".equalsIgnoreCase(parts[3]))
+		if (!"unlocked".equalsIgnoreCase(parts[4]))
 			user.lock();
-		if ("enabled".equalsIgnoreCase(parts[4])) {
+		if ("enabled".equalsIgnoreCase(parts[5])) {
 			user.enable();
 		} else {
 			user.disable();
@@ -543,13 +573,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		// generate a new csrf token
         user.resetCSRFToken();
         
-        setOldPasswordHashes(user, Arrays.asList(parts[5].split(" *, *")));
-        user.setLastHostAddress("null".equals(parts[6]) ? null : parts[7]);
-        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[7])));
-		user.setLastLoginTime(new Date( Long.parseLong(parts[8])));
-		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[9])));
-		user.setExpirationTime(new Date( Long.parseLong(parts[10])));
-		user.setFailedLoginCount(Integer.parseInt(parts[11]));
+        setOldPasswordHashes(user, Arrays.asList(parts[6].split(" *, *")));
+        user.setLastHostAddress("null".equals(parts[7]) ? null : parts[7]);
+        user.setLastPasswordChangeTime(new Date( Long.parseLong(parts[8])));
+		user.setLastLoginTime(new Date( Long.parseLong(parts[9])));
+		user.setLastFailedLoginTime(new Date( Long.parseLong(parts[10])));
+		user.setExpirationTime(new Date( Long.parseLong(parts[11])));
+		user.setFailedLoginCount(Integer.parseInt(parts[12]));
 		return user;
 	}
 	
@@ -602,7 +632,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         if (user == null) {
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
-        userMap.remove(accountName.toLowerCase());
+        userMap.remove( new Long( user.getAccountId() ));
         System.out.println("Removing user " +user.getAccountName());
         passwordMap.remove(user.getAccountName());
         saveUsers();
@@ -619,7 +649,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         try {
             writer = new PrintWriter(new FileWriter(userDB));
             writer.println("# This is the user file associated with the ESAPI library from http://www.owasp.org");
-            writer.println("# accountName | hashedPassword | roles | locked | enabled | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
+            writer.println("# accountId | accountName | hashedPassword | roles | locked | enabled | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount");
             writer.println();
             saveUsers(writer);
             writer.flush();
@@ -662,6 +692,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	 */
 	private String save(DefaultUser user) {
 		StringBuffer sb = new StringBuffer();
+		sb.append( user.getAccountId() );
+		sb.append( " | " );
 		sb.append( user.getAccountName() );
 		sb.append( " | " );
 		sb.append( getHashedPassword(user) );

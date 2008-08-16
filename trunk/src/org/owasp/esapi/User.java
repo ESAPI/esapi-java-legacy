@@ -86,6 +86,13 @@ public interface User {
     void enable();
 
     /**
+     * Gets the account id.
+     * 
+     * @return the account id
+     */
+    long getAccountId();
+    
+    /**
      * Gets the account name.
      * 
      * @return the account name
@@ -344,6 +351,13 @@ public interface User {
          */
         public void enable() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
+        }
+
+		/* (non-Javadoc)
+         * @see org.owasp.esapi.User#getAccountId()
+         */
+        public long getAccountId() {
+	        return 0;
         }
 
 		/* (non-Javadoc)

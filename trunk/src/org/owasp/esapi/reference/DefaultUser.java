@@ -52,6 +52,9 @@ public class DefaultUser implements User, Serializable {
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("User");
     
+	/** The account id. */
+	long accountId = 0;
+
 	/** The account name. */
 	private String accountName = "";
 
@@ -101,6 +104,13 @@ public class DefaultUser implements User, Serializable {
 	 */
 	DefaultUser(String accountName) {
 		setAccountName(accountName);
+		while( true ) {
+			long id = Math.abs( ESAPI.randomizer().getRandomLong() );
+			if ( ESAPI.authenticator().getUser( id ) == null && id != 0 ) {
+				setAccountId(id);
+				break;
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -156,6 +166,13 @@ public class DefaultUser implements User, Serializable {
 		this.enabled = true;
 		logger.info( Logger.SECURITY, "Account enabled: " + getAccountName() );
 	}
+
+	/* (non-Javadoc)
+     * @see org.owasp.esapi.User#getAccountId()
+     */
+    public long getAccountId() {
+        return accountId;
+    }
 
 	/**
 	 * Gets the account name.
@@ -446,6 +463,14 @@ public class DefaultUser implements User, Serializable {
 		return csrfToken;
 	}
 
+	/**
+	 * Sets the account id.
+	 */
+	private void setAccountId(long accountId) {
+		this.accountId = accountId;
+	}
+	
+	
 	/**
 	 * Sets the account name.
 	 * 

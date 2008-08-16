@@ -212,7 +212,7 @@ public class ESAPI {
 	 /**
 	 * @param factory the log factory to set
 	 */
-	 public static void setLogger(LogFactory factory) {
+	 public static void setLogFactory(LogFactory factory) {
 		 ESAPI.logFactory = factory;
 	 }
 	

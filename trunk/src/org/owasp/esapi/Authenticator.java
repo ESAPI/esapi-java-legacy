@@ -137,6 +137,17 @@ public interface Authenticator {
 	void changePassword(User user, String currentPassword, String newPassword, String newPassword2) throws AuthenticationException;
 	
 	/**
+	 * Returns the User matching the provided accountId.
+	 * 
+	 * @param accountId
+	 *            the account id
+	 * 
+	 * @return the matching User object, or null if no match exists
+	 */
+	User getUser(long accountId);
+	
+	
+	/**
 	 * Returns the User matching the provided accountName.
 	 * 
 	 * @param accountName
