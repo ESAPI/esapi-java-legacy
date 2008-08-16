@@ -399,7 +399,7 @@ public interface User {
          * @see org.owasp.esapi.User#getLastHostAddress()
          */
         public String getLastHostAddress() {
-	        return "anonymous";
+	        return "unknown";
         }
 
 		/* (non-Javadoc)

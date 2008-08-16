@@ -18,7 +18,7 @@ package org.owasp.esapi;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import org.owasp.esapi.errors.ValidationException;
@@ -41,7 +41,7 @@ import org.owasp.esapi.errors.ValidationException;
  * String address = getValidInput("Address", form.getAddress(), "SomeESAPIRegExName2", 255, false, errorList);
  * Integer weight = getValidInteger("Weight", form.getWeight(), 1, 1000000000, false, errorList);
  * Integer sortOrder = getValidInteger("Sort Order", form.getSortOrder(), -100000, +100000, false, errorList);
- * request.setAttribute(errorList , "ERROR_LIST");
+ * request.setAttribute( "ERROR_LIST", errorList );
  * </PRE>
  * 
  * The at your view layer you would be able to retrieve all
@@ -74,7 +74,7 @@ import org.owasp.esapi.errors.ValidationException;
  * And even check if a specific UI component is in error via calls like:
  * 
  * <PRE>
- * errorList.getError("Name");
+ * ValidationException e = errorList.getError("Name");
  * </PRE>
  * 
  * @author Jim Manico (jim.manico .at. aspectsecurity.com) 
@@ -86,7 +86,7 @@ public class ValidationErrorList {
 	/**
 	 * Error list of ValidationException's
 	 */
-	private Hashtable errorList = new Hashtable();
+	private HashMap errorList = new HashMap();
 
 	/**
 	 * Adds a new error to list with a unique named context.
@@ -97,7 +97,7 @@ public class ValidationErrorList {
 	 * @param ve
 	 */
 	public void addError(String context, ValidationException ve) {
-		if ((context != null) && (ve != null)) {
+		if ((context != null && ve != null)) {
 			errorList.put(context, ve);
 		}
 	}
@@ -108,13 +108,7 @@ public class ValidationErrorList {
 	 * @return List
 	 */
 	public List errors() {
-		ArrayList validationExceptionList = new ArrayList(errorList.size());
-		
-		for (Enumeration e = errorList.elements() ; e.hasMoreElements() ;) {
-			validationExceptionList.add((ValidationException)e.nextElement());
-	     }
-
-		return validationExceptionList;
+		return new ArrayList( errorList.values() );
 	}
 
 	/**
@@ -124,12 +118,8 @@ public class ValidationErrorList {
 	 * @return ValidationException or null for given context
 	 */
 	public ValidationException getError(String context) {
-		if (context == null) return null;
-		
-		Object returnValue = errorList.get(context);
-		if (returnValue == null) return null;
-		
-		return (ValidationException)returnValue;
+		if (context == null) return null;		
+		return (ValidationException)errorList.get(context);
 	}
 
 	/**
@@ -138,8 +128,7 @@ public class ValidationErrorList {
 	 * @return boolean
 	 */
 	public boolean isEmpty() {
-		if (errorList.size() == 0) return true;
-		return false;
+		return errorList.isEmpty();
 	}
 	
 	/**

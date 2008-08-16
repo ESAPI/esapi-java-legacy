@@ -5,6 +5,8 @@ package org.owasp.esapi.reference;
 
 import java.util.logging.Level;
 
+import javax.servlet.http.HttpSession;
+
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
@@ -188,6 +190,19 @@ public class JavaLogFactory implements LogFactory {
         private void log(Level level, String type, String message, Throwable throwable) {
             User user = ESAPI.authenticator().getCurrentUser();
             
+            // get a random session number
+            String counter = "unknown";
+            try {
+                HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
+	            counter = (String)session.getAttribute("ESAPI_SESSION" );
+	            if ( counter == null ) {
+	            	counter = ""+ ESAPI.randomizer().getRandomInteger(0, 100000);
+	            	session.setAttribute("ESAPI_SESSION", counter);
+	            }
+            } catch( NullPointerException e ) {
+            	// continue
+            }
+            
             // ensure there's something to log
             if ( message == null ) {
             	message = "";
@@ -210,7 +225,7 @@ public class JavaLogFactory implements LogFactory {
             }
             String msg = "";
             if ( user != null ) {
-            	msg = type + ": " + user.getAccountName() + "/" + user.getLastHostAddress() + " -- " + clean;
+            	msg = type + ": " + user.getAccountName() + "("+ counter +")(" + user.getLastHostAddress() + ") -- " + clean;
             }
             
             // jlogger.logp(level, applicationName, moduleName, msg, throwable);
