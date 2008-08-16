@@ -224,6 +224,9 @@ public class DefaultUser implements User, Serializable {
 	}
 
 	public String getLastHostAddress() {
+		if ( lastHostAddress == null ) {
+			return "local";
+		}
         return lastHostAddress;
     }
 
