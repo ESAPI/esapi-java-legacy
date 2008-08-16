@@ -90,6 +90,17 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         return secureRandom.nextInt(max - min) + min;
     }
     
+    
+    /**
+     * (non-Javadoc)
+     * 
+     * @see org.owasp.esapi.Randomizer#getRandomLong()
+     */
+    public long getRandomLong() {
+        return secureRandom.nextLong();    
+    }
+
+    
     /*
      * (non-Javadoc)
      * 

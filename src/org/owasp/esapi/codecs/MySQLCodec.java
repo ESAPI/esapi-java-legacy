@@ -15,7 +15,6 @@
  */
 package org.owasp.esapi.codecs;
 
-import org.owasp.esapi.errors.EncodingException;
 
 
 /**

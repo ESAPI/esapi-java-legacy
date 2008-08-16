@@ -13,7 +13,7 @@
  * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2008
  */
-package org.owasp.esapi.reference;
+package org.owasp.esapi;
 
 import java.io.File;
 import java.net.URI;
@@ -28,29 +28,29 @@ import org.owasp.esapi.errors.ValidationException;
  * causing problems in path lookups. This does _not_ prevent against
  * directory traversal attacks.
  */
-public class DefaultSafeFile extends File {
+public class SafeFile extends File {
 
 	private static final long serialVersionUID = 1L;
 
-	public DefaultSafeFile(String path) throws ValidationException {
+	public SafeFile(String path) throws ValidationException {
 		super(path);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-	public DefaultSafeFile(String parent, String child) throws ValidationException {
+	public SafeFile(String parent, String child) throws ValidationException {
 		super(parent, child);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-	public DefaultSafeFile(File parent, String child) throws ValidationException {
+	public SafeFile(File parent, String child) throws ValidationException {
 		super(parent, child);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-	public DefaultSafeFile(URI uri) throws ValidationException {
+	public SafeFile(URI uri) throws ValidationException {
 		super(uri);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
