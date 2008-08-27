@@ -17,7 +17,6 @@
 package org.owasp.esapi;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -97,7 +96,9 @@ public class ValidationErrorList {
 	 * @param ve
 	 */
 	public void addError(String context, ValidationException ve) {
-		if ((context != null && ve != null)) {
+		if (getError(context) != null) throw new RuntimeException("Context (" + context + ") already exists, programmer error");
+		
+		if ((context != null) && (ve != null)) {
 			errorList.put(context, ve);
 		}
 	}
