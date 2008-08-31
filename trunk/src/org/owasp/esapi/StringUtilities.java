@@ -27,7 +27,8 @@ import java.util.Arrays;
 public class StringUtilities {
 
 	/**
-	 * Removes all unprintable characters from a string for use in an HTTP header
+	 * Removes all unprintable characters from a string 
+	 * and replaces with a space for use in an HTTP header
 	 * @param input
 	 * @return the stripped header
 	 */
@@ -35,7 +36,11 @@ public class StringUtilities {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt( i );
-			if ( c > 0x20 && c < 0x7f ) sb.append( c );
+			if ( c > 0x20 && c < 0x7f ) {
+				sb.append( c );
+			} else {
+				sb.append( ' ' );
+			}
 		}
 		return sb.toString();
 	}
