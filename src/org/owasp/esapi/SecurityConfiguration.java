@@ -161,7 +161,26 @@ public interface SecurityConfiguration {
 	 * Sets the ESAPI resource directory.
 	 */
 	public void setResourceDirectory(String dir);
+	
+	/**
+	 * Gets the content-type set for responses.
+	 */
+	public String getResponseContentType();
 
+	/**
+	 * Gets the time window allowed for the remember token in milliseconds.
+	 */
+	public long getRememberTokenDuration();
+
+	/**
+	 * Returns whether HTML entity encoding should be applied to log entries.
+	 */
+	public boolean getLogEncodingRequired();
+	
+	
+	/**
+	 * Models a simple threshold as a count and an interval, along with a set of actions to take if the threshold is exceeded. 
+	 */
 	public static class Threshold {
 		public String name = null;
 		public int count = 0;

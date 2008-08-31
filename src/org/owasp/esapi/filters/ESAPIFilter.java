@@ -90,7 +90,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// log this request, obfuscating any parameter named password
-			ESAPI.httpUtilities().logHTTPRequest(logger, Arrays.asList(obfuscate));
+			ESAPI.httpUtilities().logHTTPRequest(request, logger, Arrays.asList(obfuscate));
 
 			// check access to this URL
 			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString()) ) {
@@ -115,12 +115,12 @@ public class ESAPIFilter implements Filter {
 			chain.doFilter(request, response);
 
 			// set up response with content type
-			ESAPI.httpUtilities().safeSetContentType();
+			ESAPI.httpUtilities().safeSetContentType( response );
 
             // set no-cache headers on every response
             // only do this if the entire site should not be cached
             // otherwise you should do this strategically in your controller or actions
-			ESAPI.httpUtilities().setNoCacheHeaders();
+			ESAPI.httpUtilities().setNoCacheHeaders( response );
             
 		} catch (Exception e) {
 			e.printStackTrace();

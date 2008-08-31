@@ -15,6 +15,11 @@
  */
 package org.owasp.esapi;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Set;
+
 import org.owasp.esapi.errors.EncryptionException;
 
 
@@ -61,4 +66,39 @@ public interface EncryptedProperties {
 	 */
 	String setProperty(String key, String value) throws EncryptionException;
 
+	
+	/**
+	 * Key set.
+	 * 
+	 * @return the set
+	 */
+	public Set keySet();
+	
+	
+	/**
+	 * Load.
+	 * 
+	 * @param in
+	 *            the in
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void load(InputStream in) throws IOException;
+	
+
+	/**
+	 * Store.
+	 * 
+	 * @param out
+	 *            the out
+	 * @param comments
+	 *            the comments
+	 * 
+	 * @throws IOException
+	 *             Signals that an I/O exception has occurred.
+	 */
+	public void store(OutputStream out, String comments) throws IOException;	
+	
+	
 }

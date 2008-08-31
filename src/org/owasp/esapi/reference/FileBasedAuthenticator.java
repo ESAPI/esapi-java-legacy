@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -395,19 +396,15 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
         return null;
     }
-
-    /*
-     * Get the current user from the session and set it as the current user. (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#setCurrentUser(javax.servlet.http.HttpServletRequest)
-     */
+    
+    
     /**
      * Gets the user from session.
      * 
      * @param request the request
      * @return the user from session
      */
-    public User getUserFromSession() {
+    protected User getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
         return (User)session.getAttribute(USER);
     }
@@ -418,17 +415,17 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * and existing account, or hashed password does not match user's hashed password.
      */
     protected DefaultUser getUserFromRememberToken()  {
-    	String token = ESAPI.httpUtilities().getCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+    	Cookie token = ESAPI.httpUtilities().getCookie( ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
     	if ( token == null ) {
     		return null;
     	}
 
     	String[] data = null;
 		try {
-			data = ESAPI.encryptor().unseal( token ).split( ":" );
+			data = ESAPI.encryptor().unseal( token.getValue() ).split( ":" );
 		} catch (EncryptionException e) {			
 	    	logger.warning(Logger.SECURITY, "Found corrupt or expired remember token" );
-	    	ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 	    	return null;
     	}
 		
@@ -452,7 +449,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 			user.loginWithPassword(password);
 		} catch (AuthenticationException ae) {
 			logger.warning( Logger.SECURITY, "Login via remember me cookie failed for user " + username, ae);
-	    	ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 			return null;
 		}
 		return user;
@@ -770,7 +767,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         
         // warn if this authentication request was not POST or non-SSL connection, exposing credentials or session id
         try {
-        	ESAPI.httpUtilities().assertSecureRequest();
+        	ESAPI.httpUtilities().assertSecureRequest( ESAPI.currentRequest() );
         } catch( AccessControlException e ) {
         	throw new AuthenticationException( "Attempt to login with an insecure request", e.getLogMessage(), e );
         }

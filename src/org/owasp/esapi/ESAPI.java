@@ -15,17 +15,20 @@
  */
 package org.owasp.esapi;
 
-import org.owasp.esapi.reference.FileBasedAccessController;
-import org.owasp.esapi.reference.FileBasedAuthenticator;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.reference.JavaEncryptor;
 import org.owasp.esapi.reference.DefaultExecutor;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
 import org.owasp.esapi.reference.DefaultIntrusionDetector;
-import org.owasp.esapi.reference.JavaLogFactory;
 import org.owasp.esapi.reference.DefaultRandomizer;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.reference.FileBasedAccessController;
+import org.owasp.esapi.reference.FileBasedAuthenticator;
+import org.owasp.esapi.reference.JavaEncryptor;
+import org.owasp.esapi.reference.JavaLogFactory;
 
 /**
  * ESAPI locator class to make it easy to get a concrete implementation of the
@@ -64,6 +67,14 @@ public class ESAPI {
 	private ESAPI() {
 	}
 
+	public static HttpServletRequest currentRequest() {
+		return httpUtilities().getCurrentRequest();
+	}
+	
+	public static HttpServletResponse currentResponse() {
+		return httpUtilities().getCurrentResponse();
+	}
+	
 	/**
 	 * @return the accessController
 	 */
@@ -267,4 +278,5 @@ public class ESAPI {
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
 	}
+
 }

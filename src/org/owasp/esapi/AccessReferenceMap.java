@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.util.Iterator;
+import java.util.Set;
 
 import org.owasp.esapi.errors.AccessControlException;
 
@@ -106,13 +107,20 @@ public interface AccessReferenceMap {
 	 * @param direct the direct reference
 	 * @return the corresponding indirect reference
 	 */
-	public String addDirectReference(Object direct);
+	String addDirectReference(Object direct);
 	
 	/**
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
 	 * @param direct the direct reference to remove
 	 * @return the corresponding indirect reference
 	 */
-	public String removeDirectReference(Object direct) throws AccessControlException;
+	String removeDirectReference(Object direct) throws AccessControlException;
+
+	/**
+	 * Updates the access reference map with a new set of directReferences, maintaining
+	 * any existing indirectReferences associated with items that are in the new list. 
+	 * @param directReferences
+	 */
+	void update(Set directReferences);
 
 }

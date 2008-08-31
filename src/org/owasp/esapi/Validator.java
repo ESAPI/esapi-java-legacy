@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -45,7 +47,7 @@ import org.owasp.esapi.errors.ValidationException;
  * @since June 1, 2007
  */
 public interface Validator {
-
+	
 	/**
 	 * Returns true if input is valid according to the specified type. The type parameter must be the name 
 	 * of a defined type in the ESAPI configuration or a valid regular expression. Implementers should take 
@@ -312,7 +314,6 @@ public interface Validator {
 	 */
 	void assertIsValidHTTPRequest() throws ValidationException, IntrusionException;
 	
-	
 	/**
 	 * Returns true if input is a valid list item.
 	 */
@@ -425,6 +426,6 @@ public interface Validator {
 	 * and probably terminates.
 	 */
 	String safeReadLine(InputStream inputStream, int maxLength) throws ValidationException;
-
+	
 }
 
