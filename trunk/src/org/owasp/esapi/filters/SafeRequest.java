@@ -293,14 +293,20 @@ public class SafeRequest implements HttpServletRequest {
 			try {
 				Map.Entry e = (Map.Entry)i.next();
 				String name = (String)e.getKey();
-				String value = (String)e.getValue();
 				String cleanName = ESAPI.validator().getValidInput( "HTTP parameter name: " + name, name, "HTTPParameterName", 100, false );
-				String cleanValue = ESAPI.validator().getValidInput( "HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, false );
-				cleanMap.put( cleanName, cleanValue);
-			} catch( Exception e ) {
+
+				String[] value = (String[])e.getValue();
+				String[] cleanValues = new String[value.length];
+				for( int j = 0; j < value.length; j++ ) {
+					String cleanValue = ESAPI.validator().getValidInput( "HTTP parameter value: " + value[j], value[j], "HTTPParameterValue", 2000, false );
+					cleanValues[j] = cleanValue;
+				}
+				cleanMap.put( cleanName, cleanValues);
+			} catch( ValidationException e ) {
 				// already logged
 			}
 		}
+		System.out.println( ">>>" + cleanMap );
 		return cleanMap;
 	}
 
