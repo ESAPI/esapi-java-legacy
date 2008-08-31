@@ -43,7 +43,6 @@ public class IntrusionException extends RuntimeException {
      * message.
      */
     private IntrusionException() {
-        super();
     }
 
     /**

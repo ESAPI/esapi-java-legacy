@@ -157,6 +157,7 @@ public interface Authenticator {
 	 */
 	User getUser(String accountName);
 
+	
 	/**
 	 * Gets a collection containing all the existing user names.
 	 * 

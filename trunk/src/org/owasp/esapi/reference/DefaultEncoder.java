@@ -93,25 +93,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
-	/** Standard character sets */
-	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-	public final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-	public final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
-	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
-	public final static char[] CHAR_LETTERS = union(CHAR_LOWERS, CHAR_UPPERS);
-	public final static char[] CHAR_ALPHANUMERICS = union(CHAR_LETTERS, CHAR_DIGITS);
-
-	/**
-	 * Password character set, is alphanumerics (without l, i, I, o, O, and 0)
-	 * selected specials like + (bad for URL encoding, | is like i and 1,
-	 * etc...)
-	 */
-	final static char[] CHAR_PASSWORD_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
-	final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
-	final static char[] CHAR_PASSWORD_DIGITS = { '2', '3', '4', '5', '6', '7', '8', '9' };
-	final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
-	public final static char[] CHAR_PASSWORD_LETTERS = union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
-
 
 	public DefaultEncoder() {
 		// initialize the codec list to use for canonicalization
@@ -586,41 +567,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return Base64.decode( input );
 	}
 
-    /**
-     * Union two character arrays.
-     * 
-     * @param c1 the c1
-     * @param c2 the c2
-     * @return the char[]
-     */
-    private static char[] union(char[] c1, char[] c2) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < c1.length; i++) {
-            if (!contains(sb, c1[i]))
-                sb.append(c1[i]);
-        }
-        for (int i = 0; i < c2.length; i++) {
-            if (!contains(sb, c2[i]))
-                sb.append(c2[i]);
-        }
-        char[] c3 = new char[sb.length()];
-        sb.getChars(0, sb.length(), c3, 0);
-        Arrays.sort(c3);
-        return c3;
-    }
-
-    /**
-     * Returns true if the character is contained in the provided StringBuffer.
-     */
-    private static boolean contains(StringBuffer haystack, char c) {
-        for (int i = 0; i < haystack.length(); i++) {
-            if (haystack.charAt(i) == c)
-                return true;
-        }
-        return false;
-    }
-    
-
 	
 	/**
 	 * Returns true if the character is contained in the provided array of characters.
@@ -635,7 +581,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		// If sorted arrays are guaranteed, this is faster
 		// return( Arrays.binarySearch(array, element) >= 0 );
 	}
-
 
     
 }

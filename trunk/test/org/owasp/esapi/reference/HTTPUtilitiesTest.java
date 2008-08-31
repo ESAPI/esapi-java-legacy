@@ -31,12 +31,12 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Encoder;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.filters.SafeResponse;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
 import org.owasp.esapi.http.TestHttpSession;
@@ -122,7 +122,7 @@ public class HTTPUtilitiesTest extends TestCase {
         session.setAttribute("two", "two");
         session.setAttribute("three", "three");
         String id1 = session.getId();
-        session = (TestHttpSession) ESAPI.httpUtilities().changeSessionIdentifier();
+        session = (TestHttpSession) ESAPI.httpUtilities().changeSessionIdentifier( request );
         String id2 = session.getId();
         assertTrue(!id1.equals(id2));
         assertEquals("one", (String) session.getAttribute("one"));
@@ -141,7 +141,7 @@ public class HTTPUtilitiesTest extends TestCase {
         TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request1, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            List list = ESAPI.httpUtilities().getSafeFileUploads(request1, home, home);
             fail();
         } catch( ValidationException e ) {
         	// expected
@@ -151,7 +151,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request2.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request2, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            List list = ESAPI.httpUtilities().getSafeFileUploads(request2, home, home);
             Iterator i = list.iterator();
             while ( i.hasNext() ) {
             	File f = (File)i.next();
@@ -166,7 +166,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(home, home);
+            List list = ESAPI.httpUtilities().getSafeFileUploads(request3, home, home);
             fail();
         } catch (ValidationException e) {
         	// expected
@@ -219,7 +219,7 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().killAllCookies();
+        ESAPI.httpUtilities().killAllCookies(request, response);
         // this tests getHeaders because we're using addHeader in our setCookie method
         assertTrue(response.getHeaderNames().size() == 3);
     }
@@ -238,7 +238,7 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().killCookie("test1");
+        ESAPI.httpUtilities().killCookie( request, response, "test1" );
         // this tests getHeaders because we're using addHeader in our setCookie method
         assertTrue(response.getHeaderNames().size() == 1);
     }
@@ -251,20 +251,23 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSendSafeRedirect() throws ValidationException, IOException {
         System.out.println("sendSafeRedirect");
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        TestHttpServletResponse response = new TestHttpServletResponse();
+        SafeResponse safeResponse = new SafeResponse( response );
         try {
-            ESAPI.httpUtilities().safeSendRedirect("test", "/test1/abcdefg");
-            ESAPI.httpUtilities().safeSendRedirect("test", "/test2/1234567");
+        	safeResponse.sendRedirect("/test1/abcdefg");
+            safeResponse.sendRedirect("/test2/1234567");
         } catch (IOException e) {
             fail();
         }
         try {
-            ESAPI.httpUtilities().safeSendRedirect("test", "http://www.aspectsecurity.com");
+        	safeResponse.sendRedirect("http://www.aspectsecurity.com");
             fail();
         } catch (IOException e) {
             // expected
         }
         try {
-            ESAPI.httpUtilities().safeSendRedirect("test", "/ridiculous");
+            safeResponse.sendRedirect("/ridiculous");
             fail();
         } catch (IOException e) {
             // expected
@@ -276,17 +279,16 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSetCookie() {
         System.out.println("setCookie");
-        TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        SafeResponse safeResponse = new SafeResponse( response );
         assertTrue(response.getCookies().isEmpty());
-        ESAPI.httpUtilities().safeAddCookie("test1", "test1", 10000, "test", "/");
+        safeResponse.addCookie("test1", "test1", 10000, "test", "/");
 	    assertTrue(response.getHeaderNames().size() == 1);
-    	ESAPI.httpUtilities().safeAddCookie("test2", "test2", 10000, "test", "/");
+	    safeResponse.addCookie("test2", "test2", 10000, "test", "/");
 	    assertTrue(response.getHeaderNames().size() == 2);
-    	ESAPI.httpUtilities().safeAddCookie("tes\nt3", "test3", 10000, "test", "/");
+	    safeResponse.addCookie("tes\nt3", "test3", 10000, "test", "/");
 	    assertTrue(response.getHeaderNames().size() == 2);
-    	ESAPI.httpUtilities().safeAddCookie("test3", "te\nst3", 10000, "test", "/");
+	    safeResponse.addCookie("test3", "te\nst3", 10000, "test", "/");
 	    assertTrue(response.getHeaderNames().size() == 2);
 	}
 
@@ -294,18 +296,17 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("getStateFromEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        ESAPI.httpUtilities().setCurrentHTTP(request, response);
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(map);
+	        ESAPI.httpUtilities().encryptStateInCookie(response, map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
 	        // String encrypted = response.getCookie("state").getValue();
 	        request.setCookie( "state", encrypted );
-	        Map state = ESAPI.httpUtilities().decryptStateFromCookie();
+	        Map state = ESAPI.httpUtilities().decryptStateFromCookie(request);
 	        Iterator i = map.entrySet().iterator();
 	        while ( i.hasNext() ) {
 	        	Map.Entry entry = (Map.Entry)i.next();
@@ -330,7 +331,7 @@ public class HTTPUtilitiesTest extends TestCase {
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(map);
+	        ESAPI.httpUtilities().encryptStateInCookie(response,map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
         	ESAPI.encryptor().decrypt( encrypted );
@@ -352,7 +353,7 @@ public class HTTPUtilitiesTest extends TestCase {
         response.addHeader("test2", "2");
         response.addHeader("test3", "3");
         assertFalse(response.getHeaderNames().isEmpty());
-        ESAPI.httpUtilities().setNoCacheHeaders();
+        ESAPI.httpUtilities().setNoCacheHeaders( response );
         assertTrue(response.containsHeader("Cache-Control"));
         assertTrue(response.containsHeader("Expires"));
     }
@@ -371,7 +372,7 @@ public class HTTPUtilitiesTest extends TestCase {
 		instance.login( request, response);
 
 		int maxAge = ( 60 * 60 * 24 * 14 );
-		ESAPI.httpUtilities().setRememberToken( password, maxAge, "domain", "/" );
+		ESAPI.httpUtilities().setRememberToken( request, response, password, maxAge, "domain", "/" );
 		// Can't test this because we're using safeSetCookie, which sets a header, not a real cookie!
 		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
 	    // assertEquals( user.getRememberToken(), value );

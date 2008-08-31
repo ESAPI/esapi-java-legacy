@@ -819,7 +819,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {
+	private void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {
 		
 		if (request == null) {
    			throw new ValidationException( "Input required: HTTP request is null", "Input required: HTTP request is null" );
@@ -888,8 +888,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * will generate a descriptive IntrusionException. 
 	 */
 	public String getValidListItem(String context, String input, List list) throws ValidationException, IntrusionException {
-		if (list.contains(input)) return input;
-		
+		if (list.contains(input)) return input;		
 		throw new ValidationException( context + ": Invalid list item", "Invalid list item: context=" + context + ", input=" + input, context );
 	}
 	

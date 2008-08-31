@@ -88,12 +88,12 @@ public class LoggerTest extends TestCase {
         TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         Logger logger = ESAPI.getLogger("logger");
-        ESAPI.httpUtilities().logHTTPRequest( logger, Arrays.asList(ignore) );
+        ESAPI.httpUtilities().logHTTPRequest( request, logger, Arrays.asList(ignore) );
         request.addParameter("one","one");
         request.addParameter("two","two1");
         request.addParameter("two","two2");
         request.addParameter("password","jwilliams");
-        ESAPI.httpUtilities().logHTTPRequest( logger, Arrays.asList(ignore) );
+        ESAPI.httpUtilities().logHTTPRequest( request, logger, Arrays.asList(ignore) );
     }    
     
     /**

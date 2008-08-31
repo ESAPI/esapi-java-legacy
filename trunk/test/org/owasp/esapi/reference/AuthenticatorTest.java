@@ -24,7 +24,6 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Encoder;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
@@ -244,7 +243,7 @@ public class AuthenticatorTest extends TestCase {
 		request = new TestHttpServletRequest();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		ESAPI.authenticator().setCurrentUser(user);
-		String newToken = ESAPI.httpUtilities().setRememberToken(password, 10000, "test.com", "/");
+		String newToken = ESAPI.httpUtilities().setRememberToken(request, response, password, 10000, "test.com", request.getContextPath() );
 		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, newToken );
 		User test2 = instance.login( request, response );
 		assertSame( user, test2 );

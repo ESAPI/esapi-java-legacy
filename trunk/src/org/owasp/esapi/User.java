@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,7 +42,7 @@ import org.owasp.esapi.reference.DefaultEncoder;
  * @since June 1, 2007
  */
 
-public interface User {
+public interface User extends Principal {
 
     /**
      * Adds a role to an account.
@@ -305,13 +306,40 @@ public interface User {
 	 * Verify that the supplied password matches the password for this user. This method
 	 * is typically used for "reauthentication" for the most sensitive functions, such
 	 * as transactions, changing email address, and changing other account information.
-	 * 
-	 * @param password
-	 * @return
-	 * @throws EncryptionException 
 	 */
 	public boolean verifyPassword(String password) throws EncryptionException;
 
+	/**
+	 * Set the time of the last failed login for this user.
+	 * @param lastFailedLoginTime
+	 */
+	void setLastFailedLoginTime(Date lastFailedLoginTime);
+	
+	/**
+	 * Set the last remote host address used by this user.
+	 * @param remoteHost
+	 */
+	void setLastHostAddress(String remoteHost);
+	
+	/**
+	 * Set the time of the last successful login for this user.
+	 * @param lastLoginTime
+	 */
+	void setLastLoginTime(Date lastLoginTime);
+	
+	/**
+	 * Set the time of the last password change for this user.
+	 * @param lastPasswordChangeTime
+	 */
+	void setLastPasswordChangeTime(Date lastPasswordChangeTime);
+
+	
+	
+	/**
+	 * The ANONYMOUS user is used to represent an unidentified user. Since there is
+	 * always a real user, the ANONYMOUS user is better than using null to represent
+	 * this.
+	 */
     public final User ANONYMOUS = new User() {
 
     	private String csrfToken = "";
@@ -367,6 +395,10 @@ public interface User {
 	        return "Anonymous";
         }
 
+        public String getName() {
+        	return getAccountName();
+        }
+        
 		/* (non-Javadoc)
          * @see org.owasp.esapi.User#getCSRFToken()
          */
@@ -568,8 +600,23 @@ public interface User {
 		/* (non-Javadoc)
          * @see org.owasp.esapi.User#verifyPassword(java.lang.String)
          */
-        public boolean verifyPassword(String password)
-                throws EncryptionException {
+        public boolean verifyPassword(String password) throws EncryptionException {
+        	throw new RuntimeException("Invalid operation for the anonymous user");
+        }
+
+        public void setLastFailedLoginTime(Date lastFailedLoginTime) {
+        	throw new RuntimeException("Invalid operation for the anonymous user");
+        }
+        
+    	public void setLastLoginTime(Date lastLoginTime) {
+    		throw new RuntimeException("Invalid operation for the anonymous user");
+    	}
+
+    	public void setLastHostAddress(String remoteHost) {
+        	throw new RuntimeException("Invalid operation for the anonymous user");
+        }
+                
+        public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
     };

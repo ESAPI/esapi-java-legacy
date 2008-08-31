@@ -248,6 +248,10 @@ public class DefaultUser implements User, Serializable {
 		return (Date)lastPasswordChangeTime.clone();
 	}
 
+	public String getName() {
+		return this.getAccountName();
+	}
+	
 	/**
 	 * Gets the roles.
 	 * 
@@ -401,7 +405,7 @@ public class DefaultUser implements User, Serializable {
 
 		if ( verifyPassword( password ) ) {
 			loggedIn = true;
-			ESAPI.httpUtilities().changeSessionIdentifier();
+			ESAPI.httpUtilities().changeSessionIdentifier( ESAPI.currentRequest() );
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
             setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
@@ -424,14 +428,13 @@ public class DefaultUser implements User, Serializable {
 	 * @see org.owasp.esapi.interfaces.IUser#logout()
 	 */
 	public void logout() {
-		ESAPI.httpUtilities().killCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+		ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 		
-		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-		HttpSession session = request.getSession(false);
+		HttpSession session = ESAPI.currentRequest().getSession(false);
 		if (session != null) {
 			session.invalidate();
 		}
-		ESAPI.httpUtilities().killCookie("JSESSIONID");
+		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), "JSESSIONID");
 		loggedIn = false;
 		logger.info(Logger.SECURITY, "Logout successful" );
 		ESAPI.authenticator().setCurrentUser(User.ANONYMOUS);
