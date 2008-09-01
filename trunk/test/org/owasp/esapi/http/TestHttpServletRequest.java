@@ -56,7 +56,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
     
     private byte[] body;
 
-    private String uri = null;
+    private String uri = "/test";
 
     private String contentType = null;
     

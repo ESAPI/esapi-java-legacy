@@ -192,8 +192,11 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("c3", "v3"));
         request.setCookies(list);
         ESAPI.httpUtilities().setCurrentHTTP(request, new TestHttpServletResponse() );
+        
+        // should throw IntrusionException which will be caught in isValidHTTPRequest and return false
         request.setMethod("JEFF");
         assertFalse( ESAPI.validator().isValidHTTPRequest() );
+         
         request.setMethod("POST");
         assertTrue( ESAPI.validator().isValidHTTPRequest() );
         request.setMethod("GET");
@@ -201,7 +204,9 @@ public class HTTPUtilitiesTest extends TestCase {
         request.addParameter("bad_name", "bad*value");
         request.addHeader("bad_name", "bad*value");
         list.add(new Cookie("bad_name", "bad*value"));
-        assertFalse( ESAPI.validator().isValidHTTPRequest() );
+        
+        // call the validator directly, since the safe request will shield this from failing
+        assertFalse( ((DefaultValidator)ESAPI.validator()).isValidHTTPRequest( request ) );
      }
     
     
