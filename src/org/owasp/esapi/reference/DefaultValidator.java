@@ -69,7 +69,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/** constants */
 	private static final int MAX_CREDIT_CARD_LENGTH = 19;
 	private static final int MAX_PARAMETER_NAME_LENGTH = 100;
-	private static final int MAX_PARAMETER_VALUE_LENGTH = 65535; //max length of MySQL "text" column type
+	private static final int MAX_PARAMETER_VALUE_LENGTH = 65535;
 	
 	public DefaultValidator() {
 	}

@@ -429,9 +429,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	    	return null;
     	}
 		
-		for (int i=0; i<data.length; i++ )
-			System.out.println( ">>>>>>>>>" + data[i] );
-		
 		if ( data.length != 3 ) {
 			return null;
 		}

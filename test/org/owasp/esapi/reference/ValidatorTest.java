@@ -349,7 +349,7 @@ public class ValidatorTest extends TestCase {
 		request.addParameter("p2","value");
 		request.addParameter("p3","value");
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		Validator instance = ESAPI.validator();
+		Validator instance = ESAPI.validator();		
 		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
 		request.addParameter("p4","value");
 		request.addParameter("p5","value");
@@ -363,6 +363,8 @@ public class ValidatorTest extends TestCase {
 	 * Test safe read line.
 	 */
 	public void testSafeReadLine() {
+		System.out.println("safeReadLine");
+		
 		ByteArrayInputStream s = new ByteArrayInputStream("testString".getBytes());
 		Validator instance = ESAPI.validator();
 		try {

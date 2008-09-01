@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -125,23 +124,30 @@ public class SafeRequest implements HttpServletRequest {
 		Cookie[] cookies = request.getCookies();
 		List newCookies = new ArrayList();
 		for ( int i = 0; i < cookies.length; i++ ) {
+			Cookie c = cookies[i];
+
+			// build a new clean cookie
 			try {
 				// get data from original cookie
-				Cookie c = cookies[i];
 				String name = ESAPI.validator().getValidInput( "Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", 150, false );
 				String value = ESAPI.validator().getValidInput( "Cookie value: " + c.getValue(), c.getValue(), "HTTPCookieValue", 1000, false );
 				int maxAge = c.getMaxAge();
 				String domain = c.getDomain();
 				String path = c.getPath();
 				
-				// build a new clean cookie
 				Cookie n = new Cookie( name, value );
 				n.setMaxAge(maxAge);
-				n.setDomain(ESAPI.validator().getValidInput( "Cookie domain: " + domain, domain, "HTTPHeaderValue", 200, false ));
-				n.setPath(ESAPI.validator().getValidInput( "Cookie path: " + path, path, "HTTPHeaderValue", 200, false ));
+								
+				if ( domain != null ) {
+					n.setDomain(ESAPI.validator().getValidInput( "Cookie domain: " + domain, domain, "HTTPHeaderValue", 200, false ));
+				}
+				if ( path != null ) {
+					n.setPath(ESAPI.validator().getValidInput( "Cookie path: " + path, path, "HTTPHeaderValue", 200, false ));
+				}
 				newCookies.add( n );
 			} catch( ValidationException e ) {
-				logger.warning(Logger.SECURITY, "Skipping bad cookie" );
+				e.printStackTrace();
+				logger.warning(Logger.SECURITY, "Skipping bad cookie: " + c.getName() + "=" + c.getValue() );
 			}
 		}
 		return (Cookie[])newCookies.toArray(new Cookie[newCookies.size()]);
@@ -306,7 +312,6 @@ public class SafeRequest implements HttpServletRequest {
 				// already logged
 			}
 		}
-		System.out.println( ">>>" + cleanMap );
 		return cleanMap;
 	}
 

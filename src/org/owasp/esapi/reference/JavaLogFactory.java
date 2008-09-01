@@ -228,8 +228,8 @@ public class JavaLogFactory implements LogFactory {
             	msg = type + ": " + user.getAccountName() + "("+ counter +")(" + user.getLastHostAddress() + ") -- " + clean;
             }
             
-            // jlogger.logp(level, applicationName, moduleName, msg, throwable);
-            jlogger.logp(level, applicationName, moduleName, msg);
+            jlogger.logp(level, applicationName, moduleName, msg, throwable);
+            // jlogger.logp(level, applicationName, moduleName, msg);
         }
 
     	/* (non-Javadoc)
