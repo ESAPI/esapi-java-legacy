@@ -392,8 +392,7 @@ public class SafeResponse implements HttpServletResponse {
 	 * automated scanners.
 	 */
 	public void setStatus(int sc) {
-		// TODO Security Code Here
-		response.setStatus(sc);
+		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
 	/**
