@@ -29,13 +29,18 @@ import java.util.Map;
 import java.util.Vector;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.ValidationException;
 
 
@@ -443,12 +448,14 @@ public class SafeRequest implements HttpServletRequest {
 	}
 
     /**
-     * Returns a RequestDispatcher that cannot be used to forward requests
-     * around the ESAPI AccessController.
+     * Checks to make sure the path to forward to is within the WEB-INF directory
+     * and then returns the dispatcher. Otherwise returns null.
      */
 	public RequestDispatcher getRequestDispatcher(String path) {
-		// TODO Security Code Here
-		return request.getRequestDispatcher(path);
+		if (path.startsWith("WEB-INF")) {
+			return request.getRequestDispatcher(path);
+		}
+		return null;
 	}
 
     /**
@@ -567,7 +574,10 @@ public class SafeRequest implements HttpServletRequest {
 			session.setAttribute("HTTP_ONLY", "set" );
 			Cookie cookie=new Cookie("JSESSIONID", session.getId());
 			cookie.setMaxAge(-1); // session cookie
-			ESAPI.currentResponse().addCookie(cookie);
+			HttpServletResponse response = ESAPI.currentResponse();
+			if ( response != null ) {
+				ESAPI.currentResponse().addCookie(cookie);
+			}
 		}
 		
 		return session;
@@ -586,7 +596,10 @@ public class SafeRequest implements HttpServletRequest {
 			session.setAttribute("HTTP_ONLY", "set" );
 			Cookie cookie=new Cookie("JSESSIONID", session.getId());
 			cookie.setMaxAge(-1); // session cookie
-			ESAPI.currentResponse().addCookie(cookie);
+			HttpServletResponse response = ESAPI.currentResponse();
+			if ( response != null ) {
+				ESAPI.currentResponse().addCookie(cookie);
+			}
 		}
 		
 		return session;
