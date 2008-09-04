@@ -49,11 +49,11 @@ public interface Encryptor {
 	 * more information about hashing as it pertains to password schemes.
 	 * 
 	 * @param plaintext
-	 *            the plaintext
+	 *            the plaintext String to encrypt
 	 * @param salt
 	 *            the salt
 	 * 
-	 * @return the string
+	 * @return the encrypted hash of 'plaintext' stored as a String
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -64,9 +64,9 @@ public interface Encryptor {
 	 * Encrypts the provided plaintext and returns a ciphertext string.
 	 * 
 	 * @param plaintext
-	 *            the plaintext
+	 *            the plaintext String to encrypt
 	 * 
-	 * @return the string
+	 * @return the encrypted String
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -80,7 +80,7 @@ public interface Encryptor {
 	 * @param ciphertext
 	 *            the ciphertext
 	 * 
-	 * @return the string
+	 * @return the decrypted ciphertext
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -92,9 +92,9 @@ public interface Encryptor {
 	 * string.
 	 * 
 	 * @param data
-	 *            the data
+	 *            the data to sign
 	 * 
-	 * @return the string
+	 * @return the digital signature stored as a String
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -106,11 +106,11 @@ public interface Encryptor {
 	 * the boolean result.
 	 * 
 	 * @param signature
-	 *            the signature
+	 *            the signature to verify
 	 * @param data
-	 *            the data
+	 *            the data to verify
 	 * 
-	 * @return true, if successful
+	 * @return true, if the signature is verified
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -121,11 +121,11 @@ public interface Encryptor {
 	 * Creates a seal that binds a set of data and includes an expiration timestamp.
 	 * 
 	 * @param data
-	 *            the data
+	 *            the data to seal
 	 * @param timestamp
 	 *            the absolute expiration date of the data, expressed as seconds since the epoch
 	 * 
-	 * @return the string
+	 * @return the seal
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -139,7 +139,9 @@ public interface Encryptor {
 	 * 
 	 * @param seal
 	 *            the sealed data
+	 * 
 	 * @return the original data
+	 * 
 	 * @throws ExcryptionException if the unsealed data cannot be retrieved for any reason
 	 */
 	String unseal( String seal ) throws EncryptionException;
@@ -151,7 +153,8 @@ public interface Encryptor {
 	 * 
 	 * @param seal
 	 *            the seal
-	 * @return true if the seal is valid
+	 * 
+	 * @return true, if the seal is valid
 	 */
 	boolean verifySeal(String seal);
 
@@ -159,6 +162,9 @@ public interface Encryptor {
 	/**
 	 * Gets an absolute timestamp representing an offset from the current time to be used by
 	 * other functions in the library.
+	 * 
+	 * @param offset 
+	 * 		the offset to add to the current time
 	 * 
 	 * @return the absolute timestamp
 	 */

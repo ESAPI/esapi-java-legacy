@@ -98,35 +98,35 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets the encryption algorithm.
 	 * 
-	 * @return the algorithm
+	 * @return the encryption algorithm
 	 */
 	public String getEncryptionAlgorithm();
 
 	/**
-	 * Gets the hasing algorithm.
+	 * Gets the hashing algorithm.
 	 * 
-	 * @return the algorithm
+	 * @return the hashing algorithm
 	 */
 	public String getHashAlgorithm();
 
 	/**
 	 * Gets the character encoding.
 	 * 
-	 * @return encoding name
+	 * @return encoding character name
 	 */
 	public String getCharacterEncoding();
 
 	/**
 	 * Gets the digital signature algorithm.
 	 * 
-	 * @return encoding name
+	 * @return the digital signature algorithm
 	 */
 	public String getDigitalSignatureAlgorithm();
 
 	/**
 	 * Gets the random number generation algorithm.
 	 * 
-	 * @return encoding name
+	 * @return random number generation algorithm
 	 */
 	public String getRandomAlgorithm();
 
@@ -147,18 +147,25 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets an intrusion detection Quota.
 	 * 
-	 * @param eventName
-	 * @return the matching Quota
+	 * @param eventName 
+	 * 		the event whose quota is desired
+	 * 
+	 * @return the matching Quota for eventName
 	 */
 	public Threshold getQuota(String eventName);
 
 	/**
 	 * Gets the ESAPI resource directory as a String.
+	 * 
+	 * @return the ESAPI resource directory
 	 */
 	public String getResourceDirectory();
 
 	/**
 	 * Sets the ESAPI resource directory.
+	 * 
+	 * @param dir 
+	 * 		location of the resource directory
 	 */
 	public void setResourceDirectory(String dir);
 	

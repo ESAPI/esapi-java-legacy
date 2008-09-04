@@ -32,7 +32,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * <P>
  * <img src="doc-files/Authenticator.jpg" height="600">
  * <P>
- * Once possible implementation relies on the use of a thread local variable to
+ * One possible implementation relies on the use of a thread local variable to
  * store the current user's identity. The application is responsible for calling
  * setCurrentUser() as soon as possible after each HTTP request is received. The
  * value of getCurrentUser() is used in several other places in this API. This
@@ -80,7 +80,7 @@ public interface Authenticator {
 	 * @return the user
 	 * 
 	 * @throws AuthenticationException
-	 *             the authentication exception
+	 *             if the credentials are not verified, or if the account is disabled, locked, expired, or timed out
 	 */
 	User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException;
 
@@ -89,9 +89,12 @@ public interface Authenticator {
 	 * is typically used for "reauthentication" for the most sensitive functions, such
 	 * as transactions, changing email address, and changing other account information.
 	 * 
-	 * @param user the user
-	 * @param password the password
-	 * @return true if the password is correct for the specified user
+	 * @param user 
+	 * 		the user
+	 * @param password 
+	 * 		the password
+	 * 
+	 * @return true, if the password is correct for the specified user
 	 */
 	boolean verifyPassword(User user, String password);
 	
@@ -104,8 +107,20 @@ public interface Authenticator {
 	 * Creates a new User with the information provided. Implementations should check the
 	 * accountName and password for proper format and strength against brute force attacks.
 	 * Two copies of the new password are required to encourage user interface designers to
-	 * include two fields in their forms. Implementations should verify that both are the
+	 * include a "re-type password" field in their forms. Implementations should verify that both are the
 	 * same. 
+	 * 
+	 * @param accountName 
+	 * 		the account name of the new user
+	 * @param password1 
+	 * 		the password of the new user
+	 * @param password2 
+	 * 		the password of the new user.  This field is to encourage user interface designers to include two password fields in their forms.
+	 * 
+	 * @return the User that has been created 
+	 * 
+	 * @throws AuthenticationException 
+	 * 		if user creation fails
 	 */
 	User createUser(String accountName, String password1, String password2) throws AuthenticationException;
 
@@ -113,6 +128,8 @@ public interface Authenticator {
 	 * Generate a strong password. Implementations should use a large character set that does not
 	 * include confusing characters, such as i I 1 l 0 o and O.  There are many algorithms to
 	 * generate strong memorable passwords that have been studied in the past.
+	 * 
+	 * @return a password with strong password strength
 	 */
 	String generateStrongPassword();
 
@@ -120,6 +137,13 @@ public interface Authenticator {
 	 * Generate strong password that takes into account the user's information and old password. Implementations
 	 * should verify that the new password does not include information such as the username, fragments of the
 	 * old password, and other information that could be used to weaken the strength of the password.
+	 * 
+	 * @param user 
+	 * 		the user whose information to use when generating password
+	 * @param oldPassword 
+	 * 		the old password to use when verifying strength of new password.  The new password may be checked for fragments of oldPassword.
+	 * 
+	 * @return a password with strong password strength
 	 */
 	String generateStrongPassword(User user, String oldPassword);
 
@@ -128,11 +152,17 @@ public interface Authenticator {
 	 * the password to replace it with. This new password must be repeated to ensure that the user has
 	 * typed it in correctly.
 	 * 
-	 * @param user the user to change the password for
-	 * @param currentPassword the current password for the specified user
-	 * @param newPassword the new password to use
-	 * @param newPassword2 a verification copy of the new password
-	 * @throws AuthenticationException if any errors occur
+	 * @param user 
+	 * 		the user to change the password for
+	 * @param currentPassword 
+	 * 		the current password for the specified user
+	 * @param newPassword 
+	 * 		the new password to use
+	 * @param newPassword2 
+	 * 		a verification copy of the new password
+	 * 
+	 * @throws AuthenticationException 
+	 * 		if any errors occur
 	 */
 	void changePassword(User user, String currentPassword, String newPassword, String newPassword2) throws AuthenticationException;
 	
@@ -145,8 +175,7 @@ public interface Authenticator {
 	 * @return the matching User object, or null if no match exists
 	 */
 	User getUser(long accountId);
-	
-	
+		
 	/**
 	 * Returns the User matching the provided accountName.
 	 * 
@@ -157,11 +186,10 @@ public interface Authenticator {
 	 */
 	User getUser(String accountName);
 
-	
 	/**
 	 * Gets a collection containing all the existing user names.
 	 * 
-	 * @return the user names
+	 * @return a set of all user names
 	 */
 	Set getUserNames();
 
@@ -177,7 +205,7 @@ public interface Authenticator {
 	 * Sets the currently logged in User.
 	 * 
 	 * @param user
-	 *            the current user
+	 *          the user to set as the current user
 	 */
 	void setCurrentUser(User user);
 
@@ -190,9 +218,9 @@ public interface Authenticator {
 	 * required.
 	 * 
 	 * @param password
-	 *            the password
+	 *            the password to hash
 	 * @param accountName
-	 *            the account name
+	 *            the account name to use as the salt
 	 * 
 	 * @return the hashed password
 	 */
@@ -202,23 +230,21 @@ public interface Authenticator {
 	 * Removes the account.
 	 * 
 	 * @param accountName
-	 *            the account name
+	 *            the account name to remove
 	 * 
 	 * @throws AuthenticationException
-	 *             the authentication exception
+	 *             the authentication exception if user does not exist
 	 */
 	void removeUser(String accountName) throws AuthenticationException;
 
 	/**
-	 * Ensures that the account name passes site-specific complexity requirements.
+	 * Ensures that the account name passes site-specific complexity requirements, like minimum length.
 	 * 
 	 * @param accountName
 	 *            the account name
 	 * 
-	 * @return true, if successful
-	 * 
 	 * @throws AuthenticationException
-	 *             the authentication exception
+	 *             if account name does not meet complexity requirements
 	 */
 	void verifyAccountNameStrength(String accountName) throws AuthenticationException;
 
@@ -226,22 +252,22 @@ public interface Authenticator {
 	 * Ensures that the password meets site-specific complexity requirements. This
 	 * method takes the old password so that the algorithm can analyze the new password
 	 * to see if it is too similar to the old password. Note that this has to be
-	 * invoked when the user has entered the old password, as this list of old
-	 * credentials stored by ESAPI are all hashed.
+	 * invoked when the user has entered the old password, as the list of old
+	 * credentials stored by ESAPI is all hashed.
 	 * @param oldPassword
 	 *            the old password
 	 * @param newPassword
 	 *            the new password
 	 * 
-	 * @return true, if successful
+	 * @return true, if the new password meets complexity requirements and is not too similar to the old password
 	 * 
 	 * @throws AuthenticationException
-	 *             the authentication exception
+	 *				if newPassword is too similar to oldPassword or if newPassword does not meet complexity requirements
 	 */
 	void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException;
 
 	/**
-	 * Determine if the account already exists.
+	 * Determine if the account exists.
 	 * 
 	 * @param accountName
 	 *            the account name

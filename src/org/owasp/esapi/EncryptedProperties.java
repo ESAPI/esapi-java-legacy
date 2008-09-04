@@ -44,7 +44,7 @@ public interface EncryptedProperties {
 	 * @param key
 	 *            the key
 	 * 
-	 * @return the property
+	 * @return the decrypted property value
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -59,7 +59,7 @@ public interface EncryptedProperties {
 	 * @param value
 	 *            the value
 	 * 
-	 * @return the object
+	 * @return the encrypted property value
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
