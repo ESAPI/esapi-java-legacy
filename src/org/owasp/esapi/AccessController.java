@@ -70,8 +70,11 @@ public interface AccessController {
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
-     * @param uri the uri as returned by request.getRequestURI().toString()
-     * @return true, if is authorized for URL
+     * @param uri 
+     * 		the uri as returned by request.getRequestURI().toString()
+     * 
+     * @return 
+     * 		true, if is authorized for URL
      */
     boolean isAuthorizedForURL(String url);
 
@@ -80,8 +83,11 @@ public interface AccessController {
      * function "namespace" to be enforced. Choosing something simple like the classname of action classes or menu item
      * names will make this implementation easier to use.
      * 
-     * @param functionName the function name
-     * @return true, if is authorized for function
+     * @param functionName 
+     * 		the function name
+     * 
+     * @return 
+     * 		true, if is authorized for function
      */
     boolean isAuthorizedForFunction(String functionName);
 
@@ -89,8 +95,11 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced data. The implementation should define the data
      * "namespace" to be enforced.
      * 
-     * @param key the key
-     * @return true, if is authorized for data
+     * @param key 
+     * 		the key
+     * 
+     * @return 
+     * 		true, if is authorized for data
      */
     boolean isAuthorizedForData(String key);
 
@@ -100,8 +109,11 @@ public interface AccessController {
      * 
      * @see org.owasp.esapi.Encoder#canonicalize(String)
      *   
-     * @param filepath the filepath
-     * @return true, if is authorized for file
+     * @param filepath 
+     * 		the path of the file to be checked, including filename
+     * 
+     * @return 
+     * 		true, if is authorized for file
      */
     boolean isAuthorizedForFile(String filepath);
 
@@ -109,8 +121,11 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced service. This can be used in applications that
      * provide access to a variety of backend services.
      * 
-     * @param serviceName the service name
-     * @return true, if is authorized for service
+     * @param serviceName 
+     * 		the service name
+     * 
+     * @return 
+     * 		true, if is authorized for service
      */
     boolean isAuthorizedForService(String serviceName);
 
@@ -120,8 +135,11 @@ public interface AccessController {
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().assertAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
-     * @param url the url as returned by request.getRequestURI().toString()
-     * @throws AccessControlException if access is not permitted
+     * @param url 
+     * 		the url as returned by request.getRequestURI().toString()
+     * 
+     * @throws AccessControlException 
+     * 		if access is not permitted
      */
     void assertAuthorizedForURL(String url) throws AccessControlException;
     
@@ -130,8 +148,11 @@ public interface AccessController {
      * function "namespace" to be enforced. Choosing something simple like the classname of action classes or menu item
      * names will make this implementation easier to use.
      * 
-     * @param functionName the function name
-     * @throws AccessControlException if access is not permitted
+     * @param functionName 
+     * 		the function name
+     * 
+     * @throws AccessControlException 
+     * 		if access is not permitted
      */
     void assertAuthorizedForFunction(String functionName) throws AccessControlException;
     
@@ -139,8 +160,11 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced data. The implementation should define the data
      * "namespace" to be enforced.
      * 
-     * @param key the key
-     * @throws AccessControlException is access is not permitted
+     * @param key 
+     * 		the key
+     * 
+     * @throws AccessControlException 
+     * 		is access is not permitted
      */
     void assertAuthorizedForData(String key) throws AccessControlException;
     
@@ -149,8 +173,12 @@ public interface AccessController {
      * about canonicalization.
      * 
      * @see org.owasp.esapi.Encoder#canonicalize(String)
-     * @param filepath the filepath
-     * @throws AccessControlException is access is not permitted
+     * 
+     * @param filepath 
+     * 		the path of the file to be checked, including filename
+     * 
+     * @throws AccessControlException 
+     * 		is access is not permitted
      */
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     
@@ -158,7 +186,9 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced service. This can be used in applications that
      * provide access to a variety of backend services.
      * 
-     * @param serviceName the service name
+     * @param serviceName 
+     * 		the service name
+     * 
      * @throws AccessControlException
      */
     void assertAuthorizedForService(String serviceName) throws AccessControlException;
