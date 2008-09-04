@@ -47,15 +47,15 @@ public interface Executor {
 	 * interrupted after the specified timeout period has elapsed.
 	 * 
 	 * @param command
-	 *            the command
+	 *            the command to execute
 	 * @param params
-	 *            the params
+	 *            the parameters of the command being executed
 	 * @param workdir
 	 *            the working directory
 	 * @param timeoutSeconds
 	 *            the amount of time to allow this process to run
 	 * 
-	 * @return the string
+	 * @return the output of the command being run
 	 * 
 	 * @throws ExecutorException
 	 *             the service exception

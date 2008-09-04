@@ -55,6 +55,10 @@ public interface HTTPUtilities {
 	 * Ensures that the current request uses SSL and POST to protect any sensitive parameters
 	 * in the querystring from being sniffed or logged. For example, this method should
 	 * be called from any method that uses sensitive data from a web form.
+	 * 
+	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the current {@link HttpServletRequest} object 
+	 * 
+	 * @throws AccessControlException if security constraints are not met
 	 */
 	void assertSecureRequest( HttpServletRequest request ) throws AccessControlException;
 
@@ -63,8 +67,10 @@ public interface HTTPUtilities {
      * Adds the current user's CSRF token (see User.getCSRFToken()) to the URL for purposes of preventing CSRF attacks.
      * This method should be used on all URLs to be put into all links and forms the application generates.
      * 
-     * @param href
-     * @return the updated href with the CSRF token parameter added
+     * @param href 
+     * 		the URL to which the CSRF token will be appended
+     * 
+     * @return the updated URL with the CSRF token parameter added
      */
     String addCSRFToken(String href);
     
@@ -78,7 +84,6 @@ public interface HTTPUtilities {
     /**
      * Returns the current user's CSRF token. If there is no current user then return null.
      * 
-     * @param href
      * @return the current users CSRF token
      */
     String getCSRFToken();
@@ -102,7 +107,7 @@ public interface HTTPUtilities {
      * Checks the CSRF token in the URL (see User.getCSRFToken()) against the user's CSRF token and
 	 * throws an IntrusionException if it is missing.
      * 
-	 * @throws IntrusionException
+	 * @throws IntrusionException if CSRF token is missing or incorrect
 	 */
     void verifyCSRFToken(HttpServletRequest request) throws IntrusionException;
     
@@ -110,42 +115,67 @@ public interface HTTPUtilities {
     /**
 	 * Decrypts an encrypted hidden field value and returns the cleartext. If the field does not decrypt properly,
 	 * an IntrusionException is thrown to indicate tampering.
+	 * 
+	 * @param encrypted 
+	 * 		hidden field value to decrypt
+	 * 
+	 * @return decrypted hidden field value stored as a String
 	 */
 	String decryptHiddenField(String encrypted);
 
-	
 	/**
 	 * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
 	 * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
-	 * the user that this should only be enabled on computers where no other users will have access.
+	 * the user that this should only be enabled on computers where no other users will have access.  
 	 * 
-	 * @param user the username
-	 * @param password the user's password
-	 * @param maxAge the length of time that the token should be valid for in relative seconds
-	 * @param domain the domain to restrict the token to or null
-	 * @param path the path to restrict the token to or null
+	 * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser(); 
+	 * 
+	 * @param password 
+	 * 		the user's password
+	 * @param maxAge 
+	 * 		the length of time that the token should be valid for in relative seconds
+	 * @param domain 
+	 * 		the domain to restrict the token to or null
+	 * @param path 
+	 * 		the path to restrict the token to or null
+	 * 
+	 * @return encrypted "Remember Me" token stored as a String
 	 */
 	String setRememberToken(HttpServletRequest request,HttpServletResponse response, String password, int maxAge, String domain, String path);
 
-	
     /**
      * Encrypts a hidden field value for use in HTML.
-     * @param value the cleartext value
-     * @return the encrypted value
-     * @throws EncryptionException
+     * 
+     * @param value 
+     * 		the cleartext value of the hidden field
+     * 
+     * @return the encrypted value of the hidden field
+     * 
+     * @throws EncryptionException 
      */
 	String encryptHiddenField(String value) throws EncryptionException;
 
-
 	/**
 	 * Takes a querystring (i.e. everything after the ? in the URL) and returns an encrypted string containing the parameters.
-	 * @param href
-	 * @return
+	 * 
+	 * @param query 
+	 * 		the querystring to encrypt
+	 * 
+	 * @return encrypted querystring stored as a String
+	 * 
+	 * @throws EncryptionException
 	 */
 	String encryptQueryString(String query) throws EncryptionException;
 	
 	/**
 	 * Takes an encrypted querystring and returns a Map containing the original parameters.
+	 * 
+	 * @param encrypted 
+	 * 		the encrypted querystring to decrypt
+	 * 
+	 * @return a Map object containing the decrypted querystring
+	 * 
+	 * @throws EncryptionException
 	 */
 	Map decryptQueryString(String encrypted) throws EncryptionException;
 
@@ -158,15 +188,24 @@ public interface HTTPUtilities {
 	 * 
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
      * 
-     * @param tempDir the temp dir
-     * @param finalDir the final dir
+     * @param tempDir 
+     * 		the temporary directory
+     * @param finalDir 
+     * 		the final directory
+     * 
      * @return List of new File objects from upload
-     * @throws ValidationException the validation exception
+     * 
+     * @throws ValidationException 
+     * 		if the file fails validation
      */
     List getSafeFileUploads(HttpServletRequest request, File tempDir, File finalDir) throws ValidationException;
 
     /**
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
+     * 
+	 * @return a map containing the decrypted cookie state value
+	 * 
+	 * @throws EncryptionException
      */
     Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException ;
 
@@ -198,8 +237,11 @@ public interface HTTPUtilities {
      * based access control check. This method ensures that you can only forward to non-publicly
      * accessible resources.
 	 * 
-     * @param context
-     * @param location
+     * @param context 
+     * 		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param location 
+     * 		the URL to forward to
+     * 
      * @throws AccessControlException
      * @throws ServletException
      * @throws IOException
@@ -251,8 +293,10 @@ public interface HTTPUtilities {
      * Stores the current HttpRequest and HttpResponse so that they may be readily accessed throughout
      * ESAPI (and elsewhere)
      * 
-     * @param request the current request
-     * @param response the current response
+     * @param request 
+     * 		the current request
+     * @param response 
+     * 		the current response
      */
     void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response);
     
@@ -292,8 +336,10 @@ public interface HTTPUtilities {
      * 
 	 * This method uses {@link HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
 	 * 
-	 * @param logger the logger to write the request to
-     * @param parameterNamesToObfuscate the sensitive params
+	 * @param logger 
+	 * 		the logger to write the request to
+     * @param parameterNamesToObfuscate
+     * 		the sensitive parameters
      */
     void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate);
 

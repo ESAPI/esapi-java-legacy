@@ -19,6 +19,9 @@ package org.owasp.esapi;
  * The LogFactory interface is intended to allow substitution of various logging packages, while providing
  * a common interface to access them.
  * 
+ * In the default implementation, JavaLogFactory.java implements this interface.  JavaLogFactory.java also contains an 
+ * inner class called JavaLogger which implements Logger.java and uses the Java logging package to log events. 
+ * 
  * @see org.owasp.esapi.ESAPI
  * 
  * @author rdawes

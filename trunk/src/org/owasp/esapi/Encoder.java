@@ -103,37 +103,77 @@ public interface Encoder {
 	 * For more information on form encoding, please refer to the <a
 	 * href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C
 	 * specifications</a>.
+	 * 
+	 * @param input the text to canonicalize
+	 * @return a String containing the canonicalized text
+	 * @throws EncodingException if canonicalization fails
 	 */
 	String canonicalize(String input) throws EncodingException;
 	
+	/**
+	 * @param input 
+	 * 		the text to canonicalize
+	 * @param strict 
+	 * 		true if checking for double encoding is desired, false otherwise
+	 * 
+	 * @return a String containing the canonicalized text
+	 * 
+	 * @throws EncodingException 
+	 * 		if canonicalization fails
+	 */
 	String canonicalize(String input, boolean strict) throws EncodingException;
 
 	/**
 	 * Reduce all non-ascii characters to their ASCII form so that simpler
 	 * validation rules can be applied. For example, an accented-e character
 	 * will be changed into a regular ASCII e character.
+	 * 
+	 * @param input 
+	 * 		the text to normalize
+	 * 
+	 * @return a normalized String
 	 */
 	String normalize(String input);
 
 	/**
 	 * Encode data for use in Cascading Style Sheets (CSS) content.
+	 * 
+	 * @param input 
+	 * 		the text to encode for CSS
+	 * 
+	 * @return input encoded for CSS
 	 */
 	String encodeForCSS(String input);
 
 	/**
 	 * Encode data for use in HTML content.
+	 * 
+	 * @param input 
+	 * 		the text to encode for HTML
+	 * 
+	 * @return input encoded for HTML
 	 */
 	String encodeForHTML(String input);
 
 	/**
 	 * Encode data for use in HTML attributes.
+	 * 
+	 * @param input 
+	 * 		the text to encode for an HTML attribute
+	 * 
+	 * @return input encoded for use as an HTML attribute
 	 */
 	String encodeForHTMLAttribute(String input);
 
 	/**
-	 * Encode data for insertion inside a data value in a JavaScript. Putting user data directly
+	 * Encode data for insertion inside a data value in JavaScript. Putting user data directly
 	 * inside a script is quite dangerous. Great care must be taken to prevent putting user data
 	 * directly into script code itself, as no amount of encoding will prevent attacks there.
+	 * 
+	 * @param input 
+	 * 		the text to encode for JavaScript
+	 * 
+	 * @return input encoded for use in JavaScript
 	 */
 	String encodeForJavaScript(String input);
 
@@ -141,26 +181,53 @@ public interface Encoder {
 	 * Encode data for insertion inside a data value in a visual basic script. Putting user data directly
 	 * inside a script is quite dangerous. Great care must be taken to prevent putting user data
 	 * directly into script code itself, as no amount of encoding will prevent attacks there.
+	 * 
+	 * @param input 
+	 * 		the text to encode for VBScript
+	 * 
+	 * @return input encoded for use in VBScript
 	 */
 	String encodeForVBScript(String input);
 
 	/**
 	 * Encode for SQL according to the selected codec.
+	 * 
+	 * @param codec 
+	 * 		a Codec that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
+	 * @param input 
+	 * 		the text to encode for SQL
+	 * 
+	 * @return input encoded for use in SQL
 	 */
 	String encodeForSQL(Codec codec, String input);
 
 	/**
 	 * Encode data for use in LDAP queries.
+	 * 
+	 * @param input 
+	 * 		the text to encode for LDAP
+	 * 
+	 * @return input encoded for use in LDAP
 	 */
 	String encodeForLDAP(String input);
 
 	/**
-	 * Encode data for use in an LDAP distinguished name. 
+	 * Encode data for use in an LDAP distinguished name.
+	 * 
+	 *  @param input 
+	 *  		the text to encode for an LDAP distinguished name
+	 * 
+	 *  @return input encoded for use in an LDAP distinguished name
 	 */
 	String encodeForDN(String input);
 
 	/**
 	 * Encode data for use in an XPath query.
+	 * 
+	 * @param input 
+	 * 		the text to encode for XPath
+	 * 
+	 * @return input encoded for use in XPath
 	 */
 	String encodeForXPath(String input);
 
@@ -175,8 +242,9 @@ public interface Encoder {
 	 * a safe mechanism to do so.
 	 * 
 	 * @param input
-	 *            the input
-	 * @return the string
+	 *            the text to encode for XML
+	 * 
+	 * @return input encoded for use in XML
 	 */
 	String encodeForXML(String input);
 
@@ -191,8 +259,9 @@ public interface Encoder {
 	 * a safe mechanism to do so.
 	 * 
 	 * @param input
-	 *            the input
-	 * @return the string
+	 *            the text to encode for use as an XML attribute
+	 * 
+	 * @return input encoded for use in an XML attribute
 	 */
 	String encodeForXMLAttribute(String input);
 
@@ -200,6 +269,14 @@ public interface Encoder {
 	 * Encode for use in a URL. This method performs <a
 	 * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding"</a>
 	 * on the entire string.
+	 * 
+	 * @param input 
+	 * 		the text to encode for use in a URL
+	 * 
+	 * @return input encoded for use in a URL
+	 * 
+	 * @throws EncodingException 
+	 * 		if encoding fails
 	 */
 	String encodeForURL(String input) throws EncodingException;
 
@@ -207,16 +284,37 @@ public interface Encoder {
 	 * Decode from URL. Implementations should first canonicalize and
 	 * detect any double-encoding. If this check passes, then the data is decoded using URL
 	 * decoding.
+	 * 
+	 * @param input 
+	 * 		the text to decode from an encoded URL
+	 * 
+	 * @return the decoded URL value
+	 * 
+	 * @throws EncodingException 
+	 * 		if decoding fails
 	 */
 	String decodeFromURL(String input) throws EncodingException;
 
 	/**
 	 * Encode for Base64.
+	 * 
+	 * @param input 
+	 * 		the text to encode for Base64
+	 * @param wrap
+	 * 
+	 * @return input encoded for Base64
 	 */
 	String encodeForBase64(byte[] input, boolean wrap);
 
 	/**
 	 * Decode data encoded with BASE-64 encoding.
+	 * 
+	 * @param input 
+	 * 		the Base64 text to decode
+	 * 
+	 * @return input decoded from Base64
+	 * 
+	 * @throws IOException
 	 */
 	byte[] decodeFromBase64(String input) throws IOException;
 

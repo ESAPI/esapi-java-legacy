@@ -34,12 +34,12 @@ import org.owasp.esapi.errors.EncryptionException;
 public interface Randomizer {
 
 	/**
-	 * Gets the random string.
+	 * Gets a random string. of a desired length and character set.
 	 * 
-	 * @param length
-	 *            the length
-	 * @param characterSet
-	 *            the character set
+	 * @param length 
+	 * 		the length of the string
+	 * @param characterSet 
+	 * 		the character set
 	 * 
 	 * @return the random string
 	 */
@@ -47,17 +47,18 @@ public interface Randomizer {
 
 	/**
 	 * Returns a random boolean.
-	 * @return
+	 * 
+	 * @return true or false, randomly
 	 */
 	boolean getRandomBoolean();
 	
 	/**
 	 * Gets the random integer.
 	 * 
-	 * @param min
-	 *            the min
-	 * @param max
-	 *            the max
+	 * @param min 
+	 * 		the minimum integer that will be returned
+	 * @param max 
+	 * 		the maximum integer that will be returned
 	 * 
 	 * @return the random integer
 	 */
@@ -74,6 +75,10 @@ public interface Randomizer {
 	
     /**
      * Returns an unguessable random filename with the specified extension.
+     * @param extenstion 
+     * 		extension to add to the random filename
+     * 
+     * @return a random unguessable filename ending with the specified extension
      */
     public String getRandomFilename( String extension );
     
@@ -81,10 +86,10 @@ public interface Randomizer {
 	/**
 	 * Gets the random real.
 	 * 
-	 * @param min
-	 *            the min
-	 * @param max
-	 *            the max
+	 * @param min 
+	 * 		the minimum real number that will be returned
+	 * @param max 
+	 * 		the maximum real number that will be returned
 	 * 
 	 * @return the random real
 	 */
@@ -92,7 +97,9 @@ public interface Randomizer {
 
     /**
      * Generates a random GUID.
+     * 
      * @return the GUID
+     * 
      * @throws EncryptionException 
      */
     String getRandomGUID() throws EncryptionException;

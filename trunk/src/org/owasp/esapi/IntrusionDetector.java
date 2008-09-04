@@ -37,7 +37,9 @@ public interface IntrusionDetector {
     /**
      * Adds the exception to the IntrusionDetector.
      * 
-     * @param exception the exception
+     * @param exception 
+     * 		the exception
+     * 
      * @throws IntrusionException the intrusion exception
      */
     void addException(Exception exception) throws IntrusionException;
@@ -45,9 +47,13 @@ public interface IntrusionDetector {
     /**
      * Adds the event to the IntrusionDetector.
      * 
-     * @param eventName the event
-     * @param logMessage the message to log with the event
-     * @throws IntrusionException the intrusion exception
+     * @param eventName 
+     * 		the event
+     * @param logMessage 
+     * 		the message to log with the event
+     * 
+     * @throws IntrusionException 
+     * 		the intrusion exception
      */
     void addEvent(String eventName, String logMessage) throws IntrusionException;
 

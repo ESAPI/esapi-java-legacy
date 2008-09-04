@@ -104,15 +104,21 @@ public interface AccessReferenceMap {
 
 	/**
 	 * Adds a direct reference to the AccessReferenceMap and generates an associated indirect reference. 
-	 * @param direct the direct reference
+	 * @param direct 
+	 * 		the direct reference
+	 * 
 	 * @return the corresponding indirect reference
 	 */
 	String addDirectReference(Object direct);
 	
 	/**
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
-	 * @param direct the direct reference to remove
+	 * @param direct 
+	 * 		the direct reference to remove
+	 * 
 	 * @return the corresponding indirect reference
+	 * 
+	 * @throws AccessControlException
 	 */
 	String removeDirectReference(Object direct) throws AccessControlException;
 
