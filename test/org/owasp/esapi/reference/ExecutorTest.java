@@ -25,6 +25,8 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Executor;
+import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.WindowsCodec;
 
 
 /**
@@ -79,6 +81,7 @@ public class ExecutorTest extends TestCase {
 	 *             the exception
 	 */
 	public void testExecuteSystemCommand() throws Exception {
+		Codec codec = new WindowsCodec();
 		System.out.println("executeSystemCommand");
 		Executor instance = ESAPI.executor();
 		File executable = new File( "C:\\Windows\\System32\\cmd.exe" );
@@ -87,38 +90,58 @@ public class ExecutorTest extends TestCase {
 		try {
 			params.add("/C");
 			params.add("dir");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, 10);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
 			assertTrue(result.length() > 0);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 		try {
 			File exec2 = new File( executable.getPath() + ";inject.exe" );
-			instance.executeSystemCommand(exec2, new ArrayList(params), working, 10);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
 			// expected
 		}
 		try {
 			File exec2 = new File( executable.getPath() + "\\..\\cmd.exe" );
-			instance.executeSystemCommand(exec2, new ArrayList(params), working, 10);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
 			// expected
 		}
 		try {
 			File workdir = new File( "ridiculous" );
-			instance.executeSystemCommand(executable, new ArrayList(params), workdir, 10);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), workdir, codec);
+			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
 			// expected
 		}
 		try {
 			params.add("&dir");
-			instance.executeSystemCommand(executable, new ArrayList(params), working, 10);
-			fail();
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
-			// expected
+			fail();
+		}
+
+		try {
+			params.set( params.size()-1, "c:\\autoexec.bat" );
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
+		} catch (Exception e) {
+			fail();
+		}
+
+		try {
+			params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
+		} catch (Exception e) {
+			fail();
 		}
 	}
 

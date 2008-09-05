@@ -18,6 +18,7 @@ package org.owasp.esapi;
 import java.io.File;
 import java.util.List;
 
+import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.ExecutorException;
 
 
@@ -41,10 +42,9 @@ public interface Executor {
 
 	/**
 	 * Executes a system command after checking that the executable exists and
-	 * that the parameters have not been subject to injection with untrusted
-	 * user data. Implementations shall change to the specified working
-	 * directory before invoking the command. Also, processes should be
-	 * interrupted after the specified timeout period has elapsed.
+	 * escaping all the parameters to ensure that injection is impossible.
+	 * Implementations must change to the specified working
+	 * directory before invoking the command.
 	 * 
 	 * @param command
 	 *            the command to execute
@@ -52,14 +52,14 @@ public interface Executor {
 	 *            the parameters of the command being executed
 	 * @param workdir
 	 *            the working directory
-	 * @param timeoutSeconds
-	 *            the amount of time to allow this process to run
+	 * @param codec
+	 *            the codec to use to encode for the particular OS in use
 	 * 
 	 * @return the output of the command being run
 	 * 
 	 * @throws ExecutorException
 	 *             the service exception
 	 */
-	String executeSystemCommand(File executable, List params, File workdir, int timeoutSeconds) throws ExecutorException;
+	String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException;
 
 }

@@ -90,6 +90,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // TODO: check
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_SQL = { ' ' };
+	private final static char[] IMMUNE_OS = {};
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
@@ -354,21 +355,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/**
-	 * This method is not recommended. The use PreparedStatement is the normal
-	 * and preferred approach. However, if for some reason this is impossible,
-	 * then this method is provided as a weaker alternative. The best approach
-	 * is to make sure any single-quotes are double-quoted. Another possible
-	 * approach is to use the {escape} syntax described in the JDBC
-	 * specification in section 1.5.6 (see
-	 * http://java.sun.com/j2se/1.4.2/docs/guide/jdbc/getstart/statement.html).
-	 * However, this syntax does not work with all drivers, and requires
-	 * modification of all queries.
+	
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
-	 * @see org.owasp.esapi.Encoder#encodeForSQL(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForSQL(org.owasp.esapi.codecs.Codec,java.lang.String)
 	 */
 	public String encodeForSQL(Codec codec, String input) {
 	    if( input == null ) return null;
@@ -376,6 +367,21 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
 			sb.append( encode( c, codec, CHAR_ALPHANUMERICS, IMMUNE_SQL ) );
+		}
+		return sb.toString();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.owasp.esapi.Encoder#encodeForOS(org.owasp.esapi.codecs.Codec,java.lang.String)
+	 */
+	public String encodeForOS(Codec codec, String input) {
+	    if( input == null ) return null;
+		StringBuffer sb = new StringBuffer();
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			sb.append( encode( c, codec, CHAR_ALPHANUMERICS, IMMUNE_OS ) );
 		}
 		return sb.toString();
 	}
@@ -419,6 +425,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @see org.owasp.esapi.Encoder#encodeForDN(java.lang.String)
 	 */
 	public String encodeForDN(String input) {
+		// TODO: replace with DN codec
 		StringBuffer sb = new StringBuffer();
 		if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
 			sb.append('\\'); // add the leading backslash if needed

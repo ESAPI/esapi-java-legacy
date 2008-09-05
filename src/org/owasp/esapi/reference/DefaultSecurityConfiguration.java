@@ -453,7 +453,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
 	public boolean getLogEncodingRequired() {
     	String value = properties.getProperty( "LogEncodingRequired" );
-    	if ( value != null && value.equalsIgnoreCase("false")) return false;
-    	return true;
+    	if ( value != null && value.equalsIgnoreCase("true")) return true;
+    	return false;
 	}
 }
