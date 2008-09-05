@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
+import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.owasp.esapi.ESAPI;
@@ -24,8 +25,8 @@ public class EncodeForHTMLJavaScriptTag extends BodyTagSupport {
 	
 	public int doStartTag() {
 					
-		return EVAL_BODY_TAG;
-
+		//return EVAL_BODY_TAG; <-- Deprecated
+		return BodyTag.EVAL_BODY_BUFFERED;
 	}
 
 	
