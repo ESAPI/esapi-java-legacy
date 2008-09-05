@@ -20,12 +20,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.Iterator;
 import java.util.List;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Validator;
+import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.ExecutorException;
 
 /**
@@ -51,15 +51,13 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IExecutor#executeSystemCommand(java.lang.String, java.util.List, java.io.File,
-     * int)
+     * @see org.owasp.esapi.Executor#executeSystemCommand(java.lang.String, java.util.List, java.io.File,
+     * org.owasp.esapi.codecs.Codec)
      */
-    public String executeSystemCommand(File executable, List params, File workdir, int timeoutSeconds) throws ExecutorException {
-        BufferedReader br = null;
+    public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
         try {
-            logger.trace(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
-            Validator validator = ESAPI.validator();
-
+            logger.warning(Logger.SECURITY, "Initiating executable: " + executable + " " + params + " in " + workdir);
+ 
             // command must exactly match the canonical path and must actually exist on the file system
             // using equalsIgnoreCase for Windows, although this isn't quite as strong as it should be
             if (!executable.getCanonicalPath().equalsIgnoreCase(executable.getPath())) {
@@ -69,16 +67,12 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
                 throw new ExecutorException("Execution failure", "No such executable: " + executable);
             }
 
-            // parameters must only contain alphanumerics, dash, and forward slash
-            Iterator i = params.iterator();
-            while (i.hasNext()) {
-                String param = (String) i.next();
-                if (!validator.isValidInput("executeSystemCommand", param, "SystemCommand", MAX_SYSTEM_COMMAND_LENGTH, false)) {
-                    throw new ExecutorException("Execution failure", "Illegal characters in parameter to executable: " + param);
-                }
-
+            // escape any special characters in the parameters
+            for ( int i = 0; i < params.size(); i++ ) {
+            	String param = (String)params.get(i);
+            	params.set( i, ESAPI.encoder().encodeForOS(codec, param));
             }
-
+            
             // working directory must exist
             if (!workdir.exists()) {
                 throw new ExecutorException("Execution failure", "No such working directory for running executable: " + workdir.getPath());
@@ -97,27 +91,28 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             // pb.redirectErrorStream(true);
             // Process process = pb.start();
 
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            br = new BufferedReader(isr);
-            StringBuffer sb = new StringBuffer();
-            String line;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
+            String output = readStream( process.getInputStream() );
+            String errors = readStream( process.getErrorStream() );
+            if ( errors != null && errors.length() > 0 ) {
+            	logger.warning( Logger.SECURITY, "Error during system command: " + errors );
             }
-            logger.trace(Logger.SECURITY, "System command successful: " + params);
-            return sb.toString();
+            logger.warning(Logger.SECURITY, "System command complete: " + params);
+            return output;
         } catch (Exception e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
-        } finally {
-            try {
-                if ( br != null ) {
-                    br.close();
-                }
-            } catch (IOException e) {
-                // give up
-            }
         }        
     }
 
+
+    private String readStream( InputStream is ) throws IOException {
+	    InputStreamReader isr = new InputStreamReader(is);
+	    BufferedReader br = new BufferedReader(isr);
+	    StringBuffer sb = new StringBuffer();
+	    String line;
+	    while ((line = br.readLine()) != null) {
+	        sb.append(line + "\n");
+	    }
+	    return sb.toString();
+    }
+    
 }

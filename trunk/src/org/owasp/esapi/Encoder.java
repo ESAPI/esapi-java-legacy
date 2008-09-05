@@ -87,7 +87,7 @@ public interface Encoder {
 	 * <PRE>&#x3a;</PRE>.
 	 * <P>
 	 * Note that all of these formats may possibly render properly in a
-	 * browser without the trailing semi-colon.
+	 * browser without the trailing semicolon.
 	 * <P>
 	 * Double-encoding is a particularly thorny problem, as applying ordinary decoders
 	 * may introduce encoded characters, even characters encoded with a different
@@ -189,8 +189,20 @@ public interface Encoder {
 	 */
 	String encodeForVBScript(String input);
 
+
 	/**
-	 * Encode for SQL according to the selected codec.
+	 * Encode input for use in a SQL query (this method is not recommended), according to the
+	 * selected codec (appropriate codecs include
+	 * the MySQLCodec and OracleCodec).
+	 * The use of the PreparedStatement interface is 
+	 * and preferred approach. However, if for some reason this is impossible,
+	 * then this method is provided as a weaker alternative. The best approach
+	 * is to make sure any single-quotes are double-quoted. Another possible
+	 * approach is to use the {escape} syntax described in the JDBC
+	 * specification in section 1.5.6 (see
+	 * http://java.sun.com/j2se/1.4.2/docs/guide/jdbc/getstart/statement.html).
+	 * However, this syntax does not work with all drivers, and requires
+	 * modification of all queries.
 	 * 
 	 * @param codec 
 	 * 		a Codec that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
@@ -200,6 +212,19 @@ public interface Encoder {
 	 * @return input encoded for use in SQL
 	 */
 	String encodeForSQL(Codec codec, String input);
+
+	/**
+	 * Encode for an operating system command shell according to the selected codec (appropriate codecs include
+	 * the WindowsCodec and UnixCodec).
+	 * 
+	 * @param codec 
+	 * 		a Codec that declares which database 'input' is being encoded for (ie. Windows, Unix, etc.)
+	 * @param input 
+	 * 		the text to encode for the command shell
+	 * 
+	 * @return input encoded for use in command shell
+	 */
+	String encodeForOS(Codec codec, String input);
 
 	/**
 	 * Encode data for use in LDAP queries.
