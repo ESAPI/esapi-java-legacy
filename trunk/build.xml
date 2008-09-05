@@ -81,6 +81,27 @@
         <!-- a single distributable. No shrinking, optimization or obfuscation -->
         <!-- is performed. We ignore warnings about certain missing classes    -->
         <!-- since they are not used/required                      -->
+    	
+    	<!-- rt.jar is different on MacOS X: it's split into two -->
+    	<condition property="jre.runtime"
+    	value="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar"
+    	else="${java.home}/lib/rt.jar" >
+    	<and>
+    	<os family="mac"/>
+    	<os family="unix"/>
+    	</and>
+    	</condition>
+
+    	<!-- jsse.jar is simply located in a different director on MacOS X -->
+    	<condition property="jsse.location"
+    	value="/System/Library/Frameworks/JavaVM.framework/Classes/jsse.jar"
+    	else="${java.home}/lib/jsse.jar" >
+    	<and>
+    	<os family="mac"/>
+    	<os family="unix"/>
+    	</and>
+    	</condition>
+
         <proguard 
             ignorewarnings="false" 
             obfuscate="false" 
@@ -93,8 +114,8 @@
             <injar name="lib/antisamy-bin.1.2.jar" filter="!META-INF/*"/>
             <injar name="lib/commons-fileupload-1.2.jar" filter="!META-INF/*"/>
             <injar name="lib/commons-io-1.3.2.jar" filter="!META-INF/*"/>
-            <libraryjar name="${java.home}/lib/rt.jar"/>
-            <libraryjar name="${java.home}/lib/jsse.jar"/>
+        	<libraryjar name="${jre.runtime}"/>
+        	<libraryjar name="${jsse.location}"/>
             <libraryjar name="lib/servlet-api.jar"/>
             <libraryjar name="lib/jsp-api.jar"/>
             <libraryjar name="lib/xml-apis-ext.jar"/>
