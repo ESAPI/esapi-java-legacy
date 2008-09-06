@@ -398,6 +398,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * and uses the URL to determine if the request was transmitted over SSL.
 	 */
 	public boolean isSecureChannel(HttpServletRequest request) {
+		if( ( request.getRequestURL() == null ) || ( request.getRequestURL().toString().length() == 0 ))
+			return false;
 		return (request.getRequestURL().charAt(4) == 's');
 	}
 
