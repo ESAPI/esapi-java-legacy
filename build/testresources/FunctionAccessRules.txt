@@ -1,0 +1,8 @@
+# Function Access Rules
+#
+
+/                | any      | deny  | default deny
+/FunctionA       | User     | allow |
+/FunctionAdeny   | User     | deny  |
+/FunctionB       | Admin    | allow |
+/FunctionBdeny   | Admin    | deny  |

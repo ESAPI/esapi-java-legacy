@@ -1,0 +1,6 @@
+# Data Access Rules
+#
+
+/                | any       | deny  | default deny
+/Data1           | User      | allow |
+/Data2           | Admin     | allow |
