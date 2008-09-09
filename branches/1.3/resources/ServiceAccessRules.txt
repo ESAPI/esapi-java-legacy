@@ -1,0 +1,8 @@
+# Service Access Rules
+#
+
+/                  | any     | deny  | default deny
+/services          | any     | deny  |
+/services/ServiceA | User    | allow |
+/services/ServiceB | Admin   | allow |
+
