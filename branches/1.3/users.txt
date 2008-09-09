@@ -1,3 +1,0 @@
-# This is the user file associated with the ESAPI library from http://www.owasp.org
-# accountName | hashedPassword | roles | locked | enabled | rememberToken | csrfToken | oldPasswordHashes | lastPasswordChangeTime | lastLoginTime | lastFailedLoginTime | expirationTime | failedLoginCount
-
