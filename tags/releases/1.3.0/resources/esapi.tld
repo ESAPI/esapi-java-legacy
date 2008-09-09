@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+
+   <tlibversion>1.2</tlibversion>
+   <jspversion>1.1</jspversion>
+
+   <shortname>esapi</shortname>
+   <uri>http://struts.apache.org/tags-html</uri>
+
+   <tag>
+      <name>encodeForHTML</name>
+      <tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+      <bodycontent>JSP</bodycontent>
+      <attribute>
+         <name>scope</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>attribute</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+    </tag>
+
+   <tag>
+      <name>encodeForJavaScript</name>
+      <tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+      <bodycontent>JSP</bodycontent>
+      <attribute>
+         <name>scope</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>attribute</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+    </tag>
+
+   <tag>
+      <name>encodeForHTMLAttribute</name>
+      <tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+      <bodycontent>JSP</bodycontent>
+      <attribute>
+         <name>scope</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>attribute</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+    </tag>
+    
+    <tag>
+      <name>encodeForHTML</name>
+      <tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+      <bodycontent>JSP</bodycontent>
+      <attribute>
+         <name>scope</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>attribute</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+    </tag>
+
+    <tag>
+      <name>encodeForVBScript</name>
+      <tagclass>org.owasp.esapi.tags.EncodeForVBScriptTag</tagclass>
+      <bodycontent>JSP</bodycontent>
+      <attribute>
+         <name>scope</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+      <attribute>
+         <name>attribute</name>
+         <required>false</required>
+         <rtexprvalue>false</rtexprvalue>
+      </attribute>
+    </tag>
+    
+ </taglib>
