@@ -1,0 +1,8 @@
+xxx
+Content-Disposition: form-data; name="upload"; filename="testupload.txt"
+Content-Type: text/plain
+
+This is a test of the multipart broadcast system.
+This is only a test.
+Stop.
+xxx
