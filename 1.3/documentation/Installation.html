@@ -1,0 +1,87 @@
+<html>
+
+<head>
+<title>ESAPI Installation Notes</title>
+</head>
+
+<body>
+
+<H1>Welcome to <a href="http://www.owasp.org/index.php/ESAPI">ESAPI</a></H1>
+
+<p>The OWASP Enterprise Security API Project may be found at http://www.owasp.org/index.php/ESAPI. This software
+is available under the LGPL, and we encourage your participation in the project.</p>
+
+<p>ESAPI consists of two key parts, an API defined in a set of interfaces, and a reference implementation of those
+interfaces. Within your enterprise, you may want to customize the ESAPI to suit the way you do business. The important
+thing is that you work towards creating your ESAPI and getting all of your projects to use it. This will dramatically
+increase the likelihood that your developers are producing secure code.</p>
+
+<p>Your ESAPI can be viewed as a unified facade to all of your organization's security functionality. Have a clear, easy
+to understand API make it easy to find security mechanisms and use them properly. Many of the existing security libraries,
+while providing excellent security functions, are much too complex for most developers to use without mistakes. Establishing
+your ESAPI will help to prevent this kind of problem.</p>
+
+<p>Having an ESAPI has other benefits as well, including:</p>
+<ul>
+<li>Simplifed requirements</li>
+<li>Easier developer security training</li>
+<li>Faster and more reliable security scanning and penetration testing</li>
+<li>Better results from static analysis and code review</li>
+<li>Ability to change security mechanisms across applications</li>
+<li>Higher assurance in your security mechanisms</li>
+<li>Solid coverage of most of the OWASP Top Ten</li>
+</ul>
+
+<h1>Installation</h1>
+<p>To install the ESAPI in your environment, you should include the following jar files on your classpath:
+<ul>
+<li>owasp-esapi-1.0.jar</li>
+<li>commons-fileupload-1.2.jar</li>
+<li>commons-io-1.3.2.jar</li>
+</ul>
+<p>Newer versions of the Apache Commons projects may also work.</p>
+
+<h1>Invoking</h1>
+
+<p>The ESAPI needs to know where to find the ESAPI.properties and other configuration files. This is done by way of a Java system property.
+The property should point to the resources directory where the ESAPI files reside. You can specify the system property where you invoke the JVM as follows:</p>
+
+<pre>java -Dorg.owasp.esapi.resources="/path/to/resources/directory"</pre>
+
+<p>You can then add calls to the ESAPI methods from your code. For example, to use the ESAPI Validator, you should
+get an instance from the singleton with
+
+<PRE>Validator validator = Validator.getInstance()</PRE>
+
+Then you can use validation calls directly. For example, to validate an email address, you can use:
+
+<PRE>validation.isValidDataFromBrowser( "Email", input );</PRE>
+
+Or
+
+<PRE>
+try {
+    String validEmail = validation.getValidDataFromBrowser( "Email", input );
+} catch( ValidationException e ) {
+    // handle bad data
+}
+</PRE>
+
+<p>The regular expressions that define validators such as "Email" above are defined in the ESAPI properties file. Note
+that the Validator class performs a significant amount of canonicalization work before validating and prevents
+many common forms of attack.</p>
+
+<h1>Configuring</h1>
+<p>All of the configuration options for ESAPI are in ESAPI.properties. Generally the values specified there are
+good options for a web application that needs to be secure.</p>
+
+<h1>Building</h1>
+<p>ESAPI is set up as an Eclipse project. If you download the full zip archive, you should be able to import it into
+Eclipse and get it to compile. You should be able to run the test cases, provided that you remember that your launch
+configuration for the test suite will have to have the org.owasp.esapi.resources property defined as described above.</p>
+
+</body>
+
+</html>
+
+
