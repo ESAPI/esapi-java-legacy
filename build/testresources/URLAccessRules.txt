@@ -1,0 +1,14 @@
+# URL Access Rules
+#
+
+/                | any       | deny  | default deny
+/nobody          | any       | deny  |
+/ESAPITest       | any       | allow |
+/ESAPITest/admin | admin     | allow |
+/AspectUpload/*  | any       | allow |
+/test/admin      | admin     | allow |
+/test/user       | user      | allow |
+/test/none       | any       | deny  |
+/test/all        | any       | allow |
+*.gif            | any       | allow |
+*.exe            | any       | deny

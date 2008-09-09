@@ -1,0 +1,6 @@
+# Data Access Rules
+#
+
+/                | any       | deny  | default deny
+/Dir/File1       | User      | allow |
+/Dir/File2       | Admin     | allow |
