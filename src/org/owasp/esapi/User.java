@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
  * The User interface represents an application user or user account. There is quite a lot of information that an
@@ -590,7 +589,7 @@ public interface User extends Principal {
          * @see org.owasp.esapi.User#resetCSRFToken()
          */
         public String resetCSRFToken() throws AuthenticationException {
-    		csrfToken = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+    		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
     		return csrfToken;
         }
 
