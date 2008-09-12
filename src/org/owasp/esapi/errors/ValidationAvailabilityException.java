@@ -33,7 +33,9 @@ public class ValidationAvailabilityException extends ValidationException {
     /**
      * Create a new ValidationException
      * @param userMessage
+     *            the message to display to users
      * @param logMessage
+	 * 			  the message logged
      */
 	public ValidationAvailabilityException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
@@ -42,9 +44,12 @@ public class ValidationAvailabilityException extends ValidationException {
     /**
      * Create a new ValidationException
      * @param userMessage
+     *            the message to display to users
      * @param logMessage
+	 * 			  the message logged
      * @param cause
-     */
+     * 			  the cause
+     */			  
 	public ValidationAvailabilityException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
 	}

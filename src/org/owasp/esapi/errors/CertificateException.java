@@ -36,8 +36,10 @@ public class CertificateException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of CertificateException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      */
     public CertificateException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -46,8 +48,10 @@ public class CertificateException extends EnterpriseSecurityException {
     /**
      * Instantiates a new CertificateException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */

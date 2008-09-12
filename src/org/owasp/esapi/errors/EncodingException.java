@@ -36,8 +36,10 @@ public class EncodingException extends EnterpriseSecurityException {
        /**
      * Creates a new instance of EncodingException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      */
     public EncodingException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -46,8 +48,10 @@ public class EncodingException extends EnterpriseSecurityException {
     /**
      * Instantiates a new EncodingException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */

@@ -43,8 +43,10 @@ public class AccessControlException extends EnterpriseSecurityException {
 	/**
 	 * Instantiates a new access control exception.
 	 * 
-	 * @param message
-	 *            the message
+	 * @param userMessage
+	 *            the message displayed to the user
+	 * @param logMessage
+	 * 			  the message logged
 	 * @param cause
 	 *            the cause
 	 */

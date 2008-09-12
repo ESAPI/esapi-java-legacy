@@ -32,8 +32,11 @@ public class ValidationUploadException extends ValidationException {
 
     /**
      * Create a new ValidationException
+     * 
      * @param userMessage
+     *            the message to display to users
      * @param logMessage
+	 * 			  the message logged
      */
 	public ValidationUploadException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
@@ -41,9 +44,13 @@ public class ValidationUploadException extends ValidationException {
 
     /**
      * Create a new ValidationException
+     * 
      * @param userMessage
+     *            the message to display to users
      * @param logMessage
+	 * 			  the message logged
      * @param cause
+     * 			  the cause
      */
 	public ValidationUploadException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);

@@ -254,7 +254,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * @throws EncryptionException 
-     * @see org.owasp.esapi.HTTPUtilities#decryptStateFromCookie()
+     * 
      */
     public Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
 		Cookie[] cookies = request.getCookies();
@@ -288,7 +288,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * @throws EncryptionException 
-     * @see org.owasp.esapi.HTTPUtilities#encryptStateInCookie(java.util.Map)
+     * 
      */
     public void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException {
     	StringBuffer sb = new StringBuffer();    	
@@ -475,7 +475,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
 	 * information about character encoding and MIME.
 	 * 
-	 * @see org.owasp.esapi.HTTPUtilities#safeSetContentType(java.lang.String)
+	 * 
 	 */
 	public void safeSetContentType(HttpServletResponse response) {
 		response.setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
@@ -548,7 +548,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
      * match items in the parameterNamesToObfuscate are shown as eight asterisks.
      * 
-     * @see org.owasp.esapi.Logger#logHTTPRequest(org.owasp.esapi.Logger,java.util.List)
+     * 
      */
     public void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate) {
         StringBuffer params = new StringBuffer();

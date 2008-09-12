@@ -68,7 +68,10 @@ public class EnterpriseSecurityException extends Exception {
     /**
      * Creates a new instance of EnterpriseSecurityException that includes a root cause Throwable.
      * 
-     * @param message the message
+     * @param userMessage 
+     * 			  the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      * @param cause the cause
      */
     public EnterpriseSecurityException(String userMessage, String logMessage, Throwable cause) {
@@ -76,11 +79,21 @@ public class EnterpriseSecurityException extends Exception {
         this.logMessage = logMessage;
         ESAPI.intrusionDetector().addException(this);
     }
-
+    
+    /**
+     * Returns message that is safe to display to users
+     * 
+     * @return a String containing a message that is safe to display to users
+     */
     public String getUserMessage() {
         return getMessage();
     }
 
+    /**
+     * Returns a message that is safe to display in logs, but probably not to users
+     * 
+     * @return a String containing a message that is safe to display in logs, but probably not to users
+     */
     public String getLogMessage() {
         return logMessage;
     }

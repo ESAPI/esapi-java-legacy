@@ -420,7 +420,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * Returns true if the directory path (not including a filename) is valid.
 	 * 
-	 * @see org.owasp.esapi.Validator#isValidDirectoryPath(java.lang.String)
+	 * 
 	 */
 	public boolean isValidDirectoryPath(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
@@ -961,7 +961,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Checks that all bytes are valid ASCII characters (between 33 and 126
 	 * inclusive). This implementation does no decoding. http://en.wikipedia.org/wiki/ASCII. (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.Validator#isValidASCIIFileContent(byte[])
+	 * 
 	 */
 	public boolean isValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {
