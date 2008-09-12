@@ -165,7 +165,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * by the browser, so this routine allows a single level of decoding.
 	 * 
 	 * @throws IntrusionException
-	 * @see org.owasp.esapi.Validator#canonicalize(java.lang.String)
+	 * 
 	 */
 	public String canonicalize( String input ) {
 		if ( input == null ) return null;
@@ -240,7 +240,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * characters are normalized into special characters that have meaning
 	 * to the destination of the data.
 	 * 
-	 * @see org.owasp.esapi.Validator#normalize(java.lang.String)
+	 * 
 	 */
 	public String normalize(String input) {
 		// Split any special characters into two parts, the base character and

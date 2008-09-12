@@ -44,8 +44,10 @@ public class ValidationException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of ValidationException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      */
     public ValidationException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -54,8 +56,10 @@ public class ValidationException extends EnterpriseSecurityException {
     /**
      * Instantiates a new ValidationException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */
@@ -66,9 +70,11 @@ public class ValidationException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of ValidationException.
      * 
-     * @param message
-     *            the message
-    * @param context
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
+     * @param context
      *            the source that caused this exception
      */
     public ValidationException(String userMessage, String logMessage, String context) {
@@ -79,8 +85,10 @@ public class ValidationException extends EnterpriseSecurityException {
     /**
      * Instantiates a new ValidationException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      * @param context
@@ -94,7 +102,7 @@ public class ValidationException extends EnterpriseSecurityException {
 	/**
 	 * Returns the UI reference that caused this ValidationException
 	 *  
-	 * @return
+	 * @return context, the source that caused the exception, stored as a string
 	 */
 	public String getContext() {
 		return context;
@@ -103,7 +111,8 @@ public class ValidationException extends EnterpriseSecurityException {
 	/**
 	 * Set's the UI reference that caused this ValidationException
 	 *  
-	 * @param cause
+	 * @param context
+	 * 			the context to set, passed as a String
 	 */
 	public void setContext(String context) {
 		this.context = context;

@@ -48,7 +48,10 @@ public class IntrusionException extends RuntimeException {
     /**
      * Creates a new instance of IntrusionException.
      * 
-     * @param message the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      */
     public IntrusionException(String userMessage, String logMessage) {
         super(userMessage);
@@ -59,8 +62,12 @@ public class IntrusionException extends RuntimeException {
     /**
      * Instantiates a new intrusion exception.
      * 
-     * @param message the message
-     * @param cause the cause
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
+     * @param cause 
+     *			  the cause
      */
     public IntrusionException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
@@ -68,10 +75,20 @@ public class IntrusionException extends RuntimeException {
         logger.error(Logger.SECURITY, "INTRUSION - " + logMessage, cause);
     }
 
+    /**
+     * Returns a String containing a message that is safe to display to users
+     * 
+     * @return a String containing a message that is safe to display to users
+     */
     public String getUserMessage() {
         return getMessage();
     }
 
+    /**
+     * Returns a String that is safe to display in logs, but probably not to users
+     * 
+     * @return a String containing a message that is safe to display in logs, but probably not to users
+     */
     public String getLogMessage() {
         return logMessage;
     }

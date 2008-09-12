@@ -36,8 +36,10 @@ public class EncryptionException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of EncryptionException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      */
     public EncryptionException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -46,8 +48,10 @@ public class EncryptionException extends EnterpriseSecurityException {
     /**
      * Instantiates a new EncryptionException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */

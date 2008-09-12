@@ -77,7 +77,7 @@ public interface HTTPUtilities {
     /**
      * Get the first cookie with the matching name.
      * @param name
-     * @return
+     * @return the requested cookie
      */
 	Cookie getCookie(HttpServletRequest request, String name);
     

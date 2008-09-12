@@ -36,8 +36,10 @@ public class ExecutorException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of ExecutorException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      */
     public ExecutorException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -46,8 +48,10 @@ public class ExecutorException extends EnterpriseSecurityException {
     /**
      * Instantiates a new ExecutorException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */

@@ -37,8 +37,10 @@ public class IntegrityException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of IntegrityException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      */
     public IntegrityException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -47,8 +49,10 @@ public class IntegrityException extends EnterpriseSecurityException {
     /**
      * Instantiates a new IntegrityException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */

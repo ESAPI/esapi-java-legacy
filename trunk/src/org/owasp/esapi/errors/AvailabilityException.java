@@ -37,8 +37,10 @@ public class AvailabilityException extends EnterpriseSecurityException {
     /**
      * Creates a new instance of AvailabilityException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      */
     public AvailabilityException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -47,8 +49,10 @@ public class AvailabilityException extends EnterpriseSecurityException {
     /**
      * Instantiates a new AvailabilityException.
      * 
-     * @param message
-     *            the message
+     * @param userMessage
+     *            the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      * @param cause
      *            the cause
      */

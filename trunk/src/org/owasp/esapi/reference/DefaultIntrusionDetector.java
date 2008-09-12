@@ -64,7 +64,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * @throws IntrusionException
 	 *             the intrusion exception
 	 * 
-	 * @see org.owasp.esapi.IntrusionDetector#addException(org.owasp.esapi.errors.EnterpriseSecurityException)
+	 * 
 	 */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
