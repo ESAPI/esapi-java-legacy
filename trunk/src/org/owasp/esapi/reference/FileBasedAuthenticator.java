@@ -366,7 +366,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Gets the user object with the matching account name or null if there is no match.
      * 
-     * @param accountName the account name
+     * @param accountId the account name
      * @return the user, or null if not matched.
      */
     public synchronized User getUser(long accountId) {
@@ -401,7 +401,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Gets the user from session.
      * 
-     * @param request the request
      * @return the user from session
      */
     protected User getUserFromSession() {
