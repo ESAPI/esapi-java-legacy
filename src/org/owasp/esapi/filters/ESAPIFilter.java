@@ -62,9 +62,9 @@ public class ESAPIFilter implements Filter {
 	 * method allows the Filter to pass on the request and response to the next
 	 * entity in the chain.
 	 * 
-	 * @param request
+	 * @param req
 	 *            Request object to be processed
-	 * @param response
+	 * @param resp
 	 *            Response object
 	 * @param chain
 	 *            current FilterChain
