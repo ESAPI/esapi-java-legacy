@@ -70,8 +70,8 @@ public interface AccessController {
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
-     * @param uri 
-     * 		the uri as returned by request.getRequestURI().toString()
+     * @param url 
+     * 		the url as returned by request.getRequestURI().toString()
      * 
      * @return 
      * 		true, if is authorized for URL

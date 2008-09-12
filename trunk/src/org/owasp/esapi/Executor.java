@@ -46,7 +46,7 @@ public interface Executor {
 	 * Implementations must change to the specified working
 	 * directory before invoking the command.
 	 * 
-	 * @param command
+	 * @param executable
 	 *            the command to execute
 	 * @param params
 	 *            the parameters of the command being executed

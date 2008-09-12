@@ -75,7 +75,7 @@ public interface Randomizer {
 	
     /**
      * Returns an unguessable random filename with the specified extension.
-     * @param extenstion 
+     * @param extension 
      * 		extension to add to the random filename
      * 
      * @return a random unguessable filename ending with the specified extension
