@@ -98,7 +98,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
     /**
      * Adds the event to the IntrusionDetector.
      * 
-     * @param event the eventName
+     * @param eventName the eventName
      * @param logMessage the message to log
      * @throws IntrusionException the intrusion exception
      */

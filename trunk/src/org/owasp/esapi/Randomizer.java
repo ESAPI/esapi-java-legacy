@@ -34,7 +34,7 @@ import org.owasp.esapi.errors.EncryptionException;
 public interface Randomizer {
 
 	/**
-	 * Gets a random string. of a desired length and character set.
+	 * Gets a random string of a desired length and character set.
 	 * 
 	 * @param length 
 	 * 		the length of the string

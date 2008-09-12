@@ -156,7 +156,7 @@ public interface HTTPUtilities {
 	String encryptHiddenField(String value) throws EncryptionException;
 
 	/**
-	 * Takes a querystring (i.e. everything after the ? in the URL) and returns an encrypted string containing the parameters.
+	 * Takes a querystring (everything after the question mark in the URL) and returns an encrypted string containing the parameters.
 	 * 
 	 * @param query 
 	 * 		the querystring to encrypt
