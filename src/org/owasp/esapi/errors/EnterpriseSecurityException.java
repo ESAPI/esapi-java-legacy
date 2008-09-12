@@ -57,7 +57,10 @@ public class EnterpriseSecurityException extends Exception {
      * using this API, applications will generate an extensive security log. In addition, this exception is
      * automatically registered with the IntrusionDetector, so that quotas can be checked.
      * 
-     * @param message the message
+     * @param userMessage 
+     * 			  the message displayed to the user
+     * @param logMessage
+	 * 			  the message logged
      */
     public EnterpriseSecurityException(String userMessage, String logMessage) {
     	super(userMessage);

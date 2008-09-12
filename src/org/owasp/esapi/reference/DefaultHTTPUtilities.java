@@ -314,7 +314,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * put into a session attribute, where it can be retrieved with a simple
 	 * JSP.
 	 * 
-	 * @see org.owasp.esapi.HTTPUtilities#safeGetFileUploads(java.io.File, java.io.File)
+	 * 
 	 * @return list of File objects for new files in final directory
 	 */
 	public List getSafeFileUploads(HttpServletRequest request, File tempDir, File finalDir) throws ValidationException {
