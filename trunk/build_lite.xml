@@ -1,0 +1,190 @@
+<!--
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements. See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<project name="ESAPI_Lite_v1.3" basedir="." default="all">
+
+	<!-- Local system paths -->
+	<property name="servlet.jar" value="C:\apache-tomcat-5.5.26\common\lib\servlet-api.jar"/>
+	<property name="distpath.project" value="dist"/>
+
+
+	<!-- Project settings -->
+	<property name="project.title" value="ESAPI Lite v1.3"/>
+	<property name="project.distname" value="owasp-esapi-lite-java"/>
+	<property name="project.version" value="1.3"/>
+
+	<!-- Path settings -->
+	<property name="doc.path" value="./javadoc/api"/>
+	<property name="doc.src" value="./src/java"/>
+
+	<!-- classpath for ESAPI v1.3 -->
+	<path id="compile.classpath">
+	<pathelement location ="lib/antisamy-bin.1.2.jar"/>
+	<pathelement location ="lib/batik-css.jar"/>
+	<pathelement location ="lib/batik-util.jar"/>
+	<pathelement location ="lib/commons-codec-1.3.jar"/>
+	<pathelement location ="lib/commons-fileupload-1.2-sources.jar"/>
+	<pathelement location ="lib/commons-fileupload-1.2.jar"/>
+	<pathelement location ="lib/commons-httpclient-3.1.jar"/>
+	<pathelement location ="lib/commons-io-1.3.2-sources.jar"/>
+	<pathelement location ="lib/commons-io-1.3.2.jar"/>
+	<pathelement location ="lib/commons-logging-1.1.1.jar"/>
+	<pathelement location ="lib/jsp-api.jar"/>
+	<pathelement location ="lib/junit-4.4.jar"/>
+	<pathelement location ="lib/nekohtml.jar"/>
+	<pathelement location ="lib/proguard.jar"/>
+	<pathelement location ="lib/xercesImpl.jar"/>
+	<pathelement location ="lib/xml-apis-ext.jar"/>
+	<pathelement location ="lib/xml-apis.jar"/>
+	<pathelement path ="${servlet.jar}"/>
+	<pathelement path ="classes"/>
+	<pathelement path ="${classpath}"/>
+	</path>
+
+
+	<!-- Check timestamp on files -->
+	<target name="prepare">
+	<tstamp/>
+	</target>
+
+
+	<!-- Copy any resource or configuration files -->
+	<target name="resources">
+	<copy todir="classes" includeEmptyDirs="no">
+	<fileset dir="resources">
+	<patternset>
+	<include name="**/*.properties"/>
+	<include name="**/*.xml"/>
+	</patternset>
+	</fileset>
+	</copy>
+	</target>
+
+
+	<!-- Normal build of application -->
+	<target name="compile" depends="prepare,resources">
+	<javac srcdir="src" destdir="classes">
+	<classpath refid="compile.classpath"/>
+	</javac>
+	<copy todir="classes" includeEmptyDirs="no">
+	<fileset dir="src">
+	<patternset>
+	<include name="**/*.properties"/>
+	<include name="**/*.xml"/>
+	</patternset>
+	</fileset>
+	</copy>
+	</target>
+
+
+	<!-- Remove classes directory for clean build -->
+	<target name="clean"
+	description="Prepare for clean build">
+	<delete file="classes/antisamy-esapi.xml" />
+	<delete file="classes/ESAPI.properties" />
+	<delete dir="classes/org"/>
+	</target>
+
+
+	<!-- Build Javadoc documentation -->
+	<target name="javadoc"
+	description="Generate JavaDoc API docs">
+	<delete dir="./javadoc/api"/>
+	<mkdir dir="./javadoc/api"/>
+	<javadoc 
+	destdir="./javadoc/api"
+	classpath="${servlet.jar}"
+	packagenames="*"
+	author="false"
+	private="true"
+	version="true"
+	windowtitle="${project.title} API Documentation"
+	doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
+	bottom="Copyright &#169; 2002-2005">
+		<fileset dir = "src"> <!-- list files to create javadocs for (should probably be the same as the list below, just ending in .java)-->
+			<include name="org/owasp/esapi/AccessController.java" />
+			<include name = "org/owasp/esapi/AccessReferenceMap.java" />
+			<include name = "org/owasp/esapi/Authenticator.java" />
+			<include name = "org/owasp/esapi/Encoder.java" />
+			<include name = "org/owasp/esapi/EncryptedProperties.java" />
+			<include name = "org/owasp/esapi/Encryptor.java" />
+			<include name = "org/owasp/esapi/ESAPI.java" />
+			<include name = "org/owasp/esapi/Executor.java" />
+			<include name = "org/owasp/esapi/HTTPUtilities.java" />
+			<include name = "org/owasp/esapi/IntrusionDetector.java" />
+			<include name = "org/owasp/esapi/LogFactory.java" />
+			<include name = "org/owasp/esapi/Logger.java" />
+			<include name = "org/owasp/esapi/Randomizer.java" />
+			<include name = "org/owasp/esapi/SafeFile.java" />
+			<include name = "org/owasp/esapi/SecurityConfiguration.java" />
+			<include name = "org/owasp/esapi/StringUtilities.java" />
+			<include name = "org/owasp/esapi/User.java" />
+			<include name = "org/owasp/esapi/ValidationErrorList.java" />
+			<include name = "org/owasp/esapi/Validator.java" />
+		</fileset>
+	<classpath refid="compile.classpath"/>
+	</javadoc>
+	</target>
+
+
+	<!-- Build entire project -->
+	<target name="project" depends="clean,prepare,compile,javadoc"/>
+
+
+	<!-- Create binary distribution (List of files below are files that will be included in JAR) -->
+	<target name="dist"
+	description="Create binary distribution">
+
+	<mkdir
+	dir="${distpath.project}"/>
+	<jar destfile="${distpath.project}/${project.distname}-${project.version}.jar">
+		<fileset dir="./classes/"
+			excludes="/org/**" /> <!--include only root directory (exclude anything under org) - may contain properties files-->
+		<fileset dir="./classes/"> 
+			<patternset> <!-- include only the files listed below -->
+				<include name = "org/owasp/esapi/AccessController.class" />
+				<include name = "org/owasp/esapi/AccessReferenceMap.class" />
+				<include name = "org/owasp/esapi/Authenticator.class" />
+				<include name = "org/owasp/esapi/Encoder.class" />
+				<include name = "org/owasp/esapi/EncryptedProperties.class" />
+				<include name = "org/owasp/esapi/Encryptor.class" />
+				<include name = "org/owasp/esapi/ESAPI.class" />
+				<include name = "org/owasp/esapi/Executor.class" />
+				<include name = "org/owasp/esapi/HTTPUtilities.class" />
+				<include name = "org/owasp/esapi/IntrusionDetector.class" />
+				<include name = "org/owasp/esapi/LogFactory.class" />
+				<include name = "org/owasp/esapi/Logger.class" />
+				<include name = "org/owasp/esapi/Randomizer.class" />
+				<include name = "org/owasp/esapi/SafeFile.class" />
+				<include name = "org/owasp/esapi/SecurityConfiguration.class" />
+				<include name = "org/owasp/esapi/StringUtilities.class" />
+				<include name = "org/owasp/esapi/User.class" />
+				<include name = "org/owasp/esapi/ValidationErrorList.class" />
+				<include name = "org/owasp/esapi/Validator.class" />
+			</patternset>
+		</fileset>
+	</jar>
+	<copy
+	file="${distpath.project}/${project.distname}-${project.version}.jar"
+	todir="${distpath.project}"/>
+
+	</target>
+
+
+	<!-- Build project and create distribution-->
+	<target name="all" depends="project,dist"/>
+
+	</project>
