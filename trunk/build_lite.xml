@@ -50,7 +50,7 @@ limitations under the License.
 	<pathelement location ="lib/xml-apis-ext.jar"/>
 	<pathelement location ="lib/xml-apis.jar"/>
 	<pathelement path ="${servlet.jar}"/>
-	<pathelement path ="classes"/>
+	<pathelement path ="build"/>
 	<pathelement path ="${classpath}"/>
 	</path>
 
@@ -63,7 +63,7 @@ limitations under the License.
 
 	<!-- Copy any resource or configuration files -->
 	<target name="resources">
-	<copy todir="classes" includeEmptyDirs="no">
+	<copy todir="build" includeEmptyDirs="no">
 	<fileset dir="resources">
 	<patternset>
 	<include name="**/*.properties"/>
@@ -76,10 +76,10 @@ limitations under the License.
 
 	<!-- Normal build of application -->
 	<target name="compile" depends="prepare,resources">
-	<javac srcdir="src" destdir="classes">
+	<javac srcdir="src" destdir="build">
 	<classpath refid="compile.classpath"/>
 	</javac>
-	<copy todir="classes" includeEmptyDirs="no">
+	<copy todir="build" includeEmptyDirs="no">
 	<fileset dir="src">
 	<patternset>
 	<include name="**/*.properties"/>
@@ -90,12 +90,12 @@ limitations under the License.
 	</target>
 
 
-	<!-- Remove classes directory for clean build -->
+	<!-- Remove build directory for clean build -->
 	<target name="clean"
 	description="Prepare for clean build">
-	<delete file="classes/antisamy-esapi.xml" />
-	<delete file="classes/ESAPI.properties" />
-	<delete dir="classes/org"/>
+	<delete file="build/antisamy-esapi.xml" />
+	<delete file="build/ESAPI.properties" />
+	<delete dir="build/org"/>
 	</target>
 
 
@@ -151,9 +151,9 @@ limitations under the License.
 	<mkdir
 	dir="${distpath.project}"/>
 	<jar destfile="${distpath.project}/${project.distname}-${project.version}.jar">
-		<fileset dir="./classes/"
+		<fileset dir="./build/"
 			excludes="/org/**" /> <!--include only root directory (exclude anything under org) - may contain properties files-->
-		<fileset dir="./classes/"> 
+		<fileset dir="./build/"> 
 			<patternset> <!-- include only the files listed below -->
 				<include name = "org/owasp/esapi/AccessController.class" />
 				<include name = "org/owasp/esapi/AccessReferenceMap.class" />
