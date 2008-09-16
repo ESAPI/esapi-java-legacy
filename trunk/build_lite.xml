@@ -63,7 +63,8 @@ limitations under the License.
 
 	<!-- Copy any resource or configuration files -->
 	<target name="resources">
-	<copy todir="build" includeEmptyDirs="no">
+	<mkdir dir="./build/resources"/>
+	<copy todir="build/resources" includeEmptyDirs="no">
 	<fileset dir="resources">
 	<patternset>
 	<include name="**/*.properties"/>
