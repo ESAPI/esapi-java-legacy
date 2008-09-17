@@ -102,8 +102,7 @@ limitations under the License.
 		doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
 		bottom="Copyright &#169; 2002-2005">
 		<fileset dir="src"
-			excludes = "org/owasp/esapi/reference/**" 
-		/>
+			excludes = "org/owasp/esapi/reference/**" />  
 	<classpath refid="compile.classpath"/>
 	</javadoc>
 	</target>
@@ -120,9 +119,8 @@ limitations under the License.
 	<mkdir
 	dir="${distpath.project}"/>
 	<jar destfile="${distpath.project}/${project.distname}-${project.version}.jar">
-		<fileset dir="./build/" 
-			excludes = "org/owasp/esapi/reference/**"
-		/>			
+		<fileset dir="./build/"
+			excludes = "org/owasp/esapi/reference/**" />   
 	</jar>
 	<copy
 	file="${distpath.project}/${project.distname}-${project.version}.jar"
