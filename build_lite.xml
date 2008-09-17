@@ -61,22 +61,8 @@ limitations under the License.
 	</target>
 
 
-	<!-- Copy any resource or configuration files -->
-	<target name="resources">
-	<mkdir dir="./build/resources"/>
-	<copy todir="build/resources" includeEmptyDirs="no">
-	<fileset dir="resources">
-	<patternset>
-	<include name="**/*.properties"/>
-	<include name="**/*.xml"/>
-	</patternset>
-	</fileset>
-	</copy>
-	</target>
-
-
 	<!-- Normal build of application -->
-	<target name="compile" depends="prepare,resources">
+	<target name="compile" depends="prepare">
 	<javac srcdir="src" destdir="build">
 	<classpath refid="compile.classpath"/>
 	</javac>
@@ -106,36 +92,18 @@ limitations under the License.
 	<delete dir="./javadoc/api"/>
 	<mkdir dir="./javadoc/api"/>
 	<javadoc 
-	destdir="./javadoc/api"
-	classpath="${servlet.jar}"
-	packagenames="*"
-	author="false"
-	private="true"
-	version="true"
-	windowtitle="${project.title} API Documentation"
-	doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
-	bottom="Copyright &#169; 2002-2005">
-		<fileset dir = "src"> <!-- list files to create javadocs for (should probably be the same as the list below, just ending in .java)-->
-			<include name="org/owasp/esapi/AccessController.java" />
-			<include name = "org/owasp/esapi/AccessReferenceMap.java" />
-			<include name = "org/owasp/esapi/Authenticator.java" />
-			<include name = "org/owasp/esapi/Encoder.java" />
-			<include name = "org/owasp/esapi/EncryptedProperties.java" />
-			<include name = "org/owasp/esapi/Encryptor.java" />
-			<include name = "org/owasp/esapi/ESAPI.java" />
-			<include name = "org/owasp/esapi/Executor.java" />
-			<include name = "org/owasp/esapi/HTTPUtilities.java" />
-			<include name = "org/owasp/esapi/IntrusionDetector.java" />
-			<include name = "org/owasp/esapi/LogFactory.java" />
-			<include name = "org/owasp/esapi/Logger.java" />
-			<include name = "org/owasp/esapi/Randomizer.java" />
-			<include name = "org/owasp/esapi/SafeFile.java" />
-			<include name = "org/owasp/esapi/SecurityConfiguration.java" />
-			<include name = "org/owasp/esapi/StringUtilities.java" />
-			<include name = "org/owasp/esapi/User.java" />
-			<include name = "org/owasp/esapi/ValidationErrorList.java" />
-			<include name = "org/owasp/esapi/Validator.java" />
-		</fileset>
+		destdir="./javadoc/api"
+		classpath="${servlet.jar}"
+		packagenames="*"
+		author="false"
+		private="true"
+		version="true"
+		windowtitle="${project.title} API Documentation"
+		doctitle="&lt;h1&gt;${project.title} Documentation (Version ${project.version})&lt;/h1&gt;"
+		bottom="Copyright &#169; 2002-2005">
+		<fileset dir="src"
+			excludes = "org/owasp/esapi/reference/**" 
+		/>
 	<classpath refid="compile.classpath"/>
 	</javadoc>
 	</target>
@@ -152,31 +120,9 @@ limitations under the License.
 	<mkdir
 	dir="${distpath.project}"/>
 	<jar destfile="${distpath.project}/${project.distname}-${project.version}.jar">
-		<fileset dir="./build/"
-			excludes="/org/**" /> <!--include only root directory (exclude anything under org) - may contain properties files-->
-		<fileset dir="./build/"> 
-			<patternset> <!-- include only the files listed below -->
-				<include name = "org/owasp/esapi/AccessController.class" />
-				<include name = "org/owasp/esapi/AccessReferenceMap.class" />
-				<include name = "org/owasp/esapi/Authenticator.class" />
-				<include name = "org/owasp/esapi/Encoder.class" />
-				<include name = "org/owasp/esapi/EncryptedProperties.class" />
-				<include name = "org/owasp/esapi/Encryptor.class" />
-				<include name = "org/owasp/esapi/ESAPI.class" />
-				<include name = "org/owasp/esapi/Executor.class" />
-				<include name = "org/owasp/esapi/HTTPUtilities.class" />
-				<include name = "org/owasp/esapi/IntrusionDetector.class" />
-				<include name = "org/owasp/esapi/LogFactory.class" />
-				<include name = "org/owasp/esapi/Logger.class" />
-				<include name = "org/owasp/esapi/Randomizer.class" />
-				<include name = "org/owasp/esapi/SafeFile.class" />
-				<include name = "org/owasp/esapi/SecurityConfiguration.class" />
-				<include name = "org/owasp/esapi/StringUtilities.class" />
-				<include name = "org/owasp/esapi/User.class" />
-				<include name = "org/owasp/esapi/ValidationErrorList.class" />
-				<include name = "org/owasp/esapi/Validator.class" />
-			</patternset>
-		</fileset>
+		<fileset dir="./build/" 
+			excludes = "org/owasp/esapi/reference/**"
+		/>			
 	</jar>
 	<copy
 	file="${distpath.project}/${project.distname}-${project.version}.jar"
