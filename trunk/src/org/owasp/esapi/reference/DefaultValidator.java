@@ -277,7 +277,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		
 		if (input.length() > maxLength) {
-			throw new ValidationException( context + ": Invalid HTML input can not exceed " + maxLength + " characters", context + " input exceedes maxLength by " + (input.length()-maxLength) + " characters", context);
+			throw new ValidationException( context + ": Invalid HTML. You enterted " + input.length() + " characters. Input can not exceed " + maxLength + " characters.", context + " input exceedes maxLength by " + (input.length()-maxLength) + " characters", context);
 		}
 		
 		try {
