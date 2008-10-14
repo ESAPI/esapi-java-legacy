@@ -1,6 +1,7 @@
 # Data Access Rules
 #
-
-/                | any       | deny  | default deny
-/Data1           | User      | allow |
-/Data2           | Admin     | allow |
+java.io.BufferedReader | any       | read        | default deny
+java.lang.String       | User      | read, write |
+java.lang.Math         | Admin     | read, write |
+java.util.ArrayList    | Admin     | read        |
+java.util.Date         | User      | write       |
