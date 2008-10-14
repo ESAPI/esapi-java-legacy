@@ -181,6 +181,54 @@ public class AccessControllerTest extends TestCase {
 		AccessController instance = ESAPI.accessController();
 		Authenticator auth = ESAPI.authenticator();
 		
+		Class adminR = null;
+		Class adminRW = null;
+		Class userW = null;
+		Class userRW = null;
+		Class anyR = null;
+		Class undefined = null;
+		
+		try{
+			adminR = Class.forName("java.util.ArrayList");
+			adminRW = Class.forName("java.lang.Math");
+			userW = Class.forName("java.util.Date");
+			userRW = Class.forName("java.lang.String");
+			anyR = Class.forName("java.io.BufferedReader");
+			undefined = Class.forName("java.io.FileWriter");
+		}catch(ClassNotFoundException cnf){
+			System.out.println("CLASS NOT FOUND! EPIC FAILZ!");
+		}
+		auth.setCurrentUser( auth.getUser("testuser1") );
+		assertTrue(instance.isAuthorizedForData("read", userRW));
+		assertFalse(instance.isAuthorizedForData("read", undefined));
+		assertFalse(instance.isAuthorizedForData("write", undefined));
+		assertFalse(instance.isAuthorizedForData("read", userW));
+		assertFalse(instance.isAuthorizedForData("read", adminRW));
+		assertTrue(instance.isAuthorizedForData("write", userRW));
+		assertTrue(instance.isAuthorizedForData("write", userW));
+		assertFalse(instance.isAuthorizedForData("write", anyR));
+		assertTrue(instance.isAuthorizedForData("read", anyR));
+		
+		auth.setCurrentUser( auth.getUser("testuser2") );
+		assertTrue(instance.isAuthorizedForData("read", adminRW));
+		assertFalse(instance.isAuthorizedForData("read", undefined));
+		assertFalse(instance.isAuthorizedForData("write", undefined));
+		assertFalse(instance.isAuthorizedForData("read", userRW));
+		assertTrue(instance.isAuthorizedForData("write", adminRW));
+		assertFalse(instance.isAuthorizedForData("write", anyR));
+		assertTrue(instance.isAuthorizedForData("read", anyR));
+		
+		auth.setCurrentUser( auth.getUser("testuser3") );
+		assertTrue(instance.isAuthorizedForData("read", userRW));
+		assertFalse(instance.isAuthorizedForData("read", undefined));
+		assertFalse(instance.isAuthorizedForData("write", undefined));
+		assertFalse(instance.isAuthorizedForData("read", userW));
+		assertTrue(instance.isAuthorizedForData("read", adminR));
+		assertTrue(instance.isAuthorizedForData("write", userRW));
+		assertTrue(instance.isAuthorizedForData("write", userW));
+		assertFalse(instance.isAuthorizedForData("write", anyR));
+		assertTrue(instance.isAuthorizedForData("read", anyR));		
+		/*
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForData("/Data1"));
 		assertFalse(instance.isAuthorizedForData("/Data2"));
@@ -197,12 +245,13 @@ public class AccessControllerTest extends TestCase {
 		assertFalse(instance.isAuthorizedForData("/not_listed"));
 
 		try {
-			instance.assertAuthorizedForData("/Data1");
-			instance.assertAuthorizedForData( "/not_listed" );
+			instance.assertAuthorizedForData("read", "java.lang.Math");
+			instance.assertAuthorizedForData( "write", "java.net.Authenticator" );
 			fail();
 		} catch ( AccessControlException e ) {
 			// expected
 		}
+		*/
 	}
 
 	/**

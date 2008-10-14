@@ -19,9 +19,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -36,13 +40,13 @@ import org.owasp.esapi.errors.IntrusionException;
  * Reference implementation of the AccessController interface. This reference
  * implementation uses a simple model for specifying a set of access control
  * rules. Many organizations will want to create their own implementation of the
- * methods provided in the IAccessController interface.
+ * methods provided in the AccessController interface.
  * <P>
  * This reference implementation uses a simple scheme for specifying the rules.
  * The first step is to create a namespace for the resources being accessed. For
  * files and URL's, this is easy as they already have a namespace. Be extremely
  * careful about canonicalizing when relying on information from the user in an
- * access ctnrol decision.
+ * access control decision.
  * <P>
  * For functions, data, and services, you will have to come up with your own
  * namespace for the resources being accessed. You might simply define a flat
@@ -69,7 +73,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * with a simple format.
  * <P>
  * There is a single configuration file supporting each of the five methods in
- * the IAccessController interface. These files are located in the ESAPI
+ * the AccessController interface. These files are located in the ESAPI
  * resources directory as specified when the JVM was started. The use of a
  * default deny rule is STRONGLY recommended. The file format is as follows:
  * 
@@ -147,7 +151,16 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     		return false;
     	}
     }
-
+    
+    public boolean isAuthorizedForData(String action, Object data){
+    	try{
+    		assertAuthorizedForData( action, data );
+    		return true;
+    	}catch ( Exception e ) {
+    		return false;
+    	}
+    }
+    
     public boolean isAuthorizedForFile(String filepath) {
     	try {
     		assertAuthorizedForFile( filepath );
@@ -169,7 +182,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForURL(java.lang.String,
+	 * @see org.owasp.esapi.interfaces.AccessController#isAuthorizedForURL(java.lang.String,
 	 *      java.lang.String)
 	 */
     public void assertAuthorizedForURL(String url) throws AccessControlException {
@@ -184,7 +197,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForFunction(java.lang.String,
+	 * @see org.owasp.esapi.interfaces.AccessController#isAuthorizedForFunction(java.lang.String,
 	 *      java.lang.String)
 	 */
     public void assertAuthorizedForFunction(String functionName) throws AccessControlException {
@@ -196,24 +209,49 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Checks if the current user is authorized to access the referenced data.  This method simply returns if access is authorized.
+	 * It throws an AccessControlException if access is not authorized, or the referenced data does not exist.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForData(java.lang.String)
+	 * This method enforces the following access control policy as defined in the DataAccessRules.txt configuration file:
+	 * 	1) This config file defines the name space of all the data sets for this system
+	 * 	2) This file also defines which user roles are either allowed or denied access to each data resource
+	 * 	3) This method checks to see if the resource exists in the configuration file and if not, throws and AccessControlException
+	 * 	4) It checks the policy to see if the user is authorized and if not, throws and AccessControlException
+	 * 	5) A default rule built into the method is that if the policy does not specifically grant access, access is denied,
+	 * 		and an AccessControlException is thrown
+	 * 
+	 * @param key
+	 * 		the name of the target data object
+	 * 
+	 * @throws AccessControlException
+	 * 		if access is not permitted
+	 * 
+	 * @see org.owasp.esapi.interfaces.AccessController#isAuthorizedForData(java.lang.String)
 	 */
     public void assertAuthorizedForData(String key) throws AccessControlException {
 		if (dataMap==null || dataMap.isEmpty()) {
-			dataMap = loadRules("DataAccessRules.txt");
+			dataMap = loadDataRules("DataAccessRules.txt");
 		}
 		if ( !matchRule(dataMap, key) ) {
 			throw new AccessControlException("Not authorized for function", "Not authorized for data: " + key );
 		}
 	}
-
+    
+    public void assertAuthorizedForData(String action, Object data) throws AccessControlException{
+    	if (dataMap==null || dataMap.isEmpty()) {
+			dataMap = loadDataRules("DataAccessRules.txt");
+    	}		
+    	    	
+    	if( !matchRule(dataMap, (Class) data, action ) ){
+    		throw new AccessControlException("Not authorized for data", "Not authorized for data: " + (Class)data);
+    	}
+    	
+    }
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForFile(java.lang.String,
+	 * @see org.owasp.esapi.interfaces.AccessController#isAuthorizedForFile(java.lang.String,
 	 *      java.lang.String)
 	 */
     public void assertAuthorizedForFile(String filepath) throws AccessControlException {
@@ -228,7 +266,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessController#isAuthorizedForBackendService(java.lang.String,
+	 * @see org.owasp.esapi.interfaces.AccessController#isAuthorizedForBackendService(java.lang.String,
 	 *      java.lang.String)
 	 */
     public void assertAuthorizedForService(String serviceName) throws AccessControlException {    	
@@ -260,6 +298,15 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		// search for the first rule that matches the path and rules
 		Rule rule = searchForRule(map, roles, path);
 		return rule.allow;
+	}
+	
+	private boolean matchRule(Map map, Class clazz, String action) {
+		// get users roles
+		User user = ESAPI.authenticator().getCurrentUser();
+		Set roles = user.getRoles();
+		// search for the first rule that matches the path and rules
+		Rule rule = searchForRule(map, roles, clazz, action);
+		return rule != null;
 	}
 
 	/**
@@ -335,6 +382,34 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		
 		return searchForRule(map, roles, part);
 	}
+	
+	/**
+	 * Search for rule. Four mapping rules are used in order: - exact match,
+	 * e.g. /access/login - longest path prefix match, beginning / and ending
+	 * /*, e.g. /access/* or /* - extension match, beginning *., e.g. *.css -
+	 * default servlet, specified by the single character pattern /
+	 * 
+	 * @param map
+	 *            the map
+	 * @param roles
+	 *            the roles
+	 * @param path
+	 *            the paths
+	 * 
+	 * @return the rule
+	 * 
+	 * @throws AccessControlException
+	 *             the access control exception
+	 */
+	private Rule searchForRule(Map map, Set roles, Class clazz, String action) {
+
+		// Check for exact match - ignore any ending slash
+		Rule rule = (Rule) map.get(clazz);
+		if( ( rule != null ) && ( overlap(rule.actions, action) ) && ( overlap(rule.roles, roles) )){
+			return rule;
+		}
+		return null;
+	}
 
 	/**
 	 * Return true if there is overlap between the two sets.
@@ -359,12 +434,18 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 		return false;
 	}
+	
+	private boolean overlap( List ruleActions, String action){
+		if( ruleActions.contains(action) )
+			return true;
+		return false;
+	}
 
 	/**
 	 * Load rules.
 	 * 
-	 * @param f
-	 *            the f
+	 * @param ruleset
+	 *            the ruleset
 	 * 
 	 * @return the hash map
 	 * 
@@ -406,22 +487,88 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 		return map;
 	}
+	
+	/**
+	 * Load Data rules.  Class may only appear once on the list of rules.
+	 * 
+	 * @param ruleset
+	 *            the ruleset
+	 * 
+	 * @return the hash map
+	 * 
+	 * @throws AccessControlException
+	 *             the access control exception
+	 */
+	private Map loadDataRules(String ruleset) {
+		Map map = new HashMap();
+		InputStream is = null;
 
+		try {
+			is = new FileInputStream(new File(ESAPI.securityConfiguration().getResourceDirectory(), ruleset));
+			String line = "";
+			while ((line = ESAPI.validator().safeReadLine(is, 500)) != null) {
+				if (line.length() > 0 && line.charAt(0) != '#') {
+					Rule rule = new Rule();
+					String[] parts = line.split("\\|");
+					rule.clazz = Class.forName(parts[0].trim());
+					
+					List roles = commaSplit(parts[1].trim().toLowerCase());
+					for(int x = 0; x < roles.size(); x++)
+						rule.roles.add(roles.get(x));
+					
+					List action = commaSplit(parts[2].trim().toLowerCase());
+					for(int x = 0; x < action.size(); x++)
+						rule.actions.add(((String) action.get(x)).trim());
+					
+					if (map.containsKey(rule.path)) {
+						logger.warning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+					} else {
+						map.put(rule.clazz, rule);		
+					}
+				}
+			}
+		} catch (Exception e) {
+			logger.warning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
+		} finally {
+			
+			try {
+				if (is != null) {
+					is.close();
+				}
+			} catch (IOException e) {
+				logger.warning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
+			}
+		}
+		return map;
+	}
+	
+	private List commaSplit(String input){
+		String[] array = input.split(",");
+		return Arrays.asList(array);
+	}
+	
 	/**
 	 * The Class Rule.
 	 */
 	private class Rule {
 
-		/** The path. */
+		
 		protected String path = "";
 
-		/** The roles. */
+		
 		protected Set roles = new HashSet();
 
-		/** The allow. */
+		
 		protected boolean allow = false;
+		
+		
+		protected Class clazz = null;
+		
+		
+		protected List actions = new ArrayList();
 
 		/**
+		 * 
 		 * Creates a new Rule object.
 		 */
 		protected Rule() {

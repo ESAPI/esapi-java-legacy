@@ -20,7 +20,7 @@ import org.owasp.esapi.errors.AccessControlException;
 
 
 /**
- * The IAccessController interface defines a set of methods that can be used in a wide variety of applications to
+ * The AccessController interface defines a set of methods that can be used in a wide variety of applications to
  * enforce access control. In most applications, access control must be performed in multiple different locations across
  * the various applicaton layers. This class provides access control for URLs, business functions, data, services, and
  * files.
@@ -65,13 +65,15 @@ import org.owasp.esapi.errors.AccessControlException;
 public interface AccessController {
 
     /**
-     * Checks if an account is authorized to access the referenced URL. The implementation should allow
-     * access to be granted to any part of the URL. Generally, this method should be invoked in the
+     * Checks if an account is authorized to access the referenced URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
+     * The implementation of this method should call assertAuthorizedForURL(String url), and if an AccessControlException is not thrown, this method should
+     * return true.
+     * 
      * @param url 
-     * 		the url as returned by request.getRequestURI().toString()
+     * 		the URL as returned by request.getRequestURI().toString()
      * 
      * @return 
      * 		true, if is authorized for URL
@@ -79,9 +81,10 @@ public interface AccessController {
     boolean isAuthorizedForURL(String url);
 
     /**
-     * Checks if an account is authorized to access the referenced function. The implementation should define the
-     * function "namespace" to be enforced. Choosing something simple like the classname of action classes or menu item
-     * names will make this implementation easier to use.
+     * Checks if an account is authorized to access the referenced function. 
+     * 
+     * The implementation of this method should call assertAuthorizedForFunction(String functionName), and if an AccessControlException is not thrown, this method should
+     * return true.
      * 
      * @param functionName 
      * 		the function name
@@ -92,8 +95,10 @@ public interface AccessController {
     boolean isAuthorizedForFunction(String functionName);
 
     /**
-     * Checks if an account is authorized to access the referenced data. The implementation should define the data
-     * "namespace" to be enforced.
+     * Checks if an account is authorized to access the referenced data. 
+     * 
+     * The implementation of this method should call assertAuthorizedForData(String key), and if an AccessControlException is not thrown, this method should
+     * return true.
      * 
      * @param key 
      * 		the key
@@ -103,11 +108,13 @@ public interface AccessController {
      */
     boolean isAuthorizedForData(String key);
 
+    boolean isAuthorizedForData(String action, Object data);
+    
     /**
-     * Checks if an account is authorized to access the referenced file. The implementation should be extremely careful
-     * about canonicalization.
+     * Checks if an account is authorized to access the referenced file. 
      * 
-     * @see org.owasp.esapi.Encoder#canonicalize(String)
+     * The implementation of this method should call assertAuthorizedForFile(String filepath), and if an AccessControlException is not thrown, this method should
+     * return true.
      *   
      * @param filepath 
      * 		the path of the file to be checked, including filename
@@ -121,6 +128,9 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced service. This can be used in applications that
      * provide access to a variety of backend services.
      * 
+     * The implementation of this method should call assertAuthorizedForService(String serviceName), and if an AccessControlException is not thrown, this method should
+     * return true.
+     * 
      * @param serviceName 
      * 		the service name
      * 
@@ -133,10 +143,21 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced URL. The implementation should allow
      * access to be granted to any part of the URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
-     * <PRE>ESAPI.accessController().assertAuthorizedForURL(request.getRequestURI().toString());</PRE>
+     * <PRE>ESAPI.accessController().assertAuthorizedForURL(request.getRequestURI().toString());</PRE> 
+     * 
+     * This method throws an AccessControlException if access is not authorized, or if the referenced URL does not exist.
+     * If the User is authorized, this method simply returns.
+     * 
+     * Specification:  The implementation should do the following:
+     * 	1) Check to see if the resource exists and if not, throw an AccessControlException
+     * 	2) Use available information to make an access control decision	
+     * 		a. Ideally, this policy would be data driven
+     * 		b. You can use the current User, roles, data type, data name, time of day, etc.
+     *  	c. Access control decisions must deny by default
+     * 	3) If access is not permitted, throw AccessControlException with details
      * 
      * @param url 
-     * 		the url as returned by request.getRequestURI().toString()
+     * 		the URL as returned by request.getRequestURI().toString()
      * 
      * @throws AccessControlException 
      * 		if access is not permitted
@@ -145,8 +166,20 @@ public interface AccessController {
     
     /**
      * Checks if an account is authorized to access the referenced function. The implementation should define the
-     * function "namespace" to be enforced. Choosing something simple like the classname of action classes or menu item
+     * function "namespace" to be enforced. Choosing something simple like the class name of action classes or menu item
      * names will make this implementation easier to use.
+     * 
+     * This method throws an AccessControlException if access is not authorized, or if the referenced function does not exist.
+     * If the User is authorized, this method simply returns.
+     * 
+     * Specification:  The implementation should do the following:
+     * 	1) Check to see if the function exists and if not, throw an AccessControlException
+     * 	2) Use available information to make an access control decision	
+     * 		a. Ideally, this policy would be data driven
+     * 		b. You can use the current User, roles, data type, data name, time of day, etc.
+     * 		c. Access control decisions must deny by default
+     * 	3) If access is not permitted, throw AccessControlException with details
+     *   
      * 
      * @param functionName 
      * 		the function name
@@ -157,20 +190,45 @@ public interface AccessController {
     void assertAuthorizedForFunction(String functionName) throws AccessControlException;
     
     /**
-     * Checks if an account is authorized to access the referenced data. The implementation should define the data
-     * "namespace" to be enforced.
+     * Checks if the current user is authorized to access the referenced data.  This method simply returns if access is authorized.  
+     * It throws an AccessControlException if access is not authorized, or if the referenced data does not exist.
      * 
+     * Specification:  The implementation should do the following:
+     * 	1) Check to see if the resource exists and if not, throw an AccessControlException
+     * 	2) Use available information to make an access control decision	
+     * 		a. Ideally, this policy would be data driven
+     * 		b. You can use the current User, roles, data type, data name, time of day, etc.
+     * 		c. Access control decisions must deny by default
+     * 	3) If access is not permitted, throw AccessControlException with details
+     *  
      * @param key 
-     * 		the key
+     * 		the name of the target data object
      * 
      * @throws AccessControlException 
-     * 		is access is not permitted
+     * 		if access is not permitted
      */
     void assertAuthorizedForData(String key) throws AccessControlException;
     
+    /*
+     * Javadocs here
+     * 
+     */
+    void assertAuthorizedForData(String action, Object data) throws AccessControlException;
+   
     /**
-     * Checks if an account is authorized to access the referenced file. The implementation should be extremely careful
-     * about canonicalization.
+     * Checks if an account is authorized to access the referenced file. The implementation should validate and canonicalize the 
+     * input to be sure the filepath is not malicious.
+     * 
+     * This method throws an AccessControlException if access is not authorized, or if the referenced File does not exist.
+     * If the User is authorized, this method simply returns.
+     * 
+     * Specification:  The implementation should do the following:
+     * 	1) Check to see if the File exists and if not, throw an AccessControlException
+     * 	2) Use available information to make an access control decision	
+     * 		a. Ideally, this policy would be data driven
+     * 		b. You can use the current User, roles, data type, data name, time of day, etc.
+     *  	c. Access control decisions must deny by default
+     * 	3) If access is not permitted, throw AccessControlException with details
      * 
      * @see org.owasp.esapi.Encoder#canonicalize(String)
      * 
@@ -178,7 +236,7 @@ public interface AccessController {
      * 		the path of the file to be checked, including filename
      * 
      * @throws AccessControlException 
-     * 		is access is not permitted
+     * 		if access is not permitted
      */
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     
@@ -186,11 +244,23 @@ public interface AccessController {
      * Checks if an account is authorized to access the referenced service. This can be used in applications that
      * provide access to a variety of backend services.
      * 
+     * This method throws an AccessControlException if access is not authorized, or if the referenced service does not exist.
+     * If the User is authorized, this method simply returns.
+     * 
+     * Specification:  The implementation should do the following:
+     * 	1) Check to see if the service exists and if not, throw an AccessControlException
+     * 	2) Use available information to make an access control decision	
+     * 		a. Ideally, this policy would be data driven
+     * 		b. You can use the current User, roles, data type, data name, time of day, etc.
+     *  	c. Access control decisions must deny by default
+     * 	3) If access is not permitted, throw AccessControlException with details
+     * 
      * @param serviceName 
      * 		the service name
      * 
      * @throws AccessControlException
-     */
+     * 		if access is not permitted
+     */				
     void assertAuthorizedForService(String serviceName) throws AccessControlException;
     
     
