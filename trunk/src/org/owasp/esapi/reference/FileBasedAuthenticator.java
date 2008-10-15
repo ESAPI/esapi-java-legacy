@@ -54,7 +54,7 @@ import org.owasp.esapi.errors.EncryptionException;
 /**
  * Reference implementation of the Authenticator interface. This reference implementation is backed by a simple text
  * file that contains serialized information about users. Many organizations will want to create their own
- * implementation of the methods provided in the IAuthenticator interface backed by their own user repository. This
+ * implementation of the methods provided in the Authenticator interface backed by their own user repository. This
  * reference implementation captures information about users in a simple text file format that contains user information
  * separated by the pipe "|" character. Here's an example of a single line from the users.txt file:
  * 
@@ -224,7 +224,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#createAccount(java.lang.String, java.lang.String)
+     * @see org.owasp.esapi.Authenticator#createAccount(java.lang.String, java.lang.String)
      */
     public synchronized User createUser(String accountName, String password1, String password2) throws AuthenticationException {
         loadUsersIfNecessary();
@@ -259,7 +259,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#exists(java.lang.String)
+     * @see org.owasp.esapi.Authenticator#exists(java.lang.String)
      */
     public boolean exists(String accountName) {
         return getUser(accountName) != null;
@@ -268,7 +268,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#generateStrongPassword(int, char[])
+     * @see org.owasp.esapi.Authenticator#generateStrongPassword(int, char[])
      */
     public String generateStrongPassword() {
         return generateStrongPassword("");
@@ -286,7 +286,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     }
 
     /* (non-Javadoc)
-     * @see org.owasp.esapi.interfaces.IAuthenticator#changePassword(org.owasp.esapi.interfaces.IUser, java.lang.String, java.lang.String, java.lang.String)
+     * @see org.owasp.esapi.Authenticator#changePassword(org.owasp.esapi.User, java.lang.String, java.lang.String, java.lang.String)
      */
     public void changePassword(User user, String currentPassword,
             String newPassword, String newPassword2)
@@ -316,7 +316,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
     
 	/* (non-Javadoc)
-     * @see org.owasp.esapi.interfaces.IAuthenticator#verifyPassword(org.owasp.esapi.interfaces.IUser, java.lang.String)
+     * @see org.owasp.esapi.Authenticator#verifyPassword(org.owasp.esapi.User, java.lang.String)
      */
     public boolean verifyPassword(User user, String password) {
 		String accountName = user.getAccountName();
@@ -339,7 +339,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	/*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#generateStrongPassword(int, char[])
+     * @see org.owasp.esapi.Authenticator#generateStrongPassword(int, char[])
      */
     public String generateStrongPassword(User user, String oldPassword) {
         String newPassword = generateStrongPassword(oldPassword);
@@ -352,7 +352,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * Returns the currently logged user as set by the setCurrentUser() methods. Must not log in this method because the
      * logger calls getCurrentUser() and this could cause a loop.
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#getCurrentUser()
+     * @see org.owasp.esapi.Authenticator#getCurrentUser()
      */
     public User getCurrentUser() {
         User user = (User) currentUser.get();
@@ -470,7 +470,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#hashPassword(java.lang.String, java.lang.String)
+     * @see org.owasp.esapi.Authenticator#hashPassword(java.lang.String, java.lang.String)
      */
     public String hashPassword(String password, String accountName) throws EncryptionException {
         String salt = accountName.toLowerCase();
@@ -617,7 +617,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#removeUser(java.lang.String)
+     * @see org.owasp.esapi.Authenticator#removeUser(java.lang.String)
      */
     public synchronized void removeUser(String accountName) throws AuthenticationException {
         loadUsersIfNecessary();
@@ -834,7 +834,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#setCurrentUser(org.owasp.esapi.User)
+     * @see org.owasp.esapi.Authenticator#setCurrentUser(org.owasp.esapi.User)
      */
     public void setCurrentUser(User user) {
         currentUser.setUser(user);
@@ -845,12 +845,12 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a
      * brute force attack, however the real strength comes from the name length and complexity.
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#validateAccountNameStrength(java.lang.String)
+     * @see org.owasp.esapi.Authenticator#validateAccountNameStrength(java.lang.String)
      */
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#verifyAccountNameStrength(java.lang.String)
+     * @see org.owasp.esapi.Authenticator#verifyAccountNameStrength(java.lang.String)
      */
     public void verifyAccountNameStrength(String newAccountName) throws AuthenticationException {
         if (newAccountName == null) {
@@ -865,7 +865,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * This implementation checks: - for any 3 character substrings of the old password - for use of a length *
      * character sets > 16 (where character sets are upper, lower, digit, and special (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IAuthenticator#verifyPasswordStrength(java.lang.String)
+     * @see org.owasp.esapi.Authenticator#verifyPasswordStrength(java.lang.String)
      */
     public void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException {
         if ( oldPassword == null ) oldPassword = "";

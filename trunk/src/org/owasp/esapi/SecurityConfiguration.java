@@ -20,7 +20,7 @@ import java.util.List;
 
 
 /**
- * The ISecurityConfiguration interface stores all configuration information
+ * The SecurityConfiguration interface stores all configuration information
  * that directs the behavior of the ESAPI implementation.
  * <P>
  * <img src="doc-files/SecurityConfiguration.jpg" height="600">

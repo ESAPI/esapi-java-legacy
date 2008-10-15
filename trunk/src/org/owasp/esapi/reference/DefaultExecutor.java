@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.Validator;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.ExecutorException;
 

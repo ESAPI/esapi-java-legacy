@@ -113,7 +113,7 @@ public class DefaultUser implements User, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.owasp.esapi.interfaces.IUser#addRole(java.lang.String)
+	 * @see org.owasp.esapi.User#addRole(java.lang.String)
 	 */
 	public void addRole(String role) throws AuthenticationException {
 		String roleName = role.toLowerCase();
@@ -128,7 +128,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#addRoles(java.util.Set)
+	 * @see org.owasp.esapi.User#addRoles(java.util.Set)
 	 */
 	public void addRoles(Set newRoles) throws AuthenticationException {
 		Iterator i = newRoles.iterator();
@@ -140,7 +140,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#setPassword(java.lang.String, java.lang.String)
+	 * @see org.owasp.esapi.User#setPassword(java.lang.String, java.lang.String)
 	 */
 	public void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException {
 		ESAPI.authenticator().changePassword(this, oldPassword, newPassword1, newPassword2);
@@ -149,7 +149,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#disable()
+	 * @see org.owasp.esapi.User#disable()
 	 */
 	public void disable() {
 		enabled = false;
@@ -263,24 +263,24 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#getScreenName()
+	 * @see org.owasp.esapi.User#getScreenName()
 	 */
 	public String getScreenName() {
 		return screenName;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.owasp.esapi.interfaces.IUser#incrementFailedLoginCount()
+	 * @see org.owasp.esapi.User#incrementFailedLoginCount()
 	 */
 	public void incrementFailedLoginCount() {
 		failedLoginCount++;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.owasp.esapi.interfaces.IUser#isAnonymous()
+	 * @see org.owasp.esapi.User#isAnonymous()
 	 */
 	public boolean isAnonymous() {
-		// User cannot be anonymous, since we have a special IUser.ANONYMOUS instance
+		// User cannot be anonymous, since we have a special User.ANONYMOUS instance
 		// for the anonymous user
 		return false;
 	}
@@ -295,7 +295,7 @@ public class DefaultUser implements User, Serializable {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.owasp.esapi.interfaces.IUser#isExpired()
+	 * @see org.owasp.esapi.User#isExpired()
 	 */
 	public boolean isExpired() {
 		return getExpirationTime().before( new Date() );
@@ -311,7 +311,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#isInRole(java.lang.String)
+	 * @see org.owasp.esapi.User#isInRole(java.lang.String)
 	 */
 	public boolean isInRole(String role) {
 		return roles.contains(role.toLowerCase());
@@ -320,14 +320,14 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#isLocked()
+	 * @see org.owasp.esapi.User#isLocked()
 	 */
 	public boolean isLocked() {
 		return locked;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.owasp.esapi.interfaces.IUser#isLoggedIn()
+	 * @see org.owasp.esapi.User#isLoggedIn()
 	 */
 	public boolean isLoggedIn() {
 		return loggedIn;
@@ -336,7 +336,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IIntrusionDetector#isSessionAbsoluteTimeout(java.lang.String)
+	 * @see org.owasp.esapi.IntrusionDetector#isSessionAbsoluteTimeout(java.lang.String)
 	 */
 	public boolean isSessionAbsoluteTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
@@ -348,7 +348,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IIntrusionDetector#isSessionTimeout(java.lang.String)
+	 * @see org.owasp.esapi.IntrusionDetector#isSessionTimeout(java.lang.String)
 	 */
 	public boolean isSessionTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
@@ -360,7 +360,7 @@ public class DefaultUser implements User, Serializable {
     /*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#lock()
+	 * @see org.owasp.esapi.User#lock()
 	 */
 	public void lock() {
 		this.locked = true;
@@ -370,7 +370,7 @@ public class DefaultUser implements User, Serializable {
     /*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#login(java.lang.String)
+	 * @see org.owasp.esapi.User#login(java.lang.String)
 	 */
 	public void loginWithPassword(String password) throws AuthenticationException {
 		if ( password == null || password.equals("") ) {
@@ -424,7 +424,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#logout()
+	 * @see org.owasp.esapi.User#logout()
 	 */
 	public void logout() {
 		ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
@@ -442,7 +442,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#removeRole(java.lang.String)
+	 * @see org.owasp.esapi.User#removeRole(java.lang.String)
 	 */
 	public void removeRole(String role) {
 		roles.remove(role.toLowerCase());
@@ -561,7 +561,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#setScreenName(java.lang.String)
+	 * @see org.owasp.esapi.User#setScreenName(java.lang.String)
 	 */
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
@@ -580,7 +580,7 @@ public class DefaultUser implements User, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#unlock()
+	 * @see org.owasp.esapi.User#unlock()
 	 */
 	public void unlock() {
 		this.locked = false;
@@ -591,7 +591,7 @@ public class DefaultUser implements User, Serializable {
     /*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IUser#verifyPassword(java.lang.String)
+	 * @see org.owasp.esapi.User#verifyPassword(java.lang.String)
 	 */
 	public boolean verifyPassword(String password) {
 		return ESAPI.authenticator().verifyPassword(this, password);

@@ -186,7 +186,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, 
 	 * and input that is clearly an attack will generate a descriptive IntrusionException.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#getValidDate(java.lang.String)
+	 * @see org.owasp.esapi.Validator#getValidDate(java.lang.String)
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
 		try {
@@ -206,7 +206,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, 
 	 * and input that is clearly an attack will generate a descriptive IntrusionException.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#getValidDate(java.lang.String)
+	 * @see org.owasp.esapi.Validator#getValidDate(java.lang.String)
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
@@ -222,7 +222,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns true if input is "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidSafeHTML(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidSafeHTML(java.lang.String)
 	 */
 	public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
 		
@@ -267,7 +267,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#getValidSafeHTML(java.lang.String)
+	 * @see org.owasp.esapi.Validator#getValidSafeHTML(java.lang.String)
 	 */
 	public String getValidSafeHTML( String context, String input, int maxLength, boolean allowNull ) throws ValidationException, IntrusionException {
 		
@@ -344,7 +344,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if input is a valid credit card. Maxlength is mandated by valid credit card type.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidCreditCard(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidCreditCard(java.lang.String)
 	 */
 	public boolean isValidCreditCard(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
@@ -561,7 +561,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if input is a valid number.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidNumber(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidNumber(java.lang.String)
 	 */
 	public boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws IntrusionException {
 		try {
@@ -598,7 +598,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if input is a valid number.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidNumber(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidNumber(java.lang.String)
 	 */
 	public boolean isValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws IntrusionException {
 		return isValidDouble( context, input, minValue, maxValue, allowNull );
@@ -648,7 +648,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if input is a valid number.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidInteger(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidInteger(java.lang.String)
 	 */
 	public boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException {
 		try {
@@ -870,7 +870,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if input is a valid list item.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidListItem(java.util.List,
+	 * @see org.owasp.esapi.Validator#isValidListItem(java.util.List,
 	 *      java.lang.String)
 	 */
 	public boolean isValidListItem(String context, String input, List list) {
@@ -909,7 +909,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if the parameters in the current request contain all required parameters and only optional ones in addition.
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidParameterSet(java.util.Set,
+	 * @see org.owasp.esapi.Validator#isValidParameterSet(java.util.Set,
 	 *      java.util.Set, java.util.Set)
 	 */
 	public boolean isValidHTTPRequestParameterSet(String context, Set requiredNames, Set optionalNames) {
@@ -1012,7 +1012,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/*
 	 * Returns true if input is valid printable ASCII characters (32-126).
 	 * 
-	 * @see org.owasp.esapi.interfaces.IValidator#isValidPrintable(java.lang.String)
+	 * @see org.owasp.esapi.Validator#isValidPrintable(java.lang.String)
 	 */
 	public boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {

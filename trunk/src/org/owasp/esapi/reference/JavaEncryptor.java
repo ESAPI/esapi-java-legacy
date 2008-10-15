@@ -124,7 +124,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#encrypt(java.lang.String)
+	 * @see org.owasp.esapi.Encryptor#encrypt(java.lang.String)
 	 */
 	public String encrypt(String plaintext) throws EncryptionException {
 		// Note - Cipher is not threadsafe so we create one locally
@@ -142,7 +142,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#decrypt(java.lang.String)
+	 * @see org.owasp.esapi.Encryptor#decrypt(java.lang.String)
 	 */
 	public String decrypt(String ciphertext) throws EncryptionException {
 		// Note - Cipher is not threadsafe so we create one locally
@@ -160,7 +160,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#sign(java.lang.String)
+	 * @see org.owasp.esapi.Encryptor#sign(java.lang.String)
 	 */
 	public String sign(String data) throws EncryptionException {
 		String signatureAlgorithm="SHAwithDSA";
@@ -179,7 +179,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#verifySignature(java.lang.String,
+	 * @see org.owasp.esapi.Encryptor#verifySignature(java.lang.String,
 	 *      java.lang.String)
 	 */
 	public boolean verifySignature(String signature, String data) {
@@ -198,7 +198,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#seal(java.lang.String,
+	 * @see org.owasp.esapi.Encryptor#seal(java.lang.String,
 	 *      java.lang.String)
 	 */
 	public String seal(String data, long expiration) throws IntegrityException {
@@ -214,7 +214,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#unseal(java.lang.String)
+	 * @see org.owasp.esapi.Encryptor#unseal(java.lang.String)
 	 */
 	public String unseal(String seal) throws EncryptionException {
 		
@@ -246,7 +246,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#verifySeal(java.lang.String)
+	 * @see org.owasp.esapi.Encryptor#verifySeal(java.lang.String)
 	 */
 	public boolean verifySeal( String seal ) {
 		try {
@@ -260,7 +260,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#getTimeStamp()
+	 * @see org.owasp.esapi.Encryptor#getTimeStamp()
 	 */
 	public long getTimeStamp() {
 		return new Date().getTime();
@@ -269,7 +269,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IEncryptor#getTimeStamp()
+	 * @see org.owasp.esapi.Encryptor#getTimeStamp()
 	 */
 	public long getRelativeTimeStamp( long offset ) {
 		return new Date().getTime() + offset;
