@@ -41,7 +41,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     /** The logger. */
     private final Logger logger = ESAPI.getLogger("Executor");
     
-    private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
+    //private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
     
 
     public DefaultExecutor() {

@@ -141,7 +141,7 @@ public class HTTPUtilitiesTest extends TestCase {
         TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request1, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(request1, home, home);
+            ESAPI.httpUtilities().getSafeFileUploads(request1, home, home);
             fail();
         } catch( ValidationException e ) {
         	// expected
@@ -166,7 +166,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(request3, home, home);
+            ESAPI.httpUtilities().getSafeFileUploads(request3, home, home);
             fail();
         } catch (ValidationException e) {
         	// expected
@@ -256,7 +256,6 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSendSafeRedirect() throws ValidationException, IOException {
         System.out.println("sendSafeRedirect");
-        TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         try {
@@ -309,7 +308,6 @@ public class HTTPUtilitiesTest extends TestCase {
 	        ESAPI.httpUtilities().encryptStateInCookie(response, map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-	        // String encrypted = response.getCookie("state").getValue();
 	        request.setCookie( "state", encrypted );
 	        Map state = ESAPI.httpUtilities().decryptStateFromCookie(request);
 	        Iterator i = map.entrySet().iterator();
