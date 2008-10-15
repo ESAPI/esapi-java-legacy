@@ -59,7 +59,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IRandomizer#getRandomString(int, char[])
+     * @see org.owasp.esapi.Randomizer#getRandomString(int, char[])
      */
     public String getRandomString(int length, char[] characterSet) {
         StringBuffer sb = new StringBuffer();
@@ -74,7 +74,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IRandomizer#getRandomBoolean()
+     * @see org.owasp.esapi.Randomizer#getRandomBoolean()
      */
     public boolean getRandomBoolean() {
         return secureRandom.nextBoolean();
@@ -104,7 +104,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.interfaces.IRandomizer#getRandomReal(float, float)
+     * @see org.owasp.esapi.Randomizer#getRandomReal(float, float)
      */
     public float getRandomReal(float min, float max) {
         float factor = max - min;

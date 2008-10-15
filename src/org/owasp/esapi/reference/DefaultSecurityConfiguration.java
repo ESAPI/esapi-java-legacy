@@ -124,7 +124,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /* (non-Javadoc)
-     * @see org.owasp.esapi.interfaces.ISecurityConfiguration#getApplicationName()
+     * @see org.owasp.esapi.SecurityConfiguration#getApplicationName()
      */
     public String getApplicationName() {
     	return properties.getProperty(APPLICATION_NAME);

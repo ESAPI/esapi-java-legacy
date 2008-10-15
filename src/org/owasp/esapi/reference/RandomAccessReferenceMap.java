@@ -146,7 +146,7 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessReferenceMap#getIndirectReference(java.lang.String)
+	 * @see org.owasp.esapi.AccessReferenceMap#getIndirectReference(java.lang.String)
 	 */
 	public String getIndirectReference(Object directReference) {
 		return (String) dtoi.get(directReference);
@@ -155,7 +155,7 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.interfaces.IAccessReferenceMap#getDirectReference(java.lang.String)
+	 * @see org.owasp.esapi.AccessReferenceMap#getDirectReference(java.lang.String)
 	 */
 	public Object getDirectReference(String indirectReference) throws AccessControlException {
 		if (itod.containsKey(indirectReference)) {
