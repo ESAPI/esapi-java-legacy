@@ -226,7 +226,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * @throws AccessControlException
 	 * 		if access is not permitted
 	 * 
-	 * @see org.owasp.esapi.interfaces.AccessController#isAuthorizedForData(java.lang.String)
+	 * @see org.owasp.esapi.AccessController#isAuthorizedForData(java.lang.String)
 	 */
     public void assertAuthorizedForData(String key) throws AccessControlException {
 		if (dataMap==null || dataMap.isEmpty()) {
