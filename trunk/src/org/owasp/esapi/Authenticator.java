@@ -72,12 +72,25 @@ public interface Authenticator {
 	 * necessary, creates a session if necessary, and sets the user as the
 	 * current user.
 	 * 
+	 * Specification:  The implementation should do the following:
+     * 	1) Check if the User is already stored in the session
+     * 		a. If so, check that session absolute and inactivity timeout have not expired
+     * 		b. Step 2 may not be required if 1a has been satisfied
+     * 	2) Verify User credentials
+     * 		a. It is recommended that you use 
+     * 			loginWithUsernameAndPassword(HttpServletRequest, HttpServletResponse) to validate this
+     * 	3) Set the last host of the User
+     * 	4) Verify that the request is secure (ex. over SSL)
+     * 	5) Verify the User account is allowed to be logged in
+     * 		a. Verify the User is not disabled, expired or locked
+     * 	6) Assign User to session variable     * 	
+	 * 
 	 * @param request
 	 *            the current HTTP request
 	 * @param response
 	 *            the response
 	 * 
-	 * @return the user
+	 * @return the User
 	 * 
 	 * @throws AuthenticationException
 	 *             if the credentials are not verified, or if the account is disabled, locked, expired, or timed out
@@ -100,6 +113,8 @@ public interface Authenticator {
 	
 	/**
 	 * Logs out the current user.
+	 * 
+	 * This is usually done by calling User.logout on the current User. 
 	 */
     void logout();
 
