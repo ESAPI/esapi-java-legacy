@@ -95,7 +95,7 @@ public interface AccessController {
     boolean isAuthorizedForFunction(String functionName);
 
     /**
-     * Checks if an account is authorized to access the referenced data. 
+     * Checks if an account is authorized to access the referenced data, represented as a String. 
      * 
      * The implementation of this method should call assertAuthorizedForData(String key), and if an AccessControlException is not thrown, this method should
      * return true.
@@ -108,6 +108,21 @@ public interface AccessController {
      */
     boolean isAuthorizedForData(String key);
 
+    /**
+     * Checks if an account is authorized to access the referenced data, represented as an Object. 
+     * 
+     * The implementation of this method should call assertAuthorizedForData(String action, Object data), and if an AccessControlException is not thrown, this method should
+     * return true.
+     * 
+     * @param action
+     * 		the action to check for in the configuration file in the resource directory
+     * 
+     * @data
+     * 		the data to check for in the configuration file in the resource directory 	
+     * 
+     * @return 
+     * 		true, if is authorized for data
+     */
     boolean isAuthorizedForData(String action, Object data);
     
     /**
@@ -209,9 +224,26 @@ public interface AccessController {
      */
     void assertAuthorizedForData(String key) throws AccessControlException;
     
-    /*
-     * Javadocs here
+    /**
+     * Checks if the current user is authorized to access the referenced data.  This method simply returns if access is authorized.  
+     * It throws an AccessControlException if access is not authorized, or if the referenced data does not exist.
      * 
+     * Specification:  The implementation should do the following:
+     * 	1) Check to see if the resource exists and if not, throw an AccessControlException
+     * 	2) Use available information to make an access control decision	
+     * 		a. Ideally, this policy would be data driven
+     * 		b. You can use the current User, roles, data type, data name, time of day, etc.
+     * 		c. Access control decisions must deny by default
+     * 	3) If access is not permitted, throw AccessControlException with details
+     * 
+     * @param action
+     * 		the action to check for in the configuration file in the resource directory
+     * 
+     * @data
+     * 		the data to check for in the configuration file in the resource directory
+     * 
+     * @throws AccessControlException 
+     * 		if access is not permitted
      */
     void assertAuthorizedForData(String action, Object data) throws AccessControlException;
    
