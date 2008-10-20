@@ -70,7 +70,7 @@ public interface AccessController {
      * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
      * The implementation of this method should call assertAuthorizedForURL(String url), and if an AccessControlException is not thrown, this method should
-     * return true.
+     * return true. This way, if the user is not authorized, false would be returned, and the exception would be logged.
      * 
      * @param url 
      * 		the URL as returned by request.getRequestURI().toString()
