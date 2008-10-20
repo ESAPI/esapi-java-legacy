@@ -89,7 +89,7 @@ public interface AccessReferenceMap {
 	 * Get the original direct object reference from an indirect reference.
 	 * Developers should use this when they get an indirect reference from a
 	 * request to translate it back into the real direct reference. If an
-	 * invalid indirectReference is requested, then an AccessControlException is
+	 * invalid indirect reference is requested, then an AccessControlException is
 	 * thrown.
 	 * 
 	 * @param indirectReference
@@ -103,7 +103,9 @@ public interface AccessReferenceMap {
 	Object getDirectReference(String indirectReference) throws AccessControlException;
 
 	/**
-	 * Adds a direct reference to the AccessReferenceMap and generates an associated indirect reference. 
+	 * Adds a direct reference to the AccessReferenceMap, then generates and returns 
+	 * an associated indirect reference.
+	 *  
 	 * @param direct 
 	 * 		the direct reference
 	 * 
@@ -113,6 +115,7 @@ public interface AccessReferenceMap {
 	
 	/**
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
+	 * 
 	 * @param direct 
 	 * 		the direct reference to remove
 	 * 
@@ -123,8 +126,9 @@ public interface AccessReferenceMap {
 	String removeDirectReference(Object direct) throws AccessControlException;
 
 	/**
-	 * Updates the access reference map with a new set of directReferences, maintaining
-	 * any existing indirectReferences associated with items that are in the new list. 
+	 * Updates the access reference map with a new set of direct references, maintaining
+	 * any existing indirect references associated with items that are in the new list. 
+	 * 
 	 * @param directReferences
 	 */
 	void update(Set directReferences);
