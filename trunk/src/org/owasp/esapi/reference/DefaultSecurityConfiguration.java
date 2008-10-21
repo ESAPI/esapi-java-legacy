@@ -401,23 +401,30 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return q;
     }
 
+    /**
+     * Get the log level specified in the ESAPI configuration properties file. Return a default value if it is not specified.
+     * 
+     * @return the logging level defined in the properties file. If none is specified, the default of Level.WARNING is returned.
+     */
     public Level getLogLevel() {
         String level = properties.getProperty(LOG_LEVEL);
-        if (level.equalsIgnoreCase("TRACE"))
-            return Level.FINER;
+        if (level.equalsIgnoreCase("OFF"))
+            return Level.OFF;
+        if (level.equalsIgnoreCase("FATAL"))
+            return Level.SEVERE;
         if (level.equalsIgnoreCase("ERROR"))
-            return Level.WARNING;
-        if (level.equalsIgnoreCase("SEVERE"))
             return Level.SEVERE;
         if (level.equalsIgnoreCase("WARNING"))
             return Level.WARNING;
-        if (level.equalsIgnoreCase("SUCCESS"))
+        if (level.equalsIgnoreCase("INFO"))
             return Level.INFO;
         if (level.equalsIgnoreCase("DEBUG"))
-            return Level.CONFIG;
-        if (level.equalsIgnoreCase("NONE"))
-            return Level.OFF;
-        return Level.ALL;
+            return Level.FINE;
+        if (level.equalsIgnoreCase("TRACE"))
+            return Level.FINER;
+        if (level.equalsIgnoreCase("ALL"))
+            return Level.ALL;
+        return Level.WARNING;  // Note: The default logging level is WARNING.
     }
 
     public String getResponseContentType() {

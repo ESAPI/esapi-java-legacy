@@ -399,7 +399,7 @@ public class AuthenticatorTest extends TestCase {
 					String password = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 					u = instance.createUser("test" + count++, password, password);
 					instance.setCurrentUser(u);
-					ESAPI.getLogger("test").info( Logger.SECURITY, "Got current user" );
+					ESAPI.getLogger("test").info( Logger.SECURITY, true, "Got current user" );
 					// ESAPI.authenticator().removeUser( u.getAccountName() );
 				} catch (AuthenticationException e) {
 					e.printStackTrace();

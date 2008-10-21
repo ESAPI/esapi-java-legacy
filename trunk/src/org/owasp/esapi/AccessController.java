@@ -117,7 +117,7 @@ public interface AccessController {
      * @param action
      * 		the action to check for in the configuration file in the resource directory
      * 
-     * @data
+     * @param data
      * 		the data to check for in the configuration file in the resource directory 	
      * 
      * @return 
@@ -239,7 +239,7 @@ public interface AccessController {
      * @param action
      * 		the action to check for in the configuration file in the resource directory
      * 
-     * @data
+     * @param data
      * 		the data to check for in the configuration file in the resource directory
      * 
      * @throws AccessControlException 

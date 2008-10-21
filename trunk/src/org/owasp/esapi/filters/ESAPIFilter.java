@@ -22,7 +22,6 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -70,7 +69,6 @@ public class ESAPIFilter implements Filter {
 	 *            current FilterChain
 	 * @exception IOException
 	 *                if any occurs
-	 * @throws ServletException
 	 */
 	public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException {
 		HttpServletRequest request = (HttpServletRequest) req;
@@ -124,7 +122,7 @@ public class ESAPIFilter implements Filter {
             
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error( Logger.SECURITY, "Error in ESAPI security filter: " + e.getMessage(), e );
+			logger.error( Logger.SECURITY, false, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
 			
 		} finally {

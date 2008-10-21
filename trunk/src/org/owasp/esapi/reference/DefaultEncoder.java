@@ -183,7 +183,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			if ( strict ) {
 				throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
 			} else {
-				logger.warning( Logger.SECURITY, "Double encoding detected in " + input );
+				logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
 			}
 		}
 		return candidate;
@@ -284,7 +284,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			if ( c == '\t' || c == '\n' || c == '\r' ) {
 				sb.append( c );
 			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
-				logger.warning( Logger.SECURITY, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
+				logger.warning( Logger.SECURITY, false, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
 			} else {
 				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTML ) );
 			}

@@ -153,10 +153,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
 			new SafeResponse(response).addCookie(REMEMBER_TOKEN_COOKIE_NAME, cryptToken, maxAge, domain, path );
-			logger.info(Logger.SECURITY, "Enabled remember me token for " + user.getAccountName() );
+			logger.info(Logger.SECURITY, true, "Enabled remember me token for " + user.getAccountName() );
 			return cryptToken;
 		} catch( IntegrityException e ) {
-			logger.warning(Logger.SECURITY, "Attempt to set remember me token failed for " + user.getAccountName(), e );
+			logger.warning(Logger.SECURITY, false, "Attempt to set remember me token failed for " + user.getAccountName(), e );
 			return null;
 		}
 	}
@@ -301,7 +301,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	    		sb.append( name + "=" + value );
 	    		if ( i.hasNext() ) sb.append( "&" );
     		} catch( EncodingException e ) {
-    			logger.error(Logger.SECURITY, "Problem encrypting state in cookie - skipping entry", e );
+    			logger.error(Logger.SECURITY, false, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
     	String encrypted = ESAPI.encryptor().encrypt(sb.toString());
@@ -364,7 +364,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
 					}
 
-					logger.info(Logger.SECURITY, "File upload requested: " + filename);
+					logger.info(Logger.SECURITY, true, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
 					if (f.exists()) {
 						String[] parts = filename.split("\\/.");
@@ -379,7 +379,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 					newFiles.add( f );
 					// delete temporary file
 					item.delete();
-					logger.fatal(Logger.SECURITY, "File successfully uploaded: " + f);
+					logger.fatal(Logger.SECURITY, true, "File successfully uploaded: " + f);
 					session.setAttribute("progress", Long.toString(0));
 				}
 			}
@@ -579,7 +579,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
                 }
         }
         String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
-        logger.info(Logger.SECURITY, msg);
+        logger.info(Logger.SECURITY, true, msg);
     }
 
     /**

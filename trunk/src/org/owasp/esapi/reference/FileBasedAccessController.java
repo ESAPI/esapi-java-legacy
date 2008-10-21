@@ -331,7 +331,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		try {
 		    canonical = ESAPI.encoder().canonicalize(path);
 		} catch (EncodingException e) {
-		    logger.warning( Logger.SECURITY, "Failed to canonicalize input: " + path );
+		    logger.warning( Logger.SECURITY, false, "Failed to canonicalize input: " + path );
 		}
 		
 		String part = canonical;
@@ -467,21 +467,21 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");
 					if (map.containsKey(rule.path)) {
-						logger.warning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+						logger.warning( Logger.SECURITY, false, "Problem in access control file. Duplicate rule ignored: " + rule);
 					} else {
 						map.put(rule.path, rule);
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.warning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
+			logger.warning( Logger.SECURITY, false, "Problem in access control file : " + ruleset, e );
 		} finally {
 			try {
 				if (is != null) {
 					is.close();
 				}
 			} catch (IOException e) {
-				logger.warning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
+				logger.warning(Logger.SECURITY, false, "Failure closing access control file : " + ruleset, e);
 			}
 		}
 		return map;
@@ -494,9 +494,6 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 *            the ruleset
 	 * 
 	 * @return the hash map
-	 * 
-	 * @throws AccessControlException
-	 *             the access control exception
 	 */
 	private Map loadDataRules(String ruleset) {
 		Map map = new HashMap();
@@ -520,14 +517,14 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 						rule.actions.add(((String) action.get(x)).trim());
 					
 					if (map.containsKey(rule.path)) {
-						logger.warning( Logger.SECURITY, "Problem in access control file. Duplicate rule ignored: " + rule);
+						logger.warning( Logger.SECURITY, false, "Problem in access control file. Duplicate rule ignored: " + rule);
 					} else {
 						map.put(rule.clazz, rule);		
 					}
 				}
 			}
 		} catch (Exception e) {
-			logger.warning( Logger.SECURITY, "Problem in access control file : " + ruleset, e );
+			logger.warning( Logger.SECURITY, false, "Problem in access control file : " + ruleset, e );
 		} finally {
 			
 			try {
@@ -535,7 +532,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					is.close();
 				}
 			} catch (IOException e) {
-				logger.warning(Logger.SECURITY, "Failure closing access control file : " + ruleset, e);
+				logger.warning(Logger.SECURITY, false, "Failure closing access control file : " + ruleset, e);
 			}
 		}
 		return map;
