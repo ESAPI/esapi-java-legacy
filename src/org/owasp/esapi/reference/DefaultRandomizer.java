@@ -29,7 +29,6 @@ import org.owasp.esapi.errors.EncryptionException;
  * Reference implementation of the Randomizer interface. This implementation builds on the JCE provider to provide a
  * cryptographically strong source of entropy. The specific algorithm used is configurable in ESAPI.properties.
  * 
- * @author Jeff Williams
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Randomizer
@@ -137,7 +136,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         try {
             array = ESAPI.encoder().decodeFromBase64(hash);
         } catch (IOException e) {
-            logger.fatal(Logger.SECURITY, "Problem decoding hash while creating GUID: " + hash);
+            logger.fatal(Logger.SECURITY, false, "Problem decoding hash while creating GUID: " + hash);
         }
         
         // convert to printable hexadecimal characters 

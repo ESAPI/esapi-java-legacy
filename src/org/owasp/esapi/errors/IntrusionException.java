@@ -39,13 +39,6 @@ public class IntrusionException extends RuntimeException {
     protected String logMessage = null;
 
     /**
-     * Internal classes may throw an IntrusionException to the IntrusionDetector, which generates the appropriate log
-     * message.
-     */
-    private IntrusionException() {
-    }
-
-    /**
      * Creates a new instance of IntrusionException.
      * 
      * @param userMessage
@@ -56,7 +49,7 @@ public class IntrusionException extends RuntimeException {
     public IntrusionException(String userMessage, String logMessage) {
         super(userMessage);
         this.logMessage = logMessage;
-        logger.error(Logger.SECURITY, "INTRUSION - " + logMessage);
+        logger.error(Logger.SECURITY, false, "INTRUSION - " + logMessage);
     }
 
     /**
@@ -72,7 +65,7 @@ public class IntrusionException extends RuntimeException {
     public IntrusionException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
-        logger.error(Logger.SECURITY, "INTRUSION - " + logMessage, cause);
+        logger.error(Logger.SECURITY, false, "INTRUSION - " + logMessage, cause);
     }
 
     /**

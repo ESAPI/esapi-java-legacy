@@ -96,61 +96,135 @@ public class LoggerTest extends TestCase {
         ESAPI.httpUtilities().logHTTPRequest( request, logger, Arrays.asList(ignore) );
     }    
     
+    
     /**
-	 * Test of logSuccess method, of class org.owasp.esapi.Logger.
+     * Test of setLevel method of the inner class org.owasp.esapi.reference.JavaLogger that is defined in 
+     * org.owasp.esapi.reference.JavaLogFactory.
+     */
+    public void testSetLevel() {
+        System.out.println("setLevel");
+        Logger myLogger = ESAPI.getLogger( "mod" );
+        
+        myLogger.setLevel( Logger.ALL );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertTrue(myLogger.isErrorEnabled());
+       	assertTrue(myLogger.isWarningEnabled());
+       	assertTrue(myLogger.isInfoEnabled());
+       	assertTrue(myLogger.isDebugEnabled());
+       	assertTrue(myLogger.isTraceEnabled());
+
+       	myLogger.setLevel( Logger.TRACE );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertTrue(myLogger.isErrorEnabled());
+       	assertTrue(myLogger.isWarningEnabled());
+       	assertTrue(myLogger.isInfoEnabled());
+       	assertTrue(myLogger.isDebugEnabled());
+       	assertTrue(myLogger.isTraceEnabled());
+
+       	myLogger.setLevel( Logger.DEBUG );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertTrue(myLogger.isErrorEnabled());
+       	assertTrue(myLogger.isWarningEnabled());
+       	assertTrue(myLogger.isInfoEnabled());
+       	assertTrue(myLogger.isDebugEnabled());
+       	assertFalse(myLogger.isTraceEnabled());
+       	
+       	myLogger.setLevel( Logger.INFO );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertTrue(myLogger.isErrorEnabled());
+       	assertTrue(myLogger.isWarningEnabled());
+       	assertTrue(myLogger.isInfoEnabled());
+       	assertFalse(myLogger.isDebugEnabled());
+       	assertFalse(myLogger.isTraceEnabled());
+       	
+       	myLogger.setLevel( Logger.WARNING );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertTrue(myLogger.isErrorEnabled());
+       	assertTrue(myLogger.isWarningEnabled());
+       	assertFalse(myLogger.isInfoEnabled());
+       	assertFalse(myLogger.isDebugEnabled());
+       	assertFalse(myLogger.isTraceEnabled());
+       	
+       	myLogger.setLevel( Logger.ERROR );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertTrue(myLogger.isErrorEnabled());
+       	assertFalse(myLogger.isWarningEnabled());
+       	assertFalse(myLogger.isInfoEnabled());
+       	assertFalse(myLogger.isDebugEnabled());
+       	assertFalse(myLogger.isTraceEnabled());
+       	
+       	myLogger.setLevel( Logger.FATAL );
+    	assertTrue(myLogger.isFatalEnabled());
+       	assertFalse(myLogger.isErrorEnabled());
+       	assertFalse(myLogger.isWarningEnabled());
+       	assertFalse(myLogger.isInfoEnabled());
+       	assertFalse(myLogger.isDebugEnabled());
+       	assertFalse(myLogger.isTraceEnabled());
+       	
+       	myLogger.setLevel( Logger.OFF );
+    	assertFalse(myLogger.isFatalEnabled());
+       	assertFalse(myLogger.isErrorEnabled());
+       	assertFalse(myLogger.isWarningEnabled());
+       	assertFalse(myLogger.isInfoEnabled());
+       	assertFalse(myLogger.isDebugEnabled());
+       	assertFalse(myLogger.isTraceEnabled());
+    }
+
+    
+    /**
+	 * Test of info method, of class org.owasp.esapi.Logger.
 	 */
     public void testInfo() {
         System.out.println("info");
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "test message" );
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "test message", null );
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "%3escript%3f test message", null );
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, "<script> test message", null );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "test message" );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "test message", null );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "%3escript%3f test message", null );
+        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "<script> test message", null );
     }
 
-
     /**
-	 * Test of logTrace method, of class org.owasp.esapi.Logger.
+	 * Test of trace method, of class org.owasp.esapi.Logger.
 	 */
     public void testTrace() {
         System.out.println("trace");
-        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, "test message" );
-        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, true, "test message" );
+        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, true, "test message", null );
     }
 
     /**
-	 * Test of logDebug method, of class org.owasp.esapi.Logger.
+	 * Test of debug method, of class org.owasp.esapi.Logger.
 	 */
     public void testDebug() {
         System.out.println("debug");
-        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, "test message" );
-        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, true, "test message" );
+        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, true, "test message", null );
     }
 
     /**
-	 * Test of logError method, of class org.owasp.esapi.Logger.
+	 * Test of error method, of class org.owasp.esapi.Logger.
 	 */
     public void testError() {
         System.out.println("error");
-        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, "test message" );
-        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, true, "test message" );
+        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, true, "test message", null );
     }
 
     /**
-	 * Test of logWarning method, of class org.owasp.esapi.Logger.
+	 * Test of warning method, of class org.owasp.esapi.Logger.
 	 */
     public void testWarning() {
         System.out.println("warning");
-        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, "test message" );
-        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, true, "test message" );
+        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, true, "test message", null );
     }
 
     /**
-	 * Test of logCritical method, of class org.owasp.esapi.Logger.
+	 * Test of fatal method, of class org.owasp.esapi.Logger.
 	 */
     public void testFatal() {
         System.out.println("fatal");
-        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, "test message" );
-        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, "test message", null );
+        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, true, "test message" );
+        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, true, "test message", null );
     }
     
 }
