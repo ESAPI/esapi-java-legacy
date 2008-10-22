@@ -27,9 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 
 /**
@@ -401,33 +402,42 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return q;
     }
 
-    /**
-     * Get the log level specified in the ESAPI configuration properties file. Return a default value if it is not specified.
-     * 
-     * @return the logging level defined in the properties file. If none is specified, the default of Level.WARNING is returned.
-     */
-    public Level getLogLevel() {
+    public int getLogLevel() {
         String level = properties.getProperty(LOG_LEVEL);
+        if (level == null) {
+            ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
+            		"The LOG-LEVEL property in the ESAPI properties file is not defined.");
+        	return Logger.WARNING;
+        }
         if (level.equalsIgnoreCase("OFF"))
-            return Level.OFF;
+            return Logger.OFF;
         if (level.equalsIgnoreCase("FATAL"))
-            return Level.SEVERE;
+            return Logger.FATAL;
         if (level.equalsIgnoreCase("ERROR"))
-            return Level.SEVERE;
+            return Logger.ERROR ;
         if (level.equalsIgnoreCase("WARNING"))
-            return Level.WARNING;
+            return Logger.WARNING;
         if (level.equalsIgnoreCase("INFO"))
-            return Level.INFO;
+            return Logger.INFO;
         if (level.equalsIgnoreCase("DEBUG"))
-            return Level.FINE;
+            return Logger.DEBUG;
         if (level.equalsIgnoreCase("TRACE"))
-            return Level.FINER;
+            return Logger.TRACE;
         if (level.equalsIgnoreCase("ALL"))
-            return Level.ALL;
-        return Level.WARNING;  // Note: The default logging level is WARNING.
+            return Logger.ALL;
+        
+        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
+        		"The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level);
+        return Logger.WARNING;  // Note: The default logging level is WARNING.
     }
 
-    public String getResponseContentType() {
+	public boolean getLogEncodingRequired() {
+    	String value = properties.getProperty( "LogEncodingRequired" );
+    	if ( value != null && value.equalsIgnoreCase("true")) return true;
+    	return false;
+	}
+
+	public String getResponseContentType() {
         String def = "text/html; charset=UTF-8";
         return properties.getProperty( RESPONSE_CONTENT_TYPE, def );
     }
@@ -458,9 +468,4 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return pattern;
     }
 
-	public boolean getLogEncodingRequired() {
-    	String value = properties.getProperty( "LogEncodingRequired" );
-    	if ( value != null && value.equalsIgnoreCase("true")) return true;
-    	return false;
-	}
 }

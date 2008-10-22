@@ -33,7 +33,7 @@ import org.owasp.esapi.errors.ValidationException;
  * are security issues. Boolean returns allow developers to handle both valid
  * and invalid results more cleanly than exceptions.
  * <P>
- * <img src="doc-files/Validator.jpg" height="600">
+ * <img src="doc-files/Validator.jpg">
  * <P>
  * Implementations must adopt a "whitelist" approach to validation where a
  * specific pattern or character set is matched. "Blacklist" approaches that

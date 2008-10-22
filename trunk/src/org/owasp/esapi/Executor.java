@@ -31,7 +31,7 @@ import org.owasp.esapi.errors.ExecutorException;
  * well. Finally, implementation should handle errors and generate an
  * ExecutorException with all the necessary information.
  * <P>
- * <img src="doc-files/Executor.jpg" height="600">
+ * <img src="doc-files/Executor.jpg">
  * <P>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a

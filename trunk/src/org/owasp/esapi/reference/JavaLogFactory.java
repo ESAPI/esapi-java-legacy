@@ -42,6 +42,16 @@ public class JavaLogFactory implements LogFactory {
     	return new JavaLogger(applicationName, name);
     }
 
+    /* A custom logging level defined between Level.SEVERE and Level.WARNING in logger. */
+    public static class JavaLoggerLevel extends Level {
+
+    	public static final Level ERROR_LEVEL = new JavaLoggerLevel( "ERROR", Level.SEVERE.intValue() - 1);
+    	
+		protected JavaLoggerLevel(String name, int value) {
+			super(name, value);
+		}
+    }
+    
     /*
      * (non-Javadoc)
      * 
@@ -58,16 +68,7 @@ public class JavaLogFactory implements LogFactory {
         /** The module name. */
         private String moduleName = null;
 
-        /* A custom logging level defined between Level.SEVERE and Level.WARNING in logger. */
-        private static class JavaLoggerLevel extends Level {
-
-        	public static final Level ERROR_LEVEL = new JavaLoggerLevel( "ERROR", Level.SEVERE.intValue() - 1);
-        	
-			protected JavaLoggerLevel(String name, int value) {
-				super(name, value);
-			}
-        }
-        
+      
         /**
          * Public constructor should only ever be called via the appropriate LogFactory
          * 

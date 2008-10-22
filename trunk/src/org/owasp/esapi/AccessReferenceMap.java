@@ -29,7 +29,7 @@ import org.owasp.esapi.errors.AccessControlException;
  * should not expose their direct object references as it enables attackers to
  * attempt to manipulate them.
  * <P>
- * <img src="doc-files/AccessReferenceMap.jpg" height="600">
+ * <img src="doc-files/AccessReferenceMap.jpg">
  * <P>
  * <P>
  * Indirect references are handled as strings, to facilitate their use in HTML.

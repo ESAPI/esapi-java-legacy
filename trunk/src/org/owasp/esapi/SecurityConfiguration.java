@@ -22,9 +22,7 @@ import java.util.List;
 /**
  * The SecurityConfiguration interface stores all configuration information
  * that directs the behavior of the ESAPI implementation.
- * <P>
- * <img src="doc-files/SecurityConfiguration.jpg" height="600">
- * <P>
+ * 
  * Protection of this configuration information is critical to the secure
  * operation of the application using the ESAPI. You should use operating system
  * access controls to limit access to wherever the configuration information is
@@ -179,6 +177,13 @@ public interface SecurityConfiguration {
 	 */
 	public long getRememberTokenDuration();
 
+    /**
+     * Get the log level specified in the ESAPI configuration properties file. Return a default value if it is not specified.
+     * 
+     * @return the logging level defined in the properties file. If none is specified, the default of Logger.WARNING is returned.
+     */
+    public int getLogLevel();
+	
 	/**
 	 * Returns whether HTML entity encoding should be applied to log entries.
 	 */

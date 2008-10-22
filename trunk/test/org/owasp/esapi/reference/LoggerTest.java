@@ -168,6 +168,14 @@ public class LoggerTest extends TestCase {
        	assertFalse(myLogger.isInfoEnabled());
        	assertFalse(myLogger.isDebugEnabled());
        	assertFalse(myLogger.isTraceEnabled());
+       	
+       	// Set the logging level back to whatever it is configured to be.
+       	myLogger.setLevel( ESAPI.securityConfiguration().getLogLevel() );
+       	
+       	// Normally, the default is Logger.WARNING, but if the default was changed, these tests would fail,
+       	// so there are commented out for now. But you can enable to test.
+       	//assertTrue(myLogger.isWarningEnabled());
+       	//assertTrue(myLogger.isInfoEnabled());
     }
 
     

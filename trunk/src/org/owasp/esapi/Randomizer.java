@@ -19,14 +19,12 @@ import org.owasp.esapi.errors.EncryptionException;
 
 
 /**
- * The IRandomizer interface defines a set of methods for creating
+ * The Randomizer interface defines a set of methods for creating
  * cryptographically random numbers and strings. Implementers should be sure to
  * use a strong cryptographic implementation, such as the JCE or BouncyCastle.
  * Weak sources of randomness can undermine a wide variety of security
  * mechanisms.
- * <P>
- * <img src="doc-files/Randomizer.jpg" height="600">
- * <P>
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007

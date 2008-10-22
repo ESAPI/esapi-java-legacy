@@ -30,7 +30,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * interface is to encourage developers to protect credentials from disclosure
  * to the maximum extent possible.
  * <P>
- * <img src="doc-files/Authenticator.jpg" height="600">
+ * <img src="doc-files/Authenticator.jpg">
  * <P>
  * One possible implementation relies on the use of a thread local variable to
  * store the current user's identity. The application is responsible for calling
