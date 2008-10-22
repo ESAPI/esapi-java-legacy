@@ -22,18 +22,21 @@ import org.owasp.esapi.errors.EncodingException;
 
 
 /**
- * The Encoder interface contains a number of methods related to encoding input
+ * The Encoder interface contains a number of methods for decoding input and encoding output
  * so that it will be safe for a variety of interpreters. To prevent
  * double-encoding, all encoding methods should first check to see that the
  * input does not already contain encoded characters. There are a few methods
  * related to decoding that are used for canonicalization purposes. See the
- * Validator class for more information.
+ * Validator class for more information as the Validators rely heavily on these decoders for 
+ * canonicalizing data before validating it.
  * <P>
- * <img src="doc-files/Validator.jpg" height="600">
+ * <img src="doc-files/Encoder.jpg">
  * <P>
- * All of the methods here must use a "whitelist" or "positive" security model,
- * meaning that all characters should be encoded, except for a specific list of
- * "immune" characters that are known to be safe.
+ * All of the methods must use a "whitelist" or "positive" security model.
+ * For the encoding methods, this means that all characters should be encoded, except for a specific list of
+ * "immune" characters that are known to be safe. For the decoding methods, all encoded characters should be 
+ * decoded and if any doubly encoded characters (using the same encoding scheme or two different encoding schemes)
+ * should be rejected. 
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>

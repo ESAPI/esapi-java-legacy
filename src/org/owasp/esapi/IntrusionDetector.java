@@ -23,7 +23,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * implementation can use as much state as necessary to detect attacks, but note that storing too much state will burden
  * your system.
  * <P>
- * <img src="doc-files/IntrusionDetector.jpg" height="600">
+ * <img src="doc-files/IntrusionDetector.jpg">
  * <P>
  * <P>
  * The interface is currently designed to accept exceptions as well as custom events. Implementations can use this

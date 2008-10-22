@@ -28,7 +28,7 @@ import org.owasp.esapi.errors.ValidationException;
  * called in a non-blocking fashion.
  * 
  * <P>
- * <img src="doc-files/Validator.jpg" height="600">
+ * <img src="doc-files/Validator.jpg">
  * <P>
  * 
  * To use the ValidationErrorList to execute groups of validation 

@@ -29,7 +29,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * implemented in a number of ways, the simplest being extending Properties and overloading
  * the getProperty and setProperty methods.
  * <P>
- * <img src="doc-files/EncryptedProperties.jpg" height="600">
+ * <img src="doc-files/EncryptedProperties.jpg">
  * <P>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a

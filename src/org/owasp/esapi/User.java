@@ -28,7 +28,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * application must store for each user in order to enforce security properly. There are also many rules that govern
  * authentication and identity management.
  * <P>
- * <img src="doc-files/Authenticator.jpg" height="600">
+ * <img src="doc-files/Authenticator.jpg">
  * <P>
  * A user account can be in one of several states. When first created, a User should be disabled, not expired, and
  * unlocked. To start using the account, an administrator should enable the account. The account can be locked for a

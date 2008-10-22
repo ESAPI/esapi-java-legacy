@@ -40,7 +40,7 @@ import org.owasp.esapi.filters.SafeResponse;
  * The HTTPUtilities interface is a collection of methods that provide additional security related to HTTP requests,
  * responses, sessions, cookies, headers, and logging.
  * <P>
- * <img src="doc-files/HTTPUtilities.jpg" height="600">
+ * <img src="doc-files/HTTPUtilities.jpg">
  * <P>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -232,7 +232,7 @@ public interface HTTPUtilities {
 
     
     /**
-     * This method perform a forward to any resource located inside the WEB-INF directory. Forwarding to
+     * This method performs a forward to any resource located inside the WEB-INF directory. Forwarding to
      * publicly accessible resources can be dangerous, as the request will have already passed the URL
      * based access control check. This method ensures that you can only forward to non-publicly
      * accessible resources.
