@@ -4,6 +4,7 @@
 package org.owasp.esapi.reference;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
@@ -26,6 +27,8 @@ public class JavaLogFactory implements LogFactory {
 
 	private String applicationName;
 	
+	private HashMap loggersMap = new HashMap();
+	
 	public JavaLogFactory(String applicationName) {
 		this.applicationName = applicationName;
 	}
@@ -34,14 +37,30 @@ public class JavaLogFactory implements LogFactory {
      * @see org.owasp.esapi.LogFactory#getLogger(java.lang.Class)
      */
     public Logger getLogger(Class clazz) {
-	    return new JavaLogger(applicationName, clazz.getName());
+    	
+    	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
+    	Logger classLogger = (Logger) loggersMap.get(clazz);
+    	
+    	if (classLogger == null) {
+    		classLogger = new JavaLogger(applicationName, clazz.getName());
+    		loggersMap.put(clazz, classLogger);
+    	}
+		return classLogger;
     }
 
 	/* (non-Javadoc)
      * @see org.owasp.esapi.LogFactory#getLogger(java.lang.String)
      */
     public Logger getLogger(String moduleName) {
-    	return new JavaLogger(applicationName, moduleName);
+    	
+    	// If a logger for this module already exists, we return the same one, otherwise we create a new one.
+    	Logger moduleLogger = (Logger) loggersMap.get(moduleName);
+    	
+    	if (moduleLogger == null) {
+    		moduleLogger = new JavaLogger(applicationName, moduleName);
+    		loggersMap.put(moduleName, moduleLogger);    		
+    	}
+		return moduleLogger;
     }
 
 
@@ -102,6 +121,18 @@ public class JavaLogFactory implements LogFactory {
             // Beware getting info from SecurityConfiguration, since it logs. We made sure it doesn't log in the
             // constructor and the getLogLevel() method, so this should work.
             this.jlogger.setLevel( JavaLogger.currentLevel );
+
+            // The following is sort of how you would log to a file, but it doesn't quite work yet
+            // Since it can't always lock when there are multiple logs all pointing to the same file.
+            /*
+            try {
+            	this.jlogger.addHandler( new FileHandler("C:\\ESAPI\\DaveLog", true) );
+            } catch (IOException e) {
+            	this.jlogger.log(Level.SEVERE, "Couldn't set log file to DaveLog", e);
+            }
+            
+            System.out.println("Dave: new logger created for app: " + applicationName + " and module: " + moduleName);
+            */
         }
 
         /**
