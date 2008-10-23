@@ -31,9 +31,8 @@ import org.owasp.esapi.reference.JavaEncryptor;
 import org.owasp.esapi.reference.JavaLogFactory;
 
 /**
- * ESAPI locator class to make it easy to get a concrete implementation of the
- * various ESAPI classes. Use the setters to override the reference implementations
- * with instances of any custom ESAPI implementations.
+ * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
+ * Use the set methods to override the reference implementations with instances of any custom ESAPI implementations.
  */
 public class ESAPI {
 
@@ -67,16 +66,24 @@ public class ESAPI {
 	private ESAPI() {
 	}
 
+	/**
+	 * Get the current HTTP Servlet Request being processed.
+	 * @return the current HTTP Servlet Request.
+	 */
 	public static HttpServletRequest currentRequest() {
 		return httpUtilities().getCurrentRequest();
 	}
 	
+	/**
+	 * Get the current HTTP Servlet Response being generated.
+	 * @return the current HTTP Servlet Response.
+	 */
 	public static HttpServletResponse currentResponse() {
 		return httpUtilities().getCurrentResponse();
 	}
 	
 	/**
-	 * @return the accessController
+	 * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
 	 */
 	public static AccessController accessController() {
 		if (ESAPI.accessController == null)
@@ -85,15 +92,16 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI AccessController to the AccessController provided. 
 	 * @param accessController
-	 *            the accessController to set
+	 *            the AccessController to set to be the current ESAPI AccessController. 
 	 */
 	public static void setAccessController(AccessController accessController) {
 		ESAPI.accessController = accessController;
 	}
 
 	/**
-	 * @return the authenticator
+	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
 	public static Authenticator authenticator() {
 		if (ESAPI.authenticator == null)
@@ -102,15 +110,16 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI Authenticator to the Authenticator provided. 
 	 * @param authenticator
-	 *            the authenticator to set
+	 *            the Authenticator to set to be the current ESAPI Authenticator. 
 	 */
 	public static void setAuthenticator(Authenticator authenticator) {
 		ESAPI.authenticator = authenticator;
 	}
 
 	/**
-	 * @return the encoder
+	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
 	public static Encoder encoder() {
 		if (ESAPI.encoder == null)
@@ -119,15 +128,16 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI Encoder to the Encoder provided. 
 	 * @param encoder
-	 *            the encoder to set
+	 *            the Encoder to set to be the current ESAPI Encoder. 
 	 */
 	public static void setEncoder(Encoder encoder) {
 		ESAPI.encoder = encoder;
 	}
 
 	/**
-	 * @return the encryptor
+	 * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
 	 */
 	public static Encryptor encryptor() {
 		if (ESAPI.encryptor == null)
@@ -136,15 +146,16 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI Encryptor to the Encryptor provided. 
 	 * @param encryptor
-	 *            the encryptor to set
+	 *            the Encryptor to set to be the current ESAPI Encryptor. 
 	 */
 	public static void setEncryptor(Encryptor encryptor) {
 		ESAPI.encryptor = encryptor;
 	}
 
 	/**
-	 * @return the executor
+	 * @return the current ESAPI Executor object being used to safely execute OS commands for this application. 
 	 */
 	public static Executor executor() {
 		if (ESAPI.executor == null)
@@ -153,15 +164,17 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI Executor to the Executor provided. 
 	 * @param executor
-	 *            the executor to set
+	 *            the Executor to set to be the current ESAPI Executor. 
 	 */
 	public static void setExecutor(Executor executor) {
 		ESAPI.executor = executor;
 	}
 
 	/**
-	 * @return the httpUtilities
+	 * @return the current ESAPI HTTPUtilities object being used to safely access HTTP requests and responses 
+	 * for this application. 
 	 */
 	public static HTTPUtilities httpUtilities() {
 		if (ESAPI.httpUtilities == null)
@@ -170,15 +183,16 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI HTTPUtilities object to the HTTPUtilities object provided. 
 	 * @param httpUtilities
-	 *            the httpUtilities to set
+	 *            the HTTPUtilities object to set to be the current ESAPI HTTPUtilities object. 
 	 */
 	public static void setHttpUtilities(HTTPUtilities httpUtilities) {
 		ESAPI.httpUtilities = httpUtilities;
 	}
 
 	/**
-	 * @return the intrusionDetector
+	 * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
 	 */
 	public static IntrusionDetector intrusionDetector() {
 		if (ESAPI.intrusionDetector == null)
@@ -187,13 +201,19 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI IntrusionDetector to the IntrusionDetector provided. 
 	 * @param intrusionDetector
-	 *            the intrusionDetector to set
+	 *            the IntrusionDetector to set to be the current ESAPI IntrusionDetector. 
 	 */
 	public static void setIntrusionDetector(IntrusionDetector intrusionDetector) {
 		ESAPI.intrusionDetector = intrusionDetector;
 	}
 
+	/**
+	 * Get the current LogFactory being used by ESAPI. If there isn't one yet, it will create one, and then 
+	 * return this same LogFactory from then on.
+	 * @return The current LogFactory being used by ESAPI.
+	 */
 	private static LogFactory logFactory() {
 		if (logFactory == null)
 			logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
@@ -201,34 +221,41 @@ public class ESAPI {
 	}
 	
 	/**
-	 * 
+	 * @param clazz The class to associate the logger with.
+	 * @return The current Logger associated with the specified class.
 	 */
 	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
 	
 	/**
-	 * 
+	 * @param moduleName The module to associate the logger with.
+	 * @return The current Logger associated with the specified module.
 	 */
 	public static Logger getLogger(String moduleName) {
 		return logFactory().getLogger(moduleName);
 	}
 	
+	/**
+	 * @return The default Logger.
+	 */
 	public static Logger log() {
 		if (defaultLogger == null)
-			defaultLogger = logFactory().getLogger("*");
+			defaultLogger = logFactory().getLogger("DefaultLogger");
 		return defaultLogger;
 	}
 	
-	 /**
-	 * @param factory the log factory to set
+	/**
+	 * Change the current ESAPI LogFactory to the LogFactory provided. 
+	 * @param factory
+	 *            the LogFactory to set to be the current ESAPI LogFactory. 
 	 */
 	 public static void setLogFactory(LogFactory factory) {
 		 ESAPI.logFactory = factory;
 	 }
 	
 	/**
-	 * @return the randomizer
+	 * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
 	 */
 	public static Randomizer randomizer() {
 		if (ESAPI.randomizer == null)
@@ -237,15 +264,17 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI Randomizer to the Randomizer provided. 
 	 * @param randomizer
-	 *            the randomizer to set
+	 *            the Randomizer to set to be the current ESAPI Randomizer. 
 	 */
 	public static void setRandomizer(Randomizer randomizer) {
 		ESAPI.randomizer = randomizer;
 	}
 
 	/**
-	 * @return the securityConfiguration
+	 * @return the current ESAPI SecurityConfiguration being used to manage the security configuration for 
+	 * ESAPI for this application. 
 	 */
 	public static SecurityConfiguration securityConfiguration() {
 		if (ESAPI.securityConfiguration == null)
@@ -254,8 +283,9 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI SecurityConfiguration to the SecurityConfiguration provided. 
 	 * @param securityConfiguration
-	 *            the securityConfiguration to set
+	 *            the SecurityConfiguration to set to be the current ESAPI SecurityConfiguration. 
 	 */
 	public static void setSecurityConfiguration(
 			SecurityConfiguration securityConfiguration) {
@@ -263,7 +293,7 @@ public class ESAPI {
 	}
 
 	/**
-	 * @return the validator
+	 * @return the current ESAPI Validator being used to validate data in this application. 
 	 */
 	public static Validator validator() {
 		if (ESAPI.validator == null)
@@ -272,8 +302,9 @@ public class ESAPI {
 	}
 
 	/**
+	 * Change the current ESAPI Validator to the Validator provided. 
 	 * @param validator
-	 *            the validator to set
+	 *            the Validator to set to be the current ESAPI Validator. 
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
