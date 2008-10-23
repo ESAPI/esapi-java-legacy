@@ -35,7 +35,10 @@ import org.owasp.esapi.http.TestHttpServletResponse;
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class LoggerTest extends TestCase {
-    
+
+	private static Logger testLogger = ESAPI.getLogger( "test" );
+
+	
     /**
 	 * Instantiates a new logger test.
 	 * 
@@ -103,79 +106,83 @@ public class LoggerTest extends TestCase {
      */
     public void testSetLevel() {
         System.out.println("setLevel");
-        Logger myLogger = ESAPI.getLogger( "mod" );
         
-        myLogger.setLevel( Logger.ALL );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertTrue(myLogger.isErrorEnabled());
-       	assertTrue(myLogger.isWarningEnabled());
-       	assertTrue(myLogger.isInfoEnabled());
-       	assertTrue(myLogger.isDebugEnabled());
-       	assertTrue(myLogger.isTraceEnabled());
+        // The following tests that the default logging level is set to WARNING. Since the default might be changed
+        // in the ESAPI security configuration file, these are commented out.
+       	//assertTrue(testLogger.isWarningEnabled());
+       	//assertFalse(testLogger.isInfoEnabled());
 
-       	myLogger.setLevel( Logger.TRACE );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertTrue(myLogger.isErrorEnabled());
-       	assertTrue(myLogger.isWarningEnabled());
-       	assertTrue(myLogger.isInfoEnabled());
-       	assertTrue(myLogger.isDebugEnabled());
-       	assertTrue(myLogger.isTraceEnabled());
+        testLogger.setLevel( Logger.ALL );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertTrue(testLogger.isInfoEnabled());
+       	assertTrue(testLogger.isDebugEnabled());
+       	assertTrue(testLogger.isTraceEnabled());
 
-       	myLogger.setLevel( Logger.DEBUG );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertTrue(myLogger.isErrorEnabled());
-       	assertTrue(myLogger.isWarningEnabled());
-       	assertTrue(myLogger.isInfoEnabled());
-       	assertTrue(myLogger.isDebugEnabled());
-       	assertFalse(myLogger.isTraceEnabled());
+       	testLogger.setLevel( Logger.TRACE );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertTrue(testLogger.isInfoEnabled());
+       	assertTrue(testLogger.isDebugEnabled());
+       	assertTrue(testLogger.isTraceEnabled());
+
+       	testLogger.setLevel( Logger.DEBUG );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertTrue(testLogger.isInfoEnabled());
+       	assertTrue(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
        	
-       	myLogger.setLevel( Logger.INFO );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertTrue(myLogger.isErrorEnabled());
-       	assertTrue(myLogger.isWarningEnabled());
-       	assertTrue(myLogger.isInfoEnabled());
-       	assertFalse(myLogger.isDebugEnabled());
-       	assertFalse(myLogger.isTraceEnabled());
+       	testLogger.setLevel( Logger.INFO );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertTrue(testLogger.isInfoEnabled());
+       	assertFalse(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
        	
-       	myLogger.setLevel( Logger.WARNING );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertTrue(myLogger.isErrorEnabled());
-       	assertTrue(myLogger.isWarningEnabled());
-       	assertFalse(myLogger.isInfoEnabled());
-       	assertFalse(myLogger.isDebugEnabled());
-       	assertFalse(myLogger.isTraceEnabled());
+       	testLogger.setLevel( Logger.WARNING );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertFalse(testLogger.isInfoEnabled());
+       	assertFalse(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
        	
-       	myLogger.setLevel( Logger.ERROR );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertTrue(myLogger.isErrorEnabled());
-       	assertFalse(myLogger.isWarningEnabled());
-       	assertFalse(myLogger.isInfoEnabled());
-       	assertFalse(myLogger.isDebugEnabled());
-       	assertFalse(myLogger.isTraceEnabled());
+       	testLogger.setLevel( Logger.ERROR );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertFalse(testLogger.isWarningEnabled());
+       	assertFalse(testLogger.isInfoEnabled());
+       	assertFalse(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
        	
-       	myLogger.setLevel( Logger.FATAL );
-    	assertTrue(myLogger.isFatalEnabled());
-       	assertFalse(myLogger.isErrorEnabled());
-       	assertFalse(myLogger.isWarningEnabled());
-       	assertFalse(myLogger.isInfoEnabled());
-       	assertFalse(myLogger.isDebugEnabled());
-       	assertFalse(myLogger.isTraceEnabled());
+       	testLogger.setLevel( Logger.FATAL );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertFalse(testLogger.isErrorEnabled());
+       	assertFalse(testLogger.isWarningEnabled());
+       	assertFalse(testLogger.isInfoEnabled());
+       	assertFalse(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
        	
-       	myLogger.setLevel( Logger.OFF );
-    	assertFalse(myLogger.isFatalEnabled());
-       	assertFalse(myLogger.isErrorEnabled());
-       	assertFalse(myLogger.isWarningEnabled());
-       	assertFalse(myLogger.isInfoEnabled());
-       	assertFalse(myLogger.isDebugEnabled());
-       	assertFalse(myLogger.isTraceEnabled());
+       	testLogger.setLevel( Logger.OFF );
+    	assertFalse(testLogger.isFatalEnabled());
+       	assertFalse(testLogger.isErrorEnabled());
+       	assertFalse(testLogger.isWarningEnabled());
+       	assertFalse(testLogger.isInfoEnabled());
+       	assertFalse(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
        	
        	// Set the logging level back to whatever it is configured to be.
-       	myLogger.setLevel( ESAPI.securityConfiguration().getLogLevel() );
+       	testLogger.setLevel( ESAPI.securityConfiguration().getLogLevel() );
        	
        	// Normally, the default is Logger.WARNING, but if the default was changed, these tests would fail,
        	// so there are commented out for now. But you can enable to test.
-       	//assertTrue(myLogger.isWarningEnabled());
-       	//assertTrue(myLogger.isInfoEnabled());
+       	//assertTrue(testLogger.isWarningEnabled());
+       	//assertTrue(testLogger.isInfoEnabled());
     }
 
     
@@ -184,10 +191,10 @@ public class LoggerTest extends TestCase {
 	 */
     public void testInfo() {
         System.out.println("info");
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "test message" );
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "test message", null );
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "%3escript%3f test message", null );
-        ESAPI.getLogger( "mod" ).info(Logger.SECURITY, true, "<script> test message", null );
+        testLogger.info(Logger.SECURITY, true, "test message" );
+        testLogger.info(Logger.SECURITY, true, "test message", null );
+        testLogger.info(Logger.SECURITY, true, "%3escript%3f test message", null );
+        testLogger.info(Logger.SECURITY, true, "<script> test message", null );
     }
 
     /**
@@ -195,8 +202,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testTrace() {
         System.out.println("trace");
-        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, true, "test message" );
-        ESAPI.getLogger( "mod" ).trace(Logger.SECURITY, true, "test message", null );
+        testLogger.trace(Logger.SECURITY, true, "test message" );
+        testLogger.trace(Logger.SECURITY, true, "test message", null );
     }
 
     /**
@@ -204,8 +211,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testDebug() {
         System.out.println("debug");
-        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, true, "test message" );
-        ESAPI.getLogger( "mod" ).debug(Logger.SECURITY, true, "test message", null );
+        testLogger.debug(Logger.SECURITY, true, "test message" );
+        testLogger.debug(Logger.SECURITY, true, "test message", null );
     }
 
     /**
@@ -213,8 +220,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testError() {
         System.out.println("error");
-        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, true, "test message" );
-        ESAPI.getLogger( "mod" ).error(Logger.SECURITY, true, "test message", null );
+        testLogger.error(Logger.SECURITY, true, "test message" );
+        testLogger.error(Logger.SECURITY, true, "test message", null );
     }
 
     /**
@@ -222,8 +229,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testWarning() {
         System.out.println("warning");
-        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, true, "test message" );
-        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, true, "test message", null );
+        testLogger.warning(Logger.SECURITY, true, "test message" );
+        testLogger.warning(Logger.SECURITY, true, "test message", null );
     }
 
     /**
@@ -231,8 +238,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testFatal() {
         System.out.println("fatal");
-        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, true, "test message" );
-        ESAPI.getLogger( "mod" ).fatal(Logger.SECURITY, true, "test message", null );
+        testLogger.fatal(Logger.SECURITY, true, "test message" );
+        testLogger.fatal(Logger.SECURITY, true, "test message", null );
     }
     
 }

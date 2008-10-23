@@ -479,10 +479,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     }
     
     /**
-     * Load users.
-     * 
-     * @return the hash map
-     * @throws AuthenticationException the authentication exception
+     * Load users if they haven't been loaded in a while.
      */
     protected void loadUsersIfNecessary() {
         if (userDB == null) {
@@ -580,11 +577,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Utility method to extract credentials and verify them.
      * 
-     * @param request
-     * @param response
-     * @return
-     * @throws AuthenticationException
-     * @throws
+     * @param request The current request
+     * @param response The response being prepared
+     * @return The user that successfully authenticated
+     * @throws AuthenticationException If the submitted credentials are invalid.
      */
     private User loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -664,7 +660,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * Save users.
      * 
      * @param writer the writer
-     * @throws IOException
      */
     protected synchronized void saveUsers(PrintWriter writer) {
         Iterator i = getUserNames().iterator();

@@ -128,7 +128,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @see org.owasp.esapi.SecurityConfiguration#getApplicationName()
      */
     public String getApplicationName() {
-    	return properties.getProperty(APPLICATION_NAME);
+    	return properties.getProperty(APPLICATION_NAME, "AppNameNotSpecified");
     }
 
 	/**
@@ -406,8 +406,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public int getLogLevel() {
         String level = properties.getProperty(LOG_LEVEL);
         if (level == null) {
-            ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
-            		"The LOG-LEVEL property in the ESAPI properties file is not defined.");
+// This error is  NOT logged because the logger constructor calls getLogLevel() and if this error occurred it would cause
+// an infinite loop.
+//            ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
+//            		"The LOG-LEVEL property in the ESAPI properties file is not defined.");
         	return Logger.WARNING;
         }
         if (level.equalsIgnoreCase("OFF"))
@@ -427,8 +429,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         if (level.equalsIgnoreCase("ALL"))
             return Logger.ALL;
         
-        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
-        		"The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level);
+// This error is NOT logged because the logger constructor calls getLogLevel() and if this error occurred it would cause
+// an infinite loop.
+//        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
+//        		"The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level);
         return Logger.WARNING;  // Note: The default logging level is WARNING.
     }
 

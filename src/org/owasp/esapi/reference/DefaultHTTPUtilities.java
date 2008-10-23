@@ -140,9 +140,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 	
 	/**
-	 * Save the user's remember me token in a cookie. Old remember me cookies should be
-	 * destroyed first. Setting this cookie will keep the user logged in until the
-	 * maxAge passes, the password is changed, or the cookie is deleted.
+	 * Save the user's remember me data in an encrypted cookie and send it to the user. 
+	 * Any old remember me cookie is destroyed first. Setting this cookie will keep the user 
+	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
+	 * If the cookie exists for the current user, it will automatically be used by ESAPI to
+	 * log the user in, if the data is valid and not expired. 
 	 */
 	public String setRememberToken( HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path ) {
 		User user = ESAPI.authenticator().getCurrentUser();		
@@ -486,23 +488,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 
-	/**
-	 * Set the character encoding on every HttpServletResponse in order to limit
-	 * the ways in which the input data can be represented. This prevents
-	 * malicious users from using encoding and multi-byte escape sequences to
-	 * bypass input validation routines. The default is text/html; charset=UTF-8
-	 * character encoding, which is the default in early versions of HTML and
-	 * HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
-	 * information about character encoding and MIME.
+	/* (non-Javadoc)
+	 * @see org.owasp.esapi.HTTPUtilities#setSafeContentType(javax.servlet.http.HttpServletResponse)
 	 */
-	public void safeSetContentType(HttpServletResponse response) {
+	public void setSafeContentType(HttpServletResponse response) {
 		response.setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
-	/**
-	 * Set headers to protect sensitive information against being cached in the
-	 * browser.
-	 * 
+	/* (non-Javadoc)
 	 * @see org.owasp.esapi.HTTPUtilities#setNoCacheHeaders(javax.servlet.http.HttpServletResponse)
 	 */
 	public void setNoCacheHeaders(HttpServletResponse response) {
