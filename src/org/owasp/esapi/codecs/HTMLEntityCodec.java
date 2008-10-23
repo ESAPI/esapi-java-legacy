@@ -219,15 +219,6 @@ public class HTMLEntityCodec implements Codec {
 		}
 		return null;
 	}
-
-	
-	public static void main( String[] args ) {
-		HTMLEntityCodec codec = new HTMLEntityCodec();
-		String test = "&lt";
-		// String test = "&#x25 &#X3c;script&#x3e; &#X3cscript&#x3e &#X3Cscript&#x000000000000000000000000000003e &#000000060script&#000000062 &#60;script&#62; &#60script&#62";
-		System.out.println( "Original: " + test );
-		System.out.println( "Decoded: " + codec.decode( test ) );
-	}
 	
 		
 	private void initializeMaps() {

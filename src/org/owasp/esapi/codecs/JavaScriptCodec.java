@@ -17,7 +17,7 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Implementation of the Codec interface for backslash encoding frequently used in JavaScript.
+ * Implementation of the Codec interface for backslash encoding in JavaScript.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -149,7 +149,8 @@ public class JavaScriptCodec implements Codec {
 					return new Character( (char)i );
 				} catch( NumberFormatException e ) {
 					// throw an exception for malformed entity?
-					// just continue which will reset and return null
+					input.reset();
+					return null;
 				}
 			}
 			
@@ -170,14 +171,14 @@ public class JavaScriptCodec implements Codec {
 					return new Character( (char)i );
 				} catch( NumberFormatException e ) {
 					// throw an exception for malformed entity?
-					// just continue which will reset and return null
+					input.reset();
+					return null;
 				}
 			}
 		}
 		
-		// not an encoded character
-		input.reset();
-		return null;
+		// ignore the backslash and return the character
+		return second;
 	}
 
 }
