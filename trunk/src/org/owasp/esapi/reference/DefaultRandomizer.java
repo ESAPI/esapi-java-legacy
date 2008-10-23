@@ -136,18 +136,21 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         try {
             array = ESAPI.encoder().decodeFromBase64(hash);
         } catch (IOException e) {
-            logger.fatal(Logger.SECURITY, false, "Problem decoding hash while creating GUID: " + hash);
+            throw new EncryptionException("GUID creation error", "Problem decoding hash while creating GUID: " + hash);
         }
+        if ( array == null || array.length == 0) throw new EncryptionException( "GUID creation error", "Entropy array was null or zero length" );
         
         // convert to printable hexadecimal characters 
         StringBuffer hex = new StringBuffer();
         for (int j = 0; j < array.length; ++j) {
             int b = array[j] & 0xFF;
-            if (b < 0x10)
+            if (b < 0x10) {
                 hex.append('0');
+            }
             hex.append(Integer.toHexString(b));
         }
         String raw = hex.toString().toUpperCase();
+        if ( raw.length() < 20) throw new EncryptionException( "GUID creation error", "Entropy string too short" );
 
         // convert to standard GUID format
         StringBuffer result = new StringBuffer();
