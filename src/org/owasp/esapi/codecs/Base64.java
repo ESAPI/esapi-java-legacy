@@ -983,12 +983,11 @@ public class Base64
         try
         {
             bytes = s.getBytes( PREFERRED_ENCODING );
-        }   // end try
+        }
         catch( java.io.UnsupportedEncodingException uee )
         {
             bytes = s.getBytes();
-        }   // end catch
-		//</change>
+        }
         
         // Decode
         bytes = decode( bytes, 0, bytes.length, options );
