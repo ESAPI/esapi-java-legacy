@@ -137,9 +137,12 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 /**
 	 * Adds a security event to the user.
 	 * 
-	 * @param event the event
+	 * @param user
+	 * 			The user that caused the event.
+	 * @param eventName
+	 * 			The name of the event that occurred.
 	 */
-	private void addSecurityEvent(User user, String eventName) throws IntrusionException {
+	private void addSecurityEvent(User user, String eventName) {
 		Map events = (Map) userEvents.get(user.getAccountName());
 		if (events == null) {
 			events = new HashMap();

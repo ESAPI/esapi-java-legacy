@@ -128,6 +128,14 @@ public interface HTTPUtilities {
 	 * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
 	 * the user that this should only be enabled on computers where no other users will have access.  
 	 * 
+	 * Implementations should save the user's remember me data in an encrypted cookie and send it to the user. 
+	 * Any old remember me cookie should be destroyed first. Setting this cookie should keep the user 
+	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
+	 * If the cookie exists for the current user, it should automatically be used by ESAPI to
+	 * log the user in, if the data is valid and not expired. 
+	 * 
+	 * The ESAPI reference implementation, DefaultHTTPUtilities.setRememberToken() implements all these suggestions.
+	 * 
 	 * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser(); 
 	 * 
 	 * @param password 
@@ -250,10 +258,22 @@ public interface HTTPUtilities {
 	
 
     /**
-     * Sets the content type on each HTTP response, to help protect against cross-site scripting attacks and other types
-     * of injection into HTML documents.
+	 * Set the content type character encoding header on every HttpServletResponse in order to limit
+	 * the ways in which the input data can be represented. This prevents
+	 * malicious users from using encoding and multi-byte escape sequences to
+	 * bypass input validation routines.
+	 * 
+	 * Implementations of this method should set the content type header to a safe value for your environment.
+	 * The default is text/html; charset=UTF-8 character encoding, which is the default in early 
+	 * versions of HTML and HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
+	 * information about character encoding and MIME.
+	 * 
+	 * The DefaultHTTPUtilities reference implementation sets the content type as specified.
+	 * 
+	 * @param response
+	 * 		The servlet response to set the content type for.
      */
-    void safeSetContentType(HttpServletResponse response);
+    void setSafeContentType(HttpServletResponse response);
 
     
     /**

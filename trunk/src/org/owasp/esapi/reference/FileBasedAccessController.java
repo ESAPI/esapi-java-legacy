@@ -396,8 +396,10 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 *            the map
 	 * @param roles
 	 *            the roles
-	 * @param path
-	 *            the paths
+	 * @param clazz
+	 *            the class to search for in the map to find the rule being searched for.
+	 * @param action
+	 * 			  the rule to look for.
 	 * 
 	 * @return the rule
 	 * 

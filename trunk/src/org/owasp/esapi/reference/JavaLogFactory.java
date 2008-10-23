@@ -79,12 +79,17 @@ public class JavaLogFactory implements LogFactory {
          * @param applicationName the application name
          * @param moduleName the module name
          */
-        public JavaLogger(String applicationName, String moduleName) {
+        private JavaLogger(String applicationName, String moduleName) {
             this.applicationName = applicationName;
             this.moduleName = moduleName;
             this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
-            // Beware getting info from SecurityConfiguration, since it logs.
-            this.jlogger.setLevel( Level.WARNING );  // The default level for this logger is .WARNING
+            // This set the default logging level. It isn't necessary now that the configuration value is used.
+            //this.jlogger.setLevel( Level.WARNING );  // The default level for this logger is Level.WARNING
+            
+            // Set the logging level defined in the config file.
+            // Beware getting info from SecurityConfiguration, since it logs. We made sure it doesn't log in the
+            // constructor and the getLogLevel() method, so this should work.
+            this.setLevel(ESAPI.securityConfiguration().getLogLevel());
         }
 
         /**
@@ -273,7 +278,7 @@ public class JavaLogFactory implements LogFactory {
             // create the message to log
             String msg = "";
             if ( user != null ) {
-            	msg = type + "-" + (success ? "SUCCESS: " : "FAILURE: ") + user.getAccountName() + "("+ userSessionIDforLogging +")(" + user.getLastHostAddress() 
+            	msg = type + "-" + (success ? "SUCCESS. UserID: " : "FAILURE. UserID: ") + user.getAccountName() + "(Sess:"+ userSessionIDforLogging +")(SrcIP:" + user.getLastHostAddress() 
             	+ ") -- " + clean;
             }
             
