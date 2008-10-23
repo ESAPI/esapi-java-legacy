@@ -17,14 +17,17 @@ package org.owasp.esapi.reference;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
+
+import javax.servlet.http.HttpSession;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
@@ -339,6 +342,36 @@ public class UserTest extends TestCase {
 		assertFalse("ridiculous".equals(user.getScreenName()));
 	}
 
+	public void testGetSessions() throws AuthenticationException {
+        System.out.println("getSessions");
+        Authenticator instance = ESAPI.authenticator();
+        String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+        String password = ESAPI.authenticator().generateStrongPassword();
+        User user = instance.createUser(accountName, password, password);
+        HttpSession session1 = new TestHttpSession();
+        user.addSession( session1 );
+        HttpSession session2 = new TestHttpSession();
+        user.addSession( session2 );
+        HttpSession session3 = new TestHttpSession();
+        user.addSession( session3 );
+        Set sessions = user.getSessions();
+        Iterator i = sessions.iterator();
+        while ( i.hasNext() ) {
+            HttpSession s = (HttpSession)i.next();
+            System.out.println( ">>>" + s.getId() );
+        }
+        assertTrue(sessions.size() == 3);
+	}
+	
+	
+	public void testAddSession() {
+	    // TODO
+	}
+	
+	public void testRemoveSession() {
+	    // TODO
+	}
+	
 	/**
 	 * Test of incrementFailedLoginCount method, of class org.owasp.esapi.User.
 	 * 

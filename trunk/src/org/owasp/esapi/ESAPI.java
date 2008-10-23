@@ -210,13 +210,13 @@ public class ESAPI {
 	/**
 	 * 
 	 */
-	public static Logger getLogger(String name) {
-		return logFactory().getLogger(name);
+	public static Logger getLogger(String moduleName) {
+		return logFactory().getLogger(moduleName);
 	}
 	
 	public static Logger log() {
 		if (defaultLogger == null)
-			defaultLogger = logFactory().getLogger("");
+			defaultLogger = logFactory().getLogger("*");
 		return defaultLogger;
 	}
 	

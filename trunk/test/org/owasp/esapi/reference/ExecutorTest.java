@@ -136,13 +136,13 @@ public class ExecutorTest extends TestCase {
 			fail();
 		}
 
-		try {
-			params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
-			System.out.println( "RESULT: " + result );
-		} catch (Exception e) {
-			fail();
-		}
+        try {
+            params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
+            String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+            System.out.println( "RESULT: " + result );
+        } catch (Exception e) {
+            fail();
+        }
 	}
 
 }

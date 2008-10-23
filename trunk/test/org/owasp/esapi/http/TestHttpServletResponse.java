@@ -115,7 +115,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	 */
 	public String getHeader(String name) {
 		int index = headerNames.indexOf(name);
-		return (String)headerValues.get(index);
+		if ( index != -1 ) {
+			return (String)headerValues.get(index);
+		}
+		return null;
 	}
 
 	/**

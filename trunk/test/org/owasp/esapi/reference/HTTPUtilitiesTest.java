@@ -217,14 +217,14 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killAllCookies");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
-        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        SafeResponse safeResponse = new SafeResponse( response );
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
         list.add(new Cookie("test1", "1"));
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().killAllCookies(request, response);
+        ESAPI.httpUtilities().killAllCookies(request, safeResponse);
         // this tests getHeaders because we're using addHeader in our setCookie method
         assertTrue(response.getHeaderNames().size() == 3);
     }
@@ -236,6 +236,7 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
+        SafeResponse safeResponse = new SafeResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
@@ -243,7 +244,7 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().killCookie( request, response, "test1" );
+        ESAPI.httpUtilities().killCookie( request, safeResponse, "test1" );
         // this tests getHeaders because we're using addHeader in our setCookie method
         assertTrue(response.getHeaderNames().size() == 1);
     }
@@ -286,13 +287,19 @@ public class HTTPUtilitiesTest extends TestCase {
         TestHttpServletResponse response = new TestHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         assertTrue(response.getCookies().isEmpty());
-        safeResponse.addCookie("test1", "test1", 10000, "test", "/");
+        
+		safeResponse.addCookie( new Cookie( "test1", "test1" ) );
 	    assertTrue(response.getHeaderNames().size() == 1);
-	    safeResponse.addCookie("test2", "test2", 10000, "test", "/");
+	    
+	    safeResponse.addCookie( new Cookie( "test2", "test2" ) );
 	    assertTrue(response.getHeaderNames().size() == 2);
-	    safeResponse.addCookie("tes\nt3", "test3", 10000, "test", "/");
+
+	    // test illegal name
+	    safeResponse.addCookie( new Cookie( "tes<t3", "test3" ) );
 	    assertTrue(response.getHeaderNames().size() == 2);
-	    safeResponse.addCookie("test3", "te\nst3", 10000, "test", "/");
+
+	    // test illegal value
+	    safeResponse.addCookie( new Cookie( "test3", "tes<t3" ) );
 	    assertTrue(response.getHeaderNames().size() == 2);
 	}
 
@@ -300,12 +307,13 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("getStateFromEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
+        SafeResponse safeResponse = new SafeResponse( response );
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(response, map);
+	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse, map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
 	        request.setCookie( "state", encrypted );
@@ -328,13 +336,14 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("saveStateInEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
+        SafeResponse safeResponse = new SafeResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(response,map);
+	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse,map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
         	ESAPI.encryptor().decrypt( encrypted );

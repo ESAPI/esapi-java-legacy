@@ -22,13 +22,13 @@ import org.owasp.esapi.errors.AccessControlException;
 /**
  * The AccessController interface defines a set of methods that can be used in a wide variety of applications to
  * enforce access control. In most applications, access control must be performed in multiple different locations across
- * the various applicaton layers. This class provides access control for URLs, business functions, data, services, and
+ * the various application layers. This class provides access control for URLs, business functions, data, services, and
  * files.
  * <P>
  * <img src="doc-files/AccessController.jpg">
  * <P>
- * The implementation of this interface will need to access some sort of user information repository to determine what
- * roles or permissions are assigned to the accountName passed into the various methods. In addition, the implementation
+ * The implementation of this interface will need to access the current User object (from Authenticator.getCurrentUser())
+ * to determine roles or permissions. In addition, the implementation
  * will also need information about the resources that are being accessed. Using the user information and the resource
  * information, the implementation should return an access control decision. 
  * <P>
