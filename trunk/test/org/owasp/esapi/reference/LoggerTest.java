@@ -112,6 +112,7 @@ public class LoggerTest extends TestCase {
        	//assertTrue(testLogger.isWarningEnabled());
        	//assertFalse(testLogger.isInfoEnabled());
 
+        // First, test all the differnt logging levels
         testLogger.setLevel( Logger.ALL );
     	assertTrue(testLogger.isFatalEnabled());
        	assertTrue(testLogger.isErrorEnabled());
@@ -173,6 +174,16 @@ public class LoggerTest extends TestCase {
        	assertFalse(testLogger.isErrorEnabled());
        	assertFalse(testLogger.isWarningEnabled());
        	assertFalse(testLogger.isInfoEnabled());
+       	assertFalse(testLogger.isDebugEnabled());
+       	assertFalse(testLogger.isTraceEnabled());
+       	
+       	//Now test to see if a change to the logging level in one log affects other logs
+       	Logger newLogger = ESAPI.getLogger( "test_num2" );
+       	newLogger.setLevel( Logger.INFO );
+    	assertTrue(testLogger.isFatalEnabled());
+       	assertTrue(testLogger.isErrorEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertTrue(testLogger.isInfoEnabled());
        	assertFalse(testLogger.isDebugEnabled());
        	assertFalse(testLogger.isTraceEnabled());
        	
