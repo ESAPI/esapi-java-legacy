@@ -20,6 +20,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.servlet.http.HttpSession;
+
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 
@@ -182,6 +184,23 @@ public interface User extends Principal {
      */
     String getScreenName();
 
+    /**
+     * Adds a session for this User.
+     * @param s
+     */
+    void addSession( HttpSession s );
+    
+    /**
+     * Removes a session for this User.
+     * @param s
+     */
+    void removeSession( HttpSession s );
+    
+    /**
+     * Returns the list of sessions associated with this User.
+     */
+    Set getSessions();
+    
     /**
      * Increment failed login count.
      */
@@ -491,6 +510,22 @@ public interface User extends Principal {
          */
         public String getScreenName() {
 	        return "Anonymous";
+        }
+
+        /* (non-Javadoc)
+         */
+        public void addSession(HttpSession s)  {
+        }
+
+        /* (non-Javadoc)
+         */
+        public void removeSession(HttpSession s)  {
+        }
+
+        /* (non-Javadoc)
+         */
+        public Set getSessions()  {
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
 		/* (non-Javadoc)

@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import junit.framework.Test;
@@ -24,9 +25,14 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
+import org.owasp.esapi.codecs.PercentCodec;
+import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
@@ -80,7 +86,10 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
-		Encoder instance = ESAPI.encoder();
+        ArrayList list = new ArrayList();
+        list.add( new HTMLEntityCodec() );
+	    list.add( new PercentCodec() );
+		Encoder instance = new DefaultEncoder( list );
 
         assertEquals( "%", instance.canonicalize("%25"));
         assertEquals( "%F", instance.canonicalize("%25F"));
@@ -104,14 +113,88 @@ public class EncoderTest extends TestCase {
         assertEquals( "<", instance.canonicalize("&#X3C"));
         assertEquals( "<", instance.canonicalize("&#X3C;"));
 
-        assertEquals( "<", instance.canonicalize("\\x3c"));        
-        assertEquals( "<", instance.canonicalize("\\X3c"));        
-        assertEquals( "<", instance.canonicalize("\\x3C"));        
-        assertEquals( "<", instance.canonicalize("\\X3C"));        
-        assertEquals( "<", instance.canonicalize("\\u003c"));        
-        assertEquals( "<", instance.canonicalize("\\U003c"));        
-        assertEquals( "<", instance.canonicalize("\\u003C"));        
-        assertEquals( "<", instance.canonicalize("\\U003C"));        
+        // percent encoding
+        assertEquals( "<", instance.canonicalize("%3c"));
+        assertEquals( "<", instance.canonicalize("%3C"));
+
+        // html entity encoding
+        assertEquals( "<", instance.canonicalize("&#60"));
+        assertEquals( "<", instance.canonicalize("&#060"));
+        assertEquals( "<", instance.canonicalize("&#0060"));
+        assertEquals( "<", instance.canonicalize("&#00060"));
+        assertEquals( "<", instance.canonicalize("&#000060"));
+        assertEquals( "<", instance.canonicalize("&#0000060"));
+        assertEquals( "<", instance.canonicalize("&#60;"));
+        assertEquals( "<", instance.canonicalize("&#060;"));
+        assertEquals( "<", instance.canonicalize("&#0060;"));
+        assertEquals( "<", instance.canonicalize("&#00060;"));
+        assertEquals( "<", instance.canonicalize("&#000060;"));
+        assertEquals( "<", instance.canonicalize("&#0000060;"));
+        assertEquals( "<", instance.canonicalize("&#x3c"));
+        assertEquals( "<", instance.canonicalize("&#x03c"));
+        assertEquals( "<", instance.canonicalize("&#x003c"));
+        assertEquals( "<", instance.canonicalize("&#x0003c"));
+        assertEquals( "<", instance.canonicalize("&#x00003c"));
+        assertEquals( "<", instance.canonicalize("&#x000003c"));
+        assertEquals( "<", instance.canonicalize("&#x3c;"));
+        assertEquals( "<", instance.canonicalize("&#x03c;"));
+        assertEquals( "<", instance.canonicalize("&#x003c;"));
+        assertEquals( "<", instance.canonicalize("&#x0003c;"));
+        assertEquals( "<", instance.canonicalize("&#x00003c;"));
+        assertEquals( "<", instance.canonicalize("&#x000003c;"));
+        assertEquals( "<", instance.canonicalize("&#X3c"));
+        assertEquals( "<", instance.canonicalize("&#X03c"));
+        assertEquals( "<", instance.canonicalize("&#X003c"));
+        assertEquals( "<", instance.canonicalize("&#X0003c"));
+        assertEquals( "<", instance.canonicalize("&#X00003c"));
+        assertEquals( "<", instance.canonicalize("&#X000003c"));
+        assertEquals( "<", instance.canonicalize("&#X3c;"));
+        assertEquals( "<", instance.canonicalize("&#X03c;"));
+        assertEquals( "<", instance.canonicalize("&#X003c;"));
+        assertEquals( "<", instance.canonicalize("&#X0003c;"));
+        assertEquals( "<", instance.canonicalize("&#X00003c;"));
+        assertEquals( "<", instance.canonicalize("&#X000003c;"));
+        assertEquals( "<", instance.canonicalize("&#x3C"));
+        assertEquals( "<", instance.canonicalize("&#x03C"));
+        assertEquals( "<", instance.canonicalize("&#x003C"));
+        assertEquals( "<", instance.canonicalize("&#x0003C"));
+        assertEquals( "<", instance.canonicalize("&#x00003C"));
+        assertEquals( "<", instance.canonicalize("&#x000003C"));
+        assertEquals( "<", instance.canonicalize("&#x3C;"));
+        assertEquals( "<", instance.canonicalize("&#x03C;"));
+        assertEquals( "<", instance.canonicalize("&#x003C;"));
+        assertEquals( "<", instance.canonicalize("&#x0003C;"));
+        assertEquals( "<", instance.canonicalize("&#x00003C;"));
+        assertEquals( "<", instance.canonicalize("&#x000003C;"));
+        assertEquals( "<", instance.canonicalize("&#X3C"));
+        assertEquals( "<", instance.canonicalize("&#X03C"));
+        assertEquals( "<", instance.canonicalize("&#X003C"));
+        assertEquals( "<", instance.canonicalize("&#X0003C"));
+        assertEquals( "<", instance.canonicalize("&#X00003C"));
+        assertEquals( "<", instance.canonicalize("&#X000003C"));
+        assertEquals( "<", instance.canonicalize("&#X3C;"));
+        assertEquals( "<", instance.canonicalize("&#X03C;"));
+        assertEquals( "<", instance.canonicalize("&#X003C;"));
+        assertEquals( "<", instance.canonicalize("&#X0003C;"));
+        assertEquals( "<", instance.canonicalize("&#X00003C;"));
+        assertEquals( "<", instance.canonicalize("&#X000003C;"));
+        assertEquals( "<", instance.canonicalize("&lt"));
+        assertEquals( "<", instance.canonicalize("&lT"));
+        assertEquals( "<", instance.canonicalize("&Lt"));
+        assertEquals( "<", instance.canonicalize("&LT"));
+        assertEquals( "<", instance.canonicalize("&lt;"));
+        assertEquals( "<", instance.canonicalize("&lT;"));
+        assertEquals( "<", instance.canonicalize("&Lt;"));
+        assertEquals( "<", instance.canonicalize("&LT;"));
+        
+        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
+        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript&#x3E;alert%28%22hello&#34%29%3B%3C%2Fscript%3E") );
+        
+        // javascript escape syntax
+        ArrayList js = new ArrayList();
+        js.add( new JavaScriptCodec() );
+        instance = new DefaultEncoder( js );
+        System.out.println( "JavaScript Decoding" );
 
         assertEquals( "\0", instance.canonicalize("\\0"));
         assertEquals( "\b", instance.canonicalize("\\b"));
@@ -123,26 +206,82 @@ public class EncoderTest extends TestCase {
         assertEquals( "\'", instance.canonicalize("\\'"));
         assertEquals( "\"", instance.canonicalize("\\\""));
         assertEquals( "\\", instance.canonicalize("\\\\"));
+        assertEquals( "<", instance.canonicalize("\\<"));
+        
+        assertEquals( "<", instance.canonicalize("\\u003c"));
+        assertEquals( "<", instance.canonicalize("\\U003c"));
+        assertEquals( "<", instance.canonicalize("\\u003C"));
+        assertEquals( "<", instance.canonicalize("\\U003C"));
+        assertEquals( "<", instance.canonicalize("\\x3c"));
+        assertEquals( "<", instance.canonicalize("\\X3c"));
+        assertEquals( "<", instance.canonicalize("\\x3C"));
+        assertEquals( "<", instance.canonicalize("\\X3C"));
 
-        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
-        assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript\\x3Ealert%28%22hello\\U0022%29%3B%3C%2Fscript%3E") );
+        // css escape syntax
+        // be careful because some codecs see \0 as null byte
+        ArrayList css = new ArrayList();
+        css.add( new CSSCodec() );
+        instance = new DefaultEncoder( css );
+        System.out.println( "CSS Decoding" );
+        assertEquals( "<", instance.canonicalize("\\3c"));  // add strings to prevent null byte
+        assertEquals( "<", instance.canonicalize("\\03c"));
+        assertEquals( "<", instance.canonicalize("\\003c"));
+        assertEquals( "<", instance.canonicalize("\\0003c"));
+        assertEquals( "<", instance.canonicalize("\\00003c"));
+        assertEquals( "<", instance.canonicalize("\\3C"));
+        assertEquals( "<", instance.canonicalize("\\03C"));
+        assertEquals( "<", instance.canonicalize("\\003C"));
+        assertEquals( "<", instance.canonicalize("\\0003C"));
+        assertEquals( "<", instance.canonicalize("\\00003C"));
+	}
+
+	
+    /**
+     * Test of canonicalize method, of class org.owasp.esapi.Encoder.
+     * 
+     * @throws EncodingException
+     */
+    public void testDoubleEncodingCanonicalization() throws EncodingException {
+        System.out.println("doubleEncodingCanonicalization");
+        Encoder instance = ESAPI.encoder();
+
+        // double encoding examples
+        assertEquals( "<", instance.canonicalize("&#26;lt&#59" )); //double entity
+        assertEquals( "\\", instance.canonicalize("%255c")); //double percent
+        assertEquals( "%", instance.canonicalize("%2525")); //double percent
+
+        // double encoding with multiple schemes example
+         assertEquals( "<", instance.canonicalize("%26lt%3b")); //first entity, then percent
+         assertEquals( "<", instance.canonicalize("&#25;26")); //first percent, then entity
+          
+         // nested encoding examples
+         assertEquals( "<", instance.canonicalize("%253c")); //nested encode % with percent
+         assertEquals( "<", instance.canonicalize("%%33%63")); //nested encode both nibbles with percent
+         assertEquals( "<", instance.canonicalize("%%33c")); // nested encode first nibble with percent
+         assertEquals( "<", instance.canonicalize("%3%63"));  //nested encode second nibble with percent
+         assertEquals( "<", instance.canonicalize("&&108;t;")); //nested encode l with entity
+
+         // nested encoding with multiple schemes examples
+         assertEquals( "<", instance.canonicalize("&%6ct;")); // nested encode l with percent
+         assertEquals( "<", instance.canonicalize("%&x33;c")); //nested encode 3 with entity            
         
         // multiple encoding tests, note this uses strict=false flag
         assertEquals( "% & <script> <script>", instance.canonicalize( "%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false ) );
         assertEquals( "< < < < <; <; <;", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", false ) );
 
         try {
-        	assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
+            assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
         } catch( IntrusionException e ) {
-        	// expected
+            // expected
         }
         try {
-        	assertEquals( "<script", instance.canonicalize("&#37;3Cscript" ) );
+            assertEquals( "<script", instance.canonicalize("&#37;3Cscript" ) );
         } catch( IntrusionException e ) {
-        	// expected
+            // expected
         }
-	}
-
+    }
+	
+	
 	/**
 	 * Test of normalize method, of class org.owasp.esapi.Validator.
 	 * 

@@ -177,19 +177,18 @@ public interface SecurityConfiguration {
 	 */
 	public long getRememberTokenDuration();
 
+	/**
+	 * Returns whether HTML entity encoding should be applied to log entries.
+	 */
+	public boolean getLogEncodingRequired();
+
     /**
      * Get the log level specified in the ESAPI configuration properties file. Return a default value if it is not specified.
      * 
      * @return the logging level defined in the properties file. If none is specified, the default of Logger.WARNING is returned.
      */
     public int getLogLevel();
-	
-	/**
-	 * Returns whether HTML entity encoding should be applied to log entries.
-	 */
-	public boolean getLogEncodingRequired();
-	
-	
+    	
 	/**
 	 * Models a simple threshold as a count and an interval, along with a set of actions to take if the threshold is exceeded. 
 	 */

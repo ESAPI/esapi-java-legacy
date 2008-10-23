@@ -29,7 +29,7 @@ package org.owasp.esapi;
  */
 public interface LogFactory {
 	
-	Logger getLogger(String name);
+	Logger getLogger(String moduleName);
 	
 	Logger getLogger(Class clazz);
 	

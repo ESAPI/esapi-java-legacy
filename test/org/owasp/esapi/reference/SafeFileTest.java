@@ -74,6 +74,30 @@ public class SafeFileTest extends TestCase {
 
 	String pathWithNullByte = "/temp/file.txt" + (char)0;
 
+    public void testEscapeCharactersInFilename() {
+        System.out.println("testEscapeCharactersInFilenameInjection");
+        File tf = new File( ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" );
+        if ( tf.exists() ) {
+            System.out.println( "File is there: " + tf );
+        }
+        
+        File sf = new File( ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI^.properties" );
+        if ( sf.exists() ) {
+            System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
+        } else {
+            System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
+        }
+    }
+
+    public void testEscapeCharacterInDirectoryInjection() {
+        System.out.println("testEscapeCharacterInDirectoryInjection");
+        File sf = new File( ESAPI.securityConfiguration().getResourceDirectory() + "test\\^.^.\\ESAPI.properties" );
+        if ( sf.exists() ) {
+            System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
+        } else {
+            System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
+        }
+    }
 	
 	public void testJavaFileInjection() {
 		System.out.println("testJavaFileInjection");
@@ -90,21 +114,22 @@ public class SafeFileTest extends TestCase {
 		}		
 	}
 	
-	public void testMultipleJavaFileInjection() {
-		System.out.println("testMultipleJavaFileInjection");
-		for ( int i = 0; i < 512; i++ ) {
-			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + (char)i + (char)i + (char)i;
-			File sf = new File(goodFile);
-			if ( sf.exists() ) {
-				System.out.println( "  Fail filename.txt"  + (char)i  + (char)i + (char)i + " ("+ i +") 3x" );
-			}
-			File sf2 = new File(goodFile + "test");
-			if ( sf2.exists() ) {
-				System.out.println( "  Fail c:\\filename.txt"  + (char)i + (char)i + (char)i + "test.xml ("+ i +") 3x" );
-			}
-		}		
-	}
-	
+    
+    public void testMultipleJavaFileInjection() {
+        System.out.println("testMultipleJavaFileInjection");
+        for ( int i = 0; i < 512; i++ ) {
+            String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + (char)i + (char)i + (char)i;
+            File sf = new File(goodFile);
+            if ( sf.exists() ) {
+                System.out.println( "  Fail filename.txt"  + (char)i  + (char)i + (char)i + " ("+ i +") 3x" );
+            }
+            File sf2 = new File(goodFile + "test");
+            if ( sf2.exists() ) {
+                System.out.println( "  Fail c:\\filename.txt"  + (char)i + (char)i + (char)i + "test.xml ("+ i +") 3x" );
+            }
+        }       
+    }
+    
 	public void testAlternateDataStream() {
 		System.out.println("testAlternateDataStream");
 		String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties:secret.txt";
