@@ -38,11 +38,14 @@ public class JavaLogFactory implements LogFactory {
 	/* (non-Javadoc)
      * @see org.owasp.esapi.LogFactory#getLogger(java.lang.String)
      */
-    public Logger getLogger(String name) {
-    	return new JavaLogger(applicationName, name);
+    public Logger getLogger(String moduleName) {
+    	return new JavaLogger(applicationName, moduleName);
     }
 
-    /* A custom logging level defined between Level.SEVERE and Level.WARNING in logger. */
+
+    /**
+     *  A custom logging level defined between Level.SEVERE and Level.WARNING in logger.
+     */
     public static class JavaLoggerLevel extends Level {
 
     	public static final Level ERROR_LEVEL = new JavaLoggerLevel( "ERROR", Level.SEVERE.intValue() - 1);
@@ -51,6 +54,7 @@ public class JavaLogFactory implements LogFactory {
 			super(name, value);
 		}
     }
+    
     
     /*
      * (non-Javadoc)
@@ -229,8 +233,9 @@ public class JavaLogFactory implements LogFactory {
             
             // create a random session number for the user to represent the user's 'session', if it doesn't exist already
             String userSessionIDforLogging = "unknown";
+
             try {
-                HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
+                HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession( false );
                 userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
                 // if there is no session ID for the user yet, we create one and store it in the user's session
 	            if ( userSessionIDforLogging == null ) {

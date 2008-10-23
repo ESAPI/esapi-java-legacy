@@ -94,7 +94,27 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
-
+	static {
+        Arrays.sort( DefaultEncoder.IMMUNE_HTML );
+        Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
+        Arrays.sort( DefaultEncoder.IMMUNE_JAVASCRIPT );
+        Arrays.sort( DefaultEncoder.IMMUNE_VBSCRIPT );
+        Arrays.sort( DefaultEncoder.IMMUNE_XML );
+        Arrays.sort( DefaultEncoder.IMMUNE_XMLATTR );
+        Arrays.sort( DefaultEncoder.IMMUNE_XPATH );
+        Arrays.sort( DefaultEncoder.CHAR_LOWERS );
+        Arrays.sort( DefaultEncoder.CHAR_UPPERS );
+        Arrays.sort( DefaultEncoder.CHAR_DIGITS );
+        Arrays.sort( DefaultEncoder.CHAR_SPECIALS );
+        Arrays.sort( DefaultEncoder.CHAR_LETTERS );
+        Arrays.sort( DefaultEncoder.CHAR_ALPHANUMERICS );
+        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LOWERS );
+        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_UPPERS );
+        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_DIGITS );
+        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_SPECIALS );
+        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
+	}
+	
 	public DefaultEncoder() {
 		// initialize the codec list to use for canonicalization
 		codecs.add( htmlCodec );
@@ -106,27 +126,19 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 		// leave this out because it eats " characters
 		// codecs.add( vbScriptCodec );
-		
-		Arrays.sort( DefaultEncoder.IMMUNE_HTML );
-		Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
-		Arrays.sort( DefaultEncoder.IMMUNE_JAVASCRIPT );
-		Arrays.sort( DefaultEncoder.IMMUNE_VBSCRIPT );
-		Arrays.sort( DefaultEncoder.IMMUNE_XML );
-		Arrays.sort( DefaultEncoder.IMMUNE_XMLATTR );
-		Arrays.sort( DefaultEncoder.IMMUNE_XPATH );
-		Arrays.sort( DefaultEncoder.CHAR_LOWERS );
-		Arrays.sort( DefaultEncoder.CHAR_UPPERS );
-		Arrays.sort( DefaultEncoder.CHAR_DIGITS );
-		Arrays.sort( DefaultEncoder.CHAR_SPECIALS );
-		Arrays.sort( DefaultEncoder.CHAR_LETTERS );
-		Arrays.sort( DefaultEncoder.CHAR_ALPHANUMERICS );
-		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LOWERS );
-		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_UPPERS );
-		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_DIGITS );
-		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_SPECIALS );
-		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
 	}
 
+	public DefaultEncoder( List codecs ) {
+	    Iterator i = codecs.iterator();
+	    while ( i.hasNext() ) {
+	       Object o = i.next();
+	       if ( !( o instanceof Codec ) ){
+	           throw new java.lang.IllegalArgumentException( "Codec list must contain only Codec instances" );
+	       }
+	    }
+	    this.codecs = codecs;
+	}
+	
 	/**
 	 * Simplifies encoded characters to their
 	 * simplest form so that they can be properly validated. Attackers
@@ -285,6 +297,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 				sb.append( c );
 			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
 				logger.warning( Logger.SECURITY, false, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
+				sb.append( ' ' );
 			} else {
 				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTML ) );
 			}
