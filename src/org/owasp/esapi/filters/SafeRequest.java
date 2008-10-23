@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.User;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -563,6 +564,8 @@ public class SafeRequest implements HttpServletRequest {
      */
     public HttpSession getSession() {
         HttpSession session = request.getSession();
+        User user = ESAPI.authenticator().getCurrentUser();
+        user.addSession( session );
 
         // send a new cookie header with HttpOnly on first and second responses
         if (session.getAttribute("HTTP_ONLY") == null) {

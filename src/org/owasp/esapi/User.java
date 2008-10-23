@@ -393,6 +393,7 @@ public interface User extends Principal {
     public final User ANONYMOUS = new User() {
 
     	private String csrfToken = "";
+    	private Set sessions = new HashSet();
     	
 		/* (non-Javadoc)
          * @see org.owasp.esapi.User#addRole(java.lang.String)
@@ -525,7 +526,7 @@ public interface User extends Principal {
         /* (non-Javadoc)
          */
         public Set getSessions()  {
-            throw new RuntimeException("Invalid operation for the anonymous user");
+            return sessions;
         }
 
 		/* (non-Javadoc)
