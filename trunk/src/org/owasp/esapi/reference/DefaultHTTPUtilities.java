@@ -101,7 +101,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public String addCSRFToken(String href) {
 		User user = ESAPI.authenticator().getCurrentUser();		
-		if (user.isAnonymous() || user == null) {
+		if (user.isAnonymous()) {
 			return href;
 		}
 
@@ -152,7 +152,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String clearToken = random + ":" + user.getAccountName() + ":" + password;
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
-			new SafeResponse(response).addCookie(REMEMBER_TOKEN_COOKIE_NAME, cryptToken, maxAge, domain, path );
+			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
+			cookie.setMaxAge( maxAge );
+			cookie.setDomain( domain );
+			cookie.setPath( path );
+			response.addCookie( cookie );
 			logger.info(Logger.SECURITY, true, "Enabled remember me token for " + user.getAccountName() );
 			return cryptToken;
 		} catch( IntegrityException e ) {
@@ -186,21 +190,24 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	public HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException {
 		
 		// get the current session
-		HttpSession session = request.getSession();
+		HttpSession oldSession = request.getSession();
 		
 		// make a copy of the session content
 		Map temp = new HashMap();
-		Enumeration e = session.getAttributeNames();
+		Enumeration e = oldSession.getAttributeNames();
 		while (e != null && e.hasMoreElements()) {
 			String name = (String) e.nextElement();
-			Object value = session.getAttribute(name);
+			Object value = oldSession.getAttribute(name);
 			temp.put(name, value);
 		}
 
 		// kill the old session and create a new one
-		session.invalidate();
+		oldSession.invalidate();
 		HttpSession newSession = request.getSession();
-
+		User user = ESAPI.authenticator().getCurrentUser();
+		user.addSession( newSession );
+		user.removeSession( oldSession );
+		
 		// copy back the session content
 		Iterator i = temp.entrySet().iterator();
 		while (i.hasNext()) {
@@ -305,7 +312,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     		}
     	}
     	String encrypted = ESAPI.encryptor().encrypt(sb.toString());
-    	new SafeResponse(response).addCookie("state", encrypted, -1, null, null );
+    	Cookie cookie = new Cookie( "state", encrypted );
+    	response.addCookie( cookie );
     }
 
 	/**
@@ -318,11 +326,15 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * @return list of File objects for new files in final directory
 	 */
 	public List getSafeFileUploads(HttpServletRequest request, File tempDir, File finalDir) throws ValidationException {
-		if ( !tempDir.exists() ) tempDir.mkdirs();
-		if ( !finalDir.exists() ) finalDir.mkdirs();
+		if ( !tempDir.exists() ) {
+		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
+		}
+		if ( !finalDir.exists() ) { 
+		    if ( !finalDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + finalDir.getAbsolutePath() );
+		}
 		List newFiles = new ArrayList();
 		try {
-			final HttpSession session = request.getSession();
+			final HttpSession session = request.getSession(false);
 			if (!ServletFileUpload.isMultipartContent(request)) {
 				throw new ValidationUploadException("Upload failed", "Not a multipart request");
 			}
@@ -346,7 +358,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 						return;
 					megaBytes = mBytes;
 					progress = (long) (((double) pBytesRead / (double) pContentLength) * 100);
-					session.setAttribute("progress", Long.toString(progress));
+					if ( session != null ) {
+					    session.setAttribute("progress", Long.toString(progress));
+					}
 					// logger.logSuccess(Logger.SECURITY, "   Item " + pItems + " (" + progress + "% of " + pContentLength + " bytes]");
 				}
 			};
@@ -380,7 +394,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 					// delete temporary file
 					item.delete();
 					logger.fatal(Logger.SECURITY, true, "File successfully uploaded: " + f);
-					session.setAttribute("progress", Long.toString(0));
+					if ( session != null ) {
+					    session.setAttribute("progress", Long.toString(0));
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -431,10 +447,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			path = cookie.getPath();
 			domain = cookie.getDomain();
 		}
-		SafeResponse safeResponse = new SafeResponse( response );
-		safeResponse.addCookie(name, "deleted", 0, domain, path);
+		Cookie deleter = new Cookie( name, "deleted" );
+		deleter.setMaxAge( 0 );
+		if ( domain != null ) deleter.setDomain( domain );
+		if ( path != null ) deleter.setPath( path );
+		response.addCookie( deleter );
 	}
 
+	
 	private Map queryToMap(String query) {
 		TreeMap map = new TreeMap();
 		String[] parts = query.split("&");
@@ -474,8 +494,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * character encoding, which is the default in early versions of HTML and
 	 * HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
 	 * information about character encoding and MIME.
-	 * 
-	 * 
 	 */
 	public void safeSetContentType(HttpServletResponse response) {
 		response.setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());

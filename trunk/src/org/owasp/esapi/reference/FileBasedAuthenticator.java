@@ -404,7 +404,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @return the user from session
      */
     protected User getUserFromSession() {
-        HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
+        HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
+        if ( session == null ) return null;
         return (User)session.getAttribute(USER);
     }
 
@@ -813,8 +814,11 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             user.setLastFailedLoginTime(new Date());
 			throw new AuthenticationLoginException("Login failed", "Session absolute timeout: " + user.getAccountName() );
 		}
-			
-		request.getSession().setAttribute(USER, user);
+		
+		// create new session for this User
+		HttpSession session = request.getSession();
+		user.addSession( session );
+		session.setAttribute(USER, user);
         setCurrentUser(user);
         return user;
     }
@@ -868,18 +872,19 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @see org.owasp.esapi.Authenticator#verifyPasswordStrength(java.lang.String)
      */
     public void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException {
-        if ( oldPassword == null ) oldPassword = "";
         if ( newPassword == null ) throw new AuthenticationCredentialsException("Invalid password", "New password cannot be null" );
 
         // can't change to a password that contains any 3 character substring of old password
-        int length = oldPassword.length();
-        for (int i = 0; i < length - 2; i++) {
-            String sub = oldPassword.substring(i, i + 3);
-            if (newPassword.indexOf(sub) > -1 ) {
-                throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password" );
+        if ( oldPassword != null ) {
+            int length = oldPassword.length();
+            for (int i = 0; i < length - 2; i++) {
+                String sub = oldPassword.substring(i, i + 3);
+                if (newPassword.indexOf(sub) > -1 ) {
+                    throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password" );
+                }
             }
         }
-
+        
         // new password must have enough character sets and length
         int charsets = 0;
         for (int i = 0; i < newPassword.length(); i++)

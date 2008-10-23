@@ -90,6 +90,9 @@ public class DefaultUser implements User, Serializable {
 	/** The expiration time. */
 	private Date expirationTime = new Date(Long.MAX_VALUE);
 
+	/** The session set */
+	private Set sessions = new HashSet();
+	
 	/** A flag to indicate that the password must be changed before the account can be used. */
 	// private boolean requiresPasswordChange = true;
 	
@@ -269,6 +272,18 @@ public class DefaultUser implements User, Serializable {
 		return screenName;
 	}
 
+    public void addSession( HttpSession s ) {
+        sessions.add( s );
+    }
+    
+    public void removeSession( HttpSession s ) {
+        sessions.remove( s );
+    }
+    
+	public Set getSessions() {
+	    return sessions;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.owasp.esapi.User#incrementFailedLoginCount()
 	 */
@@ -339,7 +354,8 @@ public class DefaultUser implements User, Serializable {
 	 * @see org.owasp.esapi.IntrusionDetector#isSessionAbsoluteTimeout()
 	 */
 	public boolean isSessionAbsoluteTimeout() {
-		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
+		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
+		if ( session == null ) return true;
 		Date deadline = new Date( session.getCreationTime() + 1000 * 60 * 60 * 2);
 		Date now = new Date();
 		return now.after(deadline);
@@ -351,7 +367,8 @@ public class DefaultUser implements User, Serializable {
 	 * @see org.owasp.esapi.IntrusionDetector#isSessionTimeout()
 	 */
 	public boolean isSessionTimeout() {
-		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession();
+		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
+		if ( session == null ) return true;
 		Date deadline = new Date(session.getLastAccessedTime() + 1000 * 60 * 20);
 		Date now = new Date();
 		return now.after(deadline);
@@ -431,6 +448,7 @@ public class DefaultUser implements User, Serializable {
 		
 		HttpSession session = ESAPI.currentRequest().getSession(false);
 		if (session != null) {
+            removeSession(session);
 			session.invalidate();
 		}
 		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), "JSESSIONID");

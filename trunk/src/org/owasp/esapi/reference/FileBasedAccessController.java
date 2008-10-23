@@ -335,6 +335,10 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 		
 		String part = canonical;
+        if ( part == null ) {
+            part = "";
+        }
+        
 		while (part.endsWith("/")) {
 			part = part.substring(0, part.length() - 1);
 		}
