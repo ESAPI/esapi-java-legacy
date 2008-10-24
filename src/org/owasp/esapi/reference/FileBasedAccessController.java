@@ -469,7 +469,11 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					String[] parts = line.split("\\|");
 					// fix Windows paths
 					rule.path = parts[0].trim().replaceAll("\\\\", "/");
-					rule.roles.add(parts[1].trim().toLowerCase());
+					
+					List roles = commaSplit(parts[1].trim().toLowerCase());
+					for(int x = 0; x < roles.size(); x++)
+						rule.roles.add(((String)roles.get(x)).trim());
+					
 					String action = parts[2].trim();
 					rule.allow = action.equalsIgnoreCase("allow");
 					if (map.containsKey(rule.path)) {
@@ -516,7 +520,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					
 					List roles = commaSplit(parts[1].trim().toLowerCase());
 					for(int x = 0; x < roles.size(); x++)
-						rule.roles.add(roles.get(x));
+						rule.roles.add(((String)roles.get(x)).trim());
 					
 					List action = commaSplit(parts[2].trim().toLowerCase());
 					for(int x = 0; x < action.size(); x++)
