@@ -112,6 +112,10 @@ public class AccessControllerTest extends TestCase {
 		assertFalse(instance.isAuthorizedForURL("/test/none"));
 		assertTrue(instance.isAuthorizedForURL("/test/none/test.gif"));
 		assertFalse(instance.isAuthorizedForURL("/test/none/test.exe"));
+		assertTrue(instance.isAuthorizedForURL("/test/none/test.png"));
+		assertFalse(instance.isAuthorizedForURL("/test/moderator"));
+		assertTrue(instance.isAuthorizedForURL("/test/profile"));
+		assertFalse(instance.isAuthorizedForURL("/upload"));
 
 		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForURL("/nobody"));
@@ -119,6 +123,10 @@ public class AccessControllerTest extends TestCase {
 		assertFalse(instance.isAuthorizedForURL("/test/user"));
 		assertTrue(instance.isAuthorizedForURL("/test/all"));
 		assertFalse(instance.isAuthorizedForURL("/test/none"));
+		assertTrue(instance.isAuthorizedForURL("/test/none/test.png"));
+		assertFalse(instance.isAuthorizedForURL("/test/moderator"));
+		assertTrue(instance.isAuthorizedForURL("/test/profile"));
+		assertFalse(instance.isAuthorizedForURL("/upload"));
 		
 		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertFalse(instance.isAuthorizedForURL("/nobody"));
@@ -126,6 +134,10 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForURL("/test/user"));
 		assertTrue(instance.isAuthorizedForURL("/test/all"));
 		assertFalse(instance.isAuthorizedForURL("/test/none"));
+		assertTrue(instance.isAuthorizedForURL("/test/none/test.png"));
+		assertFalse(instance.isAuthorizedForURL("/test/moderator"));
+		assertTrue(instance.isAuthorizedForURL("/test/profile"));
+		assertFalse(instance.isAuthorizedForURL("/upload"));
 		
 		try {
 			instance.assertAuthorizedForURL("/test/admin");
@@ -150,22 +162,28 @@ public class AccessControllerTest extends TestCase {
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionB"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionBdeny"));
+		assertTrue(instance.isAuthorizedForFunction("/FunctionC"));
+		assertFalse(instance.isAuthorizedForFunction("/FunctionCdeny"));
 
 		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForFunction("/FunctionA"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertTrue(instance.isAuthorizedForFunction("/FunctionB"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionBdeny"));
+		assertTrue(instance.isAuthorizedForFunction("/FunctionD"));
+		assertFalse(instance.isAuthorizedForFunction("/FunctionDdeny"));
 
 		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForFunction("/FunctionA"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionAdeny"));
 		assertTrue(instance.isAuthorizedForFunction("/FunctionB"));
 		assertFalse(instance.isAuthorizedForFunction("/FunctionBdeny"));
+		assertTrue(instance.isAuthorizedForFunction("/FunctionC"));
+		assertFalse(instance.isAuthorizedForFunction("/FunctionCdeny"));
 
 		try {
 			instance.assertAuthorizedForFunction("/FunctionA");
-			instance.assertAuthorizedForFunction( "/FunctionAdeny" );
+			instance.assertAuthorizedForFunction( "/FunctionDdeny" );
 			fail();
 		} catch ( AccessControlException e ) {
 			// expected
@@ -186,6 +204,8 @@ public class AccessControllerTest extends TestCase {
 		Class userW = null;
 		Class userRW = null;
 		Class anyR = null;
+		Class userAdminR = null;
+		Class userAdminRW = null;
 		Class undefined = null;
 		
 		try{
@@ -194,10 +214,15 @@ public class AccessControllerTest extends TestCase {
 			userW = Class.forName("java.util.Date");
 			userRW = Class.forName("java.lang.String");
 			anyR = Class.forName("java.io.BufferedReader");
+			userAdminR = Class.forName("java.util.Random");
+			userAdminRW = Class.forName("java.awt.event.MouseWheelEvent");
 			undefined = Class.forName("java.io.FileWriter");
+			
 		}catch(ClassNotFoundException cnf){
-			System.out.println("CLASS NOT FOUND! EPIC FAILZ!");
+			System.out.println("CLASS NOT FOUND.");
+			cnf.printStackTrace();
 		}
+		//test User
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForData("read", userRW));
 		assertFalse(instance.isAuthorizedForData("read", undefined));
@@ -208,7 +233,10 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForData("write", userW));
 		assertFalse(instance.isAuthorizedForData("write", anyR));
 		assertTrue(instance.isAuthorizedForData("read", anyR));
+		assertTrue(instance.isAuthorizedForData("read", userAdminR));
+		assertTrue(instance.isAuthorizedForData("write", userAdminRW));
 		
+		//test Admin
 		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertTrue(instance.isAuthorizedForData("read", adminRW));
 		assertFalse(instance.isAuthorizedForData("read", undefined));
@@ -217,7 +245,10 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForData("write", adminRW));
 		assertFalse(instance.isAuthorizedForData("write", anyR));
 		assertTrue(instance.isAuthorizedForData("read", anyR));
+		assertTrue(instance.isAuthorizedForData("read", userAdminR));
+		assertTrue(instance.isAuthorizedForData("write", userAdminRW));
 		
+		//test User/Admin
 		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForData("read", userRW));
 		assertFalse(instance.isAuthorizedForData("read", undefined));
@@ -227,31 +258,17 @@ public class AccessControllerTest extends TestCase {
 		assertTrue(instance.isAuthorizedForData("write", userRW));
 		assertTrue(instance.isAuthorizedForData("write", userW));
 		assertFalse(instance.isAuthorizedForData("write", anyR));
-		assertTrue(instance.isAuthorizedForData("read", anyR));		
-		/*
-		auth.setCurrentUser( auth.getUser("testuser1") );
-		assertTrue(instance.isAuthorizedForData("/Data1"));
-		assertFalse(instance.isAuthorizedForData("/Data2"));
-		assertFalse(instance.isAuthorizedForData("/not_listed"));
-
-		auth.setCurrentUser( auth.getUser("testuser2") );
-		assertFalse(instance.isAuthorizedForData("/Data1"));
-		assertTrue(instance.isAuthorizedForData("/Data2"));
-		assertFalse(instance.isAuthorizedForData("/not_listed"));
-
-		auth.setCurrentUser( auth.getUser("testuser3") );
-		assertTrue(instance.isAuthorizedForData("/Data1"));
-		assertTrue(instance.isAuthorizedForData("/Data2"));
-		assertFalse(instance.isAuthorizedForData("/not_listed"));
-
+		assertTrue(instance.isAuthorizedForData("read", anyR));
+		assertTrue(instance.isAuthorizedForData("read", userAdminR));
+		assertTrue(instance.isAuthorizedForData("write", userAdminRW));
 		try {
-			instance.assertAuthorizedForData("read", "java.lang.Math");
-			instance.assertAuthorizedForData( "write", "java.net.Authenticator" );
+			instance.assertAuthorizedForData("read", userRW);
+			instance.assertAuthorizedForData( "write", adminR );
 			fail();
 		} catch ( AccessControlException e ) {
 			// expected
 		}
-		*/
+		
 	}
 
 	/**
@@ -266,21 +283,24 @@ public class AccessControllerTest extends TestCase {
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForFile("/Dir/File1"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/File2"));
+		assertTrue(instance.isAuthorizedForFile("/Dir/File3"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
 
 		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForFile("/Dir/File1"));
 		assertTrue(instance.isAuthorizedForFile("/Dir/File2"));
+		assertTrue(instance.isAuthorizedForFile("/Dir/File4"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
 
 		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForFile("/Dir/File1"));
 		assertTrue(instance.isAuthorizedForFile("/Dir/File2"));
+		assertFalse(instance.isAuthorizedForFile("/Dir/File5"));
 		assertFalse(instance.isAuthorizedForFile("/Dir/ridiculous"));
 
 		try {
 			instance.assertAuthorizedForFile("/Dir/File1");
-			instance.assertAuthorizedForFile( "/Dir/ridiculous" );
+			instance.assertAuthorizedForFile( "/Dir/File6" );
 			fail();
 		} catch ( AccessControlException e ) {
 			// expected
@@ -299,20 +319,24 @@ public class AccessControllerTest extends TestCase {
 		auth.setCurrentUser( auth.getUser("testuser1") );
 		assertTrue(instance.isAuthorizedForService("/services/ServiceA"));
 		assertFalse(instance.isAuthorizedForService("/services/ServiceB"));
+		assertTrue(instance.isAuthorizedForService("/services/ServiceC"));
+		
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));
 
 		auth.setCurrentUser( auth.getUser("testuser2") );
 		assertFalse(instance.isAuthorizedForService("/services/ServiceA"));
 		assertTrue(instance.isAuthorizedForService("/services/ServiceB"));
+		assertFalse(instance.isAuthorizedForService("/services/ServiceF"));
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));
 
 		auth.setCurrentUser( auth.getUser("testuser3") );
 		assertTrue(instance.isAuthorizedForService("/services/ServiceA"));
 		assertTrue(instance.isAuthorizedForService("/services/ServiceB"));
+		assertFalse(instance.isAuthorizedForService("/services/ServiceE"));
 		assertFalse(instance.isAuthorizedForService("/test/ridiculous"));
 
 		try {
-			instance.assertAuthorizedForService("/services/ServiceA");
+			instance.assertAuthorizedForService("/services/ServiceD");
 			instance.assertAuthorizedForService( "/test/ridiculous" );
 			fail();
 		} catch ( AccessControlException e ) {
