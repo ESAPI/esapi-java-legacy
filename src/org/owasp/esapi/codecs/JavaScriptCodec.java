@@ -29,6 +29,15 @@ public class JavaScriptCodec implements Codec {
 	public JavaScriptCodec() {
 	}
 
+	/**
+	 * Encodes a String for safe use in a JavaScript context.
+	 * 
+	 * @param input
+	 * 		The String to encode
+	 * 
+	 * @return 
+	 * 		The encoded String
+	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
@@ -66,7 +75,16 @@ public class JavaScriptCodec implements Codec {
         String pad = "0000".substring(temp.length() );
         return "\\u" + pad + temp.toUpperCase();
 	}
-	
+
+	/**
+	 * Decodes a String that has been encoded for use in a JavaScript context.
+	 * 
+	 * @param input
+	 * 		The String to decode
+	 * 
+	 * @return 
+	 * 		The decoded String
+	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
@@ -90,6 +108,12 @@ public class JavaScriptCodec implements Codec {
 	 *   \\a - special characters
 	 *   \\xHH
 	 *   \\uHHHH
+	 *   
+	 *   @param input
+	 *   		The PushbackString to decode
+	 *   
+	 *   @return
+	 *   		The decoded Character
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();

@@ -37,10 +37,8 @@ public class AuthenticationCredentialsException extends AuthenticationException 
 	/**
 	 * Creates a new instance of EnterpriseSecurityException.
 	 * 
-	 * @param userMessage
-	 *            the message displayed to the user
-	 * @param logMessage
-	 * 			  the message logged
+	 * @param userMessage the message displayed to the user
+	 * @param logMessage the message logged
 	 */
 	public AuthenticationCredentialsException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
@@ -49,12 +47,9 @@ public class AuthenticationCredentialsException extends AuthenticationException 
 	/**
 	 * Instantiates a new authentication exception.
 	 * 
-	 * @param userMessage
-	 *            the message displayed to the usr
-	 * @param logMessage
-	 * 			  the message logged
-	 * @param cause
-	 *            the cause
+	 * @param userMessage the message displayed to the usr
+	 * @param logMessage the message logged
+	 * @param cause the cause
 	 */
 	public AuthenticationCredentialsException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);

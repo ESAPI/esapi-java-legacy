@@ -30,11 +30,33 @@ package org.owasp.esapi.codecs;
  */
 public interface Codec {
 
-
-	String encode( String input );
+	/**
+	 * Encode a String with a Codec
+	 * 
+	 * @param input
+	 * 		the String to encode
+	 * @return the encoded String
+	 */
+	String encode( String input ); 
 	
+	/**
+	 * Encode a Character with a Codec
+	 * 
+	 * @param c
+	 * 		the Character to encode
+	 * @return
+	 * 		the encoded Character
+	 */
 	String encodeCharacter( Character c );
 	
+	/**
+	 * Decode a String that was encoded using the encode method in this Class
+	 * 
+	 * @param input
+	 * 		the String to decode
+	 * @return
+	 *		the decoded String
+	 */
 	String decode( String input );
 	
 
@@ -42,6 +64,10 @@ public interface Codec {
 	 * Returns the decoded version of the next character from the input string and advances the
 	 * current character in the PushbackString.  If the current character is not encoded, this 
 	 * method MUST reset the PushbackString.
+	 * 
+	 * @param input	the Character to decode
+	 * 
+	 * @return the decoded Character
 	 */
 	public Character decodeCharacter( PushbackString input );
 	

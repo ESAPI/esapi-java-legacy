@@ -29,6 +29,15 @@ public class UnixCodec implements Codec {
 	public UnixCodec() {
 	}
 
+	/**
+	 * Encodes a String for safe use in a Unix context.
+	 * 
+	 * @param input
+	 * 		The String to encode
+	 * 
+	 * @return 
+	 * 		The encoded String
+	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
@@ -45,6 +54,15 @@ public class UnixCodec implements Codec {
         return "\\" + c;
 	}
 	
+	/**
+	 * Decodes a String that has been encoded using the encode method in this class.
+	 * 
+	 * @param input
+	 * 		The String to decode
+	 * 
+	 * @return 
+	 * 		The decoded String
+	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
