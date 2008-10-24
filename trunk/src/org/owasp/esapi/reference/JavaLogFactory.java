@@ -355,8 +355,7 @@ public class JavaLogFactory implements LogFactory {
             // create the message to log
             String msg = "";
             if ( user != null ) {
-            	msg = type + "-" + (success ? "SUCCESS. UserID: " : "FAILURE. UserID: ") + user.getAccountName() + "(Sess:"+ userSessionIDforLogging +")(SrcIP:" + user.getLastHostAddress() 
-            	+ ") -- " + clean;
+            	msg = type + "-" + (success ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
             }
             
             jlogger.logp(level, applicationName, moduleName, msg);
