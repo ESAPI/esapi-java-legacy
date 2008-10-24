@@ -25,9 +25,21 @@ package org.owasp.esapi.codecs;
  */
 public class CSSCodec implements Codec {
 
-    public CSSCodec() {
+    /**
+     * Public Constructor for CSSCodec
+     */
+	public CSSCodec() {
     }
 
+    /**
+     * This method encodes a String to safely be used in CSS.
+     * 
+     * @param input the String to encode
+     * 
+     * @return the encoded String
+     * 
+     * @see org.owasp.esapi.codecs.Codec#encode(String)
+     */
     public String encode(String input) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < input.length(); i++) {
@@ -54,6 +66,14 @@ public class CSSCodec implements Codec {
         return "\\" + temp.toUpperCase() + " ";
     }
 
+/**
+ * This method decodes a String that has been encoded by the encode method in this Class. 
+ * 
+ * @param input the String to decode
+ * 
+ * @return the decoded String
+ *    
+ */
     public String decode(String input) {
         StringBuffer sb = new StringBuffer();
         PushbackString pbs = new PushbackString(input);

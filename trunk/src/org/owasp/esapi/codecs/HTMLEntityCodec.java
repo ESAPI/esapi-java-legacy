@@ -35,6 +35,15 @@ public class HTMLEntityCodec implements Codec {
 		initializeMaps();
 	}
 
+/**
+ * Encodes a String for safe use as an HTML entity
+ * 
+ * @param input
+ * 		String to encode
+ * 
+ * @return 
+ * 		The encoded String
+ */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
@@ -43,7 +52,15 @@ public class HTMLEntityCodec implements Codec {
 		return sb.toString();
 	}
 
-
+/**
+ * Encodes a Character for safe use in an HTML entity field.
+ *  
+ *  @param c
+ *  	the Character to encode
+ *  
+ *  @result 
+ *  	the encoded Character as a String
+ */
 	public String encodeCharacter( Character c ) {
 		String entityName = (String) characterToEntityMap.get(c);
 		if (entityName != null) {
@@ -52,7 +69,15 @@ public class HTMLEntityCodec implements Codec {
 		return "&#" + (int)c.charValue() + ";";
 	}
 	
-	
+/**
+ * Decodes a String that has been encoded for use in an HTML entity field.
+ * 
+ * @param input
+ * 		The String to decode
+ * 
+ * @return 
+ * 		The decoded String
+ */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );

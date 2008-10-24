@@ -36,10 +36,8 @@ public class AuthenticationHostException extends AuthenticationException {
 	/**
 	 * Creates a new instance of AuthenticationHostException.
 	 * 
-	 * @param userMessage
-	 *            the message displayed to the user
-	 * @param logMessage
-	 * 			  the message logged
+	 * @param userMessage the message displayed to the user
+	 * @param logMessage the message logged
 	 */
 	public AuthenticationHostException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
@@ -48,12 +46,9 @@ public class AuthenticationHostException extends AuthenticationException {
 	/**
 	 * Instantiates a new authentication exception.
 	 * 
-	 * @param userMessage
-	 *            the message displayed to the user
-	 * @param logMessage
-	 * 			  the message logged
-	 * @param cause
-	 *            the cause
+	 * @param userMessage the message displayed to the user
+	 * @param logMessage the message logged
+	 * @param cause the cause
 	 */
 	public AuthenticationHostException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);

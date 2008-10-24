@@ -43,12 +43,9 @@ public class AccessControlException extends EnterpriseSecurityException {
 	/**
 	 * Instantiates a new access control exception.
 	 * 
-	 * @param userMessage
-	 *            the message displayed to the user
-	 * @param logMessage
-	 * 			  the message logged
-	 * @param cause
-	 *            the cause
+	 * @param userMessage the message displayed to the user
+	 * @param logMessage the message logged
+	 * @param cause the cause
 	 */
 	public AccessControlException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
