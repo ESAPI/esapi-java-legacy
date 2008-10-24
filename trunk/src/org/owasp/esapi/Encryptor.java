@@ -112,8 +112,6 @@ public interface Encryptor {
 	 * 
 	 * @return true, if the signature is verified
 	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
 	 */
 	boolean verifySignature(String signature, String data);
 
@@ -127,8 +125,6 @@ public interface Encryptor {
 	 * 
 	 * @return the seal
 	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
 	 */
 	String seal(String data, long timestamp) throws IntegrityException;
 
@@ -142,7 +138,7 @@ public interface Encryptor {
 	 * 
 	 * @return the original data
 	 * 
-	 * @throws ExcryptionException if the unsealed data cannot be retrieved for any reason
+	 * @throws EncryptionException if the unsealed data cannot be retrieved for any reason
 	 */
 	String unseal( String seal ) throws EncryptionException;
 	

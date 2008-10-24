@@ -87,14 +87,14 @@ public interface User extends Principal {
     /**
      * Disable account.
      * 
-     * @throws AuthenticationException the authentication exception
+     * 
      */
     void disable();
 
     /**
      * Enable account.
      * 
-     * @throws AuthenticationException the authentication exception
+     * 
      */
     void enable();
 

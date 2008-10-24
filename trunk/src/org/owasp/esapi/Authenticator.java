@@ -274,8 +274,6 @@ public interface Authenticator {
 	 * @param newPassword
 	 *            the new password
 	 * 
-	 * @return true, if the new password meets complexity requirements and is not too similar to the old password
-	 * 
 	 * @throws AuthenticationException
 	 *				if newPassword is too similar to oldPassword or if newPassword does not meet complexity requirements
 	 */
