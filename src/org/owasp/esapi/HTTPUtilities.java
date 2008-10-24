@@ -98,7 +98,7 @@ public interface HTTPUtilities {
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the current {@link HttpSession} object 
      * 
      * @return the new HttpSession with a changed id
-     * @throws EnterpriseSecurityException the enterprise security exception
+     * @throws AuthenticationException the exception
      */
     HttpSession changeSessionIdentifier( HttpServletRequest request ) throws AuthenticationException;
 
