@@ -98,7 +98,9 @@ public interface Logger {
 	public static final EventType PERFORMANCE = new EventType( "PERFORMANCE" );
 	
 	/**
-     * The FUNCTIONALITY type of log event. 
+     * The FUNCTIONALITY type of log event. This is the type of event that non-security focused loggers typically log.
+     * If you are going to log your existing non-security events in the same log with your security events, you 
+     * probably want to use this type of log event.  
      */
 	public static final EventType FUNCTIONALITY = new EventType( "FUNCTIONALITY" );
 

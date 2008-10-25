@@ -42,8 +42,7 @@ public class LoggerTest extends TestCase {
     /**
 	 * Instantiates a new logger test.
 	 * 
-	 * @param testName
-	 *            the test name
+	 * @param testName the test name
 	 */
     public LoggerTest(String testName) {
         super(testName);
@@ -109,10 +108,10 @@ public class LoggerTest extends TestCase {
         
         // The following tests that the default logging level is set to WARNING. Since the default might be changed
         // in the ESAPI security configuration file, these are commented out.
-       	//assertTrue(testLogger.isWarningEnabled());
-       	//assertFalse(testLogger.isInfoEnabled());
+       	assertTrue(testLogger.isWarningEnabled());
+       	assertFalse(testLogger.isInfoEnabled());
 
-        // First, test all the differnt logging levels
+        // First, test all the different logging levels
         testLogger.setLevel( Logger.ALL );
     	assertTrue(testLogger.isFatalEnabled());
        	assertTrue(testLogger.isErrorEnabled());

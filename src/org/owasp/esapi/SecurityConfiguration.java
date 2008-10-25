@@ -145,8 +145,7 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets an intrusion detection Quota.
 	 * 
-	 * @param eventName 
-	 * 		the event whose quota is desired
+	 * @param eventName the event whose quota is desired
 	 * 
 	 * @return the matching Quota for eventName
 	 */
@@ -155,49 +154,94 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets the ESAPI resource directory as a String.
 	 * 
-	 * @return the ESAPI resource directory
+	 * @return The ESAPI resource directory.
 	 */
 	public String getResourceDirectory();
 
 	/**
 	 * Sets the ESAPI resource directory.
 	 * 
-	 * @param dir 
-	 * 		location of the resource directory
+	 * @param dir The location of the resource directory.
 	 */
 	public void setResourceDirectory(String dir);
 	
 	/**
 	 * Gets the content-type set for responses.
+	 * 
+	 * @return The current content-type set of responses.
 	 */
 	public String getResponseContentType();
 
 	/**
 	 * Gets the time window allowed for the remember token in milliseconds.
+	 * 
+	 * @return The time to live for generated remember me tokens.
 	 */
 	public long getRememberTokenDuration();
 
 	/**
 	 * Returns whether HTML entity encoding should be applied to log entries.
+	 * 
+	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
 	 */
 	public boolean getLogEncodingRequired();
 
     /**
-     * Get the log level specified in the ESAPI configuration properties file. Return a default value if it is not specified.
+     * Get the log level specified in the ESAPI configuration properties file. Return a default value 
+     * if it is not specified in the properties file.
      * 
-     * @return the logging level defined in the properties file. If none is specified, the default of Logger.WARNING is returned.
+     * @return the logging level defined in the properties file. If none is specified, the default 
+     * of Logger.WARNING is returned.
      */
     public int getLogLevel();
-    	
+
+    /**
+     * Get the name of the log file specified in the ESAPI configuration properties file. Return a default value 
+     * if it is not specified.
+     * 
+     * @return the log file name defined in the properties file.
+     */
+    public String getLogFileName();
+
+    /**
+     * Get the maximum size of a single log file from the ESAPI configuration properties file. Return a default value 
+     * if it is not specified. Once the log hits this file size, it will roll over into a new log.
+     * 
+     * @return the maximum size of a single log file (in bytes).
+     */
+    public int getMaxLogFileSize();
+
 	/**
-	 * Models a simple threshold as a count and an interval, along with a set of actions to take if the threshold is exceeded. 
+	 * Models a simple threshold as a count and an interval, along with a set of actions to take if 
+	 * the threshold is exceeded. 
 	 */
 	public static class Threshold {
+		
+		/** The name of this threshold. */
 		public String name = null;
+		
+		/** The count at which this threshold is triggered. */
 		public int count = 0;
+		
+		/** 
+		 * The time frame within which 'count' number of actions has to be detected in order to
+		 * trigger this threshold.
+		 */
 		public long interval = 0;
+		
+		/** The actions to take if the threshold is met. */
 		public List actions = null;
 
+		/**
+		 * Constructs a threshold that is composed of its name, its threshold count, the time window for
+		 * the threshould, and the actions to take if the threshold is triggered.
+		 * 
+		 * @param name The name of this threshold.
+		 * @param count The count at which this threshold is triggered.
+		 * @param interval The time frame within which 'count' number of actions has to be detected in order to
+		 * trigger this threshold.
+		 * @param actions The actions to take if the threshold is met.
+		 */
 		public Threshold(String name, int count, long interval, List actions) {
 			this.name = name;
 			this.count = count;
