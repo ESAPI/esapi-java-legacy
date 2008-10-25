@@ -259,10 +259,11 @@ public interface User extends Principal {
     boolean isSessionAbsoluteTimeout();
 
     /**
-     * Tests to see if the user's session has timed out from inactivity.
+     * Tests to see if the user's session has timed out from inactivity based 
+     * on ESAPI configuration settings.
      * 
-     * A session may timeout prior to ESAPI's timeout due to the 
-     * web.xml configuration setting for idle session-timeout. 	
+     * A session may timeout prior to ESAPI's configuration setting due to the
+     * web.xml entry for session-timeout. 	
      *
      * <session-config>
      *   <session-timeout>60</session-timeout> 
