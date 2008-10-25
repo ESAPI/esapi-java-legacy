@@ -3,9 +3,7 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.FileHandler;
 import java.util.logging.Level;
 
 import javax.servlet.http.HttpSession;
