@@ -58,7 +58,7 @@ public class HTMLEntityCodec implements Codec {
  *  @param c
  *  	the Character to encode
  *  
- *  @result 
+ *  @return 
  *  	the encoded Character as a String
  */
 	public String encodeCharacter( Character c ) {

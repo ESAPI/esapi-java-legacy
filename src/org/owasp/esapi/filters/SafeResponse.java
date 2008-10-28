@@ -314,9 +314,11 @@ public class SafeResponse implements HttpServletResponse {
 	}
 
 	/**
-	 * Sets the character encoding to the ESAPI configured encoding.
+	 * Sets the character encoding scheme to the ESAPI configured encoding scheme.
 	 */
 	public void setCharacterEncoding(String charset) {
+		// Note: This overrides the provided character set and replaces it with the safe
+		// encoding scheme set in ESAPI.properties.
 		response.setCharacterEncoding( ESAPI.securityConfiguration().getCharacterEncoding() );
 	}
 

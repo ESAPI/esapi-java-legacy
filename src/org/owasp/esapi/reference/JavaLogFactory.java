@@ -15,11 +15,13 @@ import org.owasp.esapi.User;
 
 /**
  * Reference implementation of the LogFactory and Logger interfaces. This implementation uses the Java logging package, and marks each
- * log message with the currently logged in user and the word "SECURITY" for security related events.
+ * log message with the currently logged in user and the word "SECURITY" for security related events. See the 
+ * <a href="JavaLogFactory.JavaLogger.html">JavaLogFactory.JavaLogger</a> Javadocs for the details on the JavaLogger reference implementation.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.LogFactory
+ * @see org.owasp.esapi.reference.JavaLogFactory.JavaLogger
  */
 public class JavaLogFactory implements LogFactory {
 
