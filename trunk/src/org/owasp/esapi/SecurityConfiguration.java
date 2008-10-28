@@ -22,14 +22,19 @@ import java.util.List;
 /**
  * The SecurityConfiguration interface stores all configuration information
  * that directs the behavior of the ESAPI implementation.
- * 
+ * <br><br>
  * Protection of this configuration information is critical to the secure
  * operation of the application using the ESAPI. You should use operating system
  * access controls to limit access to wherever the configuration information is
- * stored. Please note that adding another layer of encryption does not make the
+ * stored.
+ * <br><br>
+ * Please note that adding another layer of encryption does not make the
  * attackers job much more difficult. Somewhere there must be a master "secret"
  * that is stored unencrypted on the application platform. Creating another
- * layer of indirection doesn't provide any real additional security.
+ * layer of indirection doesn't provide any real additional security. Its up to the
+ * reference implementation to decide whether this file should be encrypted or not.
+ * The ESAPI reference implementation (DefaultSecurityConfiguration.java) does not encrypt
+ * its properties file.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -40,119 +45,130 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets the application name, used for logging
 	 * 
-	 * @return the application name
+	 * @return the name of the current application
 	 */
 	public String getApplicationName();
 	
 	/**
-	 * Gets the master password.
+	 * Gets the master password. This password can be used to encrypt/decrypt other files or types
+	 * of data that need to be protected by your application.
 	 * 
-	 * @return the master password
+	 * @return the current master password
 	 */
 	public char[] getMasterPassword();
 
 	/**
-	 * Gets the keystore.
+	 * Gets the keystore used to hold any encryption keys used by your application.
 	 * 
-	 * @return the keystore
+	 * @return the current keystore
 	 */
 	public File getKeystore();
 
 	/**
-	 * Gets the master salt.
+	 * Gets the master salt that is used to salt stored password hashes and any other location 
+	 * where a salt is needed.
 	 * 
-	 * @return the master salt
+	 * @return the current master salt
 	 */
 	public byte[] getMasterSalt();
 
 	/**
-	 * Gets the allowed file extensions.
+	 * Gets the allowed file extensions for files that are uploaded to this application.
 	 * 
-	 * @return the allowed file extensions
+	 * @return a list of the current allowed file extensions
 	 */
 	public List getAllowedFileExtensions();
 
 	/**
-	 * Gets the allowed file upload size.
+	 * Gets the maximum allowed file upload size.
 	 * 
-	 * @return the allowed file upload size
+	 * @return the current allowed file upload size
 	 */
 	public int getAllowedFileUploadSize();
 
 	/**
-	 * Gets the password parameter name.
+	 * Gets the name of the password parameter used during user authentication.
 	 * 
-	 * @return the password parameter name
+	 * @return the name of the password parameter
 	 */
 	public String getPasswordParameterName();
 
 	/**
-	 * Gets the username parameter name.
+	 * Gets the name of the username parameter used during user authentication.
 	 * 
-	 * @return the username parameter name
+	 * @return the name of the username parameter
 	 */
 	public String getUsernameParameterName();
 
 	/**
-	 * Gets the encryption algorithm.
+	 * Gets the encryption algorithm used by ESAPI to protect data.
 	 * 
-	 * @return the encryption algorithm
+	 * @return the current encryption algorithm
 	 */
 	public String getEncryptionAlgorithm();
 
 	/**
-	 * Gets the hashing algorithm.
+	 * Gets the hashing algorithm used by ESAPI to hash data.
 	 * 
-	 * @return the hashing algorithm
+	 * @return the current hashing algorithm
 	 */
 	public String getHashAlgorithm();
 
 	/**
-	 * Gets the character encoding.
+	 * Gets the character encoding scheme supported by this application. This is used to set the
+	 * character encoding scheme on requests and responses when setCharacterEncoding() is called
+	 * on SafeRequests and SafeResponses. This scheme is also used for encoding/decoding URLs 
+	 * and any other place where the current encoding scheme needs to be known.
+	 * <br><br>
+	 * Note: This does not get the configured response content type. That is accessed by calling 
+	 * getResponseContentType().
 	 * 
-	 * @return encoding character name
+	 * @return the current character encoding scheme
 	 */
 	public String getCharacterEncoding();
 
 	/**
-	 * Gets the digital signature algorithm.
+	 * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
 	 * 
-	 * @return the digital signature algorithm
+	 * @return the current digital signature algorithm
 	 */
 	public String getDigitalSignatureAlgorithm();
 
 	/**
-	 * Gets the random number generation algorithm.
+	 * Gets the random number generation algorithm used to generate random numbers where needed.
 	 * 
-	 * @return random number generation algorithm
+	 * @return the current random number generation algorithm
 	 */
 	public String getRandomAlgorithm();
 
 	/**
-	 * Gets the allowed login attempts.
+	 * Gets the number of login attempts allowed before the user's account is locked. If this 
+	 * many failures are detected within the alloted time period, the user's account will be locked.
 	 * 
-	 * @return the allowed login attempts
+	 * @return the number of failed login attempts that cause an account to be locked
 	 */
 	public int getAllowedLoginAttempts();
 
 	/**
-	 * Gets the max old password hashes.
+	 * Gets the maximum number of old password hashes that should be retained. These hashes can 
+	 * be used to ensure that the user doesn't reuse the specified number of previous passwords
+	 * when they change their password.
 	 * 
-	 * @return the max old password hashes
+	 * @return the number of old hashed passwords to retain
 	 */
 	public int getMaxOldPasswordHashes();
 
 	/**
-	 * Gets an intrusion detection Quota.
+	 * Gets the intrusion detection quota for the specified event.
 	 * 
-	 * @param eventName the event whose quota is desired
+	 * @param eventName the name of the event whose quota is desired
 	 * 
-	 * @return the matching Quota for eventName
+	 * @return the Quota that has been configured for the specified type of event
 	 */
 	public Threshold getQuota(String eventName);
 
 	/**
-	 * Gets the ESAPI resource directory as a String.
+	 * Gets the name of the ESAPI resource directory as a String.
 	 * 
 	 * @return The ESAPI resource directory.
 	 */
@@ -166,16 +182,19 @@ public interface SecurityConfiguration {
 	public void setResourceDirectory(String dir);
 	
 	/**
-	 * Gets the content-type set for responses.
+	 * Gets the content type for responses used when setSafeContentType() is called.
+	 * <br><br>
+	 * Note: This does not get the configured character encoding scheme. That is accessed by calling 
+	 * getCharacterEncoding().
 	 * 
-	 * @return The current content-type set of responses.
+	 * @return The current content-type set for responses.
 	 */
 	public String getResponseContentType();
 
 	/**
-	 * Gets the time window allowed for the remember token in milliseconds.
+	 * Gets the length of the time to live window for remember tokens (in milliseconds).
 	 * 
-	 * @return The time to live for generated remember me tokens.
+	 * @return The time to live length for generated remember me tokens.
 	 */
 	public long getRememberTokenDuration();
 
@@ -187,8 +206,8 @@ public interface SecurityConfiguration {
 	public boolean getLogEncodingRequired();
 
     /**
-     * Get the log level specified in the ESAPI configuration properties file. Return a default value 
-     * if it is not specified in the properties file.
+     * Get the log level specified in the ESAPI configuration properties file. Return a default 
+     * value if it is not specified in the properties file.
      * 
      * @return the logging level defined in the properties file. If none is specified, the default 
      * of Logger.WARNING is returned.
@@ -213,7 +232,9 @@ public interface SecurityConfiguration {
 
 	/**
 	 * Models a simple threshold as a count and an interval, along with a set of actions to take if 
-	 * the threshold is exceeded. 
+	 * the threshold is exceeded. These thresholds are used to define when the accumulation of a particular event
+	 * has met a set number within the specified time period. Once a threshold value has been met, various
+	 * actions can be taken at that point.
 	 */
 	public static class Threshold {
 		
@@ -229,18 +250,20 @@ public interface SecurityConfiguration {
 		 */
 		public long interval = 0;
 		
-		/** The actions to take if the threshold is met. */
+		/** The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
+		 * your implementation could have this be a list of any type of 'actions' you wish to define. 
+		 */
 		public List actions = null;
 
 		/**
 		 * Constructs a threshold that is composed of its name, its threshold count, the time window for
-		 * the threshould, and the actions to take if the threshold is triggered.
+		 * the threshold, and the actions to take if the threshold is triggered.
 		 * 
 		 * @param name The name of this threshold.
 		 * @param count The count at which this threshold is triggered.
 		 * @param interval The time frame within which 'count' number of actions has to be detected in order to
 		 * trigger this threshold.
-		 * @param actions The actions to take if the threshold is met.
+		 * @param actions The list of actions to take if the threshold is met.
 		 */
 		public Threshold(String name, int count, long interval, List actions) {
 			this.name = name;

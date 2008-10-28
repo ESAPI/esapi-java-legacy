@@ -670,7 +670,7 @@ public class SafeRequest implements HttpServletRequest {
     }
 
     /**
-     * Sets the character encoding to the ESAPI configured encoding.
+     * Sets the character encoding scheme to the ESAPI configured encoding scheme.
      */
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException {
         request.setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
