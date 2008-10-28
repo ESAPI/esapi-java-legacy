@@ -34,6 +34,7 @@ import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
 
 /**
  * Reference implementation of the AccessController interface. This reference
@@ -445,7 +446,25 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 			return true;
 		return false;
 	}
-
+	
+	private List validateRoles(List roles) throws ValidationException{
+		List ret = new ArrayList();	
+		for(int x = 0; x < roles.size(); x++){
+			String canonical = "";
+			try {
+				canonical = ESAPI.encoder().canonicalize(((String)roles.get(x)).trim());
+			} catch (EncodingException e) {
+				logger.warning( Logger.SECURITY, false, "Failed to canonicalize role " + ((String)roles.get(x)).trim(), e );
+			}
+			if(!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController",canonical,"^[a-zA-Z0-9_]{0,10}$" ,200, false))
+				logger.warning( Logger.SECURITY, false, "Role: " + ((String)roles.get(x)).trim() + " is invalid, so was not added to the list of roles for this Rule.");
+			
+			else 
+				ret.add(canonical.trim());
+		}
+		return ret;
+	}
+	
 	/**
 	 * Load rules.
 	 * 
@@ -471,6 +490,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					rule.path = parts[0].trim().replaceAll("\\\\", "/");
 					
 					List roles = commaSplit(parts[1].trim().toLowerCase());
+					roles = validateRoles(roles);
 					for(int x = 0; x < roles.size(); x++)
 						rule.roles.add(((String)roles.get(x)).trim());
 					
@@ -519,6 +539,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 					rule.clazz = Class.forName(parts[0].trim());
 					
 					List roles = commaSplit(parts[1].trim().toLowerCase());
+					roles = validateRoles(roles);
 					for(int x = 0; x < roles.size(); x++)
 						rule.roles.add(((String)roles.get(x)).trim());
 					
