@@ -178,7 +178,7 @@ public interface User extends Principal {
     Set getRoles();
 
     /**
-     * Gets the screen name.
+     * Gets the screen name (alias) for the current user.
      * 
      * @return the screen name
      */
@@ -186,13 +186,17 @@ public interface User extends Principal {
 
     /**
      * Adds a session for this User.
+     * 
      * @param s
+     * 			The session to associate with this user.
      */
     void addSession( HttpSession s );
     
     /**
      * Removes a session for this User.
+     * 
      * @param s
+     * 			The session to remove from being associated with this user.
      */
     void removeSession( HttpSession s );
     
@@ -214,21 +218,21 @@ public interface User extends Principal {
     boolean isAnonymous();
 
     /**
-     * Checks if an account is currently enabled.
+     * Checks if this user's account is currently enabled.
      * 
      * @return true, if account is enabled 
      */
     boolean isEnabled();
 
     /**
-     * Checks if an account is expired.
+     * Checks if this user's account is expired.
      * 
      * @return true, if account is expired
      */
     boolean isExpired();
 
     /**
-     * Checks if an account has been assigned a particular role.
+     * Checks if this user's account is assigned a particular role.
      * 
      * @param role 
      * 		the role for which to check
@@ -238,7 +242,7 @@ public interface User extends Principal {
     boolean isInRole(String role);
 
     /**
-     * Checks if an account is locked.
+     * Checks if this user's account is locked.
      * 
      * @return true, if account is locked
      */
@@ -252,7 +256,8 @@ public interface User extends Principal {
     boolean isLoggedIn();
 
     /**
-     * Tests to see if the user's session has exceeded the absolute time out.
+     * Tests to see if this user's session has exceeded the absolute time out based 
+      * on ESAPI's configuration settings.
      * 
      * @return true, if user's session has exceeded the absolute time out
      */
@@ -260,7 +265,7 @@ public interface User extends Principal {
 
     /**
       * Tests to see if the user's session has timed out from inactivity based 
-      * on ESAPI’s configuration settings.
+      * on ESAPI's configuration settings.
       * 
       * A session may timeout prior to ESAPI's configuration setting due to 
       * the servlet container setting for session-timeout in web.xml. The 
@@ -276,7 +281,7 @@ public interface User extends Principal {
      boolean isSessionTimeout();
 
     /**
-     * Lock the user's account.
+     * Lock this user's account.
      */
     void lock();
 
@@ -296,7 +301,7 @@ public interface User extends Principal {
     void logout();
 
     /**
-     * Removes a role from an account.
+     * Removes a role from this user's account.
      * 
      * @param role 
      * 		the role to remove
@@ -319,21 +324,21 @@ public interface User extends Principal {
     String resetCSRFToken() throws AuthenticationException;
 
     /**
-     * Sets the account name.
+     * Sets this user's account name.
      * 
      * @param accountName the new account name
      */
     void setAccountName(String accountName);
 
     /**
-     * Sets the time when this user's account will expire.
+     * Sets the date and time when this user's account will expire.
      * 
      * @param expirationTime the new expiration time
      */
 	void setExpirationTime(Date expirationTime);
 
 	/**
-     * Sets the roles of this account.
+     * Sets the roles for this account.
      * 
      * @param roles 
      * 		the new roles
@@ -344,14 +349,14 @@ public interface User extends Principal {
     void setRoles(Set roles) throws AuthenticationException;
 
     /**
-     * Sets the screen name.
+     * Sets the screen name (username alias) for this user.
      * 
      * @param screenName the new screen name
      */
     void setScreenName(String screenName);
 
     /**
-     * Unlock account.
+     * Unlock this user's account.
      */
     void unlock();
 
@@ -371,30 +376,34 @@ public interface User extends Principal {
 
 	/**
 	 * Set the time of the last failed login for this user.
-	 * @param lastFailedLoginTime
+	 * 
+	 * @param lastFailedLoginTime the date and time when the user just failed to login correctly.
 	 */
 	void setLastFailedLoginTime(Date lastFailedLoginTime);
 	
 	/**
 	 * Set the last remote host address used by this user.
-	 * @param remoteHost
+	 * 
+	 * @param remoteHost The address of the user's current source host.
 	 */
 	void setLastHostAddress(String remoteHost);
 	
 	/**
 	 * Set the time of the last successful login for this user.
-	 * @param lastLoginTime
+	 * 
+	 * @param lastLoginTime the date and time when the user just successfully logged in.
 	 */
 	void setLastLoginTime(Date lastLoginTime);
 	
 	/**
 	 * Set the time of the last password change for this user.
-	 * @param lastPasswordChangeTime
+	 * 
+	 * @param lastPasswordChangeTime the date and time when the user just successfully changed his/her password.
 	 */
 	void setLastPasswordChangeTime(Date lastPasswordChangeTime);
 
 	
-	
+
 	/**
 	 * The ANONYMOUS user is used to represent an unidentified user. Since there is
 	 * always a real user, the ANONYMOUS user is better than using null to represent
@@ -456,6 +465,11 @@ public interface User extends Principal {
 	        return "Anonymous";
         }
 
+		/**
+		 * Alias method that is equivalent to getAccountName()
+		 * 
+		 * @return the name of the current user's account
+         */
         public String getName() {
         	return getAccountName();
         }
@@ -524,16 +538,19 @@ public interface User extends Principal {
         }
 
         /* (non-Javadoc)
+         * @see org.owasp.esapi.User#addSession()
          */
         public void addSession(HttpSession s)  {
         }
 
         /* (non-Javadoc)
+         * @see org.owasp.esapi.User#removeSession()
          */
         public void removeSession(HttpSession s)  {
         }
 
         /* (non-Javadoc)
+         * @see org.owasp.esapi.User#getSessions()
          */
         public Set getSessions()  {
             return sessions;
@@ -681,18 +698,30 @@ public interface User extends Principal {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
+		/* (non-Javadoc)
+         * @see org.owasp.esapi.User#setLastFailedLoginTime(java.lang.String)
+         */
         public void setLastFailedLoginTime(Date lastFailedLoginTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
         
+		/* (non-Javadoc)
+         * @see org.owasp.esapi.User#setLastLoginTime(java.lang.String)
+         */
     	public void setLastLoginTime(Date lastLoginTime) {
     		throw new RuntimeException("Invalid operation for the anonymous user");
     	}
 
-    	public void setLastHostAddress(String remoteHost) {
+		/* (non-Javadoc)
+         * @see org.owasp.esapi.User#setLastHostAddress(java.lang.String)
+         */
+     	public void setLastHostAddress(String remoteHost) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
                 
+		/* (non-Javadoc)
+         * @see org.owasp.esapi.User#setLastPasswordChangeTime(java.lang.String)
+         */
         public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }

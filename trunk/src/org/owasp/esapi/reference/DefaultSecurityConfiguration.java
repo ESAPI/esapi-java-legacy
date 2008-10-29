@@ -95,11 +95,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String REMEMBER_TOKEN_DURATION = "RememberTokenDuration";
 
+    private static final String IDLE_TIMEOUT_DURATION = "IdleTimeoutDuration";
+
+    private static final String ABSOLUTE_TIMEOUT_DURATION = "AbsoluteTimeoutDuration";
+    
     private static final String LOG_LEVEL = "LogLevel";
     
     private static final String LOG_FILE_NAME = "LogFileName";
 
     private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
+    
+    private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
     
     
     protected final int MAX_REDIRECT_LOCATION = 1000;
@@ -115,7 +121,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * <P>
      *    java -Dorg.owasp.esapi.resources="/path/resources"
      * <P>
-     * where path references the appropriate directory in your system.
+     * where 'path' references the appropriate directory in your system.
      */
     private static String resourceDirectory = System.getProperty(RESOURCE_DIRECTORY);
 
@@ -153,7 +159,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @see org.owasp.esapi.SecurityConfiguration#getResourceDirectory()
      */
     public String getResourceDirectory() {
-    	if ( resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
+    	if (resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
     		resourceDirectory += System.getProperty("file.separator" );
     	}
     	return resourceDirectory;
@@ -191,7 +197,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @see org.owasp.esapi.SecurityConfiguration#getAllowedFileUploadSize()
      */
     public int getAllowedFileUploadSize() {
-        String bytes = properties.getProperty(MAX_UPLOAD_FILE_BYTES,"50000");
+        String bytes = properties.getProperty(MAX_UPLOAD_FILE_BYTES, "5000000");
         return Integer.parseInt(bytes);
     }
 
@@ -239,7 +245,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     		logSpecial("Loaded ESAPI properties from classpath", null);
     		
     	} catch (Exception ce) {
-    		logSpecial("Can't load ESAPI properties from classpath, trying FileIO",ce);
+    		logSpecial("Can't load ESAPI properties from classpath, trying FileIO", ce);
     		file = new File(getResourceDirectory(), "ESAPI.properties");
 	        if (file.lastModified() == lastModified)
 	            return;
@@ -250,7 +256,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	            properties.load(fis);
 	            logSpecial("Loaded ESAPI properties from " + file.getAbsolutePath(), null);
 	        } catch (Exception e) {
-	            logSpecial("Can't load ESAPI properties from " + file.getAbsolutePath(),e);
+	            logSpecial("Can't load ESAPI properties from " + file.getAbsolutePath(), e);
 	        } finally {
 	            try {
 	                fis.close();
@@ -264,7 +270,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         Iterator i = new TreeSet( properties.keySet() ).iterator();
         while (i.hasNext()) {
             String key = (String) i.next();
-            logSpecial("  |   " + key + "=" + properties.get(key),null);
+            logSpecial("  |   " + key + "=" + properties.get(key), null);
         }
         
         if (file != null) {
@@ -286,9 +292,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         
     }
 
+    /**
+     * Used to log errors to the console during the loading of the properties file itself. Can't use
+     * standard logging in this case, since the Logger is not initialized yet.
+     *  
+     * @param message The message to send to the console.
+     * @param e The error that occured (this value is currently ignored).
+     */
     private void logSpecial(String message, Throwable e) {
 		System.out.println(message);
-    }
+   }
     
     /* (non-Javadoc)
      * @see org.owasp.esapi.SecurityConfiguration#getPasswordParameterName()
@@ -388,10 +401,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public int getLogLevel() {
         String level = properties.getProperty(LOG_LEVEL);
         if (level == null) {
-// This error is  NOT logged because the logger constructor calls getLogLevel() and if this error occurred it would cause
+// This error is  NOT logged the normal way because the logger constructor calls getLogLevel() and if this error occurred it would cause
 // an infinite loop.
-//            ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
-//            		"The LOG-LEVEL property in the ESAPI properties file is not defined.");
+            logSpecial("The LOG-LEVEL property in the ESAPI properties file is not defined.", null);
         	return Logger.WARNING;
         }
         if (level.equalsIgnoreCase("OFF"))
@@ -411,10 +423,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         if (level.equalsIgnoreCase("ALL"))
             return Logger.ALL;
         
-// This error is NOT logged because the logger constructor calls getLogLevel() and if this error occurred it would cause
+// This error is NOT logged the normal way because the logger constructor calls getLogLevel() and if this error occurred it would cause
 // an infinite loop.
-//        ESAPI.getLogger( "mod" ).warning(Logger.SECURITY, false, 
-//        		"The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level);
+        logSpecial("The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level, null);
         return Logger.WARNING;  // Note: The default logging level is WARNING.
     }
 
@@ -427,9 +438,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
 /**
- * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds this size, 
- * it will move the old log data into another log file. There currently is a max of 1000 log files of the same name. 
- * If that is exceeded it will presumably start discarding the oldest logs.
+ * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
+ * max log file size, the logger will move the old log data into another log file. There currently is a max of 
+ * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
  */
 public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
 
@@ -454,17 +465,16 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
      * @see org.owasp.esapi.SecurityConfiguration#getLogEncodingRequired()
      */
     public boolean getLogEncodingRequired() {
-    	String value = properties.getProperty( "LogEncodingRequired" );
+    	String value = properties.getProperty( LOG_ENCODING_REQUIRED );
     	if ( value != null && value.equalsIgnoreCase("true")) return true;
-    	return false;
+    	return false;	// Default result
 	}
 
     /* (non-Javadoc)
      * @see org.owasp.esapi.SecurityConfiguration#getResponseContentType()
      */
 	public String getResponseContentType() {
-        String def = "text/html; charset=UTF-8";
-        return properties.getProperty( RESPONSE_CONTENT_TYPE, def );
+        return properties.getProperty( RESPONSE_CONTENT_TYPE, "text/html; charset=UTF-8" );
     }
 
     /* (non-Javadoc)
@@ -478,6 +488,27 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     }
     
     /* (non-Javadoc)
+     * @see org.owasp.esapi.SecurityConfiguration#getSessionIdleTimeoutLength()
+     */
+	public int getSessionIdleTimeoutLength() {
+        String value = properties.getProperty( IDLE_TIMEOUT_DURATION, "20" );
+        int minutes = Integer.parseInt( value );
+        int duration = 1000 * 60 * minutes;
+        return duration;		
+	}
+	
+
+    /* (non-Javadoc)
+     * @see org.owasp.esapi.SecurityConfiguration#getSessionAbsoluteTimeoutLength()
+     */
+	public int getSessionAbsoluteTimeoutLength() {
+        String value = properties.getProperty( ABSOLUTE_TIMEOUT_DURATION, "120" );
+        int minutes = Integer.parseInt( value );
+        int duration = 1000 * 60 * minutes;
+        return duration;		
+	}
+
+	/* (non-Javadoc)
      * @see org.owasp.esapi.SecurityConfiguration#getValidationPatternNames()
      */
    public Iterator getValidationPatternNames() {

@@ -192,12 +192,31 @@ public interface SecurityConfiguration {
 	public String getResponseContentType();
 
 	/**
-	 * Gets the length of the time to live window for remember tokens (in milliseconds).
+	 * Gets the length of the time to live window for remember me tokens (in milliseconds).
 	 * 
 	 * @return The time to live length for generated remember me tokens.
 	 */
 	public long getRememberTokenDuration();
 
+	
+	/**
+	 * Gets the idle timeout length for sessions (in milliseconds). This is the amount of time that a session
+	 * can live before it expires due to lack of activity. Applications or frameworks could provide a reauthenticate
+	 * function that enables a session to continue after reauthentication.
+	 * 
+	 * @return The session idle timeout length.
+	 */
+	public int getSessionIdleTimeoutLength();
+	
+	/**
+	 * Gets the absolute timeout length for sessions (in milliseconds). This is the amount of time that a session
+	 * can live before it expires regardless of the amount of user activity. Applications or frameworks could 
+	 * provide a reauthenticate function that enables a session to continue after reauthentication.
+	 * 
+	 * @return The session absolute timeout length.
+	 */
+	public int getSessionAbsoluteTimeoutLength();
+	
 	/**
 	 * Returns whether HTML entity encoding should be applied to log entries.
 	 * 
