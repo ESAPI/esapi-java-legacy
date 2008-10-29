@@ -97,6 +97,9 @@ public class UserTest extends TestCase {
 
 	/**
 	 * Test of testAddRole method, of class org.owasp.esapi.User.
+	 * 
+	 * @exception Exception
+	 * 				any Exception thrown by testing addRole()
 	 */
 	public void testAddRole() throws Exception {
 		System.out.println("addRole");
@@ -198,6 +201,8 @@ public class UserTest extends TestCase {
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
+	 * @throws EncryptionException
+	 *             any EncryptionExceptions thrown by testing failedLoginLockout()
 	 */
 	public void testFailedLoginLockout() throws AuthenticationException, EncryptionException {
 		System.out.println("failedLoginLockout");
@@ -296,7 +301,7 @@ public class UserTest extends TestCase {
 	}
 
 	/**
-	 * Test of getLastPasswordChangeTime method, of class org.owasp.esapi.User.
+	 * Test getLastPasswordChangeTime method, of class org.owasp.esapi.User.
 	 * 
 	 * @throws Exception
 	 *             the exception
@@ -328,7 +333,7 @@ public class UserTest extends TestCase {
 	}
 
 	/**
-	 * Test of xxx method, of class org.owasp.esapi.User.
+	 * Test of getScreenName method, of class org.owasp.esapi.User.
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
@@ -446,7 +451,7 @@ public class UserTest extends TestCase {
 	}
 
 	/**
-	 * Test of xxx method, of class org.owasp.esapi.User.
+	 * Test of isLocked method, of class org.owasp.esapi.User.
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
@@ -480,11 +485,11 @@ public class UserTest extends TestCase {
 		TestHttpSession session = (TestHttpSession)request.getSession();
 				
 		// set session creation -3 hours (default is 2 hour timeout)		
-		session.setCreationTime( now - 1000 * 60 * 60 * 3 );
+		session.setCreationTime( now - (1000 * 60 * 60 * 3) );
 		assertTrue(user.isSessionAbsoluteTimeout());
 		
 		// set session creation -1 hour (default is 2 hour timeout)
-		session.setCreationTime( now - 1000 * 60 * 60 * 1 );
+		session.setCreationTime( now - (1000 * 60 * 60 * 1) );
 		assertFalse(user.isSessionAbsoluteTimeout());
 	}
 

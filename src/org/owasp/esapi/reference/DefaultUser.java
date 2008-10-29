@@ -48,61 +48,70 @@ public class DefaultUser implements User, Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
 
-	/** The logger. */
-	private final Logger logger = ESAPI.getLogger("User");
+	/** The idle timeout length specified in the ESAPI config file. */
+	private static final int IDLE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionIdleTimeoutLength();
+	
+	/** The absolute timeout length specified in the ESAPI config file. */
+	private static final int ABSOLUTE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionAbsoluteTimeoutLength();
+	
+	/** The logger used by the class. */
+	private final Logger logger = ESAPI.getLogger("DefaultUser");
     
-	/** The account id. */
+	/** This user's account id. */
 	long accountId = 0;
 
-	/** The account name. */
+	/** This user's account name. */
 	private String accountName = "";
 
-	/** The screen name. */
+	/** This user's screen name (account name alias). */
 	private String screenName = "";
 
-	/** The csrf token. */
+	/** This user's CSRF token. */
 	private String csrfToken = "";
 
-	/** The roles. */
+	/** This user's assigned roles. */
 	private Set roles = new HashSet();
 
-	/** The locked. */
+	/** Whether this user's account is locked. */
 	private boolean locked = false;
 
-	/** The logged in. */
+	/** Whether this user is logged in. */
 	private boolean loggedIn = true;
 
-    /** The enabled. */
+    /** Whether this user's account is enabled. */
 	private boolean enabled = false;
 
-    /** The last host address used. */
+    /** The last host address used by this user. */
     private String lastHostAddress;
 
-	/** The last password change time. */
+	/** The last password change time for this user. */
 	private Date lastPasswordChangeTime = new Date(0);
 
-	/** The last login time. */
+	/** The last login time for this user. */
 	private Date lastLoginTime = new Date(0);
 
-	/** The last failed login time. */
+	/** The last failed login time for this user. */
 	private Date lastFailedLoginTime = new Date(0);
 	
-	/** The expiration time. */
+	/** The expiration date/time for this user's account. */
 	private Date expirationTime = new Date(Long.MAX_VALUE);
 
-	/** The session set */
+	/** The session's this user is associated with */
 	private Set sessions = new HashSet();
 	
-	/** A flag to indicate that the password must be changed before the account can be used. */
+	/* A flag to indicate that the password must be changed before the account can be used. */
 	// private boolean requiresPasswordChange = true;
 	
-	/** The failed login count. */
+	/** The failed login count for this user's account. */
 	private int failedLoginCount = 0;
     
     private final int MAX_ROLE_LENGTH = 250;
     
 	/**
 	 * Instantiates a new user.
+	 * 
+	 * @param accountName
+	 * 		The name of this user's account.
 	 */
 	DefaultUser(String accountName) {
 		setAccountName(accountName);
@@ -356,7 +365,7 @@ public class DefaultUser implements User, Serializable {
 	public boolean isSessionAbsoluteTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
 		if ( session == null ) return true;
-		Date deadline = new Date( session.getCreationTime() + 1000 * 60 * 60 * 2);
+		Date deadline = new Date( session.getCreationTime() + ABSOLUTE_TIMEOUT_LENGTH);
 		Date now = new Date();
 		return now.after(deadline);
 	}
@@ -369,7 +378,7 @@ public class DefaultUser implements User, Serializable {
 	public boolean isSessionTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
 		if ( session == null ) return true;
-		Date deadline = new Date(session.getLastAccessedTime() + 1000 * 60 * 20);
+		Date deadline = new Date(session.getLastAccessedTime() + IDLE_TIMEOUT_LENGTH);
 		Date now = new Date();
 		return now.after(deadline);
 	}
@@ -487,18 +496,16 @@ public class DefaultUser implements User, Serializable {
 	}
 
 	/**
-	 * Sets the account id.
+	 * Sets the account id for this user's account.
 	 */
 	private void setAccountId(long accountId) {
 		this.accountId = accountId;
 	}
 	
 	
-	/**
-	 * Sets the account name.
-	 * 
-	 * @param accountName
-	 *            the accountName to set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setAccountName(java.lang.String)
 	 */
 	public void setAccountName(String accountName) {
 		String old = getAccountName();
@@ -507,33 +514,28 @@ public class DefaultUser implements User, Serializable {
 			logger.info(Logger.SECURITY, true, "Account name changed from " + old + " to " + getAccountName() );
 	}
 
-	/**
-	 * Sets the expiration time.
-	 * 
-	 * @param expirationTime
-	 *            the expirationTime to set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setExpirationTime(java.util.Date)
 	 */
 	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = new Date( expirationTime.getTime() );
 		logger.info(Logger.SECURITY, true, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
 	}
 
-	/**
-	 * Sets the last failed login time.
-	 * 
-	 * @param lastFailedLoginTime
-	 *            the lastFailedLoginTime to set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setLastFailedLoginTime(java.util.Date)
 	 */
 	public void setLastFailedLoginTime(Date lastFailedLoginTime) {
 		this.lastFailedLoginTime = lastFailedLoginTime;
 		logger.info(Logger.SECURITY, true, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
 	}
 	
-	
-	/**
-     * Sets the last remote host address used by this User.
-     * @param remoteHost
-     */
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setLastHostAddress(java.lang.String)
+	 */
 	public void setLastHostAddress(String remoteHost) {
 		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost)) {
         	// returning remote address not remote hostname to prevent DNS lookup
@@ -542,33 +544,27 @@ public class DefaultUser implements User, Serializable {
 		lastHostAddress = remoteHost;
     }
 
-	/**
-	 * Sets the last login time.
-	 * 
-	 * @param lastLoginTime
-	 *            the lastLoginTime to set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setLastLoginTime(java.util.Date)
 	 */
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 		logger.info(Logger.SECURITY, true, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
 	}
 
-	/**
-	 * Sets the last password change time.
-	 * 
-	 * @param lastPasswordChangeTime
-	 *            the lastPasswordChangeTime to set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setLastPasswordChangeTime(java.util.Date)
 	 */
 	public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
 		this.lastPasswordChangeTime = lastPasswordChangeTime;
 		logger.info(Logger.SECURITY, true, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
 	}
 
-	/**
-	 * Sets the roles.
-	 * 
-	 * @param roles
-	 *            the roles to set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.User#setRoles(java.util.Set)
 	 */
 	public void setRoles(Set roles) throws AuthenticationException {
 		this.roles = new HashSet();
@@ -578,7 +574,6 @@ public class DefaultUser implements User, Serializable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
 	 * @see org.owasp.esapi.User#setScreenName(java.lang.String)
 	 */
 	public void setScreenName(String screenName) {
