@@ -55,11 +55,9 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomString(java.lang.Integer, java.lang.Character[])
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getRandomString(int length, char[] characterSet) {
         StringBuffer sb = new StringBuffer();
         for (int loop = 0; loop < length; loop++) {
@@ -70,57 +68,45 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         return nonce;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomBoolean()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public boolean getRandomBoolean() {
         return secureRandom.nextBoolean();
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomInteger(java.lang.Integer, java.lang.Integer)
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public int getRandomInteger(int min, int max) {
         return secureRandom.nextInt(max - min) + min;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomLong()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public long getRandomLong() {
         return secureRandom.nextLong();    
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomReal(java.lang.Float, java.lang.Float)
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public float getRandomReal(float min, float max) {
         float factor = max - min;
         return secureRandom.nextFloat() * factor + min;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomFilename(java.lang.String)
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getRandomFilename(String extension) {
         return this.getRandomString(12, DefaultEncoder.CHAR_ALPHANUMERICS) + "." + extension;
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Randomizer#getRandomGUID()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getRandomGUID() throws EncryptionException {
         // create random string to seed the GUID
         StringBuffer sb = new StringBuffer();

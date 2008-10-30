@@ -60,10 +60,8 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 		// hidden
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.EncryptedProperties#getProperty(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized String getProperty(String key) throws EncryptionException {
 		try {
@@ -73,11 +71,8 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.EncryptedProperties#setProperty(java.lang.String,
-	 *      java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public synchronized String setProperty(String key, String value) throws EncryptionException {
 		try {
@@ -87,26 +82,23 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.EncryptedProperties#keySet()
+	/**
+	 * {@inheritDoc}
 	 */
 	public Set keySet() {
 		return properties.keySet();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.EncryptedProperties#load(java.io.InputStream)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void load(InputStream in) throws IOException {
 		properties.load(in);
 		logger.trace(Logger.SECURITY, true, "Encrypted properties loaded successfully");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.EncryptedProperties#store(java.io.OutputStream, java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void store(OutputStream out, String comments) throws IOException {
 		properties.store(out, comments);

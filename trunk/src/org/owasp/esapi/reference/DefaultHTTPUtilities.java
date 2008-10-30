@@ -97,7 +97,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 	/**
-	 * @see org.owasp.esapi.HTTPUtilities#addCSRFToken(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String addCSRFToken(String href) {
 		User user = ESAPI.authenticator().getCurrentUser();		
@@ -114,6 +114,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 
     /**
+     *
+	 * {@inheritDoc}
+	 *
      * Returns the first cookie matching the provided name.
      */
 	public Cookie getCookie(HttpServletRequest request, String name) {
@@ -130,7 +133,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 	/**
-	 * @see org.owasp.esapi.HTTPUtilities#getCSRFToken()
+	 * {@inheritDoc}
 	 */
 	public String getCSRFToken() {
 		User user = ESAPI.authenticator().getCurrentUser();		
@@ -184,10 +187,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.HTTPUtilities#changeSessionIdentifier()
+	/**
+	 * {@inheritDoc}
 	 */
 	public HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException {
 		
@@ -221,12 +222,12 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	
 	
-	/*
+	/**
+	 * {@inheritDoc}
 	 * This implementation uses the parameter name to store the token. This makes the CSRF
 	 * token a bit harder to search for in an XSS attack.
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#verifyCSRFToken()
 	 */
+	  
 	public void verifyCSRFToken(HttpServletRequest request) throws IntrusionException {
 		User user = ESAPI.authenticator().getCurrentUser();
 		
@@ -239,9 +240,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 	}
     
-    /*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#decryptHiddenField(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public String decryptHiddenField(String encrypted) {
     	try {
@@ -252,9 +252,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     }
 	
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#decryptQuueryString(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public Map decryptQueryString(String encrypted) throws EncryptionException {
 		String plaintext = ESAPI.encryptor().decrypt(encrypted);
@@ -262,9 +261,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 	/**
-	 * @throws EncryptionException 
-     * 
-     */
+	 * {@inheritDoc}
+	 */
     public Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
 		Cookie[] cookies = request.getCookies();
 		Cookie c = null;
@@ -279,26 +277,23 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		return queryToMap( plaintext );
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#encryptHiddenField(java.lang.String)
+    /**
+	 * {@inheritDoc}
 	 */
 	public String encryptHiddenField(String value) throws EncryptionException {
     	return ESAPI.encryptor().encrypt(value);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#encryptQueryString(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public String encryptQueryString(String query) throws EncryptionException {
 		return ESAPI.encryptor().encrypt( query );
 	}
 
 	/**
-	 * @throws EncryptionException 
-     * 
-     */
+	 * {@inheritDoc}
+	 */
     public void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException {
     	StringBuffer sb = new StringBuffer();    	
     	Iterator i = cleartext.entrySet().iterator();
@@ -421,10 +416,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		return (request.getRequestURL().charAt(4) == 's');
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.HTTPUtilities#killAllCookies()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void killAllCookies(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
@@ -436,10 +429,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.HTTPUtilities#killCookie(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
 		String path = "//";
@@ -473,11 +464,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		return map;
 	}
 
-	/*
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
 	 * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
-	 * 
-	 * @see org.owasp.esapi.HTTPUtilities#safeSendForward(java.lang.String, java.lang.String)
 	 */
 	public void safeSendForward(HttpServletRequest request, HttpServletResponse response, String context, String location) throws AccessControlException,ServletException,IOException {
 		if (!location.startsWith("WEB-INF")) {
@@ -488,15 +479,15 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#setSafeContentType(javax.servlet.http.HttpServletResponse)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setSafeContentType(HttpServletResponse response) {
 		response.setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.HTTPUtilities#setNoCacheHeaders(javax.servlet.http.HttpServletResponse)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setNoCacheHeaders(HttpServletResponse response) {
 		// HTTP 1.1
@@ -508,27 +499,27 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.HTTPUtilities#getCurrentRequest()
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     public SafeRequest getCurrentRequest() {
         SafeRequest request = (SafeRequest)currentRequest.get();
 		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set with HTTPUtilities.setCurrentHTTP()" );
 		return request;
     }
 
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.HTTPUtilities#getCurrentResponse()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public SafeResponse getCurrentResponse() {
         SafeResponse response = (SafeResponse)currentResponse.get();
 		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set with HTTPUtilities.setCurrentHTTP()" );
         return response;
     }
 
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.HTTPUtilities#setCurrentHTTP(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
     	SafeRequest safeRequest = null;
     	SafeResponse safeResponse = null;
