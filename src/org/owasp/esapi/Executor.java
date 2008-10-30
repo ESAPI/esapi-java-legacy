@@ -24,15 +24,20 @@ import org.owasp.esapi.errors.ExecutorException;
 
 /**
  * The Executor interface is used to run an OS command with reduced security risk.
- * Implementations should do as much as possible to minimize the risk of
+ * 
+ * <p>Implementations should do as much as possible to minimize the risk of
  * injection into either the command or parameters. In addition, implementations
  * should timeout after a specified time period in order to help prevent denial
- * of service attacks. The class should perform logging and error handling as
+ * of service attacks.</p> 
+ * 
+ * <p>The class should perform logging and error handling as
  * well. Finally, implementation should handle errors and generate an
- * ExecutorException with all the necessary information.
- * <P>
+ * ExecutorException with all the necessary information.</p>
+ * <br />
  * <img src="doc-files/Executor.jpg">
- * <P>
+ * <br />
+ * 
+ * <p>The reference implementation does all of the above.</p>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
