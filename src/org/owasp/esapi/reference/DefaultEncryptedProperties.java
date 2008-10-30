@@ -87,52 +87,41 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 		}
 	}
 
-	/**
-	 * Key set.
-	 * 
-	 * @return the set
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.EncryptedProperties#keySet()
 	 */
 	public Set keySet() {
 		return properties.keySet();
 	}
 
-	/**
-	 * Load.
-	 * 
-	 * @param in
-	 *            the in
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.EncryptedProperties#load(java.io.InputStream)
 	 */
 	public void load(InputStream in) throws IOException {
 		properties.load(in);
 		logger.trace(Logger.SECURITY, true, "Encrypted properties loaded successfully");
 	}
 
-	/**
-	 * Store.
-	 * 
-	 * @param out
-	 *            the out
-	 * @param comments
-	 *            the comments
-	 * 
-	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.EncryptedProperties#store(java.io.OutputStream, java.lang.String)
 	 */
 	public void store(OutputStream out, String comments) throws IOException {
 		properties.store(out, comments);
 	}
 
 	/**
-	 * The main method.
+	 * Loads encrypted properties file based on the location passed in args then prompts the 
+	 * user to input key-value pairs.  When the user enters a null or blank key, the values 
+	 * are stored to the properties file.
 	 * 
 	 * @param args
-	 *            the arguments
+	 *            the location of the properties file to load and write to
 	 * 
 	 * @throws Exception
-	 *             the exception
+	 *             Any exception thrown
 	 */
 	public static void main(String[] args) throws Exception {
 		File f = new File(args[0]);

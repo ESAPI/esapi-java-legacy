@@ -42,12 +42,13 @@ public interface EncryptedProperties {
 	 * Gets the property value from the encrypted store, decrypts it, and returns the plaintext value to the caller.
 	 * 
 	 * @param key
-	 *            the key
+	 *      the name of the property to get 
 	 * 
-	 * @return the decrypted property value
+	 * @return 
+	 * 		the decrypted property value
 	 * 
 	 * @throws EncryptionException
-	 *             the encryption exception
+	 *      if the property could not be decrypted
 	 */
 	String getProperty(String key) throws EncryptionException;
 
@@ -55,45 +56,47 @@ public interface EncryptedProperties {
 	 * Encrypts the plaintext property value and stores the ciphertext value in the encrypted store.
 	 * 
 	 * @param key
-	 *            the key
+	 *      the name of the property to set
 	 * @param value
-	 *            the value
+	 * 		the value of the property to set
 	 * 
-	 * @return the encrypted property value
+	 * @return 
+	 * 		the encrypted property value
 	 * 
 	 * @throws EncryptionException
-	 *             the encryption exception
+	 *      if the property could not be encrypted
 	 */
 	String setProperty(String key, String value) throws EncryptionException;
-
 	
 	/**
-	 * Key set.
+	 * Returns a Set view of properties. The Set is backed by a Hashtable, so changes to the 
+	 * Hashtable are reflected in the Set, and vice-versa. The Set supports element 
+	 * removal (which removes the corresponding entry from the Hashtable), but not element addition.
 	 * 
-	 * @return the set
+	 * @return 
+	 * 		a set view of the properties contained in this map.
 	 */
 	public Set keySet();
-	
-	
+		
 	/**
-	 * Load.
+	 * Reads a property list (key and element pairs) from the input stream.
 	 * 
 	 * @param in
-	 *            the in
+	 * 		the input stream that contains the properties file
 	 * 
 	 * @throws IOException
-	 *             Signals that an I/O exception has occurred.
+	 *      Signals that an I/O exception has occurred.
 	 */
 	public void load(InputStream in) throws IOException;
 	
-
 	/**
-	 * Store.
+	 * Writes this property list (key and element pairs) in this Properties table to 
+	 * the output stream in a format suitable for loading into a Properties table using the load method. 
 	 * 
 	 * @param out
-	 *            the out
+	 * 		the output stream that contains the properties file
 	 * @param comments
-	 *            the comments
+	 *            a description of the property list (ex. "Encrypted Properties File").
 	 * 
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
