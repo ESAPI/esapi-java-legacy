@@ -261,21 +261,17 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     public FileBasedAuthenticator() {
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#clearCurrent()
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public void clearCurrent() {
     	// logger.logWarning(Logger.SECURITY, "************Clearing threadlocals. Thread" + Thread.currentThread().getName() );
     	currentUser.setUser(null);
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#createAccount(java.lang.String, java.lang.String, java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public synchronized User createUser(String accountName, String password1, String password2) throws AuthenticationException {
         loadUsersIfNecessary();
         if (accountName == null) {
@@ -306,20 +302,16 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#exists(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean exists(String accountName) {
         return getUser(accountName) != null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#generateStrongPassword()
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public String generateStrongPassword() {
         return generateStrongPassword("");
     }
@@ -343,9 +335,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return newPassword;
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.Authenticator#changePassword(org.owasp.esapi.User, java.lang.String, java.lang.String, java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public void changePassword(User user, String currentPassword,
             String newPassword, String newPassword2)
             throws AuthenticationException {
@@ -372,9 +364,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     	}
     }
     
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.Authenticator#verifyPassword(org.owasp.esapi.User, java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean verifyPassword(User user, String password) {
 		String accountName = user.getAccountName();
 		try {
@@ -393,11 +385,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		return false;
     }
 
-	/*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#generateStrongPassword(org.owasp.esapi.User, java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public String generateStrongPassword(User user, String oldPassword) {
         String newPassword = generateStrongPassword(oldPassword);
         if (newPassword != null)
@@ -405,11 +395,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return newPassword;
     }
 
-    /*
+     /**
+	 * {@inheritDoc}
+	 *
      * Returns the currently logged user as set by the setCurrentUser() methods. Must not log in this method because the
      * logger calls getCurrentUser() and this could cause a loop.
      * 
-     * @see org.owasp.esapi.Authenticator#getCurrentUser()
+     * 
      */
     public User getCurrentUser() {
         User user = (User) currentUser.get();
@@ -419,11 +411,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#getUser(java.lang.Long)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public synchronized User getUser(long accountId) {
     	if ( accountId == 0 ) {
     		return User.ANONYMOUS;
@@ -433,11 +423,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#getUser(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public synchronized User getUser(String accountName) {
     	if ( accountName == null ) {
     		return User.ANONYMOUS;
@@ -450,8 +438,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
         return null;
     }
-    
-    
+        
     /**
      * Gets the user from session.
      * 
@@ -512,11 +499,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		return user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#getUserNames()
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public synchronized Set getUserNames() {
         loadUsersIfNecessary();
     	HashSet results = new HashSet();
@@ -528,11 +513,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     	return results;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#hashPassword(java.lang.String, java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public String hashPassword(String password, String accountName) throws EncryptionException {
         String salt = accountName.toLowerCase();
         return ESAPI.encryptor().hash(password, salt);
@@ -688,11 +671,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#removeUser(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public synchronized void removeUser(String accountName) throws AuthenticationException {
         loadUsersIfNecessary();
     	User user = getUser(accountName);
@@ -811,10 +792,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		return sb.toString();
 	}
 
-    /*
-     * (non-Javadoc)
-     * @see org.owasp.esapi.Authenticator#login(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
-     */
+	/**
+	* {@inheritDoc}
+	*/
     public User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
     	if ( request == null || response == null ) {
@@ -899,10 +879,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     }
 
 
-    /*
-     * (non-Javadoc)
-     * @see org.owasp.esapi.Authenticator#logout()
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public void logout() {
     	User user = getCurrentUser();
         if ( user != null && !user.isAnonymous() ) {
@@ -910,22 +889,19 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
     }
     
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#setCurrentUser(org.owasp.esapi.User)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public void setCurrentUser(User user) {
         currentUser.setUser(user);
     }
 
-    /*
+     /**
+	 * {@inheritDoc}
+	 *
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a
      * brute force attack, however the real strength comes from the name length and complexity.
      * 
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#verifyAccountNameStrength(java.lang.String)
      */
     public void verifyAccountNameStrength(String newAccountName) throws AuthenticationException {
         if (newAccountName == null) {
@@ -936,13 +912,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
     }
 
-    /*
+    
+     /**
+	 * {@inheritDoc}
+	 *
      * This implementation checks: - for any 3 character substrings of the old password - for use of a length *
      * character sets > 16 (where character sets are upper, lower, digit, and special 
      * 
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.Authenticator#verifyPasswordStrength(java.lang.String)
      */
     public void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException {
         if ( newPassword == null ) throw new AuthenticationCredentialsException("Invalid password", "New password cannot be null" );

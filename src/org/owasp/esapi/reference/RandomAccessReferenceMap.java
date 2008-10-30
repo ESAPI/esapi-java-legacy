@@ -67,20 +67,17 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		update(directReferences);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessReferenceMap#iterator()
-	 */
+	/**
+	* {@inheritDoc}
+	*/
 	public Iterator iterator() {
 		TreeSet sorted = new TreeSet(dtoi.keySet());
 		return sorted.iterator();
 	}
 	
-/*
- * (non-Javadoc)
- * @see org.owasp.esapi.AccessReferenceMap#addDirectReference(java.lang.Object)
- */
+	/**
+	* {@inheritDoc}
+	*/
 	public String addDirectReference(Object direct) {
 		if ( dtoi.keySet().contains( direct ) ) {
 			return (String)dtoi.get( direct );
@@ -105,10 +102,9 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		return candidate;
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.AccessReferenceMap#removeDirectReference(java.lang.Object)
-	 */
+	/**
+	* {@inheritDoc}
+	*/
 	public String removeDirectReference(Object direct) throws AccessControlException {
 		String indirect = (String)dtoi.get(direct);
 		if ( indirect != null ) {
@@ -118,10 +114,9 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		return indirect;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.AccessReferenceMap#update(java.util.Set)
-	 */
+	/**
+	* {@inheritDoc}
+	*/
 	final public void update(Set directReferences) {
 		HashMap dtoi_old = (HashMap) dtoi.clone();
 		dtoi.clear();
@@ -144,20 +139,16 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessReferenceMap#getIndirectReference(java.lang.String)
-	 */
+	/**
+	* {@inheritDoc}
+	*/
 	public String getIndirectReference(Object directReference) {
 		return (String) dtoi.get(directReference);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessReferenceMap#getDirectReference(java.lang.String)
-	 */
+	/**
+	* {@inheritDoc}
+	*/
 	public Object getDirectReference(String indirectReference) throws AccessControlException {
 		if (itod.containsKey(indirectReference)) {
 			return itod.get(indirectReference);

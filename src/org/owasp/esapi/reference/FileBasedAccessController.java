@@ -125,10 +125,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	public FileBasedAccessController() {
 	}
 
-	/* (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.AccessController#isAuthorizedForURL(java.lang.String)
-     */
+	/**
+	* {@inheritDoc}
+	*/
     public boolean isAuthorizedForURL(String url) {
     	try {
     		assertAuthorizedForURL( url );
@@ -138,10 +137,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	}
     }
     
-    /* (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.AccessController#isAuthorizedForFunction(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean isAuthorizedForFunction(String functionName) {
     	try {
     		assertAuthorizedForFunction( functionName );
@@ -151,10 +149,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	}
     }
     
-    /* (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.AccessController#isAuthorizedForData(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean isAuthorizedForData(String key) {
     	try {
     		assertAuthorizedForData( key );
@@ -164,11 +161,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	}
     }
     
-    /* (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.AccessController#isAuthorizedForData(java.lang.String,
-	 *      java.lang.Object)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean isAuthorizedForData(String action, Object data){
     	try{
     		assertAuthorizedForData( action, data );
@@ -178,10 +173,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	}
     }
     
-    /* (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.AccessController#isAuthorizedForFile(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean isAuthorizedForFile(String filepath) {
     	try {
     		assertAuthorizedForFile( filepath );
@@ -191,10 +185,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	}
     }
     
-    /* (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.AccessController#isAuthorizedForService(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public boolean isAuthorizedForService(String serviceName) {
     	try {
     		assertAuthorizedForService( serviceName );
@@ -204,11 +197,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	}
     }
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessController#assertAuthorizedForURL(java.lang.String)
-	 */
+    /**
+	* {@inheritDoc}
+	*/
     public void assertAuthorizedForURL(String url) throws AccessControlException {
 		if (urlMap==null || urlMap.isEmpty()) {
 			urlMap = loadRules("URLAccessRules.txt");
@@ -218,11 +209,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessController#assertAuthorizedForFunction(java.lang.String)
-	 */
+    /**
+	* {@inheritDoc}
+	*/
     public void assertAuthorizedForFunction(String functionName) throws AccessControlException {
     	if (functionMap==null || functionMap.isEmpty()) {
 			functionMap = loadRules("FunctionAccessRules.txt");
@@ -232,11 +221,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 	}
 
-	/*
-	 *(non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessController#assertAuthorizedForData(java.lang.String)
-	 */
+    /**
+	* {@inheritDoc}
+	*/
     public void assertAuthorizedForData(String key) throws AccessControlException {
 		if (dataMap==null || dataMap.isEmpty()) {
 			dataMap = loadDataRules("DataAccessRules.txt");
@@ -246,11 +233,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 	}
   
-    /*
-	 *(non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessController#assertAuthorizedForData(java.lang.String, java.lang.Object)
-	 */
+    /**
+	* {@inheritDoc}
+	*/
     public void assertAuthorizedForData(String action, Object data) throws AccessControlException{
     	if (dataMap==null || dataMap.isEmpty()) {
 			dataMap = loadDataRules("DataAccessRules.txt");
@@ -262,11 +247,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     	
     }
     
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessController#assertAuthorizedForFile(java.lang.String)
-	 */
+    /**
+	* {@inheritDoc}
+	*/
     public void assertAuthorizedForFile(String filepath) throws AccessControlException {
 		if (fileMap==null || fileMap.isEmpty()) {
 			fileMap = loadRules("FileAccessRules.txt");
@@ -276,11 +259,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.AccessController#assertAuthorizedForBackendService(java.lang.String)
-	 */
+    /**
+	* {@inheritDoc}
+	*/
     public void assertAuthorizedForService(String serviceName) throws AccessControlException {    	
 		if (serviceMap==null || serviceMap.isEmpty()) {
 			serviceMap = loadRules("ServiceAccessRules.txt");

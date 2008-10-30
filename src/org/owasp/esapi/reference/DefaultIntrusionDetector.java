@@ -54,12 +54,9 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	public DefaultIntrusionDetector() {
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.IntrusionDetector#addException(java.lang.Exception)
+	/**
+	 * {@inheritDoc}
 	 */
-	
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY, false, ((EnterpriseSecurityException)e).getLogMessage(), e );
@@ -89,10 +86,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.IntrusionDetector#addEvent(java.lang.Exception, java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
         logger.warning( Logger.SECURITY, false, "Security event " + eventName + " received : " + logMessage );

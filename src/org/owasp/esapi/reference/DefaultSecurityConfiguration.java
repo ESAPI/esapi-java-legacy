@@ -134,41 +134,40 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         loadConfiguration();
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getApplicationName()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getApplicationName() {
     	return properties.getProperty(APPLICATION_NAME, "AppNameNotSpecified");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getMasterPassword()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public char[] getMasterPassword() {
         return properties.getProperty(MASTER_PASSWORD).toCharArray();
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getKeystore()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public File getKeystore() {
         return new File(getResourceDirectory(), "keystore");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getResourceDirectory()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getResourceDirectory() {
     	if (resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
     		resourceDirectory += System.getProperty("file.separator" );
     	}
     	return resourceDirectory;
     }
-        
-    
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#setResourceDirectory()
-     */
+            
+    /**
+	 * {@inheritDoc}
+	 */
     public void setResourceDirectory( String dir ) {
     	resourceDirectory = dir;
     	if ( resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
@@ -177,25 +176,25 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	this.loadConfiguration();
     }
     
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getMasterSalt()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public byte[] getMasterSalt() {
         return properties.getProperty(MASTER_SALT).getBytes();
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getAllowedFileExtensions()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public List getAllowedFileExtensions() {
     	String def = ".zip,.pdf,.tar,.gz,.xls,.properties,.txt,.xml";
         String[] extList = properties.getProperty(VALID_EXTENSIONS,def).split(",");
         return Arrays.asList(extList);
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getAllowedFileUploadSize()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public int getAllowedFileUploadSize() {
         String bytes = properties.getProperty(MAX_UPLOAD_FILE_BYTES, "5000000");
         return Integer.parseInt(bytes);
@@ -303,74 +302,74 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		System.out.println(message);
    }
     
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getPasswordParameterName()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getPasswordParameterName() {
         return properties.getProperty(PASSWORD_PARAMETER_NAME, "password");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getUsernameParameterName()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getUsernameParameterName() {
         return properties.getProperty(USERNAME_PARAMETER_NAME, "username");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getEncryptionAlgorithm()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getEncryptionAlgorithm() {
         return properties.getProperty(ENCRYPTION_ALGORITHM, "PBEWithMD5AndDES/CBC/PKCS5Padding");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getHashAlgorithm()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getHashAlgorithm() {
         return properties.getProperty(HASH_ALGORITHM, "SHA-512");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getCharacterEncoding()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getCharacterEncoding() {
         return properties.getProperty(CHARACTER_ENCODING, "UTF-8");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getDigitalSignatureAlgorithm()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getDigitalSignatureAlgorithm() {
         return properties.getProperty(DIGITAL_SIGNATURE_ALGORITHM, "SHAwithDSA");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getRandomAlgorithm()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getRandomAlgorithm() {
         return properties.getProperty(RANDOM_ALGORITHM, "SHA1PRNG");
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getAllowedLoginAttempts()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public int getAllowedLoginAttempts() {
         String attempts = properties.getProperty(ALLOWED_LOGIN_ATTEMPTS, "5");
         return Integer.parseInt(attempts);
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getMaxOldPasswordHashes()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public int getMaxOldPasswordHashes() {
         String max = properties.getProperty(MAX_OLD_PASSWORD_HASHES, "12");
         return Integer.parseInt(max);
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getQuota()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public Threshold getQuota(String eventName) {
         int count = 0;
         String countString = properties.getProperty(eventName + ".count");
@@ -395,9 +394,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return q;
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getLogLevel()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public int getLogLevel() {
         String level = properties.getProperty(LOG_LEVEL);
         if (level == null) {
@@ -430,9 +429,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getLogFileName()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public String getLogFileName() {
     	return properties.getProperty( LOG_FILE_NAME, "ESAPI_logging_file" );
     }
@@ -444,9 +443,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
  */
 public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getMaxLogFileSize()
-     */
+/**
+ * {@inheritDoc}
+ */
     public int getMaxLogFileSize() {
     	// The default is 10 Meg if the property is not specified
     	String value = properties.getProperty( MAX_LOG_FILE_SIZE );
@@ -461,25 +460,25 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     }
 
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getLogEncodingRequired()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
     public boolean getLogEncodingRequired() {
     	String value = properties.getProperty( LOG_ENCODING_REQUIRED );
     	if ( value != null && value.equalsIgnoreCase("true")) return true;
     	return false;	// Default result
 	}
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getResponseContentType()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
 	public String getResponseContentType() {
         return properties.getProperty( RESPONSE_CONTENT_TYPE, "text/html; charset=UTF-8" );
     }
 
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getRememberTokenDuration()
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     public long getRememberTokenDuration() {
         String value = properties.getProperty( REMEMBER_TOKEN_DURATION, "14" );
         long days = Long.parseLong( value );
@@ -487,9 +486,9 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
         return duration;
     }
     
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getSessionIdleTimeoutLength()
-     */
+    /**
+	 * {@inheritDoc}
+	 */
 	public int getSessionIdleTimeoutLength() {
         String value = properties.getProperty( IDLE_TIMEOUT_DURATION, "20" );
         int minutes = Integer.parseInt( value );
@@ -497,10 +496,9 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
         return duration;		
 	}
 	
-
-    /* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getSessionAbsoluteTimeoutLength()
-     */
+	/**
+	 * {@inheritDoc}
+	 */
 	public int getSessionAbsoluteTimeoutLength() {
         String value = properties.getProperty( ABSOLUTE_TIMEOUT_DURATION, "120" );
         int minutes = Integer.parseInt( value );
@@ -508,9 +506,9 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
         return duration;		
 	}
 
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.SecurityConfiguration#getValidationPatternNames()
-     */
+	/**
+	 * {@inheritDoc}
+	 */
    public Iterator getValidationPatternNames() {
     	TreeSet list = new TreeSet();
     	Iterator i = properties.keySet().iterator();
@@ -523,9 +521,9 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     	return list.iterator();
     }
     
-   /* (non-Javadoc)
-    * @see org.owasp.esapi.SecurityConfiguration#getValidationPattern()
-    */
+   /**
+	 * {@inheritDoc}
+	 */
     public Pattern getValidationPattern( String key ) {
     	String value = properties.getProperty( "Validator." + key );
     	if ( value == null ) return null;

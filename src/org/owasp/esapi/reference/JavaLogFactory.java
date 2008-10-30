@@ -33,9 +33,9 @@ public class JavaLogFactory implements LogFactory {
 		this.applicationName = applicationName;
 	}
 	
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.LogFactory#getLogger(java.lang.Class)
-     */
+	/**
+	* {@inheritDoc}
+	*/
     public Logger getLogger(Class clazz) {
     	
     	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
@@ -48,9 +48,9 @@ public class JavaLogFactory implements LogFactory {
 		return classLogger;
     }
 
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.LogFactory#getLogger(java.lang.String)
-     */
+    /**
+	* {@inheritDoc}
+	*/
     public Logger getLogger(String moduleName) {
     	
     	// If a logger for this module already exists, we return the same one, otherwise we create a new one.
@@ -75,8 +75,7 @@ public class JavaLogFactory implements LogFactory {
 			super(name, value);
 		}
     }
-    
-    
+        
     /**
      * Reference implementation of the Logger interface.
      * 
@@ -174,114 +173,86 @@ public class JavaLogFactory implements LogFactory {
         	}
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#trace(EventType, boolean, String, java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void trace(EventType type, boolean success, String message, Throwable throwable) {
             log(Level.FINEST, type, success, message, throwable);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#trace(EventType, boolean, java.lang.String)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void trace(EventType type, boolean success, String message) {
             log(Level.FINEST, type, success, message, null);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#debug(EventType, boolean, java.lang.String, java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void debug(EventType type, boolean success, String message, Throwable throwable) {
             log(Level.FINE, type, success, message, throwable);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#debug(EventType, boolean, java.lang.String)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void debug(EventType type, boolean success, String message) {
             log(Level.FINE, type, success, message, null);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#info(EventType, boolean, java.lang.String,
-         * java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void info(EventType type, boolean success, String message) {
             log(Level.INFO, type, success, message, null);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#info(EventType, boolean, java.lang.String,
-         * java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void info(EventType type, boolean success, String message, Throwable throwable) {
             log(Level.INFO, type, success, message, throwable);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#warning(EventType, boolean, java.lang.String,
-         * java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void warning(EventType type, boolean success, String message, Throwable throwable) {
             log(Level.WARNING, type, success, message, throwable);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#warning(EventType, boolean, java.lang.String)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void warning(EventType type, boolean success, String message) {
             log(Level.WARNING, type, success, message, null);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#error(EventType, boolean, java.lang.String, java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void error(EventType type, boolean success, String message, Throwable throwable) {
             log(Level.SEVERE, type, success, message, throwable);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#error(EventType, boolean, java.lang.String)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void error(EventType type, boolean success, String message) {
             log(Level.SEVERE, type, success, message, null);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#fatal(EventType, boolean, java.lang.String,
-         * java.lang.Throwable)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void fatal(EventType type, boolean success, String message, Throwable throwable) {
             log(Level.SEVERE, type, success, message, throwable);
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.owasp.esapi.Logger#fatal(EventType, boolean, java.lang.String)
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public void fatal(EventType type, boolean success, String message) {
             log(Level.SEVERE, type, success, message, null);
         }
@@ -359,49 +330,49 @@ public class JavaLogFactory implements LogFactory {
             jlogger.logp(level, applicationName, moduleName, msg);
         }
 
-    	/* (non-Javadoc)
-         * @see org.owasp.esapi.Logger#isDebugEnabled()
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public boolean isDebugEnabled() {
             this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.FINE);
         }
 
-    	/* (non-Javadoc)
-         * @see org.owasp.esapi.Logger#isErrorEnabled()
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public boolean isErrorEnabled() {
             this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(JavaLoggerLevel.ERROR_LEVEL);
         }
 
-    	/* (non-Javadoc)
-         * @see org.owasp.esapi.Logger#isFatalEnabled()
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public boolean isFatalEnabled() {
             this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.SEVERE);
         }
 
-    	/* (non-Javadoc)
-         * @see org.owasp.esapi.Logger#isInfoEnabled()
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public boolean isInfoEnabled() {
             this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.INFO);
         }
 
-    	/* (non-Javadoc)
-         * @see org.owasp.esapi.Logger#isTraceEnabled()
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public boolean isTraceEnabled() {
             this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.FINEST);
         }
 
-    	/* (non-Javadoc)
-         * @see org.owasp.esapi.Logger#isWarningEnabled()
-         */
+        /**
+    	* {@inheritDoc}
+    	*/
         public boolean isWarningEnabled() {
             this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.WARNING);
