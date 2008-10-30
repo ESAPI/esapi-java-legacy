@@ -21,6 +21,8 @@ package org.owasp.esapi.codecs;
  * Implementation of the Codec interface for Oracle strings. See http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm
  * for more information.
  * 
+ * @see <a href="http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm">Special Characters in Oracle Queries</a>
+ * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -34,11 +36,13 @@ public class OracleCodec implements Codec {
 	/**
 	 * Encodes a String for safe use with an Oracle Database.
 	 * 
-	 * @param input
-	 * 		The String to encode
+	 * @param input 
+	 * 			string to be encoded
+	 * @return
+	 * 			encoded string 
 	 * 
-	 * @return 
-	 * 		The encoded String
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
 	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -50,20 +54,24 @@ public class OracleCodec implements Codec {
 	}
 
 	/**
-	 * Returns quote-encoded character
+	 * (non-Javadoc)
+	 * 
+	 * Encode a single character with a quote mark
+	 * 
+	 * @param c
+	 * 			Character to encode
+	 * @return 
+	 * 			quote-encoded character
+	 * 			
+	 * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
 	 */
 	public String encodeCharacter( Character c ) {
 		return "\\" + c;
 	}
 	
 	/**
-	 * Decodes a String that has been encoded using the encode method in this class.
-	 * 
-	 * @param input
-	 * 		The String to decode
-	 * 
-	 * @return 
-	 * 		The decoded String
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
 	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -78,14 +86,17 @@ public class OracleCodec implements Codec {
 		}
 		return sb.toString();
 	}
-	
-	
+
 	/**
+	 * (non-Javadoc)
+	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
 	 * Formats all are legal
 	 *   \c decodes to c
+	 * 
+	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();

@@ -106,6 +106,10 @@ public interface Encoder {
 	 * For more information on form encoding, please refer to the <a
 	 * href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C
 	 * specifications</a>.
+	 * <p>
+	 * This method is equivalent to calling <pre>Encoder.canonicalize(input, true);</pre>
+	 * 
+	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
 	 * 
 	 * @param input the text to canonicalize
 	 * @return a String containing the canonicalized text
@@ -114,6 +118,48 @@ public interface Encoder {
 	String canonicalize(String input) throws EncodingException;
 	
 	/**
+	 * This method performs canonicalization on data received to ensure that it
+	 * has been reduced to its most basic form before validation. For example,
+	 * URL-encoded data received from ordinary "application/x-www-url-encoded"
+	 * forms so that it may be validated properly.
+	 * <p>
+	 * Canonicalization is simply the operation of reducing a possibly encoded
+	 * string down to its simplest form. This is important, because attackers
+	 * frequently use encoding to change their input in a way that will bypass
+	 * validation filters, but still be interpreted properly by the target of
+	 * the attack. Note that data encoded more than once is not something that a
+	 * normal user would generate and should be regarded as an attack.
+	 * <P>
+	 * For input that comes from an HTTP servlet request, there are generally
+	 * two types of encoding to be concerned with. The first is
+	 * "applicaton/x-www-url-encoded" which is what is typically used in most
+	 * forms and URI's where characters are encoded in a %xy format. The other
+	 * type of common character encoding is HTML entity encoding, which uses
+	 * several formats:
+	 * <P>
+	 * <PRE>&lt;</PRE>,
+	 * <PRE>&#117;</PRE>, and
+	 * <PRE>&#x3a;</PRE>.
+	 * <P>
+	 * Note that all of these formats may possibly render properly in a
+	 * browser without the trailing semicolon.
+	 * <P>
+	 * Double-encoding is a particularly thorny problem, as applying ordinary decoders
+	 * may introduce encoded characters, even characters encoded with a different
+	 * encoding scheme. For example %26lt; is a < character which has been entity encoded
+	 * and then the first character has been url-encoded. Implementations should
+	 * throw an IntrusionException when double-encoded characters are detected.
+	 * <P>
+	 * Note that there is also "multipart/form" encoding, which allows files and
+	 * other binary data to be transmitted. Each part of a multipart form can
+	 * itself be encoded according to a "Content-Transfer-Encoding" header. See
+	 * the HTTPUtilties.getSafeFileUploads() method.
+	 * <P>
+	 * For more information on form encoding, please refer to the 
+	 * <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>.
+	 * 
+	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
+	 *  
 	 * @param input 
 	 * 		the text to canonicalize
 	 * @param strict 
@@ -141,6 +187,8 @@ public interface Encoder {
 	/**
 	 * Encode data for use in Cascading Style Sheets (CSS) content.
 	 * 
+	 * @see <a href="http://www.w3.org/TR/CSS21/syndata.html#escaped-characters">CSS Syntax [w3.org]</a>
+	 * 
 	 * @param input 
 	 * 		the text to encode for CSS
 	 * 
@@ -149,7 +197,15 @@ public interface Encoder {
 	String encodeForCSS(String input);
 
 	/**
-	 * Encode data for use in HTML content.
+	 * Encode data for use in HTML using HTML entity encoding
+	 * <p> 
+	 * Note that the following characters:
+	 * 00–08, 0B–0C, 0E–1F, and 7F–9F 
+	 * <p>cannot be used in HTML. 
+	 * 
+	 * @see <a href="http://en.wikipedia.org/wiki/Character_encodings_in_HTML">HTML Encodings [wikipedia.org]</a> 
+	 * @see <a href="http://www.w3.org/TR/html4/sgml/sgmldecl.html">SGML Specification [w3.org]</a>
+     * @see <a href="http://www.w3.org/TR/REC-xml/#charsets">XML Specification [w3.org]</a>
 	 * 
 	 * @param input 
 	 * 		the text to encode for HTML
@@ -181,9 +237,11 @@ public interface Encoder {
 	String encodeForJavaScript(String input);
 
 	/**
-	 * Encode data for insertion inside a data value in a visual basic script. Putting user data directly
+	 * Encode data for insertion inside a data value in a Visual Basic script. Putting user data directly
 	 * inside a script is quite dangerous. Great care must be taken to prevent putting user data
 	 * directly into script code itself, as no amount of encoding will prevent attacks there.
+	 * 
+	 * This method is not recommended as VBScript is only supported by Internet Explorer
 	 * 
 	 * @param input 
 	 * 		the text to encode for VBScript
@@ -194,19 +252,23 @@ public interface Encoder {
 
 
 	/**
-	 * Encode input for use in a SQL query (this method is not recommended), according to the
-	 * selected codec (appropriate codecs include
-	 * the MySQLCodec and OracleCodec).
-	 * The use of the PreparedStatement interface is 
-	 * and preferred approach. However, if for some reason this is impossible,
-	 * then this method is provided as a weaker alternative. The best approach
-	 * is to make sure any single-quotes are double-quoted. Another possible
-	 * approach is to use the {escape} syntax described in the JDBC
-	 * specification in section 1.5.6 (see
-	 * http://java.sun.com/j2se/1.4.2/docs/guide/jdbc/getstart/statement.html).
+	 * Encode input for use in a SQL query, according to the selected codec 
+	 * (appropriate codecs include the MySQLCodec and OracleCodec).
+	 * 
+	 * This method is not recommended. The use of the PreparedStatement 
+	 * interface is the preferred approach. However, if for some reason 
+	 * this is impossible, then this method is provided as a weaker 
+	 * alternative. 
+	 * 
+	 * The best approach is to make sure any single-quotes are double-quoted.
+	 * Another possible approach is to use the {escape} syntax described in the
+	 * JDBC specification in section 1.5.6.
+	 * 
 	 * However, this syntax does not work with all drivers, and requires
 	 * modification of all queries.
 	 * 
+	 * @see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/jdbc/getstart/statement.html">JDBC Specification</a>
+	 *  
 	 * @param codec 
 	 * 		a Codec that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
 	 * @param input 
@@ -221,7 +283,7 @@ public interface Encoder {
 	 * the WindowsCodec and UnixCodec).
 	 * 
 	 * @param codec 
-	 * 		a Codec that declares which database 'input' is being encoded for (ie. Windows, Unix, etc.)
+	 * 		a Codec that declares which operating system 'input' is being encoded for (ie. Windows, Unix, etc.)
 	 * @param input 
 	 * 		the text to encode for the command shell
 	 * 
@@ -252,10 +314,26 @@ public interface Encoder {
 	/**
 	 * Encode data for use in an XPath query.
 	 * 
-	 * @param input 
-	 * 		the text to encode for XPath
+	 * NB: The reference implementation encodes almost everything and may over-encode. 
 	 * 
-	 * @return input encoded for use in XPath
+	 * The difficulty with XPath encoding is that XPath has no built in mechanism for escaping
+	 * characters. It is possible to use XQuery in a parameterized way to
+	 * prevent injection. 
+	 * 
+	 * For more information, refer to <a
+	 * href="http://www.ibm.com/developerworks/xml/library/x-xpathinjection.html">this
+	 * article</a> which specifies the following list of characters as the most
+	 * dangerous: ^&"*';<>(). <a
+	 * href="http://www.packetstormsecurity.org/papers/bypass/Blind_XPath_Injection_20040518.pdf">This
+	 * paper</a> suggests disallowing ' and " in queries.
+	 * 
+	 * @see <a href="http://www.ibm.com/developerworks/xml/library/x-xpathinjection.html">XPath Injection [ibm.com]</a>
+	 * @see <a href="http://www.packetstormsecurity.org/papers/bypass/Blind_XPath_Injection_20040518.pdf">Blind XPath Injection [packetstormsecurity.org]</a>
+	 *  
+	 * @param input
+	 *      the text to encode for XPath
+	 * @return 
+	 * 		input encoded for use in XPath
 	 */
 	String encodeForXPath(String input);
 
@@ -269,10 +347,13 @@ public interface Encoder {
 	 * inclusion in an XML document and cannot use a parse, this method provides
 	 * a safe mechanism to do so.
 	 * 
-	 * @param input
-	 *            the text to encode for XML
+	 * @see <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding Standard</a>
 	 * 
-	 * @return input encoded for use in XML
+	 * @param input
+	 * 			the text to encode for XML
+	 * 
+	 * @return
+	 *			input encoded for use in XML
 	 */
 	String encodeForXML(String input);
 
@@ -286,22 +367,28 @@ public interface Encoder {
 	 * inclusion in an XML document and cannot use a parse, this method provides
 	 * a safe mechanism to do so.
 	 * 
-	 * @param input
-	 *            the text to encode for use as an XML attribute
+	 * @see <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding Standard</a>
 	 * 
-	 * @return input encoded for use in an XML attribute
+	 * @param input
+	 * 			the text to encode for use as an XML attribute
+	 * 
+	 * @return 
+	 * 			input encoded for use in an XML attribute
 	 */
 	String encodeForXMLAttribute(String input);
 
 	/**
 	 * Encode for use in a URL. This method performs <a
-	 * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding"</a>
+	 * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding</a>
 	 * on the entire string.
+	 * 
+	 * @see <a href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding</a>
 	 * 
 	 * @param input 
 	 * 		the text to encode for use in a URL
 	 * 
-	 * @return input encoded for use in a URL
+	 * @return input 
+	 * 		encoded for use in a URL
 	 * 
 	 * @throws EncodingException 
 	 * 		if encoding fails
@@ -316,7 +403,8 @@ public interface Encoder {
 	 * @param input 
 	 * 		the text to decode from an encoded URL
 	 * 
-	 * @return the decoded URL value
+	 * @return 
+	 * 		the decoded URL value
 	 * 
 	 * @throws EncodingException 
 	 * 		if decoding fails
@@ -329,6 +417,7 @@ public interface Encoder {
 	 * @param input 
 	 * 		the text to encode for Base64
 	 * @param wrap
+	 * 		the encoder will wrap lines every 64 characters of output
 	 * 
 	 * @return input encoded for Base64
 	 */
@@ -340,7 +429,8 @@ public interface Encoder {
 	 * @param input 
 	 * 		the Base64 text to decode
 	 * 
-	 * @return input decoded from Base64
+	 * @return input 
+	 * 		decoded from Base64
 	 * 
 	 * @throws IOException
 	 */
