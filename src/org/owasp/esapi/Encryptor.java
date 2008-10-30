@@ -45,18 +45,21 @@ public interface Encryptor {
 	 * salt. The salt helps to protect against a rainbow table attack by mixing
 	 * in some extra data with the plaintext. Some good choices for a salt might
 	 * be an account name or some other string that is known to the application
-	 * but not to an attacker. See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">this article</a> for 
-	 * more information about hashing as it pertains to password schemes.
+	 * but not to an attacker. 
+	 * See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">
+	 * this article</a> for more information about hashing as it pertains to password schemes.
 	 * 
 	 * @param plaintext
-	 *            the plaintext String to encrypt
+	 * 		the plaintext String to encrypt
 	 * @param salt
-	 *            the salt
+	 *      the salt to add to the plaintext String before hashing
 	 * 
-	 * @return the encrypted hash of 'plaintext' stored as a String
+	 * @return 
+	 * 		the encrypted hash of 'plaintext' stored as a String
 	 * 
 	 * @throws EncryptionException
-	 *             the encryption exception
+	 *      if the specified hash algorithm could not be found or another problem exists with 
+	 *      the hashing of 'plaintext'
 	 */
 	String hash(String plaintext, String salt) throws EncryptionException;
 
@@ -64,12 +67,14 @@ public interface Encryptor {
 	 * Encrypts the provided plaintext and returns a ciphertext string.
 	 * 
 	 * @param plaintext
-	 *            the plaintext String to encrypt
+	 *      the plaintext String to encrypt
 	 * 
-	 * @return the encrypted String
+	 * @return 
+	 * 		the encrypted String representation of 'plaintext'
 	 * 
 	 * @throws EncryptionException
-	 *             the encryption exception
+	 *      if the specified encryption algorithm could not be found or another problem exists with 
+	 *      the encryption of 'plaintext'
 	 */
 	String encrypt(String plaintext) throws EncryptionException;
 
@@ -78,12 +83,14 @@ public interface Encryptor {
 	 * method) and returns a plaintext string.
 	 * 
 	 * @param ciphertext
-	 *            the ciphertext
+	 *      the ciphertext (encrypted plaintext)
 	 * 
-	 * @return the decrypted ciphertext
+	 * @return 
+	 * 		the decrypted ciphertext
 	 * 
 	 * @throws EncryptionException
-	 *             the encryption exception
+	 *      if the specified encryption algorithm could not be found or another problem exists with 
+	 *      the encryption of 'plaintext'
 	 */
 	String decrypt(String ciphertext) throws EncryptionException;
 
@@ -92,12 +99,13 @@ public interface Encryptor {
 	 * string.
 	 * 
 	 * @param data
-	 *            the data to sign
+	 *      the data to sign
 	 * 
-	 * @return the digital signature stored as a String
+	 * @return 
+	 * 		the digital signature stored as a String
 	 * 
 	 * @throws EncryptionException
-	 *             the encryption exception
+	 * 		if the specified signature algorithm cannot be found
 	 */
 	String sign(String data) throws EncryptionException;
 
@@ -106,11 +114,12 @@ public interface Encryptor {
 	 * the boolean result.
 	 * 
 	 * @param signature
-	 *            the signature to verify
+	 *      the signature to verify against 'data'
 	 * @param data
-	 *            the data to verify
+	 *      the data to verify against 'signature'
 	 * 
-	 * @return true, if the signature is verified
+	 * @return 
+	 * 		true, if the signature is verified, false otherwise
 	 * 
 	 */
 	boolean verifySignature(String signature, String data);
@@ -119,11 +128,12 @@ public interface Encryptor {
 	 * Creates a seal that binds a set of data and includes an expiration timestamp.
 	 * 
 	 * @param data
-	 *            the data to seal
+	 *      the data to seal
 	 * @param timestamp
-	 *            the absolute expiration date of the data, expressed as seconds since the epoch
+	 *      the absolute expiration date of the data, expressed as seconds since the epoch
 	 * 
-	 * @return the seal
+	 * @return 
+	 * 		the seal
 	 * 
 	 */
 	String seal(String data, long timestamp) throws IntegrityException;
@@ -134,11 +144,13 @@ public interface Encryptor {
 	 * as an invalid seal format, expired timestamp, or decryption error.
 	 * 
 	 * @param seal
-	 *            the sealed data
+	 *      the sealed data
 	 * 
-	 * @return the original data
+	 * @return 
+	 * 		the original (unsealed) data
 	 * 
-	 * @throws EncryptionException if the unsealed data cannot be retrieved for any reason
+	 * @throws EncryptionException 
+	 * 		if the unsealed data cannot be retrieved for any reason
 	 */
 	String unseal( String seal ) throws EncryptionException;
 	
@@ -148,12 +160,12 @@ public interface Encryptor {
 	 * as an invalid seal format, expired timestamp, or data mismatch.
 	 * 
 	 * @param seal
-	 *            the seal
+	 *      the seal to verify
 	 * 
-	 * @return true, if the seal is valid
+	 * @return 
+	 * 		true, if the seal is valid.  False otherwise
 	 */
 	boolean verifySeal(String seal);
-
 	
 	/**
 	 * Gets an absolute timestamp representing an offset from the current time to be used by
@@ -162,7 +174,8 @@ public interface Encryptor {
 	 * @param offset 
 	 * 		the offset to add to the current time
 	 * 
-	 * @return the absolute timestamp
+	 * @return 
+	 * 		the absolute timestamp
 	 */
 	public long getRelativeTimeStamp( long offset );
 	
@@ -171,7 +184,8 @@ public interface Encryptor {
 	 * Gets a timestamp representing the current date and time to be used by
 	 * other functions in the library.
 	 * 
-	 * @return the timestamp
+	 * @return 
+	 * 		a timestamp representing the current time
 	 */
 	long getTimeStamp();
 
