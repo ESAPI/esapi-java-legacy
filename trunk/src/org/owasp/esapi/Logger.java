@@ -162,6 +162,8 @@ public interface Logger {
     /**
      * Dynamically set the logging severity level. All events of this level and higher will be logged from 
      * this point forward for all logs. All events below this level will be discarded.
+     * 
+     * @param level The level to set the logging level to. 
      */
     void setLevel(int level);
 
