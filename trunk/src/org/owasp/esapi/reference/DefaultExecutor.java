@@ -29,8 +29,9 @@ import org.owasp.esapi.errors.ExecutorException;
 
 /**
  * Reference implementation of the Executor interface. This implementation is very restrictive. Commands must exactly
- * equal the canonical path to an executable on the system. Valid characters for parameters are alphanumeric,
- * forward-slash, and dash.
+ * equal the canonical path to an executable on the system. 
+ * 
+ * <p>Valid characters for parameters are codec dependent, but will usually only include alphanumeric, forward-slash, and dash.</p>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -44,14 +45,24 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     //private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
     
 
+    /**
+     * Instantiate a new Executor
+     */
     public DefaultExecutor() {
     }
 
-    /*
-     * (non-Javadoc)
+    /**
+     * <p>The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
+     * and then executes the command without using concatenation.</p> 
      * 
-     * @see org.owasp.esapi.Executor#executeSystemCommand(java.lang.String, java.util.List, java.io.File,
-     * org.owasp.esapi.codecs.Codec)
+     * <p>If there are failures, it will be logged. 
+     * 
+     * <p><b>Privacy Note</b>: Be careful if you pass PII to the executor, as the reference implementation logs
+     * the parameters. You MUST change this behavior if you are passing credit card numbers, TIN/SSN, or 
+     * health information through this reference implementation, such as to a credit card or HL7 gateway.</p> 
+     * 
+     * (non-Javadoc)
+     * @see org.owasp.esapi.Executor#executeSystemCommand(java.io.File, java.util.List, java.io.File, org.owasp.esapi.codecs.Codec)
      */
     public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
         try {
@@ -102,7 +113,15 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
         }        
     }
 
-
+    /**
+     * readStream reads lines from an input stream and returns all of them in a single string
+     * 
+     * @param is
+     * 			input stream to read from
+     * @return
+     * 			a string containing as many lines as the input stream contains, with newlines between lines
+     * @throws IOException
+     */
     private String readStream( InputStream is ) throws IOException {
 	    InputStreamReader isr = new InputStreamReader(is);
 	    BufferedReader br = new BufferedReader(isr);
