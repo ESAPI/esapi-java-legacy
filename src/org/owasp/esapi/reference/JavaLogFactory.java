@@ -140,8 +140,6 @@ public class JavaLogFactory implements LogFactory {
          * Note: In this implementation, this change is not persistent,
          * meaning that if the application is restarted, the log level will revert to the level defined in the 
          * ESAPI SecurityConfiguration properties file.
-         * 
-         * @param level The level to set the logging level to. 
          */
         public void setLevel(int level)
         {
