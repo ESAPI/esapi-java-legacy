@@ -46,7 +46,7 @@ import org.owasp.esapi.errors.EncryptionException;
 public interface User extends Principal {
 
     /**
-     * Adds a role to an account.
+     * Adds a role to this user's account.
      * 
      * @param role 
      * 		the role to add
@@ -57,7 +57,7 @@ public interface User extends Principal {
     void addRole(String role) throws AuthenticationException;
 
     /**
-     * Adds a set of roles to an account.
+     * Adds a set of roles to this user's account.
      * 
      * @param newRoles 
      * 		the new roles to add
@@ -85,42 +85,38 @@ public interface User extends Principal {
     void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException;
 
     /**
-     * Disable account.
-     * 
-     * 
+     * Disable this user's account.
      */
     void disable();
 
     /**
-     * Enable account.
-     * 
-     * 
+     * Enable this user's account.
      */
     void enable();
 
     /**
-     * Gets the account id.
+     * Gets this user's account id number.
      * 
      * @return the account id
      */
     long getAccountId();
     
     /**
-     * Gets the account name.
+     * Gets this user's account name.
      * 
      * @return the account name
      */
     String getAccountName();
 
     /**
-     * Gets the CSRF token.
+     * Gets the CSRF token for this user's current sessions.
      * 
      * @return the CSRF token
      */
     String getCSRFToken();
 
     /**
-     * Returns the date that the current user's account will expire, usually when the account will be disabled.
+     * Returns the date that this user's account will expire.
      *
      * @return Date representing the account expiration time.
      */
