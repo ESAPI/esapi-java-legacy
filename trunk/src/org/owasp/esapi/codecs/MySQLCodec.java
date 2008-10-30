@@ -33,10 +33,23 @@ public class MySQLCodec implements Codec {
 	
 	private int mode = 0;
 	
+	/**
+	 * Instantiate the MySQL codec
+	 * 
+	 * @param mode
+	 * 			Mode has to be one of {MYSQL_MODE|ANSI_MODE} to allow correct encoding   
+	 */
 	public MySQLCodec( int mode ) {
 		this.mode = mode;
 	}
 
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * Returns quote-encoded string
+	 * 
+	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
+	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
@@ -47,7 +60,11 @@ public class MySQLCodec implements Codec {
 	}
 
 	/**
+	 * (non-Javadoc)
+	 * 
 	 * Returns quote-encoded character
+	 * 
+	 * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
 	 */
 	public String encodeCharacter( Character c ) {
 		switch( mode ) {
@@ -57,12 +74,30 @@ public class MySQLCodec implements Codec {
 		return null;
 	}
 	
+	/**
+	 * encodeCharacterANSI encodes for ANSI SQL. 
+	 * 
+	 * Only the apostrophe is encoded
+	 * 
+	 * @param c 
+	 * 			character to encode
+	 * @return
+	 * 			'' if ', otherwise return c directly
+	 */
 	private String encodeCharacterANSI( Character c ) {
 		if ( c.charValue() == '\'' )
         	return "\'\'";
         return ""+c;
 	}
 
+	/**
+	 * Encode a character suitable for MySQL
+	 * 
+	 * @param c
+	 * 			Character to encode
+	 * @return
+	 * 			Encoded Character
+	 */
 	private String encodeCharacterMySQL( Character c ) {
 		char ch = c.charValue();
 		if ( ch == 0x00 ) return "\\0";
@@ -78,7 +113,14 @@ public class MySQLCodec implements Codec {
 		if ( ch == 0x5f ) return "\\_";
 	    return "\\" + c;
 	}
-		
+	
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * Decodes quote-encoded string
+	 * 
+	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
+	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
@@ -93,14 +135,16 @@ public class MySQLCodec implements Codec {
 		return sb.toString();
 	}
 	
-	
-	/**
+	/*
+	 * (non-Javadoc)
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
 	 * Formats all are legal (case sensitive)
 	 *   In ANSI_MODE '' decodes to '
 	 *   In MYSQL_MODE \x decodes to x (or a small list of specials)
+	 *   
+	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		switch( mode ) {
@@ -110,6 +154,14 @@ public class MySQLCodec implements Codec {
 		return null;
 	}
 
+	/**
+	 * decodeCharacterANSI decodes the next character from ANSI SQL escaping
+	 *  
+	 * @param input
+	 * 			A PushBackString containing characters you'd like decoded
+	 * @return
+	 * 			A single character, decoded
+	 */
 	private Character decodeCharacterANSI( PushbackString input ) {
 		input.mark();
 		Character first = input.next();
@@ -138,6 +190,14 @@ public class MySQLCodec implements Codec {
 		return( new Character( '\'' ) );
 	}
 
+	/**
+	 * decodeCharacterMySQL decodes all the potential escaped characters that MySQL is prepared to escape
+	 * 
+	 * @param input
+	 * 			A string you'd like to be decoded
+	 * @return
+	 * 			A single character from that string, decoded.
+	 */
 	private Character decodeCharacterMySQL( PushbackString input ) {
 		input.mark();
 		Character first = input.next();

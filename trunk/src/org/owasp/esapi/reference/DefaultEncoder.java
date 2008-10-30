@@ -115,6 +115,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
         Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
 	}
 	
+	
+	/**
+	 * Instantiates a new DefaultEncoder
+	 * 
+	 */
 	public DefaultEncoder() {
 		// initialize the codec list to use for canonicalization
 		codecs.add( htmlCodec );
@@ -128,6 +133,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		// codecs.add( vbScriptCodec );
 	}
 
+	/**
+	 * Instantiates a new DefaultEncoder
+	 * 
+	 * @param codecs A list of codecs to use by the Encoder class
+	 * @throws java.lang.IllegalArgumentException If the encoder is not an instance of the Codec interface
+	 */
 	public DefaultEncoder( List codecs ) {
 	    Iterator i = codecs.iterator();
 	    while ( i.hasNext() ) {
@@ -140,44 +151,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 	
 	/**
-	 * Simplifies encoded characters to their
-	 * simplest form so that they can be properly validated. Attackers
-	 * frequently use encoding schemes to disguise their attacks and bypass
-	 * validation routines.
+	 * (non-Javadoc)
 	 * 
-	 * Handling multiple encoding schemes simultaneously is difficult, and
-	 * requires some special consideration. In particular, the problem of
-	 * double-encoding is difficult for parsers, and combining several encoding
-	 * schemes in double-encoding makes it even harder. Consider decoding
-	 * 
-	 * <PRE>
-	 * &amp;lt;
-	 * </PRE>
-	 * 
-	 * or
-	 * 
-	 * <PRE>
-	 * %26lt;
-	 * </PRE>
-	 * 
-	 * or
-	 * 
-	 * <PRE>
-	 * &amp;lt;
-	 * </PRE>.
-	 * 
-	 * This implementation disallows ALL double-encoded characters and throws an
-	 * IntrusionException when they are detected. Also, named entities that are
-	 * not known are simply removed.
-	 * 
-	 * Note that most data from the browser is likely to be encoded with URL
-	 * encoding (RFC 3986). The web server will decode the URL and form data
-	 * once, so most encoded data received in the application must have been
-	 * double-encoded by the attacker. However, some HTTP inputs are not decoded
-	 * by the browser, so this routine allows a single level of decoding.
-	 * 
-	 * @throws IntrusionException
-	 * 
+	 * @see org.owasp.esapi.Encoder#canonicalize(java.lang.String)
 	 */
 	public String canonicalize( String input ) {
 		if ( input == null ) return null;
@@ -185,7 +161,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 	
 	/**
-	 * Strict mode throws an exception when any double encoded data is detected.
+	 * (non-Javadoc)
+	 * 
+	 * @see org.owasp.esapi.Encoder#canonicalize(java.lang.String, boolean)
 	 */
 	public String canonicalize( String input, boolean strict ) {
 		if ( input == null ) return null;
@@ -201,6 +179,15 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return candidate;
 	}
 	
+	/**
+	 * Helper method that takes input and canonicalizes it a single time
+	 * 
+	 * This is used by canonicalize() when checking that the input doesn't
+	 * change between passes, as well as actually performing the canoncalization 
+	 * 
+	 * @param input the string to canoncalize
+	 * @return the canocalized string
+	 */
 	private String canonicalizeOnce( String input ) {
 		if ( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
@@ -228,6 +215,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * encoded, then it is decoded and pushed back onto the string, and this
 	 * method returns true.  If the current character is not encoded, then the
 	 * pushback stream is reset to its original state and this method returns false.
+	 * 
+	 * @param pbs A PushBackString, which is passed to the codecs 
+	 * @return true if pbs is an encoded character in one of the codecs, false otherwise
 	 */
 	private boolean decodeNext( PushbackString pbs ) {
 		Iterator i = codecs.iterator();
@@ -245,14 +235,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return false;
 	}
 
-
 	/**
-	 * Normalizes special characters down to ASCII using the Normalizer built
-	 * into Java. Note that this method may introduce security issues if
-	 * characters are normalized into special characters that have meaning
-	 * to the destination of the data.
-	 * 
-	 * 
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.Encoder#normalize(java.lang.String)
 	 */
 	public String normalize(String input) {
 		// Split any special characters into two parts, the base character and
@@ -265,10 +250,18 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return separated.replaceAll("[^\\p{ASCII}]", "");
 	}
 
-
 	/**
-	 * Encoding utility method. It is strongly recommended that you
-	 * canonicalize input before calling this method to prevent double-encoding.
+	 * Private helper method to encode a single character by a particular
+	 * codec. Will not encode characters from the base and special white lists. 
+	 * <p>
+	 * Note: It is strongly recommended that you canonicalize input before calling 
+	 * this method to prevent double-encoding.
+	 *   
+	 * @param c - character to be encoded 
+	 * @param codec - codec to be used to encode c
+	 * @param baseImmune - white list of base characters that are okay
+	 * @param specialImmune - white list of special characters that are okay
+	 * @return encoded character. NB: Extremely likely that the return string contains more than one character!
 	 */
 	private String encode( char c, Codec codec, char[] baseImmune, char[] specialImmune ) {
 		if (isContained(baseImmune, c) || isContained(specialImmune, c)) {
@@ -278,14 +271,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 	}
 
-	
-	
 	/**
-	 * Encode the input string using HTML entity encoding.  Note that the following characters:
-	 * 00–08, 0B–0C, 0E–1F, and 7F–9F Cannot be used in HTML. See http://en.wikipedia.org/wiki/Character_encodings_in_HTML
-	 * for more information.
-	 * See the SGML declaration - http://www.w3.org/TR/html4/sgml/sgmldecl.html
-	 * See the XML specification - see http://www.w3.org/TR/REC-xml/#charsets
+	 * (non-Javadoc)
+	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForHTML(java.lang.String)
 	 */
 	public String encodeForHTML(String input) {
@@ -306,7 +294,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 }
 	 
 	 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForHTMLAttribute(java.lang.String)
@@ -323,7 +311,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	
 	/**
-	 * http://www.w3.org/TR/CSS21/syndata.html#escaped-characters
+	 * (non-Javadoc)
+	 * 
+	 * @see org.owasp.esapi.Encoder#encodeForCSS(java.lang.String)
 	 */
 	public String encodeForCSS(String input) {
 	    if( input == null ) return null;
@@ -338,7 +328,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForJavaScript(java.lang.String)
@@ -353,10 +343,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForVisualBasicScript(java.lang.String)
+	 * @see org.owasp.esapi.Encoder#encodeForVBScript(java.lang.String)
 	 */
 	public String encodeForVBScript(String input) {
 	    if( input == null ) return null;
@@ -384,7 +374,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForOS(org.owasp.esapi.codecs.Codec,java.lang.String)
@@ -399,7 +389,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForLDAP(java.lang.String)
@@ -432,7 +422,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForDN(java.lang.String)
@@ -478,20 +468,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
+
 	/**
-	 * This implementation encodes almost everything and may overencode. The
-	 * difficulty is that XPath has no built in mechanism for escaping
-	 * characters. It is possible to use XQuery in a parameterized way to
-	 * prevent injection. For more information, refer to <a
-	 * href="http://www.ibm.com/developerworks/xml/library/x-xpathinjection.html">this
-	 * article</a> which specifies the following list of characters as the most
-	 * dangerous: ^&"*';<>(). <a
-	 * href="http://www.packetstormsecurity.org/papers/bypass/Blind_XPath_Injection_20040518.pdf">This
-	 * paper</a> suggests disallowing ' and " in queries.
+	 * (non-Javadoc)
 	 * 
-	 * @param input
-	 *            the input
-	 * @return the string
 	 * @see org.owasp.esapi.Encoder#encodeForXPath(java.lang.String)
 	 */
 	public String encodeForXPath(String input) {
@@ -504,7 +484,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForXML(java.lang.String)
@@ -519,7 +499,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForXMLAttribute(java.lang.String)
@@ -534,7 +514,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#encodeForURL(java.lang.String)
@@ -549,7 +529,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#decodeFromURL(java.lang.String)
@@ -565,10 +545,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForBase64(byte[])
+	 * @see org.owasp.esapi.Encoder#encodeForBase64(byte[], boolean)
 	 */
 	public String encodeForBase64(byte[] input, boolean wrap) {
 		int options = 0;
@@ -578,7 +558,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return Base64.encodeBytes(input, options);
 	}
 
-	/*
+	/**
 	 * (non-Javadoc)
 	 * 
 	 * @see org.owasp.esapi.Encoder#decodeFromBase64(java.lang.String)
@@ -589,7 +569,15 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	
 	/**
-	 * Returns true if the character is contained in the provided array of characters.
+	 * isContained is a helper method which determines if c is 
+	 * contained in the character array haystack.
+	 * 
+	 * @param haystack
+	 *		a character array containing a set of characters to be searched
+	 * @param c 
+	 *      a character to be searched for
+	 * @return 
+	 *      true if c is in haystack, false otherwise
 	 */
 	protected boolean isContained(char[] haystack, char c) {
 		for (int i = 0; i < haystack.length; i++) {

@@ -29,14 +29,39 @@ public class PercentCodec implements Codec {
 	public PercentCodec() {
 	}
 
+	/**
+	 * TODO: Not implemented
+	 * 
+	 * @return null
+	 * 
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
+	 */
 	public String encode( String input ) {
 		return null;
 	}
 	
+	/**
+	 * TODO: Not implemented
+	 * 
+	 * @return null
+	 * 
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
+	 */
 	public String encodeCharacter( Character c ) {
 		return null;
 	}
 	
+	/**
+	 * Decode string encoded with percent characters
+	 * 
+	 * @param input
+	 * 			encoded string using percent characters (such as URL encoding)
+	 * @return decoded string
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
+	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
@@ -57,6 +82,13 @@ public class PercentCodec implements Codec {
 	 * 
 	 * Formats all are legal both upper/lower case:
 	 *   %hh;
+	 *   
+	 * @param input
+	 * 			encoded character using percent characters (such as URL encoding)
+	 * @return decoded character
+	 *   
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();

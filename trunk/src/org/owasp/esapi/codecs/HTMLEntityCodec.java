@@ -35,15 +35,14 @@ public class HTMLEntityCodec implements Codec {
 		initializeMaps();
 	}
 
-/**
- * Encodes a String for safe use as an HTML entity
- * 
- * @param input
- * 		String to encode
- * 
- * @return 
- * 		The encoded String
- */
+
+	/**
+	 * (non-Javadoc)
+	 * 
+	 * Encodes a String for safe use as an HTML entity
+	 * 
+	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
+	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
@@ -52,15 +51,13 @@ public class HTMLEntityCodec implements Codec {
 		return sb.toString();
 	}
 
-/**
- * Encodes a Character for safe use in an HTML entity field.
- *  
- *  @param c
- *  	the Character to encode
- *  
- *  @return 
- *  	the encoded Character as a String
- */
+    /**
+     * (non-Javadoc)
+     * 
+     * Encodes a Character for safe use in an HTML entity field.
+     * 
+     * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
+     */
 	public String encodeCharacter( Character c ) {
 		String entityName = (String) characterToEntityMap.get(c);
 		if (entityName != null) {
@@ -69,15 +66,13 @@ public class HTMLEntityCodec implements Codec {
 		return "&#" + (int)c.charValue() + ";";
 	}
 	
-/**
- * Decodes a String that has been encoded for use in an HTML entity field.
- * 
- * @param input
- * 		The String to decode
- * 
- * @return 
- * 		The decoded String
- */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * Decodes a String that has been encoded for use in an HTML entity field.
+	 * 
+	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
+	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
@@ -92,9 +87,9 @@ public class HTMLEntityCodec implements Codec {
 		return sb.toString();
 	}
 	
-	
-	
-	/**
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
@@ -102,6 +97,8 @@ public class HTMLEntityCodec implements Codec {
 	 *   &#dddd;
 	 *   &#xhhhh;
 	 *   &name;
+	 *
+	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
@@ -138,7 +135,15 @@ public class HTMLEntityCodec implements Codec {
 		return null;
 	}
 	
-	
+	/**
+	 * getNumericEntry checks input to see if it is a numeric entity
+	 * 
+	 * @param input
+	 * 			The input to test for being a numeric entity
+	 *  
+	 * @return
+	 * 			null if input is null, the character of input after decoding
+	 */
 	private Character getNumericEntity( PushbackString input ) {
 		Character first = input.peek();
 		if ( first == null ) return null;
@@ -150,7 +155,15 @@ public class HTMLEntityCodec implements Codec {
 		return parseNumber( input );
 	}
 
-	
+	/**
+	 * Parse a decimal number, such as those from JavaScript's String.fromCharCode(value)
+	 * 
+	 * @param input
+	 * 			decimal encoded string, such as 65
+	 * @return
+	 * 			character representation of this decimal value, e.g. A 
+	 * @throws NumberFormatException
+	 */
 	private Character parseNumber( PushbackString input ) {
 		StringBuffer sb = new StringBuffer();
 		while( input.hasNext() ) {
@@ -182,6 +195,15 @@ public class HTMLEntityCodec implements Codec {
 		}
 	}
 	
+	/**
+	 * Parse a hex encoded entity
+	 * 
+	 * @param input
+	 * 			Hex encoded input (such as 437ae;)
+	 * @return
+	 * 			A single character from the string
+	 * @throws NumberFormatException
+	 */
 	private Character parseHex( PushbackString input ) {
 		StringBuffer sb = new StringBuffer();
 		while( input.hasNext() ) {
@@ -214,6 +236,7 @@ public class HTMLEntityCodec implements Codec {
 	}
 	
 	/**
+	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
@@ -224,6 +247,11 @@ public class HTMLEntityCodec implements Codec {
 	 *   &aaaaa;
 	 *   &aaaaaa;
 	 *   &aaaaaaa;
+	 *
+	 * @param input
+	 * 		A string containing a named entity like &quot;
+	 * @return
+	 * 		Returns the decoded version of the character starting at index, or null if no decoding is possible.
 	 */
 	private Character getNamedEntity( PushbackString input ) {
 		// search through the rest of the string up to 6 characters
@@ -244,8 +272,10 @@ public class HTMLEntityCodec implements Codec {
 		}
 		return null;
 	}
-	
-		
+
+	/**
+	 * Initialize the entityNames array with all possible named entities
+	 */
 	private void initializeMaps() {
 		String[] entityNames = { "quot"
 		/* 34 : quotation mark */, "amp"

@@ -30,13 +30,15 @@ public class WindowsCodec implements Codec {
 	}
 
 	/**
-	 * Encodes a String for safe use with an Oracle Database.
+	 * Encodes a String for safe use with the Windows command shell
 	 * 
-	 * @param input
-	 * 		The String to encode
+	 * @param input 
+	 * 			string to be encoded
+	 * @return
+	 * 			encoded string 
 	 * 
-	 * @return 
-	 * 		The encoded String
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
 	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -48,19 +50,24 @@ public class WindowsCodec implements Codec {
 	}
 
 	/**
-	 * Returns quote-encoded character
+	 * Returns Windows shell encoded character (which is ^)
+	 * 
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
 	 */
 	public String encodeCharacter( Character c ) {
         return "^" + c;
 	}
 	
 	/**
-	 * Decodes a String that has been encoded with the encode method in this Class.
+	 * Decodes a String that has been encoded with ^ 
 	 * 
 	 * @param input
-	 * 		The String to decode
-	 * 
-	 * @return the decoded String
+	 * 			string to be decoded	
+	 * @return
+	 * 			decoded string
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
 	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -75,14 +82,20 @@ public class WindowsCodec implements Codec {
 		}
 		return sb.toString();
 	}
-	
-	
+
 	/**
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
-	 * 
+	 * <p>
 	 * Formats all are legal both upper/lower case:
 	 *   ^x - all special characters
+	 *   
+	 * @param input
+	 * 			string to be decoded	
+	 * @return
+	 * 			decoded character
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
