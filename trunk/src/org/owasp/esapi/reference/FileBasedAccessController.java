@@ -296,9 +296,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * User does not have access or an exception is thrown, false is returned.
 	 * 
 	 * @param map
-	 *            the map containing access rules
+	 *       the map containing access rules
 	 * @param path
-	 *            the path of the requested File, URL, Object, etc.
+	 *       the path of the requested File, URL, Object, etc.
 	 * 
 	 * @return 
 	 * 		true, if the user has access, false otherwise
@@ -315,15 +315,15 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	
 	/**
 	 * Checks to see if the current user has access to the specified Class and action.
-	 * If the User has access, as specified by the map parameter, this method returns true if the action is permitted.
+	 * If the User has access, as specified by the map parameter, this method returns true.
      * If the User does not have access or an exception is thrown, false is returned.
 	 * 
 	 * @param map
-	 *            the map containing access rules
+	 *       the map containing access rules
 	 * @param clazz
-	 *            the Class being requested for access
+	 *       the Class being requested for access
 	 * @param action
-	 * 			  the action the User has asked to perform
+	 * 		 the action the User has asked to perform
 	 * @return 
 	 * 		true, if the user has access, false otherwise
 	 * 
@@ -344,14 +344,14 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * default servlet, specified by the single character pattern /
 	 * 
 	 * @param map
-	 *            the map containing access rules
+	 *       the map containing access rules
 	 * @param roles
-	 *            the roles of the User being checked for access
+	 *       the roles of the User being checked for access
 	 * @param path
-	 *            the File, URL, Object, etc. being checked for access
+	 *       the File, URL, Object, etc. being checked for access
 	 * 
 	 * @return 
-	 * 		the rule stating whether to allow or deny access
+	 *       the rule stating whether to allow or deny access
 	 * 
 	 */
 	private Rule searchForRule(Map map, Set roles, String path) {
@@ -419,13 +419,13 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * access to perform the specified action on the specified Class.
 	 * 
 	 * @param map
-	 *            the map containing access rules
+	 *      the map containing access rules
 	 * @param roles
-	 *            the roles used to determine access level
+	 *      the roles used to determine access level
 	 * @param clazz
-	 *            the Class being requested for access
+	 *      the Class being requested for access
 	 * @param action
-	 * 			  the action the User has asked to perform
+	 * 		the action the User has asked to perform
 	 * 
 	 * @return 
 	 * 		the rule that allows the specified roles access to perform the requested action on the specified Class, or null if access is not granted
@@ -446,9 +446,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * ruleRoles contains any of the roles listed in userRoles.
 	 * 
 	 * @param ruleRoles
-	 *            the rule roles
+	 *      the rule roles
 	 * @param userRoles
-	 *            the user roles
+	 *      the user roles
 	 * 
 	 * @return 
 	 * 		true, if any roles exist in both Sets.  False otherwise.
@@ -471,9 +471,9 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * This method merely checks to see if ruleActions contains the action requested.
 	 * 
 	 * @param ruleActions
-	 *            actions listed for a rule
+	 *      actions listed for a rule
 	 * @param action
-	 *            the action requested that will be searched for in ruleActions
+	 *      the action requested that will be searched for in ruleActions
 	 * 
 	 * @return 
 	 * 		true, if any action exists in ruleActions.  False otherwise.
@@ -483,8 +483,19 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 			return true;
 		return false;
 	}
-	
-	private List validateRoles(List roles) throws ValidationException{
+		
+	/**
+	 * Checks that the roles passed in contain only letters, numbers, and underscores.  Also checks that
+	 * roles are no more than 10 characters long.  If a role does not pass validation, it is not included in the 
+	 * list of roles returned by this method.  A log warning is also generated for any invalid roles.
+	 * 
+	 * @param roles
+	 * 		roles to validate according to criteria started above
+	 * @return
+	 * 		a List of roles that are valid according to the criteria stated above.
+	 * 
+	 */
+	private List validateRoles(List roles){
 		List ret = new ArrayList();	
 		for(int x = 0; x < roles.size(); x++){
 			String canonical = "";
@@ -513,7 +524,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * Each path may only appear once in the access rules file.  Any entry, after the first, containing the same path will be logged and ignored. 
 	 *  
 	 * @param ruleset
-	 *            the name of the data that contains access rules
+	 *      the name of the data that contains access rules
 	 * 
 	 * @return 
 	 * 		a hash map containing the ruleset
@@ -568,7 +579,7 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	 * Each path may only appear once in the access rules file.  Any entry, after the first, containing the same path will be logged and ignored. 
 	 *  
 	 * @param ruleset
-	 *            the name of the data that contains access rules
+	 *      the name of the data that contains access rules
 	 * 
 	 * @return 
 	 * 		a hash map containing the ruleset
