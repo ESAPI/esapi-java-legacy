@@ -79,9 +79,10 @@ public interface AccessReferenceMap {
 	 * implementation information.
 	 * 
 	 * @param directReference
-	 *            the direct reference
+	 * 		the direct reference
 	 * 
-	 * @return the indirect reference
+	 * @return 
+	 * 		the indirect reference
 	 */
 	String getIndirectReference(Object directReference);
 
@@ -93,12 +94,13 @@ public interface AccessReferenceMap {
 	 * thrown.
 	 * 
 	 * @param indirectReference
-	 *            the indirect reference
+	 * 		the indirect reference
 	 * 
-	 * @return the direct reference
+	 * @return 
+	 * 		the direct reference
 	 * 
-	 * @throws AccessControlException if no direct reference exists for the 
-	 * 				specified indirect reference
+	 * @throws AccessControlException 
+	 * 		if no direct reference exists for the specified indirect reference
 	 */
 	Object getDirectReference(String indirectReference) throws AccessControlException;
 
@@ -109,7 +111,8 @@ public interface AccessReferenceMap {
 	 * @param direct 
 	 * 		the direct reference
 	 * 
-	 * @return the corresponding indirect reference
+	 * @return 
+	 * 		the corresponding indirect reference
 	 */
 	String addDirectReference(Object direct);
 	
@@ -119,7 +122,8 @@ public interface AccessReferenceMap {
 	 * @param direct 
 	 * 		the direct reference to remove
 	 * 
-	 * @return the corresponding indirect reference
+	 * @return 
+	 * 		the corresponding indirect reference
 	 * 
 	 * @throws AccessControlException
 	 */
@@ -127,9 +131,13 @@ public interface AccessReferenceMap {
 
 	/**
 	 * Updates the access reference map with a new set of direct references, maintaining
-	 * any existing indirect references associated with items that are in the new list. 
+	 * any existing indirect references associated with items that are in the new list.
+	 * New indirect references could be generated every time, but that
+	 * might mess up anything that previously used an indirect reference, such
+	 * as a URL parameter. 
 	 * 
 	 * @param directReferences
+	 * 		a Set of direct references to add
 	 */
 	void update(Set directReferences);
 

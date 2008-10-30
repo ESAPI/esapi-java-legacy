@@ -54,16 +54,12 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	public DefaultIntrusionDetector() {
 	}
 	
-	/**
-	 * This implementation uses an exception store in each User object to track
-	 * exceptions.
+	/*
+	 * (non-Javadoc)
 	 * 
-	 * @param e
-	 *            the exception
-	 * 
-	 * @throws IntrusionException
-	 *             the intrusion exception
+	 * @see org.owasp.esapi.IntrusionDetector#addException(java.lang.Exception)
 	 */
+	
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY, false, ((EnterpriseSecurityException)e).getLogMessage(), e );
@@ -93,13 +89,11 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 		}
 	}
 
-    /**
-     * Adds the event to the IntrusionDetector.
-     * 
-     * @param eventName the eventName
-     * @param logMessage the message to log
-     * @throws IntrusionException the intrusion exception
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.owasp.esapi.IntrusionDetector#addEvent(java.lang.Exception, java.lang.String)
+	 */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
         logger.warning( Logger.SECURITY, false, "Security event " + eventName + " received : " + logMessage );
 
@@ -118,7 +112,15 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
         }
     }
 
-    
+    /**
+     * Take a specified security action.  In this implementation, acceptable
+     * actions are: log, disable, logout.
+     * 
+     * @param action
+     * 		the action to take (log, disable, logout)
+     * @param message
+     * 		the message to log if the action is "log"
+     */
     private void takeSecurityAction( String action, String message ) {
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY, false, "INTRUSION - " + message );
@@ -135,7 +137,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
     }
 
 	 /**
-	 * Adds a security event to the user.
+	 * Adds a security event to the user.  These events are used to check that the user has not
+	 * reached the security thresholds set in the properties file.
 	 * 
 	 * @param user
 	 * 			The user that caused the event.

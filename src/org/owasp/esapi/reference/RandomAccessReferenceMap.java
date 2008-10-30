@@ -58,7 +58,7 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	}
 
 	/**
-	 * Instantiates a new access reference map.
+	 * Instantiates a new access reference map with a set of direct references.
 	 * 
 	 * @param directReferences
 	 *            the direct references
@@ -77,10 +77,10 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		return sorted.iterator();
 	}
 	
-	/**
-	 * Adds a direct reference and a new random indirect reference, overwriting any existing values.
-	 * @param direct
-	 */
+/*
+ * (non-Javadoc)
+ * @see org.owasp.esapi.AccessReferenceMap#addDirectReference(java.lang.Object)
+ */
 	public String addDirectReference(Object direct) {
 		if ( dtoi.keySet().contains( direct ) ) {
 			return (String)dtoi.get( direct );
@@ -91,6 +91,12 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		return indirect;
 	}
 	
+	/**
+	 * Create a new random reference that is guaranteed to be unique.
+	 * 
+	 *  @return 
+	 *  	a random reference that is guaranteed to be unique
+	 */
 	private String getUniqueRandomReference() {
 		String candidate = null;
 		do {
@@ -99,9 +105,9 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		return candidate;
 	}
 	
-	/**
-	 * Remove a direct reference and the corresponding indirect reference.
-	 * @param direct
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.AccessReferenceMap#removeDirectReference(java.lang.Object)
 	 */
 	public String removeDirectReference(Object direct) throws AccessControlException {
 		String indirect = (String)dtoi.get(direct);
@@ -112,14 +118,9 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		return indirect;
 	}
 
-	/**
-	 * This preserves any existing mappings for items that are still in the new
-	 * list. You could regenerate new indirect references every time, but that
-	 * might mess up anything that previously used an indirect reference, such
-	 * as a URL parameter.
-	 * 
-	 * @param directReferences
-	 *            the direct references
+	/*
+	 * (non-Javadoc)
+	 * @see org.owasp.esapi.AccessReferenceMap#update(java.util.Set)
 	 */
 	final public void update(Set directReferences) {
 		HashMap dtoi_old = (HashMap) dtoi.clone();
