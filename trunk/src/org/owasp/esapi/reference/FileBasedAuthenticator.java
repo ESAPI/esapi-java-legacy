@@ -110,8 +110,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * 
      * </PRE>
      * 
-     * @param args the args
-     * @throws AuthenticationException the authentication exception
+     * @param args 
+     * 		the arguments
+     * @throws Exception 
+     * 		the exception
      */
     public static void main(String[] args) throws Exception {
         if (args.length != 3) {
@@ -139,6 +141,15 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
     }
 
+    /**
+     * Add a hash to a User's hashed password list.  This method is used to store a user's old password hashes
+     * to be sure that any new passwords are not too similar to old passwords.
+     * 
+     * @param user
+     * 		the user to associate with the new hash
+     * @param hash
+     * 		the hash to store in the user's password hash list 
+     */
     private void setHashedPassword(User user, String hash) {
     	List hashes = getAllHashedPasswords(user, true);
 		hashes.add( 0, hash);
@@ -147,11 +158,27 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		logger.info(Logger.SECURITY, true, "New hashed password stored for " + user.getAccountName() );
     }
     
+    /**
+     * Return the specified User's current hashed password.
+     * 
+     * @param user
+     * 		this User's current hashed password will be returned
+     * @return
+     * 		the specified User's current hashed password
+     */
     String getHashedPassword(User user) {
     	List hashes = getAllHashedPasswords(user, false);
     	return (String) hashes.get(0);
     }
     
+    /**
+     * Set the specified User's old password hashes.  This will not set the User's current password hash.
+     * 
+     * @param user
+     * 		the User's whose old password hashes will be set
+     * @param oldHashes
+     * 		a list of the User's old password hashes     * 		
+     */
     void setOldPasswordHashes(User user, List oldHashes) {
     	List hashes = getAllHashedPasswords(user, true);
     	if (hashes.size() > 1)
@@ -159,6 +186,20 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     	hashes.addAll(oldHashes);
     }
     
+    /**
+     * Returns all of the specified User's hashed passwords.  If the User's list of passwords is null,
+     * and create is set to true, an empty password list will be associated with the specified User 
+     * and then returned. If the User's password map is null and create is set to false, an exception 
+     * will be thrown.
+     * 
+     * @param user
+     * 		the User whose old hashes should be returned
+     * @param create
+     * 		true - if no password list is associated with this user, create one
+     * 		false - if no password list is associated with this user, do not create one 
+     * @return
+     * 		a List containing all of the specified User's password hashes
+     */
     List getAllHashedPasswords(User user, boolean create) {
     	List hashes = (List) passwordMap.get(user);
     	if (hashes != null)
@@ -171,6 +212,15 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     	throw new RuntimeException("No hashes found for " + user.getAccountName() + ". Is User.hashcode() and equals() implemented correctly?");
     }
     
+    /**
+     * Get a List of the specified User's old password hashes.  This will not return the User's current
+     * password hash.
+     * 
+     * @param user
+     * 		he user whose old password hashes should be returned
+     * @return
+     * 		the specified User's old password hashes
+     */
     List getOldPasswordHashes(User user) {
     	List hashes = getAllHashedPasswords(user, false);
     	if (hashes.size() > 1)
@@ -184,7 +234,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     // Map<User, List<String>>, where the strings are password hashes, with the current hash in entry 0
     private Map passwordMap = new Hashtable();
     
-    /*
+    /**
      * The currentUser ThreadLocal variable is used to make the currentUser available to any call in any part of an
      * application. Otherwise, each thread would have to pass the User object through the calltree to any methods that
      * need it. Because we want exceptions and log calls to contain user data, that could be almost anywhere. Therefore,
@@ -211,10 +261,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     public FileBasedAuthenticator() {
     }
 
-    /**
-     * Clears all threadlocal variables from the thread. This should ONLY be called after
-     * all possible ESAPI operations have concluded. If you clear too early, many calls will
-     * fail, including logging, which requires the user identity.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.owasp.esapi.Authenticator#clearCurrent()
      */
     public void clearCurrent() {
     	// logger.logWarning(Logger.SECURITY, "************Clearing threadlocals. Thread" + Thread.currentThread().getName() );
@@ -224,7 +274,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.Authenticator#createAccount(java.lang.String, java.lang.String)
+     * @see org.owasp.esapi.Authenticator#createAccount(java.lang.String, java.lang.String, java.lang.String)
      */
     public synchronized User createUser(String accountName, String password1, String password2) throws AuthenticationException {
         loadUsersIfNecessary();
@@ -268,12 +318,20 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.Authenticator#generateStrongPassword(int, char[])
+     * @see org.owasp.esapi.Authenticator#generateStrongPassword()
      */
     public String generateStrongPassword() {
         return generateStrongPassword("");
     }
-
+    
+    /**
+     * Generate a strong password that is not similar to the specified old password.
+     * 
+     * @param oldPassword
+     * 		the password to be compared to the new password for similarity
+     * @return
+     * 		a new strong password that is dissimilar to the specified old password
+     */
     private String generateStrongPassword(String oldPassword) {
         Randomizer r = ESAPI.randomizer();
         int letters = r.getRandomInteger(4, 6);  // inclusive, exclusive
@@ -313,7 +371,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     		throw new AuthenticationException("Password change failed", "Encryption exception changing password for " + accountName, ee);
     	}
     }
-
     
 	/* (non-Javadoc)
      * @see org.owasp.esapi.Authenticator#verifyPassword(org.owasp.esapi.User, java.lang.String)
@@ -339,7 +396,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	/*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.Authenticator#generateStrongPassword(int, char[])
+     * @see org.owasp.esapi.Authenticator#generateStrongPassword(org.owasp.esapi.User, java.lang.String)
      */
     public String generateStrongPassword(User user, String oldPassword) {
         String newPassword = generateStrongPassword(oldPassword);
@@ -362,12 +419,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
-    
-    /**
-     * Gets the user object with the matching account name or null if there is no match.
+    /*
+     * (non-Javadoc)
      * 
-     * @param accountId the account name
-     * @return the user, or null if not matched.
+     * @see org.owasp.esapi.Authenticator#getUser(java.lang.Long)
      */
     public synchronized User getUser(long accountId) {
     	if ( accountId == 0 ) {
@@ -378,11 +433,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         return user;
     }
 
-    /**
-     * Gets the user object with the matching account name or null if there is no match.
+    /*
+     * (non-Javadoc)
      * 
-     * @param accountName the account name
-     * @return the user, or null if not matched.
+     * @see org.owasp.esapi.Authenticator#getUser(java.lang.String)
      */
     public synchronized User getUser(String accountName) {
     	if ( accountName == null ) {
@@ -401,7 +455,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Gets the user from session.
      * 
-     * @return the user from session
+     * @return 
+     * 		the user from session or null if no user is found in the session
      */
     protected User getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
@@ -411,6 +466,11 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
     /**
      * Returns the user if a matching remember token is found, or null if the token
+     * is missing, token is corrupt, token is expired, account name does not match 
+     * and existing account, or hashed password does not match user's hashed password.
+     * 
+     * @return
+     * 		the user if a matching remember token is found, or null if the token
      * is missing, token is corrupt, token is expired, account name does not match 
      * and existing account, or hashed password does not match user's hashed password.
      */
@@ -452,10 +512,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		return user;
     }
 
-    /**
-     * Gets the user names.
+    /*
+     * (non-Javadoc)
      * 
-     * @return list of user account names
+     * @see org.owasp.esapi.Authenticator#getUserNames()
      */
     public synchronized Set getUserNames() {
         loadUsersIfNecessary();
@@ -535,6 +595,18 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     	}
     }
 
+    /**
+     * Create a new user with all attributes from a String.  The format is:  
+     * accountId | accountName | password | roles (comma separated) | unlocked | enabled | old password hashes (comma separated) | last host address | last password change time | last long time | last failed login time | expiration time | failed login count  
+     * This method verifies the account name and password strength, creates a new CSRF token, then returns the newly created user.
+     * 
+     * @param line
+     * 		parameters to set as attributes for the new User. 
+     * @return
+     * 		the newly created User
+     * 
+     * @throws AuthenticationException
+     */
 	private DefaultUser createUser(String line) throws AuthenticationException {
 		String[] parts = line.split(" *\\| *");
 		String accountIdString = parts[0];
@@ -577,10 +649,15 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Utility method to extract credentials and verify them.
      * 
-     * @param request The current request
-     * @param response The response being prepared
-     * @return The user that successfully authenticated
-     * @throws AuthenticationException If the submitted credentials are invalid.
+     * @param request 
+     * 		The current HTTP request
+     * @param response 
+     * 		The HTTP response being prepared
+     * @return 
+     * 		The user that successfully authenticated
+     * 
+     * @throws AuthenticationException 
+     * 		if the submitted credentials are invalid.
      */
     private User loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -632,7 +709,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * Saves the user database to the file system. In this implementation you must call save to commit any changes to
      * the user file. Otherwise changes will be lost when the program ends.
      * 
-     * @throws AuthenticationException the authentication exception
+     * @throws AuthenticationException 
+     * 		if the user file could not be written
      */
     protected synchronized void saveUsers() throws AuthenticationException {
         PrintWriter writer = null;
@@ -659,7 +737,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Save users.
      * 
-     * @param writer the writer
+     * @param writer 
+     * 		the print writer to use for saving
      */
     protected synchronized void saveUsers(PrintWriter writer) {
         Iterator i = getUserNames().iterator();
@@ -677,7 +756,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	/**
 	 * Save.
 	 * 
-	 * @return the string
+	 * @param user
+	 * 		the User to save
+	 * @return 
+	 * 		a line containing properly formatted information to save regarding the user
 	 */
 	private String save(DefaultUser user) {
 		StringBuffer sb = new StringBuffer();
@@ -711,7 +793,12 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
 	/**
 	 * Dump a collection as a comma-separated list.
-	 * @return the string
+	 * 
+	 * @param c
+	 * 		the collection to convert to a comma separated list
+	 * 
+	 * @return 
+	 * 		a comma separated list containing the values in c
 	 */
 	private String dump( Collection c ) {
 		StringBuffer sb = new StringBuffer();
@@ -724,16 +811,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		return sb.toString();
 	}
 
-    /**
-     * This method should be called for every HTTP request, to login the current user either from the session of HTTP
-     * request. This method will set the current user so that getCurrentUser() will work properly. This method also
-     * checks that the user's access is still enabled, unlocked, and unexpired before allowing login. For convenience
-     * this method also returns the current user.
-     * 
-     * @param request the request
-     * @param response the response
-     * @return the user
-     * @throws AuthenticationException the authentication exception
+    /*
+     * (non-Javadoc)
+     * @see org.owasp.esapi.Authenticator#login(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
      */
     public User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
@@ -819,8 +899,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     }
 
 
-    /**
-     * Log out the current user.
+    /*
+     * (non-Javadoc)
+     * @see org.owasp.esapi.Authenticator#logout()
      */
     public void logout() {
     	User user = getCurrentUser();
@@ -828,7 +909,6 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         	user.logout();
         }
     }
-    
     
     /*
      * (non-Javadoc)
@@ -839,14 +919,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         currentUser.setUser(user);
     }
 
-
     /*
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a
      * brute force attack, however the real strength comes from the name length and complexity.
      * 
-     * @see org.owasp.esapi.Authenticator#validateAccountNameStrength(java.lang.String)
-     */
-    /*
      * (non-Javadoc)
      * 
      * @see org.owasp.esapi.Authenticator#verifyAccountNameStrength(java.lang.String)
@@ -862,7 +938,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
     /*
      * This implementation checks: - for any 3 character substrings of the old password - for use of a length *
-     * character sets > 16 (where character sets are upper, lower, digit, and special (non-Javadoc)
+     * character sets > 16 (where character sets are upper, lower, digit, and special 
+     * 
+     * (non-Javadoc)
      * 
      * @see org.owasp.esapi.Authenticator#verifyPasswordStrength(java.lang.String)
      */

@@ -58,7 +58,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.Randomizer#getRandomString(int, char[])
+     * @see org.owasp.esapi.Randomizer#getRandomString(java.lang.Integer, java.lang.Character[])
      */
     public String getRandomString(int length, char[] characterSet) {
         StringBuffer sb = new StringBuffer();
@@ -79,18 +79,16 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         return secureRandom.nextBoolean();
     }
     
-    
-    /**
+    /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.Randomizer#getRandomInteger(int, int)
+     * @see org.owasp.esapi.Randomizer#getRandomInteger(java.lang.Integer, java.lang.Integer)
      */
     public int getRandomInteger(int min, int max) {
         return secureRandom.nextInt(max - min) + min;
     }
     
-    
-    /**
+    /*
      * (non-Javadoc)
      * 
      * @see org.owasp.esapi.Randomizer#getRandomLong()
@@ -98,25 +96,31 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     public long getRandomLong() {
         return secureRandom.nextLong();    
     }
-
     
     /*
      * (non-Javadoc)
      * 
-     * @see org.owasp.esapi.Randomizer#getRandomReal(float, float)
+     * @see org.owasp.esapi.Randomizer#getRandomReal(java.lang.Float, java.lang.Float)
      */
     public float getRandomReal(float min, float max) {
         float factor = max - min;
         return secureRandom.nextFloat() * factor + min;
     }
 
-    /**
-     * Returns an unguessable random filename with the specified extension.
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.owasp.esapi.Randomizer#getRandomFilename(java.lang.String)
      */
     public String getRandomFilename(String extension) {
         return this.getRandomString(12, DefaultEncoder.CHAR_ALPHANUMERICS) + "." + extension;
     }
-
+    
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.owasp.esapi.Randomizer#getRandomGUID()
+     */
     public String getRandomGUID() throws EncryptionException {
         // create random string to seed the GUID
         StringBuffer sb = new StringBuffer();
