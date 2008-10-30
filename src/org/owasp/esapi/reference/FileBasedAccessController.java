@@ -314,15 +314,16 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	}
 	
 	/**
-	 * Checks to see if the current user has access to the specified Class.
-	 * If the User has access, as specified by the map parameter, this method returns true.  If the 
-	 * User does not have access or an exception is thrown, false is returned.
+	 * Checks to see if the current user has access to the specified Class and action.
+	 * If the User has access, as specified by the map parameter, this method returns true if the action is permitted.
+     * If the User does not have access or an exception is thrown, false is returned.
 	 * 
 	 * @param map
 	 *            the map containing access rules
-	 * @param path
-	 *            the Class to check for access
-	 * 
+	 * @param clazz
+	 *            the Class being requested for access
+	 * @param action
+	 * 			  the action the User has asked to perform
 	 * @return 
 	 * 		true, if the user has access, false otherwise
 	 * 
