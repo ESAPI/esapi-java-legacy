@@ -54,15 +54,15 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         super(testName);
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#setUp()
+    /**
+     * {@inheritdoc}
      */
     protected void setUp() throws Exception {
     	// none
     }
 
-    /* (non-Javadoc)
-     * @see junit.framework.TestCase#tearDown()
+    /**
+     * {@inheritDoc}
      */
     protected void tearDown() throws Exception {
     	// none

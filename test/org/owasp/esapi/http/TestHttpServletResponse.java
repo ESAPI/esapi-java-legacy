@@ -44,8 +44,8 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	/** The status. */
 	int status = 200;
 	
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#addCookie(javax.servlet.http.Cookie)
+    /**
+     * {@inheritDoc}
 	 */
 	public void addCookie(Cookie cookie) {
 		cookies.add( cookie );
@@ -71,39 +71,39 @@ public class TestHttpServletResponse implements HttpServletResponse {
 		return null;
 	}
 	
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#addDateHeader(java.lang.String, long)
+    /**
+     * {@inheritDoc}
 	 */
 	public void addDateHeader(String name, long date) {
 		headerNames.add( name );
 		headerValues.add( ""+date );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#addHeader(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void addHeader(String name, String value) {
 		headerNames.add( name );
 		headerValues.add( value );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#addIntHeader(java.lang.String, int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void addIntHeader(String name, int value) {
 		headerNames.add( name );
 		headerValues.add( ""+value );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#containsHeader(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public boolean containsHeader(String name) {
 		return headerNames.contains(name);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#containsHeader(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	/**
 	 * Gets the header.
@@ -131,88 +131,88 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	}
 	
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#encodeRedirectURL(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public String encodeRedirectURL(String url) {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#encodeRedirectUrl(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public String encodeRedirectUrl(String url) {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#encodeURL(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public String encodeURL(String url) {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#encodeUrl(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public String encodeUrl(String url) {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#sendError(int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void sendError(int sc) throws IOException {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#sendError(int, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void sendError(int sc, String msg) throws IOException {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#sendRedirect(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void sendRedirect(String location) throws IOException {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#setDateHeader(java.lang.String, long)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setDateHeader(String name, long date) {
 		headerNames.add( name );
 		headerValues.add( ""+date );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#setHeader(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setHeader(String name, String value) {
 		headerNames.add( name );
 		headerValues.add( value );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#setIntHeader(java.lang.String, int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setIntHeader(String name, int value) {
 		headerNames.add( name );
 		headerValues.add( ""+value );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#setStatus(int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setStatus(int sc) {
 		status = sc;
@@ -227,128 +227,128 @@ public class TestHttpServletResponse implements HttpServletResponse {
 		return status;
 	}
 	
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpServletResponse#setStatus(int, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setStatus(int sc, String sm) {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#flushBuffer()
+    /**
+     * {@inheritDoc}
 	 */
 	public void flushBuffer() throws IOException {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#getBufferSize()
+    /**
+     * {@inheritDoc}
 	 */
 	public int getBufferSize() {
 	
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#getCharacterEncoding()
+    /**
+     * {@inheritDoc}
 	 */
 	public String getCharacterEncoding() {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#getContentType()
+    /**
+     * {@inheritDoc}
 	 */
 	public String getContentType() {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#getLocale()
+    /**
+     * {@inheritDoc}
 	 */
 	public Locale getLocale() {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#getOutputStream()
+    /**
+     * {@inheritDoc}
 	 */
 	public ServletOutputStream getOutputStream() throws IOException {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#getWriter()
+    /**
+     * {@inheritDoc}
 	 */
 	public PrintWriter getWriter() throws IOException {
 	
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#isCommitted()
+    /**
+     * {@inheritDoc}
 	 */
 	public boolean isCommitted() {
 	
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#reset()
+    /**
+     * {@inheritDoc}
 	 */
 	public void reset() {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#resetBuffer()
+    /**
+     * {@inheritDoc}
 	 */
 	public void resetBuffer() {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#setBufferSize(int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setBufferSize(int size) {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#setCharacterEncoding(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setCharacterEncoding(String charset) {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#setContentLength(int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setContentLength(int len) {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#setContentType(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setContentType(String type) {
 	
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.ServletResponse#setLocale(java.util.Locale)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setLocale(Locale loc) {
 	

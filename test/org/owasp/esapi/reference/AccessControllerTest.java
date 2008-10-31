@@ -67,14 +67,14 @@ public class AccessControllerTest extends TestCase {
 		mitch.addRole("user");
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#setUp()
+    /**
+     * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
 	}
 
-	/* (non-Javadoc)
-	 * @see junit.framework.TestCase#tearDown()
+    /**
+     * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
 		// none
