@@ -90,7 +90,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // TODO: check
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_SQL = { ' ' };
-	private final static char[] IMMUNE_OS = {};
+	private final static char[] IMMUNE_OS = { '-' };
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
