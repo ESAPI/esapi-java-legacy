@@ -1,6 +1,3 @@
-/**
- * 
- */
 package org.owasp.esapi.reference;
 
 import java.util.HashMap;
@@ -29,6 +26,11 @@ public class JavaLogFactory implements LogFactory {
 	
 	private HashMap loggersMap = new HashMap();
 	
+	/**
+	* Constructor for this implementation of the LogFactory interface.
+	* 
+	* @param applicationName The name of this application this logger is being constructed for.
+	*/
 	public JavaLogFactory(String applicationName) {
 		this.applicationName = applicationName;
 	}
@@ -69,8 +71,19 @@ public class JavaLogFactory implements LogFactory {
      */
     public static class JavaLoggerLevel extends Level {
 
+    	/**
+    	 * Defines a custom error level below SEVERE but above WARNING since this level isn't defined directly
+    	 * by java.util.Logger already.
+    	 */
     	public static final Level ERROR_LEVEL = new JavaLoggerLevel( "ERROR", Level.SEVERE.intValue() - 1);
     	
+    	/**
+    	 * Constructs an instance of a JavaLoggerLevel which essentially provides a mapping between the name of
+    	 * the defined level and its numeric value.
+    	 * 
+    	 * @param name The name of the JavaLoggerLevel
+    	 * @param value The associated numeric value
+    	 */
 		protected JavaLoggerLevel(String name, int value) {
 			super(name, value);
 		}
@@ -113,25 +126,11 @@ public class JavaLogFactory implements LogFactory {
             this.applicationName = applicationName;
             this.moduleName = moduleName;
             this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
-            // This set the default logging level. It isn't necessary now that the configuration value is used.
-            //this.jlogger.setLevel( Level.WARNING );  // The default level for this logger is Level.WARNING
             
             // Set the logging level defined in the config file.
             // Beware getting info from SecurityConfiguration, since it logs. We made sure it doesn't log in the
             // constructor and the getLogLevel() method, so this should work.
             this.jlogger.setLevel( JavaLogger.currentLevel );
-
-            // The following is sort of how you would log to a file, but it doesn't quite work yet
-            // Since it can't always lock when there are multiple logs all pointing to the same file.
-            /*
-            try {
-            	this.jlogger.addHandler( new FileHandler("C:\\ESAPI\\DaveLog", true) );
-            } catch (IOException e) {
-            	this.jlogger.log(Level.SEVERE, "Couldn't set log file to DaveLog", e);
-            }
-            
-            System.out.println("Dave: new logger created for app: " + applicationName + " and module: " + moduleName);
-            */
         }
 
         /**
