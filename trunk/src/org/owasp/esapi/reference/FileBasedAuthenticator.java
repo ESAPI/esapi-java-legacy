@@ -693,7 +693,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @throws AuthenticationException 
      * 		if the user file could not be written
      */
-    protected synchronized void saveUsers() throws AuthenticationException {
+    public synchronized void saveUsers() throws AuthenticationException {
         PrintWriter writer = null;
         try {
             writer = new PrintWriter(new FileWriter(userDB));
