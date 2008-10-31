@@ -52,7 +52,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     }
 
     /**
-     * {inheritDoc}
+     * {@inheritDoc}
      * 
      * <p>The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
      * and then executes the command without using concatenation.</p> 

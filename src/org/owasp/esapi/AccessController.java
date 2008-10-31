@@ -267,6 +267,8 @@ public interface AccessController {
     void assertAuthorizedForData(String action, Object data) throws AccessControlException;
    
     /**
+     * {@inheritDoc}
+     * 
      * Checks if an account is authorized to access the referenced file. The implementation should validate and canonicalize the 
      * input to be sure the filepath is not malicious.
      * <P>
@@ -284,14 +286,6 @@ public interface AccessController {
      *      </ol>
      * <li>If access is not permitted, throw an AccessControlException with details</li>
      * </ol> 
-     * 
-     * @see org.owasp.esapi.Encoder#canonicalize(String)
-     * 
-     * @param filepath 
-     * 		the path of the file to be checked, including filename
-     * 
-     * @throws AccessControlException 
-     * 		if access is not permitted
      */
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     

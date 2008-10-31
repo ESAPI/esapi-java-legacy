@@ -650,10 +650,8 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 			// to replace synthetic accessor method
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#toString()
+		/**
+	     * {@inheritDoc}
 		 */
 		public String toString() {
 			return "URL:" + path + " | " + roles + " | " + (allow ? "allow" : "deny");

@@ -410,22 +410,22 @@ public interface User extends Principal {
     	private String csrfToken = "";
     	private Set sessions = new HashSet();
     	
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#addRole(java.lang.String)
+    	/**
+         * {@inheritDoc}
          */
         public void addRole(String role) throws AuthenticationException {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#addRoles(java.util.Set)
+        /**
+         * {@inheritDoc}
          */
         public void addRoles(Set newRoles) throws AuthenticationException {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#changePassword(java.lang.String, java.lang.String, java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public void changePassword(String oldPassword, String newPassword1,
                 String newPassword2) throws AuthenticationException,
@@ -433,29 +433,29 @@ public interface User extends Principal {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#disable()
+        /**
+         * {@inheritDoc}
          */
         public void disable() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#enable()
+        /**
+         * {@inheritDoc}
          */
         public void enable() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getAccountId()
+        /**
+         * {@inheritDoc}
          */
         public long getAccountId() {
 	        return 0;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getAccountName()
+        /**
+         * {@inheritDoc}
          */
         public String getAccountName() {
 	        return "Anonymous";
@@ -470,253 +470,253 @@ public interface User extends Principal {
         	return getAccountName();
         }
         
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getCSRFToken()
+        /**
+         * {@inheritDoc}
          */
         public String getCSRFToken() {
 	        return csrfToken;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getLastFailedLoginTime()
+        /**
+         * {@inheritDoc}
          */
         public Date getExpirationTime() {
 	        return null;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getFailedLoginCount()
+        /**
+         * {@inheritDoc}
          */
         public int getFailedLoginCount() {
 	        return 0;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getLastFailedLoginTime()
+        /**
+         * {@inheritDoc}
          */
         public Date getLastFailedLoginTime() throws AuthenticationException {
 	        return null;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getLastHostAddress()
+        /**
+         * {@inheritDoc}
          */
         public String getLastHostAddress() {
 	        return "unknown";
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getLastLoginTime()
+        /**
+         * {@inheritDoc}
          */
         public Date getLastLoginTime() {
 	        return null;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getLastPasswordChangeTime()
+        /**
+         * {@inheritDoc}
          */
         public Date getLastPasswordChangeTime() {
 	        return null;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getRoles()
+        /**
+         * {@inheritDoc}
          */
         public Set getRoles() {
 	        return new HashSet();
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#getScreenName()
+        /**
+         * {@inheritDoc}
          */
         public String getScreenName() {
 	        return "Anonymous";
         }
 
-        /* (non-Javadoc)
-         * @see org.owasp.esapi.User#addSession()
+        /**
+         * {@inheritDoc}
          */
         public void addSession(HttpSession s)  {
         }
 
-        /* (non-Javadoc)
-         * @see org.owasp.esapi.User#removeSession()
+        /**
+         * {@inheritDoc}
          */
         public void removeSession(HttpSession s)  {
         }
 
-        /* (non-Javadoc)
-         * @see org.owasp.esapi.User#getSessions()
+        /**
+         * {@inheritDoc}
          */
         public Set getSessions()  {
             return sessions;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#incrementFailedLoginCount()
+        /**
+         * {@inheritDoc}
          */
         public void incrementFailedLoginCount() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isAnonymous()
+        /**
+         * {@inheritDoc}
          */
         public boolean isAnonymous() {
 	        return true;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isEnabled()
+        /**
+         * {@inheritDoc}
          */
         public boolean isEnabled() {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isExpired()
+        /**
+         * {@inheritDoc}
          */
         public boolean isExpired() {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isInRole(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public boolean isInRole(String role) {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isLocked()
+        /**
+         * {@inheritDoc}
          */
         public boolean isLocked() {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isLoggedIn()
+        /**
+         * {@inheritDoc}
          */
         public boolean isLoggedIn() {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isSessionAbsoluteTimeout()
+        /**
+         * {@inheritDoc}
          */
         public boolean isSessionAbsoluteTimeout() {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#isSessionTimeout()
+        /**
+         * {@inheritDoc}
          */
         public boolean isSessionTimeout() {
 	        return false;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#lock()
+        /**
+         * {@inheritDoc}
          */
         public void lock() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#loginWithPassword(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public void loginWithPassword(String password)
                 throws AuthenticationException {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#logout()
+        /**
+         * {@inheritDoc}
          */
         public void logout() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#removeRole(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public void removeRole(String role) throws AuthenticationException {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#resetCSRFToken()
+        /**
+         * {@inheritDoc}
          */
         public String resetCSRFToken() throws AuthenticationException {
     		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
     		return csrfToken;
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setAccountName(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public void setAccountName(String accountName) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setAccountName(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
     	public void setExpirationTime(Date expirationTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
         
-        /* (non-Javadoc)
-         * @see org.owasp.esapi.User#setRoles(java.util.Set)
+    	/**
+         * {@inheritDoc}
          */
         public void setRoles(Set roles) throws AuthenticationException {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setScreenName(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public void setScreenName(String screenName) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#unlock()
+        /**
+         * {@inheritDoc}
          */
         public void unlock() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#verifyPassword(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public boolean verifyPassword(String password) throws EncryptionException {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setLastFailedLoginTime(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
         public void setLastFailedLoginTime(Date lastFailedLoginTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
         
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setLastLoginTime(java.lang.String)
+        /**
+         * {@inheritDoc}
          */
     	public void setLastLoginTime(Date lastLoginTime) {
     		throw new RuntimeException("Invalid operation for the anonymous user");
     	}
 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setLastHostAddress(java.lang.String)
+    	/**
+         * {@inheritDoc}
          */
      	public void setLastHostAddress(String remoteHost) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
                 
-		/* (non-Javadoc)
-         * @see org.owasp.esapi.User#setLastPasswordChangeTime(java.lang.String)
+     	/**
+         * {@inheritDoc}
          */
         public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");

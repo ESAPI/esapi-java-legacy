@@ -31,14 +31,11 @@ public class CSSCodec implements Codec {
 	public CSSCodec() {
     }
 
-    /**
+	/**
+     * {@inheritDoc}
+     * 
      * This method encodes a String to safely be used in CSS.
      * 
-     * @param input the String to encode
-     * 
-     * @return the encoded String
-     * 
-     * @see org.owasp.esapi.codecs.Codec#encode(String)
      */
     public String encode(String input) {
         StringBuffer sb = new StringBuffer();
@@ -51,6 +48,7 @@ public class CSSCodec implements Codec {
 
 	/**
 	 * {@inheritDoc}
+	 *
      * Returns backslash encoded character. This implementation does not support \\### Latin encoded
      * characters in octal as it is not in ECMAScript v3.
 	 */
