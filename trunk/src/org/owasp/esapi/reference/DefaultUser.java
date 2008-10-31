@@ -124,8 +124,8 @@ public class DefaultUser implements User, Serializable {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.User#addRole(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addRole(String role) throws AuthenticationException {
 		String roleName = role.toLowerCase();
@@ -137,10 +137,8 @@ public class DefaultUser implements User, Serializable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#addRoles(java.util.Set)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addRoles(Set newRoles) throws AuthenticationException {
 		Iterator i = newRoles.iterator();
@@ -149,91 +147,84 @@ public class DefaultUser implements User, Serializable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#changePassword(java.lang.String, java.lang.String, java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException {
 		ESAPI.authenticator().changePassword(this, oldPassword, newPassword1, newPassword2);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#disable()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void disable() {
 		enabled = false;
 		logger.info( Logger.SECURITY, true, "Account disabled: " + getAccountName() );
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#enable()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void enable() {
 		this.enabled = true;
 		logger.info( Logger.SECURITY, true, "Account enabled: " + getAccountName() );
 	}
 
-	/* (non-Javadoc)
-     * @see org.owasp.esapi.User#getAccountId()
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     public long getAccountId() {
         return accountId;
     }
 
 	/**
-	 * Gets the account name.
-	 * 
-	 * @return the accountName
+	 * {@inheritDoc}
 	 */
 	public String getAccountName() {
 		return accountName;
 	}
 
 	/**
-	 * Gets the CSRF token. Use the HTTPUtilities.checkCSRFToken( request ) to verify the token.
-	 * 
-	 * @return the csrfToken
+	 * {@inheritDoc}
 	 */
 	public String getCSRFToken() {
 		return csrfToken;
 	}
 
 	/**
-	 * Gets the expiration time.
-	 * 
-	 * @return The expiration time of the current user.
+	 * {@inheritDoc}
 	 */
 	public Date getExpirationTime() {
 		return (Date)expirationTime.clone();
 	}
 
 	/**
-	 * Gets the failed login count.
-	 * 
-	 * @return the failedLoginCount
+	 * {@inheritDoc}
 	 */
 	public int getFailedLoginCount() {
 		return failedLoginCount;
 	}
 	
+	/**
+	 * Set the failed login count
+	 * 
+	 * @param count
+	 * 			the number of failed logins
+	 */
 	void setFailedLoginCount(int count) {
 		failedLoginCount = count;
 	}
 
 	/**
-	 * Gets the last failed login time.
-	 * 
-	 * @return the lastFailedLoginTime
+	 * {@inheritDoc}
 	 */
 	public Date getLastFailedLoginTime() {
 		return (Date)lastFailedLoginTime.clone();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getLastHostAddress() {
 		if ( lastHostAddress == null ) {
 			return "local";
@@ -242,66 +233,70 @@ public class DefaultUser implements User, Serializable {
     }
 
 	/**
-	 * Gets the last login time.
-	 * 
-	 * @return the lastLoginTime
+	 * {@inheritDoc}
 	 */
 	public Date getLastLoginTime() {
 		return (Date)lastLoginTime.clone();
 	}
 
 	/**
-	 * Gets the last password change time.
-	 * 
-	 * @return the lastPasswordChangeTime
+	 * {@inheritDoc}
 	 */
 	public Date getLastPasswordChangeTime() {
 		return (Date)lastPasswordChangeTime.clone();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public String getName() {
 		return this.getAccountName();
 	}
 	
 	/**
-	 * Gets the roles.
-	 * 
-	 * @return the roles
+	 * {@inheritDoc}
 	 */
 	public Set getRoles() {
 		return Collections.unmodifiableSet(roles);
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#getScreenName()
+	/**
+	 * {@inheritDoc}
 	 */
 	public String getScreenName() {
 		return screenName;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
     public void addSession( HttpSession s ) {
         sessions.add( s );
     }
     
+	/**
+	 * {@inheritDoc}
+	 */
     public void removeSession( HttpSession s ) {
         sessions.remove( s );
     }
     
+	/**
+	 * {@inheritDoc}
+	 */
 	public Set getSessions() {
 	    return sessions;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.User#incrementFailedLoginCount()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void incrementFailedLoginCount() {
 		failedLoginCount++;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.User#isAnonymous()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isAnonymous() {
 		// User cannot be anonymous, since we have a special User.ANONYMOUS instance
@@ -310,16 +305,14 @@ public class DefaultUser implements User, Serializable {
 	}
 
 	/**
-	 * Checks if is enabled.
-	 * 
-	 * @return the enabled
+	 * {@inheritDoc}
 	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.User#isExpired()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isExpired() {
 		return getExpirationTime().before( new Date() );
@@ -332,35 +325,29 @@ public class DefaultUser implements User, Serializable {
 		//		return days > 60;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#isInRole(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isInRole(String role) {
 		return roles.contains(role.toLowerCase());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#isLocked()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isLocked() {
 		return locked;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.User#isLoggedIn()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.IntrusionDetector#isSessionAbsoluteTimeout()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isSessionAbsoluteTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
@@ -370,10 +357,8 @@ public class DefaultUser implements User, Serializable {
 		return now.after(deadline);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.IntrusionDetector#isSessionTimeout()
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean isSessionTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
@@ -383,20 +368,16 @@ public class DefaultUser implements User, Serializable {
 		return now.after(deadline);
 	}
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#lock()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void lock() {
 		this.locked = true;
 		logger.info(Logger.SECURITY, true, "Account locked: " + getAccountName() );
 	}
 
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#login(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void loginWithPassword(String password) throws AuthenticationException {
 		if ( password == null || password.equals("") ) {
@@ -447,10 +428,8 @@ public class DefaultUser implements User, Serializable {
 	}
 
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#logout()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void logout() {
 		ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
@@ -466,10 +445,8 @@ public class DefaultUser implements User, Serializable {
 		ESAPI.authenticator().setCurrentUser(User.ANONYMOUS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#removeRole(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void removeRole(String role) {
 		roles.remove(role.toLowerCase());
@@ -477,6 +454,8 @@ public class DefaultUser implements User, Serializable {
 	}
 
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * In this implementation, we have chosen to use a random token that is
 	 * stored in the User object. Note that it is possible to avoid the use of
 	 * server side state by using either the hash of the users's session id or
@@ -485,8 +464,6 @@ public class DefaultUser implements User, Serializable {
 	 * because this token will appear in all links and forms.
 	 * 
 	 * @return the string
-	 * 
-	 * @see org.owasp.esapi.User#resetCSRFToken()
 	 */
 	public String resetCSRFToken() {
 		// user.csrfToken = ESAPI.encryptor().hash( session.getId(),user.name );
@@ -503,9 +480,8 @@ public class DefaultUser implements User, Serializable {
 	}
 	
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setAccountName(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setAccountName(String accountName) {
 		String old = getAccountName();
@@ -514,27 +490,24 @@ public class DefaultUser implements User, Serializable {
 			logger.info(Logger.SECURITY, true, "Account name changed from " + old + " to " + getAccountName() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setExpirationTime(java.util.Date)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = new Date( expirationTime.getTime() );
 		logger.info(Logger.SECURITY, true, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setLastFailedLoginTime(java.util.Date)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setLastFailedLoginTime(Date lastFailedLoginTime) {
 		this.lastFailedLoginTime = lastFailedLoginTime;
 		logger.info(Logger.SECURITY, true, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setLastHostAddress(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setLastHostAddress(String remoteHost) {
 		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost)) {
@@ -544,27 +517,24 @@ public class DefaultUser implements User, Serializable {
 		lastHostAddress = remoteHost;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setLastLoginTime(java.util.Date)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
 		logger.info(Logger.SECURITY, true, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setLastPasswordChangeTime(java.util.Date)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
 		this.lastPasswordChangeTime = lastPasswordChangeTime;
 		logger.info(Logger.SECURITY, true, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setRoles(java.util.Set)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setRoles(Set roles) throws AuthenticationException {
 		this.roles = new HashSet();
@@ -572,28 +542,23 @@ public class DefaultUser implements User, Serializable {
 		logger.info(Logger.SECURITY, true, "Adding roles " + roles + " to " + getAccountName() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.User#setScreenName(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
 		logger.info(Logger.SECURITY, true, "ScreenName changed to " + screenName + " for " + getAccountName() );
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
+	/**
+	 * {@inheritDoc}
 	 */
 	public String toString() {
 		return "USER:" + accountName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#unlock()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void unlock() {
 		this.locked = false;
@@ -601,10 +566,8 @@ public class DefaultUser implements User, Serializable {
 		logger.info( Logger.SECURITY, true, "Account unlocked: " + getAccountName() );
 	}
 	
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.User#verifyPassword(java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean verifyPassword(String password) {
 		return ESAPI.authenticator().verifyPassword(this, password);

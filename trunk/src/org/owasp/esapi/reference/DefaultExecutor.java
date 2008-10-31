@@ -52,6 +52,8 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     }
 
     /**
+     * {inheritDoc}
+     * 
      * <p>The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
      * and then executes the command without using concatenation.</p> 
      * 
@@ -60,9 +62,6 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * <p><b>Privacy Note</b>: Be careful if you pass PII to the executor, as the reference implementation logs
      * the parameters. You MUST change this behavior if you are passing credit card numbers, TIN/SSN, or 
      * health information through this reference implementation, such as to a credit card or HL7 gateway.</p> 
-     * 
-     * (non-Javadoc)
-     * @see org.owasp.esapi.Executor#executeSystemCommand(java.io.File, java.util.List, java.io.File, org.owasp.esapi.codecs.Codec)
      */
     public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
         try {
