@@ -55,7 +55,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected void setUp() throws Exception {
     	// none

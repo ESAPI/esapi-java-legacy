@@ -103,8 +103,11 @@ public class TestHttpServletRequest implements HttpServletRequest {
     }
 
     /**
-     * {@inheritDoc}
-     */ 
+     * removeParameter removes the parameter name from the parameters map if it exists
+     *  
+     * @param name
+     * 			parameter name to be removed
+     */
     public void removeParameter( String name ) {
     	parameters.remove( name );
     }

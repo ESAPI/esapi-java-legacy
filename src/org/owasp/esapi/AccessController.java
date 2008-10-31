@@ -267,8 +267,6 @@ public interface AccessController {
     void assertAuthorizedForData(String action, Object data) throws AccessControlException;
    
     /**
-     * {@inheritDoc}
-     * 
      * Checks if an account is authorized to access the referenced file. The implementation should validate and canonicalize the 
      * input to be sure the filepath is not malicious.
      * <P>
@@ -286,6 +284,10 @@ public interface AccessController {
      *      </ol>
      * <li>If access is not permitted, throw an AccessControlException with details</li>
      * </ol> 
+     * 
+     * @param filepath
+     * 			Path to the file to be checked
+     * @throws AccessControlException if access is denied
      */
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     
