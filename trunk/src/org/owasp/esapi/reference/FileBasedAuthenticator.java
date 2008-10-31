@@ -111,7 +111,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * </PRE>
      * 
      * @param args 
-     * 		the arguments
+     * 		the arguments (username, password, role)
      * @throws Exception 
      * 		the exception
      */
