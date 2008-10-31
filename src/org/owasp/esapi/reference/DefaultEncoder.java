@@ -151,9 +151,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 	
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#canonicalize(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String canonicalize( String input ) {
 		if ( input == null ) return null;
@@ -161,9 +159,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 	
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#canonicalize(java.lang.String, boolean)
+	 * {@inheritDoc}
 	 */
 	public String canonicalize( String input, boolean strict ) {
 		if ( input == null ) return null;
@@ -236,8 +232,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.Encoder#normalize(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String normalize(String input) {
 		// Split any special characters into two parts, the base character and
@@ -272,9 +267,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForHTML(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForHTML(String input) {
 	    if( input == null ) return null;
@@ -295,9 +288,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 
 	 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForHTMLAttribute(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForHTMLAttribute(String input) {
 	    if( input == null ) return null;
@@ -311,9 +302,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForCSS(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForCSS(String input) {
 	    if( input == null ) return null;
@@ -329,9 +318,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForJavaScript(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForJavaScript(String input) {
 	    if( input == null ) return null;
@@ -344,9 +331,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForVBScript(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForVBScript(String input) {
 	    if( input == null ) return null;
@@ -359,10 +344,8 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForSQL(org.owasp.esapi.codecs.Codec,java.lang.String)
+	/**
+	 * {@inheritDoc}
 	 */
 	public String encodeForSQL(Codec codec, String input) {
 	    if( input == null ) return null;
@@ -375,9 +358,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForOS(org.owasp.esapi.codecs.Codec,java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForOS(Codec codec, String input) {
 	    if( input == null ) return null;
@@ -390,9 +371,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForLDAP(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForLDAP(String input) {
 		// TODO: replace with LDAP codec
@@ -423,9 +402,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForDN(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForDN(String input) {
 		// TODO: replace with DN codec
@@ -470,9 +447,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForXPath(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForXPath(String input) {
 	    if( input == null ) return null;
@@ -485,9 +460,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForXML(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForXML(String input) {
 	    if( input == null ) return null;
@@ -500,9 +473,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForXMLAttribute(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForXMLAttribute(String input) {
 	    if( input == null ) return null;
@@ -515,9 +486,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForURL(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String encodeForURL(String input) throws EncodingException {
 		try {
@@ -530,9 +499,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#decodeFromURL(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public String decodeFromURL(String input) throws EncodingException {
 		String canonical = canonicalize(input);
@@ -546,9 +513,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#encodeForBase64(byte[], boolean)
+	 * {@inheritDoc}
 	 */
 	public String encodeForBase64(byte[] input, boolean wrap) {
 		int options = 0;
@@ -559,9 +524,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	}
 
 	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.Encoder#decodeFromBase64(java.lang.String)
+	 * {@inheritDoc}
 	 */
 	public byte[] decodeFromBase64(String input) throws IOException {
 		return Base64.decode( input );

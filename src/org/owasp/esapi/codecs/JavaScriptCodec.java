@@ -30,11 +30,9 @@ public class JavaScriptCodec implements Codec {
 	}
 
 	/**
-	 * (non-Javadoc)
+	 * {@inheritDoc}
 	 * 
 	 * Encodes a String for safe use in a JavaScript context.
-	 * 
-	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
 	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -46,12 +44,10 @@ public class JavaScriptCodec implements Codec {
 	}
 
 	/**
-	 * (non-Javadoc)
+	 * {@inheritDoc}
 	 * 
 	 * Returns backslash encoded character. This implementation does not support
 	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
-	 * 
-	 * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
 	 */
 	public String encodeCharacter( Character c ) {
 		char ch = c.charValue();
@@ -79,11 +75,9 @@ public class JavaScriptCodec implements Codec {
 	}
 
 	/**
-	 * (non-Javadoc)
+	 * {@inheritDoc}
 	 * 
 	 * Decodes a String that has been encoded for use in a JavaScript context.
-	 * 
-	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
 	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -101,6 +95,8 @@ public class JavaScriptCodec implements Codec {
 	
 	
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 
@@ -108,9 +104,6 @@ public class JavaScriptCodec implements Codec {
 	 *   \\a - special characters
 	 *   \\xHH
 	 *   \\uHHHH
-	 * 
-	 * (non-Javadoc)
-	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();

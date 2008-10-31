@@ -37,11 +37,9 @@ public class HTMLEntityCodec implements Codec {
 
 
 	/**
-	 * (non-Javadoc)
+	 * {@inheritDoc}
 	 * 
 	 * Encodes a String for safe use as an HTML entity
-	 * 
-	 * @see org.owasp.esapi.codecs.Codec#encode(java.lang.String)
 	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -51,12 +49,10 @@ public class HTMLEntityCodec implements Codec {
 		return sb.toString();
 	}
 
-    /**
-     * (non-Javadoc)
-     * 
+	/**
+	 * {@inheritDoc}
+	 * 
      * Encodes a Character for safe use in an HTML entity field.
-     * 
-     * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
      */
 	public String encodeCharacter( Character c ) {
 		String entityName = (String) characterToEntityMap.get(c);
@@ -66,12 +62,10 @@ public class HTMLEntityCodec implements Codec {
 		return "&#" + (int)c.charValue() + ";";
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 * 
 	 * Decodes a String that has been encoded for use in an HTML entity field.
-	 * 
-	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
 	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -87,8 +81,8 @@ public class HTMLEntityCodec implements Codec {
 		return sb.toString();
 	}
 	
-	/*
-	 * (non-Javadoc)
+	/**
+	 * {@inheritDoc}
 	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
@@ -97,8 +91,6 @@ public class HTMLEntityCodec implements Codec {
 	 *   &#dddd;
 	 *   &#xhhhh;
 	 *   &name;
-	 *
-	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();

@@ -49,14 +49,11 @@ public class CSSCodec implements Codec {
         return sb.toString();
     }
 
-    /**
-     * (non-Javadoc)
-     * 
+	/**
+	 * {@inheritDoc}
      * Returns backslash encoded character. This implementation does not support \\### Latin encoded
      * characters in octal as it is not in ECMAScript v3.
-     *
-     * @see org.owasp.esapi.codecs.Codec#encodeCharacter(java.lang.Character)
-     */
+	 */
     public String encodeCharacter(Character c) {
         char ch = c.charValue();
 
@@ -70,11 +67,9 @@ public class CSSCodec implements Codec {
         return "\\" + temp.toUpperCase() + " ";
     }
 
-    /**
-     * (non-Javadoc)
-     * 
-     * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
-     */
+	/**
+	 * {@inheritDoc}
+	 */
     public String decode(String input) {
         StringBuffer sb = new StringBuffer();
         PushbackString pbs = new PushbackString(input);
@@ -89,17 +84,13 @@ public class CSSCodec implements Codec {
         return sb.toString();
     }
 
-
     /**
-     * (non-Javadoc)
-     * 
-     * Returns the decoded version of the character starting at index, or null if no decoding is
+	 * {@inheritDoc}
+	 * Returns the decoded version of the character starting at index, or null if no decoding is
      * possible.
      * 
      * Formats all are legal both upper/lower case: \\x - special characters \\HHHH
-     *
-     * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
-     */
+	 */
     public Character decodeCharacter(PushbackString input) {
         input.mark();
         Character first = input.next();
