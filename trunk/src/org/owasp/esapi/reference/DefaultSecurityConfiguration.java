@@ -506,9 +506,13 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
         return duration;		
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+   /**
+    * getValidationPattern names returns validator pattern names
+    * from ESAPI's global properties 
+    * 
+    * @return 
+    * 			a list iterator of pattern names 
+    */
    public Iterator getValidationPatternNames() {
     	TreeSet list = new TreeSet();
     	Iterator i = properties.keySet().iterator();
@@ -522,8 +526,13 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     }
     
    /**
-	 * {@inheritDoc}
-	 */
+    * getValidationPattern returns a single pattern based upon key
+    * 
+    *  @param key 
+    *  			validation pattern name you'd like
+    *  @return
+    *  			if key exists, the associated validation pattern, null otherwise
+	*/
     public Pattern getValidationPattern( String key ) {
     	String value = properties.getProperty( "Validator." + key );
     	if ( value == null ) return null;
