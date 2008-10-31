@@ -430,7 +430,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * Returns true if the directory path (not including a filename) is valid.
 	 * 
-	 * 
+	 * <p><b>Note:</b> On platforms that support symlinks, this function will fail canonicalization if directorypath
+	 * is a symlink. For example, on MacOS X, /etc is actually /private/etc. If you mean to use /etc, use its real
+	 * path (/private/etc), not the symlink (/etc).</p>
 	 */
 	public boolean isValidDirectoryPath(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
@@ -756,6 +758,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * Returns true if a file upload has a valid name, path, and content.
+	 * 
+	 * <p><b>Note:</b> On platforms that support symlinks, this function will fail canonicalization if directorypath
+	 * is a symlink. For example, on MacOS X, /etc is actually /private/etc. If you mean to use /etc, use its real
+	 * path (/private/etc), not the symlink (/etc).</p>
+	 * 
 	 */
 	public boolean isValidFileUpload(String context, String directorypath, String filename, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException {
 		return( isValidFileName( context, filename, allowNull ) &&
