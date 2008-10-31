@@ -93,12 +93,12 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		}
 	}
 
-	/*
+	/**
+     * {@inheritDoc}
+     * 
 	 * Hashes the data using the specified algorithm and the Java MessageDigest class. This method
 	 * first adds the salt, a separator (":"), and the data, and then rehashes 1024 times to help 
 	 * strengthen weak passwords.
-	 * 
-	 * @see org.owasp.esapi.Encryptor#hash(java.lang.String, java.lang.String)
 	 */
 	public String hash(String plaintext, String salt) throws EncryptionException {
 		byte[] bytes = null;

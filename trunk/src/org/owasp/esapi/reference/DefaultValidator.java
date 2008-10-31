@@ -976,10 +976,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	/**
+     * {@inheritDoc}
+     * 
 	 * Checks that all bytes are valid ASCII characters (between 33 and 126
-	 * inclusive). This implementation does no decoding. http://en.wikipedia.org/wiki/ASCII. (non-Javadoc)
-	 * 
-	 * 
+	 * inclusive). This implementation does no decoding. http://en.wikipedia.org/wiki/ASCII.
 	 */
 	public boolean isValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {
@@ -1102,18 +1102,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 
 	/**
+     * {@inheritDoc}
+     * 
 	 * This implementation reads until a newline or the specified number of
 	 * characters.
-	 * 
-	 * @param in
-	 *            the in
-	 * @param max
-	 *            the max
-	 * @return the string
-	 * @throws ValidationException
-	 *             the validation exception
-	 * @see org.owasp.esapi.Validator#safeReadLine(java.io.InputStream,
-	 *      int)
 	 */
 	public String safeReadLine(InputStream in, int max) throws ValidationException {
 		if (max <= 0)
