@@ -51,19 +51,15 @@ public class ValidatorTest extends TestCase {
 		super(testName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
+	/**
+     * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
 		// none
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
+	/**
+     * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
 		// none
@@ -288,12 +284,49 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidDirectoryPath() {
 		System.out.println("isValidDirectoryPath");
+		
+		boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1 ) ? true : false;
+	
 		Validator instance = ESAPI.validator();
-		assertTrue(instance.isValidDirectoryPath("test", "/", false));
-		assertTrue(instance.isValidDirectoryPath("test", "c:\\jeff", false));
-		assertTrue(instance.isValidDirectoryPath("test", "/etc/config", false));
-		// assertTrue( instance.isValidDirectoryPath( "c:\\Windows\\System32\\cmd.exe" ) );
-		assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
+		if ( isWindows ) {
+			// Windows paths that don't exist and thus should fail
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\pathNotExist", false));
+			assertTrue(instance.isValidDirectoryPath("test", "c:\\jeff", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
+
+			// Windows paths that should pass
+			assertTrue(instance.isValidDirectoryPath("test", "c:\\", false));								// Windows root directory
+			assertTrue(instance.isValidDirectoryPath("test", "c:\\windows", false));						// Windows always exist directory
+			assertTrue(instance.isValidDirectoryPath("test", "c:\\windows\\system32\\cmd.exe", false));		// Windows command shell	
+			
+			// Unix specific paths should not pass
+			assertFalse(instance.isValidDirectoryPath("test", "/", false));			// Unix Root directory
+			assertFalse(instance.isValidDirectoryPath("test", "/tmp", false));		// Unix Temporary directory
+			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Unix Standard shell	
+			assertTrue(instance.isValidDirectoryPath("test", "/etc/config", false));
+			
+			// Unix specific paths that should not exist or work
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
+		} else {
+			// Windows paths should fail
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\pathNotExist", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
+
+			// Standard Windows locations should fail
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\", false));								// Windows root directory
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\temp", false));					// Windows temporary directory
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\System32\\cmd.exe", false));	// Windows command shell	
+			
+			// Unix specific paths should pass
+			assertTrue(instance.isValidDirectoryPath("test", "/", false));			// Root directory
+			assertTrue(instance.isValidDirectoryPath("test", "/bin", false));		// Always exist directory
+			assertTrue(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Standard shell	
+			
+			// Unix specific paths that should not exist or work
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
+		}
 	}
 
 	public void testIsValidPrintable() {
@@ -322,10 +355,17 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidFileUpload() {
 		System.out.println("isValidFileUpload");
 
-		String filepath = "/etc";
+		String filepath = "/bin";
 		String filename = "aspect.jar";
 		byte[] content = "Thisi is some file content".getBytes();
 		Validator instance = ESAPI.validator();
+		assertTrue(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
+		
+		// This will fail on MacOS X, as /etc is actually /private/etc
+		// TODO: Fix canonicalization of symlinks on MacOS X
+		filepath = "/etc";
+		filename = "aspect.jar";
+		content = "Thisi is some file content".getBytes();
 		assertTrue(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
 	}
 
