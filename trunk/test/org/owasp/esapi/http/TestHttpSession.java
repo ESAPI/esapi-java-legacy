@@ -70,30 +70,30 @@ public class TestHttpSession implements HttpSession {
 		this.accessedTime = accessedTime;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getAttribute(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public Object getAttribute(String string) {
 		return attributes.get( string );
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getAttributeNames()
+    /**
+     * {@inheritDoc}
 	 */
 	public Enumeration getAttributeNames() {
 		Vector v = new Vector( attributes.keySet() );
 		return v.elements();
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getCreationTime()
+    /**
+     * {@inheritDoc}
 	 */
 	public long getCreationTime() {
 		return creationTime;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getId()
+    /**
+     * {@inheritDoc}
 	 */
 	public String getId() {
 		return ""+sessionid;
@@ -108,92 +108,92 @@ public class TestHttpSession implements HttpSession {
 		return invalidated;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getLastAccessedTime()
+    /**
+     * {@inheritDoc}
 	 */
 	public long getLastAccessedTime() {
 		return accessedTime;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getMaxInactiveInterval()
+    /**
+     * {@inheritDoc}
 	 */
 	public int getMaxInactiveInterval() {
 		return 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getServletContext()
+    /**
+     * {@inheritDoc}
 	 */
 	public ServletContext getServletContext() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getSessionContext()
+    /**
+     * {@inheritDoc}
 	 */
 	public HttpSessionContext getSessionContext() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getValue(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public Object getValue(String string) {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#getValueNames()
+    /**
+     * {@inheritDoc}
 	 */
 	public String[] getValueNames() {
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#invalidate()
+    /**
+     * {@inheritDoc}
 	 */
 	public void invalidate() {
 		invalidated = true;
 	}
     
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#isNew()
+    /**
+     * {@inheritDoc}
 	 */
 	public boolean isNew() {
 		return true;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#putValue(java.lang.String, java.lang.Object)
+	/**
+     * {@inheritDoc}
 	 */
 	public void putValue(String string, Object object) {
 		// stub
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#removeAttribute(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void removeAttribute(String string) {
 		// stub
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#removeValue(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void removeValue(String string) {
 		// stub
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#setAttribute(java.lang.String, java.lang.Object)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setAttribute(String string, Object object) {
 		attributes.put(string, object);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSession#setMaxInactiveInterval(int)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setMaxInactiveInterval(int i) {
 		// stub
