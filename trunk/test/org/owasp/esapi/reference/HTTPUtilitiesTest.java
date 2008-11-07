@@ -346,16 +346,28 @@ public class HTTPUtilitiesTest extends TestCase {
         } catch( EncryptionException e ) {
         	fail();
         }
-        
+    }
+    
+    
+    public void testSaveTooLongStateInEncryptedCookieException() {
+    	System.out.println("saveTooLongStateInEncryptedCookie");
+
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        TestHttpServletResponse response = new TestHttpServletResponse();
+        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+
         String foo = ESAPI.randomizer().getRandomString(4096, DefaultEncoder.CHAR_ALPHANUMERICS);
-        map.clear();
+
+        HashMap map = new HashMap();
         map.put("long", foo);
         try {
 	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse, map);
+	        fail("Should have thrown an exception");
         }
-        catch (EncryptionException e) {
-        	; //expected
-        }
+        catch (EncryptionException expected) {
+        	//expected
+        }    	
     }
     
     /**
@@ -395,6 +407,4 @@ public class HTTPUtilitiesTest extends TestCase {
 		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
 	    // assertEquals( user.getRememberToken(), value );
 	}
-    
-    
 }

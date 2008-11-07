@@ -311,19 +311,15 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     		}
     	}
     	
-    	try {
-    		String encrypted = ESAPI.encryptor().encrypt(sb.toString());
-    		
-    		if ( encrypted.length() > (MAX_COOKIE_LEN - 12) ) {	 // Leave some room for "Set-Cookie: "
-    			throw new EncryptionException("Encryption failure", "Encrypted state too long");
-    		}
-    		
-        	Cookie cookie = new Cookie( "state", encrypted );
-        	response.addCookie( cookie );
-    	}
-    	catch ( EncryptionException e ) {
-    		logger.error(Logger.SECURITY, false, "Problem encrypting state in cookie - skipping entry", e );
-    	}
+		String encrypted = ESAPI.encryptor().encrypt(sb.toString());
+		
+		if ( encrypted.length() > (MAX_COOKIE_LEN - 12) ) {	 // Leave some room for "Set-Cookie: "
+			logger.error(Logger.SECURITY, false, "Problem encrypting state in cookie - skipping entry");
+			throw new EncryptionException("Encryption failure", "Encrypted state too long");
+		}
+		
+    	Cookie cookie = new Cookie( "state", encrypted );
+    	response.addCookie( cookie );
     }
 
 	/**
