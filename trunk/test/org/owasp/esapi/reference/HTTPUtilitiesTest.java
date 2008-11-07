@@ -346,6 +346,16 @@ public class HTTPUtilitiesTest extends TestCase {
         } catch( EncryptionException e ) {
         	fail();
         }
+        
+        String foo = ESAPI.randomizer().getRandomString(4096, DefaultEncoder.CHAR_ALPHANUMERICS);
+        map.clear();
+        map.put("long", foo);
+        try {
+	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse, map);
+        }
+        catch (EncryptionException e) {
+        	; //expected
+        }
     }
     
     /**
