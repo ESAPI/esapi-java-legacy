@@ -134,6 +134,20 @@ public class EncryptedPropertiesTest extends TestCase {
 			// expected
 		}
 	}
+
+	/**
+	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
+	 * 
+	 * This has to run before testLoad(), or else testLoad() will fail. AJV
+	 */
+	public void testAAStore() throws Exception {
+		System.out.println("store");
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
+		instance.setProperty("one", "two");
+		instance.setProperty("two", "three");
+		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
+		instance.store(new FileOutputStream( f ), "testStore");
+	}	
 	
 	/**
 	 * Test of load method, of class org.owasp.esapi.EncryptedProperties.
@@ -147,18 +161,6 @@ public class EncryptedPropertiesTest extends TestCase {
 		assertEquals( "three",  instance.getProperty("two" ) );
 	}
 	
-	/**
-	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
-	 */
-	public void testStore() throws Exception {
-		System.out.println("store");
-		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
-		instance.setProperty("one", "two");
-		instance.setProperty("two", "three");
-		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
-		instance.store(new FileOutputStream( f ), "testStore");
-	}
-
 	/**
 	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
 	 */
