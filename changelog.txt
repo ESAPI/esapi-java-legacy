@@ -1,4 +1,6 @@
 Changelog for ESAPI 1.4.x
 
+Rev 361 - DefaultValidator: Add a new sub-test to ensure safeReadLine acts like BufferedReader.readLine() 
+Rev 360 - HTTPUtility: Add a new test case for too long cookies
 Rev 359 - Ensure that the EncryptedProperties testStore() method runs before testLoad(), so that testLoad() has something to do AJV
 Rev 358 - Ensure that encrypted cookies do not exceed roughly 4080 bytes in size (AJV)
