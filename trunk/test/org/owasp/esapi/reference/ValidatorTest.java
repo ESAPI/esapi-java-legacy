@@ -15,7 +15,10 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -424,6 +427,22 @@ public class ValidatorTest extends TestCase {
 		try {
 			String u = instance.safeReadLine(s, 20);
 			assertEquals("testString", u);
+		} catch (ValidationException e) {
+			fail();
+		}
+		
+		// This sub-test attempts to validate that BufferedReader.readLine() and safeReadLine() are similar in operation 
+		// for the nominal case 
+		try {
+			s.reset();
+			InputStreamReader isr = new InputStreamReader(s);
+			BufferedReader br = new BufferedReader(isr);
+			String u = br.readLine();
+			s.reset();
+			String v = instance.safeReadLine(s, 20);
+			assertEquals(u, v);
+		} catch (IOException e) {
+			fail();
 		} catch (ValidationException e) {
 			fail();
 		}

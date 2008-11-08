@@ -1115,8 +1115,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * characters.
 	 */
 	public String safeReadLine(InputStream in, int max) throws ValidationException {
-		if (max <= 0)
+		if (max <= 0) {
 			throw new ValidationAvailabilityException( "Invalid input", "Invalid readline. Must read a positive number of bytes from the stream");
+		}
 
 		StringBuffer sb = new StringBuffer();
 		int count = 0;
@@ -1126,10 +1127,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			while (true) {
 				c = in.read();
 				if ( c == -1 ) {
-					if (sb.length() == 0) return null;
+					if (sb.length() == 0) {
+						return null;
+					}
 					break;
 				}
-				if (c == '\n' || c == '\r') break;
+				if (c == '\n' || c == '\r') {
+					break;
+				}
 				count++;
 				if (count > max) {
 					throw new ValidationAvailabilityException( "Invalid input", "Invalid readLine. Read more than maximum characters allowed (" + max + ")");
