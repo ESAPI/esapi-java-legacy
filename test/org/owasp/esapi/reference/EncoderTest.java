@@ -32,7 +32,9 @@ import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.codecs.PercentCodec;
-import org.owasp.esapi.codecs.VBScriptCodec;
+import org.owasp.esapi.codecs.PushbackString;
+import org.owasp.esapi.codecs.WindowsCodec;
+import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
@@ -78,6 +80,25 @@ public class EncoderTest extends TestCase {
         return suite;
     }
     
+	/**
+	 * Test of DefaultEncoder constructor - check that only codecs are allowed
+	 * 
+	 * @throws EncodingException
+	 */
+	public void testDefaultEncoderException() throws EncodingException {
+		System.out.println("testDefaultEncoderException");
+		
+        ArrayList list = new ArrayList();
+        list.add( new HTMLEntityCodec() );
+	    list.add( new Object() );
+	    try {
+	    	Encoder instance = new DefaultEncoder( list );
+	    	fail();
+	    }
+	    catch (IllegalArgumentException expected) {
+	    	// expected
+	    }
+	}
 
 	/**
 	 * Test of canonicalize method, of class org.owasp.esapi.Encoder.
@@ -90,7 +111,16 @@ public class EncoderTest extends TestCase {
         list.add( new HTMLEntityCodec() );
 	    list.add( new PercentCodec() );
 		Encoder instance = new DefaultEncoder( list );
-
+		
+		// Test null paths
+		assertEquals( null, instance.canonicalize(null));
+		assertEquals( null, instance.canonicalize(null, true));
+		assertEquals( null, instance.canonicalize(null, false));
+		
+		// test exception paths
+		assertEquals( "%", instance.canonicalize("%25", true));
+		assertEquals( "%", instance.canonicalize("%25", false));
+		
         assertEquals( "%", instance.canonicalize("%25"));
         assertEquals( "%F", instance.canonicalize("%25F"));
         assertEquals( "<", instance.canonicalize("%3c"));
@@ -316,6 +346,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForHTMLAttribute() {
         System.out.println("encodeForHTMLAttribute");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForHTMLAttribute(null));
         assertEquals("&lt;script&gt;", instance.encodeForHTMLAttribute("<script>"));
         assertEquals(",.-_", instance.encodeForHTMLAttribute(",.-_"));
         assertEquals("&#32;&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
@@ -325,6 +356,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForCSS() {
         System.out.println("encodeForCSS");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForCSS(null));
         assertEquals("\\<script\\>", instance.encodeForCSS("<script>"));
         assertEquals(" \\!\\@\\$\\%\\(\\)\\=\\+\\{\\}\\[\\]\\\"", instance.encodeForCSS(" !@$%()=+{}[]\""));
     }
@@ -337,6 +369,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForJavascript() {
         System.out.println("encodeForJavascript");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForJavaScript(null));
         assertEquals("\\x3Cscript\\x3E", instance.encodeForJavaScript("<script>"));
         assertEquals(",.-_ ", instance.encodeForJavaScript(",.-_ "));
         assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavaScript("!@$%()=+{}[]"));
@@ -355,6 +388,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForVBScript() {
         System.out.println("encodeForVBScript");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForVBScript(null));
         assertEquals("\"<script\">", instance.encodeForVBScript("<script>"));
         assertEquals(" \"!\"@\"$\"%\"(\")\"=\"+\"{\"}\"[\"]\"\"", instance.encodeForVBScript(" !@$%()=+{}[]\""));
     }
@@ -365,6 +399,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForXPath() {
         System.out.println("encodeForXPath");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForXPath(null));
         assertEquals("&#39;or 1&#61;1", instance.encodeForXPath("'or 1=1"));
     }
     
@@ -376,14 +411,17 @@ public class EncoderTest extends TestCase {
     public void testEncodeForSQL() {
         System.out.println("encodeForSQL");
         Encoder instance = ESAPI.encoder();
-        
+
         Codec mySQL1 = new MySQLCodec( MySQLCodec.ANSI_MODE );
+        assertEquals("ANSI_MODE", null, instance.encodeForSQL(mySQL1, null));
         assertEquals("ANSI_MODE", "Jeff'' or ''1''=''1", instance.encodeForSQL(mySQL1, "Jeff' or '1'='1"));
         
         Codec mySQL2 = new MySQLCodec( MySQLCodec.MYSQL_MODE );
+        assertEquals("MYSQL_MODE", null, instance.encodeForSQL(mySQL2, null));
         assertEquals("MYSQL_MODE", "Jeff\\' or \\'1\\'\\=\\'1", instance.encodeForSQL(mySQL2, "Jeff' or '1'='1"));
 
         Codec oracle = new OracleCodec();
+        assertEquals("Oracle", null, instance.encodeForSQL(oracle, null));
         assertEquals("Oracle", "Jeff\\' or \\'1\\'\\=\\'1", instance.encodeForSQL(oracle, "Jeff' or '1'='1"));
     }
 
@@ -394,6 +432,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForLDAP() {
         System.out.println("encodeForLDAP");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForLDAP(null));
         assertEquals("No special characters to escape", "Hi This is a test #çà", instance.encodeForLDAP("Hi This is a test #çà"));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # ç à ô", instance.encodeForLDAP("Hi (This) = is * a \\ test # ç à ô"));
@@ -405,6 +444,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForDN() {
         System.out.println("encodeForDN");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForDN(null));
         assertEquals("No special characters to escape", "Helloé", instance.encodeForDN("Helloé"));
         assertEquals("leading #", "\\# Helloé", instance.encodeForDN("# Helloé"));
         assertEquals("leading space", "\\ Helloé", instance.encodeForDN(" Helloé"));
@@ -421,6 +461,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForXML() {
         System.out.println("encodeForXML");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForXML(null));
         assertEquals(" ", instance.encodeForXML(" "));
         assertEquals("&lt;script&gt;", instance.encodeForXML("<script>"));
         assertEquals(",.-_", instance.encodeForXML(",.-_"));
@@ -435,6 +476,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForXMLAttribute() {
         System.out.println("encodeForXMLAttribute");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForXMLAttribute(null));
         assertEquals("&#32;", instance.encodeForXMLAttribute(" "));
         assertEquals("&lt;script&gt;", instance.encodeForXMLAttribute("<script>"));
         assertEquals(",.-_", instance.encodeForXMLAttribute(",.-_"));
@@ -447,6 +489,7 @@ public class EncoderTest extends TestCase {
     public void testEncodeForURL() throws Exception {
         System.out.println("encodeForURL");
         Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForURL(null));
         assertEquals("%3Cscript%3E", instance.encodeForURL("<script>"));
     }
     
@@ -457,6 +500,7 @@ public class EncoderTest extends TestCase {
         System.out.println("decodeFromURL");
         Encoder instance = ESAPI.encoder();
         try {
+        	assertEquals(null, instance.decodeFromURL(null));
             assertEquals("<script>", instance.decodeFromURL("%3Cscript%3E"));
             assertEquals("     ", instance.decodeFromURL("+++++") );
         } catch ( Exception e ) {
@@ -470,7 +514,11 @@ public class EncoderTest extends TestCase {
     public void testEncodeForBase64() {
         System.out.println("encodeForBase64");
         Encoder instance = ESAPI.encoder();
+        
         try {
+        	assertEquals(null, instance.encodeForBase64(null, false));
+            assertEquals(null, instance.encodeForBase64(null, true));
+            assertEquals(null, instance.decodeFromBase64(null));
             for ( int i=0; i < 100; i++ ) {
                 byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes();
                 String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
@@ -510,4 +558,72 @@ public class EncoderTest extends TestCase {
         }
     }
     
+    /**
+	 * Test of WindowsCodec
+	 */
+    public void testWindowsCodec() {
+        System.out.println("WindowsCodec");
+        Encoder instance = ESAPI.encoder();
+
+        Codec win = new WindowsCodec();
+        assertEquals(null, instance.encodeForOS(win, null));
+        
+        PushbackString npbs = new PushbackString("n");
+        assertEquals(null, win.decodeCharacter(npbs));
+
+        PushbackString epbs = new PushbackString("");
+        assertEquals(null, win.decodeCharacter(epbs));
+        
+        Character c = new Character('c');
+        PushbackString cpbs = new PushbackString(win.encodeCharacter(c));
+        assertEquals(c, win.decodeCharacter(cpbs));
+        
+        String orig = "c:\\jeff";
+        String enc = win.encode(orig);
+        assertEquals(orig, win.decode(enc));
+        assertEquals(orig, win.decode(orig));
+        
+     // TODO: Check that these are acceptable for Windows
+        assertEquals("c^:^\\jeff", instance.encodeForOS(win, "c:\\jeff"));		
+        assertEquals("^c^:^\\^j^e^f^f", win.encode("c:\\jeff"));
+        assertEquals("dir^ ^&^ foo", instance.encodeForOS(win, "dir & foo"));
+        assertEquals("^d^i^r^ ^&^ ^f^o^o", win.encode("dir & foo"));
+    }
+
+    /**
+	 * Test of UnixCodec
+	 */
+    public void testUnixCodec() {
+        System.out.println("UnixCodec");
+        Encoder instance = ESAPI.encoder();
+
+        Codec nix = new UnixCodec();
+        assertEquals(null, instance.encodeForOS(nix, null));
+        
+        PushbackString npbs = new PushbackString("n");
+        assertEquals(null, nix.decodeCharacter(npbs));
+
+        Character c = new Character('c');
+        PushbackString cpbs = new PushbackString(nix.encodeCharacter(c));
+        assertEquals(c, nix.decodeCharacter(cpbs));
+        
+        PushbackString epbs = new PushbackString("");
+        assertEquals(null, nix.decodeCharacter(epbs));
+
+        String orig = "/etc/passwd";
+        String enc = nix.encode(orig);
+        assertEquals(orig, nix.decode(enc));
+        assertEquals(orig, nix.decode(orig));
+        
+     // TODO: Check that these are acceptable for Unix hosts
+        assertEquals("c\\:\\\\jeff", instance.encodeForOS(nix, "c:\\jeff"));
+        assertEquals("\\c\\:\\\\\\j\\e\\f\\f", nix.encode("c:\\jeff"));
+        assertEquals("dir\\ \\&\\ foo", instance.encodeForOS(nix, "dir & foo"));
+        assertEquals("\\d\\i\\r\\ \\&\\ \\f\\o\\o", nix.encode("dir & foo"));
+
+        // Unix paths (that must be encoded safely)
+        // TODO: Check that these are acceptable for Unix
+        assertEquals("\\/etc\\/hosts", instance.encodeForOS(nix, "/etc/hosts"));
+        assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(nix, "/etc/hosts; ls -l"));
+    }
 }

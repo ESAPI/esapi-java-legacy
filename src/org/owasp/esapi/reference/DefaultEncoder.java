@@ -154,7 +154,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String canonicalize( String input ) {
-		if ( input == null ) return null;
+		if ( input == null ) {
+			return null;
+		}
 		return canonicalize( input, true );
 	}
 	
@@ -162,7 +164,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String canonicalize( String input, boolean strict ) {
-		if ( input == null ) return null;
+		if ( input == null ) {
+			return null;
+		}
 		String candidate = canonicalizeOnce( input );
 		String canary = canonicalizeOnce( candidate );
 		if ( !candidate.equals( canary ) ) {
@@ -185,7 +189,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @return the canocalized string
 	 */
 	private String canonicalizeOnce( String input ) {
-		if ( input == null ) return null;
+		if ( input == null ) {
+			return null;
+		}
 		StringBuffer sb = new StringBuffer();
 		PushbackString pbs = new PushbackString( input );
 		while ( pbs.hasNext() ) {
@@ -270,7 +276,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForHTML(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -291,7 +299,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForHTMLAttribute(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -305,7 +315,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForCSS(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -321,7 +333,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForJavaScript(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -334,7 +348,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForVBScript(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -348,7 +364,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForSQL(Codec codec, String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -361,7 +379,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForOS(Codec codec, String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;	
+	    }
+	    
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -374,6 +395,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForLDAP(String input) {
+	    if( input == null ) {
+	    	return null;	
+	    }
 		// TODO: replace with LDAP codec
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < input.length(); i++) {
@@ -405,6 +429,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForDN(String input) {
+	    if( input == null ) {
+	    	return null;	
+	    }
 		// TODO: replace with DN codec
 		StringBuffer sb = new StringBuffer();
 		if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
@@ -450,7 +477,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForXPath(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;	
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -463,7 +492,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForXML(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;	
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -476,7 +507,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForXMLAttribute(String input) {
-	    if( input == null ) return null;
+	    if( input == null ) {
+	    	return null;	
+	    }
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -489,6 +522,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForURL(String input) throws EncodingException {
+		if ( input == null ) {
+			return null;
+		}
 		try {
 			return URLEncoder.encode(input, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
@@ -502,6 +538,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String decodeFromURL(String input) throws EncodingException {
+		if ( input == null ) {
+			return null;
+		}
 		String canonical = canonicalize(input);
 		try {
 			return URLDecoder.decode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
@@ -516,6 +555,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForBase64(byte[] input, boolean wrap) {
+		if ( input == null ) {
+			return null;
+		}
 		int options = 0;
 		if ( !wrap ) {
 			options |= Base64.DONT_BREAK_LINES;
@@ -527,6 +569,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public byte[] decodeFromBase64(String input) throws IOException {
+		if ( input == null ) {
+			return null;
+		}
 		return Base64.decode( input );
 	}
 
