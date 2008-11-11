@@ -50,12 +50,12 @@ public interface SecurityConfiguration {
 	public String getApplicationName();
 	
 	/**
-	 * Gets the master password. This password can be used to encrypt/decrypt other files or types
+	 * Gets the master key. This password is used to encrypt/decrypt other files or types
 	 * of data that need to be protected by your application.
 	 * 
-	 * @return the current master password
+	 * @return the current master key
 	 */
-	public char[] getMasterPassword();
+	public byte[] getMasterKey();
 
 	/**
 	 * Gets the keystore used to hold any encryption keys used by your application.

@@ -36,6 +36,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
@@ -66,14 +67,28 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/** OWASP AntiSamy markup verification policy */
 	private Policy antiSamyPolicy = null;
 	
+	/** The encoder to use for canonicalization */
+	private Encoder encoder = null;
+	
 	/** constants */
 	private static final int MAX_CREDIT_CARD_LENGTH = 19;
 	private static final int MAX_PARAMETER_NAME_LENGTH = 100;
 	private static final int MAX_PARAMETER_VALUE_LENGTH = 65535;
 	
+	/**
+	 * Default constructor uses the ESAPI standard encoder for canonicalization.
+	 */
 	public DefaultValidator() {
+	    this.encoder = ESAPI.encoder();
 	}
 
+	/**
+	 * 
+	 */
+	public DefaultValidator( Encoder encoder ) {
+	    this.encoder = encoder;
+	}
+	
 	/**
 	 * Returns true if data received from browser is valid. Only URL encoding is
 	 * supported. Double encoding is treated as an attack.
@@ -111,8 +126,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 
 		try {
-			context = ESAPI.encoder().canonicalize( context );
-    		String canonical = ESAPI.encoder().canonicalize( input );
+			context = encoder.canonicalize( context );
+    		String canonical = encoder.canonicalize( input );
 
     		if ( type == null || type.length() == 0 ) {
     			throw new RuntimeException( "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
@@ -523,7 +538,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			}
 			
 			// do basic validation
-	        canonical = ESAPI.encoder().canonicalize(input);
+	        canonical = encoder.canonicalize(input);
 	        getValidInput( context, input, "FileName", 255, true );
 			
 			File f = new File(canonical);
@@ -1057,7 +1072,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public String getValidPrintable(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 		String canonical = "";
 		try {
-    		canonical = ESAPI.encoder().canonicalize(input);
+    		canonical = encoder.canonicalize(input);
     		return new String( getValidPrintable( context, canonical.getBytes(), maxLength, allowNull) );
 	    } catch (EncodingException e) {
 	        throw new ValidationException( context + ": Invalid printable input", "Invalid encoding of printable input, context=" + context + ", input=" + input, e, context);

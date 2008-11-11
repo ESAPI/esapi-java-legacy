@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 
@@ -67,7 +68,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String APPLICATION_NAME = "ApplicationName";
 
-    private static final String MASTER_PASSWORD = "MasterPassword";
+    private static final String MASTER_KEY = "MasterKey";
 
     private static final String MASTER_SALT = "MasterSalt";
 
@@ -144,8 +145,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-    public char[] getMasterPassword() {
-        return properties.getProperty(MASTER_PASSWORD).toCharArray();
+    public byte[] getMasterKey() {
+        String encoded = properties.getProperty(MASTER_KEY);
+        try {
+            return ESAPI.encoder().decodeFromBase64(encoded);
+        } catch( IOException e ) {
+            return null;
+        }
     }
 
     /**

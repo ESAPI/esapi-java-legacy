@@ -27,6 +27,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncryptedProperties;
 import org.owasp.esapi.errors.EncryptionException;
 
 /**
@@ -154,11 +155,16 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testLoad() throws Exception {
 		System.out.println("load");
-		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
+		EncryptedProperties creator = new DefaultEncryptedProperties();
 		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
-		instance.load( new FileInputStream( f ) );
-		assertEquals( "two", instance.getProperty("one" ) );
-		assertEquals( "three",  instance.getProperty("two" ) );
+		creator.setProperty( "one", "two" );
+		creator.setProperty( "two", "three" );
+        creator.store( new FileOutputStream( f ), "ESAPI test encrypted properties" );
+
+		EncryptedProperties loader = new DefaultEncryptedProperties();
+		loader.load( new FileInputStream( f ) );
+		assertEquals( "two", loader.getProperty("one" ) );
+		assertEquals( "three",  loader.getProperty("two" ) );
 	}
 	
 	/**
