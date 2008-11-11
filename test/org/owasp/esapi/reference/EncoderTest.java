@@ -33,8 +33,8 @@ import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.PushbackString;
-import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.codecs.UnixCodec;
+import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
@@ -558,6 +558,7 @@ public class EncoderTest extends TestCase {
         }
     }
     
+
     /**
 	 * Test of WindowsCodec
 	 */
@@ -627,3 +628,4 @@ public class EncoderTest extends TestCase {
         assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(nix, "/etc/hosts; ls -l"));
     }
 }
+

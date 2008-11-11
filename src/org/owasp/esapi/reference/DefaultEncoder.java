@@ -186,7 +186,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * change between passes, as well as actually performing the canoncalization 
 	 * 
 	 * @param input the string to canoncalize
-	 * @return the canocalized string
+	 * @return the canonicalized string
 	 */
 	private String canonicalizeOnce( String input ) {
 		if ( input == null ) {

@@ -35,7 +35,6 @@ public class CSSCodec implements Codec {
      * {@inheritDoc}
      * 
      * This method encodes a String to safely be used in CSS.
-     * 
      */
     public String encode(String input) {
         StringBuffer sb = new StringBuffer();
@@ -46,7 +45,8 @@ public class CSSCodec implements Codec {
         return sb.toString();
     }
 
-	/**
+
+    /**
 	 * {@inheritDoc}
 	 *
      * Returns backslash encoded character. This implementation does not support \\### Latin encoded
@@ -84,6 +84,7 @@ public class CSSCodec implements Codec {
 
     /**
 	 * {@inheritDoc}
+	 * 
 	 * Returns the decoded version of the character starting at index, or null if no decoding is
      * possible.
      * 

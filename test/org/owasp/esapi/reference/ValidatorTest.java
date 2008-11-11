@@ -31,7 +31,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Validator;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
@@ -287,10 +289,15 @@ public class ValidatorTest extends TestCase {
 	 */
 	public void testIsValidDirectoryPath() {
 		System.out.println("isValidDirectoryPath");
-		
+
+		// get an encoder with a special list of codecs and make a validator out of it
+		List list = new ArrayList();
+		list.add( new HTMLEntityCodec() );
+		Encoder encoder = new DefaultEncoder( list );
+		Validator instance = new DefaultValidator( encoder );
+				
 		boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1 ) ? true : false;
 	
-		Validator instance = ESAPI.validator();
 		if ( isWindows ) {
 			// Windows paths that don't exist and thus should fail
 			assertFalse(instance.isValidDirectoryPath("test", "c:\\pathNotExist", false));

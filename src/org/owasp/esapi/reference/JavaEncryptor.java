@@ -26,9 +26,9 @@ import java.security.Signature;
 import java.util.Date;
 
 import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncryptionException;
@@ -47,23 +47,37 @@ import org.owasp.esapi.errors.IntegrityException;
  */
 public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
-	/** The private key. */
-	PrivateKey privateKey = null;
+    // encryption
+    private static SecretKeySpec secretKeySpec = null;
+    private static String encryptAlgorithm = "AES";
+    private static String encoding = "UTF-8"; 
+    private static int keysize = 128;   // 192 and 256 bits may not be available until Java 1.5
 
-	/** The public key. */
-	PublicKey publicKey = null;
-
-	PBEParameterSpec parameterSpec = null;
-	SecretKey secretKey = null;
-	String encryptAlgorithm = "PBEWithMD5AndDES";
-	String signatureAlgorithm = "SHAwithDSA";
-	String hashAlgorithm = "SHA-512";
-	String randomAlgorithm = "SHA1PRNG";
-	String encoding = "UTF-8"; 
-		
+    // digital signatures
+    private static PrivateKey privateKey = null;
+	private static PublicKey publicKey = null;
+	private static String signatureAlgorithm = "SHAwithDSA";
+    private static String randomAlgorithm = "SHA1PRNG";
+	
+	// hashing
+	private static String hashAlgorithm = "SHA-512";
+	
+	
+    public static void main( String[] args ) throws Exception {
+        System.out.println( "Generating a new secret key" );
+        KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
+        kgen.init(keysize);
+        SecretKey secretKey = kgen.generateKey();
+        byte[] raw = secretKey.getEncoded();
+        System.out.println( "\nCopy and paste this into ESAPI.properties\n" );
+        System.out.println( ESAPI.encoder().encodeForBase64(raw, false) );
+        System.out.println();
+    }
+	
+    
 	public JavaEncryptor() {
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
-		char[] pass = ESAPI.securityConfiguration().getMasterPassword();
+		byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
 		// setup algorithms
         encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
@@ -73,15 +87,13 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		
 		try {
             // Set up encryption and decryption
-            parameterSpec = new javax.crypto.spec.PBEParameterSpec(salt, 20);
-			SecretKeyFactory kf = SecretKeyFactory.getInstance(encryptAlgorithm);
-			secretKey = kf.generateSecret(new javax.crypto.spec.PBEKeySpec(pass));
+            secretKeySpec = new SecretKeySpec(skey, encryptAlgorithm );
 			encoding = ESAPI.securityConfiguration().getCharacterEncoding();
 
 			// Set up signing keypair using the master password and salt
 			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
 			SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-			byte[] seed = hash(new String(pass),new String(salt)).getBytes();
+			byte[] seed = hash(new String(skey),new String(salt)).getBytes();
 			random.setSeed(seed);
 			keyGen.initialize(1024, random);
 			KeyPair pair = keyGen.generateKeyPair();
@@ -93,6 +105,10 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		}
 	}
 
+	
+	
+	
+	
 	/**
      * {@inheritDoc}
      * 
@@ -121,7 +137,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			throw new EncryptionException("Internal error", "Can't find hash algorithm " + hashAlgorithm, e);
 		}
 	}
-
+	
 	/**
 	* {@inheritDoc}
 	*/
@@ -129,7 +145,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		// Note - Cipher is not threadsafe so we create one locally
 		try {
 			Cipher encrypter = Cipher.getInstance(encryptAlgorithm);
-			encrypter.init(Cipher.ENCRYPT_MODE, secretKey, parameterSpec);
+			encrypter.init(Cipher.ENCRYPT_MODE, secretKeySpec);
 			byte[] output = plaintext.getBytes(encoding);
 			byte[] enc = encrypter.doFinal(output);
 			return ESAPI.encoder().encodeForBase64(enc,false);
@@ -145,7 +161,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		// Note - Cipher is not threadsafe so we create one locally
 		try {
 			Cipher decrypter = Cipher.getInstance(encryptAlgorithm);
-			decrypter.init(Cipher.DECRYPT_MODE, secretKey, parameterSpec);
+			decrypter.init(Cipher.DECRYPT_MODE, secretKeySpec);
 			byte[] dec = ESAPI.encoder().decodeFromBase64(ciphertext);
 			byte[] output = decrypter.doFinal(dec);
 			return new String(output, encoding);
