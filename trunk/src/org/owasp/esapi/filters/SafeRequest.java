@@ -122,6 +122,9 @@ public class SafeRequest implements HttpServletRequest {
      */
     public Cookie[] getCookies() {
         Cookie[] cookies = request.getCookies();
+        //must protect against NPE (found by Anderson)
+        if (cookies == null) return new Cookie[0];
+        
         List newCookies = new ArrayList();
         for (int i = 0; i < cookies.length; i++) {
             Cookie c = cookies[i];
