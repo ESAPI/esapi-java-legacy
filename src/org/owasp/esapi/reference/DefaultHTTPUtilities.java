@@ -180,7 +180,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public void assertSecureRequest(HttpServletRequest request) throws AccessControlException {
 		if ( !isSecureChannel( request ) ) {
-			throw new AccessControlException( "Insecure request received", "Received non-SSL request" );
+			throw new AccessControlException( "Insecure request received", "Received non-SSL request: " + request.getRequestURL() );
 		}
 		String receivedMethod = request.getMethod();
 		String requiredMethod = "POST";
@@ -419,10 +419,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * connection. This implementation ignores the built-in isSecure() method
 	 * and uses the URL to determine if the request was transmitted over SSL.
 	 */
-	public boolean isSecureChannel(HttpServletRequest request) {
-		if( ( request.getRequestURL() == null ) || ( request.getRequestURL().toString().length() == 0 ))
-			return false;
-		return (request.getRequestURL().charAt(4) == 's');
+	private boolean isSecureChannel(HttpServletRequest request) {
+	    if ( request == null ) return false;
+	    StringBuffer sb = request.getRequestURL();
+	    if ( sb == null ) return false;
+	    String url = sb.toString();
+	    if ( !url.startsWith( "https" )) return false; 
+		return true;
 	}
 
 	/**
