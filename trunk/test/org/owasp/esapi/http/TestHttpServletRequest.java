@@ -58,6 +58,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     private String uri = "/test";
 
+    private String url = "https://www.example.com/test";
+
     private String contentType = null;
     
     private String method = "POST";
@@ -244,7 +246,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * {@inheritDoc}
      */
     public StringBuffer getRequestURL() {
-        return new StringBuffer("https://localhost" + uri);
+        return new StringBuffer( url );
     }
 
     /**
@@ -561,7 +563,11 @@ public class TestHttpServletRequest implements HttpServletRequest {
     }
 
     public void setRequestURI(String uri) throws UnsupportedEncodingException {
-    	this.uri = uri;
+        this.uri = uri;
+    }
+
+    public void setRequestURL(String url) throws UnsupportedEncodingException {
+        this.url = url;
     }
 
 }

@@ -101,6 +101,51 @@ public class HTTPUtilitiesTest extends TestCase {
         assertTrue(csrf2.indexOf("&") > -1);
     }
 
+
+    /**
+     * Test of assertSecureRequest method, of class org.owasp.esapi.HTTPUtilities.
+     */
+    public void testAssertSecureRequest() {
+        System.out.println("assertSecureRequest");
+        TestHttpServletRequest request = new TestHttpServletRequest();
+        try {
+            request.setRequestURL( "http://example.com");
+            ESAPI.httpUtilities().assertSecureRequest( request );
+            fail();
+        } catch( Exception e ) {
+            // pass
+        }
+        try {
+            request.setRequestURL( "ftp://example.com");
+            ESAPI.httpUtilities().assertSecureRequest( request );
+            fail();
+        } catch( Exception e ) {
+            // pass
+        }
+        try {
+            request.setRequestURL( "");
+            ESAPI.httpUtilities().assertSecureRequest( request );
+            fail();
+        } catch( Exception e ) {
+            // pass
+        }
+        try {
+            request.setRequestURL( null );
+            ESAPI.httpUtilities().assertSecureRequest( request );
+            fail();
+        } catch( Exception e ) {
+            // pass
+        }
+        try {
+            request.setRequestURL( "https://example.com");
+            ESAPI.httpUtilities().assertSecureRequest( request );
+            // pass
+        } catch( Exception e ) {
+            fail();
+        }
+     }
+        
+    
     /**
      * Test of sendRedirect method, of class org.owasp.esapi.HTTPUtilities.
      * 
@@ -167,7 +212,6 @@ public class HTTPUtilitiesTest extends TestCase {
         } catch (ValidationException e) {
         	// expected
         }
-
     }
 
     /**
