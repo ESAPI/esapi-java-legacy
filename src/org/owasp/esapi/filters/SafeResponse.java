@@ -93,7 +93,7 @@ public class SafeResponse implements HttpServletResponse {
         // add the original cookie to the response and continue
         if (mode.equals("log")) {
             logger.warning(Logger.SECURITY, false, "Attempt to add unsafe data to cookie (log mode). Adding unsafe cookie anyway and continuing.");
-            this.addCookie(cookie);
+            response.addCookie(cookie);
             return;
         }
 
