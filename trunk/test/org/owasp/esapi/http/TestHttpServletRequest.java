@@ -146,6 +146,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * {@inheritDoc}
      */
     public Cookie[] getCookies() {
+        if ( cookies.isEmpty() ) return null;
         return (Cookie[]) cookies.toArray(new Cookie[0]);
     }
 

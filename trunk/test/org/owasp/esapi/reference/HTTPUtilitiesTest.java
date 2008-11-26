@@ -343,11 +343,16 @@ public class HTTPUtilitiesTest extends TestCase {
 	    assertTrue(response.getHeaderNames().size() == 2);
 	}
 
-    public void testGetStateFromEncryptedCookie() {
+    public void testGetStateFromEncryptedCookie() throws Exception {
         System.out.println("getStateFromEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
         TestHttpServletResponse response = new TestHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
+        
+        // test null cookie array
+        Map empty = ESAPI.httpUtilities().decryptStateFromCookie(request);
+        assertTrue( empty.isEmpty() );
+        
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );

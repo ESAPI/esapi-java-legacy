@@ -267,12 +267,16 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
     public Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
 		Cookie[] cookies = request.getCookies();
+		if ( cookies == null ) return new HashMap();
+		
 		Cookie c = null;
 		for ( int i = 0; i < cookies.length; i++ ) {
 			if ( cookies[i].getName().equals( "state" ) ) {
 				c = cookies[i];
 			}
 		}
+		if ( c == null ) return new HashMap();
+		
 		String encrypted = c.getValue();
 		String plaintext = ESAPI.encryptor().decrypt(encrypted);
 		
