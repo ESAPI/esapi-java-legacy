@@ -110,8 +110,6 @@ public class CSSCodec implements Codec {
             return null;
         }
 
-        System.out.println( ">>>" + second );
-
         // look for \HHH format
         if (input.isHexDigit(second)) {
             // Search for up to 6 hex digits following until a space

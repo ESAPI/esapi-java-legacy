@@ -159,6 +159,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 		return canonicalize( input, true );
 	}
+
 	
 	/**
 	 * {@inheritDoc}
@@ -167,75 +168,31 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		if ( input == null ) {
 			return null;
 		}
-		String candidate = canonicalizeOnce( input );
-		String canary = canonicalizeOnce( candidate );
-		if ( !candidate.equals( canary ) ) {
-			if ( strict ) {
-				throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
-			} else {
-				logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
-			}
-		}
-		return candidate;
+		
+        String working = input;
+        boolean foundEncoded = true;
+        boolean firstTime = true;
+        while( foundEncoded ) {
+            foundEncoded = false;
+            Iterator i = codecs.iterator();
+            while ( i.hasNext() ) {
+                Codec codec = (Codec)i.next();
+                String old = working;
+                working = codec.decode( working );
+                if ( !old.equals( working ) ) {
+                    foundEncoded = true;
+                    if ( strict && !firstTime ) { 
+                        throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
+                    } else {
+                        logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
+                    }
+                }
+            }
+            firstTime = false;
+        }
+        return working;
 	}
 	
-	/**
-	 * Helper method that takes input and canonicalizes it a single time
-	 * 
-	 * This is used by canonicalize() when checking that the input doesn't
-	 * change between passes, as well as actually performing the canoncalization 
-	 * 
-	 * @param input the string to canoncalize
-	 * @return the canonicalized string
-	 */
-	private String canonicalizeOnce( String input ) {
-		if ( input == null ) {
-			return null;
-		}
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			// test for encoded character and pushback if found
-			boolean encoded = decodeNext( pbs );
-
-			// get the next character and do something with it
-			Character ch = pbs.next();
-			
-			// if an encoded character is found, push it back
-			if ( encoded ) {
-				pbs.pushback( ch );
-			} else {
-				sb.append( ch );
-			}
-		}
-		return sb.toString();
-	}
-	
-	/**
-	 * Helper method to iterate through codecs to see if the current character
-	 * is an encoded character in any of them. If the current character is
-	 * encoded, then it is decoded and pushed back onto the string, and this
-	 * method returns true.  If the current character is not encoded, then the
-	 * pushback stream is reset to its original state and this method returns false.
-	 * 
-	 * @param pbs A PushBackString, which is passed to the codecs 
-	 * @return true if pbs is an encoded character in one of the codecs, false otherwise
-	 */
-	private boolean decodeNext( PushbackString pbs ) {
-		Iterator i = codecs.iterator();
-		pbs.mark();
-		while ( i.hasNext() ) {
-			pbs.reset();
-			Codec codec = (Codec)i.next();
-			Character decoded = codec.decodeCharacter(pbs);
-			if ( decoded != null ) {
-				pbs.pushback( decoded );
-				return true;
-			}
-		}
-		pbs.reset();
-		return false;
-	}
 
 	/**
 	 * {@inheritDoc}
