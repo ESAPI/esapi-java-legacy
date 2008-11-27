@@ -170,33 +170,53 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 		
         String working = input;
-        boolean foundEncoded = true;
-        boolean firstTime = true;
-        while( foundEncoded ) {
-            foundEncoded = false;
+        Codec codecFound = null;
+        boolean mixed = false;
+        int foundCount = 0;
+        boolean clean = false;
+        while( !clean ) {
+            clean = true;
+            
+            // try each codec and keep track of which ones work
             Iterator i = codecs.iterator();
             while ( i.hasNext() ) {
                 Codec codec = (Codec)i.next();
                 String old = working;
                 working = codec.decode( working );
                 if ( !old.equals( working ) ) {
-                    // test to see if another encoding has already been used
-                    if ( strict && foundEncoded ) {
-                        throw new IntrusionException( "Input validation failure", "Mixed encoding detected in " + input );
-                    } else {
-                        logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
+                    if ( codecFound != null && codecFound != codec ) {
+                        mixed = true;
                     }
-                    foundEncoded = true;
-                    
-                    // test to see if 
-                    if ( strict && !firstTime ) { 
-                        throw new IntrusionException( "Input validation failure", "Multiple encoding detected in " + input );
-                    } else {
-                        logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
+                    codecFound = codec;
+                    if ( clean ) {
+                        foundCount++;
                     }
+                    clean = false;
                 }
             }
-            firstTime = false;
+        }
+        
+        // do strict tests and handle if any mixed, multiple, nested encoding were found
+        if ( foundCount >= 2 && mixed ) {
+            if ( strict ) {
+                throw new IntrusionException( "Input validation failure", "Multiple and mixed encoding detected in " + input );
+            } else {
+                logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
+            }
+        }
+        else if ( foundCount >= 2 ) {
+            if ( strict ) {
+                throw new IntrusionException( "Input validation failure", "Multiple encoding detected in " + input );
+            } else {
+                logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) encoding detected in " + input );
+            }
+        }
+        else if ( mixed ) {
+            if ( strict ) {
+                throw new IntrusionException( "Input validation failure", "Mixed encoding detected in " + input );
+            } else {
+                logger.warning( Logger.SECURITY, false, "Mixed encoding detected in " + input );
+            }
         }
         return working;
 	}
