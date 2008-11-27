@@ -180,9 +180,17 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
                 String old = working;
                 working = codec.decode( working );
                 if ( !old.equals( working ) ) {
+                    // test to see if another encoding has already been used
+                    if ( strict && foundEncoded ) {
+                        throw new IntrusionException( "Input validation failure", "Mixed encoding detected in " + input );
+                    } else {
+                        logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
+                    }
                     foundEncoded = true;
+                    
+                    // test to see if 
                     if ( strict && !firstTime ) { 
-                        throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
+                        throw new IntrusionException( "Input validation failure", "Multiple encoding detected in " + input );
                     } else {
                         logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
                     }
