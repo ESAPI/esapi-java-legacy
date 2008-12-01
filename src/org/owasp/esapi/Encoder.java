@@ -24,19 +24,28 @@ import org.owasp.esapi.errors.EncodingException;
 /**
  * The Encoder interface contains a number of methods for decoding input and encoding output
  * so that it will be safe for a variety of interpreters. To prevent
- * double-encoding, all encoding methods should first check to see that the
- * input does not already contain encoded characters. There are a few methods
- * related to decoding that are used for canonicalization purposes. See the
- * Validator class for more information as the Validators rely heavily on these decoders for 
- * canonicalizing data before validating it.
+ * double-encoding, callers should make sure input does not already contain encoded characters
+ * by calling canonicalize. Validator implementations should call canonicalize on user input
+ * <b>before</b> validating to prevent encoded attacks.
  * <P>
  * <img src="doc-files/Encoder.jpg">
  * <P>
  * All of the methods must use a "whitelist" or "positive" security model.
  * For the encoding methods, this means that all characters should be encoded, except for a specific list of
- * "immune" characters that are known to be safe. For the decoding methods, all encoded characters should be 
- * decoded and if any doubly encoded characters (using the same encoding scheme or two different encoding schemes)
- * should be rejected. 
+ * "immune" characters that are known to be safe.
+ * <p>
+ * The Encoder performs two key functions, encoding and decoding. These functions rely
+ * on a set of codecs that can be found in the org.owasp.esapi.codecs package. These include:
+ * <ul><li>CSS Escaping</li>
+ * <li>HTMLEntity Encoding</li>
+ * <li>JavaScript Escaping</li>
+ * <li>MySQL Escaping</li>
+ * <li>Oracle Escaping</li>
+ * <li>Percent Encoding (aka URL Encoding)</li>
+ * <li>Unix Escaping</li>
+ * <li>VBScript Escaping</li>
+ * <li>Windows Encoding</li></ul>
+ * <p>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -66,47 +75,6 @@ public interface Encoder {
 
 
 	/**
-	 * This method performs canonicalization on data received to ensure that it
-	 * has been reduced to its most basic form before validation. For example,
-	 * URL-encoded data received from ordinary "application/x-www-url-encoded"
-	 * forms so that it may be validated properly.
-	 * <p>
-	 * Canonicalization is simply the operation of reducing a possibly encoded
-	 * string down to its simplest form. This is important, because attackers
-	 * frequently use encoding to change their input in a way that will bypass
-	 * validation filters, but still be interpreted properly by the target of
-	 * the attack. Note that data encoded more than once is not something that a
-	 * normal user would generate and should be regarded as an attack.
-	 * <P>
-	 * For input that comes from an HTTP servlet request, there are generally
-	 * two types of encoding to be concerned with. The first is
-	 * "applicaton/x-www-url-encoded" which is what is typically used in most
-	 * forms and URI's where characters are encoded in a %xy format. The other
-	 * type of common character encoding is HTML entity encoding, which uses
-	 * several formats:
-	 * <P>
-	 * <PRE>&lt;</PRE>,
-	 * <PRE>&#117;</PRE>, and
-	 * <PRE>&#x3a;</PRE>.
-	 * <P>
-	 * Note that all of these formats may possibly render properly in a
-	 * browser without the trailing semicolon.
-	 * <P>
-	 * Double-encoding is a particularly thorny problem, as applying ordinary decoders
-	 * may introduce encoded characters, even characters encoded with a different
-	 * encoding scheme. For example %26lt; is a < character which has been entity encoded
-	 * and then the first character has been url-encoded. Implementations should
-	 * throw an IntrusionException when double-encoded characters are detected.
-	 * <P>
-	 * Note that there is also "multipart/form" encoding, which allows files and
-	 * other binary data to be transmitted. Each part of a multipart form can
-	 * itself be encoded according to a "Content-Transfer-Encoding" header. See
-	 * the HTTPUtilties.getSafeFileUploads() method.
-	 * <P>
-	 * For more information on form encoding, please refer to the <a
-	 * href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C
-	 * specifications</a>.
-	 * <p>
 	 * This method is equivalent to calling <pre>Encoder.canonicalize(input, true);</pre>
 	 * 
 	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
@@ -118,45 +86,63 @@ public interface Encoder {
 	String canonicalize(String input) throws EncodingException;
 	
 	/**
-	 * This method performs canonicalization on data received to ensure that it
-	 * has been reduced to its most basic form before validation. For example,
-	 * URL-encoded data received from ordinary "application/x-www-url-encoded"
-	 * forms so that it may be validated properly.
-	 * <p>
 	 * Canonicalization is simply the operation of reducing a possibly encoded
 	 * string down to its simplest form. This is important, because attackers
 	 * frequently use encoding to change their input in a way that will bypass
 	 * validation filters, but still be interpreted properly by the target of
 	 * the attack. Note that data encoded more than once is not something that a
 	 * normal user would generate and should be regarded as an attack.
-	 * <P>
-	 * For input that comes from an HTTP servlet request, there are generally
-	 * two types of encoding to be concerned with. The first is
-	 * "applicaton/x-www-url-encoded" which is what is typically used in most
-	 * forms and URI's where characters are encoded in a %xy format. The other
-	 * type of common character encoding is HTML entity encoding, which uses
-	 * several formats:
-	 * <P>
-	 * <PRE>&lt;</PRE>,
-	 * <PRE>&#117;</PRE>, and
-	 * <PRE>&#x3a;</PRE>.
-	 * <P>
-	 * Note that all of these formats may possibly render properly in a
-	 * browser without the trailing semicolon.
-	 * <P>
-	 * Double-encoding is a particularly thorny problem, as applying ordinary decoders
-	 * may introduce encoded characters, even characters encoded with a different
-	 * encoding scheme. For example %26lt; is a < character which has been entity encoded
-	 * and then the first character has been url-encoded. Implementations should
-	 * throw an IntrusionException when double-encoded characters are detected.
-	 * <P>
-	 * Note that there is also "multipart/form" encoding, which allows files and
-	 * other binary data to be transmitted. Each part of a multipart form can
-	 * itself be encoded according to a "Content-Transfer-Encoding" header. See
-	 * the HTTPUtilties.getSafeFileUploads() method.
-	 * <P>
-	 * For more information on form encoding, please refer to the 
-	 * <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>.
+	 * <p>
+     * Everyone <a href="http://cwe.mitre.org/data/definitions/180.html">says</a> you shouldn’t do validation
+     * without canonicalizing the data first. This is easier said than done. The canonicalize method can
+     * be used to simplify just about any input down to its most basic form. Note that canonicalize doesn't
+     * handle Unicode issues, it focuses on higher level encoding and escaping schemes. In addition to simple
+     * decoding, canonicalize also handles:
+     * <ul><li>Perverse but legal variants of escaping schemes</li>
+     * <li>Multiple escaping (%2526 or &#x26;lt;)</li>
+     * <li>Mixed escaping (%26lt;)</li>
+     * <li>Nested escaping (%%316 or &%6ct;)</li>
+     * <li>All combinations of multiple, mixed, and nested encoding/escaping (%2&#x35;3c or &#x2526gt;)</li></ul>
+     * <p>
+     * Using canonicalize is simple. The default is just...
+     * <pre> 
+     *     String clean = ESAPI.encoder().canonicalize( request.getParameter(“input”));
+     * </pre> 
+     * You need to decode untrusted data so that it’s safe for ANY downstream interpreter or decoder. For
+     * example, if your data goes into a Windows command shell, then into a database, and then to a browser,
+     * you’re going to need to decode for all of those systems. You can build a custom encoder to canonicalize
+     * for your application like this...
+     * <pre> 
+     *     ArrayList list = new ArrayList();
+     *     list.add( new WindowsCodec() );
+     *     list.add( new MySQLCodec() );
+     *     list.add( new PercentCodec() );
+     *     Encoder encoder = new DefaultEncoder( list );
+     *     String clean = encoder.canonicalize( request.getParameter( "input" ));
+     * </pre>
+     * In ESAPI, the Validator uses the canonicalize method before it does validation.  So all you need to
+     * do is to validate as normal and you’ll be protected against a host of encoded attacks.
+     * <pre>
+     *     String input = request.getParameter( "name" );
+     *     String name = ESAPI.validator().isValidInput( "test", input, "FirstName", 20, false);
+     * </pre> 
+     * However, the default canonicalize() method only decodes HTMLEntity, percent (URL) encoding, and JavaScript
+     * encoding. If you’d like to use a custom canonicalizer with your validator, that’s pretty easy too.
+     * <pre> 
+     *     ... setup custom encoder as above
+     *     Validator validator = new DefaultValidator( encoder );
+     *     String input = request.getParameter( "name" );
+     *     String name = validator.isValidInput( "test", input, "name", 20, false);
+     * </pre>
+     * Although ESAPI is able to canonicalize multiple, mixed, or nested encoding, it’s safer to not accept
+     * this stuff in the first place. In ESAPI, the default is "strict" mode that throws an IntrusionException
+     * if it receives anything not single-encoded with a single scheme.  Currently this is not configurable 
+     * in ESAPI.properties, but it probably should be.  Even if you disable “strict” mode, you’ll still get
+     * warning messages in the log about each multiple encoding and mixed encoding received.
+     * <pre>
+     *     // disabling strict mode to allow mixed encoding
+     *     String url = ESAPI.encoder().canonicalize( request.getParameter("url"), false);
+     * </pre>
 	 * 
 	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
 	 *  
