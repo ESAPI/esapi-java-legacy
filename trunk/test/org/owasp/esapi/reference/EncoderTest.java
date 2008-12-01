@@ -304,6 +304,13 @@ public class EncoderTest extends TestCase {
         assertEquals( "% & <script> <script>", instance.canonicalize( "%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false ) );
         assertEquals( "< < < < < < <", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", false ) );
 
+        // test strict mode with both mixed and multiple encoding
+        try {
+            assertEquals( "< < < < < < <", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B" ) );
+        } catch( IntrusionException e ) {
+            // expected
+        }
+        
         try {
             assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
         } catch( IntrusionException e ) {
@@ -336,6 +343,9 @@ public class EncoderTest extends TestCase {
         System.out.println("encodeForHTML");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForHTML(null));
+        // test invalid characters are replaced with spaces
+        assertEquals("a b c d e f\tg", instance.encodeForHTML("a" + (char)0 + "b" + (char)4 + "c" + (char)128 + "d" + (char)150 + "e" +(char)159 + "f" + (char)9 + "g"));
+        
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
         assertEquals("&amp;lt&#59;script&amp;gt&#59;", instance.encodeForHTML("&lt;script&gt;"));
         assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("!@$%()=+{}[]"));

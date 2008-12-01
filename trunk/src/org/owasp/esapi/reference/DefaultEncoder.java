@@ -32,7 +32,6 @@ import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.PercentCodec;
-import org.owasp.esapi.codecs.PushbackString;
 import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
@@ -45,24 +44,6 @@ import sun.text.Normalizer;
  * list of "immune" characters is encoded. Several methods follow the approach in the <a
  * href="http://www.microsoft.com/downloads/details.aspx?familyid=efb9c819-53ff-4f82-bfaf-e11625130c25&displaylang=en">Microsoft
  * AntiXSS Library</a>.
- * <p>
- * The Encoder performs two key functions
- * The canonicalization algorithm is complex, as it has to be able to recognize
- * encoded characters that might affect downstream interpreters without being
- * told what encodings are possible. The stream is read one character at a time.
- * If an encoded character is encountered, it is canonicalized and pushed back
- * onto the stream. If the next character is encoded, then a intrusion exception
- * is thrown for the double-encoding which is assumed to be an attack.
- * <p>
- * The encoding methods also attempt to prevent double encoding, by canonicalizing strings
- * that are passed to them for encoding.
- * <p>
- * Currently the implementation supports:
- * <ul>
- * <li>HTML Entity Encoding (including non-terminated)</li>
- * <li>Percent Encoding</li>
- * <li>Backslash Encoding</li>
- * </ul>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -79,10 +60,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
 	private CSSCodec cssCodec = new CSSCodec();
 	
-	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("Encoder");
 	
-	/** Character sets that define characters immune from encoding in various formats */
+	/**
+	 *  Character sets that define characters (in addition to alphanumerics) that are
+	 * immune from encoding in various formats
+	 */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_CSS = { ' ' };  // TODO: check
@@ -94,6 +77,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
+	// initialize the character arrays in sorted order for faster searching
 	static {
         Arrays.sort( DefaultEncoder.IMMUNE_HTML );
         Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
@@ -118,7 +102,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	
 	/**
 	 * Instantiates a new DefaultEncoder
-	 * 
 	 */
 	public DefaultEncoder() {
 		// initialize the codec list to use for canonicalization
@@ -563,24 +546,26 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	
 	/**
 	 * isContained is a helper method which determines if c is 
-	 * contained in the character array haystack.
+	 * contained in the character array. For performance reasons, the
+	 * character array must be sorted or the results are not
+	 * guaranteed.
 	 * 
-	 * @param haystack
-	 *		a character array containing a set of characters to be searched
+	 * @param array
+	 *		a sorted character array containing a set of characters to be searched
 	 * @param c 
 	 *      a character to be searched for
-	 * @return 
-	 *      true if c is in haystack, false otherwise
+	 * @return  
+	 *      true if c is in array, false otherwise
 	 */
-	protected boolean isContained(char[] haystack, char c) {
-		for (int i = 0; i < haystack.length; i++) {
-			if (c == haystack[i])
-				return true;
-		}
-		return false;
+	protected boolean isContained(char[] array, char c) {
+	    // Arrays are sorted in the static initializer
+		// for (int i = 0; i < array.length; i++) {
+		//	 if (c == array[i]) return true;
+		// }
+		// return false;
 		
 		// If sorted arrays are guaranteed, this is faster
-		// return( Arrays.binarySearch(array, element) >= 0 );
+		return( Arrays.binarySearch(array, c) >= 0 );
 	}
 
     
