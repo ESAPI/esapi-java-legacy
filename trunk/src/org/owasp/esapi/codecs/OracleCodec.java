@@ -91,7 +91,7 @@ public class OracleCodec implements Codec {
 		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '\'' ) {
+		if ( first.charValue() != '\\' ) {
 			input.reset();
 			return null;
 		}
@@ -102,12 +102,7 @@ public class OracleCodec implements Codec {
 			return null;
 		}
 		
-		// if this is not an encoded character, return null
-		if ( second.charValue() != '\'' ) {
-			input.reset();
-			return null;
-		}
-		return( new Character( '\'' ) );
+		return( second );
 	}
 
 }

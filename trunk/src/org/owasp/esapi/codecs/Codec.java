@@ -69,6 +69,6 @@ public interface Codec {
 	 * 
 	 * @return the decoded Character
 	 */
-	public Character decodeCharacter( PushbackString input );
+	Character decodeCharacter( PushbackString input );
 	
 }

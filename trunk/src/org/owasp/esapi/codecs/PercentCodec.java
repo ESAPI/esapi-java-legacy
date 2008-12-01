@@ -31,21 +31,22 @@ public class PercentCodec implements Codec {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * TODO: Not implemented
 	 */
 	public String encode( String input ) {
-		return null;
+        StringBuffer sb = new StringBuffer();
+        for ( int i=0; i<input.length(); i++ ) {
+            sb.append( encodeCharacter( new Character( input.charAt(i) ) ) );
+        }
+        return sb.toString();
 	}
 	
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * TODO: Not implemented
 	 */
 	public String encodeCharacter( Character c ) {
-		return null;
+	    return( '%' + toHex( c.charValue() ) );
 	}
+	
 	
 	/**
 	 * {@inheritDoc}
@@ -114,4 +115,16 @@ public class PercentCodec implements Codec {
 		return null;
 	}
 
+    // convert to printable hexadecimal characters 
+    public final String hex = "01234567890ABCDEF";
+    public String toHex( char c ) {
+        String hex = "";
+        if (c < 0x10) {
+            hex += '0';
+        }
+        hex += Integer.toHexString((int)c);
+        return hex;
+    }
+	
+	
 }
