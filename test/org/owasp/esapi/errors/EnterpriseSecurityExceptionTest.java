@@ -117,6 +117,9 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         e = new ValidationException();
         e = new ValidationException("m1","m2");
         e = new ValidationException("m1","m2",new Throwable());
+        e = new ValidationException("m1","m2","context");
+        e = new ValidationException("m1","m2",new Throwable(),"context");
+         
         e = new IntegrityException();
         e = new IntegrityException("m1","m2");
         e = new IntegrityException("m1","m2",new Throwable());
@@ -139,6 +142,10 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         e = new ValidationUploadException();
         e = new ValidationUploadException("m1","m2");
         e = new ValidationUploadException("m1","m2",new Throwable());
+
+        ValidationException ve = new ValidationException();
+        ve.setContext("test");
+        assertEquals( "test", ve.getContext() );
 
         IntrusionException ex = new IntrusionException( "test", "test details");
         ex = new IntrusionException("m1","m2");

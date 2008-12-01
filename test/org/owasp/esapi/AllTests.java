@@ -103,6 +103,9 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.reference.EncryptedPropertiesTest.suite());
         suite.addTest(org.owasp.esapi.reference.AuthenticatorTest.suite());
 
+        // codecs
+        suite.addTest(org.owasp.esapi.codecs.CodecTest.suite() );
+        
         // exceptions
         suite.addTest(org.owasp.esapi.errors.EnterpriseSecurityExceptionTest.suite());
         
