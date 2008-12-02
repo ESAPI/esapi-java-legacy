@@ -48,7 +48,7 @@ limitations under the License.
 	<pathelement location ="lib/xercesImpl.jar"/>
 	<pathelement location ="lib/xml-apis-ext.jar"/>
 	<pathelement location ="lib/xml-apis.jar"/>
-	<pathelement location ="lib/servlet.api.jar"/>
+	<pathelement location ="lib/servlet-api.jar"/>
 	<pathelement path ="build"/>
 	<pathelement path ="${classpath}"/>
 	</path>
