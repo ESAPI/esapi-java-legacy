@@ -14,23 +14,22 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<project name="ESAPI_v1.4" basedir="." default="all">
+<project name="ESAPI" basedir="." default="all">
 
 	<!-- Local system paths -->
-	<property name="servlet.jar" value="C:\apache-tomcat-5.5.26\common\lib\servlet-api.jar"/>
 	<property name="distpath.project" value="dist"/>
 
 
 	<!-- Project settings -->
-	<property name="project.title" value="ESAPI v1.4"/>
+	<property name="project.version" value="1.4.${BUILD_NUMBER}"/>
+	<property name="project.title" value="ESAPI-${project.version}"/>
 	<property name="project.distname" value="owasp-esapi-full-java"/>
-	<property name="project.version" value="1.4"/>
 
 	<!-- Path settings -->
 	<property name="doc.path" value="./javadoc/api"/>
 	<property name="doc.src" value="./src/java"/>
 
-	<!-- classpath for ESAPI v1.3 -->
+	<!-- classpath -->
 	<path id="compile.classpath">
 	<pathelement location ="lib/antisamy-bin.1.2.jar"/>
 	<pathelement location ="lib/batik-css.jar"/>
@@ -49,7 +48,7 @@ limitations under the License.
 	<pathelement location ="lib/xercesImpl.jar"/>
 	<pathelement location ="lib/xml-apis-ext.jar"/>
 	<pathelement location ="lib/xml-apis.jar"/>
-	<pathelement path ="${servlet.jar}"/>
+	<pathelement location ="lib/servlet.api.jar"/>
 	<pathelement path ="build"/>
 	<pathelement path ="${classpath}"/>
 	</path>
