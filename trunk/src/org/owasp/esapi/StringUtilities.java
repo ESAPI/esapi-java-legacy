@@ -73,9 +73,9 @@ public class StringUtilities {
 	/**
      * Returns true if the character is contained in the provided StringBuffer.
      */
-    public static boolean contains(StringBuffer haystack, char c) {
-        for (int i = 0; i < haystack.length(); i++) {
-            if (haystack.charAt(i) == c)
+    public static boolean contains(StringBuffer input, char c) {
+        for (int i = 0; i < input.length(); i++) {
+            if (input.charAt(i) == c)
                 return true;
         }
         return false;

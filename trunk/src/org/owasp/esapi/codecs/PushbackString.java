@@ -95,10 +95,6 @@ public class PushbackString {
 		return input.charAt(index) == c;
 	}	
 	
-	public boolean isPushback() {
-		return ( pushback != null );
-	}
-	
 	public void mark() {
 		temp = pushback;
 		mark = index;
