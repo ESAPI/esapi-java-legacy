@@ -36,7 +36,7 @@ import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
-import sun.text.Normalizer;
+// import sun.text.Normalizer;
 
 /**
  * Reference implementation of the Encoder interface. This implementation takes

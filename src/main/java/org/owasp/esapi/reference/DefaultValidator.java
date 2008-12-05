@@ -295,24 +295,22 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		
 		try {
 			if ( antiSamyPolicy == null ) {
-				if ( antiSamyPolicy == null ) {
-			        InputStream in = null;
-			        try {
-			            in = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
-			            if (in != null) {
-			            	antiSamyPolicy = Policy.getInstance(in);
-			            }
-			        } catch (Exception e) {
-			        	antiSamyPolicy = null;
-			            
-			        } finally {
-			            if (in != null) try { in.close (); } catch (Throwable ignore) {}
-			        }
-			        
-			        if (antiSamyPolicy == null) {
-			            throw new IllegalArgumentException ("Can't find antisamy-esapi.xml");
-			        }       
-				}
+		        InputStream in = null;
+		        try {
+		            in = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
+		            if (in != null) {
+		            	antiSamyPolicy = Policy.getInstance(in);
+		            }
+		        } catch (Exception e) {
+		        	antiSamyPolicy = null;
+		            
+		        } finally {
+		            if (in != null) try { in.close (); } catch (Throwable ignore) {}
+		        }
+		        
+		        if (antiSamyPolicy == null) {
+		            throw new IllegalArgumentException ("Can't find antisamy-esapi.xml");
+		        }       
 			}
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(input, antiSamyPolicy);

@@ -90,7 +90,7 @@ public class ESAPIFilter implements Filter {
 			ESAPI.httpUtilities().logHTTPRequest(request, logger, Arrays.asList(obfuscate));
 
 			// check access to this URL
-			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString()) ) {
+			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI()) ) {
 				request.setAttribute("message", "Unauthorized" );
 				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
 				dispatcher.forward(request, response);
