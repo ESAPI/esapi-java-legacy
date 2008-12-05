@@ -354,7 +354,7 @@ public class SafeRequest implements HttpServletRequest {
                 }
             }
         }
-        return (String[]) newValues.toArray();
+        return (String[]) newValues.toArray(new String[0]);
     }
 
     /**
