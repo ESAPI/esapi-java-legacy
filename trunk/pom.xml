@@ -91,10 +91,7 @@
 
 
   <reporting>
-    <report>maven-checkstyle-plugin</report>
-
     <plugins>
-
 		<plugin>
 		   <groupId>org.codehaus.mojo</groupId>
 		   <artifactId>findbugs-maven-plugin</artifactId>
