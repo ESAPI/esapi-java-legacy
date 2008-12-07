@@ -62,9 +62,9 @@ public class JavaScriptCodec implements Codec {
 		if ( ch == 0x27 ) return "\\'";
 		if ( ch == 0x5c ) return "\\\\";
 
-		// encode up to 256 with \\xHH
+		// encode up to 255 with \\xHH
         String temp = Integer.toHexString((int)ch);
-		if ( ch <= 256 ) {
+		if ( ch < 256 ) {
 	        String pad = "00".substring(temp.length() );
 	        return "\\x" + pad + temp.toUpperCase();
 		}
