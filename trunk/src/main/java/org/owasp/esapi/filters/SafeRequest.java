@@ -574,13 +574,13 @@ public class SafeRequest implements HttpServletRequest {
         if (session.getAttribute("HTTP_ONLY") == null) {
             session.setAttribute("HTTP_ONLY", "set");
             Cookie cookie = new Cookie("JSESSIONID", session.getId());
+            cookie.setPath( request.getContextPath() );
             cookie.setMaxAge(-1); // session cookie
             HttpServletResponse response = ESAPI.currentResponse();
             if (response != null) {
                 ESAPI.currentResponse().addCookie(cookie);
             }
         }
-
         return session;
     }
 
@@ -593,17 +593,20 @@ public class SafeRequest implements HttpServletRequest {
         if (session == null) {
             return null;
         }
+        User user = ESAPI.authenticator().getCurrentUser();
+        user.addSession( session );
+
         // send a new cookie header with HttpOnly on first and second responses
         if (session.getAttribute("HTTP_ONLY") == null) {
             session.setAttribute("HTTP_ONLY", "set");
             Cookie cookie = new Cookie("JSESSIONID", session.getId());
             cookie.setMaxAge(-1); // session cookie
+            cookie.setPath( request.getContextPath() );
             HttpServletResponse response = ESAPI.currentResponse();
             if (response != null) {
                 ESAPI.currentResponse().addCookie(cookie);
             }
         }
-
         return session;
     }
 
