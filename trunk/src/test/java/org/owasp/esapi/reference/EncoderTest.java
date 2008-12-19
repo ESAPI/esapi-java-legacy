@@ -387,7 +387,7 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForJavaScript(null));
         assertEquals("\\x3Cscript\\x3E", instance.encodeForJavaScript("<script>"));
-        assertEquals(",.-_ ", instance.encodeForJavaScript(",.-_ "));
+        assertEquals(",.\\x2D_\\x20", instance.encodeForJavaScript(",.-_ "));
         assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavaScript("!@$%()=+{}[]"));
         // assertEquals( "\\0", instance.encodeForJavaScript("\0"));
         // assertEquals( "\\b", instance.encodeForJavaScript("\b"));
@@ -406,10 +406,10 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForVBScript(null));
         assertEquals( "chrw(60)&\"script\"&chrw(62)", instance.encodeForVBScript("<script>"));
-        assertEquals( "x \"&chrw(33)&chrw(64)&chrw(36)&chrw(37)&chrw(40)&chrw(41)&chrw(61)&chrw(43)&chrw(123)&chrw(125)&chrw(91)&chrw(93)", instance.encodeForVBScript("x !@$%()=+{}[]"));
-        assertEquals( "alert\"&chrw(40)&chrw(39)&\"ESAPI test\"&chrw(33)&chrw(39)&chrw(41)", instance.encodeForVBScript("alert('ESAPI test!')" ));
+        assertEquals( "x\"&chrw(32)&chrw(33)&chrw(64)&chrw(36)&chrw(37)&chrw(40)&chrw(41)&chrw(61)&chrw(43)&chrw(123)&chrw(125)&chrw(91)&chrw(93)", instance.encodeForVBScript("x !@$%()=+{}[]"));
+        assertEquals( "alert\"&chrw(40)&chrw(39)&\"ESAPI\"&chrw(32)&\"test\"&chrw(33)&chrw(39)&chrw(41)", instance.encodeForVBScript("alert('ESAPI test!')" ));
         assertEquals( "jeff.williams\"&chrw(64)&\"aspectsecurity.com", instance.encodeForVBScript("jeff.williams@aspectsecurity.com"));
-        assertEquals( "test \"&chrw(60)&chrw(62)&\" test", instance.encodeForVBScript("test <> test" ));
+        assertEquals( "test\"&chrw(32)&chrw(60)&chrw(62)&chrw(32)&\"test", instance.encodeForVBScript("test <> test" ));
     }
 
         
