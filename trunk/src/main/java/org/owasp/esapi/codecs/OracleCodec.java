@@ -28,24 +28,8 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class OracleCodec implements Codec {
+public class OracleCodec extends Codec {
 
-	public OracleCodec() {
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Encodes a String for safe use with an Oracle Database.
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -56,22 +40,6 @@ public class OracleCodec implements Codec {
 		return "\\" + c;
 	}
 	
-	/**
-	 * {@inheritDoc}
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * {@inheritDoc}

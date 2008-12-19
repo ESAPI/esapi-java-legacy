@@ -23,27 +23,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class CSSCodec implements Codec {
-
-    /**
-     * Public Constructor for CSSCodec
-     */
-	public CSSCodec() {
-    }
-
-	/**
-     * {@inheritDoc}
-     * 
-     * This method encodes a String to safely be used in CSS.
-     */
-    public String encode(String input) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-            sb.append(encodeCharacter(new Character(c)));
-        }
-        return sb.toString();
-    }
+public class CSSCodec extends Codec {
 
 
     /**
@@ -65,23 +45,7 @@ public class CSSCodec implements Codec {
         return "\\" + temp.toUpperCase() + " ";
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-    public String decode(String input) {
-        StringBuffer sb = new StringBuffer();
-        PushbackString pbs = new PushbackString(input);
-        while (pbs.hasNext()) {
-            Character c = decodeCharacter(pbs);
-            if (c != null) {
-                sb.append(c);
-            } else {
-                sb.append(pbs.next());
-            }
-        }
-        return sb.toString();
-    }
-
+    
     /**
 	 * {@inheritDoc}
 	 * 

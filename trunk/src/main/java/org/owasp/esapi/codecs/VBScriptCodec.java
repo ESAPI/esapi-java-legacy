@@ -24,55 +24,14 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class VBScriptCodec implements Codec {
+public class VBScriptCodec extends Codec {
 
-	public VBScriptCodec() {
-	}
-
-	/**
-	 * Encodes a String for safe use in VBScript.
-	 * 
-	 * @param input
-	 * 		The String to encode
-	 * 
-	 * @return 
-	 * 		The encoded String
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * Returns quote-encoded character
 	 */
 	public String encodeCharacter( Character c ) {
         return "\"" + c;
-	}
-	/**
-	 * Decodes a String that has been encoded with the encode method in this Class.
-	 * 
-	 * @param input
-	 * 		The String to decode
-	 * 
-	 * @return the decoded String
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
 	}
 	
 	
