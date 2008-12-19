@@ -336,14 +336,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			// handle normal characters and surround them with quotes
 			if (isContained(CHAR_ALPHANUMERICS, c) || isContained(IMMUNE_VBSCRIPT, c)) {
 				if ( encoding && i > 0 ) sb.append( "&" );
-				if ( !inquotes ) sb.append( "\"" );
+				if ( !inquotes && i > 0 ) sb.append( "\"" );
 				sb.append( c );
 				inquotes = true;
 				encoding = false;
 				
 			// handle characters that need encoding
 			} else {
-				if ( inquotes ) sb.append( "\"" );
+				if ( inquotes && i < input.length() ) sb.append( "\"" );
 				if ( i > 0 ) sb.append( "&" );
 				sb.append( vbScriptCodec.encodeCharacter( new Character( c ) ) );
 				inquotes = false;
