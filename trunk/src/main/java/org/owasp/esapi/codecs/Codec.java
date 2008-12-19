@@ -30,10 +30,19 @@ package org.owasp.esapi.codecs;
  */
 public abstract class Codec {
 
+	protected static String[] hex = new String[256];
+	
 	/**
 	 * Default constructor
 	 */
 	public Codec() {
+		for ( int c = 0; c < 0xFF; c++ ) {
+			if ( c >= 0x30 && c <= 0x39 || c >= 0x41 && c <= 0x5A || c >= 0x61 && c <= 0x7A ) {
+				hex[c] = null;
+			} else {
+				hex[c] = Integer.toHexString(c);
+			}
+		}
 	}
 	
 	/**
@@ -43,25 +52,25 @@ public abstract class Codec {
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
-    public String encode(String input) {
+    public String encode(char[] immune, String input) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            sb.append(encodeCharacter(new Character(c)));
+            sb.append(encodeCharacter(immune, new Character(c)));
         }
         return sb.toString();
     }
 
 	
 	/**
-	 * Encode a Character with a Codec
+	 * Default implementation that should be overridden in specific codecs.
 	 * 
 	 * @param c
 	 * 		the Character to encode
 	 * @return
 	 * 		the encoded Character
 	 */
-	public String encodeCharacter( Character c ) {
+	public String encodeCharacter( char[] immune, Character c ) {
 		return ""+c;
 	}
 	
@@ -99,6 +108,27 @@ public abstract class Codec {
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		return input.next();
+	}
+	
+	/**
+	 * Lookup the hex value of any character that is not alphanumeric, return null if alphanumeric.
+	 */
+	public static String getHex( char c ) {
+		return hex[(int)c];
+	}
+
+	/**
+	 * Utility to search a char[] for a specific char.
+	 * 
+	 * @param c
+	 * @param array
+	 * @return
+	 */
+	public static boolean containsCharacter( char c, char[] array ) {
+		for (int i = 0; i < array.length; i++) {
+			if (c == array[i]) return true;
+		}
+		return false;
 	}
 	
 }

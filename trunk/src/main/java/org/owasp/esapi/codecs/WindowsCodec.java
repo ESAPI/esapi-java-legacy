@@ -32,7 +32,20 @@ public class WindowsCodec extends Codec {
 	 * 
 	 * Returns Windows shell encoded character (which is ^)
 	 */
-	public String encodeCharacter( Character c ) {
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHex( c );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
         return "^" + c;
 	}
 	

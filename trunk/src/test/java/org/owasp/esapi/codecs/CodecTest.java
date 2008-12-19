@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.codecs;
 
+import org.owasp.esapi.reference.DefaultEncoder;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -76,70 +78,73 @@ public class CodecTest extends TestCase {
 	public void testEncode() {
         System.out.println("encode");
 
+        char[] immune = new char[0];
+        
         // htmlCodec
-        assertEquals( "&#116;&#101;&#115;&#116;", htmlCodec.encode("test") );
+        assertEquals( "test", htmlCodec.encode( immune, "test") );
         
         // percentCodec
-        assertEquals( "%3c", percentCodec.encode("<") );
+        assertEquals( "%3c", percentCodec.encode(immune, "<") );
 
         // javaScriptCodec
-        assertEquals( "\\x3C", javaScriptCodec.encode("<") );
+        assertEquals( "\\x3C", javaScriptCodec.encode(immune, "<") );
         
         // vbScriptCodec
-        assertEquals( "chrw(60)", vbScriptCodec.encode("<") );
+        assertEquals( "chrw(60)", vbScriptCodec.encode(immune, "<") );
 
         // cssCodec
-        assertEquals( "\\3c ", cssCodec.encode("<") );
+        assertEquals( "\\3c ", cssCodec.encode(immune, "<") );
 
         // mySQLCodecANSI
-        assertEquals( "\'\'", mySQLCodecANSI.encode("\'") );
+        assertEquals( "\'\'", mySQLCodecANSI.encode(immune, "\'") );
 
         // mySQLCodecStandard
-        assertEquals( "\\<", mySQLCodecStandard.encode("<") );
+        assertEquals( "\\<", mySQLCodecStandard.encode(immune, "<") );
 
         // oracleCodec
-        assertEquals( "\\<", oracleCodec.encode("<") );
+        assertEquals( "\\<", oracleCodec.encode(immune, "<") );
 
         // unixCodec
-        assertEquals( "\\<", unixCodec.encode("<") );
+        assertEquals( "\\<", unixCodec.encode(immune, "<") );
 
         // windowsCodec
-        assertEquals( "^<", windowsCodec.encode("<") );
+        assertEquals( "^<", windowsCodec.encode(immune, "<") );
 	}
 	
 	public void testEncodeCharacter() {
         System.out.println("encodeCharacter");
         Character c = new Character('<');
-
+        char[] immune = new char[0];
+        
         // htmlCodec
-        assertEquals( "&lt;", htmlCodec.encodeCharacter(c) );
+        assertEquals( "&lt;", htmlCodec.encodeCharacter(immune, c) );
 
         // percentCodec
-        assertEquals( "%3c", percentCodec.encodeCharacter(c) );
+        assertEquals( "%3c", percentCodec.encodeCharacter(immune, c) );
 
         // javaScriptCodec
-        assertEquals( "\\x3C", javaScriptCodec.encodeCharacter(c) );
+        assertEquals( "\\x3C", javaScriptCodec.encodeCharacter(immune, c) );
         
         // vbScriptCodec
-        assertEquals( "chrw(60)", vbScriptCodec.encodeCharacter(c) );
+        assertEquals( "chrw(60)", vbScriptCodec.encodeCharacter(immune, c) );
 
         // cssCodec
-        assertEquals( "\\3c ", cssCodec.encodeCharacter(c) );
+        assertEquals( "\\3c ", cssCodec.encodeCharacter(immune, c) );
 
         // mySQLCodecANSI
-        assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(new Character('\'')) );
+        assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(immune, new Character('\'')) );
 
         // mySQLCodecStandard
-        assertEquals( "\\<", mySQLCodecStandard.encodeCharacter(c) );
+        assertEquals( "\\<", mySQLCodecStandard.encodeCharacter(immune, c) );
 
         // oracleCodec
-        assertEquals( "\\<", oracleCodec.encodeCharacter(c) );
+        assertEquals( "\\<", oracleCodec.encodeCharacter(immune, c) );
 
         // unixCodec
-        assertEquals( "\\<", unixCodec.encodeCharacter(c) );
+        assertEquals( "\\<", unixCodec.encodeCharacter(immune, c) );
 
         // windowsCodec
-        assertEquals( "^<", windowsCodec.encodeCharacter(c) );
+        assertEquals( "^<", windowsCodec.encodeCharacter(immune, c) );
 	}
 	
 	public void testDecode() {
