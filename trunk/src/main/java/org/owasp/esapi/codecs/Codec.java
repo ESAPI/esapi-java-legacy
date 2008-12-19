@@ -114,7 +114,8 @@ public abstract class Codec {
 	 * Lookup the hex value of any character that is not alphanumeric, return null if alphanumeric.
 	 */
 	public static String getHex( char c ) {
-		return hex[(int)c];
+		if ( c > 0xFF ) return null;
+		return hex[c];
 	}
 
 	/**

@@ -353,6 +353,7 @@ public class EncoderTest extends TestCase {
         assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
         assertEquals("dir&amp;", instance.encodeForHTML("dir&"));
         assertEquals("one&amp;two", instance.encodeForHTML("one&two"));
+        assertEquals("" + (char)12345 + (char)65533 + (char)1244, "" + (char)12345 + (char)65533 + (char)1244 );
     }
     
     /**
