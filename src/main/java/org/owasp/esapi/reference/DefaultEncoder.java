@@ -220,26 +220,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return input.replaceAll("[^\\p{ASCII}]", "");
 	}
 
-	/**
-	 * Private helper method to encode a single character by a particular
-	 * codec. Will not encode characters from the base and special white lists. 
-	 * <p>
-	 * Note: It is strongly recommended that you canonicalize input before calling 
-	 * this method to prevent double-encoding.
-	 *   
-	 * @param c - character to be encoded 
-	 * @param codec - codec to be used to encode c
-	 * @param baseImmune - white list of base characters that are okay
-	 * @param specialImmune - white list of special characters that are okay
-	 * @return encoded character. NB: Extremely likely that the return string contains more than one character!
-	 */
-	private String encode( char c, Codec codec, char[] baseImmune, char[] specialImmune ) {
-		if (isContained(baseImmune, c) || isContained(specialImmune, c)) {
-			return ""+c;
-		} else {
-			return codec.encodeCharacter( new Character( c ) );
-		}
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -248,19 +228,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			if ( c == '\t' || c == '\n' || c == '\r' ) {
-				sb.append( c );
-			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
-				logger.warning( Logger.SECURITY, false, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
-				sb.append( ' ' );
-			} else {
-				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTML ) );
-			}
-		}
-		return sb.toString();
+	    return htmlCodec.encode( IMMUNE_HTML, input);	    
 	 }
 	 
 	 
@@ -271,19 +239,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			if ( c == '\t' || c == '\n' || c == '\r' ) {
-				sb.append( c );
-			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
-				logger.warning( Logger.SECURITY, false, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
-				sb.append( ' ' );
-			} else {
-				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR ) );
-			}
-		}
-		return sb.toString();
+	    return htmlCodec.encode( IMMUNE_HTMLATTR, input);
 	}
 
 	
@@ -294,14 +250,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			if ( c != 0 ) {
-				sb.append( encode( c, cssCodec, CHAR_ALPHANUMERICS, IMMUNE_CSS ) );
-			}
-		}
-		return sb.toString();
+	    return cssCodec.encode( IMMUNE_CSS, input);
 	}
 
 	
@@ -312,12 +261,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, javaScriptCodec, CHAR_ALPHANUMERICS, IMMUNE_JAVASCRIPT ) );
-		}
-		return sb.toString();
+	    return javaScriptCodec.encode(IMMUNE_JAVASCRIPT, input);
 	}
 
 	/**
@@ -327,30 +271,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;
 	    }
-		StringBuffer sb = new StringBuffer();
-		boolean encoding = false;
-		boolean inquotes = false;
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			
-			// handle normal characters and surround them with quotes
-			if (isContained(CHAR_ALPHANUMERICS, c) || isContained(IMMUNE_VBSCRIPT, c)) {
-				if ( encoding && i > 0 ) sb.append( "&" );
-				if ( !inquotes && i > 0 ) sb.append( "\"" );
-				sb.append( c );
-				inquotes = true;
-				encoding = false;
-				
-			// handle characters that need encoding
-			} else {
-				if ( inquotes && i < input.length() ) sb.append( "\"" );
-				if ( i > 0 ) sb.append( "&" );
-				sb.append( vbScriptCodec.encodeCharacter( new Character( c ) ) );
-				inquotes = false;
-				encoding = true;
-			}
-		}
-		return sb.toString();
+	    return vbScriptCodec.encode(IMMUNE_VBSCRIPT, input);	    
 	}
 
 	
@@ -361,12 +282,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, codec, CHAR_ALPHANUMERICS, IMMUNE_SQL ) );
-		}
-		return sb.toString();
+	    return codec.encode(IMMUNE_SQL, input);
 	}
 
 	/**
@@ -376,13 +292,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;	
 	    }
-	    
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, codec, CHAR_ALPHANUMERICS, IMMUNE_OS ) );
-		}
-		return sb.toString();
+	    return codec.encode( IMMUNE_OS, input);
 	}
 
 	/**
@@ -474,12 +384,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;	
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XPATH ) );
-		}
-		return sb.toString();
+	    return htmlCodec.encode( IMMUNE_XPATH, input);
 	}
 
 	/**
@@ -489,12 +394,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;	
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XML ) );
-		}
-		return sb.toString();
+	    return htmlCodec.encode( IMMUNE_XML, input);
 	}
 
 	/**
@@ -504,12 +404,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;	
 	    }
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XMLATTR ) );
-		}
-		return sb.toString();
+	    return htmlCodec.encode( IMMUNE_XMLATTR, input);
 	}
 
 	/**
@@ -569,30 +464,4 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return Base64.decode( input );
 	}
 
-	
-	/**
-	 * isContained is a helper method which determines if c is 
-	 * contained in the character array. For performance reasons, the
-	 * character array must be sorted or the results are not
-	 * guaranteed.
-	 * 
-	 * @param array
-	 *		a sorted character array containing a set of characters to be searched
-	 * @param c 
-	 *      a character to be searched for
-	 * @return  
-	 *      true if c is in array, false otherwise
-	 */
-	protected boolean isContained(char[] array, char c) {
-	    // Arrays are sorted in the static initializer
-		// for (int i = 0; i < array.length; i++) {
-		//	 if (c == array[i]) return true;
-		// }
-		// return false;
-		
-		// If sorted arrays are guaranteed, this is faster
-		return( Arrays.binarySearch(array, c) >= 0 );
-	}
-
-    
 }

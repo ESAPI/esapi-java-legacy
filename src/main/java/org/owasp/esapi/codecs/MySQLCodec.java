@@ -49,7 +49,20 @@ public class MySQLCodec extends Codec {
 	 * 
 	 * Returns quote-encoded character
 	 */
-	public String encodeCharacter( Character c ) {
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHex( c );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
 		switch( mode ) {
 			case ANSI_MODE: return encodeCharacterANSI( c );
 			case MYSQL_MODE: return encodeCharacterMySQL( c );

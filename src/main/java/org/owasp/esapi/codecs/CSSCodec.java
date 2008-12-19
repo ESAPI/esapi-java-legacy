@@ -31,12 +31,22 @@ public class CSSCodec extends Codec {
 	 *
      * Returns backslash encoded character.
 	 */
-    public String encodeCharacter(Character c) {
-        
-    	char ch = c.charValue();
-    	String hex = Integer.toHexString( (int)ch );
-    	
-        return "\\" + hex + " ";  // end in whitespace to terminate encoded character
+    public String encodeCharacter(char[] immune, Character c) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHex( c );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
+		// return the hex and end in whitespace to terminate
+        return "\\" + hex + " ";
     }
 
     

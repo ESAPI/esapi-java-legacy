@@ -17,6 +17,8 @@ package org.owasp.esapi.codecs;
 
 import java.util.HashMap;
 
+import org.owasp.esapi.Logger;
+
 /**
  * Implementation of the Codec interface for HTML entity encoding.
  * 
@@ -40,12 +42,33 @@ public class HTMLEntityCodec extends Codec {
 	 * 
      * Encodes a Character for safe use in an HTML entity field.
      */
-	public String encodeCharacter( Character c ) {
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHex( c );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
+		// check for illegal characters
+		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) ) {
+			return( " " );
+		}
+		
+		// check if there's a defined entity
 		String entityName = (String) characterToEntityMap.get(c);
 		if (entityName != null) {
 			return "&" + entityName + ";";
 		}
-		return "&#" + (int)c.charValue() + ";";
+		
+		// return the hex entity as suggested in the spec
+		return "&#x" + hex + ";";
 	}
 	
 	/**

@@ -30,26 +30,23 @@ public class JavaScriptCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Encodes a String for safe use in a JavaScript context.
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
 	 * Returns backslash encoded character. This implementation does not support
 	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
 	 */
-	public String encodeCharacter( Character c ) {
+	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHex( c );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+				
 		// Do not use these shortcuts as they can be used to break out of a context
 		// if ( ch == 0x00 ) return "\\0";
 		// if ( ch == 0x08 ) return "\\b";
@@ -74,25 +71,6 @@ public class JavaScriptCodec extends Codec {
         return "\\u" + pad + temp.toUpperCase();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Decodes a String that has been encoded for use in a JavaScript context.
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
-	}
-	
 	
 	/**
 	 * {@inheritDoc}

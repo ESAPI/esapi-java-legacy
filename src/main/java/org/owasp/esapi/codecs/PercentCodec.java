@@ -30,8 +30,24 @@ public class PercentCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String encodeCharacter( Character c ) {
-	    return( '%' + toHex( c.charValue() ) );
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHex( c );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
+        if (c < 0x10) {
+            hex = '0' + hex;
+        }
+	    return '%' + hex;
 	}
 	
 	
@@ -80,17 +96,5 @@ public class PercentCodec extends Codec {
 		input.reset();
 		return null;
 	}
-
-    // convert to printable hexadecimal characters 
-    public final String hex = "01234567890ABCDEF";
-    public String toHex( char c ) {
-        String hex = "";
-        if (c < 0x10) {
-            hex += '0';
-        }
-        hex += Integer.toHexString((int)c);
-        return hex;
-    }
-	
 	
 }

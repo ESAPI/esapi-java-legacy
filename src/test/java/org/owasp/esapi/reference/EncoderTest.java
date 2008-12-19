@@ -344,12 +344,12 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForHTML(null));
         // test invalid characters are replaced with spaces
-        assertEquals("a b c d e f\tg", instance.encodeForHTML("a" + (char)0 + "b" + (char)4 + "c" + (char)128 + "d" + (char)150 + "e" +(char)159 + "f" + (char)9 + "g"));
+        assertEquals("a b c d e f&#x9;g", instance.encodeForHTML("a" + (char)0 + "b" + (char)4 + "c" + (char)128 + "d" + (char)150 + "e" +(char)159 + "f" + (char)9 + "g"));
         
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
-        assertEquals("&amp;lt&#59;script&amp;gt&#59;", instance.encodeForHTML("&lt;script&gt;"));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML("!@$%()=+{}[]"));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTML(instance.canonicalize("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") ) );
+        assertEquals("&amp;lt&#x3b;script&amp;gt&#x3b;", instance.encodeForHTML("&lt;script&gt;"));
+        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTML("!@$%()=+{}[]"));
+        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTML(instance.canonicalize("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") ) );
         assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
         assertEquals("dir&amp;", instance.encodeForHTML("dir&"));
         assertEquals("one&amp;two", instance.encodeForHTML("one&two"));
@@ -364,7 +364,7 @@ public class EncoderTest extends TestCase {
         assertEquals(null, instance.encodeForHTMLAttribute(null));
         assertEquals("&lt;script&gt;", instance.encodeForHTMLAttribute("<script>"));
         assertEquals(",.-_", instance.encodeForHTMLAttribute(",.-_"));
-        assertEquals("&#32;&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
+        assertEquals("&#x20;&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
     }
     
     
@@ -419,7 +419,7 @@ public class EncoderTest extends TestCase {
         System.out.println("encodeForXPath");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForXPath(null));
-        assertEquals("&#39;or 1&#61;1", instance.encodeForXPath("'or 1=1"));
+        assertEquals("&#x27;or 1&#x3d;1", instance.encodeForXPath("'or 1=1"));
     }
     
 
@@ -484,7 +484,7 @@ public class EncoderTest extends TestCase {
         assertEquals(" ", instance.encodeForXML(" "));
         assertEquals("&lt;script&gt;", instance.encodeForXML("<script>"));
         assertEquals(",.-_", instance.encodeForXML(",.-_"));
-        assertEquals("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForXML("!@$%()=+{}[]"));
+        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForXML("!@$%()=+{}[]"));
     }
     
     
@@ -496,10 +496,10 @@ public class EncoderTest extends TestCase {
         System.out.println("encodeForXMLAttribute");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForXMLAttribute(null));
-        assertEquals("&#32;", instance.encodeForXMLAttribute(" "));
+        assertEquals("&#x20;", instance.encodeForXMLAttribute(" "));
         assertEquals("&lt;script&gt;", instance.encodeForXMLAttribute("<script>"));
         assertEquals(",.-_", instance.encodeForXMLAttribute(",.-_"));
-        assertEquals("&#32;&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;", instance.encodeForXMLAttribute(" !@$%()=+{}[]"));
+        assertEquals("&#x20;&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForXMLAttribute(" !@$%()=+{}[]"));
     }
     
     /**
@@ -586,6 +586,7 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
 
         Codec win = new WindowsCodec();
+        char[] immune = new char[0];
         assertEquals(null, instance.encodeForOS(win, null));
         
         PushbackString npbs = new PushbackString("n");
@@ -594,20 +595,21 @@ public class EncoderTest extends TestCase {
         PushbackString epbs = new PushbackString("");
         assertEquals(null, win.decodeCharacter(epbs));
         
-        Character c = new Character('c');
-        PushbackString cpbs = new PushbackString(win.encodeCharacter(c));
-        assertEquals(c, win.decodeCharacter(cpbs));
+        Character c = new Character('<');
+        PushbackString cpbs = new PushbackString(win.encodeCharacter(immune, c));
+        Character decoded = win.decodeCharacter(cpbs);
+        assertEquals(c, decoded);
         
         String orig = "c:\\jeff";
-        String enc = win.encode(orig);
+        String enc = win.encode(DefaultEncoder.CHAR_ALPHANUMERICS, orig);
         assertEquals(orig, win.decode(enc));
         assertEquals(orig, win.decode(orig));
         
      // TODO: Check that these are acceptable for Windows
         assertEquals("c^:^\\jeff", instance.encodeForOS(win, "c:\\jeff"));		
-        assertEquals("^c^:^\\^j^e^f^f", win.encode("c:\\jeff"));
+        assertEquals("c^:^\\jeff", win.encode(immune, "c:\\jeff"));
         assertEquals("dir^ ^&^ foo", instance.encodeForOS(win, "dir & foo"));
-        assertEquals("^d^i^r^ ^&^ ^f^o^o", win.encode("dir & foo"));
+        assertEquals("dir^ ^&^ foo", win.encode(immune, "dir & foo"));
     }
 
     /**
@@ -617,34 +619,36 @@ public class EncoderTest extends TestCase {
         System.out.println("UnixCodec");
         Encoder instance = ESAPI.encoder();
 
-        Codec nix = new UnixCodec();
-        assertEquals(null, instance.encodeForOS(nix, null));
+        Codec unix = new UnixCodec();
+        char[] immune = new char[0];
+        assertEquals(null, instance.encodeForOS(unix, null));
         
         PushbackString npbs = new PushbackString("n");
-        assertEquals(null, nix.decodeCharacter(npbs));
+        assertEquals(null, unix.decodeCharacter(npbs));
 
-        Character c = new Character('c');
-        PushbackString cpbs = new PushbackString(nix.encodeCharacter(c));
-        assertEquals(c, nix.decodeCharacter(cpbs));
+        Character c = new Character('<');
+        PushbackString cpbs = new PushbackString(unix.encodeCharacter(immune, c));
+        Character decoded = unix.decodeCharacter(cpbs);
+        assertEquals(c, decoded);
         
         PushbackString epbs = new PushbackString("");
-        assertEquals(null, nix.decodeCharacter(epbs));
+        assertEquals(null, unix.decodeCharacter(epbs));
 
         String orig = "/etc/passwd";
-        String enc = nix.encode(orig);
-        assertEquals(orig, nix.decode(enc));
-        assertEquals(orig, nix.decode(orig));
+        String enc = unix.encode(immune, orig);
+        assertEquals(orig, unix.decode(enc));
+        assertEquals(orig, unix.decode(orig));
         
      // TODO: Check that these are acceptable for Unix hosts
-        assertEquals("c\\:\\\\jeff", instance.encodeForOS(nix, "c:\\jeff"));
-        assertEquals("\\c\\:\\\\\\j\\e\\f\\f", nix.encode("c:\\jeff"));
-        assertEquals("dir\\ \\&\\ foo", instance.encodeForOS(nix, "dir & foo"));
-        assertEquals("\\d\\i\\r\\ \\&\\ \\f\\o\\o", nix.encode("dir & foo"));
+        assertEquals("c\\:\\\\jeff", instance.encodeForOS(unix, "c:\\jeff"));
+        assertEquals("c\\:\\\\jeff", unix.encode(immune, "c:\\jeff"));
+        assertEquals("dir\\ \\&\\ foo", instance.encodeForOS(unix, "dir & foo"));
+        assertEquals("dir\\ \\&\\ foo", unix.encode(immune, "dir & foo"));
 
         // Unix paths (that must be encoded safely)
         // TODO: Check that these are acceptable for Unix
-        assertEquals("\\/etc\\/hosts", instance.encodeForOS(nix, "/etc/hosts"));
-        assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(nix, "/etc/hosts; ls -l"));
+        assertEquals("\\/etc\\/hosts", instance.encodeForOS(unix, "/etc/hosts"));
+        assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(unix, "/etc/hosts; ls -l"));
     }
 }
 
