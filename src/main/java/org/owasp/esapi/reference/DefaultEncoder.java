@@ -69,35 +69,13 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_CSS = {};
-	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
-	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '_' };
+	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '_' };
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_SQL = { ' ' };
 	private final static char[] IMMUNE_OS = { '-' };
 	private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
-
-	// initialize the character arrays in sorted order for faster searching
-	static {
-        Arrays.sort( DefaultEncoder.IMMUNE_HTML );
-        Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
-        Arrays.sort( DefaultEncoder.IMMUNE_JAVASCRIPT );
-        Arrays.sort( DefaultEncoder.IMMUNE_VBSCRIPT );
-        Arrays.sort( DefaultEncoder.IMMUNE_XML );
-        Arrays.sort( DefaultEncoder.IMMUNE_XMLATTR );
-        Arrays.sort( DefaultEncoder.IMMUNE_XPATH );
-        Arrays.sort( DefaultEncoder.CHAR_LOWERS );
-        Arrays.sort( DefaultEncoder.CHAR_UPPERS );
-        Arrays.sort( DefaultEncoder.CHAR_DIGITS );
-        Arrays.sort( DefaultEncoder.CHAR_SPECIALS );
-        Arrays.sort( DefaultEncoder.CHAR_LETTERS );
-        Arrays.sort( DefaultEncoder.CHAR_ALPHANUMERICS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LOWERS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_UPPERS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_DIGITS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_SPECIALS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
-	}
 	
 	
 	/**
