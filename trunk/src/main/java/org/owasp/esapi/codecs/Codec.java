@@ -36,11 +36,11 @@ public abstract class Codec {
 	 * Default constructor
 	 */
 	public Codec() {
-		for ( int c = 0; c < 0xFF; c++ ) {
+		for ( char c = 0; c < 0xFF; c++ ) {
 			if ( c >= 0x30 && c <= 0x39 || c >= 0x41 && c <= 0x5A || c >= 0x61 && c <= 0x7A ) {
 				hex[c] = null;
 			} else {
-				hex[c] = Integer.toHexString(c);
+				hex[c] = toHex(c);
 			}
 		}
 	}
@@ -113,9 +113,16 @@ public abstract class Codec {
 	/**
 	 * Lookup the hex value of any character that is not alphanumeric, return null if alphanumeric.
 	 */
-	public static String getHex( char c ) {
+	public static String getHexForNonAlphanumeric( char c ) {
 		if ( c > 0xFF ) return null;
 		return hex[c];
+	}
+
+	/**
+	 * Return the hex value of a character as a string without leading zeroes.
+	 */
+	public static String toHex( char c ) {
+		return Integer.toHexString(c);
 	}
 
 	/**

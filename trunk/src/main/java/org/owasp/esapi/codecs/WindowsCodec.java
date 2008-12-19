@@ -41,7 +41,7 @@ public class WindowsCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHex( c );
+		String hex = Codec.getHexForNonAlphanumeric( c );
 		if ( hex == null ) {
 			return ""+ch;
 		}
