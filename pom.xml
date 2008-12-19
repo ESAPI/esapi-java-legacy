@@ -9,7 +9,7 @@
 	<description>The Enterprise Security API project is an OWASP project
 		to create simple strong security controls for every web platform.
 		Security controls are not simple to build. You can read about the
-		hundreds of pitfalls for unwary devleopers on the OWASP website. By
+		hundreds of pitfalls for unwary developers on the OWASP website. By
 		providing developers with a set of strong controls, we aim to
 		eliminate some of the complexity of creating secure web applications.
 		This can result in significant cost savings across the SDLC.</description>
@@ -118,7 +118,8 @@
 						-collpackages java.util.* -qualify -postfixpackage -nodefontsize 9
 						-nodefontpackagesize 7 </additionalparam>
 				</configuration>
-			</plugin>
+			</plugin>		
+
 		</plugins>
 	</reporting>
 </project>

@@ -108,8 +108,11 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     
     /**
 	 * {@inheritDoc}
+	 * 
+	 * This implementation is for Java 1.4, possibly replaced
+	 * by the java.util.UUID class in Java 1.5+
 	 */
-    public String getRandomGUID() throws EncryptionException {
+    public String getRandomGUID() throws EncryptionException {    	
         // create random string to seed the GUID
         StringBuffer sb = new StringBuffer();
         try {
