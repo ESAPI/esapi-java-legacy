@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class MySQLCodec implements Codec {
+public class MySQLCodec extends Codec {
 
 	public static final int MYSQL_MODE = 0;
 	public static final int ANSI_MODE = 1;
@@ -43,19 +43,6 @@ public class MySQLCodec implements Codec {
 		this.mode = mode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Returns quote-encoded string
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -108,25 +95,6 @@ public class MySQLCodec implements Codec {
 		if ( ch == 0x5c ) return "\\\\";
 		if ( ch == 0x5f ) return "\\_";
 	    return "\\" + c;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Decodes quote-encoded string
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
 	}
 	
 	/**

@@ -24,10 +24,8 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class JavaScriptCodec implements Codec {
+public class JavaScriptCodec extends Codec {
 
-	public JavaScriptCodec() {
-	}
 
 	/**
 	 * {@inheritDoc}

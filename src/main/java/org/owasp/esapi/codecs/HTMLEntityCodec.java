@@ -25,7 +25,7 @@ import java.util.HashMap;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class HTMLEntityCodec implements Codec {
+public class HTMLEntityCodec extends Codec {
 	
 	private static HashMap characterToEntityMap;
 
@@ -33,20 +33,6 @@ public class HTMLEntityCodec implements Codec {
 
 	public HTMLEntityCodec() {
 		initializeMaps();
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Encodes a String for safe use as an HTML entity
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			sb.append( encodeCharacter( new Character( input.charAt(i) ) ) );
-		}
-		return sb.toString();
 	}
 
 	/**
@@ -60,25 +46,6 @@ public class HTMLEntityCodec implements Codec {
 			return "&" + entityName + ";";
 		}
 		return "&#" + (int)c.charValue() + ";";
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Decodes a String that has been encoded for use in an HTML entity field.
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
 	}
 	
 	/**

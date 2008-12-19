@@ -28,16 +28,30 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public interface Codec {
+public abstract class Codec {
 
 	/**
-	 * Encode a String with a Codec
+	 * Default constructor
+	 */
+	public Codec() {
+	}
+	
+	/**
+	 * Encode a String so that it can be safely used in a specific context.
 	 * 
 	 * @param input
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
-	String encode( String input ); 
+    public String encode(String input) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            sb.append(encodeCharacter(new Character(c)));
+        }
+        return sb.toString();
+    }
+
 	
 	/**
 	 * Encode a Character with a Codec
@@ -47,7 +61,9 @@ public interface Codec {
 	 * @return
 	 * 		the encoded Character
 	 */
-	String encodeCharacter( Character c );
+	public String encodeCharacter( Character c ) {
+		return ""+c;
+	}
 	
 	/**
 	 * Decode a String that was encoded using the encode method in this Class
@@ -57,7 +73,19 @@ public interface Codec {
 	 * @return
 	 *		the decoded String
 	 */
-	String decode( String input );
+    public String decode(String input) {
+        StringBuffer sb = new StringBuffer();
+        PushbackString pbs = new PushbackString(input);
+        while (pbs.hasNext()) {
+            Character c = decodeCharacter(pbs);
+            if (c != null) {
+                sb.append(c);
+            } else {
+                sb.append(pbs.next());
+            }
+        }
+        return sb.toString();
+    }
 	
 
 	/**
@@ -69,6 +97,8 @@ public interface Codec {
 	 * 
 	 * @return the decoded Character
 	 */
-	Character decodeCharacter( PushbackString input );
+	public Character decodeCharacter( PushbackString input ) {
+		return input.next();
+	}
 	
 }

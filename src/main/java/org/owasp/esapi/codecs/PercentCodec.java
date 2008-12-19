@@ -24,21 +24,8 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class PercentCodec implements Codec {
+public class PercentCodec extends Codec {
 
-	public PercentCodec() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String encode( String input ) {
-        StringBuffer sb = new StringBuffer();
-        for ( int i=0; i<input.length(); i++ ) {
-            sb.append( encodeCharacter( new Character( input.charAt(i) ) ) );
-        }
-        return sb.toString();
-	}
 	
 	/**
 	 * {@inheritDoc}
@@ -48,27 +35,6 @@ public class PercentCodec implements Codec {
 	}
 	
 	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Decode string encoded with percent characters
-	 * 
-	 * @param input
-	 * 			encoded string using percent characters (such as URL encoding)
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
-	}
 	
 	/**
 	 * {@inheritDoc}
