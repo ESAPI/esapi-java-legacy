@@ -29,20 +29,14 @@ public class CSSCodec extends Codec {
     /**
 	 * {@inheritDoc}
 	 *
-     * Returns backslash encoded character. This implementation does not support \\### Latin encoded
-     * characters in octal as it is not in ECMAScript v3.
+     * Returns backslash encoded character.
 	 */
     public String encodeCharacter(Character c) {
-        char ch = c.charValue();
-
-        // encode up to 256 \x syntax
-        if (ch <= 256) {
-            return "\\" + ch;
-        }
-
-        // otherwise encode with \\HHHHHH
-        String temp = Integer.toHexString((int) ch);
-        return "\\" + temp.toUpperCase() + " ";
+        
+    	char ch = c.charValue();
+    	String hex = Integer.toHexString( (int)ch );
+    	
+        return "\\" + hex + " ";  // end in whitespace to terminate encoded character
     }
 
     
@@ -50,7 +44,7 @@ public class CSSCodec extends Codec {
 	 * {@inheritDoc}
 	 * 
 	 * Returns the decoded version of the character starting at index, or null if no decoding is
-     * possible.
+     * possible.  This implementation does not support \\### octal encoding.
      * 
      * Formats all are legal both upper/lower case: \\x - special characters \\HHHH
 	 */

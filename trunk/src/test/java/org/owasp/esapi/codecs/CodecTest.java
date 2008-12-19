@@ -86,10 +86,10 @@ public class CodecTest extends TestCase {
         assertEquals( "\\x3C", javaScriptCodec.encode("<") );
         
         // vbScriptCodec
-        assertEquals( "\"<", vbScriptCodec.encode("<") );
+        assertEquals( "chrw(60)", vbScriptCodec.encode("<") );
 
         // cssCodec
-        assertEquals( "\\<", cssCodec.encode("<") );
+        assertEquals( "\\3c ", cssCodec.encode("<") );
 
         // mySQLCodecANSI
         assertEquals( "\'\'", mySQLCodecANSI.encode("\'") );
@@ -121,10 +121,10 @@ public class CodecTest extends TestCase {
         assertEquals( "\\x3C", javaScriptCodec.encodeCharacter(c) );
         
         // vbScriptCodec
-        assertEquals( "\"<", vbScriptCodec.encodeCharacter(c) );
+        assertEquals( "chrw(60)", vbScriptCodec.encodeCharacter(c) );
 
         // cssCodec
-        assertEquals( "\\<", cssCodec.encodeCharacter(c) );
+        assertEquals( "\\3c ", cssCodec.encodeCharacter(c) );
 
         // mySQLCodecANSI
         assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(new Character('\'')) );

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
@@ -38,6 +39,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.Validator;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.codecs.JavaScriptCodec;
+import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
@@ -69,6 +74,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/** The encoder to use for canonicalization */
 	private Encoder encoder = null;
+
+	/** The encoder to use for file system */
+	private Validator fileValidator = null;
 	
 	/** constants */
 	private static final int MAX_CREDIT_CARD_LENGTH = 19;
@@ -449,31 +457,30 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				if (allowNull) return null;
        			throw new ValidationException( context + ": Input directory path required", "Input directory path required: context=" + context + ", input=" + input, context );
 			}
-						
-			// do basic validation
-			String canonical = getValidInput( context, input, "DirectoryName", 255, false);
-			
-			// get the canonical path without the drive letter if present
-			String cpath = new File(canonical).getCanonicalPath().replaceAll( "\\\\", "/");
-			String temp = cpath.toLowerCase();
-			if (temp.length() >= 2 && temp.charAt(0) >= 'a' && temp.charAt(0) <= 'z' && temp.charAt(1) == ':') {
-				cpath = cpath.substring(2);
-			}
 
-			// prepare the input without the drive letter if present
-			String escaped = canonical.replaceAll( "\\\\", "/");
-			temp = escaped.toLowerCase();
-			if (temp.length() >= 2 && temp.charAt(0) >= 'a' && temp.charAt(0) <= 'z' && temp.charAt(1) == ':') {
-				escaped = escaped.substring(2);
+			File dir = new File( input );
+
+			// check dir exists
+			if ( !dir.exists() ) {
+				throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input );
 			}
 			
-			// the path is valid if the input matches the canonical path
-			if (!escaped.equals(cpath.toLowerCase())) {
+			String canonicalPath = dir.getCanonicalPath();
+			List list = new ArrayList();
+			list.add( new HTMLEntityCodec() );
+			list.add( new PercentCodec() );
+			Encoder fileEncoder = new DefaultEncoder( list );
+			Validator fileValidator = new DefaultValidator( fileEncoder );
+			String canonical = fileValidator.getValidInput( context, canonicalPath, "DirectoryName", 255, false);
+			
+			// check canonical form matches input
+			if ( !canonical.equals( input ) ) {
 				throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical, context );
-			}
+			}			
 			return canonical; 
-		} catch (IOException e) {
-			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input, e, context );
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ValidationException( context + ": Invalid directory name", "Failure to validate directory path: context=" + context + ", input=" + input, e, context );
 		}
 	}
 	

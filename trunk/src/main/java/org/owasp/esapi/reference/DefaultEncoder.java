@@ -68,9 +68,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
-	private final static char[] IMMUNE_CSS = { ' ' };  // TODO: check
+	private final static char[] IMMUNE_CSS = {};
 	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
-	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // TODO: check
+	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_SQL = { ' ' };
 	private final static char[] IMMUNE_OS = { '-' };
@@ -274,7 +274,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR ) );
+			if ( c == '\t' || c == '\n' || c == '\r' ) {
+				sb.append( c );
+			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
+				logger.warning( Logger.SECURITY, false, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
+				sb.append( ' ' );
+			} else {
+				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR ) );
+			}
 		}
 		return sb.toString();
 	}
@@ -321,9 +328,27 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    	return null;
 	    }
 		StringBuffer sb = new StringBuffer();
+		boolean encoding = false;
+		boolean inquotes = false;
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
-			sb.append( encode( c, vbScriptCodec, CHAR_ALPHANUMERICS, IMMUNE_VBSCRIPT ) );
+			
+			// handle normal characters and surround them with quotes
+			if (isContained(CHAR_ALPHANUMERICS, c) || isContained(IMMUNE_VBSCRIPT, c)) {
+				if ( encoding && i > 0 ) sb.append( "&" );
+				if ( !inquotes ) sb.append( "\"" );
+				sb.append( c );
+				inquotes = true;
+				encoding = false;
+				
+			// handle characters that need encoding
+			} else {
+				if ( inquotes ) sb.append( "\"" );
+				if ( i > 0 ) sb.append( "&" );
+				sb.append( vbScriptCodec.encodeCharacter( new Character( c ) ) );
+				inquotes = false;
+				encoding = true;
+			}
 		}
 		return sb.toString();
 	}

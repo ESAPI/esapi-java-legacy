@@ -295,32 +295,31 @@ public class ValidatorTest extends TestCase {
 		list.add( new HTMLEntityCodec() );
 		Encoder encoder = new DefaultEncoder( list );
 		Validator instance = new DefaultValidator( encoder );
-				
+		
 		boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1 ) ? true : false;
-	
+		
 		if ( isWindows ) {
 			// Windows paths that don't exist and thus should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\pathNotExist", false));
-			assertTrue(instance.isValidDirectoryPath("test", "c:\\jeff", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", false));
 			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
 
 			// Windows paths that should pass
-			assertTrue(instance.isValidDirectoryPath("test", "c:\\", false));								// Windows root directory
-			assertTrue(instance.isValidDirectoryPath("test", "c:\\windows", false));						// Windows always exist directory
-			assertTrue(instance.isValidDirectoryPath("test", "c:\\windows\\system32\\cmd.exe", false));		// Windows command shell	
+			assertTrue(instance.isValidDirectoryPath("test", "C:\\", false));								// Windows root directory
+			assertTrue(instance.isValidDirectoryPath("test", "C:\\Windows", false));						// Windows always exist directory
+			assertTrue(instance.isValidDirectoryPath("test", "C:\\Windows\\System32\\cmd.exe", false));		// Windows command shell	
 			
 			// Unix specific paths should not pass
-			assertFalse(instance.isValidDirectoryPath("test", "/", false));			// Unix Root directory
 			assertFalse(instance.isValidDirectoryPath("test", "/tmp", false));		// Unix Temporary directory
 			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Unix Standard shell	
-			assertTrue(instance.isValidDirectoryPath("test", "/etc/config", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/config", false));
 			
 			// Unix specific paths that should not exist or work
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", false));
 			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
 		} else {
 			// Windows paths should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\pathNotExist", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", false));
 			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
 
 			// Standard Windows locations should fail
@@ -334,7 +333,7 @@ public class ValidatorTest extends TestCase {
 			assertTrue(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Standard shell	
 			
 			// Unix specific paths that should not exist or work
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", false));
 			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
 		}
 	}
@@ -365,18 +364,16 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidFileUpload() {
 		System.out.println("isValidFileUpload");
 
-		String filepath = "/bin";
+		String filepath = System.getProperty( "user.dir" );
 		String filename = "aspect.jar";
-		byte[] content = "Thisi is some file content".getBytes();
+		byte[] content = "This is some file content".getBytes();
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
 		
-		// This will fail on MacOS X, as /etc is actually /private/etc
-		// TODO: Fix canonicalization of symlinks on MacOS X
-		filepath = "/etc";
+		filepath = "/ridiculous";
 		filename = "aspect.jar";
-		content = "Thisi is some file content".getBytes();
-		assertTrue(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
+		content = "This is some file content".getBytes();
+		assertFalse(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
 	}
 
 	/**
