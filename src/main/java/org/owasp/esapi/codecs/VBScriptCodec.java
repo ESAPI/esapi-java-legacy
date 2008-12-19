@@ -26,13 +26,30 @@ package org.owasp.esapi.codecs;
  */
 public class VBScriptCodec extends Codec {
 
+	/**
+	 * Encode a String so that it can be safely used in a specific context.
+	 * 
+	 * @param input
+	 * 		the String to encode
+	 * @return the encoded String
+	 */
+    public String encode(String input) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            sb.append(encodeCharacter(new Character(c)));
+        }
+        return sb.toString();
+    }
+
 
 	/**
 	 * Returns quote-encoded character
 	 */
 	public String encodeCharacter( Character c ) {
-        return "\"" + c;
+        return "chrw(" + (int)c.charValue() + ")";
 	}
+	
 	
 	
 	/**
