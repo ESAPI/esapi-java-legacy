@@ -33,8 +33,11 @@ public class HTMLEntityCodec extends Codec {
 
 	private static HashMap entityToCharacterMap;
 
-	public HTMLEntityCodec() {
+	static {
 		initializeMaps();
+	}
+	
+	public HTMLEntityCodec() {
 	}
 
 	/**
@@ -256,7 +259,7 @@ public class HTMLEntityCodec extends Codec {
 	/**
 	 * Initialize the entityNames array with all possible named entities
 	 */
-	private void initializeMaps() {
+	private static void initializeMaps() {
 		String[] entityNames = { "quot"
 		/* 34 : quotation mark */, "amp"
 		/* 38 : ampersand */, "lt"

@@ -30,12 +30,14 @@ package org.owasp.esapi.codecs;
  */
 public abstract class Codec {
 
-	protected static String[] hex = new String[256];
-	
 	/**
-	 * Default constructor
+	 * Initialize an array to mark which characters are to be encoded. Store the hex
+	 * string for that character to save time later. If the character shouldn't be
+	 * encoded, then store null.
 	 */
-	public Codec() {
+	protected static final String[] hex = new String[256];
+
+	static {
 		for ( char c = 0; c < 0xFF; c++ ) {
 			if ( c >= 0x30 && c <= 0x39 || c >= 0x41 && c <= 0x5A || c >= 0x61 && c <= 0x7A ) {
 				hex[c] = null;
@@ -43,6 +45,13 @@ public abstract class Codec {
 				hex[c] = toHex(c);
 			}
 		}
+	}
+	
+	
+	/**
+	 * Default constructor
+	 */
+	public Codec() {
 	}
 	
 	/**

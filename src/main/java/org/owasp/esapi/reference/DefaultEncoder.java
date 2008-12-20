@@ -41,9 +41,7 @@ import org.owasp.esapi.errors.IntrusionException;
 /**
  * Reference implementation of the Encoder interface. This implementation takes
  * a whitelist approach to encoding, meaning that everything not specifically identified in a
- * list of "immune" characters is encoded. Several methods follow the approach in the <a
- * href="http://www.microsoft.com/downloads/details.aspx?familyid=efb9c819-53ff-4f82-bfaf-e11625130c25&displaylang=en">Microsoft
- * AntiXSS Library</a>.
+ * list of "immune" characters is encoded.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -53,7 +51,7 @@ import org.owasp.esapi.errors.IntrusionException;
 public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	// Codecs
-	List codecs = new ArrayList();
+	private List codecs = new ArrayList();
 	private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
 	private PercentCodec percentCodec = new PercentCodec();
 	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
