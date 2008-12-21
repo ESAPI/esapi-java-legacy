@@ -72,14 +72,19 @@ public class TestHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param string
+     * @return
+     */
 	public Object getAttribute(String string) {
 		return attributes.get( string );
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     * 
+     * @return
+     */
 	public Enumeration getAttributeNames() {
 		Vector v = new Vector( attributes.keySet() );
 		return v.elements();
@@ -87,14 +92,18 @@ public class TestHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public long getCreationTime() {
 		return creationTime;
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public String getId() {
 		return ""+sessionid;
 	}
@@ -110,42 +119,55 @@ public class TestHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public long getLastAccessedTime() {
 		return accessedTime;
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public int getMaxInactiveInterval() {
 		return 0;
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public ServletContext getServletContext() {
 		return null;
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public HttpSessionContext getSessionContext() {
 		return null;
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param string
+     * @return
+     */
 	public Object getValue(String string) {
 		return null;
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public String[] getValueNames() {
 		return null;
 	}
@@ -159,52 +181,74 @@ public class TestHttpSession implements HttpSession {
     
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public boolean isNew() {
 		return true;
 	}
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @param string
+     * @param object
+     */
 	public void putValue(String string, Object object) {
 		// stub
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param string
+     */
 	public void removeAttribute(String string) {
 		// stub
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param string
+     */
 	public void removeValue(String string) {
 		// stub
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param string
+     * @param object
+     */
 	public void setAttribute(String string, Object object) {
 		attributes.put(string, object);
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param i
+     */
 	public void setMaxInactiveInterval(int i) {
 		// stub
 	}
 	
-	public void setAccessedTime( long time ) {
+    /**
+     *
+     * @param time
+     */
+    public void setAccessedTime( long time ) {
 		this.accessedTime = time;
 	}
 
 	
-	public void setCreationTime( long time ) {
+    /**
+     *
+     * @param time
+     */
+    public void setCreationTime( long time ) {
 		this.creationTime = time;
 	}
 
