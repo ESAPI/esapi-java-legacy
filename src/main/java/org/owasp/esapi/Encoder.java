@@ -93,7 +93,7 @@ public interface Encoder {
 	 * the attack. Note that data encoded more than once is not something that a
 	 * normal user would generate and should be regarded as an attack.
 	 * <p>
-     * Everyone <a href="http://cwe.mitre.org/data/definitions/180.html">says</a> you shouldn’t do validation
+     * Everyone <a href="http://cwe.mitre.org/data/definitions/180.html">says</a> you shouldn't do validation
      * without canonicalizing the data first. This is easier said than done. The canonicalize method can
      * be used to simplify just about any input down to its most basic form. Note that canonicalize doesn't
      * handle Unicode issues, it focuses on higher level encoding and escaping schemes. In addition to simple
@@ -106,11 +106,11 @@ public interface Encoder {
      * <p>
      * Using canonicalize is simple. The default is just...
      * <pre> 
-     *     String clean = ESAPI.encoder().canonicalize( request.getParameter(“input”));
+     *     String clean = ESAPI.encoder().canonicalize( request.getParameter("input"));
      * </pre> 
-     * You need to decode untrusted data so that it’s safe for ANY downstream interpreter or decoder. For
+     * You need to decode untrusted data so that it's safe for ANY downstream interpreter or decoder. For
      * example, if your data goes into a Windows command shell, then into a database, and then to a browser,
-     * you’re going to need to decode for all of those systems. You can build a custom encoder to canonicalize
+     * you're going to need to decode for all of those systems. You can build a custom encoder to canonicalize
      * for your application like this...
      * <pre> 
      *     ArrayList list = new ArrayList();
@@ -121,23 +121,23 @@ public interface Encoder {
      *     String clean = encoder.canonicalize( request.getParameter( "input" ));
      * </pre>
      * In ESAPI, the Validator uses the canonicalize method before it does validation.  So all you need to
-     * do is to validate as normal and you’ll be protected against a host of encoded attacks.
+     * do is to validate as normal and you'll be protected against a host of encoded attacks.
      * <pre>
      *     String input = request.getParameter( "name" );
      *     String name = ESAPI.validator().isValidInput( "test", input, "FirstName", 20, false);
      * </pre> 
      * However, the default canonicalize() method only decodes HTMLEntity, percent (URL) encoding, and JavaScript
-     * encoding. If you’d like to use a custom canonicalizer with your validator, that’s pretty easy too.
+     * encoding. If you'd like to use a custom canonicalizer with your validator, that's pretty easy too.
      * <pre> 
      *     ... setup custom encoder as above
      *     Validator validator = new DefaultValidator( encoder );
      *     String input = request.getParameter( "name" );
      *     String name = validator.isValidInput( "test", input, "name", 20, false);
      * </pre>
-     * Although ESAPI is able to canonicalize multiple, mixed, or nested encoding, it’s safer to not accept
+     * Although ESAPI is able to canonicalize multiple, mixed, or nested encoding, it's safer to not accept
      * this stuff in the first place. In ESAPI, the default is "strict" mode that throws an IntrusionException
      * if it receives anything not single-encoded with a single scheme.  Currently this is not configurable 
-     * in ESAPI.properties, but it probably should be.  Even if you disable “strict” mode, you’ll still get
+     * in ESAPI.properties, but it probably should be.  Even if you disable "strict" mode, you'll still get
      * warning messages in the log about each multiple encoding and mixed encoding received.
      * <pre>
      *     // disabling strict mode to allow mixed encoding
@@ -186,7 +186,7 @@ public interface Encoder {
 	 * Encode data for use in HTML using HTML entity encoding
 	 * <p> 
 	 * Note that the following characters:
-	 * 00–08, 0B–0C, 0E–1F, and 7F–9F 
+	 * 00-08, 0B-0C, 0E-1F, and 7F-9F
 	 * <p>cannot be used in HTML. 
 	 * 
 	 * @see <a href="http://en.wikipedia.org/wiki/Character_encodings_in_HTML">HTML Encodings [wikipedia.org]</a> 
