@@ -53,6 +53,7 @@ public class CodecTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
         // none
@@ -60,6 +61,7 @@ public class CodecTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
         // none
@@ -75,7 +77,10 @@ public class CodecTest extends TestCase {
         return suite;
     }
 
-	public void testEncode() {
+    /**
+     *
+     */
+    public void testEncode() {
         System.out.println("encode");
 
         char[] immune = new char[0];
@@ -111,7 +116,10 @@ public class CodecTest extends TestCase {
         assertEquals( "^<", windowsCodec.encode(immune, "<") );
 	}
 	
-	public void testEncodeCharacter() {
+    /**
+     *
+     */
+    public void testEncodeCharacter() {
         System.out.println("encodeCharacter");
         Character c = new Character('<');
         char[] immune = new char[0];
@@ -147,7 +155,10 @@ public class CodecTest extends TestCase {
         assertEquals( "^<", windowsCodec.encodeCharacter(immune, c) );
 	}
 	
-	public void testDecode() {
+    /**
+     *
+     */
+    public void testDecode() {
         System.out.println("decode");
         
         // htmlCodec
@@ -184,7 +195,10 @@ public class CodecTest extends TestCase {
 	}
 	
 	
-	public void testDecodeCharacter() {
+    /**
+     *
+     */
+    public void testDecodeCharacter() {
         System.out.println("decodeCharacter");
         Character c = new Character('<');
 

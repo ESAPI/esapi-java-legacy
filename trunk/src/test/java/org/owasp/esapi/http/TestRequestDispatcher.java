@@ -22,12 +22,30 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+/**
+ *
+ * @author jwilliams
+ */
 public class TestRequestDispatcher implements RequestDispatcher {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
+     */
     public void forward(ServletRequest request, ServletResponse response) throws ServletException, IOException {
     	
     }
     
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
+     */
     public void include(ServletRequest request, ServletResponse response) throws ServletException, IOException {
     	
     }

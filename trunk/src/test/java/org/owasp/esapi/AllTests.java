@@ -43,6 +43,7 @@ public class AllTests extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -50,6 +51,7 @@ public class AllTests extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none

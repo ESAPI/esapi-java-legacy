@@ -30,7 +30,9 @@ public class CSSCodec extends Codec {
 	 * {@inheritDoc}
 	 *
      * Returns backslash encoded character.
-	 */
+     *
+     * @param immune
+     */
     public String encodeCharacter(char[] immune, Character c) {
 		char ch = c.charValue();
 		

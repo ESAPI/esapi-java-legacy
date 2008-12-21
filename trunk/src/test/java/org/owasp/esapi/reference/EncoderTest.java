@@ -58,6 +58,7 @@ public class EncoderTest extends TestCase {
     
     /**
      * {@inheritDoc}
+     * @throws Exception 
      */
     protected void setUp() throws Exception {
     	// none
@@ -65,6 +66,7 @@ public class EncoderTest extends TestCase {
     
     /**
      * {@inheritDoc}s
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none
@@ -332,13 +334,15 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testNormalize() throws ValidationException {
 		System.out.println("normalize");
-		// assertEquals( "e a i _ @ \" < > ", ESAPI.encoder().normalize("é à î _ @ \" < > \u20A0"));
+		// assertEquals( "e a i _ @ \" < > ", ESAPI.encoder().normalize("ï¿½ ï¿½ ï¿½ _ @ \" < > \u20A0"));
 	}
 
 	
     /**
 	 * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
-	 */
+     *
+     * @throws Exception
+     */
     public void testEncodeForHTML() throws Exception {
         System.out.println("encodeForHTML");
         Encoder instance = ESAPI.encoder();
@@ -369,6 +373,9 @@ public class EncoderTest extends TestCase {
     }
     
     
+    /**
+     *
+     */
     public void testEncodeForCSS() {
         System.out.println("encodeForCSS");
         Encoder instance = ESAPI.encoder();
@@ -401,6 +408,9 @@ public class EncoderTest extends TestCase {
         // assertEquals( "\\\\", instance.encodeForJavaScript("\\"));
     }
         
+    /**
+     *
+     */
     public void testEncodeForVBScript() {
         System.out.println("encodeForVBScript");        
         Encoder instance = ESAPI.encoder();
@@ -453,9 +463,9 @@ public class EncoderTest extends TestCase {
         System.out.println("encodeForLDAP");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForLDAP(null));
-        assertEquals("No special characters to escape", "Hi This is a test #çà", instance.encodeForLDAP("Hi This is a test #çà"));
+        assertEquals("No special characters to escape", "Hi This is a test #ï¿½ï¿½", instance.encodeForLDAP("Hi This is a test #ï¿½ï¿½"));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
-        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # ç à ô", instance.encodeForLDAP("Hi (This) = is * a \\ test # ç à ô"));
+        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # ï¿½ ï¿½ ï¿½", instance.encodeForLDAP("Hi (This) = is * a \\ test # ï¿½ ï¿½ ï¿½"));
     }
     
     /**
@@ -465,10 +475,10 @@ public class EncoderTest extends TestCase {
         System.out.println("encodeForDN");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForDN(null));
-        assertEquals("No special characters to escape", "Helloé", instance.encodeForDN("Helloé"));
-        assertEquals("leading #", "\\# Helloé", instance.encodeForDN("# Helloé"));
-        assertEquals("leading space", "\\ Helloé", instance.encodeForDN(" Helloé"));
-        assertEquals("trailing space", "Helloé\\ ", instance.encodeForDN("Helloé "));
+        assertEquals("No special characters to escape", "Helloï¿½", instance.encodeForDN("Helloï¿½"));
+        assertEquals("leading #", "\\# Helloï¿½", instance.encodeForDN("# Helloï¿½"));
+        assertEquals("leading space", "\\ Helloï¿½", instance.encodeForDN(" Helloï¿½"));
+        assertEquals("trailing space", "Helloï¿½\\ ", instance.encodeForDN("Helloï¿½ "));
         assertEquals("less than greater than", "Hello\\<\\>", instance.encodeForDN("Hello<>"));
         assertEquals("only 3 spaces", "\\  \\ ", instance.encodeForDN("   "));
         assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
@@ -505,7 +515,9 @@ public class EncoderTest extends TestCase {
     
     /**
 	 * Test of encodeForURL method, of class org.owasp.esapi.Encoder.
-	 */
+     *
+     * @throws Exception
+     */
     public void testEncodeForURL() throws Exception {
         System.out.println("encodeForURL");
         Encoder instance = ESAPI.encoder();
@@ -515,7 +527,9 @@ public class EncoderTest extends TestCase {
     
     /**
 	 * Test of decodeFromURL method, of class org.owasp.esapi.Encoder.
-	 */
+     *
+     * @throws Exception
+     */
     public void testDecodeFromURL() throws Exception {
         System.out.println("decodeFromURL");
         Encoder instance = ESAPI.encoder();

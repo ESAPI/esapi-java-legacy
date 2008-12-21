@@ -50,6 +50,7 @@ public class IntegerAccessReferenceMapTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -57,6 +58,7 @@ public class IntegerAccessReferenceMapTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none
@@ -77,7 +79,8 @@ public class IntegerAccessReferenceMapTest extends TestCase {
 	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
 	 * 
 	 * @throws AuthenticationException
-	 *             the authentication exception
+     *             the authentication exception
+     * @throws EncryptionException
 	 */
     public void testUpdate() throws AuthenticationException, EncryptionException {
         System.out.println("update");
@@ -170,6 +173,10 @@ public class IntegerAccessReferenceMapTest extends TestCase {
         }
     }
     
+    /**
+     *
+     * @throws org.owasp.esapi.errors.AccessControlException
+     */
     public void testAddDirectReference() throws AccessControlException {
         System.out.println("addDirectReference");
         
@@ -189,6 +196,10 @@ public class IntegerAccessReferenceMapTest extends TestCase {
     	assertEquals(ind, newInd);
     }
 
+    /**
+     *
+     * @throws org.owasp.esapi.errors.AccessControlException
+     */
     public void testRemoveDirectReference() throws AccessControlException {
         System.out.println("removeDirectReference");
         

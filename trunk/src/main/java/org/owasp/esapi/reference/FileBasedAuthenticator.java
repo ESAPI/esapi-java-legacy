@@ -258,6 +258,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         }
     };
 
+    /**
+     *
+     */
     public FileBasedAuthenticator() {
     }
 
@@ -515,7 +518,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
     /**
 	* {@inheritDoc}
-	*/
+     *
+     * @throws EncryptionException
+     */
     public String hashPassword(String password, String accountName) throws EncryptionException {
         String salt = accountName.toLowerCase();
         return ESAPI.encryptor().hash(password, salt);
@@ -552,6 +557,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     }
     
     // file was touched so reload it
+    /**
+     *
+     */
     protected void loadUsersImmediately() {
     	synchronized( this ) {
 	        logger.trace(Logger.SECURITY, true, "Loading users from " + userDB.getAbsolutePath(), null);
@@ -911,7 +919,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a
      * brute force attack, however the real strength comes from the name length and complexity.
      * 
-     */
+      * @param newAccountName
+      */
     public void verifyAccountNameStrength(String newAccountName) throws AuthenticationException {
         if (newAccountName == null) {
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account with a null account name");

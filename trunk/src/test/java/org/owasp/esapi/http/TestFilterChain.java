@@ -22,8 +22,19 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
+/**
+ *
+ * @author jwilliams
+ */
 public class TestFilterChain implements FilterChain {
-    public void doFilter ( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws java.io.IOException
+     * @throws javax.servlet.ServletException
+     */
+    public void doFilter( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
     	// stubbed out for test purposes
     }
 

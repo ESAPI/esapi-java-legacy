@@ -31,6 +31,10 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 
+/**
+ *
+ * @author jwilliams
+ */
 public class ESAPIFilter implements Filter {
 
 	private final Logger logger = ESAPI.getLogger("ESAPIFilter");

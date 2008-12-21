@@ -35,7 +35,10 @@ public class AccessControlException extends EnterpriseSecurityException {
 
 	/**
 	 * Creates a new instance of EnterpriseSecurityException.
-	 */
+     *
+     * @param userMessage
+     * @param logMessage
+     */
 	public AccessControlException(String userMessage, String logMessage) {
 		super(userMessage, logMessage);
 	}

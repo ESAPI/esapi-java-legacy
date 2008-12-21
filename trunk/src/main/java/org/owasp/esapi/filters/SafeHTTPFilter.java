@@ -40,6 +40,14 @@ import org.owasp.esapi.ESAPI;
  */
 public class SafeHTTPFilter implements Filter {
 
+    /**
+     *
+     * @param request
+     * @param response
+     * @param chain
+     * @throws java.io.IOException
+     * @throws javax.servlet.ServletException
+     */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 
         if (!(request instanceof HttpServletRequest)) {
@@ -52,11 +60,19 @@ public class SafeHTTPFilter implements Filter {
         chain.doFilter(new SafeRequest(hrequest), new SafeResponse(hresponse));
     }
 
-	public void destroy() {
+    /**
+     *
+     */
+    public void destroy() {
 		// no special action
 	}
 
-	public void init(FilterConfig filterConfig) throws ServletException {
+    /**
+     *
+     * @param filterConfig
+     * @throws javax.servlet.ServletException
+     */
+    public void init(FilterConfig filterConfig) throws ServletException {
 		// no special action
 	}
 	

@@ -56,6 +56,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -63,6 +64,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none
@@ -82,8 +84,6 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
     /**
 	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
 	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
 	 */
     public void testExceptions() {
         System.out.println("exceptions");

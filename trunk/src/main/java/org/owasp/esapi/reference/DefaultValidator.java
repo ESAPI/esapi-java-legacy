@@ -92,7 +92,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	/**
 	 * 
-	 */
+     *
+     * @param encoder
+     */
 	public DefaultValidator( Encoder encoder ) {
 	    this.encoder = encoder;
 	}
@@ -234,7 +236,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * and input that is clearly an attack will generate a descriptive IntrusionException.
 	 * 
 	 * 
-	 */
+      *
+      * @param errors
+      */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
 		try {
@@ -341,7 +345,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of getValidSafeHTML
-	 */
+     *
+     * @param errors
+     */
 	public String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
 		try {
@@ -419,7 +425,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of getValidCreditCard
-	 */
+     *
+     * @param errors
+     */
 	public String getValidCreditCard(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
 		try {
@@ -486,7 +494,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of getValidDirectoryPath
-	 */
+     *
+     * @param errors
+     */
 	public String getValidDirectoryPath(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
 		try {
@@ -561,7 +571,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns a canonicalized and validated file name as a String. Invalid input
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
-	 */
+     *
+     * @param errors
+     */
 	public String getValidFileName(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
 		try {
@@ -768,7 +780,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * is a symlink. For example, on MacOS X, /etc is actually /private/etc. If you mean to use /etc, use its real
 	 * path (/private/etc), not the symlink (/etc).</p>
 	 * 
-	 */
+     *
+     * @param directorypath
+     */
 	public boolean isValidFileUpload(String context, String directorypath, String filename, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException {
 		return( isValidFileName( context, filename, allowNull ) &&
 				isValidDirectoryPath( context, directorypath, allowNull ) &&
@@ -779,7 +793,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Validates the filepath, filename, and content of a file. Invalid input
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
-	 */
+     *
+     * @param directorypath
+     */
 	public void assertValidFileUpload(String context, String directorypath, String filename, byte[] content, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException {
 		getValidFileName( context, filename, allowNull );
 		getValidDirectoryPath( context, directorypath, allowNull );
@@ -789,7 +805,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	/**
 	 * ValidationErrorList variant of assertValidFileUpload
-	 */
+     *
+     * @param errors
+     */
 	public void assertValidFileUpload(String context, String filepath, String filename, byte[] content, int maxBytes, boolean allowNull, ValidationErrorList errors) 
 		throws IntrusionException {
 		try {
@@ -819,7 +837,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
 	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
-	 */
+     *
+     * @param request
+     * @return
+     * @throws IntrusionException
+     */
 	public boolean isValidHTTPRequest(HttpServletRequest request) throws IntrusionException {
 		try {
 			assertIsValidHTTPRequest(request);
@@ -924,7 +946,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	/**
 	 * ValidationErrorList variant of getValidListItem
-	 */
+     *
+     * @param errors
+     */
 	public String getValidListItem(String context, String input, List list, ValidationErrorList errors) throws IntrusionException {
 		
 		try {
@@ -941,7 +965,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns true if the parameters in the current request contain all required parameters and only optional ones in addition.
 	 * 
 	 * 
-	 */
+      *
+      * @param requiredNames
+      * @param optionalNames
+      */
 	public boolean isValidHTTPRequestParameterSet(String context, Set requiredNames, Set optionalNames) {
 		try {
 			assertIsValidHTTPRequestParameterSet( context, requiredNames, optionalNames);
@@ -978,7 +1005,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of assertIsValidHTTPRequestParameterSet
-	 */
+     *
+     * @param errors
+     */
 	public void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional, ValidationErrorList errors) throws IntrusionException {
 		try {
 			assertIsValidHTTPRequestParameterSet(context, required, optional);
@@ -1005,7 +1034,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * Returns canonicalized and validated printable characters as a byte array. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
-	 */
+     *
+     * @throws IntrusionException
+     */
 	public byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
@@ -1026,7 +1057,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of getValidPrintable
-	 */
+     *
+     * @param errors
+     */
 	public byte[] getValidPrintable(String context, byte[] input,int maxLength, boolean allowNull, ValidationErrorList errors)
 		throws IntrusionException {
 	
@@ -1058,7 +1091,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * Returns canonicalized and validated printable characters as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
-	 */
+     *
+     * @throws IntrusionException
+     */
 	public String getValidPrintable(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
 		String canonical = "";
 		try {
@@ -1071,7 +1106,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of getValidPrintable
-	 */
+     *
+     * @param errors
+     */
 	public String getValidPrintable(String context, String input,int maxLength, boolean allowNull, ValidationErrorList errors)
 		throws IntrusionException {
 	
@@ -1102,7 +1139,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * ValidationErrorList variant of getValidRedirectLocation
-	 */
+     *
+     * @param errors
+     */
 	public String getValidRedirectLocation(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 
 		try {
@@ -1118,7 +1157,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * 
 	 * This implementation reads until a newline or the specified number of
 	 * characters.
-	 */
+     *
+     * @param in
+     * @param max
+     */
 	public String safeReadLine(InputStream in, int max) throws ValidationException {
 		if (max <= 0) {
 			throw new ValidationAvailabilityException( "Invalid input", "Invalid readline. Must read a positive number of bytes from the stream");

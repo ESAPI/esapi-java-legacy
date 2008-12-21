@@ -44,6 +44,7 @@ public class EncryptorTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -51,6 +52,7 @@ public class EncryptorTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none
@@ -69,7 +71,9 @@ public class EncryptorTest extends TestCase {
 
     /**
 	 * Test of hash method, of class org.owasp.esapi.Encryptor.
-	 */
+     *
+     * @throws EncryptionException
+     */
     public void testHash() throws EncryptionException {
         System.out.println("hash");
         Encryptor instance = ESAPI.encryptor();
@@ -148,8 +152,7 @@ public class EncryptorTest extends TestCase {
     /**
 	 * Test of seal method, of class org.owasp.esapi.Encryptor.
 	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
+     * @throws IntegrityException
 	 */
     public void testSeal() throws IntegrityException {
         System.out.println("seal");
@@ -162,8 +165,7 @@ public class EncryptorTest extends TestCase {
     /**
 	 * Test of verifySeal method, of class org.owasp.esapi.Encryptor.
 	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
+     * @throws EnterpriseSecurityException
 	 */
     public void testVerifySeal() throws EnterpriseSecurityException {
         System.out.println("verifySeal");

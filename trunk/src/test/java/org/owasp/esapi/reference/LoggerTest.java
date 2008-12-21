@@ -50,6 +50,7 @@ public class LoggerTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -57,6 +58,7 @@ public class LoggerTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none

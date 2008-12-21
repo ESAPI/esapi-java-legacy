@@ -51,12 +51,17 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 
 	private Map userEvents = new WeakHashMap();
 	
-	public DefaultIntrusionDetector() {
+    /**
+     *
+     */
+    public DefaultIntrusionDetector() {
 	}
 	
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param e
+     */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY, false, ((EnterpriseSecurityException)e).getLogMessage(), e );

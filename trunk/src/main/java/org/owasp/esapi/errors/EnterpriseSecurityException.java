@@ -43,6 +43,9 @@ public class EnterpriseSecurityException extends Exception {
     /** The logger. */
     protected final Logger logger = ESAPI.getLogger("EnterpriseSecurityException");
 
+    /**
+     *
+     */
     protected String logMessage = null;
 
     /**

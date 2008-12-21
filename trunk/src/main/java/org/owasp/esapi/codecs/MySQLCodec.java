@@ -28,8 +28,14 @@ package org.owasp.esapi.codecs;
  */
 public class MySQLCodec extends Codec {
 
-	public static final int MYSQL_MODE = 0;
-	public static final int ANSI_MODE = 1;
+    /**
+     *
+     */
+    public static final int MYSQL_MODE = 0;
+    /**
+     *
+     */
+    public static final int ANSI_MODE = 1;
 	
 	private int mode = 0;
 	
@@ -48,7 +54,9 @@ public class MySQLCodec extends Codec {
 	 * {@inheritDoc}
 	 * 
 	 * Returns quote-encoded character
-	 */
+     *
+     * @param immune
+     */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		

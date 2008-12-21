@@ -61,6 +61,8 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @param name
+     * @return
      */
     public Object getAttribute(String name) {
         return request.getAttribute(name);
@@ -68,6 +70,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public Enumeration getAttributeNames() {
         return request.getAttributeNames();
@@ -75,6 +78,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getAuthType() {
         return request.getAuthType();
@@ -82,6 +86,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getCharacterEncoding() {
         return request.getCharacterEncoding();
@@ -89,6 +94,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public int getContentLength() {
         return request.getContentLength();
@@ -96,6 +102,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getContentType() {
         return request.getContentType();
@@ -104,6 +111,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the context path from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
+     * @return
      */
     public String getContextPath() {
         String path = request.getContextPath();
@@ -119,6 +127,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the array of Cookies from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
+     * @return
      */
     public Cookie[] getCookies() {
         Cookie[] cookies = request.getCookies();
@@ -157,6 +166,8 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @param name 
+     * @return
      */
     public long getDateHeader(String name) {
         return request.getDateHeader(name);
@@ -165,6 +176,8 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the named header from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
+     * @param name 
+     * @return
      */
     public String getHeader(String name) {
         String value = request.getHeader(name);
@@ -180,6 +193,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the enumeration of header names from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
+     * @return
      */
     public Enumeration getHeaderNames() {
         Vector v = new Vector();
@@ -199,6 +213,8 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the enumeration of headers from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
+     * @param name
+     * @return
      */
     public Enumeration getHeaders(String name) {
         Vector v = new Vector();
@@ -219,6 +235,8 @@ public class SafeRequest implements HttpServletRequest {
      * Same as HttpServletRequest, no security changes required. Note that this
      * input stream may contain attacks and the developer is responsible for
      * canonicalizing, validating, and encoding any data from this stream.
+     * @return 
+     * @throws IOException
      */
     public ServletInputStream getInputStream() throws IOException {
         return request.getInputStream();
@@ -226,6 +244,8 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @param name 
+     * @return
      */
     public int getIntHeader(String name) {
         return request.getIntHeader(name);
@@ -233,6 +253,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getLocalAddr() {
         return request.getLocalAddr();
@@ -240,6 +261,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public Locale getLocale() {
         return request.getLocale();
@@ -247,6 +269,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public Enumeration getLocales() {
         return request.getLocales();
@@ -254,6 +277,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getLocalName() {
         return request.getLocalName();
@@ -261,6 +285,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public int getLocalPort() {
         return request.getLocalPort();
@@ -268,6 +293,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getMethod() {
         return request.getMethod();
@@ -276,6 +302,8 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the named parameter from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
+     * @param name
+     * @return
      */
     public String getParameter(String name) {
         String orig = request.getParameter(name);
@@ -291,6 +319,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the parameter map from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
+     * @return
      */
     public Map getParameterMap() {
         Map map = request.getParameterMap();
@@ -319,6 +348,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the enumeration of parameter names from the HttpServletRequest
      * after canonicalizing and filtering out any dangerous characters.
+     * @return
      */
     public Enumeration getParameterNames() {
         Vector v = new Vector();
@@ -339,6 +369,8 @@ public class SafeRequest implements HttpServletRequest {
      * Returns the array of matching parameter values from the
      * HttpServletRequest after canonicalizing and filtering out any dangerous
      * characters.
+     * @param name 
+     * @return
      */
     public String[] getParameterValues(String name) {
         String[] values = request.getParameterValues(name);
@@ -360,6 +392,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the path info from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
+     * @return
      */
     public String getPathInfo() {
         String path = request.getPathInfo();
@@ -374,6 +407,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getPathTranslated() {
         return request.getPathTranslated();
@@ -381,6 +415,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getProtocol() {
         return request.getProtocol();
@@ -389,6 +424,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the query string from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
+     * @return
      */
     public String getQueryString() {
         String query = request.getQueryString();
@@ -405,6 +441,8 @@ public class SafeRequest implements HttpServletRequest {
      * Same as HttpServletRequest, no security changes required. Note that this
      * reader may contain attacks and the developer is responsible for
      * canonicalizing, validating, and encoding any data from this stream.
+     * @return
+     * @throws IOException
      */
     public BufferedReader getReader() throws IOException {
         return request.getReader();
@@ -412,6 +450,8 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @param path 
+     * @return
      */
     public String getRealPath(String path) {
         return request.getRealPath(path);
@@ -419,6 +459,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getRemoteAddr() {
         return request.getRemoteAddr();
@@ -426,6 +467,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public String getRemoteHost() {
         return request.getRemoteHost();
@@ -433,6 +475,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public int getRemotePort() {
         return request.getRemotePort();
@@ -440,6 +483,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Returns the name of the ESAPI user associated with this request.
+     * @return
      */
     public String getRemoteUser() {
         return ESAPI.authenticator().getCurrentUser().getAccountName();
@@ -448,6 +492,8 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Checks to make sure the path to forward to is within the WEB-INF
      * directory and then returns the dispatcher. Otherwise returns null.
+     * @param path
+     * @return
      */
     public RequestDispatcher getRequestDispatcher(String path) {
         if (path.startsWith("WEB-INF")) {
@@ -460,6 +506,7 @@ public class SafeRequest implements HttpServletRequest {
      * Returns the URI from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters. Code must be very careful not to
      * depend on the value of a requested session id reported by the user.
+     * @return
      */
     public String getRequestedSessionId() {
         String id = request.getRequestedSessionId();
@@ -475,6 +522,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the URI from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
+     * @return
      */
     public String getRequestURI() {
         String uri = request.getRequestURI();
@@ -490,6 +538,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the URL from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
+     * @return
      */
     public StringBuffer getRequestURL() {
         String url = request.getRequestURL().toString();
@@ -505,6 +554,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the scheme from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
+     * @return
      */
     public String getScheme() {
         String scheme = request.getScheme();
@@ -520,6 +570,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the server name (host header) from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
+     * @return
      */
     public String getServerName() {
         String name = request.getServerName();
@@ -535,6 +586,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the server port (after the : in the host header) from the
      * HttpServletRequest after parsing and checking the range 0-65536.
+     * @return
      */
 	public int getServerPort() {
 		int port = request.getServerPort();
@@ -549,6 +601,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns the server path from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
+     * @return
      */
     public String getServletPath() {
         String path = request.getServletPath();
@@ -564,6 +617,7 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
      * on the JSESSIONID cookie.
+     * @return
      */
     public HttpSession getSession() {
         HttpSession session = request.getSession();
@@ -587,6 +641,8 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
      * on the JSESSIONID cookie.
+     * @param create 
+     * @return
      */
     public HttpSession getSession(boolean create) {
         HttpSession session = request.getSession(create);
@@ -612,6 +668,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Returns the ESAPI User associated with this request.
+     * @return
      */
     public Principal getUserPrincipal() {
         return ESAPI.authenticator().getCurrentUser();
@@ -619,6 +676,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public boolean isRequestedSessionIdFromCookie() {
         return request.isRequestedSessionIdFromCookie();
@@ -626,6 +684,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public boolean isRequestedSessionIdFromUrl() {
         return request.isRequestedSessionIdFromUrl();
@@ -633,6 +692,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public boolean isRequestedSessionIdFromURL() {
         return request.isRequestedSessionIdFromURL();
@@ -640,6 +700,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public boolean isRequestedSessionIdValid() {
         return request.isRequestedSessionIdValid();
@@ -647,6 +708,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @return
      */
     public boolean isSecure() {
         // TODO Check request method to see if this is vulnerable
@@ -656,6 +718,8 @@ public class SafeRequest implements HttpServletRequest {
     /**
      * Returns true if the ESAPI User associated with this request has the
      * specified role.
+     * @param role
+     * @return
      */
     public boolean isUserInRole(String role) {
         return ESAPI.authenticator().getCurrentUser().isInRole(role);
@@ -663,6 +727,7 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @param name
      */
     public void removeAttribute(String name) {
         request.removeAttribute(name);
@@ -670,6 +735,8 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @param name
+     * @param o
      */
     public void setAttribute(String name, Object o) {
         request.setAttribute(name, o);
@@ -677,6 +744,8 @@ public class SafeRequest implements HttpServletRequest {
 
     /**
      * Sets the character encoding scheme to the ESAPI configured encoding scheme.
+     * @param enc
+     * @throws UnsupportedEncodingException
      */
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException {
         request.setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());

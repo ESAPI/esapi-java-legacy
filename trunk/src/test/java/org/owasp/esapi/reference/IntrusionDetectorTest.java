@@ -47,14 +47,18 @@ public class IntrusionDetectorTest extends TestCase {
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 		// none
 	}
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}

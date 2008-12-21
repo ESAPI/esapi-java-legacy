@@ -72,6 +72,9 @@ public class StringUtilities {
 
 	/**
      * Returns true if the character is contained in the provided StringBuffer.
+     * @param input 
+     * @param c 
+     * @return
      */
     public static boolean contains(StringBuffer input, char c) {
         for (int i = 0; i < input.length(); i++) {

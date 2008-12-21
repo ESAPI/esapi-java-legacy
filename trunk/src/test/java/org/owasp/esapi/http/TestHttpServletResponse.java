@@ -46,7 +46,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param cookie
+     */
 	public void addCookie(Cookie cookie) {
 		cookies.add( cookie );
 	}
@@ -60,7 +62,12 @@ public class TestHttpServletResponse implements HttpServletResponse {
 		return cookies;
 	}
 	
-	public Cookie getCookie( String name ) {
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public Cookie getCookie( String name ) {
 		Iterator i = cookies.iterator();
 		while ( i.hasNext() ) {
 			Cookie c = (Cookie)i.next();
@@ -73,7 +80,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @param date
+     */
 	public void addDateHeader(String name, long date) {
 		headerNames.add( name );
 		headerValues.add( ""+date );
@@ -81,7 +91,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @param value
+     */
 	public void addHeader(String name, String value) {
 		headerNames.add( name );
 		headerValues.add( value );
@@ -89,7 +102,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @param value
+     */
 	public void addIntHeader(String name, int value) {
 		headerNames.add( name );
 		headerValues.add( ""+value );
@@ -97,7 +113,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @return
+     */
 	public boolean containsHeader(String name) {
 		return headerNames.contains(name);
 	}
@@ -133,7 +152,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param url
+     * @return
+     */
 	public String encodeRedirectURL(String url) {
 	
 		return null;
@@ -141,7 +163,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param url
+     * @return
+     */
 	public String encodeRedirectUrl(String url) {
 	
 		return null;
@@ -149,7 +174,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param url
+     * @return
+     */
 	public String encodeURL(String url) {
 	
 		return null;
@@ -157,7 +185,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param url
+     * @return
+     */
 	public String encodeUrl(String url) {
 	
 		return null;
@@ -165,7 +196,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param sc
+     * @throws IOException
+     */
 	public void sendError(int sc) throws IOException {
 	
 
@@ -173,7 +207,11 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param sc
+     * @param msg
+     * @throws IOException
+     */
 	public void sendError(int sc, String msg) throws IOException {
 	
 
@@ -181,7 +219,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param location
+     * @throws IOException
+     */
 	public void sendRedirect(String location) throws IOException {
 	
 
@@ -189,7 +230,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @param date
+     */
 	public void setDateHeader(String name, long date) {
 		headerNames.add( name );
 		headerValues.add( ""+date );
@@ -197,7 +241,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @param value
+     */
 	public void setHeader(String name, String value) {
 		headerNames.add( name );
 		headerValues.add( value );
@@ -205,7 +252,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param name
+     * @param value
+     */
 	public void setIntHeader(String name, int value) {
 		headerNames.add( name );
 		headerValues.add( ""+value );
@@ -213,7 +263,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param sc
+     */
 	public void setStatus(int sc) {
 		status = sc;
 	}
@@ -229,7 +281,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param sc
+     * @param sm
+     */
 	public void setStatus(int sc, String sm) {
 	
 
@@ -237,7 +292,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @throws IOException
+     */
 	public void flushBuffer() throws IOException {
 	
 
@@ -245,7 +302,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public int getBufferSize() {
 	
 		return 0;
@@ -253,7 +312,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public String getCharacterEncoding() {
 	
 		return null;
@@ -261,7 +322,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public String getContentType() {
 	
 		return null;
@@ -269,7 +332,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public Locale getLocale() {
 	
 		return null;
@@ -277,7 +342,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     * @throws IOException
+     */
 	public ServletOutputStream getOutputStream() throws IOException {
 	
 		return null;
@@ -285,7 +353,10 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     * @throws IOException
+     */
 	public PrintWriter getWriter() throws IOException {
 	
 		return null;
@@ -293,7 +364,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public boolean isCommitted() {
 	
 		return false;
@@ -317,7 +390,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param size
+     */
 	public void setBufferSize(int size) {
 	
 
@@ -325,7 +400,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param charset
+     */
 	public void setCharacterEncoding(String charset) {
 	
 
@@ -333,7 +410,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param len
+     */
 	public void setContentLength(int len) {
 	
 
@@ -341,7 +420,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param type
+     */
 	public void setContentType(String type) {
 	
 
@@ -349,7 +430,9 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @param loc
+     */
 	public void setLocale(Locale loc) {
 	
 

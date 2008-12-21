@@ -11,6 +11,10 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 
+/**
+ *
+ * @author jwilliams
+ */
 public class EncodeForHTMLJavaScriptTag extends BodyTagSupport {
 
 	/**
@@ -19,18 +23,30 @@ public class EncodeForHTMLJavaScriptTag extends BodyTagSupport {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	
-	public EncodeForHTMLJavaScriptTag() {}
+    /**
+     *
+     */
+    public EncodeForHTMLJavaScriptTag() {}
 	
 	
 	
-	public int doStartTag() {
+    /**
+     *
+     * @return
+     */
+    public int doStartTag() {
 					
 		//return EVAL_BODY_TAG; <-- Deprecated
 		return BodyTag.EVAL_BODY_BUFFERED;
 	}
 
 	
-	public int doAfterBody() throws JspTagException {
+    /**
+     *
+     * @return
+     * @throws javax.servlet.jsp.JspTagException
+     */
+    public int doAfterBody() throws JspTagException {
 
 		
 		try {
@@ -54,11 +70,19 @@ public class EncodeForHTMLJavaScriptTag extends BodyTagSupport {
 	}
 
 	
-	public String getName() {
+    /**
+     *
+     * @return
+     */
+    public String getName() {
 		return name;
 	}
 	
-	public void setName(String name) {
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
 		this.name = name;
 	}
 	

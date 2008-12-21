@@ -57,7 +57,8 @@ public interface HTTPUtilities {
 	 * 
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the current {@link HttpServletRequest} object 
 	 * 
-	 * @throws AccessControlException if security constraints are not met
+     * @param request
+     * @throws AccessControlException if security constraints are not met
 	 */
 	void assertSecureRequest( HttpServletRequest request ) throws AccessControlException;
 
@@ -75,6 +76,7 @@ public interface HTTPUtilities {
     
     /**
      * Get the first cookie with the matching name.
+     * @param request
      * @param name
      * @return the requested cookie
      */
@@ -96,6 +98,7 @@ public interface HTTPUtilities {
 	 * 
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the current {@link HttpSession} object 
      * 
+     * @param request
      * @return the new HttpSession with a changed id
      * @throws AuthenticationException the exception
      */
@@ -106,7 +109,8 @@ public interface HTTPUtilities {
      * Checks the CSRF token in the URL (see User.getCSRFToken()) against the user's CSRF token and
 	 * throws an IntrusionException if it is missing.
      * 
-	 * @throws IntrusionException if CSRF token is missing or incorrect
+     * @param request
+     * @throws IntrusionException if CSRF token is missing or incorrect
 	 */
     void verifyCSRFToken(HttpServletRequest request) throws IntrusionException;
     
@@ -137,9 +141,11 @@ public interface HTTPUtilities {
 	 * 
 	 * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser(); 
 	 * 
-	 * @param password 
+     * @param request
+     * @param password
 	 * 		the user's password
-	 * @param maxAge 
+     * @param response
+     * @param maxAge
 	 * 		the length of time that the token should be valid for in relative seconds
 	 * @param domain 
 	 * 		the domain to restrict the token to or null
@@ -195,7 +201,8 @@ public interface HTTPUtilities {
 	 * 
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
      * 
-     * @param tempDir 
+     * @param request
+     * @param tempDir
      * 		the temporary directory
      * @param finalDir 
      * 		the final directory
@@ -210,7 +217,8 @@ public interface HTTPUtilities {
     /**
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
      * 
-	 * @return a map containing the decrypted cookie state value
+     * @param request
+     * @return a map containing the decrypted cookie state value
 	 * 
 	 * @throws EncryptionException
      */
@@ -219,12 +227,17 @@ public interface HTTPUtilities {
     /**
      * Kill all cookies received in the last request from the browser. Note that new cookies set by the application in
      * this response may not be killed by this method.
+     * @param request 
+     * @param response
      */
     void killAllCookies(HttpServletRequest request, HttpServletResponse response);
     
     /**
      * Kills the specified cookie by setting a new cookie that expires immediately. Note that this
      * method does not delete new cookies that are being set by the application for this response. 
+     * @param request 
+     * @param name
+     * @param response
      */
     void killCookie(HttpServletRequest request, HttpServletResponse response, String name);
 
@@ -234,6 +247,9 @@ public interface HTTPUtilities {
      * If there is a requirement not to use sessions, or the data should be stored
      * across sessions (for a long time), the use of encrypted cookies is an effective
      * way to prevent the exposure.
+     * @param response
+     * @param cleartext
+     * @throws EncryptionException
      */
     void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException;
 
@@ -244,9 +260,11 @@ public interface HTTPUtilities {
      * based access control check. This method ensures that you can only forward to non-publicly
      * accessible resources.
 	 * 
-     * @param context 
+     * @param request
+     * @param context
      * 		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
-     * @param location 
+     * @param response
+     * @param location
      * 		the URL to forward to
      * 
      * @throws AccessControlException
@@ -305,6 +323,7 @@ public interface HTTPUtilities {
      * 
 	 * This method uses {@link HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
 	 * 
+     * @param response
      */
     void setNoCacheHeaders(HttpServletResponse response);
 
@@ -339,7 +358,8 @@ public interface HTTPUtilities {
      * to log sensitive information, and consider masking with the
      * logHTTPRequest( List parameterNamesToObfuscate ) method.
 	 * 
-	 * @param logger the logger to write the request to
+     * @param request
+     * @param logger the logger to write the request to
      */
     void logHTTPRequest(HttpServletRequest request, Logger logger);
 
@@ -355,7 +375,8 @@ public interface HTTPUtilities {
      * 
 	 * This method uses {@link HTTPUtilities#getCurrentResponse()} to obtain the {@link HttpServletResponse} object
 	 * 
-	 * @param logger 
+     * @param request
+     * @param logger
 	 * 		the logger to write the request to
      * @param parameterNamesToObfuscate
      * 		the sensitive parameters

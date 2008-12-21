@@ -37,7 +37,8 @@ public class AccessControllerTest extends TestCase {
 	 * Instantiates a new access controller test.
 	 * 
 	 * @param testName
-	 *            the test name
+     *            the test name
+     * @throws Exception
 	 */
 	public AccessControllerTest(String testName) throws Exception {
 		super(testName);
@@ -70,13 +71,17 @@ public class AccessControllerTest extends TestCase {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}
@@ -91,7 +96,10 @@ public class AccessControllerTest extends TestCase {
 		return suite;
 	}
 
-	public void testMatchRule() {
+    /**
+     *
+     */
+    public void testMatchRule() {
 		ESAPI.authenticator().setCurrentUser(null);
 		assertFalse(ESAPI.accessController().isAuthorizedForURL("/nobody"));
 	}
@@ -99,7 +107,9 @@ public class AccessControllerTest extends TestCase {
 	/**
 	 * Test of isAuthorizedForURL method, of class
 	 * org.owasp.esapi.AccessController.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testIsAuthorizedForURL() throws Exception {
 		System.out.println("isAuthorizedForURL");
 		AccessController instance = ESAPI.accessController();

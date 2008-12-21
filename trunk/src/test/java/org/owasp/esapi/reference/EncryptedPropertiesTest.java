@@ -48,7 +48,9 @@ public class EncryptedPropertiesTest extends TestCase {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 		// create a new encrypted properties and put in some data
 		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
@@ -61,7 +63,9 @@ public class EncryptedPropertiesTest extends TestCase {
 
     /**
      * {@inheritDoc}s
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}
@@ -124,7 +128,9 @@ public class EncryptedPropertiesTest extends TestCase {
 	
 	/**
 	 * Test of keySet method, of class org.owasp.esapi.EncryptedProperties.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testKeySet() throws Exception {
 		System.out.println("keySet");
 		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
@@ -143,7 +149,9 @@ public class EncryptedPropertiesTest extends TestCase {
 
 	/**
 	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testStore() throws Exception {
 		System.out.println("store");
 		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
@@ -155,7 +163,9 @@ public class EncryptedPropertiesTest extends TestCase {
 	
 	/**
 	 * Test of load method, of class org.owasp.esapi.EncryptedProperties.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testLoad() throws Exception {
 		System.out.println("load");
 		EncryptedProperties creator = new DefaultEncryptedProperties();
@@ -172,7 +182,9 @@ public class EncryptedPropertiesTest extends TestCase {
 	
 	/**
 	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testMain() throws Exception {
 		System.out.println("main");
 		File f = new File( System.getProperty( "user.home" ) + "/.esapi", "test.properties" );

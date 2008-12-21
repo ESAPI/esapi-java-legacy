@@ -69,6 +69,7 @@ public class HTTPUtilitiesTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
         // none
@@ -76,6 +77,7 @@ public class HTTPUtilitiesTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
         // none
@@ -149,9 +151,7 @@ public class HTTPUtilitiesTest extends TestCase {
     /**
      * Test of sendRedirect method, of class org.owasp.esapi.HTTPUtilities.
      * 
-     * @throws ValidationException the validation exception
-     * @throws IOException Signals that an I/O exception has occurred.
-     * @throws AuthenticationException the authentication exception
+     * @throws EnterpriseSecurityException
      */
     public void testChangeSessionIdentifier() throws EnterpriseSecurityException {
         System.out.println("changeSessionIdentifier");
@@ -343,6 +343,10 @@ public class HTTPUtilitiesTest extends TestCase {
 	    assertTrue(response.getHeaderNames().size() == 2);
 	}
 
+    /**
+     *
+     * @throws java.lang.Exception
+     */
     public void testGetStateFromEncryptedCookie() throws Exception {
         System.out.println("getStateFromEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
@@ -377,6 +381,9 @@ public class HTTPUtilitiesTest extends TestCase {
         }
     }
     
+    /**
+     *
+     */
     public void testSaveStateInEncryptedCookie() {
         System.out.println("saveStateInEncryptedCookie");
         TestHttpServletRequest request = new TestHttpServletRequest();
@@ -398,6 +405,9 @@ public class HTTPUtilitiesTest extends TestCase {
     }
     
     
+    /**
+     *
+     */
     public void testSaveTooLongStateInEncryptedCookieException() {
     	System.out.println("saveTooLongStateInEncryptedCookie");
 
@@ -437,7 +447,11 @@ public class HTTPUtilitiesTest extends TestCase {
         assertTrue(response.containsHeader("Expires"));
     }
 
-	public void testSetRememberToken() throws AuthenticationException {
+    /**
+     *
+     * @throws org.owasp.esapi.errors.AuthenticationException
+     */
+    public void testSetRememberToken() throws AuthenticationException {
 		System.out.println("setRememberToken");
         Authenticator instance = (Authenticator)ESAPI.authenticator();
 		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);

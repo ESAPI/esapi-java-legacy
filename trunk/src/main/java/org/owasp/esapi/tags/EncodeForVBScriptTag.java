@@ -11,6 +11,10 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 
+/**
+ *
+ * @author jwilliams
+ */
 public class EncodeForVBScriptTag extends BodyTagSupport {
 
 	/**
@@ -19,23 +23,39 @@ public class EncodeForVBScriptTag extends BodyTagSupport {
 	private static final long serialVersionUID = 1L;
 	private String name;
 	
-	public EncodeForVBScriptTag() {}
+    /**
+     *
+     */
+    public EncodeForVBScriptTag() {}
 	
 	
-	public int doStartTag() {
+    /**
+     *
+     * @return
+     */
+    public int doStartTag() {
 					
 		//return EVAL_BODY_TAG; <-- Deprecated
 		return BodyTag.EVAL_BODY_BUFFERED;
 
 	}
 	
-	public int doEndTag() {
+    /**
+     *
+     * @return
+     */
+    public int doEndTag() {
 		
 		return SKIP_BODY;
 		
 	}
 	
-	public int doAfterBody() throws JspTagException {
+    /**
+     *
+     * @return
+     * @throws javax.servlet.jsp.JspTagException
+     */
+    public int doAfterBody() throws JspTagException {
 
 
 		BodyContent body = getBodyContent();
@@ -58,11 +78,19 @@ public class EncodeForVBScriptTag extends BodyTagSupport {
 
 	}
 	
-	public String getName() {
+    /**
+     *
+     * @return
+     */
+    public String getName() {
 		return name;
 	}
 	
-	public void setName(String name) {
+    /**
+     *
+     * @param name
+     */
+    public void setName(String name) {
 		this.name = name;
 	}
 

@@ -45,7 +45,9 @@ public class SafeFileTest extends TestCase {
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 		// create a file to test with
 		new File(System.getProperty("user.home"), "test.file" ).createNewFile();
@@ -53,7 +55,9 @@ public class SafeFileTest extends TestCase {
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}
@@ -70,6 +74,9 @@ public class SafeFileTest extends TestCase {
 
 	String pathWithNullByte = "/temp/file.txt" + (char)0;
 
+    /**
+     *
+     */
     public void testEscapeCharactersInFilename() {
         System.out.println("testEscapeCharactersInFilenameInjection");
         File tf = new File( System.getProperty("user.home","test.file" ));
@@ -85,6 +92,9 @@ public class SafeFileTest extends TestCase {
         }
     }
 
+    /**
+     *
+     */
     public void testEscapeCharacterInDirectoryInjection() {
         System.out.println("testEscapeCharacterInDirectoryInjection");
         File sf = new File( System.getProperty("user.home","test\\^.^.\\file" ));
@@ -95,7 +105,10 @@ public class SafeFileTest extends TestCase {
         }
     }
 	
-	public void testJavaFileInjection() {
+    /**
+     *
+     */
+    public void testJavaFileInjection() {
 		System.out.println("testJavaFileInjection");
 		for ( int i = 0; i < 512; i++ ) {
 	        File sf = new File( System.getProperty("user.home","test.file"+(char)i ));
@@ -110,6 +123,9 @@ public class SafeFileTest extends TestCase {
 	}
 	
     
+    /**
+     *
+     */
     public void testMultipleJavaFileInjection() {
         System.out.println("testMultipleJavaFileInjection");
         for ( int i = 0; i < 512; i++ ) {
@@ -124,7 +140,10 @@ public class SafeFileTest extends TestCase {
         }       
     }
     
-	public void testAlternateDataStream() {
+    /**
+     *
+     */
+    public void testAlternateDataStream() {
 		System.out.println("testAlternateDataStream");
 		File sf = new File( System.getProperty("user.home","test.file:secret.txt" ) );
 		if ( sf.exists() ) {
@@ -133,7 +152,10 @@ public class SafeFileTest extends TestCase {
 		}
 	}
 	
-	public void testJavaDirInjection() {
+    /**
+     *
+     */
+    public void testJavaDirInjection() {
 		System.out.println("testJavaDirInjection");
 		for ( int i = 0; i < 512; i++ ) {
 			String goodFile = System.getProperty("user.home") + (char)i;
@@ -148,13 +170,22 @@ public class SafeFileTest extends TestCase {
 		}		
 	}
 	
+    /**
+     *
+     * @param b
+     * @return
+     */
     static public String toHex(final byte b) {
         final char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
         final char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
         return new String(array);
      }	
 	
-	public void testNormalPercentEncodedFileInjection() throws Exception {
+    /**
+     *
+     * @throws java.lang.Exception
+     */
+    public void testNormalPercentEncodedFileInjection() throws Exception {
 		System.out.println("testNormalPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc1 = System.getProperty("user.home") + "%" + toHex( (byte)i );
@@ -166,7 +197,11 @@ public class SafeFileTest extends TestCase {
 		}
 	}		
 
-	public void testWeirdPercentEncodedFileInjection() throws Exception {
+    /**
+     *
+     * @throws java.lang.Exception
+     */
+    public void testWeirdPercentEncodedFileInjection() throws Exception {
 		System.out.println("testWeirdPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc2 = System.getProperty("user.home") + "%u00" + toHex( (byte)i );
@@ -266,7 +301,11 @@ public class SafeFileTest extends TestCase {
 	}
 	
 	// test parent constructor
-	public void testCreateSafeFileParentConstructor() throws Exception {
+    /**
+     *
+     * @throws java.lang.Exception
+     */
+    public void testCreateSafeFileParentConstructor() throws Exception {
 		System.out.println("SafeFile parent constructor");
 		try {
 			new SafeFile( new File( "/" ), pathWithNullByte );
@@ -300,7 +339,11 @@ public class SafeFileTest extends TestCase {
 	
 	
 	// test good file with uri constructor
-	public void testCreateSafeFileURIConstructor() throws Exception {
+    /**
+     *
+     * @throws java.lang.Exception
+     */
+    public void testCreateSafeFileURIConstructor() throws Exception {
 		System.out.println("SafeFile URI constructor");
 		// create a file to test with
 		new File(System.getProperty("user.home"), "test.file" ).createNewFile();

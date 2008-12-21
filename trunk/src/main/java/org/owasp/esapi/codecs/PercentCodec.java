@@ -29,7 +29,9 @@ public class PercentCodec extends Codec {
 	
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param immune
+     */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		

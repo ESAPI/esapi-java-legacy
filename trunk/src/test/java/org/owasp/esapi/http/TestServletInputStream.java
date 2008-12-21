@@ -18,6 +18,10 @@ package org.owasp.esapi.http;
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
 
+/**
+ *
+ * @author jwilliams
+ */
 public class TestServletInputStream extends ServletInputStream {
 
     private byte[] body;
@@ -34,6 +38,8 @@ public class TestServletInputStream extends ServletInputStream {
 
     /**
      * read
+     * @return 
+     * @throws IOException
      */
     public int read() throws IOException {
         if (next < body.length) {

@@ -133,7 +133,8 @@ public interface Encryptor {
 	 *      the absolute expiration date of the data, expressed as seconds since the epoch
 	 * 
 	 * @return 
-	 * 		the seal
+     * 		the seal
+     * @throws IntegrityException
 	 * 
 	 */
 	String seal(String data, long timestamp) throws IntegrityException;

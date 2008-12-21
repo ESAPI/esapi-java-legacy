@@ -57,7 +57,8 @@ public abstract class Codec {
 	/**
 	 * Encode a String so that it can be safely used in a specific context.
 	 * 
-	 * @param input
+     * @param immune
+     * @param input
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
@@ -74,7 +75,8 @@ public abstract class Codec {
 	/**
 	 * Default implementation that should be overridden in specific codecs.
 	 * 
-	 * @param c
+     * @param immune
+     * @param c
 	 * 		the Character to encode
 	 * @return
 	 * 		the encoded Character
@@ -121,7 +123,10 @@ public abstract class Codec {
 	
 	/**
 	 * Lookup the hex value of any character that is not alphanumeric, return null if alphanumeric.
-	 */
+     *
+     * @param c
+     * @return
+     */
 	public static String getHexForNonAlphanumeric( char c ) {
 		if ( c > 0xFF ) return null;
 		return hex[c];
@@ -129,7 +134,10 @@ public abstract class Codec {
 
 	/**
 	 * Return the hex value of a character as a string without leading zeroes.
-	 */
+     *
+     * @param c
+     * @return
+     */
 	public static String toHex( char c ) {
 		return Integer.toHexString(c);
 	}
