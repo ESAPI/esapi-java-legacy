@@ -64,9 +64,17 @@ public class TestHttpServletRequest implements HttpServletRequest {
     
     private String method = "POST";
     
+    /**
+     *
+     */
     public TestHttpServletRequest() {
     }
 
+    /**
+     *
+     * @param uri
+     * @param body
+     */
     public TestHttpServletRequest(String uri, byte[] body) {
         this.body = body;
         this.uri = uri;
@@ -74,6 +82,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getAuthType() {
         return null;
@@ -81,6 +90,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getContextPath() {
 
@@ -133,17 +143,26 @@ public class TestHttpServletRequest implements HttpServletRequest {
         cookies = list;
     }
 
+    /**
+     *
+     * @param name
+     * @param value
+     */
     public void setCookie(String name, String value ) {
     	Cookie c = new Cookie( name, value );
     	cookies.add( c );
     }
     
+    /**
+     *
+     */
     public void clearCookies() {
     	cookies.clear();
     }
     
     /**
      * {@inheritDoc}
+     * @return
      */
     public Cookie[] getCookies() {
         if ( cookies.isEmpty() ) return null;
@@ -152,6 +171,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name 
+     * @return
      */
     public long getDateHeader(String name) {
 
@@ -160,6 +181,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name 
+     * @return
      */
     public String getHeader(String name) {
         if (name.equals("Content-type")) {
@@ -170,6 +193,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Enumeration getHeaderNames() {
         Vector v = new Vector( headers.keySet() );
@@ -178,6 +202,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name
+     * @return
      */
     public Enumeration getHeaders(String name) {
         Vector v = new Vector();
@@ -187,6 +213,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name 
+     * @return
      */
     public int getIntHeader(String name) {
 
@@ -195,17 +223,23 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getMethod() {
         return method;
     }
 
+    /**
+     *
+     * @param value
+     */
     public void setMethod( String value ) {
     	method = value;
     }
     
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getPathInfo() {
 
@@ -214,6 +248,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getPathTranslated() {
 
@@ -222,6 +257,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getQueryString() {
 
@@ -230,6 +266,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getRemoteUser() {
 
@@ -238,6 +275,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getRequestURI() {
         return uri;
@@ -245,6 +283,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public StringBuffer getRequestURL() {
         return new StringBuffer( url );
@@ -252,6 +291,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getRequestedSessionId() {
 
@@ -260,6 +300,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getServletPath() {
 
@@ -268,6 +309,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public HttpSession getSession() {
         if (session != null) {
@@ -278,6 +320,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param create 
+     * @return
      */
     public HttpSession getSession(boolean create) {
         if (session == null && create) {
@@ -290,6 +334,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Principal getUserPrincipal() {
 
@@ -298,6 +343,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public boolean isRequestedSessionIdFromCookie() {
 
@@ -306,6 +352,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public boolean isRequestedSessionIdFromURL() {
 
@@ -314,6 +361,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public boolean isRequestedSessionIdFromUrl() {
 
@@ -322,6 +370,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public boolean isRequestedSessionIdValid() {
 
@@ -330,6 +379,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param role 
+     * @return
      */
     public boolean isUserInRole(String role) {
 
@@ -338,6 +389,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name
+     * @return
      */
     public Object getAttribute(String name) {
 
@@ -346,6 +399,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Enumeration getAttributeNames() {
 
@@ -354,6 +408,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getCharacterEncoding() {
 
@@ -362,6 +417,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public int getContentLength() {
         return body.length;
@@ -369,17 +425,24 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getContentType() {
         return contentType;
     }
 
+    /**
+     *
+     * @param value
+     */
     public void setContentType( String value ) {
     	contentType = value;
     }
     
     /**
      * {@inheritDoc}
+     * @return
+     * @throws IOException
      */
     public ServletInputStream getInputStream() throws IOException {
         return new TestServletInputStream(body);
@@ -387,6 +450,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getLocalAddr() {
 
@@ -395,6 +459,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getLocalName() {
 
@@ -403,6 +468,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public int getLocalPort() {
 
@@ -411,6 +477,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Locale getLocale() {
 
@@ -419,6 +486,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Enumeration getLocales() {
 
@@ -427,6 +495,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name
+     * @return
      */
     public String getParameter(String name) {
         String[] values = (String[]) parameters.get(name);
@@ -436,6 +506,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Map getParameterMap() {
         return parameters;
@@ -443,6 +514,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public Enumeration getParameterNames() {
         Vector v = new Vector( parameters.keySet() );
@@ -451,6 +523,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name
+     * @return
      */
     public String[] getParameterValues(String name) {
         return (String[])parameters.get(name);
@@ -458,6 +532,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getProtocol() {
         return "HTTP/1.1";
@@ -465,6 +540,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return 
+     * @throws IOException
      */
     public BufferedReader getReader() throws IOException {
 
@@ -473,6 +550,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param path
+     * @return
      */
     public String getRealPath(String path) {
 
@@ -481,6 +560,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getRemoteAddr() {
 
@@ -489,6 +569,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getRemoteHost() {
 
@@ -497,6 +578,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public int getRemotePort() {
 
@@ -505,6 +587,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param path
+     * @return
      */
     public RequestDispatcher getRequestDispatcher(String path) {
         return requestDispatcher;
@@ -512,7 +596,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
-     */ 
+     * @return
+     */
     public String getScheme() {
 
         return null;
@@ -520,6 +605,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public String getServerName() {
 
@@ -528,6 +614,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public int getServerPort() {
 
@@ -536,6 +623,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @return
      */
     public boolean isSecure() {
 
@@ -544,6 +632,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name
      */
     public void removeAttribute(String name) {
 
@@ -551,6 +640,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param name 
+     * @param o
      */
     public void setAttribute(String name, Object o) {
 
@@ -558,15 +649,27 @@ public class TestHttpServletRequest implements HttpServletRequest {
 
     /**
      * {@inheritDoc}
+     * @param env
+     * @throws UnsupportedEncodingException
      */
     public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 
     }
 
+    /**
+     *
+     * @param uri
+     * @throws java.io.UnsupportedEncodingException
+     */
     public void setRequestURI(String uri) throws UnsupportedEncodingException {
         this.uri = uri;
     }
 
+    /**
+     *
+     * @param url
+     * @throws java.io.UnsupportedEncodingException
+     */
     public void setRequestURL(String url) throws UnsupportedEncodingException {
         this.url = url;
     }

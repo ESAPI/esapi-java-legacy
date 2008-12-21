@@ -37,13 +37,17 @@ public class HTMLEntityCodec extends Codec {
 		initializeMaps();
 	}
 	
-	public HTMLEntityCodec() {
+    /**
+     *
+     */
+    public HTMLEntityCodec() {
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
      * Encodes a Character for safe use in an HTML entity field.
+     * @param immune
      */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();

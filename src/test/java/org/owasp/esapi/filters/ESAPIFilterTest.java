@@ -49,6 +49,7 @@ public class ESAPIFilterTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -56,6 +57,7 @@ public class ESAPIFilterTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none
@@ -75,9 +77,9 @@ public class ESAPIFilterTest extends TestCase {
     /**
 	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
 	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
+     *
+     * @throws Exception
+     */
     public void testFilter() throws Exception {
         System.out.println("ESAPIFilter");
         ESAPIFilter filter = new ESAPIFilter();

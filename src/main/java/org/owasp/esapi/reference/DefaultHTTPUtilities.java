@@ -95,7 +95,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     private ThreadLocalResponse currentResponse = new ThreadLocalResponse();
 
 
-	public DefaultHTTPUtilities() {
+    /**
+     *
+     */
+    public DefaultHTTPUtilities() {
 	}
 
 	/**
@@ -120,6 +123,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 *
      * Returns the first cookie matching the provided name.
+     * @param request
      */
 	public Cookie getCookie(HttpServletRequest request, String name) {
 		Cookie[] cookies = request.getCookies();
@@ -150,7 +154,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
 	 * If the cookie exists for the current user, it will automatically be used by ESAPI to
 	 * log the user in, if the data is valid and not expired. 
-	 */
+     *
+     * @param request
+     * @param response
+     */
 	public String setRememberToken( HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path ) {
 		User user = ESAPI.authenticator().getCurrentUser();		
 		try {
@@ -177,7 +184,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * that SSL has been used.  The POST ensures that the data does not end up in bookmarks,
 	 * web logs, referer headers, and other exposed sources.  The SSL ensures that data
 	 * has not been exposed in transit.
-	 */
+     *
+     * @param request
+     */
 	public void assertSecureRequest(HttpServletRequest request) throws AccessControlException {
 		if ( !isSecureChannel( request ) ) {
 			throw new AccessControlException( "Insecure request received", "Received non-SSL request: " + request.getRequestURL() );
@@ -191,7 +200,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param request
+     */
 	public HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException {
 		
 		// get the current session
@@ -228,7 +239,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 * This implementation uses the parameter name to store the token. This makes the CSRF
 	 * token a bit harder to search for in an XSS attack.
-	 */
+     *
+     * @param request
+     */
 	  
 	public void verifyCSRFToken(HttpServletRequest request) throws IntrusionException {
 		User user = ESAPI.authenticator().getCurrentUser();
@@ -264,7 +277,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param request
+     */
     public Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
 		Cookie[] cookies = request.getCookies();
 		if ( cookies == null ) return new HashMap();
@@ -299,7 +314,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param response
+     * @param cleartext
+     * @throws EncryptionException
+     */
     public void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException {
     	StringBuffer sb = new StringBuffer();    	
     	Iterator i = cleartext.entrySet().iterator();
@@ -333,7 +352,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * JSP.
 	 * 
 	 * 
-	 * @return list of File objects for new files in final directory
+     * @param request
+     * @return list of File objects for new files in final directory
 	 */
 	public List getSafeFileUploads(HttpServletRequest request, File tempDir, File finalDir) throws ValidationException {
 		if ( !tempDir.exists() ) {
@@ -434,7 +454,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param request
+     * @param response
+     */
 	public void killAllCookies(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -447,7 +470,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param request
+     * @param response
+     * @param name
+     */
 	public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
 		String path = "//";
 		String domain="";
@@ -485,7 +512,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * 
 	 * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
 	 * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
-	 */
+     *
+     * @param request
+     * @param response
+     */
 	public void safeSendForward(HttpServletRequest request, HttpServletResponse response, String context, String location) throws AccessControlException,ServletException,IOException {
 		if (!location.startsWith("WEB-INF")) {
 			throw new AccessControlException("Forward failed", "Bad forward location: " + location);
@@ -504,7 +534,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param response
+     */
 	public void setNoCacheHeaders(HttpServletResponse response) {
 		// HTTP 1.1
 		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
@@ -567,6 +599,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * match items in the parameterNamesToObfuscate are shown as eight asterisks.
      * 
      * 
+     * @param request
      */
     public void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate) {
         StringBuffer params = new StringBuffer();

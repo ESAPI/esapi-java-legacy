@@ -33,22 +33,38 @@ public class PushbackString {
 	private int index = 0;
 	private int mark = 0;
 	
-	public PushbackString( String input ) {
+    /**
+     *
+     * @param input
+     */
+    public PushbackString( String input ) {
 		this.input = input;
 	}
 
-	public void pushback( Character c ) {
+    /**
+     *
+     * @param c
+     */
+    public void pushback( Character c ) {
 		pushback = c;
 	}
 	
 	/*
 	 * Get the current index of the PushbackString. Typically used in error messages.
 	 */
-	public int index() {
+    /**
+     *
+     * @return
+     */
+    public int index() {
 		return index;
 	}
 	
-	public boolean hasNext() {
+    /**
+     *
+     * @return
+     */
+    public boolean hasNext() {
 		if ( pushback != null ) return true;
 		if ( input == null ) return false;
 		if ( input.length() == 0 ) return false;
@@ -56,7 +72,11 @@ public class PushbackString {
 		return true;		
 	}
 	
-	public Character next() {
+    /**
+     *
+     * @return
+     */
+    public Character next() {
 		if ( pushback != null ) {
 			Character save = pushback;
 			pushback = null;
@@ -68,18 +88,31 @@ public class PushbackString {
 		return new Character( input.charAt(index++) );
 	}
 	
-	public Character nextHex() {
+    /**
+     *
+     * @return
+     */
+    public Character nextHex() {
 		Character c = next();
 		if ( c == null ) return null;
 		if ( isHexDigit( c ) ) return c;
 		return null;
 	}
 
-	public boolean isHexDigit( Character c ) {
+    /**
+     *
+     * @param c
+     * @return
+     */
+    public boolean isHexDigit( Character c ) {
 		return ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 );
 	}
 	
-	public Character peek() {
+    /**
+     *
+     * @return
+     */
+    public Character peek() {
 		if ( pushback != null ) return pushback;
 		if ( input == null ) return null;
 		if ( input.length() == 0 ) return null;
@@ -87,7 +120,12 @@ public class PushbackString {
 		return new Character( input.charAt(index) );
 	}
 	
-	public boolean peek( char c ) {
+    /**
+     *
+     * @param c
+     * @return
+     */
+    public boolean peek( char c ) {
 		if ( pushback != null && pushback.charValue() == c ) return true;
 		if ( input == null ) return false;
 		if ( input.length() == 0 ) return false;
@@ -95,17 +133,27 @@ public class PushbackString {
 		return input.charAt(index) == c;
 	}	
 	
-	public void mark() {
+    /**
+     *
+     */
+    public void mark() {
 		temp = pushback;
 		mark = index;
 	}
 
-	public void reset() {
+    /**
+     *
+     */
+    public void reset() {
 		pushback = temp;
 		index = mark;
 	}
 	
-	protected String remainder() {
+    /**
+     *
+     * @return
+     */
+    protected String remainder() {
 		String output = input.substring( index );
 		if ( pushback != null ) {
 			output = pushback + output;

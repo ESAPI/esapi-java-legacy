@@ -119,7 +119,10 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 	/** The logger. */
 	private Logger logger = ESAPI.getLogger("AccessController");
 
-	public FileBasedAccessController() {
+    /**
+     *
+     */
+    public FileBasedAccessController() {
 	}
 
 	/**
@@ -148,7 +151,10 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
     
     /**
 	* {@inheritDoc}
-	*/
+     *
+     * @param key
+     * @return
+     */
     public boolean isAuthorizedForData(String key) {
     	try {
     		assertAuthorizedForData( key );
@@ -220,7 +226,10 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 
     /**
 	* {@inheritDoc}
-	*/
+     *
+     * @param key
+     * @throws AccessControlException
+     */
     public void assertAuthorizedForData(String key) throws AccessControlException {
 		if (dataMap==null || dataMap.isEmpty()) {
 			dataMap = loadDataRules("DataAccessRules.txt");

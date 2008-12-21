@@ -63,6 +63,11 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	private static String hashAlgorithm = "SHA-512";
 	
 	
+    /**
+     *
+     * @param args
+     * @throws java.lang.Exception
+     */
     public static void main( String[] args ) throws Exception {
         System.out.println( "Generating a new secret key" );
         KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
@@ -75,7 +80,10 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     }
 	
     
-	public JavaEncryptor() {
+    /**
+     *
+     */
+    public JavaEncryptor() {
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
 		byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
@@ -204,7 +212,10 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
 	/**
 	* {@inheritDoc}
-	*/
+     *
+     * @param expiration
+     * @throws IntegrityException
+     */
 	public String seal(String data, long expiration) throws IntegrityException {
 		try {
 			// mix in some random data so even identical data and timestamp produces different seals

@@ -58,14 +58,18 @@ public class ValidatorTest extends TestCase {
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 		// none
 	}
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}
@@ -139,7 +143,9 @@ public class ValidatorTest extends TestCase {
 
 	/**
 	 * Test of getValidSafeHTML method, of class org.owasp.esapi.Validator.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testGetValidSafeHTML() throws Exception{
 		System.out.println("getValidSafeHTML");
 		Validator instance = ESAPI.validator();
@@ -212,7 +218,10 @@ public class ValidatorTest extends TestCase {
 		assertTrue(instance.isValidNumber("test", "-1e-6", -999999999, 999999999, false));
 	}
 	
-	public void testIsValidInteger() {
+    /**
+     *
+     */
+    public void testIsValidInteger() {
 		System.out.println("isValidInteger");
 		Validator instance = ESAPI.validator();
 		//testing negative range
@@ -249,7 +258,9 @@ public class ValidatorTest extends TestCase {
 
 	/**
 	 * Test of getValidDate method, of class org.owasp.esapi.Validator.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testGetValidDate() throws Exception {
 		System.out.println("getValidDate");
 		Validator instance = ESAPI.validator();
@@ -338,7 +349,10 @@ public class ValidatorTest extends TestCase {
 		}
 	}
 
-	public void testIsValidPrintable() {
+    /**
+     *
+     */
+    public void testIsValidPrintable() {
 		System.out.println("isValidPrintable");
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidPrintable("name", "abcDEF", 100, false));

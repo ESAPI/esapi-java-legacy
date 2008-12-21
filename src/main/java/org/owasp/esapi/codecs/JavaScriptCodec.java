@@ -32,7 +32,9 @@ public class JavaScriptCodec extends Codec {
 	 * 
 	 * Returns backslash encoded character. This implementation does not support
 	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
-	 */
+     *
+     * @param immune
+     */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		

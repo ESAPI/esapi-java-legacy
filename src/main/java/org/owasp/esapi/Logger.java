@@ -118,7 +118,11 @@ public interface Logger {
 			type = name;
 		}
 		
-		public String toString() {
+        /**
+         *
+         * @return
+         */
+        public String toString() {
 			return this.type;
 		}
 	}

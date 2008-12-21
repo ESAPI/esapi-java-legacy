@@ -31,7 +31,9 @@ public class WindowsCodec extends Codec {
 	 * {@inheritDoc}
 	 * 
 	 * Returns Windows shell encoded character (which is ^)
-	 */
+     *
+     * @param immune
+     */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		

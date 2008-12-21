@@ -35,7 +35,9 @@ public class OracleCodec extends Codec {
 	 * {@inheritDoc}
 	 * 
 	 * Encode a single character with a quote mark
-	 */
+     *
+     * @param immune
+     */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		

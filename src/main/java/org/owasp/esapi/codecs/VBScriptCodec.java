@@ -31,7 +31,8 @@ public class VBScriptCodec extends Codec {
 	/**
 	 * Encode a String so that it can be safely used in a specific context.
 	 * 
-	 * @param input
+     * @param immune
+     * @param input
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
@@ -65,7 +66,9 @@ public class VBScriptCodec extends Codec {
 
 	/**
 	 * Returns quote-encoded character
-	 */
+     *
+     * @param immune
+     */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();
 		

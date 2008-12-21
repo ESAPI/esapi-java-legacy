@@ -171,12 +171,19 @@ public interface SecurityConfiguration {
 
 	/**
 	 * Gets a file from the resource directory
-	 */
+     *
+     * @param filename
+     * @return
+     */
     public File getResourceFile( String filename );
 
 	/**
 	 * Gets an InputStream to a file in the resource directory
-	 */
+     *
+     * @param filename
+     * @return
+     * @throws IOException
+     */
     public InputStream getResourceStream( String filename ) throws IOException;
 
     	
@@ -184,7 +191,6 @@ public interface SecurityConfiguration {
 	 * Sets the ESAPI resource directory.
 	 * 
 	 * @param dir The location of the resource directory.
-	 * @throws IOException 
 	 */
 	public void setResourceDirectory(String dir);
 	

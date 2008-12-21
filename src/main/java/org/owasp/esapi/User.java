@@ -198,6 +198,7 @@ public interface User extends Principal {
     
     /**
      * Returns the list of sessions associated with this User.
+     * @return
      */
     Set getSessions();
     

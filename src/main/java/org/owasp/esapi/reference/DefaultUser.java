@@ -248,7 +248,9 @@ public class DefaultUser implements User, Serializable {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public String getName() {
 		return this.getAccountName();
 	}
@@ -283,7 +285,9 @@ public class DefaultUser implements User, Serializable {
     
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public Set getSessions() {
 	    return sessions;
 	}
@@ -552,7 +556,9 @@ public class DefaultUser implements User, Serializable {
 
 	/**
 	 * {@inheritDoc}
-	 */
+     *
+     * @return
+     */
 	public String toString() {
 		return "USER:" + accountName;
 	}
@@ -575,6 +581,8 @@ public class DefaultUser implements User, Serializable {
     
     /**
      * Override clone and make final to prevent duplicate user objects.
+     * @return 
+     * @throws java.lang.CloneNotSupportedException
      */
     public final Object clone() throws java.lang.CloneNotSupportedException {
     	  throw new java.lang.CloneNotSupportedException();

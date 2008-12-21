@@ -83,14 +83,18 @@ public class UserTest extends TestCase {
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 		// none
 	}
 
 	/**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}
@@ -319,7 +323,9 @@ public class UserTest extends TestCase {
 
 	/**
 	 * Test of getRoles method, of class org.owasp.esapi.User.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testGetRoles() throws Exception {
 		System.out.println("getRoles");
 		Authenticator instance = ESAPI.authenticator();
@@ -347,7 +353,11 @@ public class UserTest extends TestCase {
 		assertFalse("ridiculous".equals(user.getScreenName()));
 	}
 
-	public void testGetSessions() throws AuthenticationException {
+    /**
+     *
+     * @throws org.owasp.esapi.errors.AuthenticationException
+     */
+    public void testGetSessions() throws AuthenticationException {
         System.out.println("getSessions");
         Authenticator instance = ESAPI.authenticator();
         String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
@@ -369,11 +379,17 @@ public class UserTest extends TestCase {
 	}
 	
 	
-	public void testAddSession() {
+    /**
+     *
+     */
+    public void testAddSession() {
 	    // TODO
 	}
 	
-	public void testRemoveSession() {
+    /**
+     *
+     */
+    public void testRemoveSession() {
 	    // TODO
 	}
 	
@@ -638,7 +654,9 @@ public class UserTest extends TestCase {
 	
 	/**
 	 * Test of setAccountName method, of class org.owasp.esapi.User.
-	 */
+     *
+     * @throws AuthenticationException
+     */
 	public void testSetAccountName() throws AuthenticationException {
 		System.out.println("setAccountName");
 		DefaultUser user = createTestUser("setAccountName");
@@ -650,7 +668,9 @@ public class UserTest extends TestCase {
 
 	/**
 	 * Test of setExpirationTime method, of class org.owasp.esapi.User.
-	 */
+     *
+     * @throws Exception
+     */
 	public void testSetExpirationTime() throws Exception {
 		System.out.println("setAccountName");
 		String password=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);

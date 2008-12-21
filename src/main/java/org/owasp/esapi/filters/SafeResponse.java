@@ -51,6 +51,11 @@ public class SafeResponse implements HttpServletResponse {
         this.response = response;
     }
 
+    /**
+     *
+     * @param response
+     * @param mode
+     */
     public SafeResponse(HttpServletResponse response, String mode) {
         this.mode = mode;
     }
@@ -63,6 +68,7 @@ public class SafeResponse implements HttpServletResponse {
      * the secure and HttpOnly flags on the cookie. This implementation uses a
      * custom "set-cookie" header instead of using Java's cookie interface which
      * doesn't allow the use of HttpOnly.
+     * @param cookie
      */
     public void addCookie(Cookie cookie) {
         String name = cookie.getName();
@@ -133,6 +139,8 @@ public class SafeResponse implements HttpServletResponse {
     /**
      * Add a cookie to the response after ensuring that there are no encoded or
      * illegal characters in the name.
+     * @param name 
+     * @param date
      */
     public void addDateHeader(String name, long date) {
         try {
@@ -150,6 +158,8 @@ public class SafeResponse implements HttpServletResponse {
      * white space with a single SP before interpreting the field value or
      * forwarding the message downstream."
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+     * @param name
+     * @param value
      */
     public void addHeader(String name, String value) {
         try {
@@ -167,6 +177,8 @@ public class SafeResponse implements HttpServletResponse {
     /**
      * Add an int header to the response after ensuring that there are no
      * encoded or illegal characters in the name and name.
+     * @param name 
+     * @param value
      */
     public void addIntHeader(String name, int value) {
         try {
@@ -179,6 +191,8 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @param name
+     * @return
      */
     public boolean containsHeader(String name) {
         return response.containsHeader(name);
@@ -242,6 +256,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @throws IOException
      */
     public void flushBuffer() throws IOException {
         response.flushBuffer();
@@ -249,6 +264,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return
      */
     public int getBufferSize() {
         return response.getBufferSize();
@@ -256,6 +272,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return
      */
     public String getCharacterEncoding() {
         return response.getCharacterEncoding();
@@ -263,6 +280,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return
      */
     public String getContentType() {
         return response.getContentType();
@@ -270,6 +288,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return
      */
     public Locale getLocale() {
         return response.getLocale();
@@ -277,6 +296,8 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return 
+     * @throws IOException
      */
     public ServletOutputStream getOutputStream() throws IOException {
         return response.getOutputStream();
@@ -284,6 +305,8 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return 
+     * @throws IOException
      */
     public PrintWriter getWriter() throws IOException {
         return response.getWriter();
@@ -291,6 +314,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @return
      */
     public boolean isCommitted() {
         return response.isCommitted();
@@ -313,6 +337,8 @@ public class SafeResponse implements HttpServletResponse {
     /**
      * Override the error code with a 200 in order to confound attackers using
      * automated scanners.
+     * @param sc 
+     * @throws IOException
      */
     public void sendError(int sc) throws IOException {
         response.sendError(HttpServletResponse.SC_OK, getHTTPMessage(sc));
@@ -322,6 +348,9 @@ public class SafeResponse implements HttpServletResponse {
      * Override the error code with a 200 in order to confound attackers using
      * automated scanners. The message is canonicalized and filtered for
      * dangerous characters.
+     * @param sc 
+     * @param msg
+     * @throws IOException
      */
     public void sendError(int sc, String msg) throws IOException {
         response.sendError(HttpServletResponse.SC_OK, ESAPI.encoder().encodeForHTML(msg));
@@ -334,6 +363,8 @@ public class SafeResponse implements HttpServletResponse {
      * be modified by attackers, so do not rely information contained within
      * redirect requests, and do not include sensitive information in a
      * redirect.
+     * @param location 
+     * @throws IOException
      */
     public void sendRedirect(String location) throws IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
@@ -345,6 +376,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @param size
      */
     public void setBufferSize(int size) {
         response.setBufferSize(size);
@@ -352,6 +384,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Sets the character encoding to the ESAPI configured encoding.
+     * @param charset
      */
     public void setCharacterEncoding(String charset) {
         response.setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
@@ -359,6 +392,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @param len
      */
     public void setContentLength(int len) {
         response.setContentLength(len);
@@ -366,6 +400,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @param type
      */
     public void setContentType(String type) {
         response.setContentType(type);
@@ -374,6 +409,8 @@ public class SafeResponse implements HttpServletResponse {
     /**
      * Add a date header to the response after ensuring that there are no
      * encoded or illegal characters in the name.
+     * @param name 
+     * @param date
      */
     public void setDateHeader(String name, long date) {
         try {
@@ -390,6 +427,8 @@ public class SafeResponse implements HttpServletResponse {
      * linear white space with a single SP before interpreting the field value
      * or forwarding the message downstream."
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+     * @param name 
+     * @param value
      */
     public void setHeader(String name, String value) {
         try {
@@ -406,6 +445,8 @@ public class SafeResponse implements HttpServletResponse {
     /**
      * Add an int header to the response after ensuring that there are no
      * encoded or illegal characters in the name.
+     * @param name 
+     * @param value
      */
     public void setIntHeader(String name, int value) {
         try {
@@ -418,6 +459,7 @@ public class SafeResponse implements HttpServletResponse {
 
     /**
      * Same as HttpServletResponse, no security changes required.
+     * @param loc
      */
     public void setLocale(Locale loc) {
         // TODO investigate the character set issues here
@@ -427,6 +469,7 @@ public class SafeResponse implements HttpServletResponse {
     /**
      * Override the status code with a 200 in order to confound attackers using
      * automated scanners.
+     * @param sc
      */
     public void setStatus(int sc) {
         response.setStatus(HttpServletResponse.SC_OK);
@@ -436,6 +479,8 @@ public class SafeResponse implements HttpServletResponse {
      * Override the status code with a 200 in order to confound attackers using
      * automated scanners. The message is canonicalized and filtered for
      * dangerous characters.
+     * @param sc 
+     * @param sm
      */
     public void setStatus(int sc, String sm) {
         try {

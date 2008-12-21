@@ -45,6 +45,7 @@ public class RandomizerTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void setUp() throws Exception {
     	// none
@@ -52,6 +53,7 @@ public class RandomizerTest extends TestCase {
 
     /**
      * {@inheritDoc}
+     * @throws Exception
      */
     protected void tearDown() throws Exception {
     	// none
@@ -124,6 +126,7 @@ public class RandomizerTest extends TestCase {
     
     /**
      * Test of getRandomGUID method, of class org.owasp.esapi.Randomizer.
+     * @throws EncryptionException
      */
     public void testGetRandomGUID() throws EncryptionException {
         System.out.println("getRandomGUID");

@@ -63,6 +63,11 @@ public class RequestRateThrottleFilter implements Filter
      * exceeded, then a short error message is written to the output stream and
      * no further processing is done on the request. Otherwise the request is
      * processed as normal.
+     * @param request 
+     * @param response 
+     * @param chain 
+     * @throws IOException
+     * @throws ServletException
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
     {

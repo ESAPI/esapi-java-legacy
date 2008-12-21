@@ -63,14 +63,18 @@ public class AuthenticatorTest extends TestCase {
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void setUp() throws Exception {
 		// none
 	}
 
     /**
      * {@inheritDoc}
-	 */
+     *
+     * @throws Exception
+     */
 	protected void tearDown() throws Exception {
 		// none
 	}
@@ -80,7 +84,8 @@ public class AuthenticatorTest extends TestCase {
 	 * Test of createAccount method, of class org.owasp.esapi.Authenticator.
 	 * 
 	 * @throws AuthenticationException
-	 *             the authentication exception
+     *             the authentication exception
+     * @throws EncryptionException
 	 */
 	public void testCreateUser() throws AuthenticationException, EncryptionException {
 		System.out.println("createUser");
@@ -153,10 +158,9 @@ public class AuthenticatorTest extends TestCase {
 	/**
 	 * Test of getCurrentUser method, of class org.owasp.esapi.Authenticator.
 	 * 
-	 * @throws InterruptedException *
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
+     *
+     * @throws Exception
+     */
 	public void testGetCurrentUser() throws Exception {
 		System.out.println("getCurrentUser");
         Authenticator instance = ESAPI.authenticator();
@@ -221,7 +225,11 @@ public class AuthenticatorTest extends TestCase {
 		assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS) ));
 	}
 	
-	public void testGetUserFromRememberToken() throws AuthenticationException {
+    /**
+     *
+     * @throws org.owasp.esapi.errors.AuthenticationException
+     */
+    public void testGetUserFromRememberToken() throws AuthenticationException {
 		System.out.println("getUserFromRememberToken");
         Authenticator instance = ESAPI.authenticator();
         instance.logout();  // in case anyone is logged in
@@ -300,7 +308,9 @@ public class AuthenticatorTest extends TestCase {
 	
 	/**
 	 * Test of hashPassword method, of class org.owasp.esapi.Authenticator.
-	 */
+     *
+     * @throws EncryptionException
+     */
 	public void testHashPassword() throws EncryptionException {
 		System.out.println("hashPassword");
 		String username = "Jeff";
@@ -543,6 +553,7 @@ public class AuthenticatorTest extends TestCase {
 
     /**
      * Test of main method, of class org.owasp.esapi.Authenticator.
+     * @throws Exception
      */
     public void testMain() throws Exception {
         System.out.println("Authenticator Main");

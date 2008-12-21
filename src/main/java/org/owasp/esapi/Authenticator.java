@@ -260,7 +260,8 @@ public interface Authenticator {
 	 *            the account name to use as the salt
 	 * 
 	 * @return 
-	 * 		the hashed password
+     * 		the hashed password
+     * @throws EncryptionException
 	 */
 	String hashPassword(String password, String accountName) throws EncryptionException;
 

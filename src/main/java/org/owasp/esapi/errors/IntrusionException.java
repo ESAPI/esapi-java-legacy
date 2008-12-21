@@ -36,6 +36,9 @@ public class IntrusionException extends RuntimeException {
     /** The logger. */
     protected final Logger logger = ESAPI.getLogger("IntrusionException");
 
+    /**
+     *
+     */
     protected String logMessage = null;
 
     /**

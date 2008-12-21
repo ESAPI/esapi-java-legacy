@@ -110,8 +110,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
         
+    /**
+     *
+     */
     protected final int MAX_REDIRECT_LOCATION = 1000;
     
+    /**
+     *
+     */
     protected final int MAX_FILE_NAME_LENGTH = 1000;
     
     private static String userDirectory = System.getProperty("user.home" ) + "/.esapi";
@@ -163,7 +169,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     /**
 	 * {@inheritDoc}
-     * @throws IOException 
 	 */
     public void setResourceDirectory( String dir ) {
     	resourceDirectory = dir;
@@ -220,7 +225,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /**
 	 * {@inheritDoc}
-	 */
+     *
+     * @param filename
+     * @return
+     */
     public File getResourceFile( String filename ) {
     	File f = null;
     	logSpecial( "Seeking " + filename, null );
@@ -261,6 +269,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * Utility method to get a resource as an InputStream. The search looks for an "esapi-resources" directory in
      * the setResourceDirectory() location, then the System.getProperty( "org.owasp.esapi.resources" ) location,
      * then the System.getProperty( "user.home" ) location, and then the classpath.
+     * @param filename
+     * @return
+     * @throws IOException
      */
     public InputStream getResourceStream( String filename ) throws IOException {
     	InputStream in = null;
