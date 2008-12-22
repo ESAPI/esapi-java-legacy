@@ -29,8 +29,7 @@ public class EncoderConcurrencyTest implements Runnable {
     /**
      *
      */
-    @Override
-	public void run() {
+    public void run() {
 		while( true ) {
 			String nonce = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS );
 			String result = javaScriptEncode( nonce );
