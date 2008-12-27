@@ -621,8 +621,8 @@ public class SafeRequest implements HttpServletRequest {
      */
     public HttpSession getSession() {
         HttpSession session = request.getSession();
-        User user = ESAPI.authenticator().getCurrentUser();
-        user.addSession( session );
+        // User user = ESAPI.authenticator().getCurrentUser();
+        // user.addSession( session );
 
         // send a new cookie header with HttpOnly on first and second responses
         if (session.getAttribute("HTTP_ONLY") == null) {
@@ -649,8 +649,8 @@ public class SafeRequest implements HttpServletRequest {
         if (session == null) {
             return null;
         }
-        User user = ESAPI.authenticator().getCurrentUser();
-        user.addSession( session );
+        // User user = ESAPI.authenticator().getCurrentUser();
+        // user.addSession( session );
 
         // send a new cookie header with HttpOnly on first and second responses
         if (session.getAttribute("HTTP_ONLY") == null) {
