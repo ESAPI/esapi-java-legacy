@@ -66,7 +66,7 @@ public class MySQLCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( c );
+		String hex = Codec.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}

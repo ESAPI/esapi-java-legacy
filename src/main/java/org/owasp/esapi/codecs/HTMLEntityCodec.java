@@ -17,8 +17,6 @@ package org.owasp.esapi.codecs;
 
 import java.util.HashMap;
 
-import org.owasp.esapi.Logger;
-
 /**
  * Implementation of the Codec interface for HTML entity encoding.
  * 
@@ -58,13 +56,13 @@ public class HTMLEntityCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( c );
+		String hex = Codec.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}
 		
 		// check for illegal characters
-		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) ) {
+		if ( ( ch <= 0x1f && ch != '\t' && ch != '\n' && ch != '\r' ) || ( ch >= 0x7f && ch <= 0x9f ) ) {
 			return( " " );
 		}
 		

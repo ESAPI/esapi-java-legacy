@@ -41,12 +41,12 @@ public class PercentCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( c );
+		String hex = Codec.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}
 		
-        if (c < 0x10) {
+        if (ch < 0x10) {
             hex = '0' + hex;
         }
 	    return '%' + hex;
