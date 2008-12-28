@@ -35,7 +35,7 @@ import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.User;
+// import org.owasp.esapi.User;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
