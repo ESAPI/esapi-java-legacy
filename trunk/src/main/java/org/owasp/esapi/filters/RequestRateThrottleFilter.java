@@ -29,7 +29,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * Servlet filter class.
+ * A simple servlet filter that limits the request rate to a certain threshold of requests per second.
+ * The default rate is 5 hits in 10 seconds. This can be overridden in the web.xml file by adding
+ * parameters named "hits" and "period" with the desired values. When the rate is exceeded, a short
+ * string is written to the response output stream and the chain method is not invoked. Otherwise,
+ * processing proceeds as normal.
  */
 public class RequestRateThrottleFilter implements Filter
 {
