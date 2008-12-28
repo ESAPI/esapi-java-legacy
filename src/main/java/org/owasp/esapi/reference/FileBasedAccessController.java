@@ -491,11 +491,11 @@ public class FileBasedAccessController implements org.owasp.esapi.AccessControll
 			} catch (EncodingException e) {
 				logger.warning( Logger.SECURITY, false, "Failed to canonicalize role " + ((String)roles.get(x)).trim(), e );
 			}
-			if(!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController",canonical,"^[a-zA-Z0-9_]{0,10}$" ,200, false))
+			if(!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController", canonical, "RoleName", 20, false)) {
 				logger.warning( Logger.SECURITY, false, "Role: " + ((String)roles.get(x)).trim() + " is invalid, so was not added to the list of roles for this Rule.");
-			
-			else 
+			} else { 
 				ret.add(canonical.trim());
+			}
 		}
 		return ret;
 	}
