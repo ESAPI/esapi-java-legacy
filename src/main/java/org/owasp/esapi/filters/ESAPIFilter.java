@@ -32,7 +32,7 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 
 /**
- *
+ * 
  * @author jwilliams
  */
 public class ESAPIFilter implements Filter {
