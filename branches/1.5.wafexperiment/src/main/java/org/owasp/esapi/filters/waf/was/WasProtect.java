@@ -97,7 +97,15 @@ public class WasProtect implements JakModule, DirectiveHandler, Inspector {
             switch(rc) {
 
                 case Rule.ACTION_ERROR :
-                    tran.res.sendError(HttpServletResponse.SC_FORBIDDEN);
+
+                	String page = context.getSecurityErrorPage();
+
+                	if ( page == null ) {
+                		tran.res.sendError(HttpServletResponse.SC_FORBIDDEN);
+                	} else {
+                		tran.res.sendRedirect(tran.req.getContextPath() + page);
+                	}
+
                     tran.setRelevant(true);
                     return Inspector.ACTION_STOP;
                     // break;
