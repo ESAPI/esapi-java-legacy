@@ -41,6 +41,8 @@ public class WAFFilter implements Filter {
 
     private String confFilename;
 
+    private String securityErrorPage = null;
+
     private long confTime;
 
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
@@ -61,7 +63,7 @@ public class WAFFilter implements Filter {
         if (new File(confFilename).lastModified() > confTime) {
             ModSecurity newModSecurity = null;
             try {
-                newModSecurity = initModSecurity(confFilename);
+                newModSecurity = initModSecurity(confFilename,securityErrorPage);
             } catch(ServletException se) {
                 se.printStackTrace(System.err);
             }
@@ -109,15 +111,24 @@ public class WAFFilter implements Filter {
         if (confFilename == null) throw new ServletException("ModSecurityFilter: parameter 'conf' not available");
         else confFilename = filterConfig.getServletContext().getRealPath(confFilename);
 
-        modSecurity = initModSecurity(confFilename);
+        securityErrorPage = filterConfig.getInitParameter("security_page");
+        if (securityErrorPage != null){
+
+        	if ( ! new File(filterConfig.getServletContext().getRealPath(securityErrorPage)).exists() ) {
+        		throw new ServletException("ModSecurityFilter: parameter 'security_page' did not point to a real file. Resolved path: [" + securityErrorPage + "]");
+        	}
+        }
+
+        modSecurity = initModSecurity(confFilename, securityErrorPage);
         confTime = new File(confFilename).lastModified();
     }
 
-    public ModSecurity initModSecurity(String confFilename) throws ServletException {
+    public ModSecurity initModSecurity(String confFilename, String securityErrorPage) throws ServletException {
         ModSecurity modSecurity = new ModSecurity(filterConfig);
         try {
             modSecurity.registerModule("ModSecurity", modSecurity);
             modSecurity.addProvider(new FileDirectiveProvider(confFilename));
+            modSecurity.setSecurityErrorPage(securityErrorPage);
             modSecurity.processConfiguration();
             modSecurity.doPostInit();
             modSecurity.doStart();

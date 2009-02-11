@@ -48,6 +48,8 @@ public class ModSecurity extends Jak implements JakModule, DirectiveHandler {
 
     private String uploadStorageDir = null;
 
+    private String securityErrorPage = null;
+
     private int uploadKeepFiles = OFF;
 
     private Object[] debugLogModules;
@@ -61,6 +63,14 @@ public class ModSecurity extends Jak implements JakModule, DirectiveHandler {
 
     public FilterConfig getFilterConfig() {
         return filterConfig;
+    }
+
+    public void setSecurityErrorPage(String s) {
+    	securityErrorPage = s;
+    }
+
+    public String getSecurityErrorPage() {
+    	return securityErrorPage;
     }
 
     public void handleDirective(Configuration config, Directive directive)
