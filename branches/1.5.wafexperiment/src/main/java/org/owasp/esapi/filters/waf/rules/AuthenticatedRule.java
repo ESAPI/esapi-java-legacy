@@ -4,6 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+
 public class AuthenticatedRule extends Rule {
 
 	private String sessionAttribute;
@@ -12,7 +14,7 @@ public class AuthenticatedRule extends Rule {
 		this.sessionAttribute = sessionAttribute;
 	}
 
-	public boolean check(HttpServletRequest request,
+	public boolean check(InterceptingHTTPServletRequest request,
 			HttpServletResponse response) {
 
 		HttpSession session = request.getSession();

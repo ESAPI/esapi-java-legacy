@@ -5,6 +5,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+
 public class IPRule extends Rule {
 
 	private Pattern ip;
@@ -15,7 +17,7 @@ public class IPRule extends Rule {
 		this.pathPattern = pathPattern;
 	}
 
-	public boolean check(HttpServletRequest request,
+	public boolean check(InterceptingHTTPServletRequest request,
 			HttpServletResponse response) {
 
 		if ( pathPattern.matcher(request.getPathInfo()).matches() ) {

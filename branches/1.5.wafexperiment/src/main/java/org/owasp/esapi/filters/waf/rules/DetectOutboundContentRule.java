@@ -6,13 +6,14 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
-public class DetectContentRule extends Rule {
+public class DetectOutboundContentRule extends Rule {
 
 	private List<Pattern> patterns;
 
-	public boolean check(HttpServletRequest request,
+	public boolean check(InterceptingHTTPServletRequest request,
 			HttpServletResponse response) {
 
 		byte[] bytes = ((InterceptingHTTPServletResponse)response).getInterceptingServletOutputStream().getResponseBytes();
