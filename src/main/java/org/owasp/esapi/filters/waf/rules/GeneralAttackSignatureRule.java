@@ -6,6 +6,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+
 public class GeneralAttackSignatureRule extends Rule {
 
 	private Pattern signature;
@@ -14,14 +16,14 @@ public class GeneralAttackSignatureRule extends Rule {
 		this.signature = signature;
 	}
 
-	public boolean check(HttpServletRequest request,
+	public boolean check(InterceptingHTTPServletRequest request,
 			HttpServletResponse response) {
 
 		Enumeration e = request.getParameterNames();
 
 		while(e.hasMoreElements()) {
 			String param = (String)e.nextElement();
-			if ( signature.matcher(request.getParameter(param)).matches() ) {
+			if ( signature.matcher(request.getDictionaryParameter(param)).matches() ) {
 				return false;
 			}
 		}
