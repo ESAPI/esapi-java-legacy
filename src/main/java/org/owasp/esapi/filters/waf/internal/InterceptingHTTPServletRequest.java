@@ -16,13 +16,13 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
+import org.owasp.esapi.filters.waf.AppGuardianConfiguration;
 import org.owasp.esapi.filters.waf.UploadTooLargeException;
 
 public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 
 	private Vector<Parameter> allParameters;
 	private Vector<String> allParameterNames;
-	private static int MAX_FILE_SIZE = Integer.MAX_VALUE;
 	private static int CHUNKED_BUFFER_SIZE = 1024;
 
 	public InterceptingHTTPServletRequest(HttpServletRequest request) throws UploadTooLargeException, FileUploadException, IOException {
@@ -75,17 +75,20 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 			    	 * regular form field. Our job is to stream it
 			    	 * to make sure it's not too big.
 			    	 */
+
 			    	ByteArrayOutputStream baos = new ByteArrayOutputStream(request.getContentLength());
 			    	byte buffer[] = new byte[CHUNKED_BUFFER_SIZE];
-			    	int size = 0;
 
-			    	while(size <= MAX_FILE_SIZE ) {
-			    		int len = stream.read(buffer, 0, CHUNKED_BUFFER_SIZE);
+			    	int size = 0;
+			    	int len = 0;
+
+			    	while ( len != -1 || size <= AppGuardianConfiguration.MAX_FILE_SIZE ) {
+			    		len = stream.read(buffer, 0, CHUNKED_BUFFER_SIZE);
 			    		size += len;
 			    		baos.write(stream.read());
 			    	}
 
-		    		if ( size > MAX_FILE_SIZE) {
+		    		if ( size > AppGuardianConfiguration.MAX_FILE_SIZE) {
 		    			throw new UploadTooLargeException("param: " + name);
 		    		}
 			    }

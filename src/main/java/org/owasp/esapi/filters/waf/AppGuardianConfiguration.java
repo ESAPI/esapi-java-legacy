@@ -7,7 +7,6 @@ import org.owasp.esapi.filters.waf.rules.Rule;
 
 public class AppGuardianConfiguration {
 
-
 	/*
 	 * Each stage has an associated set of rules.
 	 */
@@ -17,18 +16,18 @@ public class AppGuardianConfiguration {
 
 	private int defaultFailAction = DONT_BLOCK;
 
+	public static int MAX_FILE_SIZE = Integer.MAX_VALUE;
+
 	private List<Rule> beforeBodyRules;
 	private List<Rule> afterBodyRules;
 	private List<Rule> beforeResponseRules;
 
-	List<String> allowedMethods;
+	private List<String> allowedMethods;
 
 	public AppGuardianConfiguration() {
-
 		beforeBodyRules = new ArrayList<Rule>();
 		afterBodyRules = new ArrayList<Rule>();
 		beforeResponseRules = new ArrayList<Rule>();
-
 	}
 
 	public void setDefaultFailRule(int defaultFailAction) {
