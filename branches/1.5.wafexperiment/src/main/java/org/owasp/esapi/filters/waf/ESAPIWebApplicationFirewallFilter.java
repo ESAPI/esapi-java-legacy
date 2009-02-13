@@ -14,6 +14,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.fileupload.FileUploadException;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.filters.waf.rules.ConfigurationParser;
@@ -58,8 +59,18 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 1: Request has been received, but the body has not been read.
 		 */
-		InterceptingHTTPServletRequest request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
-		InterceptingHTTPServletResponse response = new InterceptingHTTPServletResponse((HttpServletResponse)servletResponse);
+		InterceptingHTTPServletRequest request = null;
+		InterceptingHTTPServletResponse response = null;
+
+		try {
+			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
+		} catch (UploadTooLargeException utle) {
+			utle.printStackTrace();
+		} catch (FileUploadException fue) {
+			fue.printStackTrace();
+		}
+
+		response = new InterceptingHTTPServletResponse((HttpServletResponse)servletResponse);
 
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
@@ -108,7 +119,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 
 	public void destroy() {
-
+		/*
+		 * Any cleanup necessary?
+		 */
 	}
 
 
