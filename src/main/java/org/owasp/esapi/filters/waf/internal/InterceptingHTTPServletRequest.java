@@ -30,6 +30,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 		super(request);
 
 		allParameters = new Vector<Parameter>();
+		allParameterNames = new Vector<String>();
 
 		Enumeration e = request.getParameterNames();
 

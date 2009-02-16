@@ -13,13 +13,13 @@ public class SimpleVirtualPatchRule extends Rule {
 	private Pattern path;
 	private Pattern parameters;
 	private Pattern exceptions;
-	private Pattern signature;
+	private Pattern valid;
 
-	public SimpleVirtualPatchRule(Pattern path, Pattern parameters, Pattern exceptions, Pattern signature) {
+	public SimpleVirtualPatchRule(Pattern path, Pattern parameters, Pattern exceptions, Pattern valid) {
 		this.path = path;
 		this.parameters = parameters;
 		this.exceptions = exceptions;
-		this.signature = signature;
+		this.valid = valid;
 	}
 
 	public boolean check(InterceptingHTTPServletRequest request,
@@ -37,8 +37,9 @@ public class SimpleVirtualPatchRule extends Rule {
 				String param = (String)e.nextElement();
 				if ( parameters.matcher(param).matches() ) {
 					if ( exceptions == null || ! exceptions.matcher(param).matches() ) {
-						if ( signature.matcher(request.getDictionaryParameter(param)).matches() ) {
-							return false;
+						System.out.println(request.getDictionaryParameter(param));
+						if ( valid.matcher(request.getDictionaryParameter(param)).matches() ) {
+							return true;
 						}
 					}
 				}
@@ -46,7 +47,7 @@ public class SimpleVirtualPatchRule extends Rule {
 
 		}
 
-		return true;
+		return false;
 	}
 
 }
