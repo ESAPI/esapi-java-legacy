@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -18,7 +19,9 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.filters.waf.rules.ConfigurationParser;
+import org.owasp.esapi.filters.waf.rules.IPRule;
 import org.owasp.esapi.filters.waf.rules.Rule;
+import org.owasp.esapi.filters.waf.rules.SimpleVirtualPatchRule;
 
 /**
  * Entry point for the ESAPI's web application firewall (codename AppGuard?).
@@ -48,6 +51,12 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * Open up configuration file and populate the AppGuardian configuration object.
 		 */
 		appGuardConfig = ConfigurationParser.readConfigurationFile(new File(realFilename));
+
+		Pattern path = Pattern.compile(".*");
+		Pattern param = Pattern.compile("^b0mb$");
+		Pattern signature = Pattern.compile("[0-9a-zA-Z]+");
+
+		appGuardConfig.addBeforeBodyRule(new SimpleVirtualPatchRule(path, param, null, signature));
 	}
 
 	/*

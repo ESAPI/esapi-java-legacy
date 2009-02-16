@@ -2,6 +2,7 @@ package org.owasp.esapi.filters.waf;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.owasp.esapi.filters.waf.rules.Rule;
 
@@ -22,8 +23,6 @@ public class AppGuardianConfiguration {
 	private List<Rule> afterBodyRules;
 	private List<Rule> beforeResponseRules;
 
-	private List<String> allowedMethods;
-
 	public AppGuardianConfiguration() {
 		beforeBodyRules = new ArrayList<Rule>();
 		afterBodyRules = new ArrayList<Rule>();
@@ -43,37 +42,23 @@ public class AppGuardianConfiguration {
 	}
 
 	public List<Rule> getAfterBodyRules() {
-		return beforeBodyRules;
+		return afterBodyRules;
 	}
 
 	public List<Rule> getBeforeResponseRules() {
-		return beforeBodyRules;
+		return beforeResponseRules;
 	}
 
-
-	public void setAllowedHTTPMethods(List<String> allowedMethods) {
-		this.allowedMethods = allowedMethods;
+	public void addBeforeBodyRule(Rule r) {
+		beforeBodyRules.add(r);
 	}
 
-	public void addRule(Rule r) {
+	public void addAfterBodyRule(Rule r) {
+		afterBodyRules.add(r);
+	}
 
-		switch(r.getState()) {
-
-			case HTTPState.ID_STATE_BEFORE_BODY:
-				beforeBodyRules.add(r);
-				break;
-
-			case HTTPState.ID_STATE_AFTER_BODY:
-				afterBodyRules.add(r);
-				break;
-
-			case HTTPState.ID_STATE_BEFORE_RESPONSE:
-				beforeResponseRules.add(r);
-				break;
-
-			default:
-		}
-
+	public void addBeforeResponseRule(Rule r) {
+		beforeResponseRules.add(r);
 	}
 
 }

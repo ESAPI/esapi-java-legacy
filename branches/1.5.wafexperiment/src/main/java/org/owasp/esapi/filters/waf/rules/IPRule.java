@@ -9,24 +9,26 @@ import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 
 public class IPRule extends Rule {
 
-	private Pattern ip;
-	private Pattern pathPattern;
+	private Pattern allowedIP;
+	private Pattern path;
 
-	public IPRule(Pattern ip, Pattern pathPattern) {
-		this.ip = ip;
-		this.pathPattern = pathPattern;
+	public IPRule(Pattern allowedIP, Pattern path) {
+		this.allowedIP = allowedIP;
+		this.path = path;
 	}
 
 	public boolean check(InterceptingHTTPServletRequest request,
 			HttpServletResponse response) {
 
-		if ( pathPattern.matcher(request.getPathInfo()).matches() ) {
-			if ( ip.matcher(request.getRemoteAddr()).matches() ) {
-				return true;
+		System.out.println(request.getRequestURI());
+
+		if ( path.matcher(request.getRequestURI()).matches() ) {
+			if ( ! allowedIP.matcher(request.getRemoteAddr()).matches() ) {
+				return false;
 			}
 		}
 
-		return false;
+		return true;
 	}
 
 }
