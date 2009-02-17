@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<policy>
+
+	<aliases>
+
+		<alias name="INPUT_VALIDATION_ERROR">/security/</alias>
+		<alias name="ADMIN_PATH" type="path">/admin/*</alias>
+
+	</aliases>
+
+	<!-- mode can be "block" or "log" -->
+	<settings>
+		<mode>block</mode>
+		<error-handling>
+			<default-page>/security/error.jsp</default-page>
+			<default-status>403</default-status>
+		</error-handling>
+		<logging>
+			<log-directory>/WEB-INF/logs</log-directory>
+			<log-level>debug</log-level>
+			<exception type="simple-path">/help/*</exception>
+		</logging>
+	</settings>
+
+	<authentication-rules key="session.userObj">
+		<exception path="/index.html" />
+		<exception path="/login.jsp" />
+		<exception path="/index.jsp" />
+		<exception path="/images/*" />
+		<exception path="/css/*" />
+		<exception path="/help/*" />
+	</authentication-rules>
+
+	<authorization-rules>
+
+		<restrict-source-ip path="/admin/*" range="192.168.1.*|127.0.0.1" />
+
+		<!-- operator contains,equals,inList,exists -->
+		<must-match path="/admin/.*" variable="request.header.x-roles" operator="contains" value="admin"/>
+
+	</authorization-rules>
+
+
+	<url-rules>
+		<restrict-extension allow=".(do|css|jpg|gif)"/>
+
+		<restrict-method deny="GET" path="*.do"/>
+		<restrict-method allow="(GET|POST|TRACE)"/>
+
+		<enforce-https path="/*">
+			<exception path="/index.html" />
+			<exception path="/index.jsp" />
+			<exception path="/images/*" />
+			<exception path="/css/*" />
+			<exception path="/help/*" />
+		</enforce-https>
+	</url-rules>
+
+	<header-rules><!-- act on incoming headers and parameters -->
+
+		<restrict-content-type deny="multipart" />
+		<restrict-content-type allow="text/plain" />
+		<restrict-content-type allow="x-www-form-urlencoded" />
+
+		<restrict-user-agent deny="*GoogleBot*" />
+		<restrict-user-agent allow="*" />
+
+	</header-rules>
+
+	<!-- expert rules, not for faint of heart -->
+	<custom-rules>
+		<rule>
+			<match-and>
+				<match-not variable="request.URI" operator="regex">/(zz|foo|bar|zaz).jsp</match-not>
+				<match variable="request.parameters.state" operator="regex">![NY|MO|CA]</match>
+			</match-and>
+			<actions>
+				<redirect status="500"/>
+				<log>custom message</log>
+				<invalidate/>
+			</actions>
+		</rule>
+	</custom-rules>
+
+	<virtual-patches>
+		<virtual-patch id="1234" path="/foo.jsp" variable="request.parameters.bar" pattern="[0-9a-zA-Z]" message="zomg attax"/>
+
+	</virtual-patches>
+
+	<!-- act on outbound headers and data -->
+	<outbound-rules>
+
+		<add-xframe-options value="(SAMEORIGIN|DENY)" path="/*">
+			<exception path="/iframe/*"/>
+		</add-xframe-options>
+
+		<add-http-only-flag>
+			<cookie name="*" />
+		</add-http-only-flag>
+
+		<dynamic-insertion pattern="&lt;/body&gt;">
+			<![CDATA[ ]]>
+		</dynamic-insertion>
+
+	</outbound-rules>
+</policy>
+
+<!-- canonicalize, status -->
