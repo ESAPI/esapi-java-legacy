@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.filters.waf.rules.ConfigurationParser;
+import org.owasp.esapi.filters.waf.rules.DetectOutboundContentRule;
 import org.owasp.esapi.filters.waf.rules.IPRule;
 import org.owasp.esapi.filters.waf.rules.Rule;
 import org.owasp.esapi.filters.waf.rules.SimpleVirtualPatchRule;
@@ -55,8 +56,14 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		Pattern path = Pattern.compile(".*");
 		Pattern param = Pattern.compile("^b0mb$");
 		Pattern signature = Pattern.compile("[0-9a-zA-Z]+");
+		Pattern patternTextHTML = Pattern.compile("^text/html.*");
+		Pattern patternBadness = Pattern.compile(".*404.*");
+		List<Pattern> listBadness = new ArrayList<Pattern>();
+		listBadness.add(patternBadness);
 
 		appGuardConfig.addBeforeBodyRule(new SimpleVirtualPatchRule(path, param, null, signature));
+		appGuardConfig.addBeforeResponseRule(new DetectOutboundContentRule(patternTextHTML, listBadness));
+
 	}
 
 	/*
@@ -79,7 +86,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			fue.printStackTrace();
 		}
 
-		response = new InterceptingHTTPServletResponse((HttpServletResponse)servletResponse);
+		/*
+		 * 2nd arg = should we bother intercepting the egress response?
+		 * 3rd arg = if 2nd arg = true, should we buffer the response?
+		 */
+		response = new InterceptingHTTPServletResponse((HttpServletResponse)servletResponse, true, true);
 
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
@@ -87,7 +98,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			Rule rule = rules.get(i);
 
 			if ( ! rule.check(request, response) ) {
-				// they failed this rule.
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You failed the rule in stage 1: " + rule.getClass());
+				return;
 			}
 		}
 
@@ -101,7 +113,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			Rule rule = rules.get(i);
 
 			if ( ! rule.check(request, response) ) {
-				// they failed this rule.
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You failed the rule in stage 2: " + rule.getClass());
+				return;
 			}
 		}
 
@@ -120,7 +133,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			Rule rule = rules.get(i);
 
 			if ( ! rule.check(request, response) ) {
-				// they failed this rule.
+				response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "You failed the rule in stage 3: " + rule.getClass());
+				return;
 			}
 		}
 	}

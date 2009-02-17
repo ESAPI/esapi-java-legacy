@@ -1,10 +1,10 @@
 package org.owasp.esapi.filters.waf.rules;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class AuthenticatedRule extends Rule {
 
@@ -15,7 +15,7 @@ public class AuthenticatedRule extends Rule {
 	}
 
 	public boolean check(InterceptingHTTPServletRequest request,
-			HttpServletResponse response) {
+			InterceptingHTTPServletResponse response) {
 
 		HttpSession session = request.getSession();
 

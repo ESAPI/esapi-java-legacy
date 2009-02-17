@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class HTTPMethodRule extends Rule {
 
@@ -14,7 +15,7 @@ public class HTTPMethodRule extends Rule {
 
 
 	public boolean check(InterceptingHTTPServletRequest request,
-			HttpServletResponse response) {
+			InterceptingHTTPServletResponse response) {
 
 		/*
 		 *	Order allow, deny.
