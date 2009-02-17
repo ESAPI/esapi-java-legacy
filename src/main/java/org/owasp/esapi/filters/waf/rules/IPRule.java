@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class IPRule extends Rule {
 
@@ -18,9 +19,7 @@ public class IPRule extends Rule {
 	}
 
 	public boolean check(InterceptingHTTPServletRequest request,
-			HttpServletResponse response) {
-
-		System.out.println(request.getRequestURI());
+			InterceptingHTTPServletResponse response) {
 
 		if ( path.matcher(request.getRequestURI()).matches() ) {
 			if ( ! allowedIP.matcher(request.getRemoteAddr()).matches() ) {

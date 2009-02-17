@@ -4,12 +4,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public abstract class Rule {
 
 	public abstract boolean check(
 			InterceptingHTTPServletRequest request,
-			HttpServletResponse response);
+			InterceptingHTTPServletResponse response);
 
 	private int guid;
 	private int state;

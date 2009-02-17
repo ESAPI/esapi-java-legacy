@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class SimpleVirtualPatchRule extends Rule {
 
@@ -23,7 +24,7 @@ public class SimpleVirtualPatchRule extends Rule {
 	}
 
 	public boolean check(InterceptingHTTPServletRequest request,
-			HttpServletResponse response) {
+			InterceptingHTTPServletResponse response) {
 
 		if ( path.matcher(request.getRequestURI()).matches() ) {
 
@@ -37,9 +38,8 @@ public class SimpleVirtualPatchRule extends Rule {
 				String param = (String)e.nextElement();
 				if ( parameters.matcher(param).matches() ) {
 					if ( exceptions == null || ! exceptions.matcher(param).matches() ) {
-						System.out.println(request.getDictionaryParameter(param));
-						if ( valid.matcher(request.getDictionaryParameter(param)).matches() ) {
-							return true;
+						if ( ! valid.matcher(request.getDictionaryParameter(param)).matches() ) {
+							return false;
 						}
 					}
 				}
@@ -47,7 +47,7 @@ public class SimpleVirtualPatchRule extends Rule {
 
 		}
 
-		return false;
+		return true;
 	}
 
 }

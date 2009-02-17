@@ -19,6 +19,8 @@ public class AppGuardianConfiguration {
 
 	public static int MAX_FILE_SIZE = Integer.MAX_VALUE;
 
+	public static String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
+	public static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_CHARACTER_ENCODING;
 	private List<Rule> beforeBodyRules;
 	private List<Rule> afterBodyRules;
 	private List<Rule> beforeResponseRules;

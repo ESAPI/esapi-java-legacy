@@ -36,6 +36,10 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
 	}
 
 	public void setResponseBytes(byte[] responseBytes) throws IOException {
+		if ( ! buffering && bos.toByteArray().length > 0 ) {
+			throw new IOException("Already committed response because not currently buffering");
+		}
+
 		bos = new ByteArrayOutputStream();
 		bos.write(responseBytes);
 	}
@@ -62,10 +66,11 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
     }
 
 	public void flush() throws IOException {
-		if (!buffering) {
+		if (buffering) {
 			os.write(bos.toByteArray());
 		}
-		bos.close();
+
+		bos.reset();
 	}
 
 	public void commit() throws IOException {
