@@ -16,8 +16,8 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.owasp.esapi.filters.waf.AppGuardianConfiguration;
 import org.owasp.esapi.filters.waf.UploadTooLargeException;
+import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
 
 public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 

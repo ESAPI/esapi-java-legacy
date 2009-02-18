@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.filters.waf.AppGuardianConfiguration;
+import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
