@@ -16,9 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileUploadException;
+import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
+import org.owasp.esapi.filters.waf.configuration.ConfigurationParser;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
-import org.owasp.esapi.filters.waf.rules.ConfigurationParser;
 import org.owasp.esapi.filters.waf.rules.DetectOutboundContentRule;
 import org.owasp.esapi.filters.waf.rules.IPRule;
 import org.owasp.esapi.filters.waf.rules.Rule;
@@ -51,7 +52,12 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Open up configuration file and populate the AppGuardian configuration object.
 		 */
-		appGuardConfig = ConfigurationParser.readConfigurationFile(new File(realFilename));
+		try {
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new File(realFilename));
+		} catch (ConfigurationException e) {
+			throw new ServletException(e);
+		}
+
 
 		Pattern path = Pattern.compile(".*");
 		Pattern param = Pattern.compile("^b0mb$");
