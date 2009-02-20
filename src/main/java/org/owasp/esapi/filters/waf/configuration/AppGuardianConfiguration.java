@@ -16,6 +16,15 @@ public class AppGuardianConfiguration {
 	public static final int BLOCK = 1;
 
 	/*
+	 * The operators.
+	 */
+	public static final int OPERATOR_EQ = 0;
+	public static final int OPERATOR_CONTAINS = 1;
+	public static final int OPERATOR_IN_LIST = 2;
+	public static final int OPERATOR_EXISTS = 3;
+
+
+	/*
 	 * Default settings.
 	 */
 	private int defaultFailAction = DONT_BLOCK;

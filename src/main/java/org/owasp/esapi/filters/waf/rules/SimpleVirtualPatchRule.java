@@ -11,16 +11,21 @@ import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class SimpleVirtualPatchRule extends Rule {
 
-	private Pattern path;
-	private Pattern parameters;
-	private Pattern exceptions;
-	private Pattern valid;
+	private static final String REQUEST_PARAMETERS = "request.parameters.";
+	private static final String REQUEST_HEADERS = "request.headers.";
 
-	public SimpleVirtualPatchRule(Pattern path, Pattern parameters, Pattern exceptions, Pattern valid) {
+	private Pattern path;
+	private String variable;
+	private Pattern valid;
+	private String id;
+	private String message;
+
+	public SimpleVirtualPatchRule(String id, Pattern path, String variable, Pattern valid, String message) {
+		this.id = id;
 		this.path = path;
-		this.parameters = parameters;
-		this.exceptions = exceptions;
+		this.variable = variable;
 		this.valid = valid;
+		this.message = message;
 	}
 
 	public boolean check(InterceptingHTTPServletRequest request,
@@ -29,25 +34,65 @@ public class SimpleVirtualPatchRule extends Rule {
 		if ( path.matcher(request.getRequestURI()).matches() ) {
 
 			/*
-			 * Go through each parameter except those that match the "exceptions"
-			 * and test if they match the signature.
+			 * Decide which parameters/headers to act on.
 			 */
-			Enumeration e = request.getParameterNames();
+			String target = null;
+			Enumeration en = null;
+			boolean parameter = true;
 
-			while(e.hasMoreElements()) {
-				String param = (String)e.nextElement();
-				if ( parameters.matcher(param).matches() ) {
-					if ( exceptions == null || ! exceptions.matcher(param).matches() ) {
-						if ( ! valid.matcher(request.getDictionaryParameter(param)).matches() ) {
+			if ( variable.startsWith(REQUEST_PARAMETERS)) {
+
+				target = variable.substring(REQUEST_PARAMETERS.length());
+				en = request.getParameterNames();
+
+			} else if ( variable.startsWith(REQUEST_HEADERS) ) {
+
+				parameter = false;
+				target = variable.substring(REQUEST_HEADERS.length());
+				en = request.getHeaderNames();
+
+			} else {
+				/*
+				 * User put in a "variable" attribute in the rule - didn't start with request.parameters
+				 * or request.headers.
+				 */
+				return false;
+			}
+
+			/*
+			 * If it contains a regex character, it's a regex. Loop through elements and grab any matches.
+			 */
+			if ( target.contains("*") || target.contains("?") ) {
+
+				target = target.replaceAll("*", ".*");
+				Pattern p = Pattern.compile(target);
+				while (en.hasMoreElements() ) {
+					String s = (String)en.nextElement();
+					String value = null;
+					if ( p.matcher(target).matches() ) {
+						if ( parameter ) {
+							value = request.getDictionaryParameter(s);
+						} else {
+							value = request.getHeader(s);
+						}
+						if ( ! valid.matcher(value).matches() ) {
 							return false;
 						}
 					}
+				}
+
+			} else {
+
+				if ( parameter ) {
+					return valid.matcher(request.getDictionaryParameter(target)).matches();
+				} else {
+					return valid.matcher(request.getHeader(target)).matches();
 				}
 			}
 
 		}
 
-		return true;
+		return false;
 	}
 
 }
