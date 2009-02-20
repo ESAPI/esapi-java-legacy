@@ -6,4 +6,8 @@ public class ConfigurationException extends Exception {
 		super(e);
 	}
 
+	public ConfigurationException(String s) {
+		super(s);
+	}
+
 }

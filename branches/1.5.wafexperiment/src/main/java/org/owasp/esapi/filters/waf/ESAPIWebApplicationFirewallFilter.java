@@ -67,7 +67,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		List<Pattern> listBadness = new ArrayList<Pattern>();
 		listBadness.add(patternBadness);
 
-		appGuardConfig.addBeforeBodyRule(new SimpleVirtualPatchRule(path, param, null, signature));
 		appGuardConfig.addBeforeResponseRule(new DetectOutboundContentRule(patternTextHTML, listBadness));
 
 	}
