@@ -21,9 +21,7 @@ import org.owasp.esapi.filters.waf.configuration.ConfigurationParser;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.filters.waf.rules.DetectOutboundContentRule;
-import org.owasp.esapi.filters.waf.rules.IPRule;
 import org.owasp.esapi.filters.waf.rules.Rule;
-import org.owasp.esapi.filters.waf.rules.SimpleVirtualPatchRule;
 
 /**
  * Entry point for the ESAPI's web application firewall (codename AppGuard?).

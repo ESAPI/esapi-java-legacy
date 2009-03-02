@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Level;
+//import org.apache.log4j.Level;
 import org.owasp.esapi.filters.waf.rules.Rule;
 
 public class AppGuardianConfiguration {
@@ -49,7 +49,7 @@ public class AppGuardianConfiguration {
 	 * Logging settings.
 	 */
 	private String logDirectory;
-	private Level logLevel;
+	//private Level logLevel;
 
 	/*
 	 * The object-level rules encapsulated by the stage in which they are executed.
@@ -57,11 +57,13 @@ public class AppGuardianConfiguration {
 	private List<Rule> beforeBodyRules;
 	private List<Rule> afterBodyRules;
 	private List<Rule> beforeResponseRules;
+	private List<Rule> cookieRules;
 
 	public AppGuardianConfiguration() {
 		beforeBodyRules = new ArrayList<Rule>();
 		afterBodyRules = new ArrayList<Rule>();
 		beforeResponseRules = new ArrayList<Rule>();
+		cookieRules = new ArrayList<Rule>();
 
 		aliases = new HashMap<String,Object>();
 	}
@@ -74,6 +76,7 @@ public class AppGuardianConfiguration {
 		this.logDirectory = logDirectory;
 	}
 
+	/*
 	public Level getLogLevel() {
 		return logLevel;
 	}
@@ -81,6 +84,7 @@ public class AppGuardianConfiguration {
 	public void setLogLevel(Level logLevel) {
 		this.logLevel = logLevel;
 	}
+	*/
 
 	public String getDefaultErrorPage() {
 		return defaultErrorPage;
@@ -122,6 +126,10 @@ public class AppGuardianConfiguration {
 		return beforeResponseRules;
 	}
 
+	public List<Rule> getCookieRules() {
+		return cookieRules;
+	}
+
 	public void addBeforeBodyRule(Rule r) {
 		beforeBodyRules.add(r);
 	}
@@ -132,6 +140,10 @@ public class AppGuardianConfiguration {
 
 	public void addBeforeResponseRule(Rule r) {
 		beforeResponseRules.add(r);
+	}
+
+	public void addCookieRule(Rule r) {
+		cookieRules.add(r);
 	}
 
 }
