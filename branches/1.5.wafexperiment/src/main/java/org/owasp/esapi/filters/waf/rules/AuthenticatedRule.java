@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
@@ -13,10 +12,12 @@ import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 public class AuthenticatedRule extends Rule {
 
 	private String sessionAttribute;
+	private Pattern path;
 	private List<Object> exceptions;
 
-	public AuthenticatedRule(String sessionAttribute, List<Object> exceptions) {
+	public AuthenticatedRule(String sessionAttribute, Pattern path, List<Object> exceptions) {
 		this.sessionAttribute = sessionAttribute;
+		this.path = path;
 		this.exceptions = exceptions;
 	}
 
@@ -25,7 +26,11 @@ public class AuthenticatedRule extends Rule {
 
 		HttpSession session = request.getSession();
 
-		if ( session != null && session.getAttribute(sessionAttribute) != null ) {
+		if ( path != null && ! path.matcher(request.getRequestURI()).matches() ) {
+			return true;
+		}
+
+		if ( session.getAttribute(sessionAttribute) != null ) {
 
 			return true;
 

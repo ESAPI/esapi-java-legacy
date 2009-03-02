@@ -23,7 +23,7 @@
 		</logging>
 	</settings>
 
-	<authentication-rules key="session.userObj">
+	<authentication-rules path="/.*" key="session.userObj">
 		<path-exception>/index.html</path-exception>
 		<path-exception>/login.jsp</path-exception>
 		<path-exception>/index.jsp</path-exception>
@@ -74,7 +74,7 @@
 		<rule>
 			<match-and>
 				<match-not variable="request.URI" operator="regex">/(zz|foo|bar|zaz).jsp</match-not>
-				<match variable="request.parameters.state" operator="regex">![NY|MO|CA]</match>
+				<match variable="request.parameters.*" operator="regex">![NY|MO|CA]</match>
 			</match-and>
 			<actions>
 				<redirect status="500"/>
@@ -91,17 +91,25 @@
 	<!-- act on outbound headers and data -->
 	<outbound-rules>
 
-		<add-xframe-options value="(SAMEORIGIN|DENY)" path="/*">
-			<exception path="/iframe/*"/>
-		</add-xframe-options>
+		<add-header name="FOO" value="BAR" path="/.*">
+			<exception path="/foobar/.*"/>
+		</add-header>
 
 		<add-http-only-flag>
-			<cookie name="*" />
+			<cookie name=".*" />
 		</add-http-only-flag>
+
+		<add-secure-flag>
+			<cookie name=".*" />
+		</add-secure-flag>
 
 		<dynamic-insertion pattern="&lt;/body&gt;">
 			<![CDATA[]]>
 		</dynamic-insertion>
+
+		<detect-content pattern="document.cookie">
+
+		</detect-content>
 
 	</outbound-rules>
 </policy>

@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Level;
+//import org.apache.log4j.Level;
 import org.owasp.esapi.filters.waf.ConfigurationException;
+import org.owasp.esapi.filters.waf.rules.AddHTTPOnlyFlagRule;
+import org.owasp.esapi.filters.waf.rules.AddHeaderRule;
+import org.owasp.esapi.filters.waf.rules.AddSecureFlagRule;
 import org.owasp.esapi.filters.waf.rules.AuthenticatedRule;
 import org.owasp.esapi.filters.waf.rules.EnforceHTTPSRule;
 import org.owasp.esapi.filters.waf.rules.HTTPMethodRule;
@@ -29,6 +32,8 @@ import nu.xom.ValidityException;
 public class ConfigurationParser {
 
 	private static final String REGEX = "regex";
+	private static final String DEFAULT_PATH_APPLY_ALL = ".*";
+	private static boolean INTERCEPT_NEEDED = false;
 
 	public static AppGuardianConfiguration readConfigurationFile(File configFile) throws ConfigurationException {
 
@@ -89,7 +94,7 @@ public class ConfigurationParser {
 			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
 
 			config.setLogDirectory(loggingRoot.getFirstChildElement("log-directory").getValue());
-			config.setLogLevel( Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
+			//config.setLogLevel( Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
 
 			/**
 			 * Parse the 'authentication-rules' section if they have one.
@@ -97,8 +102,12 @@ public class ConfigurationParser {
 			if ( authNRoot != null ) {
 
 				String key = authNRoot.getAttributeValue("key");
-				AuthenticatedRule rule = new AuthenticatedRule(key,getExceptionsFromElement(authNRoot));
-				config.addBeforeBodyRule(rule);
+				String path = authNRoot.getAttributeValue("path");
+				if ( path != null ) {
+					config.addBeforeBodyRule(new AuthenticatedRule(key,Pattern.compile(path),getExceptionsFromElement(authNRoot)));
+				} else {
+					config.addBeforeBodyRule(new AuthenticatedRule(key,null,getExceptionsFromElement(authNRoot)));
+				}
 			}
 
 			/**
@@ -164,6 +173,7 @@ public class ConfigurationParser {
 				 */
 
 				for (int i=0;i<restrictExtensionNodes.size();i++) {
+
 					Element e = restrictExtensionNodes.get(i);
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
@@ -201,6 +211,10 @@ public class ConfigurationParser {
 					String deny = e.getAttributeValue("deny");
 					String path = e.getAttributeValue("path");
 
+					if ( path == null ) {
+						path = DEFAULT_PATH_APPLY_ALL;
+					}
+
 					if ( allow != null && deny != null ) {
 						throw new ConfigurationException("restrict-method rule should not have both 'allow' and 'deny' values");
 					}
@@ -230,13 +244,16 @@ public class ConfigurationParser {
 			}
 
 			if ( headerRoot != null ) {
+
 				Elements restrictContentTypes = headerRoot.getChildElements("restrict-content-type");
 				Elements restrictUserAgents = headerRoot.getChildElements("restrict-user-agent");
 
 				for(int i=0;i<restrictContentTypes.size();i++) {
+
 					Element e = restrictContentTypes.get(i);
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
+
 					if ( allow != null && deny != null ) {
 						throw new ConfigurationException("restrict-content-type rule should not have both 'allow' and 'deny' values");
 					}
@@ -289,6 +306,105 @@ public class ConfigurationParser {
 
 					config.addAfterBodyRule( new SimpleVirtualPatchRule(id, Pattern.compile(path), variable, Pattern.compile(pattern), message) );
 				}
+			}
+
+			if ( customRulesRoot != null ) {
+				Elements rules = customRulesRoot.getChildElements("rule");
+
+			}
+
+			if ( outboundRoot != null ) {
+
+				/*
+				 * Parse the <add-header> rules. This could be used to add:
+				 * - X-I-DONT-WANT-TO-BE-FRAMED
+				 * - Caching prevention headers
+				 * - Custom application headers
+				 */
+
+				Elements addHeaderNodes = outboundRoot.getChildElements("add-header");
+
+				for(int i=0;i<addHeaderNodes.size();i++) {
+					Element e = addHeaderNodes.get(i);
+					String name = e.getAttributeValue("name");
+					String value = e.getAttributeValue("value");
+					String path = e.getAttributeValue("path");
+
+					if ( path == null ) {
+						path = DEFAULT_PATH_APPLY_ALL;
+					}
+
+					AddHeaderRule ahr = new AddHeaderRule(name, value, Pattern.compile(path), getExceptionsFromElement(e));
+					config.addBeforeResponseRule(ahr);
+
+				}
+
+				/*
+				 * Parse the <add-http-only-flag> rules that allow
+				 * us to add the HTTPOnly flag to cookies, both
+				 * custom and app server.
+				 */
+				Elements addHTTPOnlyFlagNodes = outboundRoot.getChildElements("add-http-only-flag");
+
+				for(int i=0;i<addHTTPOnlyFlagNodes.size();i++) {
+					Element e = addHTTPOnlyFlagNodes.get(i);
+
+					Elements cookiePatterns = e.getChildElements("cookie");
+					ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+
+					for(int j=0;j<cookiePatterns.size();j++) {
+						Element cookie = cookiePatterns.get(j);
+						patterns.add(Pattern.compile(cookie.getAttributeValue("name")));
+					}
+
+					AddHTTPOnlyFlagRule ahfr = new AddHTTPOnlyFlagRule(patterns);
+					config.addCookieRule(ahfr);
+				}
+
+				/*
+				 * Parse the <add-secure-flag> rules that allow
+				 * us to add the secure flag to cookies, both
+				 * custom and app server.
+				 */
+				Elements addSecureFlagNodes = outboundRoot.getChildElements("add-secure-flag");
+
+				for(int i=0;i<addSecureFlagNodes.size();i++) {
+					Element e = addSecureFlagNodes.get(i);
+					Elements cookiePatterns = e.getChildElements("cookie");
+					ArrayList<Pattern> patterns = new ArrayList<Pattern>();
+
+					for(int j=0;j<cookiePatterns.size();j++) {
+						Element cookie = cookiePatterns.get(j);
+						patterns.add(Pattern.compile(cookie.getAttributeValue("name")));
+					}
+					AddSecureFlagRule asfr = new AddSecureFlagRule(patterns);
+					config.addCookieRule(asfr);
+				}
+
+				/*
+				 * Parse dynamic-insertion nodes that allow us to dynamically
+				 * insert stuff into responses.
+				 */
+				Elements dynamicInsertionNodes = outboundRoot.getChildElements("dynamic-insertion");
+
+				for(int i=0;i<dynamicInsertionNodes.size();i++) {
+					Element e = dynamicInsertionNodes.get(i);
+
+					INTERCEPT_NEEDED = true;
+				}
+
+				/*
+				 * Parse detect-content nodes that allow us to simply detect data
+				 * leaving in responses.
+				 */
+				Elements detectContentNodes = outboundRoot.getChildElements("detect-content");
+
+				for(int i=0;i<detectContentNodes.size();i++) {
+					Element e = detectContentNodes.get(i);
+
+					INTERCEPT_NEEDED = true;
+				}
+
 			}
 
 		} catch (ValidityException e) {
