@@ -2,8 +2,8 @@ package org.owasp.esapi.filters.waf.internal;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.owasp.esapi.filters.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.filters.waf.rules.AddSecureFlagRule;
+import org.owasp.esapi.filters.waf.rules.Rule;
 
 public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper {
 
@@ -22,10 +23,23 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
 	private List<AddSecureFlagRule> addSecureFlagRules = null;
 	private List<AddHTTPOnlyFlagRule> addHTTPOnlyFlagRules = null;
 
-	public InterceptingHTTPServletResponse(HttpServletResponse response, boolean intercepting, boolean buffering) throws IOException {
+	public InterceptingHTTPServletResponse(HttpServletResponse response, boolean buffering, List<Rule> cookieRules) throws IOException {
+
 		super(response);
 		this.isos = new InterceptingServletOutputStream(response.getOutputStream(), buffering);
 		this.pw = new PrintWriter(isos);
+
+		addSecureFlagRules = new ArrayList<AddSecureFlagRule>();
+		addHTTPOnlyFlagRules = new ArrayList<AddHTTPOnlyFlagRule>();
+
+		for(int i=0;i<cookieRules.size();i++) {
+			Rule r = cookieRules.get(i);
+			if ( r instanceof AddSecureFlagRule ) {
+				addSecureFlagRules.add((AddSecureFlagRule)r);
+			} else if ( r instanceof AddHTTPOnlyFlagRule ) {
+				addHTTPOnlyFlagRules.add((AddHTTPOnlyFlagRule)r);
+			}
+		}
 	}
 
 	public InterceptingServletOutputStream getInterceptingServletOutputStream() {
@@ -48,7 +62,11 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     	contentType = s;
     }
 
-	public void addCookie(Cookie cookie) {
+    public void commit() throws IOException {
+    	isos.commit();
+    }
+
+	public void addCookie(Cookie cookie, boolean isSession) {
 
 		boolean addSecureFlag = cookie.getSecure();
 		boolean addHTTPOnlyFlag = false;
@@ -74,19 +92,22 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
 		String cookieValue = createCookieHeader(cookie.getName(),cookie.getValue(),
 												cookie.getMaxAge(),cookie.getDomain(),
 												cookie.getPath(), addSecureFlag,
-												addHTTPOnlyFlag);
+												addHTTPOnlyFlag, isSession);
 		addHeader("Set-Cookie", cookieValue);
 
-		super.addCookie(cookie);
+		//super.addCookie(cookie);
 
 	}
 
-	private String createCookieHeader(String name, String value, int maxAge, String domain, String path, boolean secure, boolean httpOnly) {
+	private String createCookieHeader(String name, String value, int maxAge, String domain, String path, boolean secure, boolean httpOnly, boolean isTemporary) {
         // create the special cookie header instead of creating a Java cookie
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
         // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
         String header = name + "=" + value;
-        header += "; Max-Age=" + maxAge;
+
+        if ( ! isTemporary ) {
+        	header += "; Max-Age=" + maxAge;
+        }
 
         if (domain != null) {
             header += "; Domain=" + domain;

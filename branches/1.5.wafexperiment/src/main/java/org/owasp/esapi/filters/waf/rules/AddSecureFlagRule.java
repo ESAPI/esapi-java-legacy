@@ -3,6 +3,10 @@ package org.owasp.esapi.filters.waf.rules;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.owasp.esapi.filters.waf.actions.Action;
+import org.owasp.esapi.filters.waf.actions.DoNothingAction;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
@@ -14,9 +18,11 @@ public class AddSecureFlagRule extends Rule {
 		this.name = name;
 	}
 
-	public boolean check(InterceptingHTTPServletRequest request,
+	public Action check(HttpServletRequest request,
 			InterceptingHTTPServletResponse response) {
-		return true;
+		DoNothingAction action = new DoNothingAction();
+
+		return action;
 	}
 
 	public boolean doesCookieMatch(String cookieName) {

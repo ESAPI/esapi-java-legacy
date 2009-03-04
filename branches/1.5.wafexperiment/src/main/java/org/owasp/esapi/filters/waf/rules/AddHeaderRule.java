@@ -3,6 +3,10 @@ package org.owasp.esapi.filters.waf.rules;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.owasp.esapi.filters.waf.actions.Action;
+import org.owasp.esapi.filters.waf.actions.DoNothingAction;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
@@ -20,7 +24,9 @@ public class AddHeaderRule extends Rule {
 		this.exceptions = exceptions;
 	}
 
-	public boolean check(InterceptingHTTPServletRequest request, InterceptingHTTPServletResponse response) {
+	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response) {
+
+		DoNothingAction action = new DoNothingAction();
 
 		if ( path.matcher(request.getRequestURI()).matches() ) {
 
@@ -30,21 +36,27 @@ public class AddHeaderRule extends Rule {
 
 				if ( o instanceof String ) {
 					if ( request.getRequestURI().equals((String)o)) {
-						return true;
+						action.setFailed(false);
+						action.setActionNecessary(false);
+						return action;
 					}
 				} else if ( o instanceof Pattern ) {
 					if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
-						return true;
-					}
+						action.setFailed(false);
+						action.setActionNecessary(false);
+						return action;					}
 				}
 
 			}
+
+			action.setFailed(true);
+			action.setActionNecessary(false);
 
 			response.setHeader(header, value);
 
 		}
 
-		return true;
+		return action;
 	}
 
 }

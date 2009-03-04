@@ -6,6 +6,10 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.filters.waf.actions.Action;
+import org.owasp.esapi.filters.waf.actions.DefaultAction;
+import org.owasp.esapi.filters.waf.actions.DoNothingAction;
+import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
@@ -28,10 +32,16 @@ public class SimpleVirtualPatchRule extends Rule {
 		this.message = message;
 	}
 
-	public boolean check(InterceptingHTTPServletRequest request,
+	public Action check(HttpServletRequest req,
 			InterceptingHTTPServletResponse response) {
 
-		if ( path.matcher(request.getRequestURI()).matches() ) {
+		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
+
+		if ( ! path.matcher(request.getRequestURI()).matches() ) {
+
+			return new DoNothingAction();
+
+		} else {
 
 			/*
 			 * Decide which parameters/headers to act on.
@@ -52,11 +62,7 @@ public class SimpleVirtualPatchRule extends Rule {
 				en = request.getHeaderNames();
 
 			} else {
-				/*
-				 * User put in a "variable" attribute in the rule - didn't start with request.parameters
-				 * or request.headers.
-				 */
-				return false;
+				return new DefaultAction();
 			}
 
 			/*
@@ -76,7 +82,7 @@ public class SimpleVirtualPatchRule extends Rule {
 							value = request.getHeader(s);
 						}
 						if ( ! valid.matcher(value).matches() ) {
-							return false;
+							return new DefaultAction();
 						}
 					}
 				}
@@ -84,15 +90,23 @@ public class SimpleVirtualPatchRule extends Rule {
 			} else {
 
 				if ( parameter ) {
-					return valid.matcher(request.getDictionaryParameter(target)).matches();
+					if ( valid.matcher(request.getDictionaryParameter(target)).matches() ) {
+						return new DoNothingAction();
+					} else {
+						return new DefaultAction();
+					}
 				} else {
-					return valid.matcher(request.getHeader(target)).matches();
+					if ( valid.matcher(request.getHeader(target)).matches() ) {
+						return new DoNothingAction();
+					} else {
+						return new DefaultAction();
+					}
 				}
 			}
 
 		}
 
-		return false;
+		return new DefaultAction();
 	}
 
 }
