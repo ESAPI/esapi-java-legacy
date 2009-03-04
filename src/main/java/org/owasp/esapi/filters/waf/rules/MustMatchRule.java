@@ -5,6 +5,11 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.owasp.esapi.filters.waf.actions.Action;
+import org.owasp.esapi.filters.waf.actions.DefaultAction;
+import org.owasp.esapi.filters.waf.actions.DoNothingAction;
 import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
@@ -27,10 +32,15 @@ public class MustMatchRule extends Rule {
 		this.value = value;
 	}
 
-	public boolean check(InterceptingHTTPServletRequest request,
+	public Action check(HttpServletRequest req,
 			InterceptingHTTPServletResponse response) {
 
-		if ( path.matcher(request.getRequestURI()).matches() ) {
+		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
+		if ( ! path.matcher(request.getRequestURI()).matches() ) {
+
+			return new DoNothingAction();
+
+		} else {
 
 			String target = null;
 
@@ -44,7 +54,7 @@ public class MustMatchRule extends Rule {
 					target = variable.substring(REQUEST_PARAMETERS.length()+1);
 
 					if ( request.getParameter(target) != null ) {
-						return true;
+						return new DoNothingAction();
 					}
 
 				} else if ( operator == AppGuardianConfiguration.OPERATOR_IN_LIST ) {
@@ -77,7 +87,7 @@ public class MustMatchRule extends Rule {
 							if ( p.matcher(param).matches() ) {
 								String s = request.getParameter(param);
 								if ( ! RuleUtil.testValue(s, value, operator) ) {
-									return false;
+									return new DefaultAction();
 								}
 							}
 						}
@@ -87,7 +97,7 @@ public class MustMatchRule extends Rule {
 						String s = request.getParameter(target);
 
 						if ( ! RuleUtil.testValue(s, value, operator) ) {
-							return false;
+							return new DefaultAction();
 						}
 
 					}
@@ -104,7 +114,7 @@ public class MustMatchRule extends Rule {
 					target = variable.substring(REQUEST_HEADERS.length()+1);
 
 					if ( request.getHeader(target) != null ) {
-						return true;
+						return new DoNothingAction();
 					}
 
 				} else if ( operator == AppGuardianConfiguration.OPERATOR_IN_LIST ) {
@@ -131,7 +141,7 @@ public class MustMatchRule extends Rule {
 							if ( p.matcher(header).matches() ) {
 								String s = request.getHeader(header);
 								if ( ! RuleUtil.testValue(s, value, operator) ) {
-									return false;
+									return new DefaultAction();
 								}
 							}
 						}
@@ -141,7 +151,7 @@ public class MustMatchRule extends Rule {
 						String s = request.getHeader(target);
 
 						if ( ! RuleUtil.testValue(s, value, operator) ) {
-							return false;
+							return new DefaultAction();
 						}
 
 					}
@@ -155,7 +165,7 @@ public class MustMatchRule extends Rule {
 				 * ANY rule if there is no session object.
 				 */
 				if ( request.getSession(false) == null ) {
-					return false;
+					return new DefaultAction();
 				}
 
 				target = variable.substring(SESSION_ATTRIBUTES.length()+1);
@@ -170,11 +180,23 @@ public class MustMatchRule extends Rule {
 					Object o = request.getSession(false).getAttribute(target);
 
 					if ( o instanceof Collection ) {
-						return RuleUtil.isInList((Collection)o, value);
+						if ( RuleUtil.isInList((Collection)o, value) ) {
+							return new DoNothingAction();
+						} else {
+							return new DefaultAction();
+						}
 					} else if ( o instanceof Map ) {
-						return RuleUtil.isInList((Map)o, value);
+						if ( RuleUtil.isInList((Map)o, value) ) {
+							return new DoNothingAction();
+						} else {
+							return new DefaultAction();
+						}
 					} else if ( o instanceof Enumeration ) {
-						return RuleUtil.isInList((Enumeration)o, value);
+						if ( RuleUtil.isInList((Enumeration)o, value) ) {
+							return new DoNothingAction();
+						} else {
+							return new DefaultAction();
+						}
 					}
 
 					/*
@@ -187,7 +209,11 @@ public class MustMatchRule extends Rule {
 
 					Object o = request.getSession(false).getAttribute(target);
 
-					return o != null;
+					if ( o != null ) {
+						return new DoNothingAction();
+					} else {
+						return new DefaultAction();
+					}
 
 				} else if ( operator == AppGuardianConfiguration.OPERATOR_EQ || operator == AppGuardianConfiguration.OPERATOR_CONTAINS ) {
 
@@ -207,7 +233,7 @@ public class MustMatchRule extends Rule {
 								Object o = request.getSession(false).getAttribute(attr);
 
 								if ( ! RuleUtil.testValue((String)o, value, operator) ) {
-									return false;
+									return new DefaultAction();
 								}
 							}
 						}
@@ -217,7 +243,7 @@ public class MustMatchRule extends Rule {
 						Object o = request.getSession(false).getAttribute(target);
 
 						if ( ! RuleUtil.testValue((String)o, value, operator) ) {
-							return false;
+							return new DefaultAction();
 						}
 
 					}
@@ -227,7 +253,11 @@ public class MustMatchRule extends Rule {
 			} else if ( variable.equals( "request.uri" ) ) {
 
 				if ( operator == AppGuardianConfiguration.OPERATOR_EQ || operator == AppGuardianConfiguration.OPERATOR_CONTAINS ) {
-					return RuleUtil.testValue(request.getRequestURI(), value, operator);
+					if ( RuleUtil.testValue(request.getRequestURI(), value, operator) ) {
+						return new DoNothingAction();
+					} else {
+						return new DefaultAction();
+					}
 				}
 
 				/*
@@ -237,7 +267,11 @@ public class MustMatchRule extends Rule {
 			} else if ( variable.equals( "request.url" ) ) {
 
 				if ( operator == AppGuardianConfiguration.OPERATOR_EQ || operator == AppGuardianConfiguration.OPERATOR_CONTAINS ) {
-					return RuleUtil.testValue(request.getRequestURL().toString(), value, operator);
+					if ( RuleUtil.testValue(request.getRequestURL().toString(), value, operator) ) {
+						return new DoNothingAction();
+					} else {
+						return new DefaultAction();
+					}
 				}
 
 				/*
@@ -247,7 +281,7 @@ public class MustMatchRule extends Rule {
 
 		}
 
-		return false;
+		return new DefaultAction();
 
 	}
 

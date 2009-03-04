@@ -86,6 +86,6 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
         if (!buffering)  {
         	os.close();
         }
-        bos.close();
     }
+
 }

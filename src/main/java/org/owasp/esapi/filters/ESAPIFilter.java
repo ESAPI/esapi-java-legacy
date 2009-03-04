@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -32,7 +32,7 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 
 /**
- * 
+ *
  * @author jwilliams
  */
 public class ESAPIFilter implements Filter {
@@ -46,7 +46,7 @@ public class ESAPIFilter implements Filter {
 	 * placed into service. The servlet container calls the init method exactly
 	 * once after instantiating the filter. The init method must complete
 	 * successfully before the filter is asked to do any filtering work.
-	 * 
+	 *
 	 * @param filterConfig
 	 *            configuration object
 	 */
@@ -63,7 +63,7 @@ public class ESAPIFilter implements Filter {
 	 * for a resource at the end of the chain. The FilterChain passed in to this
 	 * method allows the Filter to pass on the request and response to the next
 	 * entity in the chain.
-	 * 
+	 *
 	 * @param req
 	 *            Request object to be processed
 	 * @param resp
@@ -77,7 +77,7 @@ public class ESAPIFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) req;
 		HttpServletResponse response = (HttpServletResponse) resp;
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		
+
 		try {
 			// figure out who the current user is
 			try {
@@ -111,7 +111,7 @@ public class ESAPIFilter implements Filter {
 
 			// check for CSRF attacks
 			// utils.checkCSRFToken();
-			
+
 			// forward this request on to the web application
 			chain.doFilter(request, response);
 
@@ -122,12 +122,12 @@ public class ESAPIFilter implements Filter {
             // only do this if the entire site should not be cached
             // otherwise you should do this strategically in your controller or actions
 			ESAPI.httpUtilities().setNoCacheHeaders( response );
-            
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			logger.error( Logger.SECURITY, false, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
-			
+
 		} finally {
 			// VERY IMPORTANT
 			// clear out the ThreadLocal variables in the authenticator

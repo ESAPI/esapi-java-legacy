@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-//import org.apache.log4j.Level;
+import org.apache.log4j.Level;
 import org.owasp.esapi.filters.waf.rules.Rule;
 
 public class AppGuardianConfiguration {
@@ -12,8 +12,9 @@ public class AppGuardianConfiguration {
 	/*
 	 * Fail modes (BLOCK blocks and logs the request, DONT_BLOCK simply logs)
 	 */
-	public static final int DONT_BLOCK = 0;
-	public static final int BLOCK = 1;
+	public static final int LOG = 0;
+	public static final int REDIRECT = 1;
+	public static final int BLOCK = 2;
 
 	/*
 	 * The operators.
@@ -27,12 +28,15 @@ public class AppGuardianConfiguration {
 	/*
 	 * Default settings.
 	 */
-	private int defaultFailAction = DONT_BLOCK;
+	public static int DEFAULT_FAIL_ACTION = LOG;
 
 	public static int MAX_FILE_SIZE = Integer.MAX_VALUE;
 
 	public static String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 	public static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_CHARACTER_ENCODING;
+
+	public static boolean FORCE_HTTP_ONLY_FLAG_TO_SESSION = false;
+	public static boolean FORCE_SECURE_FLAG_TO_SESSION = false;
 
 	/*
 	 * The aliases declared in the beginning of the config file.
@@ -49,7 +53,7 @@ public class AppGuardianConfiguration {
 	 * Logging settings.
 	 */
 	private String logDirectory;
-	//private Level logLevel;
+	private Level logLevel;
 
 	/*
 	 * The object-level rules encapsulated by the stage in which they are executed.
@@ -76,16 +80,6 @@ public class AppGuardianConfiguration {
 		this.logDirectory = logDirectory;
 	}
 
-	/*
-	public Level getLogLevel() {
-		return logLevel;
-	}
-
-	public void setLogLevel(Level logLevel) {
-		this.logLevel = logLevel;
-	}
-	*/
-
 	public String getDefaultErrorPage() {
 		return defaultErrorPage;
 	}
@@ -104,14 +98,6 @@ public class AppGuardianConfiguration {
 
 	public void addAlias(String key, Object obj) {
 		aliases.put(key, obj);
-	}
-
-	public void setDefaultFailRule(int defaultFailAction) {
-		this.defaultFailAction = defaultFailAction;
-	}
-
-	public int getDefaultFailRule() {
-		return defaultFailAction;
 	}
 
 	public List<Rule> getBeforeBodyRules() {
@@ -146,4 +132,19 @@ public class AppGuardianConfiguration {
 		cookieRules.add(r);
 	}
 
+	public void applyHTTPOnlyFlagToSessionCookie() {
+		FORCE_HTTP_ONLY_FLAG_TO_SESSION = true;
+	}
+
+	public void applySecureFlagToSessionCookie() {
+		FORCE_SECURE_FLAG_TO_SESSION = true;
+	}
+
+	public Level getLogLevel() {
+		return logLevel;
+	}
+
+	public void setLogLevel(Level logLevel) {
+		this.logLevel = logLevel;
+	}
 }

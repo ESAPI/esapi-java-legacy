@@ -2,6 +2,11 @@ package org.owasp.esapi.filters.waf.rules;
 
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.owasp.esapi.filters.waf.actions.Action;
+import org.owasp.esapi.filters.waf.actions.DefaultAction;
+import org.owasp.esapi.filters.waf.actions.DoNothingAction;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
@@ -17,31 +22,28 @@ public class HTTPMethodRule extends Rule {
 		this.path = path;
 	}
 
-	public boolean check(InterceptingHTTPServletRequest request, InterceptingHTTPServletResponse response) {
+	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response) {
 
 		/*
 		 * If no path is specified, apply rule globally.
 		 */
 
-		if ( path != null || path.matcher(request.getRequestURI()).matches() ) {
+		if ( path == null || path.matcher(request.getRequestURI()).matches() ) {
 			/*
 			 *	Order allow, deny.
 			 */
 
 			if ( allowedMethods != null && allowedMethods.matcher(request.getMethod()).matches() ) {
-				return true;
+				return new DoNothingAction();
 			}
 
 			if ( deniedMethods != null && deniedMethods.matcher(request.getMethod()).matches() ) {
-				return false;
+				return new DefaultAction();
 			}
 
-			if ( allowedMethods == null && deniedMethods == null ) {
-				return true;
-			}
 		}
 
-		return false;
+		return new DoNothingAction();
 	}
 
 }

@@ -7,16 +7,20 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 //import org.apache.log4j.Level;
+import org.apache.log4j.Level;
 import org.owasp.esapi.filters.waf.ConfigurationException;
+import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.filters.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.filters.waf.rules.AddHeaderRule;
 import org.owasp.esapi.filters.waf.rules.AddSecureFlagRule;
 import org.owasp.esapi.filters.waf.rules.AuthenticatedRule;
+import org.owasp.esapi.filters.waf.rules.DetectOutboundContentRule;
 import org.owasp.esapi.filters.waf.rules.EnforceHTTPSRule;
 import org.owasp.esapi.filters.waf.rules.HTTPMethodRule;
 import org.owasp.esapi.filters.waf.rules.IPRule;
 import org.owasp.esapi.filters.waf.rules.MustMatchRule;
 import org.owasp.esapi.filters.waf.rules.PathExtensionRule;
+import org.owasp.esapi.filters.waf.rules.ReplaceContentRule;
 import org.owasp.esapi.filters.waf.rules.RestrictContentTypeRule;
 import org.owasp.esapi.filters.waf.rules.RestrictUserAgentRule;
 import org.owasp.esapi.filters.waf.rules.SimpleVirtualPatchRule;
@@ -33,7 +37,8 @@ public class ConfigurationParser {
 
 	private static final String REGEX = "regex";
 	private static final String DEFAULT_PATH_APPLY_ALL = ".*";
-	private static boolean INTERCEPT_NEEDED = false;
+	private static final String JEESESSIONID = "JSESSIONID";
+	private static final int DEFAULT_RESPONSE_CODE = 403;
 
 	public static AppGuardianConfiguration readConfigurationFile(File configFile) throws ConfigurationException {
 
@@ -81,20 +86,27 @@ public class ConfigurationParser {
 			String mode = settingsRoot.getFirstChildElement("mode").getValue();
 
 			if ( "block".equals(mode.toLowerCase() ) ) {
-				config.setDefaultFailRule(AppGuardianConfiguration.BLOCK);
+				AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.BLOCK;
+			} else if ( "redirect".equals(mode.toLowerCase() ) ){
+				AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.REDIRECT;
 			} else {
-				config.setDefaultFailRule(AppGuardianConfiguration.DONT_BLOCK);
+				AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.LOG;
 			}
 
 			Element errorHandlingRoot = settingsRoot.getFirstChildElement("error-handling");
 
 			config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-page").getValue() );
-			config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("default-status").getValue()) );
+
+			try {
+				config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("default-status").getValue()) );
+			} catch (Exception e) {
+				config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
+			}
 
 			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
 
 			config.setLogDirectory(loggingRoot.getFirstChildElement("log-directory").getValue());
-			//config.setLogLevel( Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
+			config.setLogLevel( Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
 
 			/**
 			 * Parse the 'authentication-rules' section if they have one.
@@ -103,10 +115,12 @@ public class ConfigurationParser {
 
 				String key = authNRoot.getAttributeValue("key");
 				String path = authNRoot.getAttributeValue("path");
-				if ( path != null ) {
+				if ( path != null && key != null ) {
 					config.addBeforeBodyRule(new AuthenticatedRule(key,Pattern.compile(path),getExceptionsFromElement(authNRoot)));
-				} else {
+				} else if ( key != null ) {
 					config.addBeforeBodyRule(new AuthenticatedRule(key,null,getExceptionsFromElement(authNRoot)));
+				} else {
+					throw new ConfigurationException("The <authentication-rules> rule requires a 'key' attribute");
 				}
 			}
 
@@ -236,9 +250,10 @@ public class ConfigurationParser {
 
 					Element e = (Element)enforceHttpsNodes.get(i);
 					String path = e.getAttributeValue("path");
+					String action = e.getAttributeValue("action");
 					List<Object> exceptions = getExceptionsFromElement(e);
 
-					config.addBeforeBodyRule( new EnforceHTTPSRule(Pattern.compile(path),exceptions) );
+					config.addBeforeBodyRule( new EnforceHTTPSRule(Pattern.compile(path), exceptions, action) );
 				}
 
 			}
@@ -310,7 +325,9 @@ public class ConfigurationParser {
 
 			if ( customRulesRoot != null ) {
 				Elements rules = customRulesRoot.getChildElements("rule");
-
+				/*
+				 * Parse the complex rules.
+				 */
 			}
 
 			if ( outboundRoot != null ) {
@@ -359,6 +376,10 @@ public class ConfigurationParser {
 
 					AddHTTPOnlyFlagRule ahfr = new AddHTTPOnlyFlagRule(patterns);
 					config.addCookieRule(ahfr);
+
+					if ( ahfr.doesCookieMatch(JEESESSIONID) ) {
+						config.applyHTTPOnlyFlagToSessionCookie();
+					}
 				}
 
 				/*
@@ -377,8 +398,14 @@ public class ConfigurationParser {
 						Element cookie = cookiePatterns.get(j);
 						patterns.add(Pattern.compile(cookie.getAttributeValue("name")));
 					}
+
 					AddSecureFlagRule asfr = new AddSecureFlagRule(patterns);
 					config.addCookieRule(asfr);
+
+					if ( asfr.doesCookieMatch(JEESESSIONID) ) {
+						config.applySecureFlagToSessionCookie();
+					}
+
 				}
 
 				/*
@@ -388,9 +415,22 @@ public class ConfigurationParser {
 				Elements dynamicInsertionNodes = outboundRoot.getChildElements("dynamic-insertion");
 
 				for(int i=0;i<dynamicInsertionNodes.size();i++) {
+
 					Element e = dynamicInsertionNodes.get(i);
 
-					INTERCEPT_NEEDED = true;
+					String pattern = e.getAttributeValue("pattern");
+
+					ArrayList<String> replacements = new ArrayList<String>();
+					Elements replacementNodes = e.getChildElements("replacement");
+
+					for(int j=0;j<replacementNodes.size();j++) {
+						Element f = replacementNodes.get(j);
+						replacements.add(f.getValue());
+					}
+
+					ReplaceContentRule rcr = new ReplaceContentRule(Pattern.compile(pattern,Pattern.DOTALL), replacements);
+					config.addBeforeResponseRule(rcr);
+
 				}
 
 				/*
@@ -400,9 +440,20 @@ public class ConfigurationParser {
 				Elements detectContentNodes = outboundRoot.getChildElements("detect-content");
 
 				for(int i=0;i<detectContentNodes.size();i++) {
-					Element e = detectContentNodes.get(i);
 
-					INTERCEPT_NEEDED = true;
+					Element e = detectContentNodes.get(i);
+					String token = e.getAttributeValue("pattern");
+					String contentType = e.getAttributeValue("content-type");
+
+					if ( token == null ) {
+						throw new ConfigurationException("<detect-content> rules must contain a 'pattern' attribute");
+					} else if ( contentType == null ) {
+						throw new ConfigurationException("<detect-content> rules must contain a 'content-type' attribute");
+					}
+
+					DetectOutboundContentRule docr = new DetectOutboundContentRule(Pattern.compile(contentType),Pattern.compile(token,Pattern.DOTALL));
+					config.addBeforeResponseRule(docr);
+
 				}
 
 			}
@@ -420,7 +471,7 @@ public class ConfigurationParser {
 	}
 
 	private static List<Object> getExceptionsFromElement(Element root) {
-		Elements exceptions = root.getChildElements("exception");
+		Elements exceptions = root.getChildElements("path-exception");
 		ArrayList<Object> exceptionList = new ArrayList<Object>();
 
 		for(int i=0;i<exceptions.size();i++) {
