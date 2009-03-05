@@ -18,10 +18,11 @@ public class AuthenticatedRule extends Rule {
 	private Pattern path;
 	private List<Object> exceptions;
 
-	public AuthenticatedRule(String sessionAttribute, Pattern path, List<Object> exceptions) {
+	public AuthenticatedRule(String id, String sessionAttribute, Pattern path, List<Object> exceptions) {
 		this.sessionAttribute = sessionAttribute;
 		this.path = path;
 		this.exceptions = exceptions;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
@@ -59,6 +60,8 @@ public class AuthenticatedRule extends Rule {
 				}
 			}
 		}
+
+		log(request, "User requested unauthenticated access to URI '" + request.getRequestURI() + "' [querystring="+request.getQueryString()+"]");
 
 		return new DefaultAction();
 	}

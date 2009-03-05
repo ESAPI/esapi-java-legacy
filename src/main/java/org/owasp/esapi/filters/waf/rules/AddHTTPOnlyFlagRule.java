@@ -14,7 +14,8 @@ public class AddHTTPOnlyFlagRule extends Rule {
 
 	private List<Pattern> name;
 
-	public AddHTTPOnlyFlagRule(List<Pattern> name) {
+	public AddHTTPOnlyFlagRule(String id, List<Pattern> name) {
+		setId(id);
 		this.name = name;
 	}
 

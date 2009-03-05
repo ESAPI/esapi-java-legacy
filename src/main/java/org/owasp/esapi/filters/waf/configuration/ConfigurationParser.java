@@ -103,10 +103,11 @@ public class ConfigurationParser {
 				config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
 			}
 
+			/*
 			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
-
-			config.setLogDirectory(loggingRoot.getFirstChildElement("log-directory").getValue());
-			config.setLogLevel( Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
+			AppGuardianConfiguration.LOG_DIRECTORY = loggingRoot.getFirstChildElement("log-directory").getValue();
+			AppGuardianConfiguration.LOG_LEVEL = Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue());
+			*/
 
 			/**
 			 * Parse the 'authentication-rules' section if they have one.
@@ -115,10 +116,12 @@ public class ConfigurationParser {
 
 				String key = authNRoot.getAttributeValue("key");
 				String path = authNRoot.getAttributeValue("path");
+				String id = authNRoot.getAttributeValue("id");
+
 				if ( path != null && key != null ) {
-					config.addBeforeBodyRule(new AuthenticatedRule(key,Pattern.compile(path),getExceptionsFromElement(authNRoot)));
+					config.addBeforeBodyRule(new AuthenticatedRule(id,key,Pattern.compile(path),getExceptionsFromElement(authNRoot)));
 				} else if ( key != null ) {
-					config.addBeforeBodyRule(new AuthenticatedRule(key,null,getExceptionsFromElement(authNRoot)));
+					config.addBeforeBodyRule(new AuthenticatedRule(id,key,null,getExceptionsFromElement(authNRoot)));
 				} else {
 					throw new ConfigurationException("The <authentication-rules> rule requires a 'key' attribute");
 				}
@@ -135,11 +138,12 @@ public class ConfigurationParser {
 				for(int i=0;i<restrictNodes.size();i++) {
 
 					Element restrictNodeRoot = restrictNodes.get(i);
+					String id = restrictNodeRoot.getAttributeValue("id");
 					Pattern ips = Pattern.compile(restrictNodeRoot.getAttributeValue("ip-regex"));
 					if ( REGEX.equalsIgnoreCase(restrictNodeRoot.getAttributeValue("type")) ) {
-						config.addBeforeBodyRule( new IPRule(ips, Pattern.compile(restrictNodeRoot.getValue())));
+						config.addBeforeBodyRule( new IPRule(id, ips, Pattern.compile(restrictNodeRoot.getValue())));
 					} else {
-						config.addBeforeBodyRule( new IPRule(ips, restrictNodeRoot.getValue()) );
+						config.addBeforeBodyRule( new IPRule(id, ips, restrictNodeRoot.getValue()) );
 					}
 
 				}
@@ -153,6 +157,7 @@ public class ConfigurationParser {
 					String variable = e.getAttributeValue("variable");
 					String value = e.getAttributeValue("value");
 					String operator = e.getAttributeValue("operator");
+					String id = e.getAttributeValue("id");
 					int op = AppGuardianConfiguration.OPERATOR_EQ;
 
 					if ( "exists".equalsIgnoreCase(operator)) {
@@ -163,7 +168,7 @@ public class ConfigurationParser {
 						op = AppGuardianConfiguration.OPERATOR_CONTAINS;
 					}
 
-					config.addBeforeBodyRule( new MustMatchRule(path,variable,op,value) );
+					config.addAfterBodyRule( new MustMatchRule(id, path,variable,op,value) );
 				}
 
 			}
@@ -191,6 +196,7 @@ public class ConfigurationParser {
 					Element e = restrictExtensionNodes.get(i);
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
+					String id = e.getAttributeValue("id");
 
 					if ( allow != null && deny != null ) {
 						throw new ConfigurationException( "restrict-extension rules can't have both 'allow' and 'deny'" );
@@ -198,11 +204,11 @@ public class ConfigurationParser {
 
 					if ( allow != null ) {
 
-						config.addBeforeBodyRule( new PathExtensionRule(Pattern.compile(allow),null) );
+						config.addBeforeBodyRule( new PathExtensionRule(id,Pattern.compile(allow),null) );
 
 					} else if ( deny != null ) {
 
-						config.addBeforeBodyRule( new PathExtensionRule(null,Pattern.compile(deny)) );
+						config.addBeforeBodyRule( new PathExtensionRule(id, null,Pattern.compile(deny)) );
 
 					} else {
 						throw new ConfigurationException("restrict extension rule should have either a 'deny' or 'allow' attribute");
@@ -224,6 +230,7 @@ public class ConfigurationParser {
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
 					String path = e.getAttributeValue("path");
+					String id = e.getAttributeValue("id");
 
 					if ( path == null ) {
 						path = DEFAULT_PATH_APPLY_ALL;
@@ -235,11 +242,11 @@ public class ConfigurationParser {
 
 					if ( allow != null ) {
 
-						config.addBeforeBodyRule( new HTTPMethodRule(Pattern.compile(allow), null, Pattern.compile(path)) );
+						config.addBeforeBodyRule( new HTTPMethodRule(id, Pattern.compile(allow), null, Pattern.compile(path)) );
 
 					} else if ( deny != null ) {
 
-						config.addBeforeBodyRule( new HTTPMethodRule(null, Pattern.compile(deny), Pattern.compile(path)) );
+						config.addBeforeBodyRule( new HTTPMethodRule(id, null, Pattern.compile(deny), Pattern.compile(path)) );
 
 					} else {
 						throw new ConfigurationException("restrict-method rule should have either an 'allow' or 'deny' value");
@@ -251,9 +258,10 @@ public class ConfigurationParser {
 					Element e = (Element)enforceHttpsNodes.get(i);
 					String path = e.getAttributeValue("path");
 					String action = e.getAttributeValue("action");
+					String id = e.getAttributeValue("id");
 					List<Object> exceptions = getExceptionsFromElement(e);
 
-					config.addBeforeBodyRule( new EnforceHTTPSRule(Pattern.compile(path), exceptions, action) );
+					config.addBeforeBodyRule( new EnforceHTTPSRule(id, Pattern.compile(path), exceptions, action) );
 				}
 
 			}
@@ -268,6 +276,7 @@ public class ConfigurationParser {
 					Element e = restrictContentTypes.get(i);
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
+					String id = e.getAttributeValue("id");
 
 					if ( allow != null && deny != null ) {
 						throw new ConfigurationException("restrict-content-type rule should not have both 'allow' and 'deny' values");
@@ -275,11 +284,11 @@ public class ConfigurationParser {
 
 					if ( allow != null ) {
 
-						config.addBeforeBodyRule( new RestrictContentTypeRule(Pattern.compile(allow), null) );
+						config.addBeforeBodyRule( new RestrictContentTypeRule(id, Pattern.compile(allow), null) );
 
 					} else if ( deny != null ) {
 
-						config.addBeforeBodyRule( new RestrictContentTypeRule(null, Pattern.compile(deny)) );
+						config.addBeforeBodyRule( new RestrictContentTypeRule(id, null, Pattern.compile(deny)) );
 
 					} else {
 						throw new ConfigurationException("restrict-content-type rule should have either an 'allow' or 'deny' value");
@@ -288,6 +297,7 @@ public class ConfigurationParser {
 
 				for(int i=0;i<restrictUserAgents.size();i++) {
 					Element e = restrictUserAgents.get(i);
+					String id = e.getAttributeValue("id");
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
 					if ( allow != null && deny != null ) {
@@ -296,11 +306,11 @@ public class ConfigurationParser {
 
 					if ( allow != null ) {
 
-						config.addBeforeBodyRule( new RestrictUserAgentRule(Pattern.compile(allow), null) );
+						config.addBeforeBodyRule( new RestrictUserAgentRule(id, Pattern.compile(allow), null) );
 
 					} else if ( deny != null ) {
 
-						config.addBeforeBodyRule( new RestrictUserAgentRule(null, Pattern.compile(deny)) );
+						config.addBeforeBodyRule( new RestrictUserAgentRule(id, null, Pattern.compile(deny)) );
 
 					} else {
 						throw new ConfigurationException("restrict-user-agent rule should have either an 'allow' or 'deny' value");
@@ -346,12 +356,13 @@ public class ConfigurationParser {
 					String name = e.getAttributeValue("name");
 					String value = e.getAttributeValue("value");
 					String path = e.getAttributeValue("path");
+					String id = e.getAttributeValue("id");
 
 					if ( path == null ) {
 						path = DEFAULT_PATH_APPLY_ALL;
 					}
 
-					AddHeaderRule ahr = new AddHeaderRule(name, value, Pattern.compile(path), getExceptionsFromElement(e));
+					AddHeaderRule ahr = new AddHeaderRule(id, name, value, Pattern.compile(path), getExceptionsFromElement(e));
 					config.addBeforeResponseRule(ahr);
 
 				}
@@ -367,6 +378,7 @@ public class ConfigurationParser {
 					Element e = addHTTPOnlyFlagNodes.get(i);
 
 					Elements cookiePatterns = e.getChildElements("cookie");
+					String id = e.getAttributeValue("id");
 					ArrayList<Pattern> patterns = new ArrayList<Pattern>();
 
 					for(int j=0;j<cookiePatterns.size();j++) {
@@ -374,7 +386,7 @@ public class ConfigurationParser {
 						patterns.add(Pattern.compile(cookie.getAttributeValue("name")));
 					}
 
-					AddHTTPOnlyFlagRule ahfr = new AddHTTPOnlyFlagRule(patterns);
+					AddHTTPOnlyFlagRule ahfr = new AddHTTPOnlyFlagRule(id, patterns);
 					config.addCookieRule(ahfr);
 
 					if ( ahfr.doesCookieMatch(JEESESSIONID) ) {
@@ -391,6 +403,7 @@ public class ConfigurationParser {
 
 				for(int i=0;i<addSecureFlagNodes.size();i++) {
 					Element e = addSecureFlagNodes.get(i);
+					String id = e.getAttributeValue("id");
 					Elements cookiePatterns = e.getChildElements("cookie");
 					ArrayList<Pattern> patterns = new ArrayList<Pattern>();
 
@@ -399,7 +412,7 @@ public class ConfigurationParser {
 						patterns.add(Pattern.compile(cookie.getAttributeValue("name")));
 					}
 
-					AddSecureFlagRule asfr = new AddSecureFlagRule(patterns);
+					AddSecureFlagRule asfr = new AddSecureFlagRule(id, patterns);
 					config.addCookieRule(asfr);
 
 					if ( asfr.doesCookieMatch(JEESESSIONID) ) {
@@ -417,18 +430,11 @@ public class ConfigurationParser {
 				for(int i=0;i<dynamicInsertionNodes.size();i++) {
 
 					Element e = dynamicInsertionNodes.get(i);
-
 					String pattern = e.getAttributeValue("pattern");
+					String id = e.getAttributeValue("id");
+					Element replacement = e.getFirstChildElement("replacement");
 
-					ArrayList<String> replacements = new ArrayList<String>();
-					Elements replacementNodes = e.getChildElements("replacement");
-
-					for(int j=0;j<replacementNodes.size();j++) {
-						Element f = replacementNodes.get(j);
-						replacements.add(f.getValue());
-					}
-
-					ReplaceContentRule rcr = new ReplaceContentRule(Pattern.compile(pattern,Pattern.DOTALL), replacements);
+					ReplaceContentRule rcr = new ReplaceContentRule(id, Pattern.compile(pattern,Pattern.DOTALL), replacement.getValue());
 					config.addBeforeResponseRule(rcr);
 
 				}
@@ -444,6 +450,7 @@ public class ConfigurationParser {
 					Element e = detectContentNodes.get(i);
 					String token = e.getAttributeValue("pattern");
 					String contentType = e.getAttributeValue("content-type");
+					String id = e.getAttributeValue("id");
 
 					if ( token == null ) {
 						throw new ConfigurationException("<detect-content> rules must contain a 'pattern' attribute");
@@ -451,7 +458,7 @@ public class ConfigurationParser {
 						throw new ConfigurationException("<detect-content> rules must contain a 'content-type' attribute");
 					}
 
-					DetectOutboundContentRule docr = new DetectOutboundContentRule(Pattern.compile(contentType),Pattern.compile(token,Pattern.DOTALL));
+					DetectOutboundContentRule docr = new DetectOutboundContentRule(id, Pattern.compile(contentType),Pattern.compile(token,Pattern.DOTALL));
 					config.addBeforeResponseRule(docr);
 
 				}

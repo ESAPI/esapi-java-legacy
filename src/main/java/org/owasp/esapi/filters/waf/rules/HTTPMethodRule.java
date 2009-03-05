@@ -16,10 +16,11 @@ public class HTTPMethodRule extends Rule {
 	private Pattern deniedMethods;
 	private Pattern path;
 
-	public HTTPMethodRule(Pattern allowedMethods, Pattern deniedMethods, Pattern path) {
+	public HTTPMethodRule(String id, Pattern allowedMethods, Pattern deniedMethods, Pattern path) {
 		this.allowedMethods = allowedMethods;
 		this.deniedMethods = deniedMethods;
 		this.path = path;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response) {
@@ -38,6 +39,7 @@ public class HTTPMethodRule extends Rule {
 			}
 
 			if ( deniedMethods != null && deniedMethods.matcher(request.getMethod()).matches() ) {
+				log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
 				return new DefaultAction();
 			}
 

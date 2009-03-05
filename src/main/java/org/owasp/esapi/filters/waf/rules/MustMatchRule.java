@@ -25,11 +25,12 @@ public class MustMatchRule extends Rule {
 	private int operator;
 	private String value;
 
-	public MustMatchRule(Pattern path, String variable, int operator, String value) {
+	public MustMatchRule(String id, Pattern path, String variable, int operator, String value) {
 		this.path = path;
 		this.variable = variable;
 		this.operator = operator;
 		this.value = value;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest req,
@@ -87,6 +88,7 @@ public class MustMatchRule extends Rule {
 							if ( p.matcher(param).matches() ) {
 								String s = request.getParameter(param);
 								if ( ! RuleUtil.testValue(s, value, operator) ) {
+									log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', input='" + s + "' parameter='"+param+"'");
 									return new DefaultAction();
 								}
 							}
@@ -97,6 +99,7 @@ public class MustMatchRule extends Rule {
 						String s = request.getParameter(target);
 
 						if ( ! RuleUtil.testValue(s, value, operator) ) {
+							log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', input='" + s + "', parameter='"+target+"'");
 							return new DefaultAction();
 						}
 
@@ -141,6 +144,7 @@ public class MustMatchRule extends Rule {
 							if ( p.matcher(header).matches() ) {
 								String s = request.getHeader(header);
 								if ( ! RuleUtil.testValue(s, value, operator) ) {
+									log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', input='" + s + "', header='"+header+"'");
 									return new DefaultAction();
 								}
 							}
@@ -281,6 +285,7 @@ public class MustMatchRule extends Rule {
 
 		}
 
+		log(request, "MustMatch rule failed on URL '" + request.getRequestURL() + "'");
 		return new DefaultAction();
 
 	}

@@ -15,9 +15,10 @@ public class RestrictContentTypeRule extends Rule {
 	private Pattern allow;
 	private Pattern deny;
 
-	public RestrictContentTypeRule(Pattern allow, Pattern deny) {
+	public RestrictContentTypeRule(String id, Pattern allow, Pattern deny) {
 		this.allow = allow;
 		this.deny = deny;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
@@ -38,6 +39,7 @@ public class RestrictContentTypeRule extends Rule {
 			}
 		}
 
+		log(request, "Disallowed content type '" + deny.pattern() + "' found on URI '" + request.getRequestURI() + "'");
 		return new DefaultAction();
 
 	}

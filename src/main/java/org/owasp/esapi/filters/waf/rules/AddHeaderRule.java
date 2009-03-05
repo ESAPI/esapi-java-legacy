@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.filters.waf.actions.Action;
 import org.owasp.esapi.filters.waf.actions.DoNothingAction;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class AddHeaderRule extends Rule {
@@ -17,7 +16,8 @@ public class AddHeaderRule extends Rule {
 	private Pattern path;
 	private List<Object> exceptions;
 
-	public AddHeaderRule(String header, String value, Pattern path, List<Object> exceptions) {
+	public AddHeaderRule(String id, String header, String value, Pattern path, List<Object> exceptions) {
+		setId(id);
 		this.header = header;
 		this.value = value;
 		this.path = path;
@@ -48,6 +48,7 @@ public class AddHeaderRule extends Rule {
 				}
 
 			}
+
 
 			action.setFailed(true);
 			action.setActionNecessary(false);

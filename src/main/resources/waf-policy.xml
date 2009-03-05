@@ -9,21 +9,16 @@
 
 	</aliases>
 
-
 	<settings>
 		<mode>block</mode> <!-- mode can be "block" or "log" -->
 		<error-handling>
 			<default-page>/security/error.jsp</default-page>
 			<default-status>403</default-status>
 		</error-handling>
-		<logging>
-			<log-directory>/WEB-INF/logs</log-directory>
-			<log-level>debug</log-level>
-			<exception type="path">/help/*</exception>
-		</logging>
 	</settings>
 
-	<authentication-rules path="/.*" key="session.userObj">
+	<authentication-rules path="/.*"> <!--  key="sessionuserObjKey"  -->
+		<path-exception>/</path-exception>
 		<path-exception>/index.html</path-exception>
 		<path-exception>/login.jsp</path-exception>
 		<path-exception>/index.jsp</path-exception>
@@ -42,7 +37,7 @@
 	</authorization-rules>
 
 	<url-rules>
-		<restrict-extension allow=".(do|css|jpg|gif)"/>
+		<restrict-extension deny=".jpg"/>
 
 		<restrict-method deny="GET" path=".*\.do$"/>
 		<restrict-method allow="(GET|POST|TRACE)"/>
@@ -64,8 +59,8 @@
 		<restrict-content-type allow="text/plain" />
 		<restrict-content-type allow="x-www-form-urlencoded" />
 
-		<restrict-user-agent deny="*GoogleBot*" />
-		<restrict-user-agent allow="*" />
+		<restrict-user-agent deny=".*GoogleBot.*" />
+		<restrict-user-agent allow=".*" />
 
 	</header-rules>
 
@@ -92,7 +87,7 @@
 	<outbound-rules>
 
 		<add-header name="FOO" value="BAR" path="/.*">
-			<exception path="/foobar/.*"/>
+			<path-exception path="/foobar/.*"/>
 		</add-header>
 
 		<add-http-only-flag>
@@ -104,12 +99,10 @@
 		</add-secure-flag>
 
 		<dynamic-insertion pattern="&lt;/body&gt;">
-			<![CDATA[]]>
+			<replacement><![CDATA[this is a test]]></replacement>
 		</dynamic-insertion>
 
-		<detect-content pattern="document.cookie">
-
-		</detect-content>
+		<detect-content content-type=".*text/.*" pattern=".*2008.*"/>
 
 	</outbound-rules>
 </policy>
