@@ -15,9 +15,10 @@ public class PathExtensionRule extends Rule {
 	private Pattern allow;
 	private Pattern deny;
 
-	public PathExtensionRule (Pattern allow, Pattern deny) {
+	public PathExtensionRule (String id, Pattern allow, Pattern deny) {
 		this.allow = allow;
 		this.deny = deny;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
@@ -26,6 +27,9 @@ public class PathExtensionRule extends Rule {
 		if ( allow != null && allow.matcher(request.getRequestURI()).matches() ) {
 			return new DoNothingAction();
 		} else if ( deny != null && deny.matcher(request.getRequestURI()).matches() ) {
+
+			log(request, "Disallowed extension pattern '" + deny.pattern() + "' found on URI '" + request.getRequestURI() + "'");
+
 			return new DefaultAction();
 		}
 

@@ -17,9 +17,10 @@ public class RestrictUserAgentRule extends Rule {
 	private Pattern allow;
 	private Pattern deny;
 
-	public RestrictUserAgentRule(Pattern allow, Pattern deny) {
+	public RestrictUserAgentRule(String id, Pattern allow, Pattern deny) {
 		this.allow = allow;
 		this.deny = deny;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
@@ -35,6 +36,7 @@ public class RestrictUserAgentRule extends Rule {
 			}
 		}
 
+		log(request, "Disallowed user agent pattern '" + deny.pattern() + "' found in user agent '" + request.getHeader(USER_AGENT_HEADER) + "'");
 		return new DefaultAction();
 	}
 

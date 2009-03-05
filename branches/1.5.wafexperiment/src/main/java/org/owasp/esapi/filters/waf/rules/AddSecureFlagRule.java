@@ -7,15 +7,15 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.filters.waf.actions.Action;
 import org.owasp.esapi.filters.waf.actions.DoNothingAction;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class AddSecureFlagRule extends Rule {
 
 	private List<Pattern> name;
 
-	public AddSecureFlagRule(List<Pattern> name) {
+	public AddSecureFlagRule(String id, List<Pattern> name) {
 		this.name = name;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,

@@ -13,10 +13,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileUploadException;
-import org.owasp.esapi.ESAPI;
+import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.owasp.esapi.filters.waf.actions.Action;
 import org.owasp.esapi.filters.waf.actions.BlockAction;
 import org.owasp.esapi.filters.waf.actions.DefaultAction;
@@ -35,31 +35,54 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	private AppGuardianConfiguration appGuardConfig;
 
 	private static final String CONFIGURATION_FILE_PARAM = "configuration";
+	private static final String LOGGING_FILE_PARAM = "log_settings";
 
 	private String configurationFilename = null;
+
+	private String logSettingsFilename = null;
 
 	private static final String SESSION_COOKIE_NAME = "JSESSIONID";
 	private static final String FAUX_SESSION_COOKIE = "self_monster";
 	private static final String SESSION_COOKIE_CANARY = "sid_canary";
 
+	private static Logger logger = Logger.getLogger(ESAPIWebApplicationFirewallFilter.class);
+
 	public void init(FilterConfig fc) throws ServletException {
+
+		/*
+		 * Pull logging file.
+		 */
+
+		logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
+
+		String realLogSettingsFilename = fc.getServletContext().getRealPath(logSettingsFilename);
+
+		if ( ! new File(realLogSettingsFilename).exists() ) {
+			throw new ServletException("[AppGuard] Could not find log file at resolved path: " + realLogSettingsFilename);
+		}
 
 		/*
 		 * Pull main configuration file.
 		 */
+
 		configurationFilename = fc.getInitParameter(CONFIGURATION_FILE_PARAM);
 
-		String realFilename = fc.getServletContext().getRealPath(configurationFilename);
+		String realConfigFilename = fc.getServletContext().getRealPath(configurationFilename);
 
-		if ( ! new File(realFilename).exists() ) {
-			throw new ServletException("[AppGuard] Could not find configuration file at resolved path: " + realFilename);
+		if ( ! new File(realConfigFilename).exists() ) {
+			throw new ServletException("[AppGuard] Could not find configuration file at resolved path: " + realConfigFilename);
 		}
 
 		/*
 		 * Open up configuration file and populate the AppGuardian configuration object.
 		 */
+
 		try {
-			appGuardConfig = ConfigurationParser.readConfigurationFile(new File(realFilename));
+
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new File(realConfigFilename));
+
+			DOMConfigurator.configure(realLogSettingsFilename);
+
 		} catch (ConfigurationException e) {
 			throw new ServletException(e);
 		}
@@ -72,8 +95,10 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain chain) throws IOException, ServletException {
 
+		logger.info("hellooo");
+
 		HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
-		HttpServletResponse httpResponse = (HttpServletResponse)servletRequest;
+		HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
 
 		InterceptingHTTPServletRequest request = null;
 		InterceptingHTTPServletResponse response = null;
@@ -147,7 +172,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 			httpRequest.getSession().setAttribute(SESSION_COOKIE_CANARY,0);
 
-			killCookie(	SESSION_COOKIE_NAME, request, response );
+			killCookie(	SESSION_COOKIE_NAME, httpRequest, response );
 
 			Cookie fauxCookie = new Cookie(FAUX_SESSION_COOKIE, httpRequest.getSession().getId());
 			fauxCookie.setPath(httpRequest.getContextPath());
@@ -166,18 +191,30 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
 		for(int i=0;i<rules.size();i++) {
+
 			Rule rule = rules.get(i);
+
+			/*
+			 * The rules execute in check(). The check() method will also log. All we have
+			 * to do is decide what other actions to take.
+			 */
 			Action action = rule.check(httpRequest, response);
 
 			if ( action.isActionNecessary() ) {
+
 				if ( action instanceof BlockAction ) {
 					return;
+
 				} else if ( action instanceof RedirectAction ) {
 					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					return;
+
 				} else if ( action instanceof DefaultAction ) {
+
 					switch ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION) {
 						case AppGuardianConfiguration.BLOCK:
 							return;
+
 						case AppGuardianConfiguration.REDIRECT:
 							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
 							return;
@@ -198,8 +235,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			fue.printStackTrace();
 		}
 
-
-
 		/*
 		 * Stage 2: After the body has been read, but before the the application has gotten it.
 		 */
@@ -207,16 +242,48 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		rules = this.appGuardConfig.getAfterBodyRules();
 
 		for(int i=0;i<rules.size();i++) {
+
 			Rule rule = rules.get(i);
+
+			/*
+			 * The rules execute in check(). The check() method will also log. All we have
+			 * to do is decide what other actions to take.
+			 */
 			Action action = rule.check(request, response);
 
 			if ( action.isActionNecessary() ) {
+
 				if ( action instanceof BlockAction ) {
 					return;
+
 				} else if ( action instanceof RedirectAction ) {
 					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					return;
+
+				} else if ( action instanceof DefaultAction ) {
+
+					switch ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION) {
+						case AppGuardianConfiguration.BLOCK:
+							return;
+
+						case AppGuardianConfiguration.REDIRECT:
+							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							return;
+					}
 				}
 			}
+		}
+
+		/*
+		 * Create the InterceptingHTTPServletRequest.
+		 */
+
+		try {
+			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
+		} catch (UploadTooLargeException utle) {
+			utle.printStackTrace();
+		} catch (FileUploadException fue) {
+			fue.printStackTrace();
 		}
 
 		/*
@@ -231,17 +298,50 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		rules = this.appGuardConfig.getBeforeResponseRules();
 
 		for(int i=0;i<rules.size();i++) {
+
 			Rule rule = rules.get(i);
+
+			/*
+			 * The rules execute in check(). The check() method will also log. All we have
+			 * to do is decide what other actions to take.
+			 */
 			Action action = rule.check(request, response);
 
 			if ( action.isActionNecessary() ) {
+
 				if ( action instanceof BlockAction ) {
 					return;
+
 				} else if ( action instanceof RedirectAction ) {
 					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					return;
+
+				} else if ( action instanceof DefaultAction ) {
+
+					switch ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION) {
+						case AppGuardianConfiguration.BLOCK:
+							return;
+
+						case AppGuardianConfiguration.REDIRECT:
+							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							return;
+					}
 				}
 			}
 		}
+
+		/*
+		 * Create the InterceptingHTTPServletRequest.
+		 */
+
+		try {
+			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
+		} catch (UploadTooLargeException utle) {
+			utle.printStackTrace();
+		} catch (FileUploadException fue) {
+			fue.printStackTrace();
+		}
+
 
 		/*
 		 * Now that we've run our last set of rules we can allow the response to go through if

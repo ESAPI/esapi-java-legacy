@@ -24,6 +24,12 @@ public class AppGuardianConfiguration {
 	public static final int OPERATOR_IN_LIST = 2;
 	public static final int OPERATOR_EXISTS = 3;
 
+	/*
+	 * Logging settings.
+	 */
+	public static Level LOG_LEVEL = Level.INFO;
+	public static String LOG_DIRECTORY = "/WEB-INF/logs";
+
 
 	/*
 	 * Default settings.
@@ -50,12 +56,6 @@ public class AppGuardianConfiguration {
 	private int defaultResponseCode;
 
 	/*
-	 * Logging settings.
-	 */
-	private String logDirectory;
-	private Level logLevel;
-
-	/*
 	 * The object-level rules encapsulated by the stage in which they are executed.
 	 */
 	private List<Rule> beforeBodyRules;
@@ -70,14 +70,6 @@ public class AppGuardianConfiguration {
 		cookieRules = new ArrayList<Rule>();
 
 		aliases = new HashMap<String,Object>();
-	}
-
-	public String getLogDirectory() {
-		return logDirectory;
-	}
-
-	public void setLogDirectory(String logDirectory) {
-		this.logDirectory = logDirectory;
 	}
 
 	public String getDefaultErrorPage() {
@@ -140,11 +132,4 @@ public class AppGuardianConfiguration {
 		FORCE_SECURE_FLAG_TO_SESSION = true;
 	}
 
-	public Level getLogLevel() {
-		return logLevel;
-	}
-
-	public void setLogLevel(Level logLevel) {
-		this.logLevel = logLevel;
-	}
 }

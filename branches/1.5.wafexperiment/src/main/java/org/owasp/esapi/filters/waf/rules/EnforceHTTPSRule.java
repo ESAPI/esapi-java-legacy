@@ -23,10 +23,11 @@ public class EnforceHTTPSRule extends Rule {
 	 * action = [ redirect | drop ]
 	 */
 
-	public EnforceHTTPSRule(Pattern path, List<Object> exceptions, String action) {
+	public EnforceHTTPSRule(String id, Pattern path, List<Object> exceptions, String action) {
 		this.path = path;
 		this.exceptions = exceptions;
 		this.action = action;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
@@ -54,6 +55,7 @@ public class EnforceHTTPSRule extends Rule {
 
 				}
 
+				log(request,"Insecure request to resource detected in URL: '" + request.getRequestURL() + "'");
 				return new DefaultAction();
 
 			}

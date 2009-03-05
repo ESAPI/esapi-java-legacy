@@ -21,11 +21,10 @@ public class SimpleVirtualPatchRule extends Rule {
 	private Pattern path;
 	private String variable;
 	private Pattern valid;
-	private String id;
 	private String message;
 
 	public SimpleVirtualPatchRule(String id, Pattern path, String variable, Pattern valid, String message) {
-		this.id = id;
+		setId(id);
 		this.path = path;
 		this.variable = variable;
 		this.valid = valid;
@@ -62,6 +61,7 @@ public class SimpleVirtualPatchRule extends Rule {
 				en = request.getHeaderNames();
 
 			} else {
+				log(request, "Patch failed (improperly configured variable '" + variable + "')");
 				return new DefaultAction();
 			}
 
@@ -82,6 +82,7 @@ public class SimpleVirtualPatchRule extends Rule {
 							value = request.getHeader(s);
 						}
 						if ( ! valid.matcher(value).matches() ) {
+							log(request, "Virtual patch tripped on variable '" + variable + "' (specifically '" + s + "'). User input was '" + value + "' and legal pattern was '" + valid.pattern() + "'");
 							return new DefaultAction();
 						}
 					}
@@ -90,21 +91,27 @@ public class SimpleVirtualPatchRule extends Rule {
 			} else {
 
 				if ( parameter ) {
-					if ( valid.matcher(request.getDictionaryParameter(target)).matches() ) {
+					String value = request.getDictionaryParameter(target);
+					if ( valid.matcher(value).matches() ) {
 						return new DoNothingAction();
 					} else {
+						log(request, "Virtual patch tripped on parameter '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "'");
 						return new DefaultAction();
 					}
 				} else {
-					if ( valid.matcher(request.getHeader(target)).matches() ) {
+					String value = request.getHeader(target);
+					if ( valid.matcher(value).matches() ) {
 						return new DoNothingAction();
 					} else {
+						log(request, "Virtual patch tripped on header '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "'");
 						return new DefaultAction();
 					}
 				}
 			}
 
 		}
+
+		log(request, "Virtual patch improperly configured (fell through)");
 
 		return new DefaultAction();
 	}

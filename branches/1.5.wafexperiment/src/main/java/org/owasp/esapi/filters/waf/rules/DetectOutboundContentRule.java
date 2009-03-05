@@ -9,7 +9,6 @@ import org.owasp.esapi.filters.waf.actions.Action;
 import org.owasp.esapi.filters.waf.actions.DefaultAction;
 import org.owasp.esapi.filters.waf.actions.DoNothingAction;
 import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
 
 public class DetectOutboundContentRule extends Rule {
@@ -17,9 +16,10 @@ public class DetectOutboundContentRule extends Rule {
 	private Pattern contentType;
 	private Pattern pattern;
 
-	public DetectOutboundContentRule(Pattern contentType, Pattern pattern) {
+	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern) {
 		this.contentType = contentType;
 		this.pattern = pattern;
+		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
@@ -45,11 +45,14 @@ public class DetectOutboundContentRule extends Rule {
 				String s = new String(bytes,response.getCharacterEncoding());
 
 				if ( pattern.matcher(s).matches() ) {
+
+					log(request,"Content pattern '" + pattern.pattern() + "' was found in response to URL: '" + request.getRequestURL() + "'");
 					return new DefaultAction();
+
 				}
 
 			} catch (UnsupportedEncodingException uee) {
-				uee.printStackTrace();
+				log(request,"Content pattern '" + pattern.pattern() + "' could not be found due to encoding error: " + uee.getMessage());
 			}
 		}
 
