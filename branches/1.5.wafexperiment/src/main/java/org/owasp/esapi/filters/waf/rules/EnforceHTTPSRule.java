@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.owasp.esapi.filters.waf.actions.Action;
 import org.owasp.esapi.filters.waf.actions.DefaultAction;
 import org.owasp.esapi.filters.waf.actions.DoNothingAction;
+import org.owasp.esapi.filters.waf.actions.RedirectAction;
 import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
@@ -20,7 +21,7 @@ public class EnforceHTTPSRule extends Rule {
 	private String action;
 
 	/*
-	 * action = [ redirect | drop ]
+	 * action = [ redirect | block ] [=default (redirect will redirect to error page]
 	 */
 
 	public EnforceHTTPSRule(String id, Pattern path, List<Object> exceptions, String action) {
@@ -56,6 +57,13 @@ public class EnforceHTTPSRule extends Rule {
 				}
 
 				log(request,"Insecure request to resource detected in URL: '" + request.getRequestURL() + "'");
+
+				if ( "redirect".equals(action) ) {
+					RedirectAction ra = new RedirectAction();
+					ra.setRedirectURL(request.getRequestURL().toString().replaceFirst("http", "https"));
+					return ra;
+				}
+
 				return new DefaultAction();
 
 			}
