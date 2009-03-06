@@ -1,6 +1,5 @@
 package org.owasp.esapi.filters.waf.rules;
 
-
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
