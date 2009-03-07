@@ -596,7 +596,7 @@ public class Base64
         }   // end try
         catch( java.io.IOException e )
         {
-            logger.error( Logger.SECURITY, false, "Problem writing object", e );
+            logger.error( Logger.SECURITY_FAILURE, "Problem writing object", e );
             return null;
         }   // end catch
         finally
@@ -729,7 +729,7 @@ public class Base64
             }   // end try
             catch( java.io.IOException e )
             {
-                logger.error( Logger.SECURITY, false, "Problem writing gzip stream", e );
+                logger.error( Logger.SECURITY_FAILURE, "Problem writing gzip stream", e );
                 return null;
             }   // end catch
             finally
@@ -884,11 +884,11 @@ public class Base64
 
             return 3;
             }catch( Exception e){
-                logger.error( Logger.SECURITY, false, "Problem writing object", e );
-                logger.error( Logger.SECURITY, false, ""+source[srcOffset]+ ": " + ( DECODABET[ source[ srcOffset     ] ]  ) );
-                logger.error( Logger.SECURITY, false, ""+source[srcOffset+1]+  ": " + ( DECODABET[ source[ srcOffset + 1 ] ]  ) );
-                logger.error( Logger.SECURITY, false, ""+source[srcOffset+2]+  ": " + ( DECODABET[ source[ srcOffset + 2 ] ]  ) );
-                logger.error( Logger.SECURITY, false, ""+source[srcOffset+3]+  ": " + ( DECODABET[ source[ srcOffset + 3 ] ]  ) );
+                logger.error( Logger.SECURITY_FAILURE, "Problem writing object", e );
+                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset]+ ": " + ( DECODABET[ source[ srcOffset     ] ]  ) );
+                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+1]+  ": " + ( DECODABET[ source[ srcOffset + 1 ] ]  ) );
+                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+2]+  ": " + ( DECODABET[ source[ srcOffset + 2 ] ]  ) );
+                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+3]+  ": " + ( DECODABET[ source[ srcOffset + 3 ] ]  ) );
                 return -1;
             }   // end catch
         }
@@ -947,7 +947,7 @@ public class Base64
             }   // end if: white space, equals sign or better
             else
             {
-            	logger.error( Logger.SECURITY, false, "Bad Base64 input character at " + i + ": " + source[i] + "(decimal)" );
+            	logger.error( Logger.SECURITY_FAILURE, "Bad Base64 input character at " + i + ": " + source[i] + "(decimal)" );
                 return null;
             }   // end else: 
         }   // each input character
@@ -1074,12 +1074,12 @@ public class Base64
         }   // end try
         catch( java.io.IOException e )
         {
-            logger.error( Logger.SECURITY, false, "Problem reading object", e );
+            logger.error( Logger.SECURITY_FAILURE, "Problem reading object", e );
             obj = null;
         }   // end catch
         catch( java.lang.ClassNotFoundException e )
         {
-            logger.error( Logger.SECURITY, false, "Problem reading object", e );
+            logger.error( Logger.SECURITY_FAILURE, "Problem reading object", e );
             obj = null;
         }   // end catch
         finally
@@ -1186,7 +1186,7 @@ public class Base64
             // Check for size of file
             if( file.length() > Integer.MAX_VALUE )
             {
-                logger.error( Logger.SECURITY, false, "File is too big for this convenience method (" + file.length() + " bytes)." );
+                logger.error( Logger.SECURITY_FAILURE, "File is too big for this convenience method (" + file.length() + " bytes)." );
                 return null;
             }   // end if: file too big for int index
             buffer = new byte[ (int)file.length() ];
@@ -1207,7 +1207,7 @@ public class Base64
         }   // end try
         catch( java.io.IOException e )
         {
-            logger.error( Logger.SECURITY, false, "Error decoding from file " + filename, e );
+            logger.error( Logger.SECURITY_FAILURE, "Error decoding from file " + filename, e );
         }   // end catch: IOException
         finally
         {
@@ -1255,7 +1255,7 @@ public class Base64
         }   // end try
         catch( java.io.IOException e )
         {
-            logger.error( Logger.SECURITY, false, "Error encoding from file " + filename, e );
+            logger.error( Logger.SECURITY_FAILURE, "Error encoding from file " + filename, e );
         }   // end catch: IOException
         finally
         {
@@ -1294,7 +1294,7 @@ public class Base64
             }   // end while: through file
             success = true;
         } catch( java.io.IOException exc ){
-            logger.error( Logger.SECURITY, false, "Problem encoding file to file", exc );
+            logger.error( Logger.SECURITY_FAILURE, "Problem encoding file to file", exc );
         } finally{
             try{ in.close();  } catch( Exception exc ){}
             try{ out.close(); } catch( Exception exc ){}
@@ -1331,7 +1331,7 @@ public class Base64
             }   // end while: through file
             success = true;
         } catch( java.io.IOException exc ){
-            logger.error( Logger.SECURITY, false, "Problem decoding file to file", exc );
+            logger.error( Logger.SECURITY_FAILURE, "Problem decoding file to file", exc );
         } finally{
             try{ in.close();  } catch( Exception exc ){}
             try{ out.close(); } catch( Exception exc ){}

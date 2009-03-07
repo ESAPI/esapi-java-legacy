@@ -158,7 +158,7 @@ public class SafeRequest implements HttpServletRequest {
                 }
                 newCookies.add(n);
             } catch (ValidationException e) {
-                logger.warning(Logger.SECURITY, false, "Skipping bad cookie: " + c.getName() + "=" + c.getValue(), e );
+                logger.warning(Logger.SECURITY_FAILURE, "Skipping bad cookie: " + c.getName() + "=" + c.getValue(), e );
             }
         }
         return (Cookie[]) newCookies.toArray(new Cookie[newCookies.size()]);
@@ -382,7 +382,7 @@ public class SafeRequest implements HttpServletRequest {
                     String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, false);
                     newValues.add(cleanValue);
                 } catch (ValidationException e) {
-                    logger.warning(Logger.SECURITY, false, "Skipping bad parameter" );
+                    logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter" );
                 }
             }
         }
@@ -591,7 +591,7 @@ public class SafeRequest implements HttpServletRequest {
 	public int getServerPort() {
 		int port = request.getServerPort();
 		if ( port < 0 || port > 0xFFFF ) {
-			logger.warning( Logger.SECURITY, false, "HTTP server port out of range: " + port );
+			logger.warning( Logger.SECURITY_FAILURE, "HTTP server port out of range: " + port );
 			port = 0;
 		}
 		return port;

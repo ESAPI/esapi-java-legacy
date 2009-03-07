@@ -159,21 +159,21 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
             if ( strict ) {
                 throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
+                logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
             }
         }
         else if ( foundCount >= 2 ) {
             if ( strict ) {
                 throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) encoding detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) encoding detected in " + input );
+                logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) encoding detected in " + input );
             }
         }
         else if ( mixed ) {
             if ( strict ) {
                 throw new IntrusionException( "Input validation failure", "Mixed encoding detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY, false, "Mixed encoding detected in " + input );
+                logger.warning( Logger.SECURITY_FAILURE, "Mixed encoding detected in " + input );
             }
         }
         return working;

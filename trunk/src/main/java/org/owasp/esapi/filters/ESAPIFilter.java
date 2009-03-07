@@ -125,7 +125,7 @@ public class ESAPIFilter implements Filter {
             
 		} catch (Exception e) {
 			e.printStackTrace();
-			logger.error( Logger.SECURITY, false, "Error in ESAPI security filter: " + e.getMessage(), e );
+			logger.error( Logger.SECURITY_FAILURE, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
 			
 		} finally {

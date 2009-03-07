@@ -92,20 +92,20 @@ public class SafeResponse implements HttpServletResponse {
 
         // if there was an error
         if (mode.equals("skip")) {
-            logger.warning(Logger.SECURITY, false, "Attempt to add unsafe data to cookie (skip mode). Skipping cookie and continuing.");
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (skip mode). Skipping cookie and continuing.");
             return;
         }
 
         // add the original cookie to the response and continue
         if (mode.equals("log")) {
-            logger.warning(Logger.SECURITY, false, "Attempt to add unsafe data to cookie (log mode). Adding unsafe cookie anyway and continuing.");
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (log mode). Adding unsafe cookie anyway and continuing.");
             response.addCookie(cookie);
             return;
         }
 
         // create a sanitized cookie header and continue
         if (mode.equals("sanitize")) {
-            logger.warning(Logger.SECURITY, false, "Attempt to add unsafe data to cookie (sanitize mode). Sanitizing cookie and continuing.");
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (sanitize mode). Sanitizing cookie and continuing.");
             String header = createCookieHeader(cookieName, cookieValue, maxAge, domain, path, secure);
             this.addHeader("Set-Cookie", header);
             return;
@@ -147,7 +147,7 @@ public class SafeResponse implements HttpServletResponse {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
             response.addDateHeader(safeName, date);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to set invalid date header name denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid date header name denied", e);
         }
     }
 
@@ -170,7 +170,7 @@ public class SafeResponse implements HttpServletResponse {
             String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", 500, false);
             response.setHeader(safeName, safeValue);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to add invalid header denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
         }
     }
 
@@ -185,7 +185,7 @@ public class SafeResponse implements HttpServletResponse {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
             response.addIntHeader(safeName, value);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to set invalid int header name denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid int header name denied", e);
         }
     }
 
@@ -368,7 +368,7 @@ public class SafeResponse implements HttpServletResponse {
      */
     public void sendRedirect(String location) throws IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
-            logger.fatal(Logger.SECURITY, false, "Bad redirect location: " + location);
+            logger.fatal(Logger.SECURITY_FAILURE, "Bad redirect location: " + location);
             throw new IOException("Redirect failed");
         }
         response.sendRedirect(location);
@@ -417,7 +417,7 @@ public class SafeResponse implements HttpServletResponse {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
             response.setDateHeader(safeName, date);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to set invalid date header name denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid date header name denied", e);
         }
     }
 
@@ -438,7 +438,7 @@ public class SafeResponse implements HttpServletResponse {
             String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", 500, false);
             response.setHeader(safeName, safeValue);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to set invalid header denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);
         }
     }
 
@@ -453,7 +453,7 @@ public class SafeResponse implements HttpServletResponse {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
             response.setIntHeader(safeName, value);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to set invalid int header name denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid int header name denied", e);
         }
     }
 
@@ -487,7 +487,7 @@ public class SafeResponse implements HttpServletResponse {
             // setStatus is deprecated so use sendError instead
             sendError(HttpServletResponse.SC_OK, sm);
         } catch (IOException e) {
-            logger.warning(Logger.SECURITY, false, "Attempt to set response status failed", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set response status failed", e);
         }
     }
 

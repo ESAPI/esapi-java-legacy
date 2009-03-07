@@ -203,10 +203,10 @@ public class LoggerTest extends TestCase {
 	 */
     public void testInfo() {
         System.out.println("info");
-        testLogger.info(Logger.SECURITY, true, "test message" );
-        testLogger.info(Logger.SECURITY, true, "test message", null );
-        testLogger.info(Logger.SECURITY, true, "%3escript%3f test message", null );
-        testLogger.info(Logger.SECURITY, true, "<script> test message", null );
+        testLogger.info(Logger.SECURITY_SUCCESS, "test message" );
+        testLogger.info(Logger.SECURITY_SUCCESS, "test message", null );
+        testLogger.info(Logger.SECURITY_SUCCESS, "%3escript%3f test message", null );
+        testLogger.info(Logger.SECURITY_SUCCESS, "<script> test message", null );
     }
 
     /**
@@ -214,8 +214,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testTrace() {
         System.out.println("trace");
-        testLogger.trace(Logger.SECURITY, true, "test message" );
-        testLogger.trace(Logger.SECURITY, true, "test message", null );
+        testLogger.trace(Logger.SECURITY_SUCCESS, "test message" );
+        testLogger.trace(Logger.SECURITY_SUCCESS, "test message", null );
     }
 
     /**
@@ -223,8 +223,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testDebug() {
         System.out.println("debug");
-        testLogger.debug(Logger.SECURITY, true, "test message" );
-        testLogger.debug(Logger.SECURITY, true, "test message", null );
+        testLogger.debug(Logger.SECURITY_SUCCESS, "test message" );
+        testLogger.debug(Logger.SECURITY_SUCCESS, "test message", null );
     }
 
     /**
@@ -232,8 +232,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testError() {
         System.out.println("error");
-        testLogger.error(Logger.SECURITY, true, "test message" );
-        testLogger.error(Logger.SECURITY, true, "test message", null );
+        testLogger.error(Logger.SECURITY_SUCCESS, "test message" );
+        testLogger.error(Logger.SECURITY_SUCCESS, "test message", null );
     }
 
     /**
@@ -241,8 +241,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testWarning() {
         System.out.println("warning");
-        testLogger.warning(Logger.SECURITY, true, "test message" );
-        testLogger.warning(Logger.SECURITY, true, "test message", null );
+        testLogger.warning(Logger.SECURITY_SUCCESS, "test message" );
+        testLogger.warning(Logger.SECURITY_SUCCESS, "test message", null );
     }
 
     /**
@@ -250,8 +250,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testFatal() {
         System.out.println("fatal");
-        testLogger.fatal(Logger.SECURITY, true, "test message" );
-        testLogger.fatal(Logger.SECURITY, true, "test message", null );
+        testLogger.fatal(Logger.SECURITY_SUCCESS, "test message" );
+        testLogger.fatal(Logger.SECURITY_SUCCESS, "test message", null );
     }
     
 }
