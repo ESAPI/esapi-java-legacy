@@ -65,7 +65,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      */
     public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
         try {
-            logger.warning(Logger.SECURITY, true, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
  
             // command must exactly match the canonical path and must actually exist on the file system
             // using equalsIgnoreCase for Windows, although this isn't quite as strong as it should be
@@ -103,9 +103,9 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             String output = readStream( process.getInputStream() );
             String errors = readStream( process.getErrorStream() );
             if ( errors != null && errors.length() > 0 ) {
-            	logger.warning( Logger.SECURITY, false, "Error during system command: " + errors );
+            	logger.warning( Logger.SECURITY_SUCCESS, "Error during system command: " + errors );
             }
-            logger.warning(Logger.SECURITY, true, "System command complete: " + params);
+            logger.warning(Logger.SECURITY_SUCCESS, "System command complete: " + params);
             return output;
         } catch (Exception e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);

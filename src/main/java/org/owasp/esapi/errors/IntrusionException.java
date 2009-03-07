@@ -52,7 +52,7 @@ public class IntrusionException extends RuntimeException {
     public IntrusionException(String userMessage, String logMessage) {
         super(userMessage);
         this.logMessage = logMessage;
-        logger.error(Logger.SECURITY, false, "INTRUSION - " + logMessage);
+        logger.error(Logger.SECURITY_FAILURE, "INTRUSION - " + logMessage);
     }
 
     /**
@@ -68,7 +68,7 @@ public class IntrusionException extends RuntimeException {
     public IntrusionException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
-        logger.error(Logger.SECURITY, false, "INTRUSION - " + logMessage, cause);
+        logger.error(Logger.SECURITY_FAILURE, "INTRUSION - " + logMessage, cause);
     }
 
     /**

@@ -102,7 +102,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
 	 */
     public String getRandomFilename(String extension) {
         String fn = getRandomString(12, DefaultEncoder.CHAR_ALPHANUMERICS) + "." + extension;
-        logger.debug(Logger.SECURITY, true, "Generated new random filename: " + fn );
+        logger.debug(Logger.SECURITY_SUCCESS, "Generated new random filename: " + fn );
         return fn;
     }
     

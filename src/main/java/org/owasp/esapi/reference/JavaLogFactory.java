@@ -24,6 +24,7 @@ public class JavaLogFactory implements LogFactory {
 
 	private String applicationName;
 	
+	@SuppressWarnings("unchecked")
 	private HashMap loggersMap = new HashMap();
 	
 	/**
@@ -31,14 +32,15 @@ public class JavaLogFactory implements LogFactory {
 	* 
 	* @param applicationName The name of this application this logger is being constructed for.
 	*/
-	public JavaLogFactory(String applicationName) {
+	public JavaLogFactory(String applicationName) { 
 		this.applicationName = applicationName;
 	}
 	
 	/**
 	* {@inheritDoc}
 	*/
-    public Logger getLogger(Class clazz) {
+    @SuppressWarnings("unchecked")
+	public Logger getLogger(Class clazz) {
     	
     	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
     	Logger classLogger = (Logger) loggersMap.get(clazz);
@@ -53,7 +55,8 @@ public class JavaLogFactory implements LogFactory {
     /**
 	* {@inheritDoc}
 	*/
-    public Logger getLogger(String moduleName) {
+    @SuppressWarnings("unchecked")
+	public Logger getLogger(String moduleName) {
     	
     	// If a logger for this module already exists, we return the same one, otherwise we create a new one.
     	Logger moduleLogger = (Logger) loggersMap.get(moduleName);
@@ -145,7 +148,7 @@ public class JavaLogFactory implements LogFactory {
         		JavaLogger.currentLevel = convertESAPILeveltoLoggerLevel( level );
         	}
         	catch (IllegalArgumentException e) {
-       			this.error(Logger.SECURITY, false, "", e);    		
+       			this.error(Logger.SECURITY_FAILURE, "", e);    		
         	}
          }
         
@@ -175,85 +178,85 @@ public class JavaLogFactory implements LogFactory {
         /**
     	* {@inheritDoc}
     	*/
-        public void trace(EventType type, boolean success, String message, Throwable throwable) {
-            log(Level.FINEST, type, success, message, throwable);
+        public void trace(EventType type, String message, Throwable throwable) {
+            log(Level.FINEST, type, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void trace(EventType type, boolean success, String message) {
-            log(Level.FINEST, type, success, message, null);
+        public void trace(EventType type, String message) {
+            log(Level.FINEST, type, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void debug(EventType type, boolean success, String message, Throwable throwable) {
-            log(Level.FINE, type, success, message, throwable);
+        public void debug(EventType type, String message, Throwable throwable) {
+            log(Level.FINE, type, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void debug(EventType type, boolean success, String message) {
-            log(Level.FINE, type, success, message, null);
+        public void debug(EventType type, String message) {
+            log(Level.FINE, type, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void info(EventType type, boolean success, String message) {
-            log(Level.INFO, type, success, message, null);
+        public void info(EventType type, String message) {
+            log(Level.INFO, type, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void info(EventType type, boolean success, String message, Throwable throwable) {
-            log(Level.INFO, type, success, message, throwable);
+        public void info(EventType type, String message, Throwable throwable) {
+            log(Level.INFO, type, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void warning(EventType type, boolean success, String message, Throwable throwable) {
-            log(Level.WARNING, type, success, message, throwable);
+        public void warning(EventType type, String message, Throwable throwable) {
+            log(Level.WARNING, type, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void warning(EventType type, boolean success, String message) {
-            log(Level.WARNING, type, success, message, null);
+        public void warning(EventType type, String message) {
+            log(Level.WARNING, type, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void error(EventType type, boolean success, String message, Throwable throwable) {
-            log(Level.SEVERE, type, success, message, throwable);
+        public void error(EventType type, String message, Throwable throwable) {
+            log(Level.SEVERE, type, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void error(EventType type, boolean success, String message) {
-            log(Level.SEVERE, type, success, message, null);
+        public void error(EventType type, String message) {
+            log(Level.SEVERE, type, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void fatal(EventType type, boolean success, String message, Throwable throwable) {
-            log(Level.SEVERE, type, success, message, throwable);
+        public void fatal(EventType type, String message, Throwable throwable) {
+            log(Level.SEVERE, type, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void fatal(EventType type, boolean success, String message) {
-            log(Level.SEVERE, type, success, message, null);
+        public void fatal(EventType type, String message) {
+            log(Level.SEVERE, type, message, null);
         }
 
         /**
@@ -271,7 +274,7 @@ public class JavaLogFactory implements LogFactory {
          * @param message the message
          * @param throwable the throwable
          */
-        private void log(Level level, EventType type, boolean success, String message, Throwable throwable) {
+        private void log(Level level, EventType type, String message, Throwable throwable) {
 
         	// Set the current logging level to the current value since it 'might' have been changed for some other log.
         	this.jlogger.setLevel( JavaLogger.currentLevel );
@@ -323,8 +326,8 @@ public class JavaLogFactory implements LogFactory {
             
             // create the message to log
             String msg = "";
-            if ( user != null ) {
-            	msg = type + "-" + (success ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
+            if ( user != null && type != null) {
+            	msg = type + "-" + (type.isSuccess() ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
             }
             
             jlogger.logp(level, applicationName, moduleName, msg);

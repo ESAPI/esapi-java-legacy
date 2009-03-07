@@ -155,7 +155,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		hashes.add( 0, hash);
 		if (hashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes() ) 
 			hashes.remove( hashes.size() - 1 );
-		logger.info(Logger.SECURITY, true, "New hashed password stored for " + user.getAccountName() );
+		logger.info(Logger.SECURITY_SUCCESS, "New hashed password stored for " + user.getAccountName() );
     }
     
     /**
@@ -300,7 +300,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		    throw new AuthenticationException("Internal error", "Error hashing password for " + accountName, ee);
 		}
         userMap.put(new Long( user.getAccountId() ), user);
-        logger.info(Logger.SECURITY, true, "New user created: " + accountName);
+        logger.info(Logger.SECURITY_SUCCESS, "New user created: " + accountName);
         saveUsers();
         return user;
     }
@@ -361,7 +361,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     			throw new AuthenticationCredentialsException( "Password change failed", "Password change matches a recent password for user: " + accountName );
     		}
     		setHashedPassword(user, newHash);
-    		logger.info(Logger.SECURITY, true, "Password changed for user: " + accountName );
+    		logger.info(Logger.SECURITY_SUCCESS, "Password changed for user: " + accountName );
     	} catch (EncryptionException ee) {
     		throw new AuthenticationException("Password change failed", "Encryption exception changing password for " + accountName, ee);
     	}
@@ -378,13 +378,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 			if (hash.equals(currentHash)) {
 				((DefaultUser)user).setLastLoginTime(new Date());
 				((DefaultUser)user).setFailedLoginCount(0);
-				logger.info(Logger.SECURITY, true, "Password verified for " + accountName );
+				logger.info(Logger.SECURITY_SUCCESS, "Password verified for " + accountName );
 				return true;
 			}
 		} catch( EncryptionException e ) {
-			logger.fatal(Logger.SECURITY, false, "Encryption error verifying password for " + accountName );
+			logger.fatal(Logger.SECURITY_FAILURE, "Encryption error verifying password for " + accountName );
 		}
-		logger.fatal(Logger.SECURITY, false, "Password verification failed for " + accountName );
+		logger.fatal(Logger.SECURITY_FAILURE, "Password verification failed for " + accountName );
 		return false;
     }
 
@@ -394,7 +394,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     public String generateStrongPassword(User user, String oldPassword) {
         String newPassword = generateStrongPassword(oldPassword);
         if (newPassword != null)
-            logger.info(Logger.SECURITY, true, "Generated strong password for " + user.getAccountName());
+            logger.info(Logger.SECURITY_SUCCESS, "Generated strong password for " + user.getAccountName());
         return newPassword;
     }
 
@@ -474,7 +474,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		try {
 			data = ESAPI.encryptor().unseal( token.getValue() ).split( ":" );
 		} catch (EncryptionException e) {			
-	    	logger.warning(Logger.SECURITY, false, "Found corrupt or expired remember token" );
+	    	logger.warning(Logger.SECURITY_FAILURE, "Found corrupt or expired remember token" );
 	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 	    	return null;
     	}
@@ -487,15 +487,15 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		String password = data[2];
     	DefaultUser user = (DefaultUser) getUser( username );
 		if ( user == null ) {
-			logger.warning( Logger.SECURITY, false, "Found valid remember token but no user matching " + username );
+			logger.warning( Logger.SECURITY_FAILURE, "Found valid remember token but no user matching " + username );
 			return null;
 		}
 		
-		logger.warning( Logger.SECURITY, true, "Logging in user with remember token: " + user.getAccountName() );
+		logger.warning( Logger.SECURITY_SUCCESS, "Logging in user with remember token: " + user.getAccountName() );
 		try {
 			user.loginWithPassword(password);
 		} catch (AuthenticationException ae) {
-			logger.warning( Logger.SECURITY, false, "Login via remember me cookie failed for user " + username, ae);
+			logger.warning( Logger.SECURITY_FAILURE, "Login via remember me cookie failed for user " + username, ae);
 	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 			return null;
 		}
@@ -537,9 +537,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         	userDB = new File( System.getProperty( "user.home" ) + "/.esapi" , "users.txt" );
         	try {
         		userDB.createNewFile();
-        		logger.warning( Logger.SECURITY, true, "Created " + userDB.getAbsolutePath() );
+        		logger.warning( Logger.SECURITY_SUCCESS, "Created " + userDB.getAbsolutePath() );
         	} catch( IOException e ) {
-        		logger.fatal( Logger.SECURITY, false, "Could not create " + userDB.getAbsolutePath(), e );
+        		logger.fatal( Logger.SECURITY_FAILURE, "Could not create " + userDB.getAbsolutePath(), e );
         	}
         }
         
@@ -562,7 +562,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      */
     protected void loadUsersImmediately() {
     	synchronized( this ) {
-	        logger.trace(Logger.SECURITY, true, "Loading users from " + userDB.getAbsolutePath(), null);
+	        logger.trace(Logger.SECURITY_SUCCESS, "Loading users from " + userDB.getAbsolutePath(), null);
 	
 	        BufferedReader reader = null;
 	        try {
@@ -573,23 +573,23 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	                if (line.length() > 0 && line.charAt(0) != '#') {
 	                    DefaultUser user = createUser(line);
                         if (map.containsKey( new Long( user.getAccountId()))) {
-                            logger.fatal(Logger.SECURITY, false, "Problem in user file. Skipping duplicate user: " + user, null);
+                            logger.fatal(Logger.SECURITY_FAILURE, "Problem in user file. Skipping duplicate user: " + user, null);
                         }
                         map.put( new Long( user.getAccountId() ), user);
                     }
 	            }
                 userMap = map;
                 this.lastModified = System.currentTimeMillis();
-                logger.trace(Logger.SECURITY, true, "User file reloaded: " + map.size(), null);
+                logger.trace(Logger.SECURITY_SUCCESS, "User file reloaded: " + map.size(), null);
 	        } catch (Exception e) {
-	            logger.fatal(Logger.SECURITY, false, "Failure loading user file: " + userDB.getAbsolutePath(), e);
+	            logger.fatal(Logger.SECURITY_FAILURE, "Failure loading user file: " + userDB.getAbsolutePath(), e);
 	        } finally {
 	            try {
 	                if (reader != null) {
 	                    reader.close();
 	                }
 	            } catch (IOException e) {
-	                logger.fatal(Logger.SECURITY, false, "Failure closing user file: " + userDB.getAbsolutePath(), e);
+	                logger.fatal(Logger.SECURITY_FAILURE, "Failure closing user file: " + userDB.getAbsolutePath(), e);
 	            }
 	        }
     	}
@@ -667,7 +667,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         // if a logged-in user is requesting to login, log them out first
         User user = getCurrentUser();
         if (user != null && !user.isAnonymous()) {
-            logger.warning(Logger.SECURITY, true, "User requested relogin. Performing logout then authentication" );
+            logger.warning(Logger.SECURITY_SUCCESS, "User requested relogin. Performing logout then authentication" );
             user.logout();
         }
 
@@ -719,9 +719,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             writer.println();
             saveUsers(writer);
             writer.flush();
-            logger.info(Logger.SECURITY, true, "User file written to disk" );
+            logger.info(Logger.SECURITY_SUCCESS, "User file written to disk" );
         } catch (IOException e) {
-            logger.fatal(Logger.SECURITY, false, "Problem saving user file " + userDB.getAbsolutePath(), e );
+            logger.fatal(Logger.SECURITY_FAILURE, "Problem saving user file " + userDB.getAbsolutePath(), e );
             throw new AuthenticationException("Internal Error", "Problem saving user file " + userDB.getAbsolutePath(), e);
         } finally {
             if (writer != null) {
