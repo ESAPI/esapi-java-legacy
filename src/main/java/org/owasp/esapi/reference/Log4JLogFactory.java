@@ -11,11 +11,12 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 
 /**
- * Reference implementation of the LogFactory and Logger interfaces. This implementation uses the Java logging package, and marks each
+ * Reference implementation of the LogFactory and Logger interfaces. This implementation uses the Apache Log4J package, and marks each
  * log message with the currently logged in user and the word "SECURITY" for security related events. See the 
  * <a href="JavaLogFactory.JavaLogger.html">JavaLogFactory.JavaLogger</a> Javadocs for the details on the JavaLogger reference implementation.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico (jim.manico .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.LogFactory
  * @see org.owasp.esapi.reference.Log4JLogFactory.Log4JLogger
@@ -131,7 +132,7 @@ public class Log4JLogFactory implements LogFactory {
         /**
          * Converts the ESAPI logging level (a number) into the levels used by Java's logger.
          * @param level The ESAPI to convert.
-         * @return The Java logging Level that is equivalent.
+         * @return The Log4J logging Level that is equivalent.
          * @throws IllegalArgumentException if the supplied ESAPI level doesn't make a level that is currently defined.
          */
         private static Level convertESAPILeveltoLoggerLevel(int level)
