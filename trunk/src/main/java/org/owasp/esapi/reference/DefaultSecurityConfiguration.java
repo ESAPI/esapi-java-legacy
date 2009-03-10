@@ -104,25 +104,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String LOG_LEVEL = "LogLevel";
     
+    private static final String LOG_IMPLEMENTATION = "Implementation.Logger";
+    
     private static final String LOG_FILE_NAME = "LogFileName";
 
     private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
     
     private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
         
-    /**
-     *
-     */
     protected final int MAX_REDIRECT_LOCATION = 1000;
-    
-    /**
-     *
-     */
+
     protected final int MAX_FILE_NAME_LENGTH = 1000;
     
     private static String userDirectory = System.getProperty("user.home" ) + "/.esapi";
-
-    private static String customDirectory = System.getProperty("org.owasp.esapi.resources");
+     private static String customDirectory = System.getProperty("org.owasp.esapi.resources");
 
     private static String resourceDirectory = null;
     
@@ -461,7 +456,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return Logger.WARNING;  // Note: The default logging level is WARNING.
     }
 
-
+    /**
+     * The default logging implemetation if a user does not specify one.
+     */
+    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.Log4JLogFactory";
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public String getLogImplementation() {
+    	String value = properties.getProperty( LOG_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_LOG_IMPLEMENTATION;
+    	return value;
+    }
+    
     /**
 	 * {@inheritDoc}
 	 */
@@ -469,16 +477,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	return properties.getProperty( LOG_FILE_NAME, "ESAPI_logging_file" );
     }
 
-/**
- * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
- * max log file size, the logger will move the old log data into another log file. There currently is a max of 
- * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
- */
-public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
-
-/**
- * {@inheritDoc}
- */
+	/**
+	 * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
+	 * max log file size, the logger will move the old log data into another log file. There currently is a max of 
+	 * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
+	 */
+	public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
+	
+	/**
+	 * {@inheritDoc}
+	 */
     public int getMaxLogFileSize() {
     	// The default is 10 Meg if the property is not specified
     	String value = properties.getProperty( MAX_LOG_FILE_SIZE );

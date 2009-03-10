@@ -1,5 +1,6 @@
 package org.owasp.esapi.reference;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Level;
 
@@ -24,8 +25,14 @@ public class JavaLogFactory implements LogFactory {
 
 	private String applicationName;
 	
-	private HashMap loggersMap = new HashMap();
+	private HashMap<Serializable, Logger> loggersMap = new HashMap<Serializable, Logger>();
 	
+	/**
+	* Null argument constructor for this implementation of the LogFactory interface
+	* needed for dynamic configuration.
+	*/
+	public JavaLogFactory() {}
+
 	/**
 	* Constructor for this implementation of the LogFactory interface.
 	* 
@@ -38,7 +45,15 @@ public class JavaLogFactory implements LogFactory {
 	/**
 	* {@inheritDoc}
 	*/
-    public Logger getLogger(Class clazz) {
+	public void setApplicationName(String newApplicationName) {
+		applicationName = newApplicationName;
+	}
+	
+	/**
+	* {@inheritDoc}
+	*/
+    @SuppressWarnings("unchecked")
+	public Logger getLogger(Class clazz) {
     	
     	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
     	Logger classLogger = (Logger) loggersMap.get(clazz);
