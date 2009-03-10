@@ -231,6 +231,13 @@ public interface SecurityConfiguration {
 	public int getSessionAbsoluteTimeoutLength();
 	
 	/**
+	 * Returns the fully qualified classname of the 
+	 * 
+	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
+	 */
+	public String getLogImplementation();
+	
+	/**
 	 * Returns whether HTML entity encoding should be applied to log entries.
 	 * 
 	 * @return True if log entries are to be HTML Entity encoded. False otherwise.

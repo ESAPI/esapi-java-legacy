@@ -57,4 +57,12 @@ public interface LogFactory {
 	 */
 	Logger getLogger(Class clazz);
 	
+	/**
+	 * This is needed to allow for null argument construction of log factories.
+	 * 
+	 * @param applicationName
+	 * 			A unique name to identify the application being logged.
+	 */
+	void setApplicationName(String applicationName);
+	
 }

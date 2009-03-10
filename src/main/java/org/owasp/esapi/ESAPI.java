@@ -215,8 +215,22 @@ public class ESAPI {
 	 * @return The current LogFactory being used by ESAPI.
 	 */
 	private static LogFactory logFactory() {
-		if (logFactory == null)
-			logFactory = new Log4JLogFactory(securityConfiguration().getApplicationName());
+		if (logFactory == null) {
+			
+			String logFactoryName = securityConfiguration().getLogImplementation();
+		    try {
+		        Class theClass  = Class.forName(logFactoryName);
+		        logFactory = (LogFactory)theClass.newInstance();
+		        logFactory.setApplicationName( securityConfiguration().getApplicationName() );
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.err.println( ex + " LogFactory class (" + logFactoryName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.err.println( ex + " LogFactory class (" + logFactoryName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.err.println( ex + " LogFactory class (" + logFactoryName + ") must have a no-arg constructor.");
+		    }
+		} 
 		return logFactory;
 	}
 	

@@ -29,12 +29,25 @@ public class Log4JLogFactory implements LogFactory {
 	private HashMap loggersMap = new HashMap();
 	
 	/**
+	* Null argument constructor for this implementation of the LogFactory interface
+	* needed for dynamic configuration.
+	*/
+	public Log4JLogFactory() {}
+	
+	/**
 	* Constructor for this implementation of the LogFactory interface.
 	* 
 	* @param applicationName The name of this application this logger is being constructed for.
 	*/
 	public Log4JLogFactory(String applicationName) { 
 		this.applicationName = applicationName;
+	}
+	
+	/**
+	* {@inheritDoc}
+	*/
+	public void setApplicationName(String newApplicationName) {
+		applicationName = newApplicationName;
 	}
 	
 	/**
