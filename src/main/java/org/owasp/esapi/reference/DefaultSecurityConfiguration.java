@@ -102,6 +102,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String ABSOLUTE_TIMEOUT_DURATION = "AbsoluteTimeoutDuration";
     
+    private static final String FORCE_HTTPONLY = "ForceHTTPOnly";
+    
     private static final String LOG_LEVEL = "LogLevel";
     
     private static final String LOG_IMPLEMENTATION = "Implementation.Logger";
@@ -509,6 +511,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	if ( value != null && value.equalsIgnoreCase("true")) return true;
     	return false;	// Default result
 	}
+    
+
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getForceHTTPOnly() {
+    	String value = properties.getProperty( FORCE_HTTPONLY );
+    	if ( value != null && value.equalsIgnoreCase("true")) return true;
+    	return false;	// Default result
+    }
+
 
     /**
 	 * {@inheritDoc}
@@ -580,5 +593,4 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         Pattern pattern = Pattern.compile(value);
         return pattern;
     }
-
 }

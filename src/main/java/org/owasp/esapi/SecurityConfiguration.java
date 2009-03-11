@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 
 /**
  * The SecurityConfiguration interface stores all configuration information
@@ -176,6 +178,15 @@ public interface SecurityConfiguration {
      * @return
      */
     public File getResourceFile( String filename );
+    
+	/**
+	 * Forces new cookie headers with HttpOnly on first and second responses
+	 * in public HttpSession org.owasp.esapi.filters.SafeRequest.getSession() and 
+	 * org.owasp.esapi.filters.getSession(boolean create) 
+     *
+     * @param force whether to override JSESSIONID cookie
+     */
+    public boolean getForceHTTPOnly() ;
 
 	/**
 	 * Gets an InputStream to a file in the resource directory

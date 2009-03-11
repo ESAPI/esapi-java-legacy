@@ -620,21 +620,24 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public HttpSession getSession() {
-        HttpSession session = request.getSession();
-        // User user = ESAPI.authenticator().getCurrentUser();
-        // user.addSession( session );
-
-        // send a new cookie header with HttpOnly on first and second responses
-        if (session.getAttribute("HTTP_ONLY") == null) {
-            session.setAttribute("HTTP_ONLY", "set");
-            Cookie cookie = new Cookie("JSESSIONID", session.getId());
-            cookie.setPath( request.getContextPath() );
-            cookie.setMaxAge(-1); // session cookie
-            HttpServletResponse response = ESAPI.currentResponse();
-            if (response != null) {
-                ESAPI.currentResponse().addCookie(cookie);
-            }
-        }
+		HttpSession session = request.getSession();
+		
+		// User user = ESAPI.authenticator().getCurrentUser();
+		// user.addSession( session );
+		
+		// send a new cookie header with HttpOnly on first and second responses
+	    if (ESAPI.securityConfiguration().getForceHTTPOnly()) {
+	        if (session.getAttribute("HTTP_ONLY") == null) {
+				session.setAttribute("HTTP_ONLY", "set");
+				Cookie cookie = new Cookie("JSESSIONID", session.getId());
+				cookie.setPath( request.getContextPath() );
+				cookie.setMaxAge(-1); // session cookie
+	            HttpServletResponse response = ESAPI.currentResponse();
+	            if (response != null) {
+	                ESAPI.currentResponse().addCookie(cookie);
+	            }
+	        }
+	    }
         return session;
     }
 
@@ -653,15 +656,17 @@ public class SafeRequest implements HttpServletRequest {
         // user.addSession( session );
 
         // send a new cookie header with HttpOnly on first and second responses
-        if (session.getAttribute("HTTP_ONLY") == null) {
-            session.setAttribute("HTTP_ONLY", "set");
-            Cookie cookie = new Cookie("JSESSIONID", session.getId());
-            cookie.setMaxAge(-1); // session cookie
-            cookie.setPath( request.getContextPath() );
-            HttpServletResponse response = ESAPI.currentResponse();
-            if (response != null) {
-                ESAPI.currentResponse().addCookie(cookie);
-            }
+        if (ESAPI.securityConfiguration().getForceHTTPOnly()) {
+	        if (session.getAttribute("HTTP_ONLY") == null) {
+	            session.setAttribute("HTTP_ONLY", "set");
+	            Cookie cookie = new Cookie("JSESSIONID", session.getId());
+	            cookie.setMaxAge(-1); // session cookie
+	            cookie.setPath( request.getContextPath() );
+	            HttpServletResponse response = ESAPI.currentResponse();
+	            if (response != null) {
+	                ESAPI.currentResponse().addCookie(cookie);
+	            }
+	        }
         }
         return session;
     }
