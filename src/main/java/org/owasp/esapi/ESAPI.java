@@ -28,7 +28,6 @@ import org.owasp.esapi.reference.DefaultValidator;
 import org.owasp.esapi.reference.FileBasedAccessController;
 import org.owasp.esapi.reference.FileBasedAuthenticator;
 import org.owasp.esapi.reference.JavaEncryptor;
-import org.owasp.esapi.reference.Log4JLogFactory;
 
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
@@ -216,7 +215,7 @@ public class ESAPI {
 	 */
 	private static LogFactory logFactory() {
 		if (logFactory == null) {
-			
+			System.out.println("logFactory called a");
 			String logFactoryName = securityConfiguration().getLogImplementation();
 		    try {
 		        Class theClass  = Class.forName(logFactoryName);
@@ -224,11 +223,11 @@ public class ESAPI {
 		        logFactory.setApplicationName( securityConfiguration().getApplicationName() );
 		        
 		    } catch ( ClassNotFoundException ex ) {
-				System.err.println( ex + " LogFactory class (" + logFactoryName + ") must be in class path.");
+				System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be in class path.");
 		    } catch( InstantiationException ex ) {
-		        System.err.println( ex + " LogFactory class (" + logFactoryName + ") must be concrete.");
+		        System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be concrete.");
 		    } catch( IllegalAccessException ex ) {
-		        System.err.println( ex + " LogFactory class (" + logFactoryName + ") must have a no-arg constructor.");
+		        System.out.println( ex + " LogFactory class (" + logFactoryName + ") must have a no-arg constructor.");
 		    }
 		} 
 		return logFactory;
