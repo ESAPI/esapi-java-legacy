@@ -103,9 +103,21 @@ public class ESAPI {
 	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
 	public static Authenticator authenticator() {
-		if (ESAPI.authenticator == null)
-			ESAPI.authenticator = new FileBasedAuthenticator();
-		return ESAPI.authenticator;
+		if (authenticator == null) {
+			String authenticatorName = securityConfiguration().getAuthenticationImplementation();
+		    try {
+		        Class theClass  = Class.forName(authenticatorName);
+		        authenticator = (Authenticator)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " Authenticator class (" + authenticatorName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " Authenticator class (" + authenticatorName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " Authenticator class (" + authenticatorName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return authenticator;
 	}
 
 	/**
@@ -121,9 +133,21 @@ public class ESAPI {
 	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
 	public static Encoder encoder() {
-		if (ESAPI.encoder == null)
-			ESAPI.encoder = new DefaultEncoder();
-		return ESAPI.encoder;
+		if (encoder == null) {
+			String encoderName = securityConfiguration().getEncoderImplementation();
+		    try {
+		        Class theClass  = Class.forName(encoderName);
+		        encoder = (Encoder)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " Encoder class (" + encoderName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " Encoder class (" + encoderName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " Encoder class (" + encoderName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return encoder;
 	}
 
 	/**
