@@ -121,6 +121,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String RANDOMIZER_IMPLEMENTATION = "Implementation.Randomizer";
     
+	private static final String EXECUTOR_IMPLEMENTATION = "Implementation.Executor";
+	
+	private static final String VALIDATOR_IMPLEMENTATION = "Implementation.Validator";
+
+	private static final String HTTP_UTILITIES_IMPLEMENTATION = "Implementation.HTTPUtilities";
+	
     private static final String LOG_FILE_NAME = "LogFileName";
 
     private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
@@ -231,6 +237,30 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public String getRandomizerImplementation() {
     	String value = properties.getProperty( RANDOMIZER_IMPLEMENTATION );
     	if (value == null) return DEFAULT_RANDOMIZER_IMPLEMENTATION;
+    	return value;
+    }
+
+    public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultExecutor";
+
+    public String getExecutorImplementation() {
+    	String value = properties.getProperty( EXECUTOR_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_EXECUTOR_IMPLEMENTATION;
+    	return value;
+    }
+
+    public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
+    
+    public String getHTTPUtilitiesImplementation() {
+    	String value = properties.getProperty(  HTTP_UTILITIES_IMPLEMENTATION);
+    	if (value == null) return DEFAULT_HTTP_UTILITIES_IMPLEMENTATION;
+    	return value;
+    }
+    
+    public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
+    
+    public String getValidationImplementation() {
+    	String value = properties.getProperty(VALIDATOR_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_VALIDATOR_IMPLEMENTATION;
     	return value;
     }
     
