@@ -20,9 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
-
 /**
  * The SecurityConfiguration interface stores all configuration information
  * that directs the behavior of the ESAPI implementation.
@@ -69,6 +66,26 @@ public interface SecurityConfiguration {
 	public String getEncoderImplementation();
 	
 	/**
+	 * Returns the fully qualified classname of the ESAPI Access Control implementation.
+	 */
+	public String getAccessControlImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI Intrusion Detection implementation.
+	 */
+	public String getIntrusionDetectionImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI Randomizer implementation.
+	 */
+	public String getRandomizerImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI Encryption implementation.
+	 */
+	public String getEncryptionImplementation();
+	
+	/**
 	 * Gets the master key. This password is used to encrypt/decrypt other files or types
 	 * of data that need to be protected by your application.
 	 * 
@@ -96,6 +113,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
+	@SuppressWarnings("unchecked")
 	public List getAllowedFileExtensions();
 
 	/**
@@ -312,6 +330,7 @@ public interface SecurityConfiguration {
 		/** The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
 		 * your implementation could have this be a list of any type of 'actions' you wish to define. 
 		 */
+		@SuppressWarnings("unchecked")
 		public List actions = null;
 
 		/**
@@ -324,6 +343,7 @@ public interface SecurityConfiguration {
 		 * trigger this threshold.
 		 * @param actions The list of actions to take if the threshold is met.
 		 */
+		@SuppressWarnings("unchecked")
 		public Threshold(String name, int count, long interval, List actions) {
 			this.name = name;
 			this.count = count;

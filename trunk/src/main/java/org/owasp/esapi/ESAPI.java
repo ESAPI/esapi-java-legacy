@@ -18,16 +18,10 @@ package org.owasp.esapi;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.reference.DefaultEncoder;
 import org.owasp.esapi.reference.DefaultExecutor;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
-import org.owasp.esapi.reference.DefaultIntrusionDetector;
-import org.owasp.esapi.reference.DefaultRandomizer;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.owasp.esapi.reference.DefaultValidator;
-import org.owasp.esapi.reference.FileBasedAccessController;
-import org.owasp.esapi.reference.FileBasedAuthenticator;
-import org.owasp.esapi.reference.JavaEncryptor;
 
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
@@ -35,25 +29,25 @@ import org.owasp.esapi.reference.JavaEncryptor;
  */
 public class ESAPI {
 
-	private static AccessController accessController = null;
-
 	private static Authenticator authenticator = null;
 
 	private static Encoder encoder = null;
+	
+	private static LogFactory logFactory = null;
+	
+	private static AccessController accessController = null;
+	
+	private static IntrusionDetector intrusionDetector = null;
+	
+	private static Randomizer randomizer = null;
 
 	private static Encryptor encryptor = null;
 
 	private static Executor executor = null;
 
 	private static HTTPUtilities httpUtilities = null;
-
-	private static IntrusionDetector intrusionDetector = null;
-
-	private static LogFactory logFactory = null;
 	
 	private static Logger defaultLogger = null;
-
-	private static Randomizer randomizer = null;
 
 	private static SecurityConfiguration securityConfiguration = new DefaultSecurityConfiguration();
 
@@ -84,10 +78,23 @@ public class ESAPI {
 	/**
 	 * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
 	 */
+	@SuppressWarnings("unchecked")
 	public static AccessController accessController() {
-		if (ESAPI.accessController == null)
-			ESAPI.accessController = new FileBasedAccessController();
-		return ESAPI.accessController;
+		if (accessController == null) {
+			String accessControllerName = securityConfiguration().getAccessControlImplementation();
+		    try {
+		        Class theClass  = Class.forName(accessControllerName);
+		        accessController = (AccessController)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " AccessController class (" + accessControllerName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " AccessController class (" + accessControllerName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " AccessController class (" + accessControllerName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return accessController;
 	}
 
 	/**
@@ -102,6 +109,7 @@ public class ESAPI {
 	/**
 	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
+	@SuppressWarnings("unchecked")
 	public static Authenticator authenticator() {
 		if (authenticator == null) {
 			String authenticatorName = securityConfiguration().getAuthenticationImplementation();
@@ -132,6 +140,7 @@ public class ESAPI {
 	/**
 	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
+	@SuppressWarnings("unchecked")
 	public static Encoder encoder() {
 		if (encoder == null) {
 			String encoderName = securityConfiguration().getEncoderImplementation();
@@ -162,10 +171,23 @@ public class ESAPI {
 	/**
 	 * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
 	 */
+	@SuppressWarnings("unchecked")
 	public static Encryptor encryptor() {
-		if (ESAPI.encryptor == null)
-			ESAPI.encryptor = new JavaEncryptor();
-		return ESAPI.encryptor;
+		if (encryptor == null) {
+			String encryptorName = securityConfiguration().getEncryptionImplementation();
+		    try {
+		        Class theClass  = Class.forName(encryptorName);
+		        encryptor = (Encryptor)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " Encryptor class (" + encryptorName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " Encryptor class (" + encryptorName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " Encryptor class (" + encryptorName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return encryptor;
 	}
 
 	/**
@@ -217,10 +239,23 @@ public class ESAPI {
 	/**
 	 * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
 	 */
+	@SuppressWarnings("unchecked")
 	public static IntrusionDetector intrusionDetector() {
-		if (ESAPI.intrusionDetector == null)
-			ESAPI.intrusionDetector = new DefaultIntrusionDetector();
-		return ESAPI.intrusionDetector;
+		if (intrusionDetector == null) {
+			String intrusionDetectorName = securityConfiguration().getEncryptionImplementation();
+		    try {
+		        Class theClass  = Class.forName(intrusionDetectorName);
+		        intrusionDetector = (IntrusionDetector)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return intrusionDetector;
 	}
 
 	/**
@@ -237,9 +272,9 @@ public class ESAPI {
 	 * return this same LogFactory from then on.
 	 * @return The current LogFactory being used by ESAPI.
 	 */
+	@SuppressWarnings("unchecked")
 	private static LogFactory logFactory() {
 		if (logFactory == null) {
-			System.out.println("logFactory called a");
 			String logFactoryName = securityConfiguration().getLogImplementation();
 		    try {
 		        Class theClass  = Class.forName(logFactoryName);
@@ -261,6 +296,7 @@ public class ESAPI {
 	 * @param clazz The class to associate the logger with.
 	 * @return The current Logger associated with the specified class.
 	 */
+	@SuppressWarnings("unchecked")
 	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
@@ -294,10 +330,23 @@ public class ESAPI {
 	/**
 	 * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
 	 */
+	@SuppressWarnings("unchecked")
 	public static Randomizer randomizer() {
-		if (ESAPI.randomizer == null)
-			ESAPI.randomizer = new DefaultRandomizer();
-		return ESAPI.randomizer;
+		if (randomizer == null) {
+			String randomizerName = securityConfiguration().getRandomizerImplementation();
+		    try {
+		        Class theClass = Class.forName(randomizerName);
+		        randomizer = (Randomizer)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " Randomizer class (" + randomizerName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " Randomizer class (" + randomizerName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " Randomizer class (" + randomizerName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return randomizer;
 	}
 
 	/**
