@@ -242,7 +242,7 @@ public class ESAPI {
 	@SuppressWarnings("unchecked")
 	public static IntrusionDetector intrusionDetector() {
 		if (intrusionDetector == null) {
-			String intrusionDetectorName = securityConfiguration().getEncryptionImplementation();
+			String intrusionDetectorName = securityConfiguration().getIntrusionDetectionImplementation();
 		    try {
 		        Class theClass  = Class.forName(intrusionDetectorName);
 		        intrusionDetector = (IntrusionDetector)theClass.newInstance();
