@@ -44,14 +44,14 @@ public class ESAPI {
 	private static Encryptor encryptor = null;
 
 	private static Executor executor = null;
+	
+	private static Validator validator = null;
 
 	private static HTTPUtilities httpUtilities = null;
 	
 	private static Logger defaultLogger = null;
 
 	private static SecurityConfiguration securityConfiguration = new DefaultSecurityConfiguration();
-
-	private static Validator validator = null;
 
 	/**
 	 * prevent instantiation of this class
@@ -203,9 +203,21 @@ public class ESAPI {
 	 * @return the current ESAPI Executor object being used to safely execute OS commands for this application. 
 	 */
 	public static Executor executor() {
-		if (ESAPI.executor == null)
-			ESAPI.executor = new DefaultExecutor();
-		return ESAPI.executor;
+		if (executor == null) {
+			String executorName = securityConfiguration().getExecutorImplementation();
+		    try {
+		        Class theClass  = Class.forName(executorName);
+		        executor = (Executor)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " Executor class (" + executorName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " Executor class (" + executorName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " Executor class (" + executorName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return executor;
 	}
 
 	/**
@@ -222,9 +234,21 @@ public class ESAPI {
 	 * for this application. 
 	 */
 	public static HTTPUtilities httpUtilities() {
-		if (ESAPI.httpUtilities == null)
-			ESAPI.httpUtilities = new DefaultHTTPUtilities();
-		return ESAPI.httpUtilities;
+		if (httpUtilities == null) {
+			String httpUtilitiesName = securityConfiguration().getHTTPUtilitiesImplementation();
+		    try {
+		        Class theClass  = Class.forName(httpUtilitiesName);
+		        httpUtilities = (HTTPUtilities)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return httpUtilities;
 	}
 
 	/**
@@ -382,9 +406,21 @@ public class ESAPI {
 	 * @return the current ESAPI Validator being used to validate data in this application. 
 	 */
 	public static Validator validator() {
-		if (ESAPI.validator == null)
-			ESAPI.validator = new DefaultValidator();
-		return ESAPI.validator;
+		if (validator == null) {
+			String validatorName = securityConfiguration().getValidationImplementation();
+		    try {
+		        Class theClass = Class.forName(validatorName);
+		        validator = (Validator)theClass.newInstance();
+		        
+		    } catch ( ClassNotFoundException ex ) {
+				System.out.println( ex + " Validator class (" + validatorName + ") must be in class path.");
+		    } catch( InstantiationException ex ) {
+		        System.out.println( ex + " Validator class (" + validatorName + ") must be concrete.");
+		    } catch( IllegalAccessException ex ) {
+		        System.out.println( ex + " Validator class (" + validatorName + ") must have a no-arg constructor.");
+		    }
+		} 
+		return validator;
 	}
 
 	/**

@@ -86,6 +86,21 @@ public interface SecurityConfiguration {
 	public String getEncryptionImplementation();
 	
 	/**
+	 * Returns the fully qualified classname of the ESAPI Validation implementation.
+	 */
+	public String getValidationImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI OS Execution implementation.
+	 */
+	public String getExecutorImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI HTTPUtilities implementation.
+	 */
+	public String getHTTPUtilitiesImplementation();
+	
+	/**
 	 * Gets the master key. This password is used to encrypt/decrypt other files or types
 	 * of data that need to be protected by your application.
 	 * 
