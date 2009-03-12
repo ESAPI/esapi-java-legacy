@@ -64,7 +64,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private Properties properties = new Properties();
 
     /** Regular expression cache */
-    private Map regexMap = null;
+    @SuppressWarnings("unchecked")
+	private Map regexMap = null;
     
     private static final String ALLOWED_LOGIN_ATTEMPTS = "AllowedLoginAttempts";
 
@@ -112,6 +113,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String ENCODER_IMPLEMENTATION = "Implementation.Encoder";
     
+    private static final String ACCESS_CONTROL_IMPLEMENTATION = "Implementation.AccessControl";
+    
+    private static final String ENCRYPTION_IMPLEMENTATION = "Implementation.Encryptor";
+    
+    private static final String INTRUSION_DETECTION_IMPLEMENTATION = "Implementation.IntrusionDetector";
+    
+    private static final String RANDOMIZER_IMPLEMENTATION = "Implementation.Randomizer";
+    
     private static final String LOG_FILE_NAME = "LogFileName";
 
     private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
@@ -149,7 +158,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     * The default logging implemetation if a user does not specify one.
+     * The default logging implementation if a user does not specify one.
      */
     public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.JavaLogFactory";
     
@@ -163,7 +172,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
     
     /**
-     * The default authenticator implemetation if a user does not specify one.
+     * The default authenticator implementation if a user does not specify one.
      */
     public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
     
@@ -177,14 +186,51 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
     
     /**
-     * The default encoder implemetation if a user does not specify one.
+     * The default encoder implementation if a user does not specify one.
      */
     public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
-    
-    
+
     public String getEncoderImplementation() {
     	String value = properties.getProperty( ENCODER_IMPLEMENTATION );
     	if (value == null) return DEFAULT_ENCODER_IMPLEMENTATION;
+    	return value;
+    }
+    
+    /**
+     * The default access control implementation if a user does not specify one.
+     */
+    public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAccessController";
+    
+    public String getAccessControlImplementation() {
+    	String value = properties.getProperty( ACCESS_CONTROL_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_ENCODER_IMPLEMENTATION;
+    	return value;
+    }
+    
+    /**
+     * The default encryption implementation if a user does not specify one.
+     */
+    public static final String DEFAULT_ENCRYPTION_IMPLEMENTATION = "org.owasp.esapi.reference.JavaEncryptor";
+
+    public String getEncryptionImplementation() {
+    	String value = properties.getProperty( ENCRYPTION_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_ENCRYPTION_IMPLEMENTATION;
+    	return value;
+    }
+    
+    public static final String DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultIntrusionDetector";
+
+    public String getIntrusionDetectionImplementation() {
+    	String value = properties.getProperty( INTRUSION_DETECTION_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION;
+    	return value;
+    }
+
+    public static final String DEFAULT_RANDOMIZER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultRandomizer";
+    
+    public String getRandomizerImplementation() {
+    	String value = properties.getProperty( RANDOMIZER_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_RANDOMIZER_IMPLEMENTATION;
     	return value;
     }
     
@@ -236,7 +282,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-    public List getAllowedFileExtensions() {
+    @SuppressWarnings("unchecked")
+	public List getAllowedFileExtensions() {
     	String def = ".zip,.pdf,.tar,.gz,.xls,.properties,.txt,.xml";
         String[] extList = properties.getProperty(VALID_EXTENSIONS,def).split(",");
         return Arrays.asList(extList);
@@ -341,7 +388,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * Load configuration.
      */
-    private void loadConfiguration() throws IOException {
+    @SuppressWarnings("unchecked")
+	private void loadConfiguration() throws IOException {
     	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ) );
 
         logSpecial("  ========Master Configuration========", null);
@@ -444,7 +492,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-    public Threshold getQuota(String eventName) {
+    @SuppressWarnings("unchecked")
+	public Threshold getQuota(String eventName) {
         int count = 0;
         String countString = properties.getProperty(eventName + ".count");
         if (countString != null) {
@@ -597,6 +646,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     * @return 
     * 			a list iterator of pattern names 
     */
+   @SuppressWarnings("unchecked")
    public Iterator getValidationPatternNames() {
     	TreeSet list = new TreeSet();
     	Iterator i = properties.keySet().iterator();
