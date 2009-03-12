@@ -108,6 +108,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String LOG_IMPLEMENTATION = "Implementation.Logger";
     
+    private static final String AUTHENTICATION_IMPLEMENTATION = "Implementation.Authenticator";
+    
+    private static final String ENCODER_IMPLEMENTATION = "Implementation.Encoder";
+    
     private static final String LOG_FILE_NAME = "LogFileName";
 
     private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
@@ -144,6 +148,46 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	return properties.getProperty(APPLICATION_NAME, "AppNameNotSpecified");
     }
 
+    /**
+     * The default logging implemetation if a user does not specify one.
+     */
+    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.JavaLogFactory";
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public String getLogImplementation() {
+    	String value = properties.getProperty( LOG_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_LOG_IMPLEMENTATION;
+    	return value;
+    }
+    
+    /**
+     * The default authenticator implemetation if a user does not specify one.
+     */
+    public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public String getAuthenticationImplementation() {
+    	String value = properties.getProperty( AUTHENTICATION_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_AUTHENTICATION_IMPLEMENTATION;
+    	return value;
+    }
+    
+    /**
+     * The default encoder implemetation if a user does not specify one.
+     */
+    public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
+    
+    
+    public String getEncoderImplementation() {
+    	String value = properties.getProperty( ENCODER_IMPLEMENTATION );
+    	if (value == null) return DEFAULT_ENCODER_IMPLEMENTATION;
+    	return value;
+    }
+    
     /**
 	 * {@inheritDoc}
 	 */
@@ -456,20 +500,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 // an infinite loop.
         logSpecial("The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level, null);
         return Logger.WARNING;  // Note: The default logging level is WARNING.
-    }
-
-    /**
-     * The default logging implemetation if a user does not specify one.
-     */
-    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.Log4JLogFactory";
-    
-    /**
-	 * {@inheritDoc}
-	 */
-    public String getLogImplementation() {
-    	String value = properties.getProperty( LOG_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_LOG_IMPLEMENTATION;
-    	return value;
     }
     
     /**

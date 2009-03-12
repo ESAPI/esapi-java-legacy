@@ -54,6 +54,21 @@ public interface SecurityConfiguration {
 	public String getApplicationName();
 	
 	/**
+	 * Returns the fully qualified classname of the ESAPI Logging implementation.
+	 */
+	public String getLogImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI Authentication implementation.
+	 */
+	public String getAuthenticationImplementation();
+	
+	/**
+	 * Returns the fully qualified classname of the ESAPI Encoder implementation.
+	 */
+	public String getEncoderImplementation();
+	
+	/**
 	 * Gets the master key. This password is used to encrypt/decrypt other files or types
 	 * of data that need to be protected by your application.
 	 * 
@@ -241,12 +256,6 @@ public interface SecurityConfiguration {
 	 */
 	public int getSessionAbsoluteTimeoutLength();
 	
-	/**
-	 * Returns the fully qualified classname of the 
-	 * 
-	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
-	 */
-	public String getLogImplementation();
 	
 	/**
 	 * Returns whether HTML entity encoding should be applied to log entries.
