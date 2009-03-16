@@ -209,7 +209,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     public String getAccessControlImplementation() {
     	String value = properties.getProperty( ACCESS_CONTROL_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_ENCODER_IMPLEMENTATION;
+    	if (value == null) return DEFAULT_ACCESS_CONTROL_IMPLEMENTATION;
     	return value;
     }
     
