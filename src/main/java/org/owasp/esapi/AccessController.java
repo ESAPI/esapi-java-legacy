@@ -70,7 +70,7 @@ import org.owasp.esapi.errors.AccessControlException;
 public interface AccessController {
 
     /**
-     * Checks if an account is authorized to access the referenced URL. Generally, this method should be invoked in the
+     * Checks if the current user is authorized to access the referenced URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().isAuthorizedForURL(request.getRequestURI().toString());</PRE>
      * 
@@ -87,7 +87,7 @@ public interface AccessController {
     boolean isAuthorizedForURL(String url);
 
     /**
-     * Checks if an account is authorized to access the referenced function. 
+     * Checks if the current user is authorized to access the referenced function. 
      * 
      * The implementation of this method should call assertAuthorizedForFunction(String functionName), and if an 
      * AccessControlException is not thrown, this method should return true.
@@ -102,7 +102,7 @@ public interface AccessController {
 
 
     /**
-     * Checks if an account is authorized to access the referenced data, represented as an Object. 
+     * Checks if the current user is authorized to access the referenced data, represented as an Object. 
      * 
      * The implementation of this method should call assertAuthorizedForData(String action, Object data), and if an 
      * AccessControlException is not thrown, this method should return true.
@@ -120,7 +120,7 @@ public interface AccessController {
     boolean isAuthorizedForData(String action, Object data);
     
     /**
-     * Checks if an account is authorized to access the referenced file. 
+     * Checks if the current user is authorized to access the referenced file. 
      * 
      * The implementation of this method should call assertAuthorizedForFile(String filepath), and if an AccessControlException 
      * is not thrown, this method should return true.
@@ -134,7 +134,7 @@ public interface AccessController {
     boolean isAuthorizedForFile(String filepath);
 
     /**
-     * Checks if an account is authorized to access the referenced service. This can be used in applications that
+     * Checks if the current user is authorized to access the referenced service. This can be used in applications that
      * provide access to a variety of back end services.
      * 
      * The implementation of this method should call assertAuthorizedForService(String serviceName), and if an 
@@ -149,7 +149,7 @@ public interface AccessController {
     boolean isAuthorizedForService(String serviceName);
 
     /**
-     * Checks if an account is authorized to access the referenced URL. The implementation should allow
+     * Checks if the current user is authorized to access the referenced URL. The implementation should allow
      * access to be granted to any part of the URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
      * <PRE>ESAPI.accessController().assertAuthorizedForURL(request.getRequestURI().toString());</PRE> 
@@ -177,7 +177,7 @@ public interface AccessController {
     void assertAuthorizedForURL(String url) throws AccessControlException;
     
     /**
-     * Checks if an account is authorized to access the referenced function. The implementation should define the
+     * Checks if the current user is authorized to access the referenced function. The implementation should define the
      * function "namespace" to be enforced. Choosing something simple like the class name of action classes or menu item
      * names will make this implementation easier to use.
      * <P>
@@ -222,10 +222,11 @@ public interface AccessController {
      * </ol> 
      * 
      * @param action
-     * 		the action to check for in the configuration file in the resource directory
+     *      The action to verify for an access control decision, such as a role, or an action being performed on the object 
+     *      (e.g., Read, Write, etc.), or the name of the function the data is being passed to.
      * 
      * @param data
-     * 		the data to check for in the configuration file in the resource directory
+     * 		The actual object or object identifier being accessed or a reference to the object being accessed.
      * 
      * @throws AccessControlException 
      * 		if access is not permitted
@@ -233,7 +234,7 @@ public interface AccessController {
     void assertAuthorizedForData(String action, Object data) throws AccessControlException;
    
     /**
-     * Checks if an account is authorized to access the referenced file. The implementation should validate and canonicalize the 
+     * Checks if the current user is authorized to access the referenced file. The implementation should validate and canonicalize the 
      * input to be sure the filepath is not malicious.
      * <P>
      * This method throws an AccessControlException if access is not authorized, or if the referenced File does not exist.
@@ -258,7 +259,7 @@ public interface AccessController {
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     
     /**
-     * Checks if an account is authorized to access the referenced service. This can be used in applications that
+     * Checks if the current user is authorized to access the referenced service. This can be used in applications that
      * provide access to a variety of backend services.
      * <P>
      * This method throws an AccessControlException if access is not authorized, or if the referenced service does not exist.
