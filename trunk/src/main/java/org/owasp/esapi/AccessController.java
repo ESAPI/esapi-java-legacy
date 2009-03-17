@@ -108,10 +108,11 @@ public interface AccessController {
      * AccessControlException is not thrown, this method should return true.
      * 
      * @param action
-     * 		the action to check for in the configuration file in the resource directory
+     *      The action to verify for an access control decision, such as a role, or an action being performed on the object 
+     *      (e.g., Read, Write, etc.), or the name of the function the data is being passed to.
      * 
      * @param data
-     * 		the data to check for in the configuration file in the resource directory 	
+     * 		The actual object or object identifier being accessed or a reference to the object being accessed.
      * 
      * @return 
      * 		true, if is authorized for the data
