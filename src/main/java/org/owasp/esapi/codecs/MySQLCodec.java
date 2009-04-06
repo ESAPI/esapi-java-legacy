@@ -109,7 +109,7 @@ public class MySQLCodec extends Codec {
 		if ( ch == 0x09 ) return "\\t";
 		if ( ch == 0x0a ) return "\\n";
 		if ( ch == 0x0d ) return "\\r";
-		if ( ch == 0x1a ) return "\\z";
+		if ( ch == 0x1a ) return "\\Z";
 		if ( ch == 0x22 ) return "\\\"";
 		if ( ch == 0x25 ) return "\\%";
 		if ( ch == 0x27 ) return "\\'";
