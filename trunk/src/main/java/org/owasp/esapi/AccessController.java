@@ -32,19 +32,19 @@ import org.owasp.esapi.errors.AccessControlException;
  * will also need information about the resources that are being accessed. Using the user information and the resource
  * information, the implementation should return an access control decision. 
  * <P>
- * Implementers are encouraged to implement the ESAPI access control methods, like assertAuthorizedForFunction() using 
+ * Implementers are encouraged to implement the ESAPI access control rules, like assertAuthorizedForFunction() using 
  * existing access control mechanisms, such as methods like isUserInRole() or hasPrivilege(). While powerful, 
  * methods like isUserInRole() can be confusing for developers, as users may be in multiple roles or possess multiple 
  * overlapping privileges. Direct use of these finer grained access control methods encourages the use of complex boolean 
  * tests throughout the code, which can easily lead to developer mistakes.
  * <P>
  * The point of the ESAPI access control interface is to centralize access control logic behind easy to use calls like 
- * assertAuthorizedForData() so that access control is easy to use and easy to verify. Here is an example of a very 
+ * assertAuthorized() so that access control is easy to use and easy to verify. Here is an example of a very 
  * straightforward to implement, understand, and verify ESAPI access control check: 
  * 
  * <pre>
  * try {
- *     ESAPI.accessController().assertAuthorizedForFunction( BUSINESS_FUNCTION );
+ *     ESAPI.accessController().assertAuthorized("businessFunction", runtimeData);
  *     // execute BUSINESS_FUNCTION
  * } catch (AccessControlException ace) {
  * ... attack in progress
@@ -58,17 +58,85 @@ import org.owasp.esapi.errors.AccessControlException;
  * repeated in both the business logic and data layers.
  * 
  * <pre>
- * &lt;% if ( ESAPI.accessController().isAuthorizedForFunction( ADMIN_FUNCTION ) ) { %&gt;
+ * &lt;% if ( ESAPI.accessController().isAuthorized( "businessFunction", runtimeData ) ) { %&gt;
  * &lt;a href=&quot;/doAdminFunction&quot;&gt;ADMIN&lt;/a&gt;
  * &lt;% } else { %&gt;
  * &lt;a href=&quot;/doNormalFunction&quot;&gt;NORMAL&lt;/a&gt;
  * &lt;% } %&gt;
  * </pre>
  * 
- * @author Jeff Williams (jeff.williams@aspectsecurity.com)
+ * @author Mike H. Fauzy (mike.fauzy@aspectsecurity.com) ESAPI v1.6-
+ * @author Jeff Williams (jeff.williams@aspectsecurity.com) ESAPI v0-1.5
  */
 public interface AccessController {
 
+	/**
+	 * <code>isAuthorized</code> executes the <code>AccessControlRule</code> 
+	 * that is identified by <code>key</code> and listed in the 
+	 * <code>resources/ESAPI-AccessControlPolicy.xml</code> file. It returns 
+	 * true if the <code>AccessControlRule</code> decides that the operation 
+	 * should be allowed. Otherwise, it returns false. Any exception thrown by 
+	 * the <code>AccessControlRule</code> must result in false. If 
+	 * <code>key</code> does not map to an <code>AccessControlRule</code>, then 
+	 * false is returned. 
+	 *  
+	 * Developers should call isAuthorized to control execution flow. For 
+	 * example, if you want to decide whether to display a UI widget in the 
+	 * browser using the same logic that you will use to enforce permissions
+	 * on the server, then isAuthorized is the method that you want to use.
+	 * 
+	 * Typically, assertAuthorized should be used to enforce permissions on the 
+	 * server.
+	 *  
+	 * @param key <code>key</code> maps to 
+	 * <code>&lt;AccessControlPolicy&gt;&lt;AccessControlRules&gt;
+	 *     &lt;AccessControlRule name="key"</code>
+	 * @param runtimeParameter runtimeParameter can contain anything that 
+	 *        the AccessControlRule needs from the runtime system. 
+	 * @return Returns <code>true</code> if and only if the AccessControlRule specified 
+	 *        by <code>key</code> exists and returned <code>true</code>. 
+	 *        Otherwise returns <code>false</code> 
+	 */
+	public boolean isAuthorized(Object key, Object runtimeParameter);
+	
+	/**
+	 * <code>assertAuthorized</code> executes the <code>AccessControlRule</code> 
+	 * that is identified by <code>key</code> and listed in the 
+	 * <code>resources/ESAPI-AccessControlPolicy.xml</code> file. It does 
+	 * nothing if the <code>AccessControlRule</code> decides that the operation 
+	 * should be allowed. Otherwise, it throws an 
+	 * <code>org.owasp.esapi.errors.AccessControlException</code>. Any exception
+	 * thrown by the <code>AccessControlRule</code> will also result in an 
+	 * <code>AccesControlException</code>. If <code>key</code> does not map to 
+	 * an <code>AccessControlRule</code>, then an <code>AccessControlException
+	 * </code> is thrown.  
+	 *  
+	 * Developers should call assertAuthorized to enforce privileged access to 
+	 * the system. It should be used to answer the question: "Should execution 
+	 * continue." Ideally, the call to <code>assertAuthorized</code> should
+	 * be integrated into the application framework so that it is called 
+	 * automatically. 
+	 *  
+	 * @param key <code>key</code> maps to 
+	 * &lt;AccessControlPolicy&gt;&lt;AccessControlRules&gt;
+	 *     &lt;AccessControlRule name="key"
+	 * @param runtimeParameter runtimeParameter can contain anything that 
+	 *        the AccessControlRule needs from the runtime system. 
+	 * @return Returns <code>true</code> if and only if the AccessControlRule specified 
+	 *        by <code>key</code> exists and returned <code>true</code>. 
+	 *        Otherwise returns <code>false</code> 
+	 */
+	public void assertAuthorized(Object key, Object runtimeParameter)
+		throws AccessControlException;
+
+		
+
+	
+	/*** Below this line has been deprecated as of ESAPI 1.6 ***/ 
+	
+	
+	
+	
     /**
      * Checks if the current user is authorized to access the referenced URL. Generally, this method should be invoked in the
      * application's controller or a filter as follows:
@@ -83,6 +151,7 @@ public interface AccessController {
      * 
      * @return 
      * 		true, if is authorized for URL
+     * @deprecated
      */
     boolean isAuthorizedForURL(String url);
 
@@ -97,6 +166,7 @@ public interface AccessController {
      * 
      * @return 
      * 		true, if is authorized for function
+     * @deprecated
      */
     boolean isAuthorizedForFunction(String functionName);
 
@@ -116,6 +186,7 @@ public interface AccessController {
      * 
      * @return 
      * 		true, if is authorized for the data
+     * @deprecated
      */
     boolean isAuthorizedForData(String action, Object data);
     
@@ -130,6 +201,7 @@ public interface AccessController {
      * 
      * @return 
      * 		true, if is authorized for the file
+     * @deprecated
      */
     boolean isAuthorizedForFile(String filepath);
 
@@ -145,6 +217,7 @@ public interface AccessController {
      * 
      * @return 
      * 		true, if is authorized for the service
+     * @deprecated
      */
     boolean isAuthorizedForService(String serviceName);
 
@@ -173,6 +246,7 @@ public interface AccessController {
      * 
      * @throws AccessControlException 
      * 		if access is not permitted
+     * @deprecated
      */
     void assertAuthorizedForURL(String url) throws AccessControlException;
     
@@ -201,6 +275,7 @@ public interface AccessController {
      * 
      * @throws AccessControlException 
      * 		if access is not permitted
+     * @deprecated
      */
     void assertAuthorizedForFunction(String functionName) throws AccessControlException;
     
@@ -230,6 +305,7 @@ public interface AccessController {
      * 
      * @throws AccessControlException 
      * 		if access is not permitted
+     * @deprecated
      */
     void assertAuthorizedForData(String action, Object data) throws AccessControlException;
    
@@ -255,6 +331,7 @@ public interface AccessController {
      * @param filepath
      * 			Path to the file to be checked
      * @throws AccessControlException if access is denied
+     * @deprecated
      */
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     
@@ -282,6 +359,7 @@ public interface AccessController {
      * 
      * @throws AccessControlException
      * 		if access is not permitted
+     * @deprecated
      */				
     void assertAuthorizedForService(String serviceName) throws AccessControlException;
     
