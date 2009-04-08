@@ -95,8 +95,23 @@ import org.owasp.esapi.errors.IntrusionException;
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @since June 1, 2007
  * @see org.owasp.esapi.AccessController
+ * @deprecated
  */
 public class FileBasedAccessController implements org.owasp.esapi.AccessController {
+	
+	/**
+	 * This class is deprecated. 
+	 */
+	public boolean isAuthorized(Object key, Object runtimeParameter) {
+		return false;
+	}
+	/**
+	 * This class is deprecated.
+	 */
+	public void assertAuthorized(Object key, Object runtimeParameter) throws AccessControlException{
+		throw new AccessControlException("Access Denied", "Method Not implemented");
+	}
+	
 
 	/** The url map. */
 	private Map urlMap = new HashMap();

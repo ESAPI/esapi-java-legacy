@@ -205,7 +205,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * The default access control implementation if a user does not specify one.
      */
-    public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAccessController";
+    public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.accesscontrol.DefaultAccessController";
     
     public String getAccessControlImplementation() {
     	String value = properties.getProperty( ACCESS_CONTROL_IMPLEMENTATION );
