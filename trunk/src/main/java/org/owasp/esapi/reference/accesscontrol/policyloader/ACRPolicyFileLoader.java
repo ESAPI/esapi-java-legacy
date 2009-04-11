@@ -6,6 +6,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AccessControlException;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -15,17 +16,17 @@ final public class ACRPolicyFileLoader {
 	public PolicyDTO load() throws AccessControlException {
 		PolicyDTO policyDTO = new PolicyDTO();
 		XMLConfiguration config;
+		File file = ESAPI.securityConfiguration().getResourceFile("ESAPI-AccessControlPolicy.xml"); 
 		try
 		{
-			
-			String fileName = ".\\ESAPI-AccessControlPolicy.xml";
-		    config = new XMLConfiguration(fileName);		    
+		    config = new XMLConfiguration(file);		    
 		}
 		catch(ConfigurationException cex)
 		{
-			java.io.File file = new java.io.File(".\\ESAPI-AccessControlPolicy.xml");
-			String fileNotFoundAt = file.getAbsolutePath();
-		    throw new AccessControlException("Unable to load configuration file from the following location: " + fileNotFoundAt, "", cex);
+			if(file == null) {
+				throw new AccessControlException("Unable to load configuration file from the following location: " + file, "", cex);
+			}
+		    throw new AccessControlException("Unable to load configuration file from the following location: " + file.getAbsolutePath(), "", cex);
 		} 
 
 		Object property = config.getProperty("AccessControlRules.AccessControlRule[@name]");
