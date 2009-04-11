@@ -10,6 +10,7 @@
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
+ * @author Mike Fauzy <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -296,15 +297,6 @@ public interface SecurityConfiguration {
 	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
 	 */
 	public boolean getLogEncodingRequired();
-
-    /**
-     * Get the log level specified in the ESAPI configuration properties file. Return a default 
-     * value if it is not specified in the properties file.
-     * 
-     * @return the logging level defined in the properties file. If none is specified, the default 
-     * of Logger.WARNING is returned.
-     */
-    public int getLogLevel();
 
     /**
      * Get the name of the log file specified in the ESAPI configuration properties file. Return a default value 

@@ -10,6 +10,7 @@
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
+ * @author Mike Fauzy <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Rogan Dawes <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2008
  */
@@ -90,7 +91,6 @@ public class ESAPI {
 		    try {
 		        Class theClass  = Class.forName(accessControllerName);
 		        accessController = (AccessController)theClass.newInstance();
-		        
 		    } catch ( ClassNotFoundException ex ) {
 				System.out.println( ex + " AccessController class (" + accessControllerName + ") must be in class path.");
 		    } catch( InstantiationException ex ) {

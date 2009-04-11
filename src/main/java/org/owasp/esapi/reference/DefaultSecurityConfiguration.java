@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import java.util.regex.Pattern;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
+
 
 /**
  * The SecurityConfiguration manages all the settings used by the ESAPI in a single place. In this reference
@@ -53,7 +55,9 @@ import org.owasp.esapi.SecurityConfiguration;
  * keys and passwords, logging locations, error thresholds, and allowed file extensions.
  * <p>
  * WARNING: Do not forget to update ESAPI.properties to change the master key and other security critical settings.
- * 
+ *
+ * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
+ * @author Jim Manico (jim.manico@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  */
@@ -61,7 +65,7 @@ import org.owasp.esapi.SecurityConfiguration;
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /** The properties. */
-    private Properties properties = new Properties();
+    private Properties properties = null;
 
     /** Regular expression cache */
     @SuppressWarnings("unchecked")
@@ -106,26 +110,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String FORCE_HTTPONLY = "ForceHTTPOnly";
     
     private static final String LOG_LEVEL = "LogLevel";
-    
-    private static final String LOG_IMPLEMENTATION = "Implementation.Logger";
-    
-    private static final String AUTHENTICATION_IMPLEMENTATION = "Implementation.Authenticator";
-    
-    private static final String ENCODER_IMPLEMENTATION = "Implementation.Encoder";
-    
-    private static final String ACCESS_CONTROL_IMPLEMENTATION = "Implementation.AccessControl";
-    
-    private static final String ENCRYPTION_IMPLEMENTATION = "Implementation.Encryptor";
-    
-    private static final String INTRUSION_DETECTION_IMPLEMENTATION = "Implementation.IntrusionDetector";
-    
-    private static final String RANDOMIZER_IMPLEMENTATION = "Implementation.Randomizer";
-    
-	private static final String EXECUTOR_IMPLEMENTATION = "Implementation.Executor";
-	
-	private static final String VALIDATOR_IMPLEMENTATION = "Implementation.Validator";
-
-	private static final String HTTP_UTILITIES_IMPLEMENTATION = "Implementation.HTTPUtilities";
 	
     private static final String LOG_FILE_NAME = "LogFileName";
 
@@ -136,11 +120,52 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     protected final int MAX_REDIRECT_LOCATION = 1000;
 
     protected final int MAX_FILE_NAME_LENGTH = 1000;
-    
-    private static String userDirectory = System.getProperty("user.home" ) + "/.esapi";
-     private static String customDirectory = System.getProperty("org.owasp.esapi.resources");
 
-    private static String resourceDirectory = null;
+
+    /*
+     * Implementation Keys
+     */
+    private static final String LOG_IMPLEMENTATION = "Implementation.Logger";
+    private static final String AUTHENTICATION_IMPLEMENTATION = "Implementation.Authenticator";
+    private static final String ENCODER_IMPLEMENTATION = "Implementation.Encoder";
+    private static final String ACCESS_CONTROL_IMPLEMENTATION = "Implementation.AccessControl";
+    private static final String ENCRYPTION_IMPLEMENTATION = "Implementation.Encryptor";
+    private static final String INTRUSION_DETECTION_IMPLEMENTATION = "Implementation.IntrusionDetector";
+    private static final String RANDOMIZER_IMPLEMENTATION = "Implementation.Randomizer";
+	private static final String EXECUTOR_IMPLEMENTATION = "Implementation.Executor";
+	private static final String VALIDATOR_IMPLEMENTATION = "Implementation.Validator";
+	private static final String HTTP_UTILITIES_IMPLEMENTATION = "Implementation.HTTPUtilities";
+    
+    /*
+     * Default Implementations
+     */
+    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.JavaLogFactory";
+    public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
+    public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
+    public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.accesscontrol.DefaultAccessController";
+    public static final String DEFAULT_ENCRYPTION_IMPLEMENTATION = "org.owasp.esapi.reference.JavaEncryptor";
+    public static final String DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultIntrusionDetector";
+    public static final String DEFAULT_RANDOMIZER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultRandomizer";
+    public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultExecutor";
+    public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
+    public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
+
+    
+    
+    /*
+     * Absolute path to the userDirectory
+     */
+    private static String userDirectory = System.getProperty("user.home" ) + "/.esapi";
+    /*
+     * Absolute path to the customDirectory
+     */
+    private static String customDirectory = System.getProperty("org.owasp.esapi.resources");
+    /*
+     * Relative path to the resourceDirectory. Relative to the classpath. 
+     * Specifically, ClassLoader.getResource(resourceDirectory + filename) will
+     * be used to load the file.
+     */
+    private static String resourceDirectory = ".esapi";
     
     private static long lastModified = -1;
 
@@ -162,107 +187,94 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public String getApplicationName() {
     	return properties.getProperty(APPLICATION_NAME, "AppNameNotSpecified");
     }
-
+    
     /**
-     * The default logging implementation if a user does not specify one.
+     * This method attempts to load property from this.properties. If it cannot
+     * load the property, then it uses the specified defaultValue and logs that
+     * this has happened.  
+     * @param property the property in the properties file to load
+     * @param defaultValue the class name to use if property is not found
+     * @return
      */
-    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.JavaLogFactory";
+    protected String getImplementation(String property, String defaultValue) {
+    	String value = properties.getProperty( property );
+    	if (value == null) {
+    		value = defaultValue;
+    		logSpecial(property + " was not found. Using default: " + value, null);
+    	}
+    	return value;
+    }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getLogImplementation() {
-    	String value = properties.getProperty( LOG_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_LOG_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(LOG_IMPLEMENTATION, DEFAULT_LOG_IMPLEMENTATION);	
     }
-    
-    /**
-     * The default authenticator implementation if a user does not specify one.
-     */
-    public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getAuthenticationImplementation() {
-    	String value = properties.getProperty( AUTHENTICATION_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_AUTHENTICATION_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(AUTHENTICATION_IMPLEMENTATION, DEFAULT_AUTHENTICATION_IMPLEMENTATION);
     }
-    
-    /**
-     * The default encoder implementation if a user does not specify one.
-     */
-    public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
 
+    /**
+	 * {@inheritDoc}
+	 */
     public String getEncoderImplementation() {
-    	String value = properties.getProperty( ENCODER_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_ENCODER_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(ENCODER_IMPLEMENTATION, DEFAULT_ENCODER_IMPLEMENTATION);
     }
-    
+
     /**
-     * The default access control implementation if a user does not specify one.
-     */
-    public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.accesscontrol.DefaultAccessController";
-    
+	 * {@inheritDoc}
+	 */
     public String getAccessControlImplementation() {
-    	String value = properties.getProperty( ACCESS_CONTROL_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_ACCESS_CONTROL_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(ACCESS_CONTROL_IMPLEMENTATION, DEFAULT_ACCESS_CONTROL_IMPLEMENTATION);
     }
     
     /**
-     * The default encryption implementation if a user does not specify one.
-     */
-    public static final String DEFAULT_ENCRYPTION_IMPLEMENTATION = "org.owasp.esapi.reference.JavaEncryptor";
-
+	 * {@inheritDoc}
+	 */
     public String getEncryptionImplementation() {
-    	String value = properties.getProperty( ENCRYPTION_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_ENCRYPTION_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(ENCRYPTION_IMPLEMENTATION, DEFAULT_ENCRYPTION_IMPLEMENTATION);
     }
-    
-    public static final String DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultIntrusionDetector";
-
+   
+    /**
+	 * {@inheritDoc}
+	 */
     public String getIntrusionDetectionImplementation() {
-    	String value = properties.getProperty( INTRUSION_DETECTION_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(INTRUSION_DETECTION_IMPLEMENTATION, DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION);
     }
-
-    public static final String DEFAULT_RANDOMIZER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultRandomizer";
     
+    /**
+	 * {@inheritDoc}
+	 */
     public String getRandomizerImplementation() {
-    	String value = properties.getProperty( RANDOMIZER_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_RANDOMIZER_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(RANDOMIZER_IMPLEMENTATION, DEFAULT_RANDOMIZER_IMPLEMENTATION);
     }
-
-    public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultExecutor";
-
+    
+    /**
+	 * {@inheritDoc}
+	 */
     public String getExecutorImplementation() {
-    	String value = properties.getProperty( EXECUTOR_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_EXECUTOR_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(EXECUTOR_IMPLEMENTATION, DEFAULT_EXECUTOR_IMPLEMENTATION);
     }
-
-    public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
     
+    /**
+	 * {@inheritDoc}
+	 */
     public String getHTTPUtilitiesImplementation() {
-    	String value = properties.getProperty(  HTTP_UTILITIES_IMPLEMENTATION);
-    	if (value == null) return DEFAULT_HTTP_UTILITIES_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(HTTP_UTILITIES_IMPLEMENTATION, DEFAULT_HTTP_UTILITIES_IMPLEMENTATION);
     }
     
-    public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
-    
+    /**
+	 * {@inheritDoc}
+	 */
     public String getValidationImplementation() {
-    	String value = properties.getProperty(VALIDATOR_IMPLEMENTATION );
-    	if (value == null) return DEFAULT_VALIDATOR_IMPLEMENTATION;
-    	return value;
+    	return getImplementation(VALIDATOR_IMPLEMENTATION, DEFAULT_VALIDATOR_IMPLEMENTATION);
     }
+    
     
     /**
 	 * {@inheritDoc}
@@ -272,6 +284,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         try {
             return ESAPI.encoder().decodeFromBase64(encoded);
         } catch( IOException e ) {
+        	logSpecial("Unable to decode master key. Property key: " + MASTER_KEY, null);
             return null;
         }
     }
@@ -289,9 +302,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
     public void setResourceDirectory( String dir ) {
     	resourceDirectory = dir;
-    	if ( resourceDirectory != null && !resourceDirectory.endsWith( System.getProperty("file.separator"))) {
-    		resourceDirectory += System.getProperty("file.separator" );
-    	}
         logSpecial( "Reset resource directory to: " + dir, null );
      	
         // reload configuration if necessary
@@ -329,7 +339,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     
     private Properties loadPropertiesFromStream( InputStream is ) throws IOException {
-        if ( is == null ) return properties;
     	Properties config = new Properties();
         try {
 	        config.load(is);
@@ -351,16 +360,19 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	File f = null;
     	logSpecial( "Seeking " + filename, null );
     	
-    	// try the programatically set resource directory
-    	f = new File( resourceDirectory, filename );
-    	if ( resourceDirectory != null && f.exists() ) {
-        	logSpecial( "  Found in setResourceDirectory: " + f.getAbsolutePath(), null );
-        	return f;
-    	} else {
-        	logSpecial( "  Not found in setResourceDirectory: " + f.getAbsolutePath(), null );
-    	}
+    	//Note: relative directories are relative to the SystemResource directory
+    	//  The SystemResource directory is defined by ClassLoader.getSystemResource(
+    	//  Relative directories use URLs, so they must be specified using / as 
+    	//  the pathSeparater, not the file system dependent pathSeparator. 
+    	//First, load from the absolute directory specified in customDirectory
+    	//Second, load from the relative directory specified in resourceDirectory
+    	//Third, load from the relative resource-default-directory which is .esapi
+    	//Fourth, load from the relative directory without directory specification.
+    	//Finally, load from the user's home directory.
+    	//TODO MHF consider the security implications of non-deterministic
+    	//  configuration resource locations.
     	
-    	// if not found, then try the -Dorg.owasp.esapi.resources directory
+    	// first, allow command line overrides. -Dorg.owasp.esapi.resources directory
 		f = new File( customDirectory, filename );
     	if ( customDirectory != null && f.exists() ) {
         	logSpecial( "  Found in 'org.owasp.esapi.resources' directory: " + f.getAbsolutePath(), null );
@@ -369,6 +381,51 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         	logSpecial( "  Not found in 'org.owasp.esapi.resources' directory: " + f.getAbsolutePath(), null );
     	}
 
+    	// if not found, then try the programatically set resource directory (this defaults to SystemResource directory/.esapi
+    	URL fileUrl = ClassLoader.getSystemResource(this.resourceDirectory + "/" + filename);
+    	if(fileUrl != null) {
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath(), null );
+        	}	
+    	} else {
+    		logSpecial( "  Not found in SystemResource Directory/resourceDirectory: " + this.resourceDirectory + "/" + filename, null );
+    	}
+    	
+    	// if not found, then try the default set resource directory    	
+    	fileUrl = ClassLoader.getSystemResource(".esapi/" + filename);
+    	if(fileUrl != null) {
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory/.esapi: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory/.esapi(this should never happen): " + f.getAbsolutePath(), null );
+        	}	
+    	} else {
+    		logSpecial( "  Not found in SystemResource Directory/.esapi: " + ".esapi/" + filename, null );
+    	}
+    	
+    	// if not found, then try the resource directory without the .esapi    	
+    	fileUrl = ClassLoader.getSystemResource(filename);
+    	if(fileUrl != null) {
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory (this should never happen): " + f.getAbsolutePath(), null );
+        	}	
+    	} else {
+    		logSpecial( "  Not found in SystemResource Directory: " + filename, null );
+    	}
+    	
     	// if not found, then try the user's home directory
     	f = new File( userDirectory, filename);    		
     	if ( userDirectory != null && f.exists() ) {
@@ -395,12 +452,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	InputStream in = null;
     	
     	File f = getResourceFile( filename );
-    	if ( f != null ) {
-    		// shortcut out if the file hasn't been modified
-            if (f.lastModified() == lastModified) {
-                lastModified = f.lastModified();
-            	return null;
-            }
+    	if ( f != null && f.exists() ) {
     		in = new FileInputStream( f ); 
     	} else {
 	    	ClassLoader loader = getClass().getClassLoader();
@@ -440,7 +492,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				regexMap.put( name, regex );
 			}
 		}
-        
     }
 
     /**

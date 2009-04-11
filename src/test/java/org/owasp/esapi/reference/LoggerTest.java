@@ -32,11 +32,14 @@ import org.owasp.esapi.http.TestHttpServletResponse;
 /**
  * The Class LoggerTest.
  * 
+ * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class LoggerTest extends TestCase {
 
-	private static Logger testLogger = ESAPI.getLogger( "test" );
+	private static int testCount = 0;
+	
+	private static Logger testLogger = null;
 
 	
     /**
@@ -53,7 +56,9 @@ public class LoggerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+    	//This ensures a clean logger between tests
+    	testLogger = ESAPI.getLogger( "test" + testCount++ );
+    	System.out.println("Test logger: " + testLogger);
     }
 
     /**
@@ -61,7 +66,8 @@ public class LoggerTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+    	//this helps, with garbage collection
+    	testLogger = null;
     }
 
     /**
@@ -110,8 +116,8 @@ public class LoggerTest extends TestCase {
         
         // The following tests that the default logging level is set to WARNING. Since the default might be changed
         // in the ESAPI security configuration file, these are commented out.
-       	assertTrue(testLogger.isWarningEnabled());
-       	assertFalse(testLogger.isInfoEnabled());
+//       	assertTrue(testLogger.isWarningEnabled());
+//       	assertFalse(testLogger.isInfoEnabled());
 
         // First, test all the different logging levels
         testLogger.setLevel( Logger.ALL );
@@ -180,21 +186,21 @@ public class LoggerTest extends TestCase {
        	
        	//Now test to see if a change to the logging level in one log affects other logs
        	Logger newLogger = ESAPI.getLogger( "test_num2" );
+       	testLogger.setLevel( Logger.OFF );
        	newLogger.setLevel( Logger.INFO );
-    	assertTrue(testLogger.isFatalEnabled());
-       	assertTrue(testLogger.isErrorEnabled());
-       	assertTrue(testLogger.isWarningEnabled());
-       	assertTrue(testLogger.isInfoEnabled());
+    	assertFalse(testLogger.isFatalEnabled());
+       	assertFalse(testLogger.isErrorEnabled());
+       	assertFalse(testLogger.isWarningEnabled());
+       	assertFalse(testLogger.isInfoEnabled());
        	assertFalse(testLogger.isDebugEnabled());
        	assertFalse(testLogger.isTraceEnabled());
        	
-       	// Set the logging level back to whatever it is configured to be.
-       	testLogger.setLevel( ESAPI.securityConfiguration().getLogLevel() );
-       	
-       	// Normally, the default is Logger.WARNING, but if the default was changed, these tests would fail,
-       	// so there are commented out for now. But you can enable to test.
-       	//assertTrue(testLogger.isWarningEnabled());
-       	//assertTrue(testLogger.isInfoEnabled());
+       	assertTrue(newLogger.isFatalEnabled());
+       	assertTrue(newLogger.isErrorEnabled());
+       	assertTrue(newLogger.isWarningEnabled());
+       	assertTrue(newLogger.isInfoEnabled());
+       	assertFalse(newLogger.isDebugEnabled());
+       	assertFalse(newLogger.isTraceEnabled());
     }
 
     
@@ -214,8 +220,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testTrace() {
         System.out.println("trace");
-        testLogger.trace(Logger.SECURITY_SUCCESS, "test message" );
-        testLogger.trace(Logger.SECURITY_SUCCESS, "test message", null );
+        testLogger.trace(Logger.SECURITY_SUCCESS, "test message trace" );
+        testLogger.trace(Logger.SECURITY_SUCCESS, "test message trace", null );
     }
 
     /**
@@ -223,8 +229,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testDebug() {
         System.out.println("debug");
-        testLogger.debug(Logger.SECURITY_SUCCESS, "test message" );
-        testLogger.debug(Logger.SECURITY_SUCCESS, "test message", null );
+        testLogger.debug(Logger.SECURITY_SUCCESS, "test message debug" );
+        testLogger.debug(Logger.SECURITY_SUCCESS, "test message debug", null );
     }
 
     /**
@@ -232,8 +238,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testError() {
         System.out.println("error");
-        testLogger.error(Logger.SECURITY_SUCCESS, "test message" );
-        testLogger.error(Logger.SECURITY_SUCCESS, "test message", null );
+        testLogger.error(Logger.SECURITY_SUCCESS, "test message error" );
+        testLogger.error(Logger.SECURITY_SUCCESS, "test message error", null );
     }
 
     /**
@@ -241,8 +247,8 @@ public class LoggerTest extends TestCase {
 	 */
     public void testWarning() {
         System.out.println("warning");
-        testLogger.warning(Logger.SECURITY_SUCCESS, "test message" );
-        testLogger.warning(Logger.SECURITY_SUCCESS, "test message", null );
+        testLogger.warning(Logger.SECURITY_SUCCESS, "test message warning" );
+        testLogger.warning(Logger.SECURITY_SUCCESS, "test message warning", null );
     }
 
     /**
@@ -250,8 +256,7 @@ public class LoggerTest extends TestCase {
 	 */
     public void testFatal() {
         System.out.println("fatal");
-        testLogger.fatal(Logger.SECURITY_SUCCESS, "test message" );
-        testLogger.fatal(Logger.SECURITY_SUCCESS, "test message", null );
+        testLogger.fatal(Logger.SECURITY_SUCCESS, "test message fatal" );
+        testLogger.fatal(Logger.SECURITY_SUCCESS, "test message fatal", null );
     }
-    
 }

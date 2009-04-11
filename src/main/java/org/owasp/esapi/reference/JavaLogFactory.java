@@ -16,6 +16,7 @@ import org.owasp.esapi.User;
  * log message with the currently logged in user and the word "SECURITY" for security related events. See the 
  * <a href="JavaLogFactory.JavaLogger.html">JavaLogFactory.JavaLogger</a> Javadocs for the details on the JavaLogger reference implementation.
  * 
+ * @author Mike Fauzy (mike.fauzy@aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.LogFactory
@@ -126,10 +127,6 @@ public class JavaLogFactory implements LogFactory {
         /** The module name using this log. */
         private String moduleName = null;
 
-        // Initialize the current logging level to the value defined in the configuration properties file
-        /** The current level that logging is set to. */ 
-        private static Level currentLevel = 
-        	convertESAPILeveltoLoggerLevel( ESAPI.securityConfiguration().getLogLevel() );
         
         /**
          * Public constructor should only ever be called via the appropriate LogFactory
@@ -141,11 +138,6 @@ public class JavaLogFactory implements LogFactory {
             this.applicationName = applicationName;
             this.moduleName = moduleName;
             this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
-            
-            // Set the logging level defined in the config file.
-            // Beware getting info from SecurityConfiguration, since it logs. We made sure it doesn't log in the
-            // constructor and the getLogLevel() method, so this should work.
-            this.jlogger.setLevel( JavaLogger.currentLevel );
         }
 
         /**
@@ -157,7 +149,7 @@ public class JavaLogFactory implements LogFactory {
         public void setLevel(int level)
         {
         	try {
-        		JavaLogger.currentLevel = convertESAPILeveltoLoggerLevel( level );
+        		jlogger.setLevel(convertESAPILeveltoLoggerLevel( level ));
         	}
         	catch (IllegalArgumentException e) {
        			this.error(Logger.SECURITY_FAILURE, "", e);    		
@@ -288,9 +280,6 @@ public class JavaLogFactory implements LogFactory {
          */
         private void log(Level level, EventType type, String message, Throwable throwable) {
 
-        	// Set the current logging level to the current value since it 'might' have been changed for some other log.
-        	this.jlogger.setLevel( JavaLogger.currentLevel );
-        	
         	// Before we waste all kinds of time preparing this event for the log, let check to see if its loggable
         	if (!jlogger.isLoggable( level )) return;
        	
@@ -349,7 +338,6 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isDebugEnabled() {
-            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.FINE);
         }
 
@@ -357,7 +345,6 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isErrorEnabled() {
-            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(JavaLoggerLevel.ERROR_LEVEL);
         }
 
@@ -365,7 +352,6 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isFatalEnabled() {
-            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.SEVERE);
         }
 
@@ -373,7 +359,6 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isInfoEnabled() {
-            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.INFO);
         }
 
@@ -381,7 +366,6 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isTraceEnabled() {
-            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.FINEST);
         }
 
@@ -389,7 +373,6 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isWarningEnabled() {
-            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.WARNING);
         }
     }
