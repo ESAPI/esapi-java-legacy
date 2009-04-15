@@ -36,8 +36,8 @@ import org.owasp.esapi.Validator;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.http.TestHttpServletRequest;
-import org.owasp.esapi.http.TestHttpServletResponse;
+import org.owasp.esapi.http.MockHttpServletRequest;
+import org.owasp.esapi.http.MockHttpServletResponse;
 
 /**
  * The Class ValidatorTest.
@@ -404,8 +404,8 @@ public class ValidatorTest extends TestCase {
 		optionalNames.add("p4");
 		optionalNames.add("p5");
 		optionalNames.add("p6");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
 		request.addParameter("p1","value");
 		request.addParameter("p2","value");
 		request.addParameter("p3","value");

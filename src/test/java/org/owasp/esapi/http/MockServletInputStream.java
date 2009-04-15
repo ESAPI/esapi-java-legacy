@@ -22,7 +22,7 @@ import java.io.IOException;
  *
  * @author jwilliams
  */
-public class TestServletInputStream extends ServletInputStream {
+public class MockServletInputStream extends ServletInputStream {
 
     private byte[] body;
 
@@ -32,7 +32,7 @@ public class TestServletInputStream extends ServletInputStream {
      * constructor
      * @param body
      */
-    public TestServletInputStream(byte[] body) {
+    public MockServletInputStream(byte[] body) {
         this.body = body;
     }
 

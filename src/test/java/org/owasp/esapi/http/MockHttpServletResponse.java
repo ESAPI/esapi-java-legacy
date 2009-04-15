@@ -26,11 +26,11 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The Class TestHttpServletResponse.
+ * The Class MockHttpServletResponse.
  * 
  * @author jwilliams
  */
-public class TestHttpServletResponse implements HttpServletResponse {
+public class MockHttpServletResponse implements HttpServletResponse {
 
 	/** The cookies. */
 	List cookies = new ArrayList();

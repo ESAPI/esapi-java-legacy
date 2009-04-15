@@ -37,9 +37,9 @@ import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SafeResponse;
-import org.owasp.esapi.http.TestHttpServletRequest;
-import org.owasp.esapi.http.TestHttpServletResponse;
-import org.owasp.esapi.http.TestHttpSession;
+import org.owasp.esapi.http.MockHttpServletRequest;
+import org.owasp.esapi.http.MockHttpServletResponse;
+import org.owasp.esapi.http.MockHttpSession;
 
 /**
  * The Class HTTPUtilitiesTest.
@@ -109,7 +109,7 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testAssertSecureRequest() {
         System.out.println("assertSecureRequest");
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         try {
             request.setRequestURL( "http://example.com");
             ESAPI.httpUtilities().assertSecureRequest( request );
@@ -155,15 +155,15 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testChangeSessionIdentifier() throws EnterpriseSecurityException {
         System.out.println("changeSessionIdentifier");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
-        TestHttpSession session = (TestHttpSession) request.getSession();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpSession session = (MockHttpSession) request.getSession();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         session.setAttribute("one", "one");
         session.setAttribute("two", "two");
         session.setAttribute("three", "three");
         String id1 = session.getId();
-        session = (TestHttpSession) ESAPI.httpUtilities().changeSessionIdentifier( request );
+        session = (MockHttpSession) ESAPI.httpUtilities().changeSessionIdentifier( request );
         String id2 = session.getId();
         assertTrue(!id1.equals(id2));
         assertEquals("one", (String) session.getAttribute("one"));
@@ -178,8 +178,8 @@ public class HTTPUtilitiesTest extends TestCase {
         File home = new File( System.getProperty("user.home" ) + "/.esapi", "uploads" );
         String content = "--ridiculous\r\nContent-Disposition: form-data; name=\"upload\"; filename=\"testupload.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nThis is a test of the multipart broadcast system.\r\nThis is only a test.\r\nStop.\r\n\r\n--ridiculous\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\nSubmit Query\r\n--ridiculous--\r\nEpilogue";
         
-        TestHttpServletRequest request1 = new TestHttpServletRequest("/test", content.getBytes());
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request1 = new MockHttpServletRequest("/test", content.getBytes());
+        MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request1, response);
         try {
             ESAPI.httpUtilities().getSafeFileUploads(request1, home, home);
@@ -188,7 +188,7 @@ public class HTTPUtilitiesTest extends TestCase {
         	// expected
         }
         
-        TestHttpServletRequest request2 = new TestHttpServletRequest("/test", content.getBytes());
+        MockHttpServletRequest request2 = new MockHttpServletRequest("/test", content.getBytes());
         request2.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request2, response);
         try {
@@ -203,7 +203,7 @@ public class HTTPUtilitiesTest extends TestCase {
             fail();
         }
         
-        TestHttpServletRequest request3 = new TestHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes());
+        MockHttpServletRequest request3 = new MockHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes());
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
         try {
@@ -219,7 +219,7 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testIsValidHTTPRequest() {
         System.out.println("isValidHTTPRequest");
-        TestHttpServletRequest request = new TestHttpServletRequest();
+        MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter("p1", "v1");
         request.addParameter("p2", "v3");
         request.addParameter("p3", "v2");
@@ -231,7 +231,7 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("c2", "v2"));
         list.add(new Cookie("c3", "v3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().setCurrentHTTP(request, new TestHttpServletResponse() );
+        ESAPI.httpUtilities().setCurrentHTTP(request, new MockHttpServletResponse() );
         
         // should throw IntrusionException which will be caught in isValidHTTPRequest and return false
         request.setMethod("JEFF");
@@ -255,8 +255,8 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testKillAllCookies() {
         System.out.println("killAllCookies");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
@@ -274,8 +274,8 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testKillCookie() {
         System.out.println("killCookie");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
@@ -297,7 +297,7 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSendSafeRedirect() throws ValidationException, IOException {
         System.out.println("sendSafeRedirect");
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         try {
         	safeResponse.sendRedirect("/test1/abcdefg");
@@ -324,7 +324,7 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSetCookie() {
         System.out.println("setCookie");
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         assertTrue(response.getCookies().isEmpty());
         
@@ -349,8 +349,8 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testGetStateFromEncryptedCookie() throws Exception {
         System.out.println("getStateFromEncryptedCookie");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         
         // test null cookie array
@@ -386,8 +386,8 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSaveStateInEncryptedCookie() {
         System.out.println("saveStateInEncryptedCookie");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         HashMap map = new HashMap();
@@ -411,8 +411,8 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testSaveTooLongStateInEncryptedCookieException() {
     	System.out.println("saveTooLongStateInEncryptedCookie");
 
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         SafeResponse safeResponse = new SafeResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
 
@@ -434,8 +434,8 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSetNoCacheHeaders() {
         System.out.println("setNoCacheHeaders");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         assertTrue(response.getHeaderNames().isEmpty());
         response.addHeader("test1", "1");
@@ -458,10 +458,10 @@ public class HTTPUtilitiesTest extends TestCase {
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
 		user.enable();
-		TestHttpServletRequest request = new TestHttpServletRequest();
+		MockHttpServletRequest request = new MockHttpServletRequest();
 		request.addParameter("username", accountName);
 		request.addParameter("password", password);
-		TestHttpServletResponse response = new TestHttpServletResponse();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 		instance.login( request, response);
 
 		int maxAge = ( 60 * 60 * 24 * 14 );

@@ -26,8 +26,8 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.http.TestHttpServletRequest;
-import org.owasp.esapi.http.TestHttpServletResponse;
+import org.owasp.esapi.http.MockHttpServletRequest;
+import org.owasp.esapi.http.MockHttpServletResponse;
 
 /**
  * The Class LoggerTest.
@@ -94,8 +94,8 @@ public class LoggerTest extends TestCase {
     public void testLogHTTPRequest() throws ValidationException, IOException, AuthenticationException {
         System.out.println("logHTTPRequest");
         String[] ignore = {"password","ssn","ccn"};
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         Logger logger = ESAPI.getLogger("logger");
         ESAPI.httpUtilities().logHTTPRequest( request, logger, Arrays.asList(ignore) );

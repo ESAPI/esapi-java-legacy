@@ -1,0 +1,28 @@
+-------------------------------------------------------------------------------
+Test set: org.owasp.esapi.reference.EncoderConcurrencyMock
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 1, Skipped: 0, Time elapsed: 0.005 sec <<< FAILURE!
+initializationError0(org.owasp.esapi.reference.EncoderConcurrencyMock)  Time elapsed: 0.002 sec  <<< ERROR!
+java.lang.Exception: No runnable methods
+	at org.junit.internal.runners.MethodValidator.validateInstanceMethods(MethodValidator.java:32)
+	at org.junit.internal.runners.MethodValidator.validateMethodsForDefaultRunner(MethodValidator.java:43)
+	at org.junit.internal.runners.JUnit4ClassRunner.validate(JUnit4ClassRunner.java:36)
+	at org.junit.internal.runners.JUnit4ClassRunner.<init>(JUnit4ClassRunner.java:27)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)
+	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:39)
+	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:27)
+	at java.lang.reflect.Constructor.newInstance(Constructor.java:513)
+	at org.junit.internal.requests.ClassRequest.buildRunner(ClassRequest.java:33)
+	at org.junit.internal.requests.ClassRequest.getRunner(ClassRequest.java:28)
+	at org.apache.maven.surefire.junit4.JUnit4TestSet.<init>(JUnit4TestSet.java:45)
+	at org.apache.maven.surefire.junit4.JUnit4DirectoryTestSuite.createTestSet(JUnit4DirectoryTestSuite.java:56)
+	at org.apache.maven.surefire.suite.AbstractDirectoryTestSuite.locateTestSets(AbstractDirectoryTestSuite.java:96)
+	at org.apache.maven.surefire.Surefire.createSuiteFromDefinition(Surefire.java:209)
+	at org.apache.maven.surefire.Surefire.run(Surefire.java:156)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:597)
+	at org.apache.maven.surefire.booter.SurefireBooter.runSuitesInProcess(SurefireBooter.java:338)
+	at org.apache.maven.surefire.booter.SurefireBooter.main(SurefireBooter.java:997)
+

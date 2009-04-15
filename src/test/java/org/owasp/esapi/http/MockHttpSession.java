@@ -26,11 +26,11 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 /**
- * The Class TestHttpSession.
+ * The Class MockHttpSession.
  * 
  * @author jwilliams
  */
-public class TestHttpSession implements HttpSession {
+public class MockHttpSession implements HttpSession {
 
 	/** The invalidated. */
 	boolean invalidated = false;
@@ -53,7 +53,7 @@ public class TestHttpSession implements HttpSession {
 	/**
 	 * Instantiates a new test http session.
 	 */
-	public TestHttpSession() {
+	public MockHttpSession() {
 		// to replace synthetic accessor method
 	}
 	
@@ -65,7 +65,7 @@ public class TestHttpSession implements HttpSession {
 	 * @param accessedTime
 	 *            the accessed time
 	 */
-	public TestHttpSession( long creationTime, long accessedTime ) {
+	public MockHttpSession( long creationTime, long accessedTime ) {
 		this.creationTime = creationTime;
 		this.accessedTime = accessedTime;
 	}
