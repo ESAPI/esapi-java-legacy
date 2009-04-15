@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="0.084" errors="0" skipped="0" tests="2" name="org.owasp.esapi.reference.IntrusionDetectorTest">
+  <properties>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
+    <property name="localRepository" value="C:\Users\kfealey\.m2\repository"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="env.TRACE_FORMAT_SEARCH_PATH" value="\\NTREL202.ntdev.corp.microsoft.com\4F18C3A5-CA09-4DBD-B6FC-219FDD4C6BE0\TraceFormat"/>
+    <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
+    <property name="env.PROMPT" value="$P$G"/>
+    <property name="os.name" value="Windows Vista"/>
+    <property name="env.FP_NO_HOST_CHECK" value="NO"/>
+    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.6.0_10\jre\lib\resources.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\rt.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\jce.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.6.0_10\jre\classes"/>
+    <property name="env.COMPUTERNAME" value="DELALTD830-KF"/>
+    <property name="env.ALLUSERSPROFILE" value="C:\ProgramData"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.runtime.version" value="1.6.0_10-rc-b28"/>
+    <property name="env.HOMEPATH" value="\Users\kfealey"/>
+    <property name="user.name" value="kfealey"/>
+    <property name="env.QTJAVA" value="C:\Program Files\Java\jre6\lib\ext\QTJava.zip"/>
+    <property name="user.language" value="en"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.6.0_10\jre\bin"/>
+    <property name="classworlds.conf" value="C:\Work\Aspect\ESAPI_documentation\.metadata\.plugins\org.maven.ide.eclipse\launches\m2conf57439.tmp"/>
+    <property name="java.version" value="1.6.0_10-rc"/>
+    <property name="env.PROCESSOR_IDENTIFIER" value="x86 Family 6 Model 23 Stepping 6, GenuineIntel"/>
+    <property name="user.timezone" value="America/New_York"/>
+    <property name="env.TEMP" value="C:\Users\kfealey\AppData\Local\Temp"/>
+    <property name="sun.arch.data.model" value="32"/>
+    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk1.6.0_10\jre\lib\endorsed"/>
+    <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
+    <property name="env.HOMEDRIVE" value="C:"/>
+    <property name="sun.jnu.encoding" value="Cp1252"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="file.separator" value="\"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="50.0"/>
+    <property name="user.country" value="US"/>
+    <property name="java.home" value="C:\Program Files\Java\jdk1.6.0_10\jre"/>
+    <property name="env.APPDATA" value="C:\Users\kfealey\AppData\Roaming"/>
+    <property name="env.PUBLIC" value="C:\Users\Public"/>
+    <property name="java.vm.info" value="mixed mode, sharing"/>
+    <property name="env.ComSpec" value="C:\Windows\system32\cmd.exe"/>
+    <property name="env.OS" value="Windows_NT"/>
+    <property name="env.CommonProgramFiles" value="C:\Program Files\Common Files"/>
+    <property name="os.version" value="6.0"/>
+    <property name="path.separator" value=";"/>
+    <property name="java.vm.version" value="11.0-b15"/>
+    <property name="user.variant" value=""/>
+    <property name="env.USERPROFILE" value="C:\Users\kfealey"/>
+    <property name="env.JAVA_HOME" value="C:\j2sdk1.4.2_17"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="env.TMP" value="C:\Users\kfealey\AppData\Local\Temp"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="user.home" value="C:\Users\kfealey"/>
+    <property name="env.ProgramData" value="C:\ProgramData"/>
+    <property name="env.SESSIONNAME" value="Console"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="env.RoxioCentral" value="C:\Program Files\Common Files\Roxio Shared\9.0\Roxio Central33\"/>
+    <property name="env.CLASSPATH" value=".;C:\j2sdk1.4.2_17\jre\lib;C:\Program Files\Java\jre6\lib\ext\QTJava.zip"/>
+    <property name="env.NUMBER_OF_PROCESSORS" value="2"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jdk1.6.0_10\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin/client;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;C:\Work\Aspect\TCL\bin;C:\Program Files\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\"/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
+    <property name="env.USERDNSDOMAIN" value="ASPECTSECURITY.LOCAL"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="maven.home" value="EMBEDDED"/>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="java.class.path" value="/C:/eclipse/plugins/org.maven.ide.components.maven_embedder_2.1.0.20080530-2300/jars/plexus-classworlds-1.2-alpha-12.jar"/>
+    <property name="env.DFSTRACINGON" value="FALSE"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="env.LOGONSERVER" value="\\DEPESRV1425-SBS"/>
+    <property name="env.windir" value="C:\Windows"/>
+    <property name="java.vm.specification.version" value="1.0"/>
+    <property name="env.PROCESSOR_ARCHITECTURE" value="x86"/>
+    <property name="sun.os.patch.level" value="Service Pack 1"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="env.ProgramFiles" value="C:\Program Files"/>
+    <property name="env.com.adobe.versioncue.client.appversion" value="1.0.0"/>
+    <property name="surefire.test.class.path" value="C:\Work\Aspect\ESAPI_documentation\ESAPI\target\test-classes;C:\Work\Aspect\ESAPI_documentation\ESAPI\target\classes;C:\Users\kfealey\.m2\repository\commons-configuration\commons-configuration\1.5\commons-configuration-1.5.jar;C:\Users\kfealey\.m2\repository\commons-collections\commons-collections\3.2\commons-collections-3.2.jar;C:\Users\kfealey\.m2\repository\commons-lang\commons-lang\2.3\commons-lang-2.3.jar;C:\Users\kfealey\.m2\repository\commons-logging\commons-logging\1.1\commons-logging-1.1.jar;C:\Users\kfealey\.m2\repository\log4j\log4j\1.2.12\log4j-1.2.12.jar;C:\Users\kfealey\.m2\repository\logkit\logkit\1.0.1\logkit-1.0.1.jar;C:\Users\kfealey\.m2\repository\avalon-framework\avalon-framework\4.1.3\avalon-framework-4.1.3.jar;C:\Users\kfealey\.m2\repository\javax\servlet\servlet-api\2.4\servlet-api-2.4.jar;C:\Users\kfealey\.m2\repository\commons-digester\commons-digester\1.8\commons-digester-1.8.jar;C:\Users\kfealey\.m2\repository\commons-beanutils\commons-beanutils\1.7.0\commons-beanutils-1.7.0.jar;C:\Users\kfealey\.m2\repository\commons-beanutils\commons-beanutils-core\1.7.0\commons-beanutils-core-1.7.0.jar;C:\Users\kfealey\.m2\repository\junit\junit\4.4\junit-4.4.jar;C:\Users\kfealey\.m2\repository\javax\servlet\jsp-api\2.0\jsp-api-2.0.jar;C:\Users\kfealey\.m2\repository\commons-fileupload\commons-fileupload\1.2\commons-fileupload-1.2.jar;C:\Users\kfealey\.m2\repository\commons-io\commons-io\1.3\commons-io-1.3.jar;C:\Users\kfealey\.m2\repository\OWASP\AntiSamy\1.2\AntiSamy-1.2.jar;C:\Users\kfealey\.m2\repository\xerces\xercesImpl\2.9.1\xercesImpl-2.9.1.jar;C:\Users\kfealey\.m2\repository\xml-apis\xml-apis\1.3.04\xml-apis-1.3.04.jar;C:\Users\kfealey\.m2\repository\nekohtml\nekohtml\0.9.5\nekohtml-0.9.5.jar;"/>
+    <property name="java.io.tmpdir" value="C:\Users\kfealey\AppData\Local\Temp\"/>
+    <property name="env.PROCESSOR_REVISION" value="1706"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
+    <property name="env.SystemRoot" value="C:\Windows"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="os.arch" value="x86"/>
+    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.6.0_10\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="user.dir" value="C:\Work\Aspect\ESAPI_documentation\ESAPI"/>
+    <property name="env.LOCALAPPDATA" value="C:\Users\kfealey\AppData\Local"/>
+    <property name="env.com.adobe.versioncue.client.applocale" value="en_US"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) Client VM"/>
+    <property name="env.PATHEXT" value=".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"/>
+    <property name="env.Path" value="C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin/client;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;C:\Work\Aspect\TCL\bin;C:\Program Files\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\"/>
+    <property name="basedir" value="C:\Work\Aspect\ESAPI_documentation\ESAPI"/>
+    <property name="maven.mode.standalone" value="true"/>
+    <property name="env.USERNAME" value="kfealey"/>
+    <property name="env.SystemDrive" value="C:"/>
+    <property name="file.encoding" value="Cp1252"/>
+    <property name="env.com.adobe.versioncue.client.appname" value="AdobeDrive"/>
+    <property name="env.USERDOMAIN" value="ASPECTSECURITY"/>
+    <property name="java.specification.version" value="1.6"/>
+    <property name="env.PROCESSOR_LEVEL" value="6"/>
+  </properties>
+  <testcase time="0.036" classname="org.owasp.esapi.reference.IntrusionDetectorTest" name="testAddException"/>
+  <testcase time="0.048" classname="org.owasp.esapi.reference.IntrusionDetectorTest" name="testAddEvent"/>
+</testsuite>

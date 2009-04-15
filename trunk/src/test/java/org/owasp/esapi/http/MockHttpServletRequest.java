@@ -33,17 +33,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
- * The Class TestHttpServletRequest.
+ * The Class MockHttpServletRequest.
  * 
  * @author jwilliams
  */
-public class TestHttpServletRequest implements HttpServletRequest {
+public class MockHttpServletRequest implements HttpServletRequest {
 
 	/** The requestDispatcher */
-	private RequestDispatcher requestDispatcher = new TestRequestDispatcher();
+	private RequestDispatcher requestDispatcher = new MockRequestDispatcher();
 	
     /** The session. */
-    private TestHttpSession session = null;
+    private MockHttpSession session = null;
 
     /** The cookies. */
     private ArrayList cookies = new ArrayList();
@@ -67,7 +67,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
     /**
      *
      */
-    public TestHttpServletRequest() {
+    public MockHttpServletRequest() {
     }
 
     /**
@@ -75,7 +75,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * @param uri
      * @param body
      */
-    public TestHttpServletRequest(String uri, byte[] body) {
+    public MockHttpServletRequest(String uri, byte[] body) {
         this.body = body;
         this.uri = uri;
     }
@@ -325,9 +325,9 @@ public class TestHttpServletRequest implements HttpServletRequest {
      */
     public HttpSession getSession(boolean create) {
         if (session == null && create) {
-            session = new TestHttpSession();
+            session = new MockHttpSession();
         } else if (session != null && session.getInvalidated()) {
-            session = new TestHttpSession();
+            session = new MockHttpSession();
         }
         return session;
     }
@@ -445,7 +445,7 @@ public class TestHttpServletRequest implements HttpServletRequest {
      * @throws IOException
      */
     public ServletInputStream getInputStream() throws IOException {
-        return new TestServletInputStream(body);
+        return new MockServletInputStream(body);
     }
 
     /**

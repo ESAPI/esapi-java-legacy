@@ -17,7 +17,7 @@ package org.owasp.esapi.http;
 
 import java.io.IOException;
 
-import javax.servlet.FilterChain;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -26,16 +26,29 @@ import javax.servlet.ServletResponse;
  *
  * @author jwilliams
  */
-public class TestFilterChain implements FilterChain {
+public class MockRequestDispatcher implements RequestDispatcher {
+
     /**
      *
      * @param request
      * @param response
-     * @throws java.io.IOException
      * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
      */
-    public void doFilter( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
-    	// stubbed out for test purposes
+    public void forward(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+    	
     }
-
+    
+    /**
+     *
+     * @param request
+     * @param response
+     * @throws javax.servlet.ServletException
+     * @throws java.io.IOException
+     */
+    public void include(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+    	
+    }
 }
+
+

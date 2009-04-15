@@ -24,9 +24,9 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.User;
-import org.owasp.esapi.http.TestFilterChain;
-import org.owasp.esapi.http.TestHttpServletRequest;
-import org.owasp.esapi.http.TestHttpServletResponse;
+import org.owasp.esapi.http.MockFilterChain;
+import org.owasp.esapi.http.MockHttpServletRequest;
+import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.reference.DefaultEncoder;
 
 /**
@@ -90,9 +90,9 @@ public class ESAPIFilterTest extends TestCase {
 		User user = instance.createUser(accountName, password, password);
 		instance.setCurrentUser(user);
 		user.enable();
-   	    TestHttpServletRequest request = new TestHttpServletRequest();
-		TestHttpServletResponse response = new TestHttpServletResponse();
-		TestFilterChain chain = new TestFilterChain();
+   	    MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		MockFilterChain chain = new MockFilterChain();
         HttpSession session = request.getSession();
         session.setAttribute("ESAPIUserSessionKey", user);
 		

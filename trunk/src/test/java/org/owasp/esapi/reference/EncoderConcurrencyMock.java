@@ -6,7 +6,7 @@ import org.owasp.esapi.ESAPI;
  *
  * @author jwilliams
  */
-public class EncoderConcurrencyTest implements Runnable {
+public class EncoderConcurrencyMock implements Runnable {
 
     /**
      *
@@ -18,9 +18,9 @@ public class EncoderConcurrencyTest implements Runnable {
      * @param args
      */
     public static void main(String[] args) {
-		EncoderConcurrencyTest[] threads = new EncoderConcurrencyTest[10];
+		EncoderConcurrencyMock[] threads = new EncoderConcurrencyMock[10];
 		for (int i = 0; i < 2; i++) {
-			threads[i] = new EncoderConcurrencyTest();
+			threads[i] = new EncoderConcurrencyMock();
 			threads[i].num = i;
 			new Thread( threads[i] ).start();
 		}
