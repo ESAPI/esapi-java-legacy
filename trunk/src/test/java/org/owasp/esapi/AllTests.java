@@ -95,7 +95,7 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.reference.RandomizerTest.suite());
         suite.addTest(org.owasp.esapi.reference.AccessControllerTest.suite());
         suite.addTest(org.owasp.esapi.reference.HTTPUtilitiesTest.suite());
-        suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite());
+//        suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite()); not required in JUnit 4.4
         suite.addTest(org.owasp.esapi.reference.EncryptorTest.suite());
         suite.addTest(org.owasp.esapi.reference.IntrusionDetectorTest.suite());
         suite.addTest(org.owasp.esapi.reference.AccessReferenceMapTest.suite());

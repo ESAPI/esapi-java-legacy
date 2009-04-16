@@ -26,10 +26,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Validator;
@@ -39,55 +35,24 @@ import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 /**
  * The Class ValidatorTest.
  * 
+ * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ValidatorTest extends TestCase {
-
-	/**
-	 * Instantiates a new validator test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public ValidatorTest(String testName) {
-		super(testName);
-	}
-
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void setUp() throws Exception {
-		// none
-	}
-
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void tearDown() throws Exception {
-		// none
-	}
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ValidatorTest.class);
-
-		return suite;
-	}
+public class ValidatorTest {
 
 	/**
 	 * Test of isValidCreditCard method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidCreditCard() {
 		System.out.println("isValidCreditCard");
 		Validator instance = ESAPI.validator();
@@ -100,6 +65,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidEmailAddress method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testisValidInput() {
 		System.out.println("isValidInput");
 		Validator instance = ESAPI.validator();
@@ -128,6 +94,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidSafeHTML method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidSafeHTML() {
 		System.out.println("isValidSafeHTML");
 		Validator instance = ESAPI.validator();
@@ -146,6 +113,7 @@ public class ValidatorTest extends TestCase {
      *
      * @throws Exception
      */
+	@Test
 	public void testGetValidSafeHTML() throws Exception{
 		System.out.println("getValidSafeHTML");
 		Validator instance = ESAPI.validator();
@@ -171,6 +139,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidListItem method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidListItem() {
 		System.out.println("isValidListItem");
 		Validator instance = ESAPI.validator();
@@ -184,6 +153,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidNumber method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidNumber() {
 		System.out.println("isValidNumber");
 		Validator instance = ESAPI.validator();
@@ -221,6 +191,7 @@ public class ValidatorTest extends TestCase {
     /**
      *
      */
+	@Test
     public void testIsValidInteger() {
 		System.out.println("isValidInteger");
 		Validator instance = ESAPI.validator();
@@ -261,6 +232,7 @@ public class ValidatorTest extends TestCase {
      *
      * @throws Exception
      */
+	@Test
 	public void testGetValidDate() throws Exception {
 		System.out.println("getValidDate");
 		Validator instance = ESAPI.validator();
@@ -283,21 +255,30 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidFileName method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidFileName() {
 		System.out.println("isValidFileName");
 		Validator instance = ESAPI.validator();
-		assertTrue(instance.isValidFileName("test", "aspect.jar", false));
-		assertFalse(instance.isValidFileName("test", "", false));
-        try {
-            instance.isValidFileName("test", "abc/def", false);
-        } catch( IntrusionException e ) {
-            // expected
-        }
+		assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false));
+		assertTrue("All Valid Filename Characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false));
 	}
-
+	
+	@Test
+	public void testIsInvalidFilename() {
+		Validator instance = ESAPI.validator();
+		char invalidChars[] = "/\\:*?\"<>|".toCharArray();
+		for(int i = 0; i < invalidChars.length; i++) {
+			assertFalse(invalidChars[i] + " is an invalid character for a filename", 
+					instance.isValidFileName("test", "as" + invalidChars[i] + "pect.jar", false));
+		}
+		assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
+		assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
+	}	
+	
 	/**
 	 * Test of isValidDirectoryPath method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidDirectoryPath() {
 		System.out.println("isValidDirectoryPath");
 
@@ -352,6 +333,7 @@ public class ValidatorTest extends TestCase {
     /**
      *
      */
+	@Test
     public void testIsValidPrintable() {
 		System.out.println("isValidPrintable");
 		Validator instance = ESAPI.validator();
@@ -365,6 +347,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidFileContent method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidFileContent() {
 		System.out.println("isValidFileContent");
 		byte[] content = "This is some file content".getBytes();
@@ -375,6 +358,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidFileUpload method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidFileUpload() {
 		System.out.println("isValidFileUpload");
 
@@ -393,6 +377,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test of isValidParameterSet method, of class org.owasp.esapi.Validator.
 	 */
+	@Test
 	public void testIsValidParameterSet() {
 		System.out.println("isValidParameterSet");
 
@@ -423,6 +408,7 @@ public class ValidatorTest extends TestCase {
 	/**
 	 * Test safe read line.
 	 */
+	@Test
 	public void testSafeReadLine() {
 		System.out.println("safeReadLine");
 		

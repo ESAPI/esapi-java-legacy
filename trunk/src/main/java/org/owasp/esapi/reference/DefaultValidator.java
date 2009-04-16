@@ -544,7 +544,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 			
 			// the path is valid if the input matches the canonical path
-			if (!input.equals(cpath.toLowerCase())) {
+			if (!input.equals(cpath)) {
 				throw new ValidationException( context + ": Invalid file name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical, context );
 			}
 
