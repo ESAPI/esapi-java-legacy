@@ -72,8 +72,8 @@ public class ESAPITest extends TestCase {
 	 */
 	public void testSetters() throws Exception {
 		System.out.println("testSetters");
-		ESAPI.setAccessController(ESAPI.accessController());
 		ESAPI.setAuthenticator(ESAPI.authenticator());
+		ESAPI.setAccessController(ESAPI.accessController());
 		ESAPI.setEncoder(ESAPI.encoder());
 		ESAPI.setEncryptor(ESAPI.encryptor());
 		ESAPI.setExecutor(ESAPI.executor());
