@@ -291,24 +291,17 @@ public class Log4JLogFactory implements LogFactory {
                 }
             }
             
-            // convert the stack trace into something that can be logged
-            if ( throwable != null ) {
-            	String fqn = throwable.getClass().getName();
-            	int index = fqn.lastIndexOf('.');
-            	if ( index > 0 ) fqn = fqn.substring(index + 1);
-            	StackTraceElement ste = throwable.getStackTrace()[0];
-            	clean += "\n    " + fqn + " @ " + ste.getClassName() + "." + ste.getMethodName() + "(" + ste.getFileName() 
-            		+ ":" + ste.getLineNumber() + ")";
-            	clean += "\n	" + throwable.getMessage();
-            }
-            
             // create the message to log
             String msg = "";
             if ( user != null && type != null) {
             	msg = type + "-" + (type.isSuccess() ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
             }
+            if(throwable == null) {
+            	jlogger.log(level, applicationName + ":" + moduleName + ":" + msg);
+            } else {
+            	jlogger.log(level, applicationName + ":" + moduleName + ":" + msg, throwable);
+            }
             
-            jlogger.log(level, applicationName + ":" + moduleName + ":" + msg);
         }
 
         /**

@@ -313,25 +313,17 @@ public class JavaLogFactory implements LogFactory {
                     clean += " (Encoded)";
                 }
             }
-            
-            // convert the stack trace into something that can be logged
-            if ( throwable != null ) {
-            	String fqn = throwable.getClass().getName();
-            	int index = fqn.lastIndexOf('.');
-            	if ( index > 0 ) fqn = fqn.substring(index + 1);
-            	StackTraceElement ste = throwable.getStackTrace()[0];
-            	clean += "\n    " + fqn + " @ " + ste.getClassName() + "." + ste.getMethodName() + "(" + ste.getFileName() 
-            		+ ":" + ste.getLineNumber() + ")";
-            	clean += "\n	" + throwable.getMessage();
-            }
-            
+                        
             // create the message to log
             String msg = "";
             if ( user != null ) {
             	msg = type + "-" + (type.isSuccess() ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
             }
-            
-            jlogger.logp(level, applicationName, moduleName, msg);
+            if(throwable == null) {
+            	jlogger.logp(level, applicationName, moduleName, msg);	
+            } else {
+            	jlogger.logp(level, applicationName, moduleName, msg, throwable);
+            }
         }
 
         /**
