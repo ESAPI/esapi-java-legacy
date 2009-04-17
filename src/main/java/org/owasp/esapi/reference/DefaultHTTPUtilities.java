@@ -359,9 +359,21 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		if ( !tempDir.exists() ) {
 		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
 		}
-		if ( !finalDir.exists() ) { 
-		    if ( !finalDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + finalDir.getAbsolutePath() );
+		
+		if( finalDir != null){
+			if ( !finalDir.exists() ) { 
+				if ( !finalDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + finalDir.getAbsolutePath() );
+			}
 		}
+		else {
+			if ( !ESAPI.securityConfiguration().getUpoloadDirectory().exists()) { 
+				if ( !ESAPI.securityConfiguration().getUpoloadDirectory().mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + ESAPI.securityConfiguration().getUpoloadDirectory().getAbsolutePath() );
+			}
+			finalDir = ESAPI.securityConfiguration().getUpoloadDirectory();
+		}
+		
+		
+		
 		List newFiles = new ArrayList();
 		try {
 			final HttpSession session = request.getSession(false);

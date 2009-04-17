@@ -338,7 +338,7 @@ public interface HTTPUtilities {
      */
     void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response);
     
-    /**
+     /**
      * Retrieves the current HttpServletRequest
      * 
      * @return the current request
