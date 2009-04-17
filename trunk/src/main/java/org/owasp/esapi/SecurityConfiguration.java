@@ -110,6 +110,13 @@ public interface SecurityConfiguration {
 	public byte[] getMasterKey();
 
 	/**
+     * Retrieves the default upload directory declared in the ESAPI properties file.
+     * 
+     * @return the default upload directory declared in the ESAPI properties file
+     */
+    public File getUpoloadDirectory();
+	
+	/**
 	 * Gets the keystore used to hold any encryption keys used by your application.
 	 * 
 	 * @return the current keystore

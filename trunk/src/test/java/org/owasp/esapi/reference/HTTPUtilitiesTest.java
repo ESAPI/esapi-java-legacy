@@ -175,6 +175,7 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testGetFileUploads() throws IOException {
         System.out.println("getFileUploads");
+        //System.out.println("ESAPI.properties default upload location set to: " + ESAPI.securityConfiguration().getUpoloadDirectory());
         File home = new File( System.getProperty("user.home" ) + "/.esapi", "uploads" );
         String content = "--ridiculous\r\nContent-Disposition: form-data; name=\"upload\"; filename=\"testupload.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nThis is a test of the multipart broadcast system.\r\nThis is only a test.\r\nStop.\r\n\r\n--ridiculous\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\nSubmit Query\r\n--ridiculous--\r\nEpilogue";
         
@@ -211,6 +212,21 @@ public class HTTPUtilitiesTest extends TestCase {
             fail();
         } catch (ValidationException e) {
         	// expected
+        }
+        
+        MockHttpServletRequest request4 = new MockHttpServletRequest("/test", content.getBytes());
+        request2.setContentType( "multipart/form-data; boundary=ridiculous");
+        ESAPI.httpUtilities().setCurrentHTTP(request2, response);
+        try {
+            List list = ESAPI.httpUtilities().getSafeFileUploads(request2, home, null);
+            Iterator i = list.iterator();
+            while ( i.hasNext() ) {
+            	File f = (File)i.next();
+            	System.out.println( "  " + f.getAbsolutePath() );
+            }
+            assertTrue( list.size() > 0 );
+        } catch (ValidationException e) {
+            fail();
         }
     }
 

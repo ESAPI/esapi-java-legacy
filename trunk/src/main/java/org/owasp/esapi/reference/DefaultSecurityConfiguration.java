@@ -116,10 +116,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
     
     private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
+    
+    private static final String UPLOAD_DIRECTORY = "UploadDir";
         
     protected final int MAX_REDIRECT_LOCATION = 1000;
 
     protected final int MAX_FILE_NAME_LENGTH = 1000;
+    
+    
 
 
     /*
@@ -570,6 +574,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return Integer.parseInt(max);
     }
 
+    /**
+	 * {@inheritDoc}
+	 */
+    public File getUpoloadDirectory() {
+    	File uploadDirectory = new File(properties.getProperty(UPLOAD_DIRECTORY, "UploadDir"));
+    	return uploadDirectory;
+    }
+    
     /**
 	 * {@inheritDoc}
 	 */
