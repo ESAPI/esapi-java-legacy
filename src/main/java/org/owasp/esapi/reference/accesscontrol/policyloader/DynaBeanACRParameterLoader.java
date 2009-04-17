@@ -1,12 +1,16 @@
 package org.owasp.esapi.reference.accesscontrol.policyloader;
 
 import org.apache.commons.configuration.XMLConfiguration;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.reference.accesscontrol.DynaBeanACRParameter;
 
 import static org.owasp.esapi.reference.accesscontrol.policyloader.ACRParameterLoaderHelper.getParameterValue;
 
 final public class DynaBeanACRParameterLoader  
 	implements ACRParameterLoader<DynaBeanACRParameter> {
+	
+	Logger logger = ESAPI.getLogger(this.getClass());
 	
 //	@Override
 	public DynaBeanACRParameter getParameters(XMLConfiguration config, int currentRule) throws java.lang.Exception { //TODO reduce the exception
@@ -19,7 +23,8 @@ final public class DynaBeanACRParameterLoader
 			policyParameter.set(parameterName, parameterValue);
 		}
 		policyParameter.lock(); //This line makes the policyParameter read only. 
-		
+		logger.info(Logger.SECURITY_SUCCESS, "Loaded " + numberOfParameters + 
+				" parameters: " + policyParameter.toString());
 		return policyParameter;
 	}
 }

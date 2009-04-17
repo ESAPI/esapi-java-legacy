@@ -25,6 +25,64 @@
 				<Parameter name="isTrue" type="Boolean" value="true"/>
 			</Parameters>
 		</AccessControlRule>
+		
+		<!-- 
+			The following Rules are for backwards compatibility with
+			the deprecated AcessController 1.0 reference implementation
+			specification
+		-->
+		<AccessControlRule
+			name="AC 1.0 Data"
+			description="See delegateClass's code comments"
+			class="org.owasp.esapi.reference.accesscontrol.DelegatingACR">
+			<Parameters>
+				<Parameter name="delegateClass" type="String" value="org.owasp.esapi.reference.accesscontrol.FileBasedACRs"/> 
+				<Parameter name="delegateMethod" type="String" value="isAuthorizedForData"/>
+				<Parameter name="parameterClasses" type="StringArray" value="java.lang.String, java.lang.Object"/>
+			</Parameters>
+		</AccessControlRule>
+		<AccessControlRule
+			name="AC 1.0 File"
+			description="See delegateClass's code comments"
+			class="org.owasp.esapi.reference.accesscontrol.DelegatingACR">
+			<Parameters>
+				<Parameter name="delegateClass" type="String" value="org.owasp.esapi.reference.accesscontrol.FileBasedACRs"/>
+				<Parameter name="delegateMethod" type="String" value="isAuthorizedForFile"/>
+				<Parameter name="parameterClasses" type="StringArray" value="java.lang.String"/>
+			</Parameters>
+		</AccessControlRule>
+		<AccessControlRule
+			name="AC 1.0 Function"
+			description="See delegateClass's code comments"
+			class="org.owasp.esapi.reference.accesscontrol.DelegatingACR">
+			<Parameters>
+				<Parameter name="delegateClass" type="String" value="org.owasp.esapi.reference.accesscontrol.FileBasedACRs"/>
+				<Parameter name="delegateMethod" type="String" value="isAuthorizedForFunction"/>
+				<Parameter name="parameterClasses" type="StringArray" value="java.lang.String"/>
+			</Parameters>
+		</AccessControlRule>
+		<AccessControlRule
+			name="AC 1.0 Service"
+			description="See delegateClass's code comments"
+			class="org.owasp.esapi.reference.accesscontrol.DelegatingACR">
+			<Parameters>
+				<Parameter name="delegateClass" type="String" value="org.owasp.esapi.reference.accesscontrol.FileBasedACRs"/>
+				<Parameter name="delegateMethod" type="String" value="isAuthorizedForService"/>
+				<Parameter name="parameterClasses" type="StringArray" value="java.lang.String"/>
+			</Parameters>
+		</AccessControlRule>
+		<AccessControlRule
+			name="AC 1.0 URL"
+			description="See delegateClass's code comments"
+			class="org.owasp.esapi.reference.accesscontrol.DelegatingACR">
+			<Parameters>
+				<Parameter name="delegateClass" type="String" value="org.owasp.esapi.reference.accesscontrol.FileBasedACRs"/>
+				<Parameter name="delegateMethod" type="String" value="isAuthorizedForURL"/>
+				<Parameter name="parameterClasses" type="StringArray" value="java.lang.String"/>
+			</Parameters>
+		</AccessControlRule>
+		
+		<!-- End Rules for backwards compatibility with Access Controller 1.0 -->
 	</AccessControlRules>
 </AccessControlPolicy>
 
