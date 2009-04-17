@@ -4,7 +4,7 @@ import org.owasp.esapi.AccessControlRule;
 
 abstract public class BaseACR<P, R> implements AccessControlRule<P, R> {
 
-	P policyParameters;
+	protected P policyParameters;
 	
 //	@Override
 	public void setPolicyParameters(P policyParameter) {
