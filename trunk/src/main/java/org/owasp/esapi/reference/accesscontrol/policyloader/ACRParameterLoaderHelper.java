@@ -10,6 +10,8 @@ final public class ACRParameterLoaderHelper {
 		Object parameterValue;
 		if("String".equalsIgnoreCase(parameterType)) {
 			parameterValue = config.getString(key);
+		} else if("StringArray".equalsIgnoreCase(parameterType)) {
+			parameterValue = config.getStringArray(key);
 		} else if("Boolean".equalsIgnoreCase(parameterType)){ 
 			parameterValue = config.getBoolean(key);
 		} else if("Byte".equalsIgnoreCase(parameterType)){ 

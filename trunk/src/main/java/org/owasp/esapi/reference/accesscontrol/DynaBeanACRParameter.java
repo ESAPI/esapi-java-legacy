@@ -3,6 +3,7 @@ package org.owasp.esapi.reference.accesscontrol;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.commons.beanutils.*;
 import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyParameters;
@@ -125,6 +126,15 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	public String getString(String key) {
 		return (String)get(key);
 	}
+	
+	public String getString(String key, String defaultValue) {
+		return (String)get(key) == null ? defaultValue : (String)get(key);
+	}
+	
+	public String[] getStringArray(String key) {
+		return (String[])get(key);
+	}
+	
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
@@ -158,4 +168,19 @@ public class DynaBeanACRParameter implements PolicyParameters {
 		policyProperties.setRestricted(true);
 	}
 	
+	public String toString() {
+		StringBuffer stringBuffer = new StringBuffer();
+		Iterator keys = policyProperties.getMap().keySet().iterator();
+		String currentKey;
+		while(keys.hasNext()) {
+			currentKey = (String)keys.next();
+			stringBuffer.append(currentKey);
+			stringBuffer.append("=");
+			stringBuffer.append(policyProperties.get(currentKey));
+			if(keys.hasNext()) {
+				stringBuffer.append(",");
+			}
+		}
+		return stringBuffer.toString();
+	}
 }

@@ -104,7 +104,7 @@ public class AccessControllerTest {
 		policyParameter = new DynaBeanACRParameter();
 		policyParameter.set("delegateClass", "java.lang.Object");
 		policyParameter.set("delegateMethod", "equals");
-		policyParameter.set("parameterClasses", "java.lang.Object");
+		policyParameter.set("parameterClasses", new String[] {"java.lang.Object"});
 		delegatingACR.setPolicyParameters(policyParameter);
 		org.junit.Assert.assertFalse(delegatingACR.isAuthorized(new Object[] {new Object()}));
 		org.junit.Assert.assertFalse(delegatingACR.isAuthorized(new Object[] {delegatingACR}));
@@ -112,7 +112,7 @@ public class AccessControllerTest {
 		
 		policyParameter.set("delegateClass", "org.owasp.esapi.reference.accesscontrol.AlwaysTrueACR");
 		policyParameter.set("delegateMethod", "isAuthorized");
-		policyParameter.set("parameterClasses", "java.lang.Object");
+		policyParameter.set("parameterClasses", new String[] {"java.lang.Object"});
 		delegatingACR.setPolicyParameters(policyParameter);
 		org.junit.Assert.assertTrue(delegatingACR.isAuthorized(new Object[] {null}));
 		
@@ -120,7 +120,7 @@ public class AccessControllerTest {
 		policyParameter = new DynaBeanACRParameter();
 		policyParameter.set("delegateClass", "org.owasp.esapi.reference.accesscontrol.AlwaysFalseACR");
 		policyParameter.set("delegateMethod", "isAuthorized");
-		policyParameter.set("parameterClasses", "java.lang.Object");
+		policyParameter.set("parameterClasses", new String[] {"java.lang.Object"});
 		delegatingACR.setPolicyParameters(policyParameter);
 		org.junit.Assert.assertFalse(delegatingACR.isAuthorized(new Object[] {null}));
 	}

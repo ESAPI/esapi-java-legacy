@@ -73,18 +73,9 @@ public class DefaultAccessController implements AccessController {
 					" runtimeParameter: " + runtimeParameter);
 		}
 	}
-
-	
-	
-	
 	
 	/**** Below this line is legacy support ****/
 	
-	
-	
-	
-	FileBasedAccessController legacySupport = new FileBasedAccessController();
-
 	/**
 	 * @param action
 	 * @param data
@@ -94,18 +85,7 @@ public class DefaultAccessController implements AccessController {
 	 */
 	public void assertAuthorizedForData(String action, Object data)
 			throws AccessControlException {
-		legacySupport.assertAuthorizedForData(action, data);
-	}
-
-	/**
-	 * @param key
-	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForData(java.lang.String)
-	 * @deprecated
-	 */
-	public void assertAuthorizedForData(String key)
-			throws AccessControlException {
-		legacySupport.assertAuthorizedForData(key);
+		this.assertAuthorized("AC 1.0 Data", new Object[] {action, data});
 	}
 
 	/**
@@ -116,7 +96,7 @@ public class DefaultAccessController implements AccessController {
 	 */
 	public void assertAuthorizedForFile(String filepath)
 			throws AccessControlException {
-		legacySupport.assertAuthorizedForFile(filepath);
+		this.assertAuthorized("AC 1.0 File", new Object[] {filepath});
 	}
 
 	/**
@@ -127,7 +107,7 @@ public class DefaultAccessController implements AccessController {
 	 */
 	public void assertAuthorizedForFunction(String functionName)
 			throws AccessControlException {
-		legacySupport.assertAuthorizedForFunction(functionName);
+		this.assertAuthorized("AC 1.0 Function", new Object[] {functionName});
 	}
 
 	/**
@@ -138,7 +118,7 @@ public class DefaultAccessController implements AccessController {
 	 */
 	public void assertAuthorizedForService(String serviceName)
 			throws AccessControlException {
-		legacySupport.assertAuthorizedForService(serviceName);
+		this.assertAuthorized("AC 1.0 Service", new Object[] {serviceName});
 	}
 
 	/**
@@ -149,7 +129,7 @@ public class DefaultAccessController implements AccessController {
 	 */
 	public void assertAuthorizedForURL(String url)
 			throws AccessControlException {
-		legacySupport.assertAuthorizedForURL(url);
+		this.assertAuthorized("AC 1.0 URL(", new Object[] {url});
 	}
 
 	/**
@@ -160,17 +140,7 @@ public class DefaultAccessController implements AccessController {
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForData(String action, Object data) {
-		return legacySupport.isAuthorizedForData(action, data);
-	}
-
-	/**
-	 * @param key
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForData(java.lang.String)
-	 * @deprecated
-	 */
-	public boolean isAuthorizedForData(String key) {
-		return legacySupport.isAuthorizedForData(key);
+		return this.isAuthorized("AC 1.0 Data", new Object[] {action, data});
 	}
 
 	/**
@@ -180,7 +150,7 @@ public class DefaultAccessController implements AccessController {
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForFile(String filepath) {
-		return legacySupport.isAuthorizedForFile(filepath);
+		return this.isAuthorized("AC 1.0 File", new Object[] {filepath});
 	}
 
 	/**
@@ -190,7 +160,7 @@ public class DefaultAccessController implements AccessController {
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForFunction(String functionName) {
-		return legacySupport.isAuthorizedForFunction(functionName);
+		return this.isAuthorized("AC 1.0 Function", new Object[] {functionName});
 	}
 
 	/**
@@ -200,7 +170,7 @@ public class DefaultAccessController implements AccessController {
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForService(String serviceName) {
-		return legacySupport.isAuthorizedForService(serviceName);
+		return this.isAuthorized("AC 1.0 Service", new Object[] {serviceName});
 	}
 
 	/**
@@ -210,6 +180,6 @@ public class DefaultAccessController implements AccessController {
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForURL(String url) {
-		return legacySupport.isAuthorizedForURL(url);
+		return this.isAuthorized("AC 1.0 URL", new Object[] {url});
 	}
 }

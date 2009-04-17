@@ -43,8 +43,8 @@ final public class PolicyDTO {
 			accessControlRules.put(key, accessControlRule);
 		} catch (Exception e) {
 			throw new AccessControlException(
-					"Unable to create Access Control Rule for key: " + key
-							+ " with policyParameters: " + policyParameter,
+					"Unable to create Access Control Rule for key: \"" + key
+							+ "\" with policyParameters: \"" + policyParameter + "\"",
 					"", 
 					e);
 		}

@@ -30,34 +30,39 @@ final public class ACRPolicyFileLoader {
 		} 
 
 		Object property = config.getProperty("AccessControlRules.AccessControlRule[@name]");
+		logger.info(Logger.EVENT_SUCCESS, "Loading Property: " + property);
 		int numberOfRules = 0;
 		if(property instanceof Collection) {
-			numberOfRules = ((Collection)property).size(); 
-		} //TODO MHF, what is the count and class if it's not a collection? 0 or 1?
-		
-		 
+			numberOfRules = ((Collection)property).size();
+		} //implied else property == null -> return new PolicyDTO
+				 
+		String ruleName = "";
+		String ruleClass = "";
+		Object rulePolicyParameter = null;
+		int currentRule = 0;
 	    try {	    	
-	    	logger.error(Logger.EVENT_SUCCESS, "Number of rules: " + numberOfRules);
-			String ruleName;
-			String ruleClass;
-			Object rulePolicyParameter;
-			for(int currentRule = 0; currentRule < numberOfRules; currentRule++) {
-				logger.error(Logger.EVENT_SUCCESS, "----");
+	    	logger.info(Logger.EVENT_SUCCESS, "Number of rules: " + numberOfRules);
+			for(currentRule = 0; currentRule < numberOfRules; currentRule++) {
+				logger.trace(Logger.EVENT_SUCCESS, "----");
 				ruleName = config.getString("AccessControlRules.AccessControlRule(" + currentRule + ")[@name]");
-				logger.error(Logger.EVENT_SUCCESS, "Rule name: " + ruleName);
+				logger.trace(Logger.EVENT_SUCCESS, "Rule name: " + ruleName);
 				ruleClass = config.getString("AccessControlRules.AccessControlRule(" + currentRule + ")[@class]");
-				logger.error(Logger.EVENT_SUCCESS, "Rule Class: " + ruleClass);
+				logger.trace(Logger.EVENT_SUCCESS, "Rule Class: " + ruleClass);
 				rulePolicyParameter = getPolicyParameter(config, currentRule);
-				logger.error(Logger.EVENT_SUCCESS, "rulePolicyParameters: " + rulePolicyParameter);
+				logger.trace(Logger.EVENT_SUCCESS, "rulePolicyParameters: " + rulePolicyParameter);
 				policyDTO.addAccessControlRule(
 						ruleName,
 						ruleClass,
 						rulePolicyParameter);		    	
-				logger.error(Logger.EVENT_SUCCESS, "policyDTO: " + policyDTO);
-			}			
+			}
+			logger.info(Logger.EVENT_SUCCESS, "policyDTO loaded: " + policyDTO);
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new AccessControlException("Unable to load AccessControlRule parameter", "", e);
+			throw new AccessControlException("Unable to load AccessControlRule parameter. " + 
+					" Rule number: " + currentRule + 
+					" Probably: Rule.name: " + ruleName +
+					" Probably: Rule.class: " + ruleClass +
+					e.getMessage(), "", e);
 		}
 		return policyDTO;
 	}
@@ -66,10 +71,20 @@ final public class ACRPolicyFileLoader {
 		throws ClassNotFoundException, IllegalAccessException, InstantiationException, Exception {
 		//If there aren't any properties: short circuit and return null.
 //		Properties tempParameters = config.getProperties("AccessControlRules.AccessControlRule(" + currentRule + ").Parameters.Parameter[@name]");
-		Properties tempParameters = config.getProperties("AccessControlRules.AccessControlRule(" + currentRule + ").Parameters.Parameter(1)[@name]");
-
-		if(tempParameters == null ||
-			"".equals(tempParameters)) { //tempParameters.size() < 1) {
+		Object property = config.getProperty("AccessControlRules.AccessControlRule(" + currentRule + ").Parameters.Parameter[@name]");
+		if(property == null) {
+			return null;
+		}
+		
+		int numberOfProperties = 0;		
+		if(property instanceof Collection) {
+			numberOfProperties = ((Collection)property).size(); 
+		} else {
+			numberOfProperties = 1;
+		}
+		logger.info(Logger.EVENT_SUCCESS, "Number of properties: " + numberOfProperties);
+		
+		if(numberOfProperties < 1) {
 			return null;
 		}
 		String parametersLoaderClassName = config.getString("AccessControlRules.AccessControlRule(" + currentRule + ").Parameters[@parametersLoader]");
@@ -77,7 +92,7 @@ final public class ACRPolicyFileLoader {
 			//this default should have a properties file override option
 			parametersLoaderClassName = "org.owasp.esapi.reference.accesscontrol.policyloader.DynaBeanACRParameterLoader";
 		}
-		logger.error(Logger.EVENT_SUCCESS, "Parameters Loader:" + parametersLoaderClassName);
+		logger.info(Logger.EVENT_SUCCESS, "Parameters Loader:" + parametersLoaderClassName);
 		ACRParameterLoader acrParamaterLoader = 
 			(ACRParameterLoader)
 			Class.forName(parametersLoaderClassName).newInstance();
