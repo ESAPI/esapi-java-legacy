@@ -46,13 +46,13 @@ import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.reference.validation.CreditCardValidationRule;
-import org.owasp.esapi.reference.validation.DateValidationRule;
-import org.owasp.esapi.reference.validation.HTMLValidationRule;
-import org.owasp.esapi.reference.validation.IntegerValidationRule;
-import org.owasp.esapi.reference.validation.NumberValidationRule;
-import org.owasp.esapi.reference.validation.StringValidationRule;
-import org.owasp.esapi.ValidationRule;
+import org.owasp.esapi.validation.CreditCardValidationRule;
+import org.owasp.esapi.validation.DateValidationRule;
+import org.owasp.esapi.validation.HTMLValidationRule;
+import org.owasp.esapi.validation.IntegerValidationRule;
+import org.owasp.esapi.validation.NumberValidationRule;
+import org.owasp.esapi.validation.StringValidationRule;
+import org.owasp.esapi.validation.ValidationRule;
 
 /**
  * Reference implementation of the Validator interface. This implementation
@@ -575,7 +575,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 			
 			// the path is valid if the input matches the canonical path
-			if (!input.equals(cpath)) {
+			if (!input.equals(cpath.toLowerCase())) {
 				throw new ValidationException( context + ": Invalid file name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical, context );
 			}
 
@@ -588,9 +588,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 		// verify extensions
 		List extensions = ESAPI.securityConfiguration().getAllowedFileExtensions();
-		Iterator<String> i = extensions.iterator();
+		Iterator i = extensions.iterator();
 		while (i.hasNext()) {
-			String ext = i.next();
+			String ext = (String) i.next();
 			if (input.toLowerCase().endsWith(ext.toLowerCase())) {
 				return canonical;
 			}
@@ -928,17 +928,17 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			String name = (String) entry.getKey();
 			getValidInput( "HTTP request parameter: " + name, name, "HTTPParameterName", MAX_PARAMETER_NAME_LENGTH, false );
 			String[] values = (String[]) entry.getValue();
-			Iterator<String> i3 = Arrays.asList(values).iterator();
+			Iterator i3 = Arrays.asList(values).iterator();
 			while (i3.hasNext()) {
-				String value = i3.next();
+				String value = (String) i3.next();
 				getValidInput( "HTTP request parameter: " + name, value, "HTTPParameterValue", MAX_PARAMETER_VALUE_LENGTH, true );
 			}
 		}
 
 		if (request.getCookies() != null) {
-			Iterator<Cookie> i2 = Arrays.asList(request.getCookies()).iterator();
+			Iterator i2 = Arrays.asList(request.getCookies()).iterator();
 			while (i2.hasNext()) {
-				Cookie cookie = i2.next();
+				Cookie cookie = (Cookie) i2.next();
 				String name = cookie.getName();
 				getValidInput( "HTTP request cookie: " + name, name, "HTTPCookieName", MAX_PARAMETER_NAME_LENGTH, true );
 				String value = cookie.getValue();
@@ -946,14 +946,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			}
 		}
 
-		Enumeration<String> e = request.getHeaderNames();
+		Enumeration e = request.getHeaderNames();
 		while (e.hasMoreElements()) {
-			String name = e.nextElement();
+			String name = (String) e.nextElement();
 			if (name != null && !name.equalsIgnoreCase( "Cookie")) {
 				getValidInput( "HTTP request header: " + name, name, "HTTPHeaderName", MAX_PARAMETER_NAME_LENGTH, true );				
-				Enumeration<String> e2 = request.getHeaders(name);
+				Enumeration e2 = request.getHeaders(name);
 				while (e2.hasMoreElements()) {
-					String value = e2.nextElement();
+					String value = (String) e2.nextElement();
 					getValidInput( "HTTP request header: " + name, value, "HTTPHeaderValue", MAX_PARAMETER_VALUE_LENGTH, true );
 				}
 			}

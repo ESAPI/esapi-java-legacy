@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.ValidationRule;
 
 
 /**
@@ -46,6 +47,10 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public interface Validator {
 
+	void addRule( ValidationRule rule );
+
+	ValidationRule getRule( String name );
+	
 	/**
 	 * Returns true if input is valid according to the specified type. The type parameter must be the name 
 	 * of a defined type in the ESAPI configuration or a valid regular expression. Implementers should take 
@@ -885,7 +890,7 @@ public interface Validator {
 	 * 
 	 * @throws IntrusionException
 	 */
-	boolean isValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws IntrusionException;
+	boolean isValidPrintable(String context, char[] input, int maxLength, boolean allowNull) throws IntrusionException;
 
 	/**
 	 * Returns canonicalized and validated printable characters as a byte array. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
@@ -904,7 +909,7 @@ public interface Validator {
 	 *  
 	 *  @throws ValidationException
 	 */
-	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull) throws ValidationException;
+	char[] getValidPrintable(String context, char[] input, int maxLength, boolean allowNull) throws ValidationException;
 
 	/**
 	 * Returns canonicalized and validated printable characters as a byte array. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
@@ -926,7 +931,7 @@ public interface Validator {
 	 * 
 	 * @throws IntrusionException
 	 */
-	byte[] getValidPrintable(String context, byte[] input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
+	char[] getValidPrintable(String context, char[] input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
 	
 	/**
