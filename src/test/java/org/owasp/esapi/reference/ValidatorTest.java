@@ -16,9 +16,9 @@
 package org.owasp.esapi.reference;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,10 +30,10 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
+import org.owasp.esapi.reference.validation.HTMLValidationRule;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -102,6 +102,10 @@ public class ValidatorTest {
 		assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
 		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
 		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
+		assertFalse(instance.isValidSafeHTML("test", "Test. <div style={xss:expression(xss)}>", 100, false));
+		assertFalse(instance.isValidSafeHTML("test", "Test. <s%00cript>alert(document.cookie)</script>", 100, false));
+		assertFalse(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
+		assertFalse(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
 
 		// TODO: waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
@@ -117,6 +121,20 @@ public class ValidatorTest {
 	public void testGetValidSafeHTML() throws Exception{
 		System.out.println("getValidSafeHTML");
 		Validator instance = ESAPI.validator();
+		
+		// new school test case setup
+		HTMLValidationRule rule = new HTMLValidationRule( "test" );
+		ESAPI.validator().addRule( rule );
+		
+		// new school test case		
+		try {
+			ESAPI.validator().getRule( "test" ).getValid("test", "Test. <script>alert(document.cookie)</script>" );
+			fail();
+		} catch( Exception e ) {
+			// expected
+		}
+		
+		
 		String test1 = "<b>Jeff</b>";
 		String result1 = instance.getValidSafeHTML("test", test1, 100, false);
 		assertEquals(test1, result1);
@@ -126,9 +144,13 @@ public class ValidatorTest {
 		assertEquals(test2, result2);
 		
 		String test3 = "Test. <script>alert(document.cookie)</script>";
-		String result3 = instance.getValidSafeHTML("test", test3, 100, false);
-		assertEquals("Test.", result3);
+		assertEquals("Test.", rule.getSafe("test", test3 ));
 		
+		assertEquals( "Test. &lt;<div>load=alert()</div>",rule.getSafe("test", "Test. <<div on<script></script>load=alert()" ));
+		assertEquals( "Test. <div>b</div>",rule.getSafe("test", "Test. <div style={xss:expression(xss)}>b</div>"));
+		assertEquals( "Test.",rule.getSafe("test", "Test. <s%00cript>alert(document.cookie)</script>"));
+		assertEquals( "Test. alert(document.cookie)",rule.getSafe("test", "Test. <s\tcript>alert(document.cookie)</script>"));
+		assertEquals( "Test. alert(document.cookie)",rule.getSafe("test", "Test. <s\tcript>alert(document.cookie)</script>"));
 		// TODO: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
@@ -258,9 +280,19 @@ public class ValidatorTest {
 	@Test
 	public void testIsValidFileName() {
 		System.out.println("isValidFileName");
-		Validator instance = ESAPI.validator();
+		Validator instance = ESAPI.validator();		
 		assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false));
-		assertTrue("All Valid Filename Characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false));
+		assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false));
+//		TODO: MHF This new test doesn't pass 
+//		assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false));
+	}
+	
+	@Test
+	public void testGetValidFileName() throws Exception {
+		Validator instance = ESAPI.validator();
+		String testName = "aspe%20ct.jar";
+//		TODO: MHF This new test doesn't pass
+//		assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, false) );
 	}
 	
 	@Test
@@ -273,6 +305,9 @@ public class ValidatorTest {
 		}
 		assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
 		assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
+		assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
+//		TODO: MHF This new test doesn't pass
+//		assertTrue("Legal filenames that decode to illegal filenames are rejected", instance.isValidFileName("test", "aspe%20ct.jar", false));
 	}	
 	
 	/**
@@ -339,8 +374,8 @@ public class ValidatorTest {
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidPrintable("name", "abcDEF", 100, false));
 		assertTrue(instance.isValidPrintable("name", "!@#R()*$;><()", 100, false));
-        byte[] bytes = { 0x60, (byte) 0xFF, 0x10, 0x25 };
-        assertFalse( instance.isValidPrintable("name", bytes, 100, false ) );
+        char[] chars = { 0x60, (char)0xFF, 0x10, 0x25 };
+        assertFalse( instance.isValidPrintable("name", chars, 100, false ) );
 		assertFalse(instance.isValidPrintable("name", "%08", 100, false));
     }
 
