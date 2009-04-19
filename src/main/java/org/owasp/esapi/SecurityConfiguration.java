@@ -114,7 +114,7 @@ public interface SecurityConfiguration {
      * 
      * @return the default upload directory declared in the ESAPI properties file
      */
-    public File getUpoloadDirectory();
+    public File getUploadDirectory();
 	
 	/**
 	 * Gets the keystore used to hold any encryption keys used by your application.

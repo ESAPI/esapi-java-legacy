@@ -366,10 +366,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			}
 		}
 		else {
-			if ( !ESAPI.securityConfiguration().getUpoloadDirectory().exists()) { 
-				if ( !ESAPI.securityConfiguration().getUpoloadDirectory().mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + ESAPI.securityConfiguration().getUpoloadDirectory().getAbsolutePath() );
+			if ( !ESAPI.securityConfiguration().getUploadDirectory().exists()) { 
+				if ( !ESAPI.securityConfiguration().getUploadDirectory().mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + ESAPI.securityConfiguration().getUploadDirectory().getAbsolutePath() );
 			}
-			finalDir = ESAPI.securityConfiguration().getUpoloadDirectory();
+			finalDir = ESAPI.securityConfiguration().getUploadDirectory();
 		}
 		
 		
