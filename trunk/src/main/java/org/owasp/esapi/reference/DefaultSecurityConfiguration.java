@@ -577,7 +577,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-    public File getUpoloadDirectory() {
+    public File getUploadDirectory() {
     	File uploadDirectory = new File(properties.getProperty(UPLOAD_DIRECTORY, "UploadDir"));
     	return uploadDirectory;
     }
