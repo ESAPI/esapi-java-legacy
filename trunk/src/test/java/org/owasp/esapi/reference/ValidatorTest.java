@@ -283,16 +283,14 @@ public class ValidatorTest {
 		Validator instance = ESAPI.validator();		
 		assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false));
 		assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false));
-//		TODO: MHF This new test doesn't pass 
-//		assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false));
+		assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false));
 	}
 	
 	@Test
 	public void testGetValidFileName() throws Exception {
 		Validator instance = ESAPI.validator();
 		String testName = "aspe%20ct.jar";
-//		TODO: MHF This new test doesn't pass
-//		assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, false) );
+		assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, false) );
 	}
 	
 	@Test
@@ -306,8 +304,6 @@ public class ValidatorTest {
 		assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
 		assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
 		assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
-//		TODO: MHF This new test doesn't pass
-//		assertTrue("Legal filenames that decode to illegal filenames are rejected", instance.isValidFileName("test", "aspe%20ct.jar", false));
 	}	
 	
 	/**

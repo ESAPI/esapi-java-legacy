@@ -566,7 +566,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			}
 			
 			// do basic validation
-	        canonical = encoder.canonicalize(input);
+	        canonical = new File(input).getCanonicalFile().getName();
 	        getValidInput( context, input, "FileName", 255, true );
 			
 			File f = new File(canonical);
@@ -581,10 +581,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 		} catch (IOException e) {
 			throw new ValidationException( context + ": Invalid file name", "Invalid file name does not exist: context=" + context + ", canonical=" + canonical, e, context );
-		} catch (EncodingException ee) {
-            throw new IntrusionException( context + ": Invalid file name", "Invalid file name: context=" + context + ", canonical=" + canonical, ee );
 		}
-
 
 		// verify extensions
 		List extensions = ESAPI.securityConfiguration().getAllowedFileExtensions();
