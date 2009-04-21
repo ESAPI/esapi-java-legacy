@@ -132,14 +132,14 @@ public abstract class Codec {
 		return hex[c];
 	}
 
-	/**
-	 * Return the hex value of a character as a string without leading zeroes.
-     *
-     * @param c
-     * @return
-     */
+	public static String toOctal( char c ) {
+		if ( c > 0xFF ) return null;
+		return Integer.toOctalString( c );
+	}
+
 	public static String toHex( char c ) {
-		return Integer.toHexString(c);
+		if ( c > 0xFF ) return null;
+		return Integer.toHexString( c );
 	}
 
 	/**

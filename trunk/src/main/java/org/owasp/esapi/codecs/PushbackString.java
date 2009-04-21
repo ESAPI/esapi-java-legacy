@@ -89,27 +89,51 @@ public class PushbackString {
 	}
 	
     /**
-     *
-     * @return
-     */
-    public Character nextHex() {
+    *
+    * @return
+    */
+   public Character nextHex() {
 		Character c = next();
 		if ( c == null ) return null;
 		if ( isHexDigit( c ) ) return c;
 		return null;
 	}
 
-    /**
-     *
-     * @param c
-     * @return
-     */
-    public boolean isHexDigit( Character c ) {
-		return ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 );
+   /**
+   *
+   * @return
+   */
+  public Character nextOctal() {
+		Character c = next();
+		if ( c == null ) return null;
+		if ( isOctalDigit( c ) ) return c;
+		return null;
 	}
-	
+
+  /**
+ * Returns true if the parameter character is a hexidecimal digit 0 through 9, a through f, or A through F.
+  * @param c
+  * @return
+  */
+ public static boolean isHexDigit( Character c ) {
+		if ( c == null ) return false;
+		char ch = c.charValue();
+		return (ch >= '0' && ch <= '9' ) || (ch >= 'a' && ch <= 'f' ) || (ch >= 'A' && ch <= 'F' );
+	}
+
+ /**
+ * Returns true if the parameter character is an octal digit 0 through 7.
+ * @param c
+ * @return
+ */
+public static boolean isOctalDigit( Character c ) {
+	if ( c == null ) return false;
+	char ch = c.charValue();
+	return ch >= '0' && ch <= '7';
+}
+
     /**
-     *
+     * Return the next character without affecting the current index.
      * @return
      */
     public Character peek() {
@@ -121,7 +145,7 @@ public class PushbackString {
 	}
 	
     /**
-     *
+     * Test to see if the next character is a particular value without affecting the current index.
      * @param c
      * @return
      */

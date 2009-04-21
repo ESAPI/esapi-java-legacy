@@ -30,8 +30,8 @@ public class JavaScriptCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Returns backslash encoded character. This implementation does not support
-	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
+	 * Returns backslash encoded numeric format. Does not use backslash character escapes
+	 * as these can be used in attacks.
      *
      * @param immune
      */
@@ -79,11 +79,12 @@ public class JavaScriptCodec extends Codec {
 	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
-	 * 
+	 * See http://www.planetpdf.com/codecuts/pdfs/tutorial/jsspec.pdf 
 	 * Formats all are legal both upper/lower case:
 	 *   \\a - special characters
 	 *   \\xHH
 	 *   \\uHHHH
+	 *   \\OOO (1, 2, or 3 digits)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
@@ -105,9 +106,10 @@ public class JavaScriptCodec extends Codec {
 			return null;
 		}
 		
-		if ( second.charValue() == '0' ) {
-			return new Character( (char)0x00 );
-		} else if ( second.charValue() == 'b' ) {
+		// \0 collides with the octal decoder and is non-standard
+		// if ( second.charValue() == '0' ) {
+		//	return new Character( (char)0x00 );
+		if ( second.charValue() == 'b' ) {
 			return new Character( (char)0x08 );
 		} else if ( second.charValue() == 't' ) {
 			return new Character( (char)0x09 );
@@ -133,19 +135,21 @@ public class JavaScriptCodec extends Codec {
 			for ( int i=0; i<2; i++ ) {
 				Character c = input.nextHex();
 				if ( c != null ) sb.append( c );
-			}
-			if ( sb.length() == 2 ) {
-				try {
-					// parse the hex digit and create a character
-					int i = Integer.parseInt(sb.toString(), 16);
-					// TODO: in Java 1.5 you can test whether this is a valid code point
-					// with Character.isValidCodePoint() et al.
-					return new Character( (char)i );
-				} catch( NumberFormatException e ) {
-					// throw an exception for malformed entity?
+				else {
 					input.reset();
 					return null;
 				}
+			}
+			try {
+				// parse the hex digit and create a character
+				int i = Integer.parseInt(sb.toString(), 16);
+				// TODO: in Java 1.5 you can test whether this is a valid code point
+				// with Character.isValidCodePoint() et al.
+				return new Character( (char)i );
+			} catch( NumberFormatException e ) {
+				// throw an exception for malformed entity?
+				input.reset();
+				return null;
 			}
 			
 		// look for \\uXXXX format
@@ -155,19 +159,53 @@ public class JavaScriptCodec extends Codec {
 			for ( int i=0; i<4; i++ ) {
 				Character c = input.nextHex();
 				if ( c != null ) sb.append( c );
-			}
-			if ( sb.length() == 4 ) {
-				try {
-					// parse the hex digit and create a character
-					int i = Integer.parseInt(sb.toString(), 16);
-					// TODO: in Java 1.5 you can test whether this is a valid code point
-					// with Character.isValidCodePoint() et al.
-					return new Character( (char)i );
-				} catch( NumberFormatException e ) {
-					// throw an exception for malformed entity?
+				else {
 					input.reset();
 					return null;
 				}
+			}
+			try {
+				// parse the hex string and create a character
+				int i = Integer.parseInt(sb.toString(), 16);
+				// TODO: in Java 1.5 you can test whether this is a valid code point
+				// with Character.isValidCodePoint() et al.
+				return new Character( (char)i );
+			} catch( NumberFormatException e ) {
+				// throw an exception for malformed entity?
+				input.reset();
+				return null;
+			}
+			
+		// look for one, two, or three octal digits
+		} else if ( input.isOctalDigit( second.charValue() ) ) {
+            StringBuffer sb = new StringBuffer();
+            // get digit 1
+            sb.append(second);
+            
+            // get digit 2 if present
+            Character c2 = input.next();
+            if ( !input.isOctalDigit(c2) ) {
+            	input.pushback( c2 );
+            } else {
+            	sb.append( c2 );
+	            // get digit 3 if present
+	            Character c3 = input.next();
+	            if ( !input.isOctalDigit(c3) ) {
+	            	input.pushback( c3 );
+	            } else {
+	            	sb.append( c3 );
+	            }
+            }
+			try {
+				// parse the octal string and create a character
+				int i = Integer.parseInt(sb.toString(), 8);
+				// TODO: in Java 1.5 you can test whether this is a valid code point
+				// with Character.isValidCodePoint() et al.
+				return new Character( (char)i );
+			} catch( NumberFormatException e ) {
+				// throw an exception for malformed entity?
+				input.reset();
+				return null;
 			}
 		}
 		

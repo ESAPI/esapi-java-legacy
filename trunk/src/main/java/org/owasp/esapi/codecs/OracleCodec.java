@@ -34,7 +34,7 @@ public class OracleCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Encode a single character with a quote mark
+	 * Encode a single character with a backslash
      *
      * @param immune
      */
