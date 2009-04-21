@@ -204,6 +204,23 @@ public class HTTPUtilitiesTest extends TestCase {
             fail();
         }
         
+        MockHttpServletRequest request4 = new MockHttpServletRequest("/test", content.getBytes());
+        request4.setContentType( "multipart/form-data; boundary=ridiculous");
+        ESAPI.httpUtilities().setCurrentHTTP(request4, response);
+        System.err.println("UPLOAD DIRECTORY: " + ESAPI.securityConfiguration().getUploadDirectory());
+        try {
+            List list = ESAPI.httpUtilities().getSafeFileUploads(request4, home);
+            Iterator i = list.iterator();
+            while ( i.hasNext() ) {
+            	File f = (File)i.next();
+            	System.out.println( "  " + f.getAbsolutePath() );
+            }
+            assertTrue( list.size() > 0 );
+        } catch (ValidationException e) {
+        	System.err.println("ERROR: " + e.toString());
+            fail();
+        }
+        
         MockHttpServletRequest request3 = new MockHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes());
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
@@ -214,22 +231,6 @@ public class HTTPUtilitiesTest extends TestCase {
         	// expected
         }
         
-        MockHttpServletRequest request4 = new MockHttpServletRequest("/test", content.getBytes());
-        request2.setContentType( "multipart/form-data; boundary=ridiculous");
-        ESAPI.httpUtilities().setCurrentHTTP(request2, response);
-        
-//        TODO: KF
-//        try {
-//            List list = ESAPI.httpUtilities().getSafeFileUploads(request2, home, null);
-//            Iterator i = list.iterator();
-//            while ( i.hasNext() ) {
-//            	File f = (File)i.next();
-//            	System.out.println( "  " + f.getAbsolutePath() );
-//            }
-//            assertTrue( list.size() > 0 );
-//        } catch (ValidationException e) {
-//            fail();
-//        }
     }
 
     /**

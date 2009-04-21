@@ -33,6 +33,7 @@ import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SafeRequest;
 import org.owasp.esapi.filters.SafeResponse;
+import org.owasp.esapi.http.MockHttpServletRequest;
 
 
 /**
@@ -382,5 +383,8 @@ public interface HTTPUtilities {
      * 		the sensitive parameters
      */
     void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate);
+
+
+	List getSafeFileUploads(HttpServletRequest request, File tempDir) throws ValidationException;
 
 }
