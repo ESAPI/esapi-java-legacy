@@ -394,7 +394,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		} catch (UnsupportedEncodingException ex) {
 			throw new EncodingException("Encoding failure", "Encoding not supported", ex);
 		} catch (Exception e) {
-			throw new EncodingException("Encoding failure", "Problem URL decoding input", e);
+			throw new EncodingException("Encoding failure", "Problem URL encoding input", e);
 		}
 	}
 

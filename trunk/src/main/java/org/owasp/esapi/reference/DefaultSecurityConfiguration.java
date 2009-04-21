@@ -296,14 +296,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-    public File getKeystore() {
-        return getResourceFile("keystore");
-    }
-
-    
-    /**
-	 * {@inheritDoc}
-	 */
     public void setResourceDirectory( String dir ) {
     	resourceDirectory = dir;
         logSpecial( "Reset resource directory to: " + dir, null );

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="0.019" errors="0" skipped="0" tests="21" name="org.owasp.esapi.reference.EncoderTest">
+<testsuite failures="0" time="0.021" errors="0" skipped="0" tests="21" name="org.owasp.esapi.reference.EncoderTest">
   <properties>
     <property name="java.vendor" value="Sun Microsystems Inc."/>
     <property name="localRepository" value="C:\Users\kfealey\.m2\repository"/>
@@ -9,24 +9,24 @@
     <property name="env.PROMPT" value="$P$G"/>
     <property name="os.name" value="Windows Vista"/>
     <property name="env.FP_NO_HOST_CHECK" value="NO"/>
-    <property name="sun.boot.class.path" value="C:\Program Files\Java\jdk1.6.0_10\jre\lib\resources.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\rt.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\sunrsasign.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\jsse.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\jce.jar;C:\Program Files\Java\jdk1.6.0_10\jre\lib\charsets.jar;C:\Program Files\Java\jdk1.6.0_10\jre\classes"/>
+    <property name="sun.boot.class.path" value="C:\Program Files\Java\jre1.6.0_07\lib\resources.jar;C:\Program Files\Java\jre1.6.0_07\lib\rt.jar;C:\Program Files\Java\jre1.6.0_07\lib\sunrsasign.jar;C:\Program Files\Java\jre1.6.0_07\lib\jsse.jar;C:\Program Files\Java\jre1.6.0_07\lib\jce.jar;C:\Program Files\Java\jre1.6.0_07\lib\charsets.jar;C:\Program Files\Java\jre1.6.0_07\classes"/>
     <property name="env.COMPUTERNAME" value="DELALTD830-KF"/>
     <property name="env.ALLUSERSPROFILE" value="C:\ProgramData"/>
     <property name="sun.desktop" value="windows"/>
     <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
-    <property name="java.runtime.version" value="1.6.0_10-rc-b28"/>
+    <property name="java.runtime.version" value="1.6.0_07-b06"/>
     <property name="env.HOMEPATH" value="\Users\kfealey"/>
     <property name="user.name" value="kfealey"/>
     <property name="env.QTJAVA" value="C:\Program Files\Java\jre6\lib\ext\QTJava.zip"/>
     <property name="user.language" value="en"/>
-    <property name="sun.boot.library.path" value="C:\Program Files\Java\jdk1.6.0_10\jre\bin"/>
-    <property name="classworlds.conf" value="C:\Work\Aspect\ESAPI_documentation\.metadata\.plugins\org.maven.ide.eclipse\launches\m2conf57439.tmp"/>
-    <property name="java.version" value="1.6.0_10-rc"/>
+    <property name="sun.boot.library.path" value="C:\Program Files\Java\jre1.6.0_07\bin"/>
+    <property name="classworlds.conf" value="C:\Work\Aspect\ESAPI_documentation\.metadata\.plugins\org.maven.ide.eclipse\launches\m2conf40032.tmp"/>
+    <property name="java.version" value="1.6.0_07"/>
     <property name="env.PROCESSOR_IDENTIFIER" value="x86 Family 6 Model 23 Stepping 6, GenuineIntel"/>
     <property name="user.timezone" value="America/New_York"/>
     <property name="env.TEMP" value="C:\Users\kfealey\AppData\Local\Temp"/>
     <property name="sun.arch.data.model" value="32"/>
-    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jdk1.6.0_10\jre\lib\endorsed"/>
+    <property name="java.endorsed.dirs" value="C:\Program Files\Java\jre1.6.0_07\lib\endorsed"/>
     <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
     <property name="env.HOMEDRIVE" value="C:"/>
     <property name="sun.jnu.encoding" value="Cp1252"/>
@@ -35,7 +35,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="50.0"/>
     <property name="user.country" value="US"/>
-    <property name="java.home" value="C:\Program Files\Java\jdk1.6.0_10\jre"/>
+    <property name="java.home" value="C:\Program Files\Java\jre1.6.0_07"/>
     <property name="env.APPDATA" value="C:\Users\kfealey\AppData\Roaming"/>
     <property name="env.PUBLIC" value="C:\Users\Public"/>
     <property name="java.vm.info" value="mixed mode, sharing"/>
@@ -44,7 +44,7 @@
     <property name="env.CommonProgramFiles" value="C:\Program Files\Common Files"/>
     <property name="os.version" value="6.0"/>
     <property name="path.separator" value=";"/>
-    <property name="java.vm.version" value="11.0-b15"/>
+    <property name="java.vm.version" value="10.0-b23"/>
     <property name="user.variant" value=""/>
     <property name="env.USERPROFILE" value="C:\Users\kfealey"/>
     <property name="env.JAVA_HOME" value="C:\j2sdk1.4.2_17"/>
@@ -59,7 +59,7 @@
     <property name="env.RoxioCentral" value="C:\Program Files\Common Files\Roxio Shared\9.0\Roxio Central33\"/>
     <property name="env.CLASSPATH" value=".;C:\j2sdk1.4.2_17\jre\lib;C:\Program Files\Java\jre6\lib\ext\QTJava.zip"/>
     <property name="env.NUMBER_OF_PROCESSORS" value="2"/>
-    <property name="java.library.path" value="C:\Program Files\Java\jdk1.6.0_10\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin/client;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;C:\Work\Aspect\TCL\bin;C:\Program Files\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\"/>
+    <property name="java.library.path" value="C:\Program Files\Java\jre1.6.0_07\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin/client;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;c:\Program Files\Microsoft SQL Server\90\Tools\binn\;C:\Work\Aspect\TCL\bin;C:\Program Files\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;c:\Program Files\Microsoft SQL Server\90\Tools\binn\"/>
     <property name="java.vendor.url" value="http://java.sun.com/"/>
     <property name="env.USERDNSDOMAIN" value="ASPECTSECURITY.LOCAL"/>
     <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
@@ -83,7 +83,7 @@
     <property name="env.SystemRoot" value="C:\Windows"/>
     <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
     <property name="os.arch" value="x86"/>
-    <property name="java.ext.dirs" value="C:\Program Files\Java\jdk1.6.0_10\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="java.ext.dirs" value="C:\Program Files\Java\jre1.6.0_07\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
     <property name="user.dir" value="C:\Work\Aspect\ESAPI_documentation\ESAPI"/>
     <property name="env.LOCALAPPDATA" value="C:\Users\kfealey\AppData\Local"/>
     <property name="env.com.adobe.versioncue.client.applocale" value="en_US"/>
@@ -91,7 +91,7 @@
 "/>
     <property name="java.vm.name" value="Java HotSpot(TM) Client VM"/>
     <property name="env.PATHEXT" value=".COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC"/>
-    <property name="env.Path" value="C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin/client;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;C:\Work\Aspect\TCL\bin;C:\Program Files\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\"/>
+    <property name="env.Path" value="C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin/client;C:/Program Files/Java/jdk1.6.0_10/bin/../jre/bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;c:\Program Files\Microsoft SQL Server\90\Tools\binn\;C:\Work\Aspect\TCL\bin;C:\Program Files\Java\bin;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\NTRU Cryptosystems\NTRU TCG Software Stack\bin\;C:\Program Files\Wave Systems Corp\Gemalto\Access Client\v5\;C:\Program Files\Gemplus\GemSafe Libraries\BIN;C:\Program Files\Common Files\Roxio Shared\DLLShared\;C:\Program Files\Common Files\Roxio Shared\9.0\DLLShared\;C:\Program Files\Perforce;C:\j2sdk1.4.2_17\bin;C:\Program Files\MySQL\MySQL Server 5.0\bin;C:\Program Files\TortoiseSVN\bin;C:\Program Files\QuickTime\QTSystem\;c:\Program Files\Microsoft SQL Server\90\Tools\binn\"/>
     <property name="basedir" value="C:\Work\Aspect\ESAPI_documentation\ESAPI"/>
     <property name="maven.mode.standalone" value="true"/>
     <property name="env.USERNAME" value="kfealey"/>
@@ -103,24 +103,24 @@
     <property name="env.PROCESSOR_LEVEL" value="6"/>
   </properties>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testDefaultEncoderException"/>
-  <testcase time="0.001" classname="org.owasp.esapi.reference.EncoderTest" name="testCanonicalize"/>
-  <testcase time="0.003" classname="org.owasp.esapi.reference.EncoderTest" name="testDoubleEncodingCanonicalization"/>
+  <testcase time="0.002" classname="org.owasp.esapi.reference.EncoderTest" name="testCanonicalize"/>
+  <testcase time="0.002" classname="org.owasp.esapi.reference.EncoderTest" name="testDoubleEncodingCanonicalization"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testNormalize"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForHTML"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForHTMLAttribute"/>
-  <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForCSS"/>
-  <testcase time="0.001" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForJavascript"/>
-  <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForVBScript"/>
+  <testcase time="0.001" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForCSS"/>
+  <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForJavascript"/>
+  <testcase time="0.001" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForVBScript"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForXPath"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForSQL"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForLDAP"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForDN"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForXML"/>
-  <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForXMLAttribute"/>
+  <testcase time="0.001" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForXMLAttribute"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForURL"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testDecodeFromURL"/>
   <testcase time="0.003" classname="org.owasp.esapi.reference.EncoderTest" name="testEncodeForBase64"/>
-  <testcase time="0.005" classname="org.owasp.esapi.reference.EncoderTest" name="testDecodeFromBase64"/>
+  <testcase time="0.006" classname="org.owasp.esapi.reference.EncoderTest" name="testDecodeFromBase64"/>
   <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testWindowsCodec"/>
-  <testcase time="0" classname="org.owasp.esapi.reference.EncoderTest" name="testUnixCodec"/>
+  <testcase time="0.001" classname="org.owasp.esapi.reference.EncoderTest" name="testUnixCodec"/>
 </testsuite>
