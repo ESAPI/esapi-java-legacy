@@ -453,22 +453,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @throws IOException
      */
     public InputStream getResourceStream( String filename ) throws IOException {
-    	InputStream in = null;
-    	
-    	File f = getResourceFile( filename );
-    	if ( f != null && f.exists() ) {
-    		in = new FileInputStream( f ); 
-    	} else {
-	    	ClassLoader loader = getClass().getClassLoader();
-	 		in = loader.getResourceAsStream( ".esapi/"+filename );
-	 		if ( in != null ) {
-	 	    	logSpecial( "  Found on classpath", null );
-	 		} else {
-	 	    	logSpecial( "  Not found on classpath", null );
-	 	    	logSpecial( "  Not found anywhere", null );
-	 		}
-    	}
-    	return in;
+    	try {
+	    	File f = getResourceFile( filename );
+	    	if ( f != null && f.exists() ) {
+	    		return new FileInputStream( f ); 
+	    	}
+    	} catch( Exception e ) {
+	    	// continue
+	    }
+
+    	ClassLoader loader = getClass().getClassLoader();
+ 		InputStream in = loader.getResourceAsStream( ".esapi/"+filename );
+ 		if ( in != null ) {
+ 	    	logSpecial( "  Found on classpath", null );
+ 	    	return in;
+ 		} else {
+ 	    	logSpecial( "  Not found on classpath", null );
+ 	    	logSpecial( "  Not found anywhere", null );
+ 		}
+ 		
+ 		return null;
     }
 
     /**
