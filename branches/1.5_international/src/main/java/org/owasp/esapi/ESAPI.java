@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.reference.DefaultExecutor;
 import org.owasp.esapi.reference.DefaultHTTPUtilities;
+import org.owasp.esapi.reference.DefaultMessageUtil;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.owasp.esapi.reference.DefaultValidator;
 import org.owasp.esapi.reference.accesscontrol.DefaultAccessController;
@@ -57,6 +58,8 @@ public class ESAPI {
 	private static Logger defaultLogger = null;
 
 	private static SecurityConfiguration securityConfiguration = new DefaultSecurityConfiguration();
+	
+	private static MessageUtil messageUtil = null;
 
 	/**
 	 * prevent instantiation of this class
@@ -435,6 +438,14 @@ public class ESAPI {
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
+	}
+	/**
+	 * @return the current ESAPI MessageUtil object for internationalization. 
+	 */
+	public static MessageUtil messageUtil() {
+		if (ESAPI.messageUtil == null)
+			ESAPI.messageUtil = new DefaultMessageUtil();
+		return ESAPI.messageUtil;
 	}
 
 }

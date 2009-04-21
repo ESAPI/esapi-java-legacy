@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -104,6 +105,9 @@ public class DefaultUser implements User, Serializable {
 	
 	/** The failed login count for this user's account. */
 	private int failedLoginCount = 0;
+	
+	/** This user's Locale. */
+	private Locale locale;
     
     private final int MAX_ROLE_LENGTH = 250;
     
@@ -587,5 +591,18 @@ public class DefaultUser implements User, Serializable {
     public final Object clone() throws java.lang.CloneNotSupportedException {
     	  throw new java.lang.CloneNotSupportedException();
     }
+	/**
+	 * @return the locale
+	 */
+	public Locale getLocale() {
+		return locale;
+	}
+
+	/**
+	 * @param locale the locale to set
+	 */
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
     
 }
