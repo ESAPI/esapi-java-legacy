@@ -49,6 +49,7 @@ import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.ValidationUploadException;
 import org.owasp.esapi.filters.SafeRequest;
 import org.owasp.esapi.filters.SafeResponse;
+import org.owasp.esapi.http.MockHttpServletRequest;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation
@@ -343,6 +344,20 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		
     	Cookie cookie = new Cookie( "state", encrypted );
     	response.addCookie( cookie );
+    }
+    
+    /**
+	 * Uses the Apache Commons FileUploader to parse the multipart HTTP request
+	 * and extract any files therein. Note that the progress of any uploads is
+	 * put into a session attribute, where it can be retrieved with a simple
+	 * JSP.  Places the file in the default upload directory declared in ESAPI.properties.
+	 * 
+	 * 
+     * @param request
+     * @return list of File objects for new files in final directory
+	 */
+    public List getSafeFileUploads(HttpServletRequest request, File tempDir) throws ValidationException {
+    	return getSafeFileUploads(request, tempDir, ESAPI.securityConfiguration().getUploadDirectory());
     }
 
 	/**
