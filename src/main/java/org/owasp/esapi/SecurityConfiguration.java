@@ -117,13 +117,6 @@ public interface SecurityConfiguration {
     public File getUploadDirectory();
 	
 	/**
-	 * Gets the keystore used to hold any encryption keys used by your application.
-	 * 
-	 * @return the current keystore
-	 */
-	public File getKeystore();
-
-	/**
 	 * Gets the master salt that is used to salt stored password hashes and any other location 
 	 * where a salt is needed.
 	 * 
