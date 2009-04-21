@@ -129,7 +129,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		
         String working = input;
         Codec codecFound = null;
-        boolean mixed = false;
+        int mixedCount = 1;
         int foundCount = 0;
         boolean clean = false;
         while( !clean ) {
@@ -143,7 +143,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
                 working = codec.decode( working );
                 if ( !old.equals( working ) ) {
                     if ( codecFound != null && codecFound != codec ) {
-                        mixed = true;
+                        mixedCount++;
                     }
                     codecFound = codec;
                     if ( clean ) {
@@ -155,11 +155,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
         }
         
         // do strict tests and handle if any mixed, multiple, nested encoding were found
-        if ( foundCount >= 2 && mixed ) {
+        if ( foundCount >= 2 && mixedCount > 1 ) {
             if ( strict ) {
-                throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
+                throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
+                logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
             }
         }
         else if ( foundCount >= 2 ) {
@@ -169,11 +169,11 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
                 logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) encoding detected in " + input );
             }
         }
-        else if ( mixed ) {
+        else if ( mixedCount > 1 ) {
             if ( strict ) {
-                throw new IntrusionException( "Input validation failure", "Mixed encoding detected in " + input );
+                throw new IntrusionException( "Input validation failure", "Mixed encoding ("+ mixedCount +"x) detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY_FAILURE, "Mixed encoding detected in " + input );
+                logger.warning( Logger.SECURITY_FAILURE, "Mixed encoding ("+ mixedCount +"x) detected in " + input );
             }
         }
         return working;
