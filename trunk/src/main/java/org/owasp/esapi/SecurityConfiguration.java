@@ -125,6 +125,13 @@ public interface SecurityConfiguration {
 	public byte[] getMasterSalt();
 
 	/**
+	 * Gets the allowed executables to run with the Executor.
+	 * 
+	 * @return a list of the current allowed file extensions
+	 */
+	public List getAllowedExecutables();
+
+	/**
 	 * Gets the allowed file extensions for files that are uploaded to this application.
 	 * 
 	 * @return a list of the current allowed file extensions

@@ -79,7 +79,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String MASTER_SALT = "MasterSalt";
 
-    private static final String VALID_EXTENSIONS = "ValidExtensions";
+    private static final String APPROVED_EXECUTABLES = "ApprovedExecutables";
+
+    private static final String APPROVED_UPLOAD_EXTENSIONS = "ApprovedUploadExtensions";
 
     private static final String MAX_UPLOAD_FILE_BYTES = "MaxUploadFileBytes";
 
@@ -318,10 +320,19 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
+	public List getAllowedExecutables() {
+    	String def = "";
+        String[] exList = properties.getProperty(APPROVED_EXECUTABLES,def).split(",");
+        return Arrays.asList(exList);
+    }
+
+    /**
+	 * {@inheritDoc}
+	 */
     @SuppressWarnings("unchecked")
 	public List getAllowedFileExtensions() {
     	String def = ".zip,.pdf,.tar,.gz,.xls,.properties,.txt,.xml";
-        String[] extList = properties.getProperty(VALID_EXTENSIONS,def).split(",");
+        String[] extList = properties.getProperty(APPROVED_UPLOAD_EXTENSIONS,def).split(",");
         return Arrays.asList(extList);
     }
 

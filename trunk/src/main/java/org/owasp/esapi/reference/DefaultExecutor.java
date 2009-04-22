@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
+import java.util.Map;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -55,7 +56,9 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * {@inheritDoc}
      * 
      * <p>The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
-     * and then executes the command without using concatenation.</p> 
+     * and then executes the command without using concatenation. The exact, absolute, canonical path of each
+     * executable must be listed as an approved executable in the ESAPI properties. The executable must also
+     * exist on the disk.</p> 
      * 
      * <p>If there are failures, it will be logged. 
      * 
@@ -65,15 +68,25 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      */
     public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
         try {
-            logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
- 
-            // command must exactly match the canonical path and must actually exist on the file system
-            // using equalsIgnoreCase for Windows, although this isn't quite as strong as it should be
-            if (!executable.getCanonicalPath().equalsIgnoreCase(executable.getPath())) {
-                throw new ExecutorException("Execution failure", "Invalid path to executable file: " + executable);
-            }
+            // executable must exist
             if (!executable.exists()) {
                 throw new ExecutorException("Execution failure", "No such executable: " + executable);
+            }
+            
+            // executable must use canonical path
+            if ( !executable.isAbsolute() ) {
+                throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-absolute path: " + executable);
+            }
+            
+            // executable must use canonical path
+            if ( !executable.getPath().equals( executable.getCanonicalPath() ) ) {
+            	throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-canonical path: " + executable);
+        	}
+                    		
+            // exact, absolute, canonical path to executable must be listed in ESAPI configuration 
+            List approved = ESAPI.securityConfiguration().getAllowedExecutables();
+            if (!approved.contains(executable.getPath())) {
+                throw new ExecutorException("Execution failure", "Attempt to invoke executable that is not listed as an approved executable in ESAPI configuration: " + executable + " not listed in " + approved );
             }
 
             // escape any special characters in the parameters
@@ -89,23 +102,25 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             
             params.add(0, executable.getCanonicalPath());
             String[] command = (String[])params.toArray( new String[0] );
-            Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
-            
-            // Future - this is how to implement this in Java 1.5+
-            // ProcessBuilder pb = new ProcessBuilder(params);
-            // Map env = pb.environment();
-            // Security check - clear environment variables!
-            // env.clear();
-            // pb.directory(workdir);
-            // pb.redirectErrorStream(true);
-            // Process process = pb.start();
 
+            // Legacy - this is how to implement in Java 1.4
+            // Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
+            
+            // The following is host to implement in Java 1.5+
+            ProcessBuilder pb = new ProcessBuilder(params);
+            Map env = pb.environment();
+            env.clear();  // Security check - clear environment variables!
+            pb.directory(workdir);
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+
+            logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
             String output = readStream( process.getInputStream() );
             String errors = readStream( process.getErrorStream() );
             if ( errors != null && errors.length() > 0 ) {
             	logger.warning( Logger.SECURITY_SUCCESS, "Error during system command: " + errors );
             }
-            logger.warning(Logger.SECURITY_SUCCESS, "System command complete: " + params);
+            logger.warning(Logger.SECURITY_SUCCESS, "System command complete");
             return output;
         } catch (Exception e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
