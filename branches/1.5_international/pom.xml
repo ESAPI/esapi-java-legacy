@@ -124,8 +124,8 @@
 				<version>1.3</version>
 				<executions>
 				<execution>
-					<id>compile</id>
-					<phase>compile</phase>
+				    <id>compile</id>
+					<phase>plugin:compile</phase>
 					<configuration>
 						<tasks>
 						<taskdef name="Convert2UTF8" classname="org.owasp.esapi.Convert2UTF8" classpath="target/classes"/>
