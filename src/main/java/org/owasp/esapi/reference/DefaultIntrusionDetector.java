@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
-import java.util.WeakHashMap;
+
+import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -37,7 +38,10 @@ import org.owasp.esapi.errors.IntrusionException;
  * minute period. Or if there are more than 3 authentication problems in a 10
  * second period. More complex implementations are certainly possible, such as
  * one that establishes a baseline of expected behavior, and then detects
- * deviations from that baseline.
+ * deviations from that baseline. This implementation stores state in the
+ * user's session, so that it will be properly cleaned up when the session is
+ * terminated. State is not otherwise persisted, so attacks that span sessions
+ * will not be detectable.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -49,8 +53,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
-	private Map userEvents = new WeakHashMap();
-	
+	private static final String USER_EVENT_MAP = "ESAPIUserEventMap";
     /**
      *
      */
@@ -146,10 +149,11 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * 			The name of the event that occurred.
 	 */
 	private void addSecurityEvent(User user, String eventName) {
-		Map events = (Map) userEvents.get(user.getAccountName());
+		HttpSession session = ESAPI.currentRequest().getSession();
+		Map events = (Map)session.getAttribute( USER_EVENT_MAP );
 		if (events == null) {
 			events = new HashMap();
-			userEvents.put(user.getAccountName(), events);
+			session.setAttribute(USER_EVENT_MAP, events);
 		}
 		Event event = (Event)events.get( eventName );
 		if ( event == null ) {
