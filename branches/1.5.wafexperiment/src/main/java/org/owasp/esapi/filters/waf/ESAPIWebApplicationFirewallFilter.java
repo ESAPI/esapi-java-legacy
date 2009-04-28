@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf;
+package org.owasp.esapi.waf;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,15 +17,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.owasp.esapi.filters.waf.actions.Action;
-import org.owasp.esapi.filters.waf.actions.BlockAction;
-import org.owasp.esapi.filters.waf.actions.DefaultAction;
-import org.owasp.esapi.filters.waf.actions.RedirectAction;
-import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
-import org.owasp.esapi.filters.waf.configuration.ConfigurationParser;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
-import org.owasp.esapi.filters.waf.rules.Rule;
+import org.owasp.esapi.waf.actions.Action;
+import org.owasp.esapi.waf.actions.BlockAction;
+import org.owasp.esapi.waf.actions.DefaultAction;
+import org.owasp.esapi.waf.actions.RedirectAction;
+import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
+import org.owasp.esapi.waf.configuration.ConfigurationParser;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
+import org.owasp.esapi.waf.rules.Rule;
 
 /**
  * Entry point for the ESAPI's web application firewall (codename AppGuard?).
@@ -49,6 +49,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	public void init(FilterConfig fc) throws ServletException {
 
+		logger.info( ">> Initializing WAF" );
 		/*
 		 * Pull logging file.
 		 */
@@ -95,7 +96,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain chain) throws IOException, ServletException {
 
-		logger.info("hellooo");
+		logger.info(">>In WAF doFilter");
 
 		HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
 		HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
@@ -121,6 +122,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * Stage 0: Apply any cookie rules for incoming requests that don't yet have
 		 * sessions.
 		 */
+
+		logger.info(">> Starting Stage 0" );
 
 		if ( httpRequest.getSession(false) == null && ( AppGuardianConfiguration.FORCE_SECURE_FLAG_TO_SESSION ||
 				 AppGuardianConfiguration.FORCE_HTTP_ONLY_FLAG_TO_SESSION ) ) {
@@ -187,6 +190,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 1: Rules that do not need the request body.
 		 */
+		logger.info(">> Starting stage 1" );
 
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
@@ -238,6 +242,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 2: After the body has been read, but before the the application has gotten it.
 		 */
+		logger.info(">> Starting Stage 2" );
 
 		rules = this.appGuardConfig.getAfterBodyRules();
 
@@ -289,12 +294,14 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * In between stages 2 and 3 is the application's processing of the input.
 		 */
-
+		logger.info(">> Calling the FilterChain: " + chain );
 		chain.doFilter(request, response);
 
 		/*
 		 * Stage 3: Before the response has been sent back to the user.
 		 */
+		logger.info(">> Starting Stage 3" );
+		
 		rules = this.appGuardConfig.getBeforeResponseRules();
 
 		for(int i=0;i<rules.size();i++) {
@@ -348,6 +355,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * we were intercepting.
 		 */
 		if ( appGuardConfig.getBeforeResponseRules().size() + appGuardConfig.getCookieRules().size() > 0 ) {
+			System.out.println( ">>> committing reponse" );
 			response.commit();
 		}
 

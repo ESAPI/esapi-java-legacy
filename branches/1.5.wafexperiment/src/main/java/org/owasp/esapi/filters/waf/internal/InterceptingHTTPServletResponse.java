@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf.internal;
+package org.owasp.esapi.waf.internal;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,9 +10,9 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-import org.owasp.esapi.filters.waf.rules.AddHTTPOnlyFlagRule;
-import org.owasp.esapi.filters.waf.rules.AddSecureFlagRule;
-import org.owasp.esapi.filters.waf.rules.Rule;
+import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
+import org.owasp.esapi.waf.rules.AddSecureFlagRule;
+import org.owasp.esapi.waf.rules.Rule;
 
 public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper {
 

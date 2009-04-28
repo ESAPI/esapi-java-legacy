@@ -1,27 +1,21 @@
-package org.owasp.esapi.filters.waf.internal;
+package org.owasp.esapi.waf.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Vector;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItemIterator;
 import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.filters.waf.UploadTooLargeException;
-import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
+import org.owasp.esapi.waf.UploadTooLargeException;
+import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 
 public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 

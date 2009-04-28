@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf.actions;
+package org.owasp.esapi.waf.actions;
 
 public abstract class Action {
 

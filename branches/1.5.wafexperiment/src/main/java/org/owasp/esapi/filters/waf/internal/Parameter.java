@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf.internal;
+package org.owasp.esapi.waf.internal;
 
 public class Parameter {
 

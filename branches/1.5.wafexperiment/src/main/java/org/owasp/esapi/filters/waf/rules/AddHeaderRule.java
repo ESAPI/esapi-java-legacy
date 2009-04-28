@@ -1,13 +1,13 @@
-package org.owasp.esapi.filters.waf.rules;
+package org.owasp.esapi.waf.rules;
 
 import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.owasp.esapi.filters.waf.actions.Action;
-import org.owasp.esapi.filters.waf.actions.DoNothingAction;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
+import org.owasp.esapi.waf.actions.Action;
+import org.owasp.esapi.waf.actions.DoNothingAction;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
 public class AddHeaderRule extends Rule {
 

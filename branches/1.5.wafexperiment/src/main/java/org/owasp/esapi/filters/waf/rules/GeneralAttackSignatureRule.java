@@ -1,16 +1,15 @@
-package org.owasp.esapi.filters.waf.rules;
+package org.owasp.esapi.waf.rules;
 
 import java.util.Enumeration;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.filters.waf.actions.Action;
-import org.owasp.esapi.filters.waf.actions.DefaultAction;
-import org.owasp.esapi.filters.waf.actions.DoNothingAction;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
+import org.owasp.esapi.waf.actions.Action;
+import org.owasp.esapi.waf.actions.DefaultAction;
+import org.owasp.esapi.waf.actions.DoNothingAction;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
 public class GeneralAttackSignatureRule extends Rule {
 
