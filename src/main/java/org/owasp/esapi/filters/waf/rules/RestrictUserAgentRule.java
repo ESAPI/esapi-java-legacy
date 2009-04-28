@@ -1,14 +1,13 @@
-package org.owasp.esapi.filters.waf.rules;
+package org.owasp.esapi.waf.rules;
 
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.owasp.esapi.filters.waf.actions.Action;
-import org.owasp.esapi.filters.waf.actions.DefaultAction;
-import org.owasp.esapi.filters.waf.actions.DoNothingAction;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletRequest;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
+import org.owasp.esapi.waf.actions.Action;
+import org.owasp.esapi.waf.actions.DefaultAction;
+import org.owasp.esapi.waf.actions.DoNothingAction;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
 public class RestrictUserAgentRule extends Rule {
 
@@ -23,15 +22,16 @@ public class RestrictUserAgentRule extends Rule {
 		setId(id);
 	}
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
-
+	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response) {
+		String userAgent = request.getHeader( USER_AGENT_HEADER );
+		if ( userAgent == null ) userAgent="";
+		
 		if ( allow != null ) {
-			if ( allow.matcher(request.getHeader(USER_AGENT_HEADER)).matches() ) {
+			if ( allow.matcher(userAgent).matches() ) {
 				return new DoNothingAction();
 			}
 		} else if ( deny != null ) {
-			if ( ! deny.matcher(request.getHeader(USER_AGENT_HEADER)).matches() ) {
+			if ( ! deny.matcher(userAgent).matches() ) {
 				return new DoNothingAction();
 			}
 		}

@@ -1,12 +1,11 @@
-package org.owasp.esapi.filters.waf.rules;
+package org.owasp.esapi.waf.rules;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
-import org.owasp.esapi.filters.waf.actions.Action;
-import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
-
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
+import org.owasp.esapi.waf.actions.Action;
+import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
+import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
 public abstract class Rule {
 

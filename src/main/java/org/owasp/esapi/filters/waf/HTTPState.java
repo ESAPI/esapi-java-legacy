@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf;
+package org.owasp.esapi.waf;
 
 public class HTTPState {
 

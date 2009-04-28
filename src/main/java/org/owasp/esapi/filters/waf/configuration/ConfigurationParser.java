@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf.configuration;
+package org.owasp.esapi.waf.configuration;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,31 +6,28 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-//import org.apache.log4j.Level;
-import org.apache.log4j.Level;
-import org.owasp.esapi.filters.waf.ConfigurationException;
-import org.owasp.esapi.filters.waf.internal.InterceptingHTTPServletResponse;
-import org.owasp.esapi.filters.waf.rules.AddHTTPOnlyFlagRule;
-import org.owasp.esapi.filters.waf.rules.AddHeaderRule;
-import org.owasp.esapi.filters.waf.rules.AddSecureFlagRule;
-import org.owasp.esapi.filters.waf.rules.AuthenticatedRule;
-import org.owasp.esapi.filters.waf.rules.DetectOutboundContentRule;
-import org.owasp.esapi.filters.waf.rules.EnforceHTTPSRule;
-import org.owasp.esapi.filters.waf.rules.HTTPMethodRule;
-import org.owasp.esapi.filters.waf.rules.IPRule;
-import org.owasp.esapi.filters.waf.rules.MustMatchRule;
-import org.owasp.esapi.filters.waf.rules.PathExtensionRule;
-import org.owasp.esapi.filters.waf.rules.ReplaceContentRule;
-import org.owasp.esapi.filters.waf.rules.RestrictContentTypeRule;
-import org.owasp.esapi.filters.waf.rules.RestrictUserAgentRule;
-import org.owasp.esapi.filters.waf.rules.SimpleVirtualPatchRule;
-
 import nu.xom.Builder;
 import nu.xom.Document;
 import nu.xom.Element;
 import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
+
+import org.owasp.esapi.waf.ConfigurationException;
+import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
+import org.owasp.esapi.waf.rules.AddHeaderRule;
+import org.owasp.esapi.waf.rules.AddSecureFlagRule;
+import org.owasp.esapi.waf.rules.AuthenticatedRule;
+import org.owasp.esapi.waf.rules.DetectOutboundContentRule;
+import org.owasp.esapi.waf.rules.EnforceHTTPSRule;
+import org.owasp.esapi.waf.rules.HTTPMethodRule;
+import org.owasp.esapi.waf.rules.IPRule;
+import org.owasp.esapi.waf.rules.MustMatchRule;
+import org.owasp.esapi.waf.rules.PathExtensionRule;
+import org.owasp.esapi.waf.rules.ReplaceContentRule;
+import org.owasp.esapi.waf.rules.RestrictContentTypeRule;
+import org.owasp.esapi.waf.rules.RestrictUserAgentRule;
+import org.owasp.esapi.waf.rules.SimpleVirtualPatchRule;
 
 
 public class ConfigurationParser {

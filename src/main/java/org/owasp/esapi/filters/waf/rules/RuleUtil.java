@@ -1,11 +1,11 @@
-package org.owasp.esapi.filters.waf.rules;
+package org.owasp.esapi.waf.rules;
 
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.owasp.esapi.filters.waf.configuration.AppGuardianConfiguration;
+import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 
 public class RuleUtil {
 

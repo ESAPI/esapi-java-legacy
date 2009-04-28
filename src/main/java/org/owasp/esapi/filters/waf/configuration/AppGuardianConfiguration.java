@@ -1,11 +1,11 @@
-package org.owasp.esapi.filters.waf.configuration;
+package org.owasp.esapi.waf.configuration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import org.apache.log4j.Level;
-import org.owasp.esapi.filters.waf.rules.Rule;
+import org.owasp.esapi.waf.rules.Rule;
 
 public class AppGuardianConfiguration {
 
@@ -38,6 +38,7 @@ public class AppGuardianConfiguration {
 
 	public static int MAX_FILE_SIZE = Integer.MAX_VALUE;
 
+	// TODO: use UTF-8
 	public static String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 	public static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_CHARACTER_ENCODING;
 

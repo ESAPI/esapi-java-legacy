@@ -1,4 +1,4 @@
-package org.owasp.esapi.filters.waf.internal;
+package org.owasp.esapi.waf.internal;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
