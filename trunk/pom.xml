@@ -4,7 +4,7 @@
 	<groupId>OWASP</groupId>
 	<artifactId>ESAPI</artifactId>
 	<packaging>jar</packaging>
-	<version>1.5</version>
+	<version>2.0</version>
 	<name>ESAPI</name>
 	<description>The Enterprise Security API project is an OWASP project
 		to create simple strong security controls for every web platform.
@@ -17,6 +17,13 @@
 		<name>The Open Web Application Security Project (OWASP)</name>
 	</organization>
 	<url>http://www.esapi.org</url>
+	<repositories>
+		<repository>
+			<id>ibiblio</id>
+			<name>ibiblio</name>
+			<url>http://www.ibiblio.com/maven</url>
+		</repository>
+	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>commons-configuration</groupId>
@@ -88,6 +95,11 @@
             <version>1.2.12</version>
             <scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.0</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -96,6 +108,7 @@
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
+					<debug>true</debug>
 				</configuration>
 			</plugin>		
 			<plugin>
@@ -125,21 +138,6 @@
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<configuration>
-					<doclet>gr.spinellis.umlgraph.doclet.UmlGraphDoc</doclet>
-					<docletArtifact>
-						<groupId>gr.spinellis</groupId>
-						<artifactId>UmlGraph</artifactId>
-						<version>4.4</version>
-					</docletArtifact>
-					<additionalparam> -inferrel -inferdep -quiet -hide java.*
-						-collpackages java.util.* -qualify -postfixpackage -nodefontsize 9
-						-nodefontpackagesize 7 </additionalparam>
-				</configuration>
-			</plugin>		
 		</plugins>
 	</reporting>
 </project>
