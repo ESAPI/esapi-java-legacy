@@ -18,6 +18,8 @@ public class MustMatchRule extends Rule {
 
 	private static final String REQUEST_PARAMETERS = "request.parameters.";
 	private static final String REQUEST_HEADERS = "request.headers.";
+	private static final String REQUEST_URI = "request.uri";
+	private static final String REQUEST_URL = "request.url";
 	private static final String SESSION_ATTRIBUTES = "session.";
 
 	private Pattern path;
@@ -37,7 +39,9 @@ public class MustMatchRule extends Rule {
 			InterceptingHTTPServletResponse response) {
 
 		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
-		if ( ! path.matcher(request.getRequestURI()).matches() ) {
+
+		String uri = request.getRequestURI();
+		if ( ! path.matcher(uri).matches() ) {
 
 			return new DoNothingAction();
 
@@ -52,7 +56,7 @@ public class MustMatchRule extends Rule {
 
 				if ( operator == AppGuardianConfiguration.OPERATOR_EXISTS ) {
 
-					target = variable.substring(REQUEST_PARAMETERS.length()+1);
+					target = variable.substring(REQUEST_PARAMETERS.length());
 
 					if ( request.getParameter(target) != null ) {
 						return new DoNothingAction();
@@ -73,7 +77,7 @@ public class MustMatchRule extends Rule {
 					 * simple regex characters, we treat it as a regex.
 					 * Otherwise we treat it as a single parameter.
 					 */
-					target = variable.substring(REQUEST_PARAMETERS.length()+1);
+					target = variable.substring(REQUEST_PARAMETERS.length());
 
 					if ( target.contains("*") || target.contains("?") ) {
 
@@ -114,7 +118,7 @@ public class MustMatchRule extends Rule {
 
 				if ( operator == AppGuardianConfiguration.OPERATOR_EXISTS ) {
 
-					target = variable.substring(REQUEST_HEADERS.length()+1);
+					target = variable.substring(REQUEST_HEADERS.length());
 
 					if ( request.getHeader(target) != null ) {
 						return new DoNothingAction();
@@ -130,7 +134,7 @@ public class MustMatchRule extends Rule {
 
 				} else if ( operator == AppGuardianConfiguration.OPERATOR_EQ || operator == AppGuardianConfiguration.OPERATOR_CONTAINS ) {
 
-					target = variable.substring(REQUEST_HEADERS.length()+1);
+					target = variable.substring(REQUEST_HEADERS.length());
 
 					if ( target.contains("*") || target.contains("?") ) {
 
@@ -154,7 +158,8 @@ public class MustMatchRule extends Rule {
 
 						String s = request.getHeader(target);
 
-						if ( ! RuleUtil.testValue(s, value, operator) ) {
+						if ( s == null || ! RuleUtil.testValue(s, value, operator) ) {
+							log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', input='" + s + "', header='"+target+"'");
 							return new DefaultAction();
 						}
 
@@ -254,7 +259,7 @@ public class MustMatchRule extends Rule {
 
 				}
 
-			} else if ( variable.equals( "request.uri" ) ) {
+			} else if ( variable.equals( REQUEST_URI ) ) {
 
 				if ( operator == AppGuardianConfiguration.OPERATOR_EQ || operator == AppGuardianConfiguration.OPERATOR_CONTAINS ) {
 					if ( RuleUtil.testValue(request.getRequestURI(), value, operator) ) {
@@ -268,7 +273,7 @@ public class MustMatchRule extends Rule {
 				 * Any other operator doesn't make sense.
 				 */
 
-			} else if ( variable.equals( "request.url" ) ) {
+			} else if ( variable.equals( REQUEST_URL ) ) {
 
 				if ( operator == AppGuardianConfiguration.OPERATOR_EQ || operator == AppGuardianConfiguration.OPERATOR_CONTAINS ) {
 					if ( RuleUtil.testValue(request.getRequestURL().toString(), value, operator) ) {
