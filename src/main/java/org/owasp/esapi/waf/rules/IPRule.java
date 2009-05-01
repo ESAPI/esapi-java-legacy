@@ -33,10 +33,12 @@ public class IPRule extends Rule {
 	public Action check(HttpServletRequest request,
 			InterceptingHTTPServletResponse response) {
 
-		if ( (!useExactPath && path.matcher(request.getRequestURI()).matches()) ||
-			 ( useExactPath && exactPath.equals(request.getRequestURI())) ) {
-			if ( ! allowedIP.matcher(request.getRemoteAddr()).matches() ) {
-				log(request, "IP not allowed to access URI '" + request.getRequestURI() + "'");
+		String uri = request.getRequestURI();
+
+		if ( (!useExactPath && path.matcher(uri).matches()) ||
+			 ( useExactPath && exactPath.equals(uri)) ) {
+			if ( ! allowedIP.matcher(request.getRemoteAddr()+"").matches() ) {
+				log(request, "IP not allowed to access URI '" + uri + "'");
 				return new DefaultAction();
 			}
 		}

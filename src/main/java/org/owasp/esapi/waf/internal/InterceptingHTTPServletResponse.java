@@ -16,18 +16,20 @@ import org.owasp.esapi.waf.rules.Rule;
 
 public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper {
 
-	private PrintWriter pw;
+	private InterceptingPrintWriter ipw;
 	private InterceptingServletOutputStream isos;
 	private String contentType;
 
 	private List<AddSecureFlagRule> addSecureFlagRules = null;
 	private List<AddHTTPOnlyFlagRule> addHTTPOnlyFlagRules = null;
+	private boolean alreadyCalledWriter = false;
+	private boolean alreadyCalledOutputStream = false;
 
 	public InterceptingHTTPServletResponse(HttpServletResponse response, boolean buffering, List<Rule> cookieRules) throws IOException {
 
 		super(response);
 		this.isos = new InterceptingServletOutputStream(response.getOutputStream(), buffering);
-		this.pw = new PrintWriter(isos);
+		this.ipw = new InterceptingPrintWriter(new PrintWriter(isos));
 
 		addSecureFlagRules = new ArrayList<AddSecureFlagRule>();
 		addHTTPOnlyFlagRules = new ArrayList<AddHTTPOnlyFlagRule>();
@@ -42,16 +44,31 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
 		}
 	}
 
+	public boolean isUsingWriter() {
+		return alreadyCalledWriter;
+	}
+
 	public InterceptingServletOutputStream getInterceptingServletOutputStream() {
 		return isos;
 	}
 
 	public ServletOutputStream getOutputStream() throws IllegalStateException, IOException {
+		if ( alreadyCalledWriter == true ) {
+			throw new IllegalStateException();
+		}
+
+		alreadyCalledOutputStream = true;
+
 		return isos;
     }
 
 	public PrintWriter getWriter() throws IOException {
-		return pw;
+		if ( alreadyCalledOutputStream == true ) {
+			throw new IllegalStateException();
+		}
+		alreadyCalledWriter = true;
+
+		return ipw;
 	}
 
     public String getContentType() {
@@ -62,7 +79,16 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     	contentType = s;
     }
 
+    public void flush() {
+    	ipw.flush();
+    }
+
     public void commit() throws IOException {
+
+    	if ( alreadyCalledWriter ) {
+    		ipw.flush();
+    	}
+
     	isos.commit();
     }
 
@@ -95,7 +121,6 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
 												addHTTPOnlyFlag, isSession);
 		addHeader("Set-Cookie", cookieValue);
 
-		//super.addCookie(cookie);
 
 	}
 
@@ -126,4 +151,5 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
 
         return header;
     }
+
 }
