@@ -59,6 +59,8 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     private String scheme = "http";
     
+    private String host = "www.example.com";
+    
     private String uri = "/test";
 
     private String url = "https://www.example.com" + uri;
@@ -87,7 +89,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     public MockHttpServletRequest( URL url ) {
     	scheme = url.getProtocol();
-    	// host = url.getHost();
+    	host = url.getHost();
     	uri = url.getPath();
     }
     
@@ -104,7 +106,6 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getContextPath() {
-
         return null;
     }
 
@@ -573,8 +574,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getRemoteAddr() {
-
-        return null;
+    	return "192.168.1.200";
     }
 
     /**
@@ -582,8 +582,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getRemoteHost() {
-
-        return null;
+    	return host;
     }
 
     /**
