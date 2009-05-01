@@ -1,18 +1,3 @@
-/**
- * OWASP Enterprise Security API (ESAPI)
- * 
- * This file is part of the Open Web Application Security Project (OWASP)
- * Enterprise Security API (ESAPI) project. For details, please see
- * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
- *
- * Copyright (c) 2007 - The OWASP Foundation
- * 
- * The ESAPI is published by OWASP under the BSD license. You should read and accept the
- * LICENSE before you use, modify, and/or redistribute this software.
- * 
- * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
- * @created 2007
- */
 package org.owasp.esapi.waf;
 
 import java.net.URL;
@@ -34,17 +19,18 @@ import org.owasp.esapi.http.MockFilterConfig;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.waf.ESAPIWebApplicationFirewallFilter;
 
 /**
  * The Class AccessReferenceMapTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class WAFFilterTest extends TestCase {
-    
+
     /**
 	 * Instantiates a new access reference map test.
-	 * 
+	 *
 	 * @param testName
 	 *            the test name
 	 */
@@ -70,7 +56,7 @@ public class WAFFilterTest extends TestCase {
 
     /**
 	 * Suite.
-	 * 
+	 *
 	 * @return the test
 	 */
     public static Test suite() {
@@ -78,10 +64,10 @@ public class WAFFilterTest extends TestCase {
         return suite;
     }
 
-    
+
     /**
 	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
-	 * 
+	 *
      *
      * @throws Exception
      */
@@ -92,12 +78,12 @@ public class WAFFilterTest extends TestCase {
     	map.put( "configuration", "waf-policy.xml");
     	map.put( "log_settings", "log4j.xml");
     	FilterConfig mfc = new MockFilterConfig( map );
-    	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();        
+    	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
     	waf.init( mfc );
    	    MockHttpServletRequest request = new MockHttpServletRequest();
         request.setScheme("https");
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		
+
 		// the mock filter chain writes the requested URI to the response body
 		MockFilterChain chain = new MockFilterChain();
 
@@ -115,21 +101,21 @@ public class WAFFilterTest extends TestCase {
 		System.out.println( "\nTest good URL: " + url );
         request = new MockHttpServletRequest( url );
         doFilter( waf, request, response, chain, HttpServletResponse.SC_OK );
-        
+
         // test good scheme
         response.reset();
         url = new URL( "https://www.example.com/" );
 		System.out.println( "\nTest good scheme: " + url );
         request = new MockHttpServletRequest( url );
         doFilter( waf, request, response, chain, HttpServletResponse.SC_OK );
-        
+
         // test bad scheme
         response.reset();
         url = new URL( "http://www.example.com/images/test.jpg" );
 		System.out.println( "\nTest bad scheme (no ssl): " + url );
         request = new MockHttpServletRequest( url );
         doFilter( waf, request, response, chain, HttpServletResponse.SC_MOVED_PERMANENTLY );
-        
+
         // test good method
         response.reset();
         url = new URL( "http://www.example.com/index.jsp" );
@@ -160,7 +146,7 @@ public class WAFFilterTest extends TestCase {
 		System.out.println( "\nTest bad request (no user in session): " + url );
         request = new MockHttpServletRequest( url );
         doFilter( waf, request, response, chain, HttpServletResponse.SC_MOVED_PERMANENTLY );
-        
+
         // Test protected URL
         response.reset();
         url = new URL( "https://www.example.com/admin/config" );
@@ -187,7 +173,7 @@ public class WAFFilterTest extends TestCase {
         request.getSession().setAttribute("ESAPIUserSessionKey", user);
         doFilter( waf, request, response, chain, HttpServletResponse.SC_INTERNAL_SERVER_ERROR );
     }
-    
+
     private void doFilter( ESAPIWebApplicationFirewallFilter waf, MockHttpServletRequest request, MockHttpServletResponse response, MockFilterChain chain, int expectedResult ) {
         try {
         	waf.doFilter(request, response, chain);
