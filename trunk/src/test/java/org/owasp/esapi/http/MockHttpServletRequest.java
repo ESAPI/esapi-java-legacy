@@ -18,6 +18,7 @@ package org.owasp.esapi.http;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -56,10 +57,14 @@ public class MockHttpServletRequest implements HttpServletRequest {
     
     private byte[] body;
 
+    private String scheme = "http";
+    
     private String uri = "/test";
 
-    private String url = "https://www.example.com/test";
+    private String url = "https://www.example.com" + uri;
 
+    private String querystring = "pid=1&qid=test";
+    
     private String contentType = null;
     
     private String method = "POST";
@@ -80,6 +85,12 @@ public class MockHttpServletRequest implements HttpServletRequest {
         this.uri = uri;
     }
 
+    public MockHttpServletRequest( URL url ) {
+    	scheme = url.getProtocol();
+    	// host = url.getHost();
+    	uri = url.getPath();
+    }
+    
     /**
      * {@inheritDoc}
      * @return
@@ -260,8 +271,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getQueryString() {
-
-        return null;
+    	return querystring;
     }
 
     /**
@@ -286,7 +296,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public StringBuffer getRequestURL() {
-        return new StringBuffer( url );
+        return new StringBuffer( getScheme() + "://" + this.getServerName() + getRequestURI() + "?" + getQueryString() );
     }
 
     /**
@@ -599,8 +609,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getScheme() {
-
-        return null;
+    	return scheme;
     }
 
     /**
@@ -626,8 +635,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public boolean isSecure() {
-
-        return false;
+    	return scheme.equals( "https" );
     }
 
     /**
@@ -671,7 +679,16 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @throws java.io.UnsupportedEncodingException
      */
     public void setRequestURL(String url) throws UnsupportedEncodingException {
-        this.url = url;
+    	int q = url.indexOf( "?" );
+    	if ( q != -1 ) {
+    		querystring = url.substring( q+1 );
+        	url = url.substring( 0, q );
+        }
+    	this.url = url;
     }
 
+    public void setScheme( String scheme ) {
+    	this.scheme = scheme;
+    }
+    
 }

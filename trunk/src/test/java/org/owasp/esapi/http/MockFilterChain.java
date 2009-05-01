@@ -21,6 +21,7 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  *
@@ -35,7 +36,7 @@ public class MockFilterChain implements FilterChain {
      * @throws javax.servlet.ServletException
      */
     public void doFilter( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
-    	// stubbed out for test purposes
+    	response.getOutputStream().println( "Received request for " +  ((HttpServletRequest)request).getRequestURI() );
     }
 
 }

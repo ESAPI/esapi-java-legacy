@@ -21,9 +21,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import org.owasp.esapi.ESAPI;
 
 /**
  * The Class MockHttpServletResponse.
@@ -34,23 +37,29 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/** The cookies. */
 	List cookies = new ArrayList();
-	
+
 	/** The header names. */
 	List headerNames = new ArrayList();
-	
+
 	/** The header values. */
 	List headerValues = new ArrayList();
-	
+
 	/** The status. */
 	int status = 200;
+
+	StringBuffer body = new StringBuffer();
+
+	public String getBody() {
+		return body.toString();
+	}
 	
-    /**
-     * {@inheritDoc}
-     *
-     * @param cookie
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param cookie
+	 */
 	public void addCookie(Cookie cookie) {
-		cookies.add( cookie );
+		cookies.add(cookie);
 	}
 
 	/**
@@ -61,68 +70,68 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	public List getCookies() {
 		return cookies;
 	}
-	
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public Cookie getCookie( String name ) {
+
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Cookie getCookie(String name) {
 		Iterator i = cookies.iterator();
-		while ( i.hasNext() ) {
-			Cookie c = (Cookie)i.next();
-			if ( c.getName().equals( name ) ) {
+		while (i.hasNext()) {
+			Cookie c = (Cookie) i.next();
+			if (c.getName().equals(name)) {
 				return c;
 			}
 		}
 		return null;
 	}
-	
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @param date
-     */
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @param date
+	 */
 	public void addDateHeader(String name, long date) {
-		headerNames.add( name );
-		headerValues.add( ""+date );
+		headerNames.add(name);
+		headerValues.add("" + date);
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @param value
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @param value
+	 */
 	public void addHeader(String name, String value) {
-		headerNames.add( name );
-		headerValues.add( value );
+		headerNames.add(name);
+		headerValues.add(value);
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @param value
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @param value
+	 */
 	public void addIntHeader(String name, int value) {
-		headerNames.add( name );
-		headerValues.add( ""+value );
+		headerNames.add(name);
+		headerValues.add("" + value);
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @return
+	 */
 	public boolean containsHeader(String name) {
 		return headerNames.contains(name);
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	/**
 	 * Gets the header.
@@ -134,8 +143,8 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 */
 	public String getHeader(String name) {
 		int index = headerNames.indexOf(name);
-		if ( index != -1 ) {
-			return (String)headerValues.get(index);
+		if (index != -1) {
+			return (String) headerValues.get(index);
 		}
 		return null;
 	}
@@ -148,124 +157,120 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	public List getHeaderNames() {
 		return headerNames;
 	}
-	
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param url
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public String encodeRedirectURL(String url) {
-	
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param url
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public String encodeRedirectUrl(String url) {
-	
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param url
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public String encodeURL(String url) {
-	
-		return null;
+		String enc = url;
+		try { enc = ESAPI.encoder().encodeForURL(url);
+		} catch( Exception e ) {}
+		return enc;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param url
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param url
+	 * @return
+	 */
 	public String encodeUrl(String url) {
-	
-		return null;
+		return encodeURL( url );
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param sc
-     * @throws IOException
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param sc
+	 * @throws IOException
+	 */
 	public void sendError(int sc) throws IOException {
-	
-
+		status = sc;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param sc
-     * @param msg
-     * @throws IOException
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param sc
+	 * @param msg
+	 * @throws IOException
+	 */
 	public void sendError(int sc, String msg) throws IOException {
-	
-
+		status = sc;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param location
-     * @throws IOException
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param location
+	 * @throws IOException
+	 */
 	public void sendRedirect(String location) throws IOException {
-	
-
+		status = HttpServletResponse.SC_MOVED_PERMANENTLY;
+		body = new StringBuffer( "Redirect to " + location );
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @param date
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @param date
+	 */
 	public void setDateHeader(String name, long date) {
-		headerNames.add( name );
-		headerValues.add( ""+date );
+		headerNames.add(name);
+		headerValues.add("" + date);
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @param value
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @param value
+	 */
 	public void setHeader(String name, String value) {
-		headerNames.add( name );
-		headerValues.add( value );
+		headerNames.add(name);
+		headerValues.add(value);
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param name
-     * @param value
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param name
+	 * @param value
+	 */
 	public void setIntHeader(String name, int value) {
-		headerNames.add( name );
-		headerValues.add( ""+value );
+		headerNames.add(name);
+		headerValues.add("" + value);
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param sc
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param sc
+	 */
 	public void setStatus(int sc) {
 		status = sc;
 	}
@@ -278,163 +283,157 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	public int getStatus() {
 		return status;
 	}
-	
-    /**
-     * {@inheritDoc}
-     *
-     * @param sc
-     * @param sm
-     */
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param sc
+	 * @param sm
+	 */
 	public void setStatus(int sc, String sm) {
-	
-
+		status = sc;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws IOException
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @throws IOException
+	 */
 	public void flushBuffer() throws IOException {
-	
 
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 */
 	public int getBufferSize() {
-	
-		return 0;
+		return body.length();
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 */
 	public String getCharacterEncoding() {
-	
-		return null;
+		return "UTF-8";
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 */
 	public String getContentType() {
-	
-		return null;
+		return "text/html";
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 */
 	public Locale getLocale() {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     * @throws IOException
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public ServletOutputStream getOutputStream() throws IOException {
-	
-		return null;
+		return new ServletOutputStream() {
+			public void write(int b) throws IOException {
+				body.append((char)b);
+			}
+		};
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     * @throws IOException
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 * @throws IOException
+	 */
 	public PrintWriter getWriter() throws IOException {
-	
-		return null;
+		return new PrintWriter( getOutputStream(), true );
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @return
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @return
+	 */
 	public boolean isCommitted() {
-	
+
 		return false;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void reset() {
-	
-
+		body = new StringBuffer();
+		cookies = new ArrayList();
+		headerNames = new ArrayList();
+		headerValues = new ArrayList();
+		status = 200;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void resetBuffer() {
-	
-
+		body = new StringBuffer();
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param size
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param size
+	 */
 	public void setBufferSize(int size) {
-	
 
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param charset
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param charset
+	 */
 	public void setCharacterEncoding(String charset) {
-	
 
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param len
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param len
+	 */
 	public void setContentLength(int len) {
-	
 
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param type
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param type
+	 */
 	public void setContentType(String type) {
-	
 
 	}
 
-    /**
-     * {@inheritDoc}
-     *
-     * @param loc
-     */
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @param loc
+	 */
 	public void setLocale(Locale loc) {
-	
 
 	}
 
