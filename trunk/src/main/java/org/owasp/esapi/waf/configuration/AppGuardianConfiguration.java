@@ -46,6 +46,14 @@ public class AppGuardianConfiguration {
 	public static boolean FORCE_SECURE_FLAG_TO_SESSION = false;
 
 	/*
+	 * The JavaScript to redirect users to the default error page. Have
+	 * to use this because response.sendRedirect() can't have an arbitrary
+	 * response code and that is a requirement.
+	 */
+	public static final String JAVASCRIPT_TARGET_TOKEN = "##1##";
+	public static final String JAVASCRIPT_REDIRECT = "<html><body><script>document.location='" + JAVASCRIPT_TARGET_TOKEN + "';</script></body></html>";
+
+	/*
 	 * The aliases declared in the beginning of the config file.
 	 */
 	private HashMap<String,Object> aliases;

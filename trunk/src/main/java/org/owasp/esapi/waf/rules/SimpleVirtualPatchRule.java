@@ -79,7 +79,7 @@ public class SimpleVirtualPatchRule extends Rule {
 						} else {
 							value = request.getHeader(s);
 						}
-						if ( ! valid.matcher(value).matches() ) {
+						if ( value != null && ! valid.matcher(value).matches() ) {
 							log(request, "Virtual patch tripped on variable '" + variable + "' (specifically '" + s + "'). User input was '" + value + "' and legal pattern was '" + valid.pattern() + "'");
 							return new DefaultAction();
 						}
@@ -90,7 +90,7 @@ public class SimpleVirtualPatchRule extends Rule {
 
 				if ( parameter ) {
 					String value = request.getDictionaryParameter(target);
-					if ( valid.matcher(value).matches() ) {
+					if ( value == null || valid.matcher(value).matches() ) {
 						return new DoNothingAction();
 					} else {
 						log(request, "Virtual patch tripped on parameter '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "'");
@@ -98,7 +98,7 @@ public class SimpleVirtualPatchRule extends Rule {
 					}
 				} else {
 					String value = request.getHeader(target);
-					if ( valid.matcher(value).matches() ) {
+					if ( value == null || valid.matcher(value).matches() ) {
 						return new DoNothingAction();
 					} else {
 						log(request, "Virtual patch tripped on header '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "'");

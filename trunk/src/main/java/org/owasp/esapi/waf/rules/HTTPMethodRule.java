@@ -27,17 +27,22 @@ public class HTTPMethodRule extends Rule {
 		/*
 		 * If no path is specified, apply rule globally.
 		 */
+		String uri = request.getRequestURI();
+		String method = request.getMethod();
 
-		if ( path == null || path.matcher(request.getRequestURI()).matches() ) {
+		if ( path == null || path.matcher(uri).matches() ) {
 			/*
 			 *	Order allow, deny.
 			 */
 
-			if ( allowedMethods != null && allowedMethods.matcher(request.getMethod()).matches() ) {
+			if ( allowedMethods != null && allowedMethods.matcher(method).matches() ) {
 				return new DoNothingAction();
+			} else if ( allowedMethods != null ) {
+				log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
+				return new DefaultAction();
 			}
 
-			if ( deniedMethods != null && deniedMethods.matcher(request.getMethod()).matches() ) {
+			if ( deniedMethods != null && deniedMethods.matcher(method).matches() ) {
 				log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
 				return new DefaultAction();
 			}

@@ -4,16 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
@@ -26,6 +16,16 @@ import org.owasp.esapi.waf.configuration.ConfigurationParser;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.waf.rules.Rule;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Entry point for the ESAPI's web application firewall (codename AppGuard?).
@@ -220,7 +220,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							redirectUserToErrorPage(response);
+							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
 							return;
 					}
 				}
@@ -272,7 +273,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							redirectUserToErrorPage(response);
+							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
 							return;
 					}
 				}
@@ -301,7 +303,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * Stage 3: Before the response has been sent back to the user.
 		 */
 		logger.info(">> Starting Stage 3" );
-		
+
 		rules = this.appGuardConfig.getBeforeResponseRules();
 
 		for(int i=0;i<rules.size();i++) {
@@ -330,7 +332,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							redirectUserToErrorPage(response);
+							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
 							return;
 					}
 				}
@@ -356,9 +359,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 		if ( appGuardConfig.getBeforeResponseRules().size() + appGuardConfig.getCookieRules().size() > 0 ) {
 			System.out.println( ">>> committing reponse" );
-			response.commit();
-		}
 
+		}
+		response.commit();
 	}
 
 
@@ -385,5 +388,15 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 	}
 
+	public void redirectUserToErrorPage(InterceptingHTTPServletResponse response) throws IOException {
+		String finalJavaScript = AppGuardianConfiguration.JAVASCRIPT_REDIRECT;
+		finalJavaScript = finalJavaScript.replaceAll(AppGuardianConfiguration.JAVASCRIPT_TARGET_TOKEN, appGuardConfig.getDefaultErrorPage());
+
+		response.reset();
+		response.resetBuffer();
+		response.setStatus(appGuardConfig.getDefaultResponseCode());
+		response.getOutputStream().write(finalJavaScript.getBytes());
+		response.commit();
+	}
 
 }

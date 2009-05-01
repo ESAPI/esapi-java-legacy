@@ -29,8 +29,9 @@ public class AuthenticatedRule extends Rule {
 			InterceptingHTTPServletResponse response) {
 
 		HttpSession session = request.getSession();
+		String uri = request.getRequestURI();
 
-		if ( path != null && ! path.matcher(request.getRequestURI()).matches() ) {
+		if ( path != null && ! path.matcher(uri).matches() ) {
 			return new DoNothingAction();
 		}
 
@@ -47,13 +48,13 @@ public class AuthenticatedRule extends Rule {
 				if ( o instanceof Pattern ) {
 
 					Pattern p = (Pattern)o;
-					if ( p.matcher(request.getRequestURI()).matches() ) {
+					if ( p.matcher(uri).matches() ) {
 						return new DoNothingAction();
 					}
 
 				} else if ( o instanceof String ) {
 
-					if ( request.getRequestURI().equals((String)o)) {
+					if ( uri.equals((String)o)) {
 						return new DoNothingAction();
 					}
 

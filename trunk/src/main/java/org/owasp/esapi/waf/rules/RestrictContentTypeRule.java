@@ -32,13 +32,15 @@ public class RestrictContentTypeRule extends Rule {
 			if ( allow.matcher(request.getContentType()).matches() ) {
 				return new DoNothingAction();
 			}
+			log(request, "Disallowed content type based on allow pattern '" + allow.pattern() + "' found on URI '" + request.getRequestURI() + "' (value was '" + request.getContentType() +"')");
 		} else if ( deny != null ) {
 			if ( ! deny.matcher(request.getContentType()).matches() ) {
 				return new DoNothingAction();
 			}
+			log(request, "Disallowed content type based on deny pattern '" + deny.pattern() + "' found on URI '" + request.getRequestURI() + "' (value was '" + request.getContentType() + ")'");
 		}
 
-		log(request, "Disallowed content type '" + deny.pattern() + "' found on URI '" + request.getRequestURI() + "'");
+
 		return new DefaultAction();
 
 	}
