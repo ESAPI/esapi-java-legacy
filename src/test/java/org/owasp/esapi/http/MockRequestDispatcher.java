@@ -36,7 +36,7 @@ public class MockRequestDispatcher implements RequestDispatcher {
      * @throws java.io.IOException
      */
     public void forward(ServletRequest request, ServletResponse response) throws ServletException, IOException {
-    	
+    	System.out.println( "Forwarding" );
     }
     
     /**
@@ -47,7 +47,7 @@ public class MockRequestDispatcher implements RequestDispatcher {
      * @throws java.io.IOException
      */
     public void include(ServletRequest request, ServletResponse response) throws ServletException, IOException {
-    	
+    	System.out.println( "Including" );
     }
 }
 

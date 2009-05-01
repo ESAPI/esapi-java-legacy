@@ -195,7 +195,7 @@ public class MockHttpSession implements HttpSession {
      * @param object
      */
 	public void putValue(String string, Object object) {
-		// stub
+		setAttribute( string, object );
 	}
 
     /**
@@ -204,7 +204,7 @@ public class MockHttpSession implements HttpSession {
      * @param string
      */
 	public void removeAttribute(String string) {
-		// stub
+		attributes.remove( string );
 	}
 
     /**
@@ -213,7 +213,7 @@ public class MockHttpSession implements HttpSession {
      * @param string
      */
 	public void removeValue(String string) {
-		// stub
+		removeAttribute( string );
 	}
 
     /**
