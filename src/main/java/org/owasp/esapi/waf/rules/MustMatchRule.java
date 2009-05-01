@@ -154,6 +154,8 @@ public class MustMatchRule extends Rule {
 							}
 						}
 
+						return new DoNothingAction();
+
 					} else {
 
 						String s = request.getHeader(target);
@@ -162,6 +164,8 @@ public class MustMatchRule extends Rule {
 							log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', input='" + s + "', header='"+target+"'");
 							return new DefaultAction();
 						}
+
+						return new DoNothingAction();
 
 					}
 
@@ -192,18 +196,21 @@ public class MustMatchRule extends Rule {
 						if ( RuleUtil.isInList((Collection)o, value) ) {
 							return new DoNothingAction();
 						} else {
+							log(request, "MustMatch rule failed - looking for value='" + value + "', in session Collection attribute '" + target + "']");
 							return new DefaultAction();
 						}
 					} else if ( o instanceof Map ) {
 						if ( RuleUtil.isInList((Map)o, value) ) {
 							return new DoNothingAction();
 						} else {
+							log(request, "MustMatch rule failed - looking for value='" + value + "', in session Map attribute '" + target + "']");
 							return new DefaultAction();
 						}
 					} else if ( o instanceof Enumeration ) {
 						if ( RuleUtil.isInList((Enumeration)o, value) ) {
 							return new DoNothingAction();
 						} else {
+							log(request, "MustMatch rule failed - looking for value='" + value + "', in session Enumeration attribute '" + target + "']");
 							return new DefaultAction();
 						}
 					}
@@ -221,6 +228,7 @@ public class MustMatchRule extends Rule {
 					if ( o != null ) {
 						return new DoNothingAction();
 					} else {
+						log(request, "MustMatch rule failed - couldn't find required session attribute='" + target + "'");
 						return new DefaultAction();
 					}
 
@@ -242,7 +250,10 @@ public class MustMatchRule extends Rule {
 								Object o = request.getSession(false).getAttribute(attr);
 
 								if ( ! RuleUtil.testValue((String)o, value, operator) ) {
+									log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', session attribute='" + attr + "', attribute value='"+(String)o+"'");
 									return new DefaultAction();
+								} else {
+									return new DoNothingAction();
 								}
 							}
 						}
@@ -252,7 +263,10 @@ public class MustMatchRule extends Rule {
 						Object o = request.getSession(false).getAttribute(target);
 
 						if ( ! RuleUtil.testValue((String)o, value, operator) ) {
+							log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', session attribute='" + target + "', attribute value='"+(String)o+"'");
 							return new DefaultAction();
+						} else {
+							return new DoNothingAction();
 						}
 
 					}
@@ -265,6 +279,7 @@ public class MustMatchRule extends Rule {
 					if ( RuleUtil.testValue(request.getRequestURI(), value, operator) ) {
 						return new DoNothingAction();
 					} else {
+						log(request, "MustMatch rule on request URI failed (operator="+operator+"), requestURI='" + request.getRequestURI() + "', value='" + value+ "'");
 						return new DefaultAction();
 					}
 				}
@@ -279,6 +294,7 @@ public class MustMatchRule extends Rule {
 					if ( RuleUtil.testValue(request.getRequestURL().toString(), value, operator) ) {
 						return new DoNothingAction();
 					} else {
+						log(request, "MustMatch rule on request URL failed (operator="+operator+"), requestURL='" + request.getRequestURL() + "', value='" + value+ "'");
 						return new DefaultAction();
 					}
 				}
@@ -290,7 +306,7 @@ public class MustMatchRule extends Rule {
 
 		}
 
-		log(request, "MustMatch rule failed on URL '" + request.getRequestURL() + "'");
+		log(request, "MustMatch rule failed close on URL '" + request.getRequestURL() + "'");
 		return new DefaultAction();
 
 	}
