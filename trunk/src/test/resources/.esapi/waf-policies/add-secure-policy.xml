@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies an add-secure-flag rule.
+
+	Protection #1: Any cookie set by the application will have the secure flag set. This
+	               should apply to the application session ID as well as any custom cookies.
+
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-page>/security/error.jsp</default-page>
+			<default-status>403</default-status>
+		</error-handling>
+	</settings>
+
+	<add-secure-flag>
+		<cookie name=".*"/>
+	</add-secure-flag>
+
+</policy>

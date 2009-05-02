@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a dynamic-insertion rule.
+
+	Protection #1: All instances of "</body>" in the response body will be replaced by
+	               "this is a test".
+
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-page>/security/error.jsp</default-page>
+			<default-status>403</default-status>
+		</error-handling>
+	</settings>
+
+	<dynamic-insertion pattern="&lt;/body&gt;">
+		<replacement><![CDATA[this is a test]]></replacement>
+	</dynamic-insertion>
+
+</policy>
