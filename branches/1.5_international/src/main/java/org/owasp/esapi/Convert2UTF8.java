@@ -1,5 +1,9 @@
 package org.owasp.esapi;
 
+/**
+ * @author Pawan Singh
+ */
+
 import java.util.regex.*;
 import java.util.*;
 import java.io.*;
@@ -9,8 +13,7 @@ import java.lang.*;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
 
-public class Convert2UTF8 extends Task
-{
+public class Convert2UTF8 extends Task {
 	private String srcDir;
 	private String srcExtension = ".properties";
 	private String srcEncoding;
@@ -18,73 +21,54 @@ public class Convert2UTF8 extends Task
 	private String destDir;
 	private String destExtension = ".utf8";
 
-	public void execute() throws BuildException
-	{
-		System.out.println("Begin Convert2UTF8. srcDir=[" + srcDir + "] destDir=[" + destDir + "]");
-		if (srcDir == null)
-		{
+	public void execute() throws BuildException {
+		System.out.println("Begin Convert2UTF8. srcDir=[" + srcDir
+				+ "] destDir=[" + destDir + "]");
+		if (srcDir == null) {
 			throw new BuildException("srcDir must be defined.");
 		}
-		if (destDir == null)
-		{
+		if (destDir == null) {
 			throw new BuildException("destDir must be defined.");
 		}
-		if (!srcExtension.startsWith("."))
-		{
-			throw new BuildException("srcExtension must start with period ('.').");
+		if (!srcExtension.startsWith(".")) {
+			throw new BuildException(
+					"srcExtension must start with period ('.').");
 		}
-		if (!destExtension.startsWith("."))
-		{
-			throw new BuildException("destExtension must start with period ('.').");
+		if (!destExtension.startsWith(".")) {
+			throw new BuildException(
+					"destExtension must start with period ('.').");
 		}
 
 		File fileSrcDir = new File(srcDir);
-		String[] fileNameList = fileSrcDir.list(
-								new FilenameFilter()
-		{
-			public boolean accept(File d, String name)
-			{
+		String[] fileNameList = fileSrcDir.list(new FilenameFilter() {
+			public boolean accept(File d, String name) {
 				return name.endsWith(srcExtension);
 			}
-		}
-		);
-		for (int i = 0; i < fileNameList.length; i++)
-		{
+		});
+		for (int i = 0; i < fileNameList.length; i++) {
 			String srcFileName = fileNameList[i];
-			String destFileName = srcFileName.replaceFirst(srcExtension, destExtension);
-			System.out.println("Index[" + i + "]: srcFileName=" + srcFileName + " destFileName=" +
-				destFileName);
-			if (srcEncoding != null && srcEncoding.length() != 0)
-			{
-				encodeFile(srcDir + "/" + srcFileName, srcEncoding, destDir + "/" + destFileName,
-					"UTF8");
-			}
-			else
-			if (srcFileName.indexOf("_ja.") > 0)
-			{
-				encodeFile(srcDir + "/" + srcFileName, "SHIFT_JIS", destDir + "/" + destFileName,
-					"UTF8");
-			}
-			else
-			if (srcFileName.indexOf("_ko.") > 0)
-			{
-				encodeFile(srcDir + "/" + srcFileName, "CP949", destDir + "/" + destFileName,
-					"UTF8");
-			}
-			else
-			if (srcFileName.indexOf("_zhs.") > 0)
-			{
-				encodeFile(srcDir + "/" + srcFileName, "MS936", destDir + "/" + destFileName,
-					"UTF8");
-			}
-			else
-			if (srcFileName.indexOf("_zht.") > 0)
-			{
-				encodeFile(srcDir + "/" + srcFileName, "MS950", destDir + "/" + destFileName, "UTF8");
-			}
-			else
-			{
-				encodeFile(srcDir + "/" + srcFileName, "ISO-8859-1", destDir + "/" + destFileName, "UTF8");
+			String destFileName = srcFileName.replaceFirst(srcExtension,
+					destExtension);
+			System.out.println("Index[" + i + "]: srcFileName=" + srcFileName
+					+ " destFileName=" + destFileName);
+			if (srcEncoding != null && srcEncoding.length() != 0) {
+				encodeFile(srcDir + "/" + srcFileName, srcEncoding, destDir
+						+ "/" + destFileName, "UTF8");
+			} else if (srcFileName.indexOf("_ja") > 0) {
+				encodeFile(srcDir + "/" + srcFileName, "SHIFT_JIS", destDir
+						+ "/" + destFileName, "UTF8");
+			} else if (srcFileName.indexOf("_ko") > 0) {
+				encodeFile(srcDir + "/" + srcFileName, "CP949", destDir + "/"
+						+ destFileName, "UTF8");
+			} else if (srcFileName.indexOf("_zhs") > 0) {
+				encodeFile(srcDir + "/" + srcFileName, "MS936", destDir + "/"
+						+ destFileName, "UTF8");
+			} else if (srcFileName.indexOf("_zht") > 0) {
+				encodeFile(srcDir + "/" + srcFileName, "MS950", destDir + "/"
+						+ destFileName, "UTF8");
+			} else {
+				encodeFile(srcDir + "/" + srcFileName, "ISO-8859-1", destDir
+						+ "/" + destFileName, "UTF8");
 			}
 		}
 
@@ -92,54 +76,46 @@ public class Convert2UTF8 extends Task
 
 	}
 
-	private static void encodeFile(String srcFileName, String srcFileEncoding, String outFileName,
-		String outFileEncoding)
-	{
-		System.out.println("encodeFile: srcFileName="+srcFileName+" srcFileEncoding="+srcFileEncoding);
-		System.out.println("encodeFile: outFileName="+outFileName+" srcFileEncoding="+outFileEncoding);
-		try
-		{
-			BufferedReader br =
-				new BufferedReader(new InputStreamReader(new FileInputStream(srcFileName),
-				srcFileEncoding));
-			BufferedWriter bw =
-				new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outFileName),
-				outFileEncoding));
+	private static void encodeFile(String srcFileName, String srcFileEncoding,
+			String outFileName, String outFileEncoding) {
+		System.out.println("encodeFile: srcFileName=" + srcFileName
+				+ " srcFileEncoding=" + srcFileEncoding);
+		System.out.println("encodeFile: outFileName=" + outFileName
+				+ " srcFileEncoding=" + outFileEncoding);
+		try {
+			BufferedReader br = new BufferedReader(new InputStreamReader(
+					new FileInputStream(srcFileName), srcFileEncoding));
+			BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(
+					new FileOutputStream(outFileName), outFileEncoding));
 			String str = "";
 			while ((str = br.readLine()) != null)
 				bw.write(str + "\n");
 			br.close();
 			bw.close();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			System.out.println("Error:" + e.getMessage());
-			System.out.println("srcFileName:["+srcFileName+"] outFileName:["+outFileName+"].");
+			System.out.println("srcFileName:[" + srcFileName
+					+ "] outFileName:[" + outFileName + "].");
 		}
 	}
 
-	public void setDestDir(String destDir)
-	{
+	public void setDestDir(String destDir) {
 		this.destDir = destDir;
 	}
 
-	public void setSrcDir(String srcDir)
-	{
+	public void setSrcDir(String srcDir) {
 		this.srcDir = srcDir;
 	}
 
-	public void setSrcEncoding(String srcEncoding)
-	{
+	public void setSrcEncoding(String srcEncoding) {
 		this.srcEncoding = srcEncoding;
 	}
 
-	public void setSrcExtension(String srcExtension)
-	{
+	public void setSrcExtension(String srcExtension) {
 		this.srcExtension = srcExtension;
 	}
 
-	public void setDestExtension(String destExtension)
-	{
+	public void setDestExtension(String destExtension) {
 		this.destExtension = destExtension;
 	}
 }
