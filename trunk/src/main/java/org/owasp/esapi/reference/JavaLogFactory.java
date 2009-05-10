@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Level;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
@@ -288,16 +289,18 @@ public class JavaLogFactory implements LogFactory {
             // create a random session number for the user to represent the user's 'session', if it doesn't exist already
             String userSessionIDforLogging = "unknown";
 
-            try {
-                HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession( false );
-                userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
-                // if there is no session ID for the user yet, we create one and store it in the user's session
-	            if ( userSessionIDforLogging == null ) {
-	            	userSessionIDforLogging = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
-	            	session.setAttribute("ESAPI_SESSION", userSessionIDforLogging);
-	            }
-            } catch( NullPointerException e ) {
-            	// continue
+            // add a session token to log if there is an HTTP session
+            HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+            if ( request != null ) {
+                HttpSession session = request.getSession( false );
+                if ( session != null ) {
+	                userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
+	                // if there is no session ID for the user yet, we create one and store it in the user's session
+		            if ( userSessionIDforLogging == null ) {
+		            	userSessionIDforLogging = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+		            	session.setAttribute("ESAPI_SESSION", userSessionIDforLogging);
+		            }
+                }
             }
             
             // ensure there's something to log
