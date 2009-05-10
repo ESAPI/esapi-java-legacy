@@ -117,6 +117,13 @@ public interface SecurityConfiguration {
     public File getUploadDirectory();
 	
 	/**
+	 * Gets the key length to use in cryptographic operations declared in the ESAPI properties file.
+	 * 
+	 * @return the key length.
+	 */
+    public int getKeyLength();
+    
+	/**
 	 * Gets the master salt that is used to salt stored password hashes and any other location 
 	 * where a salt is needed.
 	 * 
