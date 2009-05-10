@@ -50,7 +50,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     private static SecretKeySpec secretKeySpec = null;
     private static String encryptAlgorithm = "AES";
     private static String encoding = "UTF-8"; 
-    private static int keysize = 256; 
 
     // digital signatures
     private static PrivateKey privateKey = null;
@@ -70,7 +69,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     public static void main( String[] args ) throws Exception {
         System.out.println( "Generating a new secret key" );
         KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
-        kgen.init(keysize);
+        kgen.init( ESAPI.securityConfiguration().getKeyLength() );
         SecretKey secretKey = kgen.generateKey();
         byte[] raw = secretKey.getEncoded();
         System.out.println( "\nCopy and paste this into ESAPI.properties\n" );

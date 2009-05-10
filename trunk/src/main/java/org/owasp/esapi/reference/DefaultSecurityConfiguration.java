@@ -79,6 +79,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String MASTER_SALT = "MasterSalt";
 
+    private static final String KEY_LENGTH = "KeyLength";
+
     private static final String APPROVED_EXECUTABLES = "ApprovedExecutables";
 
     private static final String APPROVED_UPLOAD_EXTENSIONS = "ApprovedUploadExtensions";
@@ -109,6 +111,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String ABSOLUTE_TIMEOUT_DURATION = "AbsoluteTimeoutDuration";
     
+    private static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
+
     private static final String FORCE_HTTPONLY = "ForceHTTPOnly";
     
     private static final String LOG_LEVEL = "LogLevel";
@@ -308,6 +312,18 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	} catch( IOException e ) {
 	        logSpecial("Failed to load security configuration from " + dir, e);
     	}
+    }
+    
+    public int getKeyLength() {
+    	int length = 256;
+    	String property = properties.getProperty(KEY_LENGTH);
+    	try {
+    		length = Integer.parseInt( property );
+    	} catch( Exception e ) {
+    		logSpecial( "Could not parse the " + KEY_LENGTH + " property: " + property, e );
+    		// return the default
+    	}
+    	return length;
     }
     
     /**
@@ -781,7 +797,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * by the Executor.
      */
 	public File getWorkingDirectory() {
-    	String value = properties.getProperty( "Executor.WorkingDirectory" );
+    	String value = properties.getProperty( WORKING_DIRECTORY );
     	if ( value == null ) {
     		logSpecial( "Could not find Executor.WorkingDirectory  property, returning null", null );
     	}
