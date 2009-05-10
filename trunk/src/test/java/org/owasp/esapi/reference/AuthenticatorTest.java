@@ -182,21 +182,21 @@ public class AuthenticatorTest extends TestCase {
 			private int count = 1;
             private boolean result = false;
 			public void run() {
-		        Authenticator instance = ESAPI.authenticator();
+		        Authenticator auth = ESAPI.authenticator();
 				User a = null;
 				try {
-					String password = instance.generateStrongPassword();
+					String password = auth.generateStrongPassword();
 					String accountName = "TestAccount" + count++;
-					a = instance.getUser(accountName);
+					a = auth.getUser(accountName);
 					if ( a != null ) {
-						instance.removeUser(accountName);
+						auth.removeUser(accountName);
 					}
-					a = instance.createUser(accountName, password, password);
-					instance.setCurrentUser(a);
+					a = auth.createUser(accountName, password, password);
+					auth.setCurrentUser(a);
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 				}
-				User b = instance.getCurrentUser();
+				User b = auth.getCurrentUser();
 				result &= a.equals(b);
 			}
 		};

@@ -35,7 +35,7 @@ public abstract class Codec {
 	 * string for that character to save time later. If the character shouldn't be
 	 * encoded, then store null.
 	 */
-	protected static final String[] hex = new String[256];
+	private static final String[] hex = new String[256];
 
 	static {
 		for ( char c = 0; c < 0xFF; c++ ) {

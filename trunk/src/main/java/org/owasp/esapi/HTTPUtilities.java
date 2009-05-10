@@ -33,7 +33,6 @@ import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SafeRequest;
 import org.owasp.esapi.filters.SafeResponse;
-import org.owasp.esapi.http.MockHttpServletRequest;
 
 
 /**

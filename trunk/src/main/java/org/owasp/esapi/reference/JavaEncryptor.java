@@ -177,7 +177,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	* {@inheritDoc}
 	*/
 	public String sign(String data) throws EncryptionException {
-		String signatureAlgorithm="SHAwithDSA";
 		try {
 			Signature signer = Signature.getInstance(signatureAlgorithm);
 			signer.initSign(privateKey);

@@ -49,7 +49,6 @@ import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.ValidationUploadException;
 import org.owasp.esapi.filters.SafeRequest;
 import org.owasp.esapi.filters.SafeResponse;
-import org.owasp.esapi.http.MockHttpServletRequest;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation

@@ -1,13 +1,12 @@
 package org.owasp.esapi.reference.accesscontrol;
 
-import java.util.*;
+import java.util.Map;
 
 import org.owasp.esapi.AccessControlRule;
 import org.owasp.esapi.AccessController;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.reference.FileBasedAccessController;
 import org.owasp.esapi.reference.accesscontrol.policyloader.ACRPolicyFileLoader;
 import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyDTO;
 

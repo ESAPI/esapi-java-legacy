@@ -1,8 +1,6 @@
 package org.owasp.esapi.reference.accesscontrol.policyloader;
 
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.beanutils.*;
-import org.owasp.esapi.errors.*;
 
 
 public interface ACRParameterLoader <T> {
