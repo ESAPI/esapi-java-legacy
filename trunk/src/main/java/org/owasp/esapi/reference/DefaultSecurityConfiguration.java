@@ -773,4 +773,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         Pattern pattern = Pattern.compile(value);
         return pattern;
     }
+
+    /**
+     * getWorkingDirectory returns the default directory where processes will be executed
+     * by the Executor.
+     */
+	public File getWorkingDirectory() {
+    	String value = properties.getProperty( "Executor.WorkingDirectory" );
+    	if ( value == null ) {
+    		logSpecial( "Could not find Executor.WorkingDirectory  property, returning null", null );
+    	}
+    	return new File( value );
+	}
 }

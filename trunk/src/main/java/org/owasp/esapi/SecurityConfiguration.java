@@ -365,4 +365,9 @@ public interface SecurityConfiguration {
 			this.actions = actions;
 		}
 	}
+
+	/**
+	 * Returns the default working directory for executing native processes with Runtime.exec().
+	 */
+	public File getWorkingDirectory();
 }

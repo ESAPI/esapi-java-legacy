@@ -46,6 +46,16 @@ import org.owasp.esapi.errors.ExecutorException;
 public interface Executor {
 
 	/**
+	 * Invokes the specified executable with default workdir and codec and not logging parameters.
+	 * 
+	 * @param executable
+	 *            the command to execute
+	 * @param params
+	 *            the parameters of the command being executed
+	 */
+	String executeSystemCommand(File executable, List params) throws ExecutorException;
+	
+	/**
 	 * Executes a system command after checking that the executable exists and
 	 * escaping all the parameters to ensure that injection is impossible.
 	 * Implementations must change to the specified working
@@ -59,12 +69,14 @@ public interface Executor {
 	 *            the working directory
 	 * @param codec
 	 *            the codec to use to encode for the particular OS in use
+	 * @param logParams
+	 *            use false if any parameters contains sensitive or confidential information
 	 * 
 	 * @return the output of the command being run
 	 * 
 	 * @throws ExecutorException
 	 *             the service exception
 	 */
-	String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException;
+	String executeSystemCommand(File executable, List params, File workdir, Codec codec, boolean logParams) throws ExecutorException;
 
 }

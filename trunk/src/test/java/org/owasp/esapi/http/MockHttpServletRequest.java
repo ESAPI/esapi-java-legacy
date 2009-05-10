@@ -57,7 +57,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
     
     private byte[] body;
 
-    private String scheme = "http";
+    private String scheme = "https";
     
     private String host = "www.example.com";
     
@@ -678,6 +678,11 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @throws java.io.UnsupportedEncodingException
      */
     public void setRequestURL(String url) throws UnsupportedEncodingException {
+    	// get the scheme
+    	int p = url.indexOf( ":" );
+    	this.scheme = url.substring( 0, p );
+    	
+    	// get the querystring
     	int q = url.indexOf( "?" );
     	if ( q != -1 ) {
     		querystring = url.substring( q+1 );

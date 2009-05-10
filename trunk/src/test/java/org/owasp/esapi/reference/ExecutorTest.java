@@ -98,15 +98,16 @@ public class ExecutorTest extends TestCase {
 		try {
 			params.add("/C");
 			params.add("dir");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			assertTrue(result.length() > 0);
 		} catch (Exception e) {
-			fail(e.getMessage());
+			e.printStackTrace();
+			fail();
 		}
 		try {
 			File exec2 = new File( executable.getPath() + ";inject.exe" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -114,15 +115,15 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( executable.getPath() + "\\..\\cmd.exe" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
 			// expected
 		}
 		try {
-			File workdir = new File( "ridiculous" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), workdir, codec);
+			File workdir = new File( "c:\\ridiculous" );
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), workdir, codec, false );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -130,7 +131,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			params.add("&dir");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -138,7 +139,7 @@ public class ExecutorTest extends TestCase {
 
 		try {
 			params.set( params.size()-1, "c:\\autoexec.bat" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -146,7 +147,7 @@ public class ExecutorTest extends TestCase {
 
         try {
             params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-            String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+            String result = instance.executeSystemCommand(executable, new ArrayList(params) );
             System.out.println( "RESULT: " + result );
         } catch (Exception e) {
             fail();
@@ -177,7 +178,7 @@ public class ExecutorTest extends TestCase {
 			params.add("-c");
 			params.add("ls");
 			params.add("/");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			assertTrue(result.length() > 0);
 		} catch (Exception e) {
@@ -185,7 +186,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( executable.getPath() + ";./inject" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -193,7 +194,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( executable.getPath() + "/../bin/sh" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -201,7 +202,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File workdir = new File( "ridiculous" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), workdir, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -209,7 +210,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			params.add(";ls");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -231,5 +232,6 @@ public class ExecutorTest extends TestCase {
 //            fail();
 //        }
 	}
+	
 
 }
