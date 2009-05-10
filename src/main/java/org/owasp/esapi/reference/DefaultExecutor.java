@@ -26,6 +26,8 @@ import java.util.Map;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.UnixCodec;
+import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.ExecutorException;
 
 /**
@@ -42,7 +44,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
 
     /** The logger. */
     private final Logger logger = ESAPI.getLogger("Executor");
-    
+    private Codec codec = null;
     //private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
     
 
@@ -50,23 +52,34 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * Instantiate a new Executor
      */
     public DefaultExecutor() {
+		if ( System.getProperty("os.name").indexOf("Windows") != -1 ) {
+			logger.warning( Logger.SECURITY_SUCCESS, "Using WindowsCodec for Executor. If this is not running on Windows this could allow injection" );
+			codec = new WindowsCodec();
+		} else {
+			logger.warning( Logger.SECURITY_SUCCESS, "Using UnixCodec for Executor. If this is not running on Unix this could allow injection" );
+			codec = new UnixCodec();
+		}
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String executeSystemCommand(File executable, List params) throws ExecutorException {
+    	File workdir = ESAPI.securityConfiguration().getWorkingDirectory();
+    	boolean logParams = false;
+    	return executeSystemCommand( executable, params, workdir, codec, logParams );
     }
 
     /**
      * {@inheritDoc}
      * 
-     * <p>The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
+     * The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
      * and then executes the command without using concatenation. The exact, absolute, canonical path of each
      * executable must be listed as an approved executable in the ESAPI properties. The executable must also
-     * exist on the disk.</p> 
-     * 
-     * <p>If there are failures, it will be logged. 
-     * 
-     * <p><b>Privacy Note</b>: Be careful if you pass PII to the executor, as the reference implementation logs
-     * the parameters. You MUST change this behavior if you are passing credit card numbers, TIN/SSN, or 
-     * health information through this reference implementation, such as to a credit card or HL7 gateway.</p> 
+     * exist on the disk. All failures will be logged, along with parameters if specified. Set the logParams to false if
+     * you are going to invoke this interface with confidential information.
      */
-    public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
+    public String executeSystemCommand(File executable, List params, File workdir, Codec codec, boolean logParams ) throws ExecutorException {
         try {
             // executable must exist
             if (!executable.exists()) {
@@ -100,6 +113,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
                 throw new ExecutorException("Execution failure", "No such working directory for running executable: " + workdir.getPath());
             }
             
+            // set the command into the list and create command array
             params.add(0, executable.getCanonicalPath());
             String[] command = (String[])params.toArray( new String[0] );
 
@@ -114,7 +128,11 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             pb.redirectErrorStream(true);
             Process process = pb.start();
 
-            logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            if ( logParams ) {
+            	logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            } else {
+            	logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " [sensitive parameters obscured] in " + workdir);
+            }
             String output = readStream( process.getInputStream() );
             String errors = readStream( process.getErrorStream() );
             if ( errors != null && errors.length() > 0 ) {
