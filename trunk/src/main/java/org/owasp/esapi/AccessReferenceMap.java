@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi;
 
+import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -62,7 +63,7 @@ import org.owasp.esapi.errors.AccessControlException;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public interface AccessReferenceMap {
+public interface AccessReferenceMap extends Serializable {
 
 	/**
 	 * Get an iterator through the direct object references. No guarantee is made as 
