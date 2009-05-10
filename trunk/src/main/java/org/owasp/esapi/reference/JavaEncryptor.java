@@ -39,7 +39,6 @@ import org.owasp.esapi.errors.IntegrityException;
  * layers on the JCE provided cryptographic package. Algorithms used are
  * configurable in the ESAPI.properties file.
  * 
- * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -51,7 +50,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     private static SecretKeySpec secretKeySpec = null;
     private static String encryptAlgorithm = "AES";
     private static String encoding = "UTF-8"; 
-    private static int keysize = 128;   // 192 and 256 bits may not be available until Java 1.5
+    private static int keysize = 256; 
 
     // digital signatures
     private static PrivateKey privateKey = null;
@@ -113,9 +112,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		}
 	}
 
-	
-	
-	
 	
 	/**
      * {@inheritDoc}
