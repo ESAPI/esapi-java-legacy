@@ -489,7 +489,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         Iterator i = new TreeSet( properties.keySet() ).iterator();
         while (i.hasNext()) {
             String key = (String) i.next();
-            logSpecial("  |   " + key + "=" + properties.get(key), null);
+            if ( !key.equals( "MasterKey" ) && !key.equals( "MasterSalt" ) ) {
+            		logSpecial("  |   " + key + "=" + properties.get(key), null);
+        	}
         }
         
 		// cache regular expressions
