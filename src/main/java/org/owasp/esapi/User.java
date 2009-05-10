@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi;
 
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * @since June 1, 2007
  */
 
-public interface User extends Principal {
+public interface User extends Principal, Serializable {
 
     /**
      * Adds a role to this user's account.
