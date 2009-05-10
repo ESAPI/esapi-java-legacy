@@ -56,7 +56,7 @@ public class EncryptedPropertiesTest extends TestCase {
 		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		instance.setProperty("one", "two");
 		instance.setProperty("two", "three");
-		File dir = new File( System.getProperty( "user.home" ), ".esapi");
+		File dir = new File( System.getProperty( "user.home" ), ".esapi_test");
 		dir.mkdir();
 		instance.store(new FileOutputStream( new File( dir, "test.properties") ), "testStore");
 	}
