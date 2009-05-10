@@ -1,14 +1,13 @@
 package org.owasp.esapi.reference.accesscontrol.policyloader;
 
-import org.apache.commons.configuration.*;
-import org.apache.commons.beanutils.*;
+import java.io.File;
+import java.util.Collection;
+
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AccessControlException;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 final public class ACRPolicyFileLoader {
 	protected final Logger logger = ESAPI.getLogger("ACRPolicyFileLoader");

@@ -15,23 +15,9 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.errors.IntrusionException;
 
 /**
  * Reference implementation of the AccessController interface. This reference

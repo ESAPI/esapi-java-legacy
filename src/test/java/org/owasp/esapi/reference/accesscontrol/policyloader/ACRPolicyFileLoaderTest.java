@@ -10,9 +10,6 @@ import org.junit.Test;
 import org.owasp.esapi.AccessController;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.reference.accesscontrol.DefaultAccessController;
-import org.owasp.esapi.reference.accesscontrol.policyloader.ACRPolicyFileLoader;
-import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyDTO;
 /**
  * Answers the question: Is the policy file being loaded properly?
  * @author Mike H. Fauzy

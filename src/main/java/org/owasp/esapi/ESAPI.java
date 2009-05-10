@@ -16,18 +16,10 @@
  */
 package org.owasp.esapi;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.reference.DefaultExecutor;
-import org.owasp.esapi.reference.DefaultHTTPUtilities;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
-import org.owasp.esapi.reference.DefaultValidator;
-import org.owasp.esapi.reference.accesscontrol.DefaultAccessController;
-import org.owasp.esapi.reference.accesscontrol.policyloader.ACRPolicyFileLoader;
-import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyDTO;
 
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
@@ -107,8 +99,8 @@ public class ESAPI {
 	 * @param accessController
 	 *            the AccessController to set to be the current ESAPI AccessController. 
 	 */
-	public static void setAccessController(AccessController accessController) {
-		ESAPI.accessController = accessController;
+	public static void setAccessController(AccessController controller) {
+		ESAPI.accessController = controller;
 	}
 
 	/**

@@ -15,23 +15,11 @@
  */
 package org.owasp.esapi.waf.internal;
 
-import org.owasp.esapi.waf.WAFFilterTest;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.FilterConfig;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.http.MockFilterChain;
-import org.owasp.esapi.http.MockFilterConfig;
 import org.owasp.esapi.http.MockHttpServletRequest;
-import org.owasp.esapi.http.MockHttpServletResponse;
-import org.owasp.esapi.waf.ESAPIWebApplicationFirewallFilter;
-import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)

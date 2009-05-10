@@ -33,7 +33,7 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public abstract class BaseValidationRule implements ValidationRule {
 
-	protected String typeName = null;
+	private String typeName = null;
 	protected boolean allowNull = false;
 	protected Encoder encoder = null;
 	

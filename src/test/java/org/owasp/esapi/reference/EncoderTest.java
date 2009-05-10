@@ -665,5 +665,60 @@ public class EncoderTest extends TestCase {
         assertEquals("\\/etc\\/hosts", instance.encodeForOS(unix, "/etc/hosts"));
         assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(unix, "/etc/hosts; ls -l"));
     }
+    
+    public static void main( String[] args ) throws Exception {
+        System.out.println("Canonicalization Performance");
+    	Encoder encoder = ESAPI.encoder();
+    	int iterations = 1000;
+    	String normal = "The quick brown fox jumped over the lazy dog";
+    	
+    	long start = System.currentTimeMillis();
+        for ( int i=0; i< iterations; i++ ) {
+        	String temp = normal;
+        }
+    	long stop = System.currentTimeMillis();
+        System.out.println( "Normal: " + (stop-start) );
+        
+    	start = System.currentTimeMillis();
+        for ( int i=0; i< iterations; i++ ) {
+        	String temp = encoder.canonicalize( normal, false );
+        }
+    	stop = System.currentTimeMillis();
+        System.out.println( "Normal Loose: " + (stop-start) );
+        
+    	start = System.currentTimeMillis();
+        for ( int i=0; i< iterations; i++ ) {
+        	String temp = encoder.canonicalize( normal, true );
+        }
+    	stop = System.currentTimeMillis();
+        System.out.println( "Normal Strict: " + (stop-start) );
+
+    	String attack = "%2&#x35;2%3525&#x32;\\u0036lt;\r\n\r\n%&#x%%%3333\\u0033;&%23101;";
+    	
+    	start = System.currentTimeMillis();
+        for ( int i=0; i< iterations; i++ ) {
+        	String temp = attack;
+        }
+    	stop = System.currentTimeMillis();
+        System.out.println( "Attack: " + (stop-start) );
+        
+    	start = System.currentTimeMillis();
+        for ( int i=0; i< iterations; i++ ) {
+        	String temp = encoder.canonicalize( attack, false );
+        }
+    	stop = System.currentTimeMillis();
+        System.out.println( "Attack Loose: " + (stop-start) );
+        
+    	start = System.currentTimeMillis();
+        for ( int i=0; i< iterations; i++ ) {
+        	try {
+        		String temp = encoder.canonicalize( attack, true );
+        	} catch( IntrusionException e ) { 
+        		// expected
+        	}
+        }
+    	stop = System.currentTimeMillis();
+        System.out.println( "Attack Strict: " + (stop-start) );
+    }
 }
 
