@@ -49,7 +49,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	public void init(FilterConfig fc) throws ServletException {
 
-		logger.info( ">> Initializing WAF" );
+//		logger.info( ">> Initializing WAF" );
 		/*
 		 * Pull logging file.
 		 */
@@ -96,7 +96,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain chain) throws IOException, ServletException {
 
-		logger.info(">>In WAF doFilter");
+//		logger.info(">>In WAF doFilter");
 
 		HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
 		HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
@@ -123,7 +123,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * sessions.
 		 */
 
-		logger.info(">> Starting Stage 0" );
+//		logger.info(">> Starting Stage 0" );
 
 		if ( httpRequest.getSession(false) == null && ( AppGuardianConfiguration.FORCE_SECURE_FLAG_TO_SESSION ||
 				 AppGuardianConfiguration.FORCE_HTTP_ONLY_FLAG_TO_SESSION ) ) {
@@ -190,7 +190,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 1: Rules that do not need the request body.
 		 */
-		logger.info(">> Starting stage 1" );
+//		logger.info(">> Starting stage 1" );
 
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
@@ -243,7 +243,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 2: After the body has been read, but before the the application has gotten it.
 		 */
-		logger.info(">> Starting Stage 2" );
+//		logger.info(">> Starting Stage 2" );
 
 		rules = this.appGuardConfig.getAfterBodyRules();
 
@@ -296,13 +296,13 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * In between stages 2 and 3 is the application's processing of the input.
 		 */
-		logger.info(">> Calling the FilterChain: " + chain );
+//		logger.info(">> Calling the FilterChain: " + chain );
 		chain.doFilter(request, response);
 
 		/*
 		 * Stage 3: Before the response has been sent back to the user.
 		 */
-		logger.info(">> Starting Stage 3" );
+//		logger.info(">> Starting Stage 3" );
 
 		rules = this.appGuardConfig.getBeforeResponseRules();
 
