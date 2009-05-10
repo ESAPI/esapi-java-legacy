@@ -392,7 +392,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		try {
 			return URLEncoder.encode(input, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
-			throw new EncodingException("Encoding failure", "Encoding not supported", ex);
+			throw new EncodingException("Encoding failure", "Character encoding not supported", ex);
 		} catch (Exception e) {
 			throw new EncodingException("Encoding failure", "Problem URL encoding input", e);
 		}
@@ -409,7 +409,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		try {
 			return URLDecoder.decode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
-			throw new EncodingException("Decoding failed", "Encoding not supported", ex);
+			throw new EncodingException("Decoding failed", "Character encoding not supported", ex);
 		} catch (Exception e) {
 			throw new EncodingException("Decoding failed", "Problem URL decoding input", e);
 		}
