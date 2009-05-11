@@ -23,14 +23,17 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.security.Signature;
+import java.util.ArrayList;
 import java.util.Date;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
+import javax.crypto.Mac;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
 
@@ -182,7 +185,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			signer.initSign(privateKey);
 			signer.update(data.getBytes());
 			byte[] bytes = signer.sign();
-			return ESAPI.encoder().encodeForBase64(bytes,true);
+			return ESAPI.encoder().encodeForBase64(bytes, false);
 		} catch (Exception e) {
 			throw new EncryptionException("Signature failure", "Can't find signature algorithm " + signatureAlgorithm, e);
 		}
@@ -214,7 +217,11 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		try {
 			// mix in some random data so even identical data and timestamp produces different seals
 			String random = ESAPI.randomizer().getRandomString(10, DefaultEncoder.CHAR_ALPHANUMERICS);
-			return this.encrypt(expiration + ":" + random + ":" + data);
+			String plaintext = expiration + ":" + random + ":" + data;
+			// add integrity check
+			String sig = this.sign( plaintext );
+			String ciphertext = this.encrypt( plaintext + ":" + sig );
+			return ciphertext;
 		} catch( EncryptionException e ) {
 			throw new IntegrityException( e.getUserMessage(), e.getLogMessage(), e );
 		}
@@ -224,29 +231,34 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	* {@inheritDoc}
 	*/
 	public String unseal(String seal) throws EncryptionException {
-		
 		String plaintext = null;
 		try {
+			System.out.println( "DECRYPTING: " + seal );
 			plaintext = decrypt(seal);
+
+			String[] parts = plaintext.split(":");
+			if (parts.length != 4) {
+				throw new EncryptionException("Invalid seal", "Seal was not formatted properly");
+			}
+	
+			String timestring = parts[0];
+			long now = new Date().getTime();
+			long expiration = Long.parseLong(timestring);
+			if (now > expiration) {
+				throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
+			}
+			String random = parts[1];
+			String data = parts[2];
+			String sig = parts[3];
+			if (!this.verifySignature(sig, timestring + ":" + random + ":" + data ) ) {
+				throw new EncryptionException("Invalid seal", "Seal integrity check failed");
+			}	
+			return data;
 		} catch (EncryptionException e) {
-			throw new EncryptionException("Invalid seal", "Seal did not decrypt properly", e);
+			throw e;
+		} catch (Exception e) {
+			throw new EncryptionException("Invalid seal", "Invalid seal:" + e.getMessage(), e);
 		}
-
-		int index = plaintext.indexOf(":");
-		if (index == -1) {
-			throw new EncryptionException("Invalid seal", "Seal did not contain properly formatted separator");
-		}
-
-		String timestring = plaintext.substring(0, index);
-		long now = new Date().getTime();
-		long expiration = Long.parseLong(timestring);
-		if (now > expiration) {
-			throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
-		}
-
-		index = plaintext.indexOf(":", index+1);
-		String sealedValue = plaintext.substring(index + 1);
-		return sealedValue;
 	}
 
 	
@@ -276,4 +288,19 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		return new Date().getTime() + offset;
 	}
 
+   /**
+    * Compute an HMAC for a String.  Experimental
+    */
+	/******
+	private String computeHMAC( String input ) throws EncryptionException {
+		try {
+			Mac hmac = Mac.getInstance("HMacMD5");
+			hmac.init(secretKeySpec);
+			byte[] bytes = hmac.doFinal(input.getBytes());
+			return ESAPI.encoder().encodeForBase64(bytes, false);
+	    } catch (Exception e) {
+	    	throw new EncryptionException("Could not compute HMAC", "Problem computing HMAC for " + input, e );
+	    }
+	}
+	*****/
 }

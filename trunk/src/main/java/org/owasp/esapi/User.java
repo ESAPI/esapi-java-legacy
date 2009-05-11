@@ -18,6 +18,7 @@ package org.owasp.esapi;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -400,6 +401,11 @@ public interface User extends Principal, Serializable {
 	 */
 	void setLastPasswordChangeTime(Date lastPasswordChangeTime);
 
+	/**
+	 * Returns the hashmap used to store security events for this user. Used by the
+	 * IntrusionDetector.
+	 */
+	HashMap getEventMap();
 	
 
 	/**
@@ -721,6 +727,13 @@ public interface User extends Principal, Serializable {
          * {@inheritDoc}
          */
         public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
+        	throw new RuntimeException("Invalid operation for the anonymous user");
+        }
+        
+        /**
+         *  {@inheritDoc}
+         */
+        public HashMap getEventMap() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
     };

@@ -666,10 +666,10 @@ public class EncoderTest extends TestCase {
         assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(unix, "/etc/hosts; ls -l"));
     }
     
-    public static void main( String[] args ) throws Exception {
+    public void testCanonicalizePerformance() throws Exception {
         System.out.println("Canonicalization Performance");
     	Encoder encoder = ESAPI.encoder();
-    	int iterations = 1000;
+    	int iterations = 100;
     	String normal = "The quick brown fox jumped over the lazy dog";
     	
     	long start = System.currentTimeMillis();

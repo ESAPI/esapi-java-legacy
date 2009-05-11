@@ -21,6 +21,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Stack;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
@@ -149,20 +150,20 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * 			The name of the event that occurred.
 	 */
 	private void addSecurityEvent(User user, String eventName) {
-		HttpSession session = ESAPI.currentRequest().getSession();
-		Map events = (Map)session.getAttribute( USER_EVENT_MAP );
-		if (events == null) {
-			events = new HashMap();
-			session.setAttribute(USER_EVENT_MAP, events);
-		}
-		Event event = (Event)events.get( eventName );
-		if ( event == null ) {
-			event = new Event( eventName );
-			events.put( eventName, event );
-		}
-
+		if ( user.isAnonymous() ) return;
+		
+		HashMap eventMap = user.getEventMap();
+		
+		// if there is a threshold, then track this event
 		Threshold q = ESAPI.securityConfiguration().getQuota( eventName );
 		if ( q.count > 0 ) {
+			// get event or create a new one
+			Event event = (Event)eventMap.get( eventName );
+			if ( event == null ) {
+				event = new Event( eventName );
+				eventMap.put( eventName, event );
+			}
+			// increment
 			event.increment(q.count, q.interval);
 		}
 	}
