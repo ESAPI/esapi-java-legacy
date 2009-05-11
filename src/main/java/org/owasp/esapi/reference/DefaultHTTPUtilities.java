@@ -162,8 +162,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		User user = ESAPI.authenticator().getCurrentUser();		
 		try {
 			killCookie(request, response, REMEMBER_TOKEN_COOKIE_NAME );
-			String random = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
-			String clearToken = random + ":" + user.getAccountName() + ":" + password;
+			// seal already contains random data
+			String clearToken = user.getAccountName() + "|" + password;
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
 			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );

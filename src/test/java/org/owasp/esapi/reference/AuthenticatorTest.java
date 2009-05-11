@@ -241,6 +241,7 @@ public class AuthenticatorTest extends TestCase {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		
+		System.out.println("getUserFromRememberToken - expecting failure");
 		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
 		try {
 			instance.login( request, response );  // wrong cookie will fail
@@ -248,11 +249,13 @@ public class AuthenticatorTest extends TestCase {
 			// expected
 		}
 
+		System.out.println("getUserFromRememberToken - expecting success");
 		request = new MockHttpServletRequest();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		ESAPI.authenticator().setCurrentUser(user);
 		String newToken = ESAPI.httpUtilities().setRememberToken(request, response, password, 10000, "test.com", request.getContextPath() );
 		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, newToken );
+        user.logout();  // logout the current user so we can log them in with the remember cookie
 		User test2 = instance.login( request, response );
 		assertSame( user, test2 );
 	}

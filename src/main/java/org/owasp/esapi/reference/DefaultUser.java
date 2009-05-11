@@ -18,6 +18,7 @@ package org.owasp.esapi.reference;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -96,8 +97,11 @@ public class DefaultUser implements User, Serializable {
 	/** The expiration date/time for this user's account. */
 	private Date expirationTime = new Date(Long.MAX_VALUE);
 
-	/** The session's this user is associated with */
-	private Set sessions = new HashSet();
+	/** The sessions this user is associated with */
+	private transient Set sessions = new HashSet();
+	
+	/** The event map for this User */ 
+	private transient HashMap eventMap = new HashMap();
 	
 	/* A flag to indicate that the password must be changed before the account can be used. */
 	// private boolean requiresPasswordChange = true;
@@ -586,6 +590,10 @@ public class DefaultUser implements User, Serializable {
      */
     public final Object clone() throws java.lang.CloneNotSupportedException {
     	  throw new java.lang.CloneNotSupportedException();
+    }
+    
+    public HashMap getEventMap() {
+    	return eventMap;
     }
     
 }

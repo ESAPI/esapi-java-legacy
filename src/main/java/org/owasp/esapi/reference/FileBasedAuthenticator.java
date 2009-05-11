@@ -472,19 +472,22 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 
     	String[] data = null;
 		try {
-			data = ESAPI.encryptor().unseal( token.getValue() ).split( ":" );
-		} catch (EncryptionException e) {			
+			data = ESAPI.encryptor().unseal( token.getValue() ).split( "\\|" );
+		} catch (EncryptionException e) {	
 	    	logger.warning(Logger.SECURITY_FAILURE, "Found corrupt or expired remember token" );
 	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 	    	return null;
     	}
-		
-		if ( data.length != 3 ) {
+
+		if ( data.length != 2 ) {
+	    	logger.warning(Logger.SECURITY_FAILURE, "Found corrupt or expired remember token" );
+	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
 			return null;
 		}
-		// data[0] is a random nonce, which can be ignored
-		String username = data[1];
-		String password = data[2];
+		String username = data[0];
+		String password = data[1];
+		System.out.println( "DATA0: " + username );
+		System.out.println( "DATA1:" + password );
     	DefaultUser user = (DefaultUser) getUser( username );
 		if ( user == null ) {
 			logger.warning( Logger.SECURITY_FAILURE, "Found valid remember token but no user matching " + username );
