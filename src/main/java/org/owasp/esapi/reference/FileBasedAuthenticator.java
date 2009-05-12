@@ -890,6 +890,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 			throw new AuthenticationLoginException("Login failed", "Session absolute timeout: " + user.getAccountName() );
 		}
 		
+		//set Locale to the user object in the session from request
+		user.setLocale(request.getLocale());
+		
 		// create new session for this User
 		HttpSession session = request.getSession();
 		user.addSession( session );
