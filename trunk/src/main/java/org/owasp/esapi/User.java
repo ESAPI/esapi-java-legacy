@@ -20,6 +20,7 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -46,6 +47,15 @@ import org.owasp.esapi.errors.EncryptionException;
  */
 
 public interface User extends Principal, Serializable {
+	/**
+	 * @return the locale
+	 */
+	public Locale getLocale();
+
+	/**
+	 * @param locale the locale to set
+	 */
+	public void setLocale(Locale locale);
 
     /**
      * Adds a role to this user's account.
@@ -417,6 +427,7 @@ public interface User extends Principal, Serializable {
 
     	private String csrfToken = "";
     	private Set sessions = new HashSet();
+		private Locale locale = null;
     	
     	/**
          * {@inheritDoc}
@@ -736,5 +747,18 @@ public interface User extends Principal, Serializable {
         public HashMap getEventMap() {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
+         /**
+    	 * @return the locale
+    	 */
+    	public Locale getLocale() {
+    		return locale;
+    	}
+
+    	/**
+    	 * @param locale the locale to set
+    	 */
+    	public void setLocale(Locale locale) {
+    		this.locale = locale;
+    	}
     };
 }
