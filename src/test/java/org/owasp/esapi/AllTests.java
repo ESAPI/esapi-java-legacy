@@ -20,12 +20,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import org.owasp.esapi.filters.ClickjackFilterTest;
-import org.owasp.esapi.waf.WAFFilterTest;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+import org.owasp.esapi.filters.ClickjackFilterTest;
+import org.owasp.esapi.filters.SafeRequestTest;
+import org.owasp.esapi.waf.WAFFilterTest;
 
 /**
  * The Class AllTests.
@@ -117,6 +118,7 @@ public class AllTests extends TestCase {
         // filters
         suite.addTest(WAFFilterTest.suite());
         suite.addTest(ClickjackFilterTest.suite());
+        suite.addTest(SafeRequestTest.suite());
         return suite;
     }
 
