@@ -170,45 +170,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
 		return (String)rvr.getValid(context, input);
-		
-		
-		/*
-		try {
-			context = encoder.canonicalize( context );
-    		String canonical = encoder.canonicalize( input );
-
-    		if ( type == null || type.length() == 0 ) {
-    			throw new RuntimeException( "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
-    		}
-    		
-    		if (isEmpty(canonical)) {
-    			if (allowNull) return null;
-       			throw new ValidationException( context + ": Input required.", "Input required: context=" + context + ", type=" + type + "), input=" + input, context );
-    		}
-
-    		if (canonical.length() > maxLength) {
-    			throw new ValidationException( context + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + type + "), input=" + input, context );
-    		}
-
-    		Pattern p = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
-    		if ( p == null ) {
-    			try {
-    				p = Pattern.compile( type );
-    			} catch( PatternSyntaxException e ) {
-    				throw new RuntimeException( "Validation misconfiguration, specified type to validate against was null: context=" + context + ", type=" + type + "), input=" + input );
-    	    	}
-    		}
-
-    		if ( !p.matcher(canonical).matches() ) {
-    			throw new ValidationException( context + ": Invalid input. Please conform to: " + p.pattern() + " with a maximum length of " + maxLength, "Invalid input: context=" + context + ", type=" + type + "( " + p.pattern() + "), input=" + input, context );
-    		}
-    		
-    		return canonical;
-    		
-	    } catch (EncodingException e) {
-	        throw new ValidationException( context + ": Invalid input. An encoding error occurred.", "Error canonicalizing user input", e, context);
-	    }
-	    */
 	}
 	
 	/**
@@ -225,7 +186,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @throws IntrusionException
 	 */
 	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-		
 		try {
 			return getValidInput(context,  input,  type,  maxLength,  allowNull);
 		} catch (ValidationException e) {
@@ -251,40 +211,22 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 *
 	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, 
 	 * and input that is clearly an attack will generate a descriptive IntrusionException.
-	 * 
-	 * 
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
 		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder);
 		dvr.setAllowNull(allowNull);
 		dvr.setDateFormat(DateFormat.getDateInstance());
 		return (Date)dvr.getValid(context, input);
-
-		/*try {
-			if (isEmpty(input)) {
-    			if (allowNull) return null;
-       			throw new ValidationException( context + ": Input date required", "Input date required: context=" + context + ", input=" + input, context );
-    		}
-			
-			Date date = format.parse(input);
-			return date;
-		} catch (Exception e) {
-			throw new ValidationException( context + ": Invalid date must follow " + format + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input, e, context);
-		}*/
 	}
 	
 	 /**
-	 * {@inheritDoc}
-	 *
-	 * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, 
-	 * and input that is clearly an attack will generate a descriptive IntrusionException.
-	 * 
-	 * 
-      *
+	  * {@inheritDoc} 
+	  *
+	  * Returns a valid date as a Date. Invalid input will generate a descriptive ValidationException, 
+	  * and input that is clearly an attack will generate a descriptive IntrusionException.
       * @param errors
       */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidDate(context, input, format, allowNull);
 		} catch (ValidationException e) {
@@ -298,8 +240,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 *
 	 * Returns true if input is "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
-	 * 
-	 * 
 	 */
 	public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {
@@ -315,64 +255,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 *
 	 * Returns canonicalized and validated "safe" HTML. Implementors should reference the OWASP AntiSamy project for ideas
 	 * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
-	 * 
-	 * 
 	 */
-	public String getValidSafeHTML( String context, String input, int maxLength, boolean allowNull ) throws ValidationException, IntrusionException {
-		
+	public String getValidSafeHTML( String context, String input, int maxLength, boolean allowNull ) throws ValidationException, IntrusionException {		
 		HTMLValidationRule hvr = new HTMLValidationRule( "safehtml", encoder );
 		hvr.setMaximumLength(maxLength);
 		hvr.setAllowNull(allowNull);
 		return (String)hvr.getValid(context, input);
-		
-
-		/*
-		if (isEmpty(input)) {
-			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input HTML required", "Input HTML required: context=" + context + ", input=" + input, context );
-		}
-		
-		if (input.length() > maxLength) {
-			throw new ValidationException( context + ": Invalid HTML. You enterted " + input.length() + " characters. Input can not exceed " + maxLength + " characters.", context + " input exceedes maxLength by " + (input.length()-maxLength) + " characters", context);
-		}
-		
-		try {
-			if ( antiSamyPolicy == null ) {
-		        InputStream in = null;
-		        try {
-		            in = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
-		            if (in != null) {
-		            	antiSamyPolicy = Policy.getInstance(in);
-		            }
-		        } catch (Exception e) {
-		        	antiSamyPolicy = null;
-		            
-		        } finally {
-		            if (in != null) try { in.close (); } catch (Throwable ignore) {}
-		        }
-		        
-		        if (antiSamyPolicy == null) {
-		            throw new IllegalArgumentException ("Can't find antisamy-esapi.xml");
-		        }       
-			}
-			AntiSamy as = new AntiSamy();
-			CleanResults test = as.scan(input, antiSamyPolicy);
-			List errors = test.getErrorMessages();
-			
-			if ( errors.size() > 0 ) {
-				// just create new exception to get it logged and intrusion detected
-				new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", errors=" + errors, context );
-			}
-			
-			return(test.getCleanHTML().trim());
-		
-		} catch (ScanException e) {
-			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
-		
-		} catch (PolicyException e) {
-			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e, context );
-		}
-		*/
 	}
 	
 	/**
@@ -381,7 +269,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * @param errors
      */
 	public String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidSafeHTML(context, input, maxLength, allowNull);
 		} catch (ValidationException e) {
@@ -394,8 +281,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if input is a valid credit card. Maxlength is mandated by valid credit card type.
-	 * 
-	 * 
 	 */
 	public boolean isValidCreditCard(String context, String input, boolean allowNull) throws IntrusionException {
 		try {
@@ -415,48 +300,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		CreditCardValidationRule ccvr = new CreditCardValidationRule( "creditcard", encoder );
 		ccvr.setAllowNull(allowNull);
 		return (String)ccvr.getValid(context, input);
-		
-	/*if (isEmpty(input)) {
-			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input credit card required", "Input credit card required: context=" + context + ", input=" + input, context );
-		}
-		
-		String canonical = getValidInput( context, input, "CreditCard", MAX_CREDIT_CARD_LENGTH, allowNull);
-
-		// perform Luhn algorithm checking
-		StringBuffer digitsOnly = new StringBuffer();
-		char c;
-		for (int i = 0; i < canonical.length(); i++) {
-			c = canonical.charAt(i);
-			if (Character.isDigit(c)) {
-				digitsOnly.append(c);
-			}
-		}
-	
-		int sum = 0;
-		int digit = 0;
-		int addend = 0;
-		boolean timesTwo = false;
-	
-		for (int i = digitsOnly.length() - 1; i >= 0; i--) {
-			digit = Integer.parseInt(digitsOnly.substring(i, i + 1));
-			if (timesTwo) {
-				addend = digit * 2;
-				if (addend > 9) {
-					addend -= 9;
-				}
-			} else {
-				addend = digit;
-			}
-			sum += addend;
-			timesTwo = !timesTwo;
-		}
-	
-		int modulus = sum % 10;
-		if (modulus != 0) throw new ValidationException( context + ": Invalid credit card input", "Invalid credit card input: context=" + context, context );
-			
-		return canonical;
-		*/
 	}
 	
 	/**
@@ -465,7 +308,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * @param errors
      */
 	public String getValidCreditCard(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidCreditCard(context, input, allowNull);
 		} catch (ValidationException e) {
@@ -603,7 +445,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * @param errors
      */
 	public String getValidFileName(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidFileName(context, input, allowNull);
 		} catch (ValidationException e) {
@@ -616,8 +457,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if input is a valid number.
-	 * 
-	 * 
 	 */
 	public boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws IntrusionException {
 		try {
@@ -639,15 +478,19 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		return getValidDouble(context, input, minDoubleValue.doubleValue(), maxDoubleValue.doubleValue(), allowNull);
 	}
 	
+	 /**
+     * {@inheritDoc}
+	 *
+	 * Returns true if input is a valid number.
+	 */
 	public Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidNumber(context, input, minValue, maxValue, allowNull);
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
 		
-		//not sure what to return on error
+		//TODO: not sure what to return on error
 		return new Double(0);
 	}
 	
@@ -674,41 +517,16 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		NumberValidationRule nvr = new NumberValidationRule( "number", encoder, minValue, maxValue );
 		nvr.setAllowNull(allowNull);
 		return (Double)nvr.getValid(context, input);
-
-		/*
-		if (minValue > maxValue) {
-			//should this be a RunTime?
-			throw new ValidationException( context + ": Invalid double input: context", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
-		}
-		
-		if (isEmpty(input)) {
-			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required: context", "Input required: context=" + context + ", input=" + input, context );
-		}
-		
-		try {
-			Double d = new Double(Double.parseDouble(input));
-			if (d.isInfinite()) throw new ValidationException( "Invalid double input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input, context );
-			if (d.isNaN()) throw new ValidationException( "Invalid double input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input, context );
-			if (d.doubleValue() < minValue) throw new ValidationException( "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
-			if (d.doubleValue() > maxValue) throw new ValidationException( "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid double input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
-			
-			return d;
-		} catch (NumberFormatException e) {
-			throw new ValidationException( context + ": Invalid double input", "Invalid double input format: context=" + context + ", input=" + input, e, context);
-		}
-		*/
 	}
 	
 	public Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidDouble(context, input, minValue, maxValue, allowNull);
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
 		
-		//not sure what to return on error
+		//TODO: not sure what to return on error
 		return new Double(0);
 	}
 	
@@ -716,8 +534,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if input is a valid number.
-	 * 
-	 * 
 	 */
 	public boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException {
 		try {
@@ -737,37 +553,15 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		IntegerValidationRule ivr = new IntegerValidationRule( "number", encoder, minValue, maxValue );
 		ivr.setAllowNull(allowNull);
 		return (Integer)ivr.getValid(context, input);
-
-		/*
-		if (minValue > maxValue) {
-			//should this be a RunTime?
-			throw new ValidationException( context + ": Invalid Integer", "Validation parameter error for double: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
-		}
-		
-		if (isEmpty(input)) {
-			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input, context );
-		}
-		
-		try {
-			int i = Integer.parseInt(input);
-			if (i < minValue || i > maxValue ) throw new ValidationException( context + ": Invalid Integer. Value must be between " + minValue + " and " + maxValue, "Invalid int input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
-			return new Integer(i);
-		} catch (NumberFormatException e) {
-			throw new ValidationException( context + ": Invalid integer input", "Invalid int input: context=" + context + ", input=" + input, e, context );
-		}
-		*/
 	}
 	
 	public Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidInteger(context, input, minValue, maxValue, allowNull);
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		
-		//not sure what to return on error
+		//TODO: not sure what to return on error - default value
 		return new Integer(0);
 	}
 	
@@ -802,14 +596,13 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	public byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-
 		try {
 			return getValidFileContent(context, input, maxBytes, allowNull);
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
 		
-		//not sure what to return on error
+		//TODO: not sure what to return on error
 		return input;
 	}
 	
@@ -819,7 +612,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * <p><b>Note:</b> On platforms that support symlinks, this function will fail canonicalization if directorypath
 	 * is a symlink. For example, on MacOS X, /etc is actually /private/etc. If you mean to use /etc, use its real
 	 * path (/private/etc), not the symlink (/etc).</p>
-	 * 
      *
      * @param directorypath
      */
@@ -909,8 +701,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	private void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {
-		
+	private void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {	
 		if (request == null) {
    			throw new ValidationException( "Input required: HTTP request is null", "Input required: HTTP request is null" );
 		}
@@ -989,8 +780,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      *
      * @param errors
      */
-	public String getValidListItem(String context, String input, List list, ValidationErrorList errors) throws IntrusionException {
-		
+	public String getValidListItem(String context, String input, List list, ValidationErrorList errors) throws IntrusionException {	
 		try {
 			return getValidListItem(context, input, list);
 		} catch (ValidationException e) {

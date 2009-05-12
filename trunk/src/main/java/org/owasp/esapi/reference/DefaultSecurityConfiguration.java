@@ -64,12 +64,7 @@ import org.owasp.esapi.SecurityConfiguration;
 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
-    /** The properties. */
     private Properties properties = null;
-
-    /** Regular expression cache */
-    @SuppressWarnings("unchecked")
-	private Map regexMap = null;
     
     private static final String ALLOWED_LOGIN_ATTEMPTS = "AllowedLoginAttempts";
 
@@ -497,7 +492,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * Load configuration.
      */
-    @SuppressWarnings("unchecked")
 	private void loadConfiguration() throws IOException {
     	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ) );
 
@@ -509,18 +503,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             		logSpecial("  |   " + key + "=" + properties.get(key), null);
         	}
         }
-        
-		// cache regular expressions
-		regexMap = new HashMap();
-
-		Iterator regexIterator = getValidationPatternNames();
-		while ( regexIterator.hasNext() ) {
-			String name = (String)regexIterator.next();
-			Pattern regex = getValidationPattern(name);
-			if ( name != null && regex != null ) {
-				regexMap.put( name, regex );
-			}
-		}
     }
 
     /**
@@ -756,26 +738,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         int duration = 1000 * 60 * minutes;
         return duration;		
 	}
-
-   /**
-    * getValidationPattern names returns validator pattern names
-    * from ESAPI's global properties 
-    * 
-    * @return 
-    * 			a list iterator of pattern names 
-    */
-   @SuppressWarnings("unchecked")
-   public Iterator getValidationPatternNames() {
-    	TreeSet list = new TreeSet();
-    	Iterator i = properties.keySet().iterator();
-    	while( i.hasNext() ) {
-    		String name = (String)i.next();
-    		if ( name.startsWith( "Validator.")) {
-    			list.add( name.substring(name.indexOf('.') + 1 ) );
-    		}
-    	}
-    	return list.iterator();
-    }
     
    /**
     * getValidationPattern returns a single pattern based upon key
