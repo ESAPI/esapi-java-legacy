@@ -74,10 +74,9 @@ public class InterceptingHttpServletResponseTest extends TestCase {
         System.out.println("InterceptingHTTPServletResponse");
    	    MockHttpServletResponse mres = new MockHttpServletResponse();
         InterceptingHTTPServletResponse ires = new InterceptingHTTPServletResponse(mres, false, new ArrayList() );
-        InterceptingServletOutputStream isos = (InterceptingServletOutputStream)ires.getOutputStream();
         // isos.println( "Hello" );
         // ires.getOutputStream().println( "Hello" );
         ires.getWriter().println("Hello");
-        assertEquals( "Hello\r\n", new String( isos.getResponseBytes() ) );
+        assertEquals( "Hello\r\n", new String( ires.getInterceptingServletOutputStream().getResponseBytes() ) );
     }
 }
