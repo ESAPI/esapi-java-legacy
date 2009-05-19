@@ -30,7 +30,7 @@
 		requests at all, but will simply log errors.
 	-->
 	<settings>
-		<mode>block</mode>
+		<mode>redirect</mode>
 		<error-handling>
 			<default-page>/security/error.jsp</default-page>
 			<default-status>403</default-status>
@@ -42,7 +42,7 @@
 	<!--
 		Set authentication rules by path.
 	-->
-	<authentication-rules path="/.*"  key="sessionuserObjKey" >
+	<authentication-rules path="/.*"  key="ESAPIUserSessionKey" >
 		<path-exception>/</path-exception>
 		<path-exception>/index.html</path-exception>
 		<path-exception>/login.jsp</path-exception>
@@ -74,7 +74,7 @@
 		<restrict-extension deny=".jpg" />
 
 		<restrict-method deny="GET" path=".*\.do$" />
-		<restrict-method allow="(GET|POST|TRACE)" />
+		<restrict-method allow="^(GET|POST|TRACE)$" />
 
 		<enforce-https path="/.*">
 			<path-exception>/index.html</path-exception>
