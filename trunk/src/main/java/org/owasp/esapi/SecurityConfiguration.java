@@ -182,6 +182,13 @@ public interface SecurityConfiguration {
 	public String getHashAlgorithm();
 
 	/**
+	 * Gets the hash iterations used by ESAPI to hash data.
+	 * 
+	 * @return the current hashing algorithm
+	 */
+	public int getHashIterations();
+
+	/**
 	 * Gets the character encoding scheme supported by this application. This is used to set the
 	 * character encoding scheme on requests and responses when setCharacterEncoding() is called
 	 * on SafeRequests and SafeResponses. This scheme is also used for encoding/decoding URLs 

@@ -92,6 +92,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String HASH_ALGORITHM = "HashAlgorithm";
 
+    private static final String HASH_ITERATIONS = "HashIterations";
+
     private static final String CHARACTER_ENCODING = "CharacterEncoding";
 
     private static final String RANDOM_ALGORITHM = "RandomAlgorithm";
@@ -325,7 +327,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public byte[] getMasterSalt() {
-        return properties.getProperty(MASTER_SALT).getBytes();
+        String encoded = properties.getProperty(MASTER_SALT);
+        try {
+            return ESAPI.encoder().decodeFromBase64(encoded);
+        } catch( IOException e ) {
+        	logSpecial("Unable to decode master salt. Property key: " + MASTER_SALT, null);
+            return null;
+        }
     }
 
     /**
@@ -534,7 +542,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public String getEncryptionAlgorithm() {
-        return properties.getProperty(ENCRYPTION_ALGORITHM, "PBEWithMD5AndDES/CBC/PKCS5Padding");
+        return properties.getProperty(ENCRYPTION_ALGORITHM, "AES");
     }
 
     /**
@@ -542,6 +550,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
     public String getHashAlgorithm() {
         return properties.getProperty(HASH_ALGORITHM, "SHA-512");
+    }
+
+    /**
+	 * {@inheritDoc}
+	 */
+    public int getHashIterations() {
+    	String iterations = properties.getProperty(HASH_ITERATIONS, "1024");
+        return Integer.parseInt(iterations);
     }
 
     /**
