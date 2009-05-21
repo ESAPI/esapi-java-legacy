@@ -72,7 +72,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     public static void main( String[] args ) throws Exception {
         System.out.println( "Generating a new secret key" );
         KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
-        kgen.init( ESAPI.securityConfiguration().getKeyLength() );
+		SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
+        kgen.init( ESAPI.securityConfiguration().getKeyLength(), random );
         SecretKey secretKey = kgen.generateKey();
         byte[] raw = secretKey.getEncoded();
         System.out.println( "\nCopy and paste this into ESAPI.properties\n" );
