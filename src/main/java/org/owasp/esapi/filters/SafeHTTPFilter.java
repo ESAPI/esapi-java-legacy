@@ -49,7 +49,6 @@ public class SafeHTTPFilter implements Filter {
      * @throws javax.servlet.ServletException
      */
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
         if (!(request instanceof HttpServletRequest)) {
             chain.doFilter(request, response);
             return;
@@ -57,7 +56,7 @@ public class SafeHTTPFilter implements Filter {
         HttpServletRequest hrequest = (HttpServletRequest)request;
         HttpServletResponse hresponse = (HttpServletResponse)response;
         ESAPI.httpUtilities().setCurrentHTTP(hrequest, hresponse);
-        chain.doFilter(new SafeRequest(hrequest), new SafeResponse(hresponse));
+        chain.doFilter(ESAPI.currentRequest(), ESAPI.currentResponse());
     }
 
     /**
