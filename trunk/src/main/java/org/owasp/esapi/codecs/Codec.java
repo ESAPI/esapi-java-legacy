@@ -70,7 +70,12 @@ public abstract class Codec {
         }
         return sb.toString();
     }
-
+    
+//    public abstract String encodeString( String input ) ;
+	
+//    public abstract String encodeDate( String input ) ;
+	
+//    public abstract String encodeNumber( String input ) ;
 	
 	/**
 	 * Default implementation that should be overridden in specific codecs.
