@@ -121,7 +121,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the key length.
 	 */
-    public int getKeyLength();
+    public int getEncryptionKeyLength();
     
 	/**
 	 * Gets the master salt that is used to salt stored password hashes and any other location 
@@ -143,7 +143,6 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	@SuppressWarnings("unchecked")
 	public List getAllowedFileExtensions();
 
 	/**
@@ -208,6 +207,13 @@ public interface SecurityConfiguration {
 	 */
 	public String getDigitalSignatureAlgorithm();
 
+	/**
+	 * Gets the digital signature key length used by ESAPI to generate and verify signatures.
+	 * 
+	 * @return the current digital signature key length
+	 */
+	public int getDigitalSignatureKeyLength();
+		   
 	/**
 	 * Gets the random number generation algorithm used to generate random numbers where needed.
 	 * 
@@ -355,10 +361,10 @@ public interface SecurityConfiguration {
 		 */
 		public long interval = 0;
 		
-		/** The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
+		/**
+		 * The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
 		 * your implementation could have this be a list of any type of 'actions' you wish to define. 
 		 */
-		@SuppressWarnings("unchecked")
 		public List actions = null;
 
 		/**
@@ -371,7 +377,6 @@ public interface SecurityConfiguration {
 		 * trigger this threshold.
 		 * @param actions The list of actions to take if the threshold is met.
 		 */
-		@SuppressWarnings("unchecked")
 		public Threshold(String name, int count, long interval, List actions) {
 			this.name = name;
 			this.count = count;

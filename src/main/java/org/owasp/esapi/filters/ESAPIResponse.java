@@ -20,6 +20,7 @@ import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -32,9 +33,8 @@ import org.owasp.esapi.errors.ValidationException;
  * This response wrapper simply overrides unsafe methods in the
  * HttpServletResponse API with safe versions.
  */
-public class SafeResponse implements HttpServletResponse {
+public class ESAPIResponse extends HttpServletResponseWrapper implements HttpServletResponse {
 
-    private HttpServletResponse response;
     private final Logger logger = ESAPI.getLogger("SafeResponse");
 
     // modes are "log", "skip", "sanitize", "throw"
@@ -47,8 +47,8 @@ public class SafeResponse implements HttpServletResponse {
      * 
      * @param response
      */
-    public SafeResponse(HttpServletResponse response) {
-        this.response = response;
+    public ESAPIResponse(HttpServletResponse response) {
+    	super( response );
     }
 
     /**
@@ -56,11 +56,15 @@ public class SafeResponse implements HttpServletResponse {
      * @param response
      * @param mode
      */
-    public SafeResponse(HttpServletResponse response, String mode) {
+    public ESAPIResponse(HttpServletResponse response, String mode) {
+    	super( response );
         this.mode = mode;
     }
 
 
+    private HttpServletResponse getHttpServletResponse() {
+    	return (HttpServletResponse)super.getResponse();
+    }
 
     /**
      * Add a cookie to the response after ensuring that there are no encoded or
@@ -99,7 +103,7 @@ public class SafeResponse implements HttpServletResponse {
         // add the original cookie to the response and continue
         if (mode.equals("log")) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (log mode). Adding unsafe cookie anyway and continuing.");
-            response.addCookie(cookie);
+            getHttpServletResponse().addCookie(cookie);
             return;
         }
 
@@ -145,7 +149,7 @@ public class SafeResponse implements HttpServletResponse {
     public void addDateHeader(String name, long date) {
         try {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
-            response.addDateHeader(safeName, date);
+            getHttpServletResponse().addDateHeader(safeName, date);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid date header name denied", e);
         }
@@ -168,7 +172,7 @@ public class SafeResponse implements HttpServletResponse {
             String strippedValue = StringUtilities.stripControls(value);
             String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", 20, false);
             String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", 500, false);
-            response.setHeader(safeName, safeValue);
+            getHttpServletResponse().setHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
         }
@@ -183,7 +187,7 @@ public class SafeResponse implements HttpServletResponse {
     public void addIntHeader(String name, int value) {
         try {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
-            response.addIntHeader(safeName, value);
+            getHttpServletResponse().addIntHeader(safeName, value);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid int header name denied", e);
         }
@@ -195,7 +199,7 @@ public class SafeResponse implements HttpServletResponse {
      * @return
      */
     public boolean containsHeader(String name) {
-        return response.containsHeader(name);
+        return getHttpServletResponse().containsHeader(name);
     }
 
     /**
@@ -259,7 +263,7 @@ public class SafeResponse implements HttpServletResponse {
      * @throws IOException
      */
     public void flushBuffer() throws IOException {
-        response.flushBuffer();
+        getHttpServletResponse().flushBuffer();
     }
 
     /**
@@ -267,7 +271,7 @@ public class SafeResponse implements HttpServletResponse {
      * @return
      */
     public int getBufferSize() {
-        return response.getBufferSize();
+        return getHttpServletResponse().getBufferSize();
     }
 
     /**
@@ -275,7 +279,7 @@ public class SafeResponse implements HttpServletResponse {
      * @return
      */
     public String getCharacterEncoding() {
-        return response.getCharacterEncoding();
+        return getHttpServletResponse().getCharacterEncoding();
     }
 
     /**
@@ -283,7 +287,7 @@ public class SafeResponse implements HttpServletResponse {
      * @return
      */
     public String getContentType() {
-        return response.getContentType();
+        return getHttpServletResponse().getContentType();
     }
 
     /**
@@ -291,7 +295,7 @@ public class SafeResponse implements HttpServletResponse {
      * @return
      */
     public Locale getLocale() {
-        return response.getLocale();
+        return getHttpServletResponse().getLocale();
     }
 
     /**
@@ -300,7 +304,7 @@ public class SafeResponse implements HttpServletResponse {
      * @throws IOException
      */
     public ServletOutputStream getOutputStream() throws IOException {
-        return response.getOutputStream();
+        return getHttpServletResponse().getOutputStream();
     }
 
     /**
@@ -309,7 +313,7 @@ public class SafeResponse implements HttpServletResponse {
      * @throws IOException
      */
     public PrintWriter getWriter() throws IOException {
-        return response.getWriter();
+        return getHttpServletResponse().getWriter();
     }
 
     /**
@@ -317,21 +321,21 @@ public class SafeResponse implements HttpServletResponse {
      * @return
      */
     public boolean isCommitted() {
-        return response.isCommitted();
+        return getHttpServletResponse().isCommitted();
     }
 
     /**
      * Same as HttpServletResponse, no security changes required.
      */
     public void reset() {
-        response.reset();
+        getHttpServletResponse().reset();
     }
 
     /**
      * Same as HttpServletResponse, no security changes required.
      */
     public void resetBuffer() {
-        response.resetBuffer();
+        getHttpServletResponse().resetBuffer();
     }
 
     /**
@@ -341,7 +345,7 @@ public class SafeResponse implements HttpServletResponse {
      * @throws IOException
      */
     public void sendError(int sc) throws IOException {
-        response.sendError(HttpServletResponse.SC_OK, getHTTPMessage(sc));
+        getHttpServletResponse().sendError(HttpServletResponse.SC_OK, getHTTPMessage(sc));
     }
 
     /**
@@ -353,7 +357,7 @@ public class SafeResponse implements HttpServletResponse {
      * @throws IOException
      */
     public void sendError(int sc, String msg) throws IOException {
-        response.sendError(HttpServletResponse.SC_OK, ESAPI.encoder().encodeForHTML(msg));
+        getHttpServletResponse().sendError(HttpServletResponse.SC_OK, ESAPI.encoder().encodeForHTML(msg));
     }
 
     /**
@@ -371,7 +375,7 @@ public class SafeResponse implements HttpServletResponse {
             logger.fatal(Logger.SECURITY_FAILURE, "Bad redirect location: " + location);
             throw new IOException("Redirect failed");
         }
-        response.sendRedirect(location);
+        getHttpServletResponse().sendRedirect(location);
     }
 
     /**
@@ -379,7 +383,7 @@ public class SafeResponse implements HttpServletResponse {
      * @param size
      */
     public void setBufferSize(int size) {
-        response.setBufferSize(size);
+        getHttpServletResponse().setBufferSize(size);
     }
 
     /**
@@ -387,7 +391,7 @@ public class SafeResponse implements HttpServletResponse {
      * @param charset
      */
     public void setCharacterEncoding(String charset) {
-        response.setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
+        getHttpServletResponse().setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
     }
 
     /**
@@ -395,7 +399,7 @@ public class SafeResponse implements HttpServletResponse {
      * @param len
      */
     public void setContentLength(int len) {
-        response.setContentLength(len);
+        getHttpServletResponse().setContentLength(len);
     }
 
     /**
@@ -403,7 +407,7 @@ public class SafeResponse implements HttpServletResponse {
      * @param type
      */
     public void setContentType(String type) {
-        response.setContentType(type);
+        getHttpServletResponse().setContentType(type);
     }
 
     /**
@@ -415,7 +419,7 @@ public class SafeResponse implements HttpServletResponse {
     public void setDateHeader(String name, long date) {
         try {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
-            response.setDateHeader(safeName, date);
+            getHttpServletResponse().setDateHeader(safeName, date);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid date header name denied", e);
         }
@@ -436,7 +440,7 @@ public class SafeResponse implements HttpServletResponse {
             String strippedValue = StringUtilities.stripControls(value);
             String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 20, false);
             String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", 500, false);
-            response.setHeader(safeName, safeValue);
+            getHttpServletResponse().setHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);
         }
@@ -451,7 +455,7 @@ public class SafeResponse implements HttpServletResponse {
     public void setIntHeader(String name, int value) {
         try {
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
-            response.setIntHeader(safeName, value);
+            getHttpServletResponse().setIntHeader(safeName, value);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid int header name denied", e);
         }
@@ -463,7 +467,7 @@ public class SafeResponse implements HttpServletResponse {
      */
     public void setLocale(Locale loc) {
         // TODO investigate the character set issues here
-        response.setLocale(loc);
+        getHttpServletResponse().setLocale(loc);
     }
 
     /**
@@ -472,7 +476,7 @@ public class SafeResponse implements HttpServletResponse {
      * @param sc
      */
     public void setStatus(int sc) {
-        response.setStatus(HttpServletResponse.SC_OK);
+        getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
     }
 
     /**

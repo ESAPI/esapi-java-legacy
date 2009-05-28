@@ -155,16 +155,15 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 		HashMap eventMap = user.getEventMap();
 		
 		// if there is a threshold, then track this event
-		Threshold q = ESAPI.securityConfiguration().getQuota( eventName );
-		if ( q.count > 0 ) {
-			// get event or create a new one
+		Threshold threshold = ESAPI.securityConfiguration().getQuota( eventName );
+		if ( threshold != null ) {
 			Event event = (Event)eventMap.get( eventName );
 			if ( event == null ) {
 				event = new Event( eventName );
 				eventMap.put( eventName, event );
 			}
 			// increment
-			event.increment(q.count, q.interval);
+			event.increment(threshold.count, threshold.interval);
 		}
 	}
 

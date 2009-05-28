@@ -52,7 +52,7 @@ public class DateValidationRule extends BaseValidationRule {
 	public Object getValid( String context, String input ) throws ValidationException {
 
 		// check null
-	    if ( input == null || input.isEmpty() ) {
+	    if ( input == null || input.length()==0 ) {
 			if (allowNull) return null;
 			throw new ValidationException( context + ": Input date required", "Input date required: context=" + context + ", input=" + input, context );
 	    }

@@ -30,12 +30,12 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-// import org.owasp.esapi.User;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -44,9 +44,8 @@ import org.owasp.esapi.errors.ValidationException;
  * where possible. The wrapper returns a safe value when a validation error is
  * detected, including stripped or empty strings.
  */
-public class SafeRequest implements HttpServletRequest {
+public class ESAPIRequest extends HttpServletRequestWrapper implements HttpServletRequest {
 
-    private HttpServletRequest request;
     private final Logger logger = ESAPI.getLogger("SafeRequest");
 
     /**
@@ -55,17 +54,21 @@ public class SafeRequest implements HttpServletRequest {
      * 
      * @param request
      */
-    public SafeRequest(HttpServletRequest request) {
-        this.request = request;
+    public ESAPIRequest(HttpServletRequest request) {
+    	super( request );
     }
 
+    private HttpServletRequest getHttpServletRequest() {
+    	return (HttpServletRequest)super.getRequest();
+    }
+    
     /**
      * Same as HttpServletRequest, no security changes required.
      * @param name
      * @return
      */
     public Object getAttribute(String name) {
-        return request.getAttribute(name);
+        return getHttpServletRequest().getAttribute(name);
     }
 
     /**
@@ -73,7 +76,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public Enumeration getAttributeNames() {
-        return request.getAttributeNames();
+        return getHttpServletRequest().getAttributeNames();
     }
 
     /**
@@ -81,7 +84,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getAuthType() {
-        return request.getAuthType();
+        return getHttpServletRequest().getAuthType();
     }
 
     /**
@@ -89,7 +92,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getCharacterEncoding() {
-        return request.getCharacterEncoding();
+        return getHttpServletRequest().getCharacterEncoding();
     }
 
     /**
@@ -97,7 +100,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public int getContentLength() {
-        return request.getContentLength();
+        return getHttpServletRequest().getContentLength();
     }
 
     /**
@@ -105,7 +108,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getContentType() {
-        return request.getContentType();
+        return getHttpServletRequest().getContentType();
     }
 
     /**
@@ -114,7 +117,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getContextPath() {
-        String path = request.getContextPath();
+        String path = getHttpServletRequest().getContextPath();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP context path: " + path, path, "HTTPContextPath", 150, false);
@@ -130,7 +133,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public Cookie[] getCookies() {
-        Cookie[] cookies = request.getCookies();
+        Cookie[] cookies = getHttpServletRequest().getCookies();
         //must protect against NPE (found by Anderson)
         if (cookies == null) return new Cookie[0];
         
@@ -170,7 +173,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public long getDateHeader(String name) {
-        return request.getDateHeader(name);
+        return getHttpServletRequest().getDateHeader(name);
     }
 
     /**
@@ -180,7 +183,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getHeader(String name) {
-        String value = request.getHeader(name);
+        String value = getHttpServletRequest().getHeader(name);
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
@@ -197,7 +200,7 @@ public class SafeRequest implements HttpServletRequest {
      */
     public Enumeration getHeaderNames() {
         Vector v = new Vector();
-        Enumeration en = request.getHeaderNames();
+        Enumeration en = getHttpServletRequest().getHeaderNames();
         while (en.hasMoreElements()) {
             try {
                 String name = (String) en.nextElement();
@@ -218,7 +221,7 @@ public class SafeRequest implements HttpServletRequest {
      */
     public Enumeration getHeaders(String name) {
         Vector v = new Vector();
-        Enumeration en = request.getHeaders(name);
+        Enumeration en = getHttpServletRequest().getHeaders(name);
         while (en.hasMoreElements()) {
             try {
                 String value = (String) en.nextElement();
@@ -239,7 +242,7 @@ public class SafeRequest implements HttpServletRequest {
      * @throws IOException
      */
     public ServletInputStream getInputStream() throws IOException {
-        return request.getInputStream();
+        return getHttpServletRequest().getInputStream();
     }
 
     /**
@@ -248,7 +251,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public int getIntHeader(String name) {
-        return request.getIntHeader(name);
+        return getHttpServletRequest().getIntHeader(name);
     }
 
     /**
@@ -256,7 +259,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getLocalAddr() {
-        return request.getLocalAddr();
+        return getHttpServletRequest().getLocalAddr();
     }
 
     /**
@@ -264,7 +267,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public Locale getLocale() {
-        return request.getLocale();
+        return getHttpServletRequest().getLocale();
     }
 
     /**
@@ -272,7 +275,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public Enumeration getLocales() {
-        return request.getLocales();
+        return getHttpServletRequest().getLocales();
     }
 
     /**
@@ -280,7 +283,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getLocalName() {
-        return request.getLocalName();
+        return getHttpServletRequest().getLocalName();
     }
 
     /**
@@ -288,7 +291,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public int getLocalPort() {
-        return request.getLocalPort();
+        return getHttpServletRequest().getLocalPort();
     }
 
     /**
@@ -296,7 +299,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getMethod() {
-        return request.getMethod();
+        return getHttpServletRequest().getMethod();
     }
 
     /**
@@ -306,7 +309,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getParameter(String name) {
-        String orig = request.getParameter(name);
+        String orig = getHttpServletRequest().getParameter(name);
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, "HTTPParameterValue", 2000, false);
@@ -322,7 +325,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public Map getParameterMap() {
-        Map map = request.getParameterMap();
+        Map map = getHttpServletRequest().getParameterMap();
         HashMap cleanMap = new HashMap();
         Iterator i = map.entrySet().iterator();
         while (i.hasNext()) {
@@ -352,7 +355,7 @@ public class SafeRequest implements HttpServletRequest {
      */
     public Enumeration getParameterNames() {
         Vector v = new Vector();
-        Enumeration en = request.getParameterNames();
+        Enumeration en = getHttpServletRequest().getParameterNames();
         while (en.hasMoreElements()) {
             try {
                 String name = (String) en.nextElement();
@@ -373,7 +376,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String[] getParameterValues(String name) {
-        String[] values = request.getParameterValues(name);
+        String[] values = getHttpServletRequest().getParameterValues(name);
         List newValues = new ArrayList();
         if ( values != null ) {
             for (int i = 0; i < values.length; i++) {
@@ -395,7 +398,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getPathInfo() {
-        String path = request.getPathInfo();
+        String path = getHttpServletRequest().getPathInfo();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP path: " + path, path, "HTTPPath", 150, false);
@@ -410,7 +413,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getPathTranslated() {
-        return request.getPathTranslated();
+        return getHttpServletRequest().getPathTranslated();
     }
 
     /**
@@ -418,7 +421,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getProtocol() {
-        return request.getProtocol();
+        return getHttpServletRequest().getProtocol();
     }
 
     /**
@@ -427,7 +430,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getQueryString() {
-        String query = request.getQueryString();
+        String query = getHttpServletRequest().getQueryString();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", 2000, false);
@@ -445,7 +448,7 @@ public class SafeRequest implements HttpServletRequest {
      * @throws IOException
      */
     public BufferedReader getReader() throws IOException {
-        return request.getReader();
+        return getHttpServletRequest().getReader();
     }
 
     /**
@@ -454,7 +457,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getRealPath(String path) {
-        return request.getRealPath(path);
+        return getHttpServletRequest().getRealPath(path);
     }
 
     /**
@@ -462,7 +465,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getRemoteAddr() {
-        return request.getRemoteAddr();
+        return getHttpServletRequest().getRemoteAddr();
     }
 
     /**
@@ -470,7 +473,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getRemoteHost() {
-        return request.getRemoteHost();
+        return getHttpServletRequest().getRemoteHost();
     }
 
     /**
@@ -478,11 +481,11 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public int getRemotePort() {
-        return request.getRemotePort();
+        return getHttpServletRequest().getRemotePort();
     }
 
     /**
-     * Returns the name of the ESAPI user associated with this request.
+     * Returns the name of the ESAPI user associated with this getHttpServletRequest().
      * @return
      */
     public String getRemoteUser() {
@@ -497,7 +500,7 @@ public class SafeRequest implements HttpServletRequest {
      */
     public RequestDispatcher getRequestDispatcher(String path) {
         if (path.startsWith("WEB-INF")) {
-            return request.getRequestDispatcher(path);
+            return getHttpServletRequest().getRequestDispatcher(path);
         }
         return null;
     }
@@ -509,7 +512,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getRequestedSessionId() {
-        String id = request.getRequestedSessionId();
+        String id = getHttpServletRequest().getRequestedSessionId();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("Requested cookie: " + id, id, "HTTPJSESSIONID", 50, false);
@@ -525,7 +528,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getRequestURI() {
-        String uri = request.getRequestURI();
+        String uri = getHttpServletRequest().getRequestURI();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP URI: " + uri, uri, "HTTPURI", 2000, false);
@@ -541,7 +544,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public StringBuffer getRequestURL() {
-        String url = request.getRequestURL().toString();
+        String url = getHttpServletRequest().getRequestURL().toString();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP URL: " + url, url, "HTTPURL", 2000, false);
@@ -557,7 +560,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getScheme() {
-        String scheme = request.getScheme();
+        String scheme = getHttpServletRequest().getScheme();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP scheme: " + scheme, scheme, "HTTPScheme", 10, false);
@@ -573,7 +576,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getServerName() {
-        String name = request.getServerName();
+        String name = getHttpServletRequest().getServerName();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP server name: " + name, name, "HTTPServerName", 100, false);
@@ -589,7 +592,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
 	public int getServerPort() {
-		int port = request.getServerPort();
+		int port = getHttpServletRequest().getServerPort();
 		if ( port < 0 || port > 0xFFFF ) {
 			logger.warning( Logger.SECURITY_FAILURE, "HTTP server port out of range: " + port );
 			port = 0;
@@ -604,7 +607,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public String getServletPath() {
-        String path = request.getServletPath();
+        String path = getHttpServletRequest().getServletPath();
         String clean = "";
         try {
             clean = ESAPI.validator().getValidInput("HTTP servlet path: " + path, path, "HTTPServletPath", 100, false);
@@ -620,7 +623,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public HttpSession getSession() {
-		HttpSession session = request.getSession();
+		HttpSession session = getHttpServletRequest().getSession();
 		
 		// User user = ESAPI.authenticator().getCurrentUser();
 		// user.addSession( session );
@@ -630,7 +633,7 @@ public class SafeRequest implements HttpServletRequest {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 				session.setAttribute("HTTP_ONLY", "set");
 				Cookie cookie = new Cookie("JSESSIONID", session.getId());
-				cookie.setPath( request.getContextPath() );
+				cookie.setPath( getHttpServletRequest().getContextPath() );
 				cookie.setMaxAge(-1); // session cookie
 	            HttpServletResponse response = ESAPI.currentResponse();
 	            if (response != null) {
@@ -648,7 +651,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public HttpSession getSession(boolean create) {
-        HttpSession session = request.getSession(create);
+        HttpSession session = getHttpServletRequest().getSession(create);
         if (session == null) {
             return null;
         }
@@ -661,7 +664,7 @@ public class SafeRequest implements HttpServletRequest {
 	            session.setAttribute("HTTP_ONLY", "set");
 	            Cookie cookie = new Cookie("JSESSIONID", session.getId());
 	            cookie.setMaxAge(-1); // session cookie
-	            cookie.setPath( request.getContextPath() );
+	            cookie.setPath( getHttpServletRequest().getContextPath() );
 	            HttpServletResponse response = ESAPI.currentResponse();
 	            if (response != null) {
 	                ESAPI.currentResponse().addCookie(cookie);
@@ -672,7 +675,7 @@ public class SafeRequest implements HttpServletRequest {
     }
 
     /**
-     * Returns the ESAPI User associated with this request.
+     * Returns the ESAPI User associated with this getHttpServletRequest().
      * @return
      */
     public Principal getUserPrincipal() {
@@ -684,7 +687,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public boolean isRequestedSessionIdFromCookie() {
-        return request.isRequestedSessionIdFromCookie();
+        return getHttpServletRequest().isRequestedSessionIdFromCookie();
     }
 
     /**
@@ -692,7 +695,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public boolean isRequestedSessionIdFromUrl() {
-        return request.isRequestedSessionIdFromUrl();
+        return getHttpServletRequest().isRequestedSessionIdFromUrl();
     }
 
     /**
@@ -700,7 +703,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public boolean isRequestedSessionIdFromURL() {
-        return request.isRequestedSessionIdFromURL();
+        return getHttpServletRequest().isRequestedSessionIdFromURL();
     }
 
     /**
@@ -708,7 +711,7 @@ public class SafeRequest implements HttpServletRequest {
      * @return
      */
     public boolean isRequestedSessionIdValid() {
-        return request.isRequestedSessionIdValid();
+        return getHttpServletRequest().isRequestedSessionIdValid();
     }
 
     /**
@@ -717,7 +720,7 @@ public class SafeRequest implements HttpServletRequest {
      */
     public boolean isSecure() {
         // TODO Check request method to see if this is vulnerable
-        return request.isSecure();
+        return getHttpServletRequest().isSecure();
     }
 
     /**
@@ -735,7 +738,7 @@ public class SafeRequest implements HttpServletRequest {
      * @param name
      */
     public void removeAttribute(String name) {
-        request.removeAttribute(name);
+        getHttpServletRequest().removeAttribute(name);
     }
 
     /**
@@ -744,7 +747,7 @@ public class SafeRequest implements HttpServletRequest {
      * @param o
      */
     public void setAttribute(String name, Object o) {
-        request.setAttribute(name, o);
+        getHttpServletRequest().setAttribute(name, o);
     }
 
     /**
@@ -753,7 +756,7 @@ public class SafeRequest implements HttpServletRequest {
      * @throws UnsupportedEncodingException
      */
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException {
-        request.setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
+        getHttpServletRequest().setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
     }
 
 }

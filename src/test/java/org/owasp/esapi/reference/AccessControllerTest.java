@@ -319,11 +319,11 @@ public class AccessControllerTest extends TestCase {
 	}
 
 	/**
-	 * Test of isAuthorizedForBackendService method, of class
+	 * Test of isAuthorizedForService method, of class
 	 * org.owasp.esapi.AccessController.
 	 */
-	public void testIsAuthorizedForBackendService() {
-		System.out.println("isAuthorizedForBackendService");
+	public void testIsAuthorizedForService() {
+		System.out.println("isAuthorizedForService");
 		AccessController instance = ESAPI.accessController();
 		Authenticator auth = ESAPI.authenticator();
 		

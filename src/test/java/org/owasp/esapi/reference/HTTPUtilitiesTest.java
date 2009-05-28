@@ -36,7 +36,7 @@ import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.filters.SafeResponse;
+import org.owasp.esapi.filters.ESAPIResponse;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
@@ -276,7 +276,7 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killAllCookies");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
         list.add(new Cookie("test1", "1"));
@@ -295,7 +295,7 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killCookie");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
@@ -317,7 +317,7 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testSendSafeRedirect() throws ValidationException, IOException {
         System.out.println("sendSafeRedirect");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         try {
         	safeResponse.sendRedirect("/test1/abcdefg");
             safeResponse.sendRedirect("/test2/1234567");
@@ -344,7 +344,7 @@ public class HTTPUtilitiesTest extends TestCase {
     public void testSetCookie() {
         System.out.println("setCookie");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         assertTrue(response.getCookies().isEmpty());
         
 		safeResponse.addCookie( new Cookie( "test1", "test1" ) );
@@ -370,7 +370,7 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("getStateFromEncryptedCookie");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         
         // test null cookie array
         Map empty = ESAPI.httpUtilities().decryptStateFromCookie(request);
@@ -407,7 +407,7 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("saveStateInEncryptedCookie");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
@@ -432,7 +432,7 @@ public class HTTPUtilitiesTest extends TestCase {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        SafeResponse safeResponse = new SafeResponse( response );
+        ESAPIResponse safeResponse = new ESAPIResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
 
         String foo = ESAPI.randomizer().getRandomString(4096, DefaultEncoder.CHAR_ALPHANUMERICS);

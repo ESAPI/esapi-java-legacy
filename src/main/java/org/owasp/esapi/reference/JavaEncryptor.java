@@ -21,10 +21,16 @@ import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
+import java.security.Security;
 import java.security.Signature;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -51,12 +57,14 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     private static SecretKeySpec secretKeySpec = null;
     private static String encryptAlgorithm = "AES";
     private static String encoding = "UTF-8"; 
-
+    private static int encryptionKeyLength = 256;
+    
     // digital signatures
     private static PrivateKey privateKey = null;
 	private static PublicKey publicKey = null;
 	private static String signatureAlgorithm = "SHAwithDSA";
     private static String randomAlgorithm = "SHA1PRNG";
+	private static int signatureKeyLength = 1024;
 	
 	// hashing
 	private static String hashAlgorithm = "SHA-512";
@@ -69,17 +77,50 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
      * @throws java.lang.Exception
      */
     public static void main( String[] args ) throws Exception {
-        System.out.println( "Generating a new secret key" );
+		System.out.println( "Generating a new secret key" );
+		System.out.println( "   use -print to show available algorithms" );
+		
+		// print out available ciphers
+		if ( args.length == 1 && args[0].equalsIgnoreCase("-print" ) ) {
+			System.out.println( "AVAILABLE ALGORITHMS" );
+					
+			Provider[] providers = Security.getProviders();
+			TreeMap tm = new TreeMap();
+			for (int i = 0; i != providers.length; i++) {
+				Iterator it = providers[i].keySet().iterator();
+				while (it.hasNext()) {
+		            String key = (String) it.next();
+		            String value = providers[i].getProperty( key );
+		            tm.put(key, value);
+				}
+			}
+			Iterator it = tm.entrySet().iterator();
+			while( it.hasNext() ) {
+				Map.Entry entry = (Map.Entry)it.next();
+				String key = (String)entry.getKey();
+				String value = (String)entry.getValue();
+	        	System.out.println( "   " + key + " -> "+ value );
+			}
+		}
+		
+        // setup algorithms
+        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
+		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
+		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
+
         KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
 		SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-        kgen.init( ESAPI.securityConfiguration().getKeyLength(), random );
-        SecretKey secretKey = kgen.generateKey();
+        kgen.init( encryptionKeyLength, random );
+        SecretKey secretKey = kgen.generateKey();        
         byte[] raw = secretKey.getEncoded();
+
+        System.out.println( "KLEN: " + encryptionKeyLength );
+        System.out.println( "SKEY: " + raw.length );
         byte[] salt = new byte[20];
         random.nextBytes( salt );
         System.out.println( "\nCopy and paste this into ESAPI.properties\n" );
-        System.out.println( "MasterKey=" + ESAPI.encoder().encodeForBase64(raw, false) );
-        System.out.println( "MasterSalt=" + ESAPI.encoder().encodeForBase64(salt, false) );
+        System.out.println( "Encryptor.MasterKey=" + ESAPI.encoder().encodeForBase64(raw, false) );
+        System.out.println( "Encryptor.MasterSalt=" + ESAPI.encoder().encodeForBase64(salt, false) );
         System.out.println();
     }
 	
@@ -98,17 +139,22 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
 		hashIterations = ESAPI.securityConfiguration().getHashIterations();
 		encoding = ESAPI.securityConfiguration().getCharacterEncoding();
-		
+		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
+        signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
+        
+		System.out.println( "KLEN: " + encryptionKeyLength );
+        System.out.println( "SKEY: " + skey.length );
+        
 		try {
             // Set up encryption and decryption
             secretKeySpec = new SecretKeySpec(skey, encryptAlgorithm );
 
 			// Set up signing keypair using the master password and salt
-			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm);
 			SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
 			byte[] seed = hash(new String(skey),new String(salt)).getBytes();
 			random.setSeed(seed);
-			keyGen.initialize(1024, random);
+			keyGen.initialize(signatureKeyLength, random);
 			KeyPair pair = keyGen.generateKeyPair();
 			privateKey = pair.getPrivate();
 			publicKey = pair.getPublic();
@@ -118,15 +164,24 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		}
 	}
 
+	/**
+     * {@inheritDoc}
+     * 
+	 * Hashes the data with the supplied salt and the number of iterations specified in
+	 * the ESAPI SecurityConfiguration.
+	 */
+	public String hash(String plaintext, String salt) throws EncryptionException {
+		return hash( plaintext, salt, hashIterations );
+	}
 	
 	/**
      * {@inheritDoc}
      * 
 	 * Hashes the data using the specified algorithm and the Java MessageDigest class. This method
-	 * first adds the salt, a separator (":"), and the data, and then rehashes 1024 times to help 
-	 * strengthen weak passwords.
+	 * first adds the salt, a separator (":"), and the data, and then rehashes the specified number of iterations
+	 * in order to help strengthen weak passwords.
 	 */
-	public String hash(String plaintext, String salt) throws EncryptionException {
+	public String hash(String plaintext, String salt, int iterations) throws EncryptionException {
 		byte[] bytes = null;
 		try {
 			MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
@@ -137,7 +192,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
 			// rehash a number of times to help strengthen weak passwords
 			bytes = digest.digest();
-			for (int i = 0; i < hashIterations; i++) {
+			for (int i = 0; i < iterations; i++) {
 				digest.reset();
 				bytes = digest.digest(bytes);
 			}
