@@ -30,7 +30,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -113,9 +112,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         kgen.init( encryptionKeyLength, random );
         SecretKey secretKey = kgen.generateKey();        
         byte[] raw = secretKey.getEncoded();
-
-        System.out.println( "KLEN: " + encryptionKeyLength );
-        System.out.println( "SKEY: " + raw.length );
         byte[] salt = new byte[20];
         random.nextBytes( salt );
         System.out.println( "\nCopy and paste this into ESAPI.properties\n" );
@@ -141,9 +137,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		encoding = ESAPI.securityConfiguration().getCharacterEncoding();
 		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
         signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
-        
-		System.out.println( "KLEN: " + encryptionKeyLength );
-        System.out.println( "SKEY: " + skey.length );
         
 		try {
             // Set up encryption and decryption
