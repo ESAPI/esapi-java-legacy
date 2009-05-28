@@ -77,7 +77,7 @@ public class SafeRequestTest extends TestCase {
         request.addParameter( "two","2" );
         request.addParameter( "one","3" );
         request.addParameter( "one","4" );
-        SafeRequest safeRequest = new SafeRequest( request );
+        ESAPIRequest safeRequest = new ESAPIRequest( request );
         String[] params = safeRequest.getParameterValues("one");
         String out = "";
         for (int i = 0; i < params.length; i++ ) out += params[i];

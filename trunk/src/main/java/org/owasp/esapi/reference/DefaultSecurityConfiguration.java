@@ -22,13 +22,12 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -36,7 +35,7 @@ import org.owasp.esapi.SecurityConfiguration;
 
 
 /**
- * The SecurityConfiguration manages all the settings used by the ESAPI in a single place. In this reference
+ * The reference SecurityConfiguration manages all the settings used by the ESAPI in a single place. In this reference
  * implementation, resources can be put in several locations, which are searched in the following order:
  * <p>
  * 1) Inside a directory set with a call to SecurityConfiguration.setResourceDirectory( "C:\temp\resources" ).
@@ -66,82 +65,63 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private Properties properties = null;
     
-    private static final String ALLOWED_LOGIN_ATTEMPTS = "AllowedLoginAttempts";
-
-    private static final String APPLICATION_NAME = "ApplicationName";
-
-    private static final String MASTER_KEY = "MasterKey";
-
-    private static final String MASTER_SALT = "MasterSalt";
-
-    private static final String KEY_LENGTH = "KeyLength";
-
-    private static final String APPROVED_EXECUTABLES = "ApprovedExecutables";
-
-    private static final String APPROVED_UPLOAD_EXTENSIONS = "ApprovedUploadExtensions";
-
-    private static final String MAX_UPLOAD_FILE_BYTES = "MaxUploadFileBytes";
-
-    private static final String USERNAME_PARAMETER_NAME = "UsernameParameterName";
-
-    private static final String PASSWORD_PARAMETER_NAME = "PasswordParameterName";
-
-    private static final String MAX_OLD_PASSWORD_HASHES = "MaxOldPasswordHashes";
-
-    private static final String ENCRYPTION_ALGORITHM = "EncryptionAlgorithm";
-
-    private static final String HASH_ALGORITHM = "HashAlgorithm";
-
-    private static final String HASH_ITERATIONS = "HashIterations";
-
-    private static final String CHARACTER_ENCODING = "CharacterEncoding";
-
-    private static final String RANDOM_ALGORITHM = "RandomAlgorithm";
-
-    private static final String DIGITAL_SIGNATURE_ALGORITHM = "DigitalSignatureAlgorithm";
-
-    private static final String RESPONSE_CONTENT_TYPE = "ResponseContentType";
-
-    private static final String REMEMBER_TOKEN_DURATION = "RememberTokenDuration";
-
-    private static final String IDLE_TIMEOUT_DURATION = "IdleTimeoutDuration";
-
-    private static final String ABSOLUTE_TIMEOUT_DURATION = "AbsoluteTimeoutDuration";
+    
+    private static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
+    private static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
+    private static final String ABSOLUTE_TIMEOUT_DURATION = "Authenticator.AbsoluteTimeoutDuration";
+    private static final String ALLOWED_LOGIN_ATTEMPTS = "Authenticator.AllowedLoginAttempts";
+    private static final String USERNAME_PARAMETER_NAME = "Authenticator.UsernameParameterName";
+    private static final String PASSWORD_PARAMETER_NAME = "Authenticator.PasswordParameterName";
+    private static final String MAX_OLD_PASSWORD_HASHES = "Authenticator.MaxOldPasswordHashes";
+    
+    private static final String MASTER_KEY = "Encryptor.MasterKey";
+    private static final String MASTER_SALT = "Encryptor.MasterSalt";
+    private static final String KEY_LENGTH = "Encryptor.EncryptionKeyLength";
+    private static final String ENCRYPTION_ALGORITHM = "Encryptor.EncryptionAlgorithm";
+    private static final String HASH_ALGORITHM = "Encryptor.HashAlgorithm";
+    private static final String HASH_ITERATIONS = "Encryptor.HashIterations";
+    private static final String CHARACTER_ENCODING = "Encryptor.CharacterEncoding";
+    private static final String RANDOM_ALGORITHM = "Encryptor.RandomAlgorithm";
+    private static final String DIGITAL_SIGNATURE_ALGORITHM = "Encryptor.DigitalSignatureAlgorithm";
+    private static final String DIGITAL_SIGNATURE_KEY_LENGTH = "Encryptor.DigitalSignatureKeyLength";
     
     private static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
+    private static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
+    
+    private static final String FORCE_HTTPONLY = "HttpUtilities.ForceHTTPOnly";
+    private static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";    
+    private static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
+    private static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
+    private static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
 
-    private static final String FORCE_HTTPONLY = "ForceHTTPOnly";
-    
-    private static final String LOG_LEVEL = "LogLevel";
-	
-    private static final String LOG_FILE_NAME = "LogFileName";
-
-    private static final String MAX_LOG_FILE_SIZE = "MaxLogFileSize";
-    
-    private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
-    
-    private static final String UPLOAD_DIRECTORY = "UploadDir";
-        
+    private static final String APPLICATION_NAME = "Logger.ApplicationName";    
+    private static final String LOG_LEVEL = "Logger.LogLevel";
+    private static final String LOG_FILE_NAME = "Logger.LogFileName";
+    private static final String MAX_LOG_FILE_SIZE = "Logger.MaxLogFileSize";
+    private static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
+            
+ 	/**
+	 * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
+	 * max log file size, the logger will move the old log data into another log file. There currently is a max of 
+	 * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
+	 */
+	public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     protected final int MAX_REDIRECT_LOCATION = 1000;
-
     protected final int MAX_FILE_NAME_LENGTH = 1000;
-    
-    
-
 
     /*
      * Implementation Keys
      */
-    private static final String LOG_IMPLEMENTATION = "Implementation.Logger";
-    private static final String AUTHENTICATION_IMPLEMENTATION = "Implementation.Authenticator";
-    private static final String ENCODER_IMPLEMENTATION = "Implementation.Encoder";
-    private static final String ACCESS_CONTROL_IMPLEMENTATION = "Implementation.AccessControl";
-    private static final String ENCRYPTION_IMPLEMENTATION = "Implementation.Encryptor";
-    private static final String INTRUSION_DETECTION_IMPLEMENTATION = "Implementation.IntrusionDetector";
-    private static final String RANDOMIZER_IMPLEMENTATION = "Implementation.Randomizer";
-	private static final String EXECUTOR_IMPLEMENTATION = "Implementation.Executor";
-	private static final String VALIDATOR_IMPLEMENTATION = "Implementation.Validator";
-	private static final String HTTP_UTILITIES_IMPLEMENTATION = "Implementation.HTTPUtilities";
+    private static final String LOG_IMPLEMENTATION = "ESAPI.Logger";
+    private static final String AUTHENTICATION_IMPLEMENTATION = "ESAPI.Authenticator";
+    private static final String ENCODER_IMPLEMENTATION = "ESAPI.Encoder";
+    private static final String ACCESS_CONTROL_IMPLEMENTATION = "ESAPI.AccessControl";
+    private static final String ENCRYPTION_IMPLEMENTATION = "ESAPI.Encryptor";
+    private static final String INTRUSION_DETECTION_IMPLEMENTATION = "ESAPI.IntrusionDetector";
+    private static final String RANDOMIZER_IMPLEMENTATION = "ESAPI.Randomizer";
+	private static final String EXECUTOR_IMPLEMENTATION = "ESAPI.Executor";
+	private static final String VALIDATOR_IMPLEMENTATION = "ESAPI.Validator";
+	private static final String HTTP_UTILITIES_IMPLEMENTATION = "ESAPI.HTTPUtilities";
     
     /*
      * Default Implementations
@@ -192,94 +172,77 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public String getApplicationName() {
-    	return properties.getProperty(APPLICATION_NAME, "AppNameNotSpecified");
-    }
-    
-    /**
-     * This method attempts to load property from this.properties. If it cannot
-     * load the property, then it uses the specified defaultValue and logs that
-     * this has happened.  
-     * @param property the property in the properties file to load
-     * @param defaultValue the class name to use if property is not found
-     * @return
-     */
-    protected String getImplementation(String property, String defaultValue) {
-    	String value = properties.getProperty( property );
-    	if (value == null) {
-    		value = defaultValue;
-    		logSpecial(property + " was not found. Using default: " + value, null);
-    	}
-    	return value;
+    	return getESAPIProperty(APPLICATION_NAME, "DefaultName");
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getLogImplementation() {
-    	return getImplementation(LOG_IMPLEMENTATION, DEFAULT_LOG_IMPLEMENTATION);	
+    	return getESAPIProperty(LOG_IMPLEMENTATION, DEFAULT_LOG_IMPLEMENTATION);	
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getAuthenticationImplementation() {
-    	return getImplementation(AUTHENTICATION_IMPLEMENTATION, DEFAULT_AUTHENTICATION_IMPLEMENTATION);
+    	return getESAPIProperty(AUTHENTICATION_IMPLEMENTATION, DEFAULT_AUTHENTICATION_IMPLEMENTATION);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getEncoderImplementation() {
-    	return getImplementation(ENCODER_IMPLEMENTATION, DEFAULT_ENCODER_IMPLEMENTATION);
+    	return getESAPIProperty(ENCODER_IMPLEMENTATION, DEFAULT_ENCODER_IMPLEMENTATION);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getAccessControlImplementation() {
-    	return getImplementation(ACCESS_CONTROL_IMPLEMENTATION, DEFAULT_ACCESS_CONTROL_IMPLEMENTATION);
+    	return getESAPIProperty(ACCESS_CONTROL_IMPLEMENTATION, DEFAULT_ACCESS_CONTROL_IMPLEMENTATION);
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getEncryptionImplementation() {
-    	return getImplementation(ENCRYPTION_IMPLEMENTATION, DEFAULT_ENCRYPTION_IMPLEMENTATION);
+    	return getESAPIProperty(ENCRYPTION_IMPLEMENTATION, DEFAULT_ENCRYPTION_IMPLEMENTATION);
     }
    
     /**
 	 * {@inheritDoc}
 	 */
     public String getIntrusionDetectionImplementation() {
-    	return getImplementation(INTRUSION_DETECTION_IMPLEMENTATION, DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION);
+    	return getESAPIProperty(INTRUSION_DETECTION_IMPLEMENTATION, DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION);
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getRandomizerImplementation() {
-    	return getImplementation(RANDOMIZER_IMPLEMENTATION, DEFAULT_RANDOMIZER_IMPLEMENTATION);
+    	return getESAPIProperty(RANDOMIZER_IMPLEMENTATION, DEFAULT_RANDOMIZER_IMPLEMENTATION);
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getExecutorImplementation() {
-    	return getImplementation(EXECUTOR_IMPLEMENTATION, DEFAULT_EXECUTOR_IMPLEMENTATION);
+    	return getESAPIProperty(EXECUTOR_IMPLEMENTATION, DEFAULT_EXECUTOR_IMPLEMENTATION);
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getHTTPUtilitiesImplementation() {
-    	return getImplementation(HTTP_UTILITIES_IMPLEMENTATION, DEFAULT_HTTP_UTILITIES_IMPLEMENTATION);
+    	return getESAPIProperty(HTTP_UTILITIES_IMPLEMENTATION, DEFAULT_HTTP_UTILITIES_IMPLEMENTATION);
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public String getValidationImplementation() {
-    	return getImplementation(VALIDATOR_IMPLEMENTATION, DEFAULT_VALIDATOR_IMPLEMENTATION);
+    	return getESAPIProperty(VALIDATOR_IMPLEMENTATION, DEFAULT_VALIDATOR_IMPLEMENTATION);
     }
     
     
@@ -287,13 +250,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public byte[] getMasterKey() {
-        String encoded = properties.getProperty(MASTER_KEY);
-        try {
-            return ESAPI.encoder().decodeFromBase64(encoded);
-        } catch( IOException e ) {
-        	logSpecial("Unable to decode master key. Property key: " + MASTER_KEY, null);
-            return null;
-        }
+    	return getESAPIPropertyEncoded( MASTER_KEY, null );
     }
 
     /**
@@ -311,29 +268,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	}
     }
     
-    public int getKeyLength() {
-    	int length = 256;
-    	String property = properties.getProperty(KEY_LENGTH);
-    	try {
-    		length = Integer.parseInt( property );
-    	} catch( Exception e ) {
-    		logSpecial( "Could not parse the " + KEY_LENGTH + " property: " + property, e );
-    		// return the default
-    	}
-    	return length;
+    public int getEncryptionKeyLength() {
+    	return getESAPIProperty(KEY_LENGTH, 256 );
     }
     
     /**
 	 * {@inheritDoc}
 	 */
     public byte[] getMasterSalt() {
-        String encoded = properties.getProperty(MASTER_SALT);
-        try {
-            return ESAPI.encoder().decodeFromBase64(encoded);
-        } catch( IOException e ) {
-        	logSpecial("Unable to decode master salt. Property key: " + MASTER_SALT, null);
-            return null;
-        }
+        return getESAPIPropertyEncoded(MASTER_SALT, null);
     }
 
     /**
@@ -341,17 +284,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
 	public List getAllowedExecutables() {
     	String def = "";
-        String[] exList = properties.getProperty(APPROVED_EXECUTABLES,def).split(",");
+        String[] exList = getESAPIProperty(APPROVED_EXECUTABLES,def).split(",");
         return Arrays.asList(exList);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
-    @SuppressWarnings("unchecked")
 	public List getAllowedFileExtensions() {
     	String def = ".zip,.pdf,.tar,.gz,.xls,.properties,.txt,.xml";
-        String[] extList = properties.getProperty(APPROVED_UPLOAD_EXTENSIONS,def).split(",");
+        String[] extList = getESAPIProperty(APPROVED_UPLOAD_EXTENSIONS,def).split(",");
         return Arrays.asList(extList);
     }
 
@@ -359,8 +301,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public int getAllowedFileUploadSize() {
-        String bytes = properties.getProperty(MAX_UPLOAD_FILE_BYTES, "5000000");
-        return Integer.parseInt(bytes);
+        return getESAPIProperty(MAX_UPLOAD_FILE_BYTES, 5000000);
     }
 
     
@@ -504,10 +445,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ) );
 
         logSpecial("  ========Master Configuration========", null);
+        System.out.println( "  ResourceDirectory: " + this.resourceDirectory );
         Iterator i = new TreeSet( properties.keySet() ).iterator();
         while (i.hasNext()) {
             String key = (String) i.next();
-            if ( !key.equals( "MasterKey" ) && !key.equals( "MasterSalt" ) ) {
+            // print out properties, but not sensitive ones like MasterKey and MasterSalt
+            if ( !key.contains( "Master" ) ) {
             		logSpecial("  |   " + key + "=" + properties.get(key), null);
         	}
         }
@@ -528,122 +471,111 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public String getPasswordParameterName() {
-        return properties.getProperty(PASSWORD_PARAMETER_NAME, "password");
+        return getESAPIProperty(PASSWORD_PARAMETER_NAME, "password");
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getUsernameParameterName() {
-        return properties.getProperty(USERNAME_PARAMETER_NAME, "username");
+        return getESAPIProperty(USERNAME_PARAMETER_NAME, "username");
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getEncryptionAlgorithm() {
-        return properties.getProperty(ENCRYPTION_ALGORITHM, "AES");
+        return getESAPIProperty(ENCRYPTION_ALGORITHM, "AES");
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getHashAlgorithm() {
-        return properties.getProperty(HASH_ALGORITHM, "SHA-512");
+        return getESAPIProperty(HASH_ALGORITHM, "SHA-512");
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public int getHashIterations() {
-    	String iterations = properties.getProperty(HASH_ITERATIONS, "1024");
-        return Integer.parseInt(iterations);
+    	return getESAPIProperty(HASH_ITERATIONS, 1024);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getCharacterEncoding() {
-        return properties.getProperty(CHARACTER_ENCODING, "UTF-8");
+        return getESAPIProperty(CHARACTER_ENCODING, "UTF-8");
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getDigitalSignatureAlgorithm() {
-        return properties.getProperty(DIGITAL_SIGNATURE_ALGORITHM, "SHAwithDSA");
+        return getESAPIProperty(DIGITAL_SIGNATURE_ALGORITHM, "SHAwithDSA");
+    }
+
+    /**
+	 * {@inheritDoc}
+	 */
+    public int getDigitalSignatureKeyLength() {
+        return getESAPIProperty(DIGITAL_SIGNATURE_KEY_LENGTH, 1024);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public String getRandomAlgorithm() {
-        return properties.getProperty(RANDOM_ALGORITHM, "SHA1PRNG");
+        return getESAPIProperty(RANDOM_ALGORITHM, "SHA1PRNG");
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public int getAllowedLoginAttempts() {
-        String attempts = properties.getProperty(ALLOWED_LOGIN_ATTEMPTS, "5");
-        return Integer.parseInt(attempts);
+        return getESAPIProperty(ALLOWED_LOGIN_ATTEMPTS, 5);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public int getMaxOldPasswordHashes() {
-        String max = properties.getProperty(MAX_OLD_PASSWORD_HASHES, "12");
-        return Integer.parseInt(max);
+        return getESAPIProperty(MAX_OLD_PASSWORD_HASHES, 12);
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public File getUploadDirectory() {
-    	File uploadDirectory = new File(properties.getProperty(UPLOAD_DIRECTORY, "UploadDir"));
-    	return uploadDirectory;
+    	String dir = getESAPIProperty( UPLOAD_DIRECTORY, "UploadDir");
+    	return new File( dir );
     }
     
     /**
 	 * {@inheritDoc}
 	 */
-    @SuppressWarnings("unchecked")
 	public Threshold getQuota(String eventName) {
-        int count = 0;
-        String countString = properties.getProperty(eventName + ".count");
-        if (countString != null) {
-            count = Integer.parseInt(countString);
-        }
-
-        int interval = 0;
-        String intervalString = properties.getProperty(eventName + ".interval");
-        if (intervalString != null) {
-            interval = Integer.parseInt(intervalString);
-        }
-
+        int count = getESAPIProperty("IntrusionDetector." + eventName + ".count", 0);
+        int interval =  getESAPIProperty("IntrusionDetector." + eventName + ".interval", 0);
         List actions = new ArrayList();
-        String actionString = properties.getProperty(eventName + ".actions");
+        String actionString = getESAPIProperty("IntrusionDetector." + eventName + ".actions", "");
         if (actionString != null) {
             String[] actionList = actionString.split(",");
             actions = Arrays.asList(actionList);
         }
-
-        Threshold q = new Threshold(eventName, count, interval, actions);
-        return q;
+        if ( count > 0 && interval > 0 && actions.size() > 0 ) {
+        	return new Threshold(eventName, count, interval, actions);
+        }
+        return null;
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public int getLogLevel() {
-        String level = properties.getProperty(LOG_LEVEL);
-        if (level == null) {
-// This error is  NOT logged the normal way because the logger constructor calls getLogLevel() and if this error occurred it would cause
-// an infinite loop.
-            logSpecial("The LOG-LEVEL property in the ESAPI properties file is not defined.", null);
-        	return Logger.WARNING;
-        }
+        String level = getESAPIProperty(LOG_LEVEL, "WARNING" );
+
         if (level.equalsIgnoreCase("OFF"))
             return Logger.OFF;
         if (level.equalsIgnoreCase("FATAL"))
@@ -661,9 +593,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         if (level.equalsIgnoreCase("ALL"))
             return Logger.ALL;
         
-// This error is NOT logged the normal way because the logger constructor calls getLogLevel() and if this error occurred it would cause
-// an infinite loop.
-        logSpecial("The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level, null);
+		// This error is NOT logged the normal way because the logger constructor calls getLogLevel() and if this error occurred it would cause
+		// an infinite loop.
+        logSpecial("The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level + ". Using default: WARNING", null);
         return Logger.WARNING;  // Note: The default logging level is WARNING.
     }
     
@@ -671,30 +603,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public String getLogFileName() {
-    	return properties.getProperty( LOG_FILE_NAME, "ESAPI_logging_file" );
+    	return getESAPIProperty( LOG_FILE_NAME, "ESAPI_logging_file" );
     }
 
-	/**
-	 * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
-	 * max log file size, the logger will move the old log data into another log file. There currently is a max of 
-	 * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
-	 */
-	public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
-	
 	/**
 	 * {@inheritDoc}
 	 */
     public int getMaxLogFileSize() {
-    	// The default is 10 Meg if the property is not specified
-    	String value = properties.getProperty( MAX_LOG_FILE_SIZE );
-    	if (value == null) return DEFAULT_MAX_LOG_FILE_SIZE;
-    	
-    	try	{
-        	return Integer.parseInt(value);	
-    	}
-    	catch (NumberFormatException e) {
-    		return DEFAULT_MAX_LOG_FILE_SIZE;
-    	}
+    	return getESAPIProperty( MAX_LOG_FILE_SIZE, DEFAULT_MAX_LOG_FILE_SIZE );
     }
 
 
@@ -702,9 +618,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public boolean getLogEncodingRequired() {
-    	String value = properties.getProperty( LOG_ENCODING_REQUIRED );
-    	if ( value != null && value.equalsIgnoreCase("true")) return true;
-    	return false;	// Default result
+    	return getESAPIProperty( LOG_ENCODING_REQUIRED, false );
 	}
     
 
@@ -712,9 +626,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public boolean getForceHTTPOnly() {
-    	String value = properties.getProperty( FORCE_HTTPONLY );
-    	if ( value != null && value.equalsIgnoreCase("true")) return true;
-    	return false;	// Default result
+    	return getESAPIProperty( FORCE_HTTPONLY, true );
     }
 
 
@@ -722,15 +634,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public String getResponseContentType() {
-        return properties.getProperty( RESPONSE_CONTENT_TYPE, "text/html; charset=UTF-8" );
+        return getESAPIProperty( RESPONSE_CONTENT_TYPE, "text/html; charset=UTF-8" );
     }
 
 	/**
 	 * {@inheritDoc}
 	 */
     public long getRememberTokenDuration() {
-        String value = properties.getProperty( REMEMBER_TOKEN_DURATION, "14" );
-        long days = Long.parseLong( value );
+        int days = getESAPIProperty( REMEMBER_TOKEN_DURATION, 14 );
         long duration = 1000 * 60 * 60 * 24 * days;
         return duration;
     }
@@ -739,20 +650,18 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public int getSessionIdleTimeoutLength() {
-        String value = properties.getProperty( IDLE_TIMEOUT_DURATION, "20" );
-        int minutes = Integer.parseInt( value );
+        int minutes = getESAPIProperty( IDLE_TIMEOUT_DURATION, 20 );
         int duration = 1000 * 60 * minutes;
-        return duration;		
+        return duration;
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */
 	public int getSessionAbsoluteTimeoutLength() {
-        String value = properties.getProperty( ABSOLUTE_TIMEOUT_DURATION, "120" );
-        int minutes = Integer.parseInt( value );
+        int minutes = getESAPIProperty(ABSOLUTE_TIMEOUT_DURATION, 20 );
         int duration = 1000 * 60 * minutes;
-        return duration;		
+        return duration;
 	}
     
    /**
@@ -764,10 +673,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     *  			if key exists, the associated validation pattern, null otherwise
 	*/
     public Pattern getValidationPattern( String key ) {
-    	String value = properties.getProperty( "Validator." + key );
+    	String value = getESAPIProperty( "Validator." + key, null );
     	if ( value == null ) return null;
-        Pattern pattern = Pattern.compile(value);
-        return pattern;
+    	try {
+    		return Pattern.compile(value);
+    	} catch ( PatternSyntaxException e ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not a valid regex in ESAPI.properties. Returning null", null );
+    		return null;
+    	}
     }
 
     /**
@@ -775,10 +688,64 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * by the Executor.
      */
 	public File getWorkingDirectory() {
-    	String value = properties.getProperty( WORKING_DIRECTORY );
-    	if ( value == null ) {
-    		logSpecial( "Could not find Executor.WorkingDirectory  property, returning null", null );
-    	}
-    	return new File( value );
+		String dir = getESAPIProperty( WORKING_DIRECTORY, null );
+		if ( dir != null ) {
+			return new File( dir );
+		}
+		return null;
+	}
+	
+	private String getESAPIProperty( String key, String def ) {
+		String value = properties.getProperty(key);
+		if ( value == null ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
+    		return def;
+		}
+		return value;
+	}
+
+	private boolean getESAPIProperty( String key, boolean def ) {
+		String property = properties.getProperty(key);
+		if ( property == null ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
+    		return def;
+		}
+		if ( property.equalsIgnoreCase("true") ) {
+			return true;
+		}
+		if ( property.equalsIgnoreCase("false") ) {
+			return false;
+		}
+		logSpecial( "SecurityConfiguration for " + key + " not either \"true\" or \"false\" in ESAPI.properties. Using default: " + def, null );
+		return def;
+	}
+
+	private byte[] getESAPIPropertyEncoded( String key, byte[] def ) {
+		String property = properties.getProperty(key);
+		if ( property == null ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
+    		return def;
+		}
+        try {
+            return ESAPI.encoder().decodeFromBase64(property);
+        } catch( IOException e ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not properly Base64 encoded in ESAPI.properties. Using default: " + def, null );
+            return null;
+        }
+	}
+	
+	private int getESAPIProperty( String key, int def ) {
+		String property = properties.getProperty(key);
+		if ( property == null ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
+    		return def;
+		}
+		try {
+			int value = Integer.parseInt( property );
+			return value;
+		} catch( NumberFormatException e ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not an integer in ESAPI.properties. Using default: " + def, null );
+			return def;
+		}
 	}
 }

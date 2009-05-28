@@ -64,6 +64,32 @@ public interface Encryptor {
 	String hash(String plaintext, String salt) throws EncryptionException;
 
 	/**
+	 * Returns a string representation of the hash of the provided plaintext and
+	 * salt. The salt helps to protect against a rainbow table attack by mixing
+	 * in some extra data with the plaintext. Some good choices for a salt might
+	 * be an account name or some other string that is known to the application
+	 * but not to an attacker. 
+	 * See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">
+	 * this article</a> for more information about hashing as it pertains to password schemes.
+	 * 
+	 * @param plaintext
+	 * 		the plaintext String to encrypt
+	 * @param salt
+	 *      the salt to add to the plaintext String before hashing
+	 * @param iterations
+	 *      the number of times to iterate the hash
+	 * 
+	 * @return 
+	 * 		the encrypted hash of 'plaintext' stored as a String
+	 * 
+	 * @throws EncryptionException
+	 *      if the specified hash algorithm could not be found or another problem exists with 
+	 *      the hashing of 'plaintext'
+	 */
+	String hash(String plaintext, String salt, int iterations) throws EncryptionException;
+
+	
+	/**
 	 * Encrypts the provided plaintext and returns a ciphertext string.
 	 * 
 	 * @param plaintext

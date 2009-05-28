@@ -673,6 +673,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * @param request
      * @return
      * @throws IntrusionException
+     * @deprecated
      */
 	public boolean isValidHTTPRequest(HttpServletRequest request) throws IntrusionException {
 		try {
@@ -689,7 +690,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * will generate a descriptive IntrusionException. 
 	 * 
 	 * Uses current HTTPRequest saved in EASPI Authenticator
-	 * 
+     *
+     * @deprecated
 	 */
 	public void assertIsValidHTTPRequest() throws ValidationException, IntrusionException {
 		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
@@ -700,6 +702,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
 	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
+	 * 
+     * @deprecated
 	 */
 	private void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {	
 		if (request == null) {
@@ -752,8 +756,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if input is a valid list item.
-	 * 
-	 * 
 	 */
 	public boolean isValidListItem(String context, String input, List list) {
 		try {
@@ -793,12 +795,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if the parameters in the current request contain all required parameters and only optional ones in addition.
-	 * 
-	 * 
-      *
-      * @param requiredNames
-      * @param optionalNames
-      */
+     * @param requiredNames
+     * @param optionalNames
+     */
 	public boolean isValidHTTPRequestParameterSet(String context, Set requiredNames, Set optionalNames) {
 		try {
 			assertIsValidHTTPRequestParameterSet( context, requiredNames, optionalNames);
@@ -906,8 +905,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if input is valid printable ASCII characters (32-126).
-	 * 
-	 * 
 	 */
 	public boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull) throws IntrusionException {
 		try {

@@ -413,6 +413,7 @@ public class FileBasedACRs {
 	 * 		a hash map containing the ruleset
 	 */
 	private Map loadRules(String ruleset) {
+		ruleset = "fbac-policies/" + ruleset;
 		Map map = new HashMap();
 		InputStream is = null;
 		try {
@@ -440,14 +441,14 @@ public class FileBasedACRs {
 				}
 			}
 		} catch (Exception e) {
-			logger.warning( Logger.SECURITY_FAILURE, "Problem in access control file : " + ruleset, e );
+			logger.warning( Logger.SECURITY_FAILURE, "Problem in access control file: " + ruleset, e );
 		} finally {
 			try {
 				if (is != null) {
 					is.close();
 				}
 			} catch (IOException e) {
-				logger.warning(Logger.SECURITY_FAILURE, "Failure closing access control file : " + ruleset, e);
+				logger.warning(Logger.SECURITY_FAILURE, "Failure closing access control file: " + ruleset, e);
 			}
 		}
 		return map;

@@ -26,9 +26,10 @@ public class InterceptingPrintWriter extends PrintWriter {
 		return super.checkError();
 	}
 
-	protected void clearError() {
-		super.clearError();
-	}
+// Java 1.6 only
+//	protected void clearError() {
+//		super.clearError();
+//	}
 
 	public void close() {
 		super.close();

@@ -47,8 +47,8 @@ import org.owasp.esapi.errors.IntegrityException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.ValidationUploadException;
-import org.owasp.esapi.filters.SafeRequest;
-import org.owasp.esapi.filters.SafeResponse;
+import org.owasp.esapi.filters.ESAPIRequest;
+import org.owasp.esapi.filters.ESAPIResponse;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation
@@ -576,8 +576,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
 	 */
-    public SafeRequest getCurrentRequest() {
-        SafeRequest request = (SafeRequest)currentRequest.get();
+    public ESAPIRequest getCurrentRequest() {
+        ESAPIRequest request = (ESAPIRequest)currentRequest.get();
 		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set with HTTPUtilities.setCurrentHTTP()" );
 		return request;
     }
@@ -585,8 +585,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     /**
 	 * {@inheritDoc}
 	 */
-    public SafeResponse getCurrentResponse() {
-        SafeResponse response = (SafeResponse)currentResponse.get();
+    public ESAPIResponse getCurrentResponse() {
+        ESAPIResponse response = (ESAPIResponse)currentResponse.get();
 		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set with HTTPUtilities.setCurrentHTTP()" );
         return response;
     }
@@ -595,19 +595,19 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
-    	SafeRequest safeRequest = null;
-    	SafeResponse safeResponse = null;
+    	ESAPIRequest safeRequest = null;
+    	ESAPIResponse safeResponse = null;
     	
     	// wrap if necessary
-    	if ( request instanceof SafeRequest ) {
-    		safeRequest = (SafeRequest)request;
+    	if ( request instanceof ESAPIRequest ) {
+    		safeRequest = (ESAPIRequest)request;
     	} else {
-    		safeRequest = new SafeRequest( request );
+    		safeRequest = new ESAPIRequest( request );
     	}
-    	if ( response instanceof SafeResponse ) {
-    		safeResponse = (SafeResponse)response;
+    	if ( response instanceof ESAPIResponse ) {
+    		safeResponse = (ESAPIResponse)response;
     	} else {
-    		safeResponse = new SafeResponse( response );
+    		safeResponse = new ESAPIResponse( response );
     	}
     	
     	currentRequest.set(safeRequest);
@@ -668,11 +668,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         	return null;
         }
         
-        public SafeRequest getRequest() {
-            return (SafeRequest)super.get();
+        public ESAPIRequest getRequest() {
+            return (ESAPIRequest)super.get();
         }
 
-        public void setRequest(SafeRequest newRequest) {
+        public void setRequest(ESAPIRequest newRequest) {
             super.set(newRequest);
         }
     };
@@ -686,11 +686,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         	return null;
         }
         
-        public SafeResponse getResponse() {
-            return (SafeResponse)super.get();
+        public ESAPIResponse getResponse() {
+            return (ESAPIResponse)super.get();
         }
 
-        public void setResponse(SafeResponse newResponse) {
+        public void setResponse(ESAPIResponse newResponse) {
             super.set(newResponse);
         }
     };

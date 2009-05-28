@@ -59,7 +59,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
 	public Object getValid( String context, String input ) throws ValidationException {
 
 		// check null
-	    if ( input == null || input.isEmpty() ) {
+	    if ( input == null || input.length()==0 ) {
 			if (allowNull) return null;
 			throw new ValidationException( context + ": Input credit card required", "Input credit card required: context=" + context + ", input=" + input, context );
 	    }

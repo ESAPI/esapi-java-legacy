@@ -18,8 +18,9 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Implementation of the Codec interface for Oracle strings. See http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm
- * for more information.
+ * Implementation of the Codec interface for Oracle strings. See http://www.oracle.com/technology/tech/pl_sql/pdf/how_to_write_injection_proof_plsql.pdf
+ * for more information. There are three types of SQL literal: text, datetime, and numeric. The "alternative quoting"
+ * mechanism available in Oracle that uses braces around a string must not be used for text literals.
  * 
  * @see <a href="http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm">Special Characters in Oracle Queries</a>
  * 
