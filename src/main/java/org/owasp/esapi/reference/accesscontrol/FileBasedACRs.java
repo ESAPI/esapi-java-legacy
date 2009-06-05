@@ -473,6 +473,7 @@ public class FileBasedACRs {
 		InputStream is = null;
 
 		try {
+			ruleset = "fbac-policies/" + ruleset;
 			is = ESAPI.securityConfiguration().getResourceStream(ruleset);
 			String line = "";
 			while ((line = ESAPI.validator().safeReadLine(is, 500)) != null) {

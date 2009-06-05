@@ -128,7 +128,7 @@ public class DefaultAccessController implements AccessController {
 	 */
 	public void assertAuthorizedForURL(String url)
 			throws AccessControlException {
-		this.assertAuthorized("AC 1.0 URL(", new Object[] {url});
+		this.assertAuthorized("AC 1.0 URL", new Object[] {url});
 	}
 
 	/**
