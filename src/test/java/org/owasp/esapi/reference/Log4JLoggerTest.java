@@ -23,6 +23,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.ValidationException;
@@ -32,10 +33,9 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 /**
  * The Class LoggerTest.
  * 
- * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class LoggerTest extends TestCase {
+public class Log4JLoggerTest extends TestCase {
 
 	private static int testCount = 0;
 	
@@ -47,7 +47,7 @@ public class LoggerTest extends TestCase {
 	 * 
 	 * @param testName the test name
 	 */
-    public LoggerTest(String testName) {
+    public Log4JLoggerTest(String testName) {
         super(testName);
     }
 
@@ -56,6 +56,7 @@ public class LoggerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
+    	ESAPI.setLogFactory( new Log4JLogFactory() );
     	//This ensures a clean logger between tests
     	testLogger = ESAPI.getLogger( "test" + testCount++ );
     	System.out.println("Test logger: " + testLogger);
@@ -76,11 +77,10 @@ public class LoggerTest extends TestCase {
 	 * @return the test
 	 */
     public static Test suite() {
-        TestSuite suite = new TestSuite(LoggerTest.class);
-        
+        TestSuite suite = new TestSuite(Log4JLoggerTest.class);    
         return suite;
     }
-
+    
     /**
      * Test of logHTTPRequest method, of class org.owasp.esapi.Logger.
      * 

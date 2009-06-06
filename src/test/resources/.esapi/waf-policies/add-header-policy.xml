@@ -19,9 +19,11 @@
 			<default-status>403</default-status>
 		</error-handling>
 	</settings>
-
-	<add-header name="FOO" value="BAR" path="/.*">
-		<path-exception type="regexp">/marketing/.*</path-exception>
-	</add-header>
-
+	
+	<outbound-rules>
+		<add-header name="FOO" value="BAR" path="/.*">
+			<path-exception type="regexp">/marketing/.*</path-exception>
+		</add-header>
+	</outbound-rules>
+	
 </policy>

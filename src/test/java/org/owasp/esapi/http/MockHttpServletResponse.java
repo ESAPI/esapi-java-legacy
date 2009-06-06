@@ -392,6 +392,10 @@ public class MockHttpServletResponse implements HttpServletResponse {
 		body = new StringBuffer();
 	}
 
+	public void setBody( String value ) {
+		body = new StringBuffer( value );
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -437,4 +441,15 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	}
 
+	/*
+	 * Dump the response in a semi-readable format close to a real HTTP response on the wire
+	 */
+	public void dump() {
+        System.out.println();
+		System.out.println( "  " + this.getStatus() + " " );
+        for ( Object name : getHeaderNames() ) System.out.println( "  " + name + "=" + getHeader( (String)name ) );
+        System.out.println( "  BODY: " + this.getBody() );
+        System.out.println();
+	}
+	
 }

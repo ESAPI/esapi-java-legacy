@@ -21,9 +21,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.ValidationRule;
 
 
 /**
@@ -754,7 +755,7 @@ public interface Validator {
      * 
      * @throws IntrusionException
      */
-	boolean isValidHTTPRequest() throws IntrusionException;
+	boolean isValidHTTPRequest( HttpServletRequest request ) throws IntrusionException;
 	
 	/**
 	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
@@ -764,7 +765,7 @@ public interface Validator {
 	 * @throws ValidationException
 	 * @throws IntrusionException
 	 */
-	void assertIsValidHTTPRequest() throws ValidationException, IntrusionException;
+	void assertIsValidHTTPRequest( HttpServletRequest request ) throws ValidationException, IntrusionException;
 	
 	/**
 	 * Returns true if input is a valid list item.

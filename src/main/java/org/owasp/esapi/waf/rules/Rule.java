@@ -29,4 +29,7 @@ public abstract class Rule {
 		this.id = id;
 	}
 
+	public String toString() {
+		return "Rule:" + this.getClass().getName();
+	}
 }

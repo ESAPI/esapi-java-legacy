@@ -17,9 +17,11 @@
 			<default-status>403</default-status>
 		</error-handling>
 	</settings>
-
-	<add-secure-flag>
-		<cookie name=".*"/>
-	</add-secure-flag>
-
+	
+	<outbound-rules>
+		<add-secure-flag>
+			<cookie name=".*"/>
+		</add-secure-flag>
+	</outbound-rules>
+	
 </policy>

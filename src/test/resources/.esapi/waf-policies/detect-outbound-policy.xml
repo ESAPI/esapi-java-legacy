@@ -20,6 +20,8 @@
 		</error-handling>
 	</settings>
 
-	<detect-content content-type=".*text/.*" pattern=".*2008.*" />
-
+	<outbound-rules>
+		<detect-content content-type=".*text/.*" pattern=".*2008.*" />
+	</outbound-rules>
+	
 </policy>

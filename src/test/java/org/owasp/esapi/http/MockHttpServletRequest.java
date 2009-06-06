@@ -20,7 +20,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.Principal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Locale;
@@ -165,7 +168,12 @@ public class MockHttpServletRequest implements HttpServletRequest {
     	cookies.add( c );
     }
     
+    public boolean clearCookie(String name) {
+    	return cookies.remove(name);
+    }
+    
     /**
+     * @return 
      *
      */
     public void clearCookies() {
@@ -187,8 +195,12 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public long getDateHeader(String name) {
-
-        return 0;
+    	try {
+    		Date date = SimpleDateFormat.getDateTimeInstance().parse( getParameter( name ) );
+            return date.getTime(); // TODO needs to be HTTP format
+    	} catch( ParseException e ) {
+    		return 0;
+    	}
     }
 
     /**
@@ -515,6 +527,14 @@ public class MockHttpServletRequest implements HttpServletRequest {
         return values[0];
     }
 
+    public void clearParameter(String name) {
+    	parameters.remove( name );
+    }
+    
+    public void clearParameters() {
+    	parameters.clear();
+    }
+    
     /**
      * {@inheritDoc}
      * @return
@@ -616,8 +636,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getServerName() {
-
-        return null;
+    	return host;
     }
 
     /**
@@ -626,7 +645,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      */
     public int getServerPort() {
 
-        return 0;
+        return 80;
     }
 
     /**
@@ -694,5 +713,15 @@ public class MockHttpServletRequest implements HttpServletRequest {
     public void setScheme( String scheme ) {
     	this.scheme = scheme;
     }
+
+	public void dump() {
+		System.out.println();
+		System.out.println( "  " + this.getMethod() + " " + this.getRequestURL() );
+        for ( Object name : headers.keySet() ) System.out.println( "  " + name + "=" + headers.get( name  ) );
+        for ( Object name : parameters.keySet() ) {
+        	System.out.print( "  " + name + "=" + parameters.get( name  ) + "&" );
+        }
+		System.out.println( "\n" );
+	}
     
 }

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * The SecurityConfiguration interface stores all configuration information
@@ -90,6 +91,13 @@ public interface SecurityConfiguration {
 	 * Returns the fully qualified classname of the ESAPI Validation implementation.
 	 */
 	public String getValidationImplementation();
+	
+	/**
+	 * Returns the validation pattern for a particular type
+	 * @param type
+	 * @return the validation pattern
+	 */
+    public Pattern getValidationPattern( String typeName );
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI OS Execution implementation.
@@ -325,6 +333,12 @@ public interface SecurityConfiguration {
 	 */
 	public boolean getLogEncodingRequired();
 
+	/**
+	 * Returns the current log level.
+	 * @return
+	 */
+    public int getLogLevel();
+	
     /**
      * Get the name of the log file specified in the ESAPI configuration properties file. Return a default value 
      * if it is not specified.

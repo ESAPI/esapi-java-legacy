@@ -92,14 +92,15 @@ public class AllTests extends TestCase {
         }
 
         TestSuite suite = new TestSuite("AllTests");
-        suite.addTest(org.owasp.esapi.reference.LoggerTest.suite());
+        suite.addTest(org.owasp.esapi.reference.JavaLoggerTest.suite());
+        suite.addTest(org.owasp.esapi.reference.Log4JLoggerTest.suite());
         suite.addTest(org.owasp.esapi.reference.SafeFileTest.suite());
         suite.addTest(org.owasp.esapi.reference.UserTest.suite());
         suite.addTest(org.owasp.esapi.ESAPITest.suite());
         suite.addTest(org.owasp.esapi.reference.RandomizerTest.suite());
         suite.addTest(org.owasp.esapi.reference.AccessControllerTest.suite());
         suite.addTest(org.owasp.esapi.reference.HTTPUtilitiesTest.suite());
-//        suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite()); not required in JUnit 4.4
+        suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite());
         suite.addTest(org.owasp.esapi.reference.EncryptorTest.suite());
         suite.addTest(org.owasp.esapi.reference.IntrusionDetectorTest.suite());
         suite.addTest(org.owasp.esapi.reference.AccessReferenceMapTest.suite());
@@ -109,6 +110,10 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.reference.EncryptedPropertiesTest.suite());
         suite.addTest(org.owasp.esapi.reference.AuthenticatorTest.suite());
 
+        // main
+        suite.addTest(org.owasp.esapi.ValidationErrorListTest.suite() );
+        suite.addTest( org.owasp.esapi.UserTest.suite() );
+        
         // codecs
         suite.addTest(org.owasp.esapi.codecs.CodecTest.suite() );
 

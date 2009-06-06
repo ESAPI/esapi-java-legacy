@@ -39,8 +39,8 @@ public class AccessControllerTest {
 		assertEquals("AlwaysTrue", accessController.isAuthorized("AlwaysTrue", null), true);
 		assertEquals("AlwaysFalse", accessController.isAuthorized("AlwaysFalse", null), false);
 		
-		assertEquals("EchoRuntimeParameter: True", accessController.isAuthorized("EchoRuntimeParameter", new Boolean(true)), true);
-		assertEquals("EchoRuntimeParameter: False", accessController.isAuthorized("EchoRuntimeParameter", new Boolean(false)), false);
+		assertEquals("EchoRuntimeParameter: True", accessController.isAuthorized("EchoRuntimeParameter", Boolean.TRUE), true );
+		assertEquals("EchoRuntimeParameter: False", accessController.isAuthorized("EchoRuntimeParameter", Boolean.FALSE), false);
 		assertEquals("EchoRuntimeParameter: ClassCastException", accessController.isAuthorized("EchoRuntimeParameter", "This is not a boolean"), false);
 		assertEquals("EchoRuntimeParameter: null Runtime Parameter", accessController.isAuthorized("EchoRuntimeParameter", null), false);
 	}
@@ -73,7 +73,7 @@ public class AccessControllerTest {
 	@Test 
 	//Should not throw an exception
 	public void enforceAuthorizationEchoRuntimeParameterTrue() throws Exception {
-		accessController.assertAuthorized("EchoRuntimeParameter", new Boolean(true));
+		accessController.assertAuthorized("EchoRuntimeParameter", Boolean.TRUE);
 	}
 	
 	/**
@@ -82,7 +82,7 @@ public class AccessControllerTest {
 	 */
 	@Test (expected = AccessControlException.class)	 
 	public void enforceAuthorizationEchoRuntimeParameterFalse() throws Exception {		
-		accessController.assertAuthorized("EchoRuntimeParameter", new Boolean(false));
+		accessController.assertAuthorized("EchoRuntimeParameter", Boolean.FALSE);
 	}
 	
 	@Test (expected = AccessControlException.class)	 

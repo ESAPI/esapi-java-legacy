@@ -54,8 +54,7 @@ public class HTTPUtilitiesTest extends TestCase {
      * @return the test
      */
     public static Test suite() {
-        TestSuite suite = new TestSuite(HTTPUtilitiesTest.class);
-        return suite;
+        return new TestSuite(HTTPUtilitiesTest.class);
     }
 
     /**
@@ -83,6 +82,24 @@ public class HTTPUtilitiesTest extends TestCase {
         // none
     }
 
+    public void testCSRFToken() throws Exception {
+    	System.out.println( "CSRFToken");
+		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		User user = ESAPI.authenticator().createUser(username, "addCSRFToken", "addCSRFToken");
+		ESAPI.authenticator().setCurrentUser( user );
+		String token = ESAPI.httpUtilities().getCSRFToken();
+		assertEquals( 8, token.length() );
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		try {
+			ESAPI.httpUtilities().verifyCSRFToken(request);
+			fail();
+		} catch( Exception e ) {
+			// expected
+		}
+		request.addParameter( token, "" );
+		ESAPI.httpUtilities().verifyCSRFToken(request);
+    }
+    
     /**
      * Test of addCSRFToken method, of class org.owasp.esapi.HTTPUtilities.
      * @throws AuthenticationException 
@@ -250,16 +267,15 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("c2", "v2"));
         list.add(new Cookie("c3", "v3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().setCurrentHTTP(request, new MockHttpServletResponse() );
         
         // should throw IntrusionException which will be caught in isValidHTTPRequest and return false
         request.setMethod("JEFF");
-        assertFalse( ESAPI.validator().isValidHTTPRequest() );
+        assertFalse( ESAPI.validator().isValidHTTPRequest( request ) );
          
         request.setMethod("POST");
-        assertTrue( ESAPI.validator().isValidHTTPRequest() );
+        assertTrue( ESAPI.validator().isValidHTTPRequest( request ) );
         request.setMethod("GET");
-        assertTrue( ESAPI.validator().isValidHTTPRequest() );
+        assertTrue( ESAPI.validator().isValidHTTPRequest( request) );
         request.addParameter("bad_name", "bad*value");
         request.addHeader("bad_name", "bad*value");
         list.add(new Cookie("bad_name", "bad*value"));

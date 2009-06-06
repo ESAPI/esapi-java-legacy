@@ -69,7 +69,7 @@ public class DefaultUser implements User, Serializable {
 	private String screenName = "";
 
 	/** This user's CSRF token. */
-	private String csrfToken = "";
+	private String csrfToken = resetCSRFToken();
 
 	/** This user's assigned roles. */
 	private Set roles = new HashSet();

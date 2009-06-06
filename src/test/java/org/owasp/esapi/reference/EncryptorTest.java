@@ -19,8 +19,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encryptor;
+import org.owasp.esapi.User;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
@@ -213,5 +215,20 @@ public class EncryptorTest extends TestCase {
         	fail();
         }
     }
+
+    
+    /**
+     * Test of main method, of class org.owasp.esapi.Encryptor.
+     * @throws Exception
+     */
+    public void testMain() throws Exception {
+        System.out.println("Encryptor Main");
+        String[] args = {};
+        JavaEncryptor.main( args );        
+        String[] args1 = {"-print"};
+        JavaEncryptor.main( args1 );        
+    }
+    
+    
     
 }

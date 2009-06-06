@@ -13,20 +13,19 @@
  * @author Pawan Singh (pawan.singh@owasp.org) <a href="www.owasp.org">OWASP</a>
  * @created 2009
  */
-package org.owasp.esapi.reference;
+package org.owasp.esapi.util;
 
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.MessageUtil;
 
 /**
  * @author Pawan Singh (pawan.singh@owasp.org)
  *
  */
-public class DefaultMessageUtil implements MessageUtil {
+public class DefaultMessageUtil {
 
     private final String DEFAULT_LOCALE_LANG = "en";
     private final String DEFAULT_LOCALE_LOC = "US";

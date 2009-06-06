@@ -21,7 +21,9 @@ import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -36,7 +38,9 @@ public class MockFilterChain implements FilterChain {
      * @throws javax.servlet.ServletException
      */
     public void doFilter( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
-    	response.getOutputStream().println( "Received request for " +  ((HttpServletRequest)request).getRequestURI() );
+    	System.out.println( "CHAIN received " + request.getClass().getName() + " and is issuing " + response.getClass().getName() );
+       	response.getOutputStream().println( "   This is the body of a response for " +  ((HttpServletRequest)request).getRequestURI() );
+           	((HttpServletResponse)response).addCookie( new Cookie( "name", "value" ) );
     }
 
 }
