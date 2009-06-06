@@ -159,9 +159,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @throws ValidationException
 	 * @throws IntrusionException
 	 */
-	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
+	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException {
 		StringValidationRule rvr = new StringValidationRule( type, encoder );
-		Pattern p = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( type );
+		Pattern p = ESAPI.securityConfiguration().getValidationPattern( type );
 		if ( p != null ) {
 			rvr.addWhitelistPattern( p.pattern() );
 		} else {
@@ -562,7 +562,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			errors.addError(context, e);
 		}
 		//TODO: not sure what to return on error - default value
-		return new Integer(0);
+		return Integer.valueOf(0);
 	}
 	
 	/**
@@ -648,32 +648,15 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			errors.addError(context, e);
 		}
 	}
-
-	/**
-	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
-	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
-	 * will generate a descriptive IntrusionException. 
-	 * 
-	 * Uses current HTTPRequest saved in EASPI Authenticator
-	 */
-	public boolean isValidHTTPRequest() throws IntrusionException {
-		try {
-			assertIsValidHTTPRequest();
-			return true;
-		} catch( Exception e ) {
-			return false;
-		}
-	}
 	
 	/**
-	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
+	 * Validates an HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
 	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
      *
      * @param request
      * @return
      * @throws IntrusionException
-     * @deprecated
      */
 	public boolean isValidHTTPRequest(HttpServletRequest request) throws IntrusionException {
 		try {
@@ -685,27 +668,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	/**
-	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
+	 * Validates an HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
 	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
-	 * 
-	 * Uses current HTTPRequest saved in EASPI Authenticator
-     *
-     * @deprecated
 	 */
-	public void assertIsValidHTTPRequest() throws ValidationException, IntrusionException {
-		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-		assertIsValidHTTPRequest(request);
-	}
-	
-	/**
-	 * Validates the current HTTP request by comparing parameters, headers, and cookies to a predefined whitelist of allowed
-	 * characters. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
-	 * will generate a descriptive IntrusionException. 
-	 * 
-     * @deprecated
-	 */
-	private void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {	
+	public void assertIsValidHTTPRequest(HttpServletRequest request) throws ValidationException, IntrusionException {	
 		if (request == null) {
    			throw new ValidationException( "Input required: HTTP request is null", "Input required: HTTP request is null" );
 		}
@@ -795,6 +762,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 *
 	 * Returns true if the parameters in the current request contain all required parameters and only optional ones in addition.
+	 * 
+	 * Uses current HTTPRequest saved in ESAPI Authenticator
      * @param requiredNames
      * @param optionalNames
      */
@@ -811,6 +780,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Validates that the parameters in the current request contain all required parameters and only optional ones in
 	 * addition. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
+	 * 
+	 * Uses current HTTPRequest saved in ESAPI Authenticator
 	 */
 	public void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional) throws ValidationException, IntrusionException {
 		HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
@@ -835,6 +806,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * ValidationErrorList variant of assertIsValidHTTPRequestParameterSet
      *
+	 * Uses current HTTPRequest saved in ESAPI Authenticator
      * @param errors
      */
 	public void assertIsValidHTTPRequestParameterSet(String context, Set required, Set optional, ValidationErrorList errors) throws IntrusionException {

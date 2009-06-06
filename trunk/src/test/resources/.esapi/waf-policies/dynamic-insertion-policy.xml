@@ -18,8 +18,10 @@
 		</error-handling>
 	</settings>
 
-	<dynamic-insertion pattern="&lt;/body&gt;">
-		<replacement><![CDATA[this is a test]]></replacement>
-	</dynamic-insertion>
-
+	<outbound-rules>
+		<dynamic-insertion pattern="&lt;/body&gt;">
+			<replacement><![CDATA[this is a test]]></replacement>
+		</dynamic-insertion>
+	</outbound-rules>
+	
 </policy>

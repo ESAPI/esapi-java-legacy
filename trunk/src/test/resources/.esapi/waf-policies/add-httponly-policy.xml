@@ -18,8 +18,10 @@
 		</error-handling>
 	</settings>
 
-	<add-http-only-flag>
-		<cookie name=".*"/>
-	</add-http-only-flag>
-
+	<outbound-rules>
+		<add-http-only-flag>
+			<cookie name=".*"/>
+		</add-http-only-flag>
+	</outbound-rules>
+	
 </policy>

@@ -1,7 +1,7 @@
 package org.owasp.esapi.waf.configuration;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -37,7 +37,7 @@ public class ConfigurationParser {
 	private static final String JEESESSIONID = "JSESSIONID";
 	private static final int DEFAULT_RESPONSE_CODE = 403;
 
-	public static AppGuardianConfiguration readConfigurationFile(File configFile) throws ConfigurationException {
+	public static AppGuardianConfiguration readConfigurationFile(InputStream stream) throws ConfigurationException {
 
 		AppGuardianConfiguration config = new AppGuardianConfiguration();
 
@@ -47,7 +47,7 @@ public class ConfigurationParser {
 
 		try {
 
-			doc = parser.build(configFile);
+			doc = parser.build(stream);
 			root = doc.getRootElement();
 
 			Element aliasesRoot = root.getFirstChildElement("aliases");
@@ -63,54 +63,59 @@ public class ConfigurationParser {
 			/**
 			 * Parse the 'aliases' section.
 			 */
-			Elements aliases = aliasesRoot.getChildElements("alias");
-
-			for(int i=0;i<aliases.size();i++) {
-				Element e = aliases.get(i);
-				String name = e.getAttributeValue("name");
-				String type = e.getAttributeValue("type");
-				String value = e.getValue();
-				if ( REGEX.equals(type) ) {
-					config.addAlias(name, Pattern.compile(value));
-				} else {
-					config.addAlias(name, value);
+			if ( aliasesRoot != null ) {
+				Elements aliases = aliasesRoot.getChildElements("alias");
+	
+				for(int i=0;i<aliases.size();i++) {
+					Element e = aliases.get(i);
+					String name = e.getAttributeValue("name");
+					String type = e.getAttributeValue("type");
+					String value = e.getValue();
+					if ( REGEX.equals(type) ) {
+						config.addAlias(name, Pattern.compile(value));
+					} else {
+						config.addAlias(name, value);
+					}
 				}
 			}
-
+			
 			/**
 			 * Parse the 'settings' section.
 			 */
-			String mode = settingsRoot.getFirstChildElement("mode").getValue();
-
-			if ( "block".equals(mode.toLowerCase() ) ) {
-				AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.BLOCK;
-			} else if ( "redirect".equals(mode.toLowerCase() ) ){
-				AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.REDIRECT;
-			} else {
-				AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.LOG;
+			if ( settingsRoot != null ) {
+				String mode = settingsRoot.getFirstChildElement("mode").getValue();
+	
+				if ( "block".equals(mode.toLowerCase() ) ) {
+					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.BLOCK;
+				} else if ( "redirect".equals(mode.toLowerCase() ) ){
+					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.REDIRECT;
+				} else {
+					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.LOG;
+				}
+	
+				Element errorHandlingRoot = settingsRoot.getFirstChildElement("error-handling");
+	
+				config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-page").getValue() );
+	
+				try {
+					config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("default-status").getValue()) );
+				} catch (Exception e) {
+					config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
+				}
 			}
-
-			Element errorHandlingRoot = settingsRoot.getFirstChildElement("error-handling");
-
-			config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-page").getValue() );
-
-			try {
-				config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("default-status").getValue()) );
-			} catch (Exception e) {
-				config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
-			}
-
+			
 			/*
-			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
-			AppGuardianConfiguration.LOG_DIRECTORY = loggingRoot.getFirstChildElement("log-directory").getValue();
-			AppGuardianConfiguration.LOG_LEVEL = Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue());
+			if ( loggingRoot != null ) {
+				Element loggingRoot = settingsRoot.getFirstChildElement("logging");
+				AppGuardianConfiguration.LOG_DIRECTORY = loggingRoot.getFirstChildElement("log-directory").getValue();
+				AppGuardianConfiguration.LOG_LEVEL = Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue());
+			}
 			*/
 
 			/**
 			 * Parse the 'authentication-rules' section if they have one.
 			 */
 			if ( authNRoot != null ) {
-
 				String key = authNRoot.getAttributeValue("key");
 				String path = authNRoot.getAttributeValue("path");
 				String id = authNRoot.getAttributeValue("id");

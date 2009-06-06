@@ -66,7 +66,7 @@ public class IntegerValidationRule extends BaseValidationRule {
 		
 		// validate min and max
 		try {
-			Integer i = new Integer(Integer.parseInt( canonical ));
+			Integer i = new Integer(canonical);
 			if (i.intValue() < minValue) throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
 			if (i.intValue() > maxValue) throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );			
 			return i;
@@ -76,7 +76,7 @@ public class IntegerValidationRule extends BaseValidationRule {
 	}
 
 	public Object sanitize( String context, String input ) {
-		return new Integer( 0 );
+		return Integer.valueOf( 0 );
 	}
 	
 }

@@ -540,6 +540,12 @@ public class EncoderTest extends TestCase {
         } catch ( Exception e ) {
             fail();
         }
+        try {
+        	instance.decodeFromURL( "%3xridiculous" );
+        	fail();
+        } catch( Exception e ) {
+        	// expected
+        }
     }
     
     /**
@@ -720,5 +726,42 @@ public class EncoderTest extends TestCase {
     	stop = System.currentTimeMillis();
         System.out.println( "Attack Strict: " + (stop-start) );
     }
+    
+
+    public void testConcurrency() {
+        System.out.println("Encoder Concurrency");
+		for (int i = 0; i < 10; i++) {
+			new Thread( new EncoderConcurrencyMock( i )).start();
+		}
+	}
+
+    /**
+     *  A simple class that calls the Encoder to test thread safety
+     */
+    public class EncoderConcurrencyMock implements Runnable {
+    	public int num = 0;
+    	public EncoderConcurrencyMock( int num ) {
+    		this.num = num;
+    	}
+	    public void run() {
+			while( true ) {
+				String nonce = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS );
+				String result = javaScriptEncode( nonce );
+				// randomize the threads
+				try {
+					Thread.sleep( ESAPI.randomizer().getRandomInteger( 100, 500 ) );
+				} catch (InterruptedException e) {
+					// just continue
+				}
+				assertTrue( result.equals ( javaScriptEncode( nonce ) ) );
+			}
+		}
+		
+	    public String javaScriptEncode(String str) {
+			DefaultEncoder encoder = new DefaultEncoder();
+			return encoder.encodeForJavaScript(str);
+		}
+    }
+    
 }
 

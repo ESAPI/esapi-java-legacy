@@ -141,4 +141,16 @@ public class AppGuardianConfiguration {
 		FORCE_SECURE_FLAG_TO_SESSION = true;
 	}
 
+	public String toString() {
+		StringBuffer sb = new StringBuffer( "WAF Configuration\n" );
+		sb.append( "Before body rules:\n" );
+		for ( Rule rule : beforeBodyRules ) sb.append( "  " + rule.toString() + "\n" );
+		sb.append( "After body rules:\n" );
+		for ( Rule rule : afterBodyRules ) sb.append( "  " + rule.toString() + "\n" );
+		sb.append( "Before response rules:\n" );
+		for ( Rule rule : beforeResponseRules ) sb.append( "  " + rule.toString() + "\n" );
+		sb.append( "Cookie rules:\n" );
+		for ( Rule rule : cookieRules ) sb.append( "  " + rule.toString() + "\n" );
+		return sb.toString();
+	}
 }

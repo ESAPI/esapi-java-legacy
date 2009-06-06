@@ -49,7 +49,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
 	}
 
 	private StringValidationRule getCCRule( Encoder encoder ) {
-		Pattern p = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getValidationPattern( "CreditCard" );
+		Pattern p = ESAPI.securityConfiguration().getValidationPattern( "CreditCard" );
 		StringValidationRule ccr = new StringValidationRule( "ccrule", encoder, p.pattern() );
 		ccr.setMaximumLength(19);
 		ccr.setAllowNull( false );

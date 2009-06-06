@@ -26,7 +26,7 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
  * Use the set methods to override the reference implementations with instances of any custom ESAPI implementations.
  */
-public class ESAPI {
+public final class ESAPI {
 
 	private static Authenticator authenticator = null;
 
@@ -51,8 +51,6 @@ public class ESAPI {
 	private static Logger defaultLogger = null;
 
 	private static SecurityConfiguration securityConfiguration = new DefaultSecurityConfiguration();
-	
-	private static MessageUtil messageUtil = null;
 
 	/**
 	 * prevent instantiation of this class
@@ -430,14 +428,6 @@ public class ESAPI {
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
-	}
-	/**
-	 * @return the current ESAPI MessageUtil object for internationalization. 
-	 */
-	public static MessageUtil messageUtil() {
-		if (ESAPI.messageUtil == null)
-			ESAPI.messageUtil = new DefaultMessageUtil();
-		return ESAPI.messageUtil;
 	}
 
 }

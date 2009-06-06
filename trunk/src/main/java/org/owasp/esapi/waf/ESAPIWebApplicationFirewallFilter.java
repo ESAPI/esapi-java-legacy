@@ -1,8 +1,21 @@
 package org.owasp.esapi.waf;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
@@ -16,16 +29,6 @@ import org.owasp.esapi.waf.configuration.ConfigurationParser;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.waf.rules.Rule;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * Entry point for the ESAPI's web application firewall (codename AppGuard?).
@@ -47,6 +50,18 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	private static Logger logger = Logger.getLogger(ESAPIWebApplicationFirewallFilter.class);
 
+	public void setConfiguration( InputStream is ) {
+		try {
+			appGuardConfig = ConfigurationParser.readConfigurationFile(is);
+		} catch (ConfigurationException e ) {
+			e.printStackTrace(); // FIXME
+		}
+	}
+	
+	public AppGuardianConfiguration getConfiguration() {
+		return appGuardConfig;
+	}
+	
 	public void init(FilterConfig fc) throws ServletException {
 
 //		logger.info( ">> Initializing WAF" );
@@ -80,10 +95,12 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		try {
 
-			appGuardConfig = ConfigurationParser.readConfigurationFile(new File(realConfigFilename));
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(realConfigFilename));
 
 			DOMConfigurator.configure(realLogSettingsFilename);
 
+		} catch (FileNotFoundException e) {
+			throw new ServletException(e);
 		} catch (ConfigurationException e) {
 			throw new ServletException(e);
 		}
@@ -119,8 +136,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
 
 		/*
-		 * Stage 0: Apply any cookie rules for incoming requests that don't yet have
-		 * sessions.
+		 * Stage 0: Apply any cookie rules for incoming requests that don't yet have sessions.
 		 */
 
 //		logger.info(">> Starting Stage 0" );
@@ -197,7 +213,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-
+			logger.info( "  Applying BEFORE rule:  " + rule.getClass().getName() );
+			
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
 			 * to do is decide what other actions to take.
@@ -250,6 +267,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
+			logger.info( "  Applying BEFORE CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
@@ -309,6 +327,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
+			logger.info( "  Applying AFTER CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
@@ -358,8 +377,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * we were intercepting.
 		 */
 		if ( appGuardConfig.getBeforeResponseRules().size() + appGuardConfig.getCookieRules().size() > 0 ) {
-			System.out.println( ">>> committing reponse" );
-
+			System.out.println( "      >>> committing reponse" );
 		}
 		response.commit();
 	}

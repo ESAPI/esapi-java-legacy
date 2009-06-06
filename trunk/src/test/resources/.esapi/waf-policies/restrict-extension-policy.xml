@@ -18,8 +18,8 @@
 	</settings>
 
 	<url-rules>
-		<restrict-extension deny="\.log$" />
-		<restrict-extension allow="\.jsp$" />
+		<restrict-extension deny=".*\.log$" />
+		<restrict-extension allow=".*\.jsp$" />
 	</url-rules>
 
 </policy>
