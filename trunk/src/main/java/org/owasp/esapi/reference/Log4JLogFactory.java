@@ -301,8 +301,6 @@ public class Log4JLogFactory implements LogFactory {
             } else {
             	jlogger.log(level, applicationName + " " + moduleName + " " + msg, throwable);
             }
-            //ERROR HibernateAccessController - ARMS:com.aspectsecurity.arms.service.HibernateAccessController:SECURITY SUCCESS-SUCCESS dave@192.168.7.100:342842 -- ACCESS GRANTED isAuthorizedForURL urlString=/arms/assessment/AssessmentView.do?id=709
-
         }
 
         /**
