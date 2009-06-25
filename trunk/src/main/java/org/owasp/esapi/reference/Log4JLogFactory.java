@@ -294,14 +294,15 @@ public class Log4JLogFactory implements LogFactory {
             // create the message to log
             String msg = "";
             if ( user != null && type != null) {
-            	msg = type + "-" + (type.isSuccess() ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
+            	msg = type + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " " + clean;
             }
             if(throwable == null) {
-            	jlogger.log(level, applicationName + ":" + moduleName + ":" + msg);
+            	jlogger.log(level, applicationName + " " + moduleName + " " + msg);
             } else {
-            	jlogger.log(level, applicationName + ":" + moduleName + ":" + msg, throwable);
+            	jlogger.log(level, applicationName + " " + moduleName + " " + msg, throwable);
             }
-            
+            //ERROR HibernateAccessController - ARMS:com.aspectsecurity.arms.service.HibernateAccessController:SECURITY SUCCESS-SUCCESS dave@192.168.7.100:342842 -- ACCESS GRANTED isAuthorizedForURL urlString=/arms/assessment/AssessmentView.do?id=709
+
         }
 
         /**
