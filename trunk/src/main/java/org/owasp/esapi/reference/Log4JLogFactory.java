@@ -291,28 +291,28 @@ public class Log4JLogFactory implements LogFactory {
                 }
             }
             
-            // create the message to log
-            String msg = "";
-            if ( user != null && type != null) {
-            	msg = type + " " + user.getAccountName()+ ":" + user.getAccountId() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " " + clean;
-            }
-            
-        	boolean logAppName = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogApplicationName();
-        	boolean logServerIP = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogServerIP();
-
-        	if (!logServerIP) {
-        		if (logAppName) {
-        			jlogger.log(level, applicationName + " " + moduleName + " " + msg, throwable);
-        		} else { //!logAppName
-        			jlogger.log(level, moduleName + " " + msg, throwable);
-        		}
-        	} else { //logServerIP
-        		if (logAppName) {
-        			jlogger.log(level, applicationName + ":" + ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " + moduleName + " " + msg, throwable);
-        		} else { //!logAppName
-        			jlogger.log(level, ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " +moduleName + " " + msg, throwable);
-        		}
-        	}
+			// create the message to log
+			String msg = "";
+			if ( user != null && type != null) {
+				msg = type + " " + user.getAccountName()+ ":" + user.getAccountId() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " " + clean;
+			}
+			            
+			boolean logAppName = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogApplicationName();
+			boolean logServerIP = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogServerIP();
+			
+			if (!logServerIP) {
+				if (logAppName) {
+					jlogger.log(level, applicationName + " " + moduleName + " " + msg, throwable);
+				} else { //!logAppName
+					jlogger.log(level, moduleName + " " + msg, throwable);
+				}
+			} else { //logServerIP
+				if (logAppName) {
+					jlogger.log(level, applicationName + ":" + ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " + moduleName + " " + msg, throwable);
+				} else { //!logAppName
+					jlogger.log(level, ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " +moduleName + " " + msg, throwable);
+				}
+			}
         }
 
         /**
