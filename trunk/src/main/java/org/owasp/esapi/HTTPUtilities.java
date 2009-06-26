@@ -50,6 +50,12 @@ public interface HTTPUtilities {
     /** Key for remember token cookie */
     public final static String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
 
+
+	/**
+	 * Nullifies HTTP Request/Response threadLocal variables.
+	 */
+    public void clearCurrent();
+	
 	/**
 	 * Ensures that the current request uses SSL and POST to protect any sensitive parameters
 	 * in the querystring from being sniffed or logged. For example, this method should
