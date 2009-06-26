@@ -102,6 +102,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 	/**
+	 * Nullifies HTTP Request/Response threadLocal variables.
+	 */
+    public void clearCurrent() {
+		currentRequest.set(null);
+		currentResponse.set(null);
+	}
+	
+	/**
 	 * {@inheritDoc}
 	 */
 	public String addCSRFToken(String href) {

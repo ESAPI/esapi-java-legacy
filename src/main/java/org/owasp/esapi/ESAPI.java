@@ -57,6 +57,16 @@ public final class ESAPI {
 	 */
 	private ESAPI() {
 	}
+	
+	/**
+	 * Nullifies all threadLocal variables, namely the
+	 * authentication user and HTTP Request/Response
+	 * threadLocal variables.
+	 */
+	public static void clearCurrent() {
+		authenticator().clearCurrent();
+		httpUtilities().clearCurrent();
+	}
 
 	/**
 	 * Get the current HTTP Servlet Request being processed.
