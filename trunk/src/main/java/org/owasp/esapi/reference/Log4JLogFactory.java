@@ -294,7 +294,7 @@ public class Log4JLogFactory implements LogFactory {
             // create the message to log
             String msg = "";
             if ( user != null && type != null) {
-            	msg = type + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " " + clean;
+            	msg = type + " " + user.getAccountName()+ ":" + user.getAccountId() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " " + clean;
             }
             if(throwable == null) {
             	jlogger.log(level, applicationName + " " + moduleName + " " + msg);
