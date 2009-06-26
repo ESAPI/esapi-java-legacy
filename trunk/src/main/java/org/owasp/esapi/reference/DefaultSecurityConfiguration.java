@@ -99,7 +99,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String LOG_FILE_NAME = "Logger.LogFileName";
     private static final String MAX_LOG_FILE_SIZE = "Logger.MaxLogFileSize";
     private static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
-            
+    private static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
+    private static final String LOG_SERVER_IP = "Logger.LogServerIP";
  	/**
 	 * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
 	 * max log file size, the logger will move the old log data into another log file. There currently is a max of 
@@ -621,6 +622,21 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	return getESAPIProperty( LOG_ENCODING_REQUIRED, false );
 	}
     
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getLogApplicationName() {
+    	return getESAPIProperty( LOG_APPLICATION_NAME, true );
+	}
+    
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getLogServerIP() {
+    	return getESAPIProperty( LOG_SERVER_IP, true );
+	}
 
     /**
 	 * {@inheritDoc}

@@ -332,6 +332,22 @@ public interface SecurityConfiguration {
 	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
 	 */
 	public boolean getLogEncodingRequired();
+	
+	/**
+	 * Returns whether ESAPI should log the application name. This might be clutter in some
+	 * single-server/single-app environments.
+	 * 
+	 * @return True if ESAPI should log the application name, False otherwise
+	 */
+	public boolean getLogApplicationName();
+
+	/**
+	 * Returns whether ESAPI should log the server IP. This might be clutter in some
+	 * single-server environments.
+	 * 
+	 * @return True if ESAPI should log the server IP and port, False otherwise
+	 */
+	public boolean getLogServerIP();
 
 	/**
 	 * Returns the current log level.
