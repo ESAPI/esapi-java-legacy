@@ -23,7 +23,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.ValidationException;
