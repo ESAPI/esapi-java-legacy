@@ -72,9 +72,8 @@ package org.owasp.esapi;
  * social security numbers, etc.</li>
  * </ol>
  * 
- * In the default implementation, this interface is implemented by JavaLogger, which is an inner class 
- * in JavaLogFactory.java. JavaLogger uses the java.util.logging package as the basis for its logging 
- * implementation. This default implementation implements requirements #1 thru #5 above.<br>
+ * There are both Log4j and native Java Logging default implementations. JavaLogger uses the java.util.logging package as the basis for its logging 
+ * implementation. Both default implementations implements requirements #1 thru #5 above.<br>
  * <br>
  * Customization: It is expected that most organizations will implement their own custom Logger class in 
  * order to integrate ESAPI logging with their logging infrastructure. The ESAPI Reference Implementation 
