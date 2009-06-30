@@ -86,7 +86,12 @@ public class HTMLValidationRule extends StringValidationRule {
 	}
 
 	private String invokeAntiSamy( String context, String input, boolean throwException ) throws ValidationException {
-		
+		// check null
+	    if ( input == null || input.length()==0 ) {
+			if (allowNull) return null;
+			throw new ValidationException( context + " is required", "AntiSamy validation error: context=" + context + ", input=" + input, context );
+	    }
+	    
 		String canonical = (String)super.getValid( context, input );
 
 		try {
@@ -110,7 +115,5 @@ public class HTMLValidationRule extends StringValidationRule {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e, context );
 		}
 	}
-	
-	
 }
 
