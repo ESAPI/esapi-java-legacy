@@ -31,7 +31,9 @@ public class JavaScriptCodec extends Codec {
 	 * {@inheritDoc}
 	 * 
 	 * Returns backslash encoded numeric format. Does not use backslash character escapes
-	 * as these can be used in attacks.
+	 * such as, \" or \' as these may cause parsing problems. For example, if a javascript
+	 * attribute, such as onmouseover, contains a \" that will close the entire attribute and
+	 * allow an attacker to inject another script attribute.
      *
      * @param immune
      */
