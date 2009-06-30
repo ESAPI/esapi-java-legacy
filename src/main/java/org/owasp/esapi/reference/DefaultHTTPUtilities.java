@@ -586,7 +586,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
     public ESAPIRequest getCurrentRequest() {
         ESAPIRequest request = (ESAPIRequest)currentRequest.get();
-		if ( request == null ) throw new NullPointerException( "Cannot use current request until it is set with HTTPUtilities.setCurrentHTTP()" );
 		return request;
     }
 
@@ -595,7 +594,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
     public ESAPIResponse getCurrentResponse() {
         ESAPIResponse response = (ESAPIResponse)currentResponse.get();
-		if ( response == null ) throw new NullPointerException( "Cannot use current response until it is set with HTTPUtilities.setCurrentHTTP()" );
         return response;
     }
 
