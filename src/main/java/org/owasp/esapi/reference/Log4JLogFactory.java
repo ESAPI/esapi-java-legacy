@@ -1,10 +1,11 @@
 package org.owasp.esapi.reference;
 
 import java.util.HashMap;
-import org.apache.log4j.Level;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Level;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
@@ -265,16 +266,18 @@ public class Log4JLogFactory implements LogFactory {
             // create a random session number for the user to represent the user's 'session', if it doesn't exist already
             String userSessionIDforLogging = "unknown";
 
-            try {
-                HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession( false );
-                userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
-                // if there is no session ID for the user yet, we create one and store it in the user's session
-	            if ( userSessionIDforLogging == null ) {
-	            	userSessionIDforLogging = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
-	            	session.setAttribute("ESAPI_SESSION", userSessionIDforLogging);
-	            }
-            } catch( NullPointerException e ) {
-            	// continue
+            // add a session token to log if there is an HTTP session
+            HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+            if ( request != null ) {
+                HttpSession session = request.getSession( false );
+                if ( session != null ) {
+	                userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
+	                // if there is no session ID for the user yet, we create one and store it in the user's session
+		            if ( userSessionIDforLogging == null ) {
+		            	userSessionIDforLogging = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+		            	session.setAttribute("ESAPI_SESSION", userSessionIDforLogging);
+		            }
+                }
             }
             
             // ensure there's something to log
@@ -300,14 +303,14 @@ public class Log4JLogFactory implements LogFactory {
 			boolean logAppName = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogApplicationName();
 			boolean logServerIP = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogServerIP();
 			
-			if (!logServerIP) {
+			if (!logServerIP || ESAPI.currentRequest() == null ) {
 				if (logAppName) {
 					jlogger.log(level, applicationName + " " + moduleName + " " + msg, throwable);
 				} else { //!logAppName
 					jlogger.log(level, moduleName + " " + msg, throwable);
 				}
 			} else { //logServerIP
-				if (logAppName) {
+				if (logAppName && ESAPI.currentRequest() != null ) {
 					jlogger.log(level, applicationName + ":" + ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " + moduleName + " " + msg, throwable);
 				} else { //!logAppName
 					jlogger.log(level, ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " +moduleName + " " + msg, throwable);
