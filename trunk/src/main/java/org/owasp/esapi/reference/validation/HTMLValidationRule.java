@@ -98,6 +98,8 @@ public class HTMLValidationRule extends StringValidationRule {
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(canonical, antiSamyPolicy);
 			
+			/* 
+			//WWWILLLLLIIAAMSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 			// if there are any errors, wrap them up and throw a ValidationException
 			List errors = test.getErrorMessages();
 			if ( errors.size() > 0 ) {
@@ -106,6 +108,7 @@ public class HTMLValidationRule extends StringValidationRule {
 					throw e;
 				}
 			}
+			*/
 			
 			return(test.getCleanHTML().trim());
 			
