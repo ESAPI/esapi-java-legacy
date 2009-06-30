@@ -125,8 +125,11 @@ public interface Randomizer {
     /**
      * Generates a random GUID.  This method could use a hash of random Strings, the current time,
      * and any other random data available.  The format is a well-defined sequence of 32 hex digits 
-     * grouped into chunks of 8-4-4-4-12.  
-     * 
+     * grouped into chunks of 8-4-4-4-12.
+     * <p>
+     * For more information including algorithms used to create <tt>UUID</tt>s,
+     * see the Internet-Draft <a href="http://www.ietf.org/internet-drafts/draft-mealling-uuid-urn-03.txt">UUIDs and GUIDs</a>
+     * or the standards body definition at <a href="http://www.iso.ch/cate/d2229.html">ISO/IEC 11578:1996</a>.
      * @return 
      * 		the GUID
      * 

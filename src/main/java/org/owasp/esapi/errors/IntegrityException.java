@@ -16,9 +16,9 @@
 package org.owasp.esapi.errors;
 
 /**
- * An AvailabilityException should be thrown when the availability of a limited
- * resource is in jeopardy. For example, if a database connection pool runs out
- * of connections, an availability exception should be thrown.
+ * An IntegrityException should be thrown when a problem with the integrity of data
+ * has been detected. For example, if a financial account cannot be reconciled after
+ * a transaction has been performed, an integrity exception should be thrown.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
