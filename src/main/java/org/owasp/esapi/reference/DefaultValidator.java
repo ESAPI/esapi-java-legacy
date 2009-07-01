@@ -195,7 +195,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 
 	/**
-	 * Returns true if input is a valid date according to the specified date format.
+	 *  Returns true if input is a valid date according to the specified date format.
 	 */
 	public boolean isValidDate(String context, String input, DateFormat format, boolean allowNull) throws IntrusionException {
 		try {
