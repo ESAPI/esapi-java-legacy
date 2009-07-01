@@ -79,8 +79,13 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * Instantiates a new DefaultEncoder
 	 */
 	public DefaultEncoder() {
-		List<String> codecClasses = ESAPI.securityConfiguration().getDefaultCanonicalizationCodecs();
-		for ( String clazz : codecClasses ) {
+		codecs.add( htmlCodec );
+		codecs.add( percentCodec );
+		codecs.add( javaScriptCodec );
+	}
+	
+	public DefaultEncoder( List<String> codecNames ) {
+		for ( String clazz : codecNames ) {
 			try {
 				if ( clazz.indexOf( '.' ) == -1 ) clazz = "org.owasp.esapi.codecs." + clazz;
 				codecs.add( Class.forName( clazz ).newInstance() );
@@ -88,23 +93,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 				logger.warning( Logger.EVENT_FAILURE, "Codec " + clazz + " listed in ESAPI.properties not on classpath" );
 			}
 		}
-	}
-
-	/**
-	 * Instantiates a new DefaultEncoder
-	 * 
-	 * @param codecs A list of codecs to use by the Encoder class
-	 * @throws java.lang.IllegalArgumentException If the encoder is not an instance of the Codec interface
-	 */
-	public DefaultEncoder( List codecs ) {
-	    Iterator i = codecs.iterator();
-	    while ( i.hasNext() ) {
-	       Object o = i.next();
-	       if ( !( o instanceof Codec ) ){
-	           throw new java.lang.IllegalArgumentException( "Codec list must contain only Codec instances" );
-	       }
-	    }
-	    this.codecs = codecs;
 	}
 	
 	/**

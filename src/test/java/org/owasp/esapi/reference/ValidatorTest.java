@@ -318,7 +318,7 @@ public class ValidatorTest  extends TestCase {
 
 		// get an encoder with a special list of codecs and make a validator out of it
 		List list = new ArrayList();
-		list.add( new HTMLEntityCodec() );
+		list.add( "HTMLEntityCodec" );
 		Encoder encoder = new DefaultEncoder( list );
 		Validator instance = new DefaultValidator( encoder );
 		
