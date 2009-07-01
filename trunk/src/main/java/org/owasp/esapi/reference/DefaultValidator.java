@@ -85,8 +85,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/** Initialize file validator with an appropriate set of codecs */
 	static {
 		List list = new ArrayList();
-		list.add( new HTMLEntityCodec() );
-		list.add( new PercentCodec() );
+		list.add( "HTMLEntityCodec" );
+		list.add( "PercentCodec" );
 		Encoder fileEncoder = new DefaultEncoder( list );
 		fileValidator = new DefaultValidator( fileEncoder );
 	}

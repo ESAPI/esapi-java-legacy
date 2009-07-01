@@ -83,26 +83,6 @@ public class EncoderTest extends TestCase {
     }
     
 	/**
-	 * Test of DefaultEncoder constructor - check that only codecs are allowed
-	 * 
-	 * @throws EncodingException
-	 */
-	public void testDefaultEncoderException() throws EncodingException {
-		System.out.println("testDefaultEncoderException");
-		
-        ArrayList list = new ArrayList();
-        list.add( new HTMLEntityCodec() );
-	    list.add( new Object() );
-	    try {
-	    	Encoder instance = new DefaultEncoder( list );
-	    	fail();
-	    }
-	    catch (IllegalArgumentException expected) {
-	    	// expected
-	    }
-	}
-
-	/**
 	 * Test of canonicalize method, of class org.owasp.esapi.Encoder.
 	 * 
 	 * @throws EncodingException
@@ -110,8 +90,8 @@ public class EncoderTest extends TestCase {
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
         ArrayList list = new ArrayList();
-        list.add( new HTMLEntityCodec() );
-	    list.add( new PercentCodec() );
+        list.add( "HTMLEntityCodec" );
+	    list.add( "PercentCodec" );
 		Encoder instance = new DefaultEncoder( list );
 		
 		// Test null paths
@@ -224,7 +204,7 @@ public class EncoderTest extends TestCase {
         
         // javascript escape syntax
         ArrayList js = new ArrayList();
-        js.add( new JavaScriptCodec() );
+        js.add( "JavaScriptCodec" );
         instance = new DefaultEncoder( js );
         System.out.println( "JavaScript Decoding" );
 
@@ -252,7 +232,7 @@ public class EncoderTest extends TestCase {
         // css escape syntax
         // be careful because some codecs see \0 as null byte
         ArrayList css = new ArrayList();
-        css.add( new CSSCodec() );
+        css.add( "CSSCodec" );
         instance = new DefaultEncoder( css );
         System.out.println( "CSS Decoding" );
         assertEquals( "<", instance.canonicalize("\\3c"));  // add strings to prevent null byte

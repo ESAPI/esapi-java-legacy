@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -32,9 +33,6 @@ import java.util.regex.PatternSyntaxException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.codecs.HTMLEntityCodec;
-import org.owasp.esapi.codecs.JavaScriptCodec;
-import org.owasp.esapi.codecs.PercentCodec;
 
 
 /**
@@ -67,7 +65,6 @@ import org.owasp.esapi.codecs.PercentCodec;
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private Properties properties = null;
-    
     
     private static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
     private static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
@@ -107,7 +104,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
     private static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
     private static final String LOG_SERVER_IP = "Logger.LogServerIP";
- 	/**
+    private static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
+    
+    
+    
+    /**
 	 * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current 
 	 * max log file size, the logger will move the old log data into another log file. There currently is a max of 
 	 * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
@@ -316,7 +317,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	Properties config = new Properties();
         try {
 	        config.load(is);
-	        logSpecial("Loaded ESAPI properties", null);
+	        logSpecial("Loaded properties file", null);
         } finally {
             if ( is != null ) try { is.close(); } catch( Exception e ) {}
         }
@@ -450,12 +451,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
 	private void loadConfiguration() throws IOException {
     	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ) );
-
+    	// get validation properties and merge them into the main properties
+    	Properties validationProperties = loadPropertiesFromStream( getResourceStream( getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties") ) );
+    	Iterator i = validationProperties.keySet().iterator();
+    	while( i.hasNext() ) {
+    		String key = (String)i.next();
+    		String value = validationProperties.getProperty(key);
+    		properties.put( key, value);
+    	}
+    	
         logSpecial("  ========Master Configuration========", null);
-        System.out.println( "  ResourceDirectory: " + this.resourceDirectory );
-        Iterator i = new TreeSet( properties.keySet() ).iterator();
-        while (i.hasNext()) {
-            String key = (String) i.next();
+        System.out.println( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
+        Iterator j = new TreeSet( properties.keySet() ).iterator();
+        while (j.hasNext()) {
+            String key = (String)j.next();
             // print out properties, but not sensitive ones like MasterKey and MasterSalt
             if ( !key.contains( "Master" ) ) {
             		logSpecial("  |   " + key + "=" + properties.get(key), null);
