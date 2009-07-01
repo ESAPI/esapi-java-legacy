@@ -32,6 +32,9 @@ import java.util.regex.PatternSyntaxException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.codecs.JavaScriptCodec;
+import org.owasp.esapi.codecs.PercentCodec;
 
 
 /**
@@ -73,6 +76,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String USERNAME_PARAMETER_NAME = "Authenticator.UsernameParameterName";
     private static final String PASSWORD_PARAMETER_NAME = "Authenticator.PasswordParameterName";
     private static final String MAX_OLD_PASSWORD_HASHES = "Authenticator.MaxOldPasswordHashes";
+    
+    private static final String ALLOW_MULTIPLE_ENCODING = "Encoder.AllowMultipleEncoding";
+    private static final String CANONICALIZATION_CODECS = "Encoder.DefaultCodecList";
     
     private static final String MASTER_KEY = "Encryptor.MasterKey";
     private static final String MASTER_SALT = "Encryptor.MasterSalt";
@@ -513,6 +519,24 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
+	public boolean getAllowMultipleEncoding() { 
+		return getESAPIProperty( ALLOW_MULTIPLE_ENCODING, false );
+	}
+
+    /**
+	 * {@inheritDoc}
+	 */
+	public List getDefaultCanonicalizationCodecs() {
+		List def = new ArrayList();
+		def.add( "org.owasp.esapi.codecs.HTMLEntityCodec" );
+		def.add( "org.owasp.esapi.codecs.PercentCodec" );
+		def.add( "org.owasp.esapi.codecs.JavaScriptCodec" );
+		return getESAPIProperty( CANONICALIZATION_CODECS, def );
+	}
+
+    /**
+	 * {@inheritDoc}
+	 */
     public String getDigitalSignatureAlgorithm() {
         return getESAPIProperty(DIGITAL_SIGNATURE_ALGORITHM, "SHAwithDSA");
     }
@@ -689,8 +713,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     *  			if key exists, the associated validation pattern, null otherwise
 	*/
     public Pattern getValidationPattern( String key ) {
-    	String value = getESAPIProperty( "Validator." + key, null );
-    	if ( value == null ) return null;
+    	String value = getESAPIProperty( "Validator." + key, "" );
+    	if ( value == null || value.equals( "" ) ) return null;
     	try {
     		return Pattern.compile(value);
     	} catch ( PatternSyntaxException e ) {
@@ -704,7 +728,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * by the Executor.
      */
 	public File getWorkingDirectory() {
-		String dir = getESAPIProperty( WORKING_DIRECTORY, null );
+		String dir = getESAPIProperty( WORKING_DIRECTORY, System.getProperty( "user.dir") );
 		if ( dir != null ) {
 			return new File( dir );
 		}
@@ -764,4 +788,22 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 			return def;
 		}
 	}
+	
+	/**
+	 * Returns a List representing the parsed, comma-separated property
+	 * @param key
+	 * @param def
+	 * @return
+	 */
+	private List getESAPIProperty( String key, List def ) {
+		String property = properties.getProperty( key );
+		if ( property == null ) {
+    		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
+    		return def;
+		}
+		String[] parts = property.split(",");
+		List list = Arrays.asList( parts );
+		return list;
+	}
+		
 }

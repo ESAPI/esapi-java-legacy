@@ -56,7 +56,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
 	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
 	private CSSCodec cssCodec = new CSSCodec();
-	
+
 	private final Logger logger = ESAPI.getLogger("Encoder");
 	
 	/**
@@ -79,16 +79,15 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * Instantiates a new DefaultEncoder
 	 */
 	public DefaultEncoder() {
-		// initialize the codec list to use for canonicalization
-		codecs.add( htmlCodec );
-		codecs.add( percentCodec );
-		codecs.add( javaScriptCodec );
-
-		// leave this out because it eats / characters
-		// codecs.add( cssCodec );
-
-		// leave this out because it eats " characters
-		// codecs.add( vbScriptCodec );
+		List<String> codecClasses = ESAPI.securityConfiguration().getDefaultCanonicalizationCodecs();
+		for ( String clazz : codecClasses ) {
+			try {
+				if ( clazz.indexOf( '.' ) == -1 ) clazz = "org.owasp.esapi.codecs." + clazz;
+				codecs.add( Class.forName( clazz ).newInstance() );
+			} catch ( Exception e ) {
+				logger.warning( Logger.EVENT_FAILURE, "Codec " + clazz + " listed in ESAPI.properties not on classpath" );
+			}
+		}
 	}
 
 	/**
