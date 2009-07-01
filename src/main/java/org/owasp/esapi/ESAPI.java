@@ -87,7 +87,6 @@ public final class ESAPI {
 	/**
 	 * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
 	 */
-	@SuppressWarnings("unchecked")
 	public static AccessController accessController() {
 		if (accessController == null) {
 			String accessControllerName = securityConfiguration().getAccessControlImplementation();
@@ -117,7 +116,6 @@ public final class ESAPI {
 	/**
 	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
-	@SuppressWarnings("unchecked")
 	public static Authenticator authenticator() {
 		if (authenticator == null) {
 			String authenticatorName = securityConfiguration().getAuthenticationImplementation();
@@ -148,7 +146,6 @@ public final class ESAPI {
 	/**
 	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
-	@SuppressWarnings("unchecked")
 	public static Encoder encoder() {
 		if (encoder == null) {
 			String encoderName = securityConfiguration().getEncoderImplementation();
@@ -179,7 +176,6 @@ public final class ESAPI {
 	/**
 	 * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
 	 */
-	@SuppressWarnings("unchecked")
 	public static Encryptor encryptor() {
 		if (encryptor == null) {
 			String encryptorName = securityConfiguration().getEncryptionImplementation();
@@ -271,7 +267,6 @@ public final class ESAPI {
 	/**
 	 * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
 	 */
-	@SuppressWarnings("unchecked")
 	public static IntrusionDetector intrusionDetector() {
 		if (intrusionDetector == null) {
 			String intrusionDetectorName = securityConfiguration().getIntrusionDetectionImplementation();
@@ -304,7 +299,6 @@ public final class ESAPI {
 	 * return this same LogFactory from then on.
 	 * @return The current LogFactory being used by ESAPI.
 	 */
-	@SuppressWarnings("unchecked")
 	private static LogFactory logFactory() {
 		if (logFactory == null) {
 			String logFactoryName = securityConfiguration().getLogImplementation();
@@ -328,7 +322,6 @@ public final class ESAPI {
 	 * @param clazz The class to associate the logger with.
 	 * @return The current Logger associated with the specified class.
 	 */
-	@SuppressWarnings("unchecked")
 	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
@@ -362,7 +355,6 @@ public final class ESAPI {
 	/**
 	 * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
 	 */
-	@SuppressWarnings("unchecked")
 	public static Randomizer randomizer() {
 		if (randomizer == null) {
 			String randomizerName = securityConfiguration().getRandomizerImplementation();

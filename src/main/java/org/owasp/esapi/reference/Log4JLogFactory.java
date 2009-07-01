@@ -27,7 +27,6 @@ public class Log4JLogFactory implements LogFactory {
 
 	private String applicationName;
 	
-	@SuppressWarnings("unchecked")
 	private HashMap loggersMap = new HashMap();
 	
 	/**
@@ -55,7 +54,6 @@ public class Log4JLogFactory implements LogFactory {
 	/**
 	* {@inheritDoc}
 	*/
-    @SuppressWarnings("unchecked")
 	public Logger getLogger(Class clazz) {
     	
     	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
@@ -71,7 +69,6 @@ public class Log4JLogFactory implements LogFactory {
     /**
 	* {@inheritDoc}
 	*/
-    @SuppressWarnings("unchecked")
 	public Logger getLogger(String moduleName) {
     	
     	// If a logger for this module already exists, we return the same one, otherwise we create a new one.
