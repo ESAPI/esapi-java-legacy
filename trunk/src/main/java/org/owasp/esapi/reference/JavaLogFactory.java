@@ -54,7 +54,6 @@ public class JavaLogFactory implements LogFactory {
 	/**
 	* {@inheritDoc}
 	*/
-    @SuppressWarnings("unchecked")
 	public Logger getLogger(Class clazz) {
     	
     	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
