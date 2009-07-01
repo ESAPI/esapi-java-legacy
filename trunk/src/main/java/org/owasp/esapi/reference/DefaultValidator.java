@@ -213,9 +213,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * and input that is clearly an attack will generate a descriptive IntrusionException.
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
-		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder);
+		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
 		dvr.setAllowNull(allowNull);
-		dvr.setDateFormat(format);
 		return (Date)dvr.getValid(context, input);
 	}
 	
