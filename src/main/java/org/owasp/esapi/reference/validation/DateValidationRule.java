@@ -36,18 +36,15 @@ public class DateValidationRule extends BaseValidationRule {
 	
 	private DateFormat format = DateFormat.getDateInstance();
 	
-	public DateValidationRule( String typeName, Encoder encoder ) {
-		super( typeName, encoder );
-	}
-
-	public DateValidationRule( String typeName, Encoder encoder, DateFormat format ) {
-		super( typeName, encoder );
-		setDateFormat( format );
+	public DateValidationRule( String typeName, Encoder encoder, DateFormat newFormat ) {
+		super( typeName, encoder );      
+		setDateFormat( newFormat );
 	}
 	
-	public void setDateFormat( DateFormat format ) {
-		this.format = format;
-	}
+    public void setDateFormat( DateFormat newFormat ) {
+        if (newFormat == null) throw new RuntimeException("DateValidationRule.setDateFormat requires a non-null DateFormat");
+        this.format = newFormat;
+    }
 
 	public Object getValid( String context, String input ) throws ValidationException {
 
