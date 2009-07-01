@@ -215,7 +215,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
 		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder);
 		dvr.setAllowNull(allowNull);
-		dvr.setDateFormat(DateFormat.getDateInstance());
+		dvr.setDateFormat(format);
 		return (Date)dvr.getValid(context, input);
 	}
 	
