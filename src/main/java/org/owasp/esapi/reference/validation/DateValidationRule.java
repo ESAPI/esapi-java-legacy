@@ -70,7 +70,7 @@ public class DateValidationRule extends BaseValidationRule {
 			// validation passed
 			return date;
 		} catch (Exception e) {
-			throw new ValidationException( context + ": Invalid date must follow " + format + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input, e, context);
+			throw new ValidationException( context + ": Invalid date must follow the " + format.getNumberFormat() + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input, e, context);
 		}
 	}
 	
