@@ -209,6 +209,20 @@ public interface SecurityConfiguration {
 	public String getCharacterEncoding();
 
 	/**
+	 * Return true if multiple encoding is allowed
+	 * 
+	 * @return whether multiple encoding is allowed when canonicalizing data
+	 */
+	public boolean getAllowMultipleEncoding();
+
+	/**
+	 * Returns the List of Codecs to use when canonicalizing data
+	 * 
+	 * @return the codec list
+	 */
+	public List getDefaultCanonicalizationCodecs();
+
+	/**
 	 * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
 	 * 
 	 * @return the current digital signature algorithm
