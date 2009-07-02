@@ -304,9 +304,7 @@ public final class ESAPI {
 			String logFactoryName = securityConfiguration().getLogImplementation();
 		    try {
 		        Class theClass  = Class.forName(logFactoryName);
-		        logFactory = (LogFactory)theClass.newInstance();
-		        logFactory.setApplicationName( securityConfiguration().getApplicationName() );
-		        
+		        logFactory = (LogFactory)theClass.newInstance();		        
 		    } catch ( ClassNotFoundException ex ) {
 				System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be in class path.");
 		    } catch( InstantiationException ex ) {

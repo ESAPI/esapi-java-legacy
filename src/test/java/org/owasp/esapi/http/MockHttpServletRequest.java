@@ -62,7 +62,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     private String scheme = "https";
     
-    private String host = "www.example.com";
+    private String host = "64.14.103.52";
     
     private String uri = "/test";
 
@@ -476,8 +476,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getLocalAddr() {
-
-        return null;
+        return "10.1.43.6";
     }
 
     /**
@@ -485,8 +484,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getLocalName() {
-
-        return null;
+        return "www.domain.com";
     }
 
     /**
@@ -494,8 +492,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public int getLocalPort() {
-
-        return 0;
+        return 80;
     }
 
     /**
@@ -503,7 +500,6 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public Locale getLocale() {
-
         return null;
     }
 
@@ -512,7 +508,6 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public Enumeration getLocales() {
-
         return null;
     }
 

@@ -235,7 +235,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public String getLastHostAddress() {
 		if ( lastHostAddress == null ) {
-			return "local";
+			return "unknown";
 		}
         return lastHostAddress;
     }
@@ -426,7 +426,7 @@ public class DefaultUser implements User, Serializable {
 			ESAPI.httpUtilities().changeSessionIdentifier( ESAPI.currentRequest() );
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
-            setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
+            setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteAddr() );
 			logger.trace(Logger.SECURITY_SUCCESS, "User logged in: " + accountName );
 		} else {
 			loggedIn = false;
@@ -498,8 +498,12 @@ public class DefaultUser implements User, Serializable {
 	public void setAccountName(String accountName) {
 		String old = getAccountName();
 		this.accountName = accountName.toLowerCase();
-		if (old != null)
+		if (old != null) {
+			if ( old.equals( "" ) ) {
+				old = "[nothing]";
+			}
 			logger.info(Logger.SECURITY_SUCCESS, "Account name changed from " + old + " to " + getAccountName() );
+		}
 	}
 
 	/**

@@ -24,8 +24,6 @@ import org.owasp.esapi.User;
  * @see org.owasp.esapi.reference.Log4JLogFactory.Log4JLogger
  */
 public class Log4JLogFactory implements LogFactory {
-
-	private String applicationName;
 	
 	private HashMap loggersMap = new HashMap();
 	
@@ -36,22 +34,6 @@ public class Log4JLogFactory implements LogFactory {
 	public Log4JLogFactory() {}
 	
 	/**
-	* Constructor for this implementation of the LogFactory interface.
-	* 
-	* @param applicationName The name of this application this logger is being constructed for.
-	*/
-	public Log4JLogFactory(String applicationName) { 
-		this.applicationName = applicationName;
-	}
-	
-	/**
-	* {@inheritDoc}
-	*/
-	public void setApplicationName(String newApplicationName) {
-		applicationName = newApplicationName;
-	}
-	
-	/**
 	* {@inheritDoc}
 	*/
 	public Logger getLogger(Class clazz) {
@@ -60,7 +42,7 @@ public class Log4JLogFactory implements LogFactory {
     	Logger classLogger = (Logger) loggersMap.get(clazz);
     	
     	if (classLogger == null) {
-    		classLogger = new Log4JLogger(applicationName, clazz.getName());
+    		classLogger = new Log4JLogger(clazz.getName());
     		loggersMap.put(clazz, classLogger);
     	}
 		return classLogger;
@@ -75,7 +57,7 @@ public class Log4JLogFactory implements LogFactory {
     	Logger moduleLogger = (Logger) loggersMap.get(moduleName);
     	
     	if (moduleLogger == null) {
-    		moduleLogger = new Log4JLogger(applicationName, moduleName);
+    		moduleLogger = new Log4JLogger(moduleName);
     		loggersMap.put(moduleName, moduleLogger);    		
     	}
 		return moduleLogger;
@@ -97,20 +79,24 @@ public class Log4JLogFactory implements LogFactory {
     	/** The jlogger object used by this class to log everything. */
         private org.apache.log4j.Logger jlogger = null;
 
-        /** The application name using this log. */
-        private String applicationName = null;
-
         /** The module name using this log. */
         private String moduleName = null;
-        
+
+        /** The application name defined in ESAPI.properties */
+    	private String applicationName=ESAPI.securityConfiguration().getApplicationName();
+
+        /** Log the application name? */
+    	private static boolean logAppName = ESAPI.securityConfiguration().getLogApplicationName();
+
+    	/** Log the server ip? */
+    	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
+    	
         /**
          * Public constructor should only ever be called via the appropriate LogFactory
          * 
-         * @param applicationName the application name
          * @param moduleName the module name
          */
-        private Log4JLogger(String applicationName, String moduleName) {
-            this.applicationName = applicationName;
+        private Log4JLogger(String moduleName) {
             this.moduleName = moduleName;
             this.jlogger = org.apache.log4j.Logger.getLogger(applicationName + ":" + moduleName);
         }
@@ -255,24 +241,20 @@ public class Log4JLogFactory implements LogFactory {
          */
         private void log(Level level, EventType type, String message, Throwable throwable) {
         	
-        	// Before we waste time preparing this event for the log, we check to see if it needs to be logged
+        	// Check to see if we need to log
         	if (!jlogger.isEnabledFor( level )) return;
         	
-        	User user = ESAPI.authenticator().getCurrentUser();
-            
             // create a random session number for the user to represent the user's 'session', if it doesn't exist already
-            String userSessionIDforLogging = "unknown";
-
-            // add a session token to log if there is an HTTP session
+            String sid = null;
             HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
             if ( request != null ) {
                 HttpSession session = request.getSession( false );
                 if ( session != null ) {
-	                userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
+	                sid = (String)session.getAttribute("ESAPI_SESSION");
 	                // if there is no session ID for the user yet, we create one and store it in the user's session
-		            if ( userSessionIDforLogging == null ) {
-		            	userSessionIDforLogging = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
-		            	session.setAttribute("ESAPI_SESSION", userSessionIDforLogging);
+		            if ( sid == null ) {
+		            	sid = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+		            	session.setAttribute("ESAPI_SESSION", sid);
 		            }
                 }
             }
@@ -291,28 +273,25 @@ public class Log4JLogFactory implements LogFactory {
                 }
             }
             
-			// create the message to log
-			String msg = "";
+			// log user information - username:session@ipaddr
+        	User user = ESAPI.authenticator().getCurrentUser();            
+			String userInfo = "";
 			if ( user != null && type != null) {
-				msg = type + " " + user.getAccountName()+ ":" + user.getAccountId() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " " + clean;
+				userInfo = user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
 			}
-			            
-			boolean logAppName = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogApplicationName();
-			boolean logServerIP = ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogServerIP();
+
+			// log server, port, app name, module name -- server:80/app/module
+			StringBuilder appInfo = new StringBuilder();
+			if ( ESAPI.currentRequest() != null && logServerIP ) {
+				appInfo.append( ESAPI.currentRequest().getLocalAddr() + ":" + ESAPI.currentRequest().getLocalPort() );
+			}
+			if ( logAppName ) {
+				appInfo.append( "/" + applicationName );
+			}
+			appInfo.append( "/"  + moduleName );
 			
-			if (!logServerIP || ESAPI.currentRequest() == null ) {
-				if (logAppName) {
-					jlogger.log(level, applicationName + " " + moduleName + " " + msg, throwable);
-				} else { //!logAppName
-					jlogger.log(level, moduleName + " " + msg, throwable);
-				}
-			} else { //logServerIP
-				if (logAppName && ESAPI.currentRequest() != null ) {
-					jlogger.log(level, applicationName + ":" + ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " + moduleName + " " + msg, throwable);
-				} else { //!logAppName
-					jlogger.log(level, ESAPI.currentRequest().getServerName() + ":" + ESAPI.currentRequest().getLocalPort() + " " +moduleName + " " + msg, throwable);
-				}
-			}
+			// log the message
+			jlogger.log(level, "[" + userInfo + " -> " + appInfo + "] " + clean, throwable);
         }
 
         /**

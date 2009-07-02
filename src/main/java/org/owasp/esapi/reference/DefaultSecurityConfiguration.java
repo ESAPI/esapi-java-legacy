@@ -97,7 +97,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
     private static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
 
-    private static final String APPLICATION_NAME = "Logger.ApplicationName";    
+    private static final String APPLICATION_NAME = "Logger.ApplicationName";
     private static final String LOG_LEVEL = "Logger.LogLevel";
     private static final String LOG_FILE_NAME = "Logger.LogFileName";
     private static final String MAX_LOG_FILE_SIZE = "Logger.MaxLogFileSize";
