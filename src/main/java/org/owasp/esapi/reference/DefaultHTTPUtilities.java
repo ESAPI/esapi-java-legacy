@@ -47,8 +47,6 @@ import org.owasp.esapi.errors.IntegrityException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.ValidationUploadException;
-import org.owasp.esapi.filters.ESAPIRequest;
-import org.owasp.esapi.filters.ESAPIResponse;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation
@@ -365,8 +363,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      * @return list of File objects for new files in final directory
 	 */
-    public List getSafeFileUploads(HttpServletRequest request, File tempDir) throws ValidationException {
-    	return getSafeFileUploads(request, tempDir, ESAPI.securityConfiguration().getUploadDirectory());
+    public List getSafeFileUploads(HttpServletRequest request) throws ValidationException {
+    	return getSafeFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory());
     }
 
 	/**
@@ -379,7 +377,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      * @return list of File objects for new files in final directory
 	 */
-	public List getSafeFileUploads(HttpServletRequest request, File tempDir, File finalDir) throws ValidationException {
+	public List getSafeFileUploads(HttpServletRequest request, File finalDir) throws ValidationException {
+        File tempDir = ESAPI.securityConfiguration().getUploadTempDirectory();
 		if ( !tempDir.exists() ) {
 		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
 		}
@@ -586,40 +585,23 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
 	 */
-    public ESAPIRequest getCurrentRequest() {
-        ESAPIRequest request = (ESAPIRequest)currentRequest.get();
-		return request;
+    public HttpServletRequest getCurrentRequest() {
+    	return (HttpServletRequest)currentRequest.get();
     }
 
     /**
 	 * {@inheritDoc}
 	 */
-    public ESAPIResponse getCurrentResponse() {
-        ESAPIResponse response = (ESAPIResponse)currentResponse.get();
-        return response;
+    public HttpServletResponse getCurrentResponse() {
+        return (HttpServletResponse)currentResponse.get();
     }
 
     /**
 	 * {@inheritDoc}
 	 */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
-    	ESAPIRequest safeRequest = null;
-    	ESAPIResponse safeResponse = null;
-    	
-    	// wrap if necessary
-    	if ( request instanceof ESAPIRequest ) {
-    		safeRequest = (ESAPIRequest)request;
-    	} else {
-    		safeRequest = new ESAPIRequest( request );
-    	}
-    	if ( response instanceof ESAPIResponse ) {
-    		safeResponse = (ESAPIResponse)response;
-    	} else {
-    		safeResponse = new ESAPIResponse( response );
-    	}
-    	
-    	currentRequest.set(safeRequest);
-        currentResponse.set(safeResponse);
+     	currentRequest.set(request);
+        currentResponse.set(response);
     }
 
     public void logHTTPRequest(HttpServletRequest request, Logger logger) {
@@ -676,11 +658,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         	return null;
         }
         
-        public ESAPIRequest getRequest() {
-            return (ESAPIRequest)super.get();
+        public HttpServletRequest getRequest() {
+            return (HttpServletRequest)super.get();
         }
 
-        public void setRequest(ESAPIRequest newRequest) {
+        public void setRequest(HttpServletRequest newRequest) {
             super.set(newRequest);
         }
     };
@@ -694,11 +676,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         	return null;
         }
         
-        public ESAPIResponse getResponse() {
-            return (ESAPIResponse)super.get();
+        public HttpServletResponse getResponse() {
+            return (HttpServletResponse)super.get();
         }
 
-        public void setResponse(ESAPIResponse newResponse) {
+        public void setResponse(HttpServletResponse newResponse) {
             super.set(newResponse);
         }
     };

@@ -93,6 +93,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String FORCE_HTTPONLY = "HttpUtilities.ForceHTTPOnly";
     private static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";    
+    private static final String UPLOAD_TEMP_DIRECTORY = "HttpUtilities.UploadTempDir";    
     private static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
     private static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
     private static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
@@ -583,6 +584,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
     public File getUploadDirectory() {
     	String dir = getESAPIProperty( UPLOAD_DIRECTORY, "UploadDir");
+    	return new File( dir );
+    }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public File getUploadTempDirectory() {
+    	String dir = getESAPIProperty( UPLOAD_TEMP_DIRECTORY, "UploadTempDir");
     	return new File( dir );
     }
     
