@@ -118,12 +118,17 @@ public interface SecurityConfiguration {
 	public byte[] getMasterKey();
 
 	/**
-     * Retrieves the default upload directory declared in the ESAPI properties file.
-     * 
-     * @return the default upload directory declared in the ESAPI properties file
+     * Retrieves the upload directory as specified in the ESAPI.properties file.
+     * @return the upload directory
      */
     public File getUploadDirectory();
 	
+    /**
+     * Retrieves the temp directory to use when uploading files, as specified in ESAPI.properties.
+     * @return the temp directory
+     */
+    public File getUploadTempDirectory();
+
 	/**
 	 * Gets the key length to use in cryptographic operations declared in the ESAPI properties file.
 	 * 

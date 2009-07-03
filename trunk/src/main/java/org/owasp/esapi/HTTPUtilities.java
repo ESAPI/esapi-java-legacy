@@ -31,8 +31,6 @@ import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.filters.ESAPIRequest;
-import org.owasp.esapi.filters.ESAPIResponse;
 
 
 /**
@@ -208,17 +206,14 @@ public interface HTTPUtilities {
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
      * 
      * @param request
-     * @param tempDir
-     * 		the temporary directory
-     * @param finalDir 
-     * 		the final directory
+     * @param destination directory 
      * 
      * @return List of new File objects from upload
      * 
      * @throws ValidationException 
      * 		if the file fails validation
      */
-    List getSafeFileUploads(HttpServletRequest request, File tempDir, File finalDir) throws ValidationException;
+    List getSafeFileUploads(HttpServletRequest request, File destinationDir) throws ValidationException;
 
     /**
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
@@ -347,14 +342,14 @@ public interface HTTPUtilities {
      * 
      * @return the current request
      */
-    ESAPIRequest getCurrentRequest();
+    HttpServletRequest getCurrentRequest();
     
     /**
      * Retrieves the current HttpServletResponse
      * 
      * @return the current response
      */
-    ESAPIResponse getCurrentResponse();
+    HttpServletResponse getCurrentResponse();
     
     /**
      * Format the Source IP address, URL, URL parameters, and all form
@@ -386,6 +381,9 @@ public interface HTTPUtilities {
     void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate);
 
 
-	List getSafeFileUploads(HttpServletRequest request, File tempDir) throws ValidationException;
+    /**
+	 * Parse a multipart HTTP request and extract any files therein.
+	 */
+	List getSafeFileUploads(HttpServletRequest request) throws ValidationException;
 
 }

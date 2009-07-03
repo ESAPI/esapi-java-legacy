@@ -200,7 +200,7 @@ public class HTTPUtilitiesTest extends TestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request1, response);
         try {
-            ESAPI.httpUtilities().getSafeFileUploads(request1, home, home);
+            ESAPI.httpUtilities().getSafeFileUploads(request1, home);
             fail();
         } catch( ValidationException e ) {
         	// expected
@@ -210,7 +210,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request2.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request2, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(request2, home, home);
+            List list = ESAPI.httpUtilities().getSafeFileUploads(request2, home);
             Iterator i = list.iterator();
             while ( i.hasNext() ) {
             	File f = (File)i.next();
@@ -242,7 +242,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
         try {
-            ESAPI.httpUtilities().getSafeFileUploads(request3, home, home);
+            ESAPI.httpUtilities().getSafeFileUploads(request3, home);
             fail();
         } catch (ValidationException e) {
         	// expected
