@@ -102,7 +102,7 @@ public class ESAPIFilter implements Filter {
 			}
 
 			// check for CSRF attacks
-			// utils.checkCSRFToken();
+			// ESAPI.httpUtilities().checkCSRFToken();
 			
 			// forward this request on to the web application
 			chain.doFilter(request, response);
@@ -124,8 +124,7 @@ public class ESAPIFilter implements Filter {
 			// VERY IMPORTANT
 			// clear out the ThreadLocal variables in the authenticator
 			// some containers could possibly reuse this thread without clearing the User
-			ESAPI.authenticator().clearCurrent();
-			ESAPI.httpUtilities().setCurrentHTTP(null, null);
+			ESAPI.clearCurrent();
 		}
 	}
 

@@ -96,7 +96,7 @@ public class HTTPUtilitiesTest extends TestCase {
 		} catch( Exception e ) {
 			// expected
 		}
-		request.addParameter( token, "" );
+		request.addParameter( DefaultHTTPUtilities.CSRF_TOKEN_NAME, token );
 		ESAPI.httpUtilities().verifyCSRFToken(request);
     }
     

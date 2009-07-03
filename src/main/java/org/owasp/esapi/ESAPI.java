@@ -59,9 +59,9 @@ public final class ESAPI {
 	}
 	
 	/**
-	 * Nullifies all threadLocal variables, namely the
-	 * authentication user and HTTP Request/Response
-	 * threadLocal variables.
+	 * Required call to clear threadlocal variables in ESAPI *MUST* be made before request is abandoned.
+	 * Because threads may be reused in some containers, clearing these is critical for security. The
+	 * advantages of having identity everywhere are worth the risk here.
 	 */
 	public static void clearCurrent() {
 		authenticator().clearCurrent();

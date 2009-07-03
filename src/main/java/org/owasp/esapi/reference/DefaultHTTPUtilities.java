@@ -63,7 +63,9 @@ import org.owasp.esapi.filters.ESAPIResponse;
  * Typically, this is done by calling the Authenticator.login() method, which
  * calls setCurrentHTTP() automatically. However if you want to use these methods
  * in another application, you should explicitly call setCurrentHTTP() in your
- * own code.
+ * own code. In either case, you *must* call ESAPI.clearCurrent() to clear threadlocal
+ * variables before the thread is reused. The advantages of having identity everywhere
+ * outweigh the disadvantages of this approach.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -73,6 +75,7 @@ import org.owasp.esapi.filters.ESAPIResponse;
 public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	private final int MAX_COOKIE_LEN = 4096;			// From RFC 2109
 	// private final int MAX_COOKIE_PAIRS = 20;			// From RFC 2109
+	static final String CSRF_TOKEN_NAME = "ct";
 	
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("HTTPUtilities");
@@ -118,11 +121,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			return href;
 		}
 
-		if ( ( href.indexOf( '?') != -1 ) || ( href.indexOf( '&' ) != -1 ) ) {
-			return href + "&" + user.getCSRFToken();
-		} else {
-			return href + "?" + user.getCSRFToken();
-		}
+		// if there are already parameters append with &, otherwise append with ?
+		String token = CSRF_TOKEN_NAME + "=" + user.getCSRFToken();
+		return href.indexOf( '?') != -1 ? href + "&" + token : href + "?" + token;
 	}
 
 
@@ -258,7 +259,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		if( request.getAttribute(user.getCSRFToken()) != null ) {
 			return;
 		}
-		if ( request.getParameter(user.getCSRFToken()) == null) {
+		String token = request.getParameter(CSRF_TOKEN_NAME);
+		if ( !user.getCSRFToken().equals( token ) ) {
 			throw new IntrusionException("Authentication failed", "Possibly forged HTTP request without proper CSRF token detected");
 		}
 	}

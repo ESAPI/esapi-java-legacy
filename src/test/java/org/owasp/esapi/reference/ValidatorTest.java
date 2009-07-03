@@ -259,14 +259,7 @@ public class ValidatorTest  extends TestCase {
 		HTMLValidationRule rule = new HTMLValidationRule( "test" );
 		ESAPI.validator().addRule( rule );
 		
-		// new school test case		
-		try {
-			ESAPI.validator().getRule( "test" ).getValid("test", "Test. <script>alert(document.cookie)</script>" );
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-		
+		assertEquals( "Test.", ESAPI.validator().getRule( "test" ).getValid("test", "Test. <script>alert(document.cookie)</script>" ) );
 		
 		String test1 = "<b>Jeff</b>";
 		String result1 = instance.getValidSafeHTML("test", test1, 100, false, errors);
@@ -596,11 +589,11 @@ public class ValidatorTest  extends TestCase {
 
 		assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
 		assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
-		assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
-		assertFalse(instance.isValidSafeHTML("test", "Test. <div style={xss:expression(xss)}>", 100, false));
-		assertFalse(instance.isValidSafeHTML("test", "Test. <s%00cript>alert(document.cookie)</script>", 100, false));
-		assertFalse(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
-		assertFalse(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
+		assertTrue(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
+		assertTrue(instance.isValidSafeHTML("test", "Test. <div style={xss:expression(xss)}>", 100, false));
+		assertTrue(instance.isValidSafeHTML("test", "Test. <s%00cript>alert(document.cookie)</script>", 100, false));
+		assertTrue(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
+		assertTrue(instance.isValidSafeHTML("test", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false));
 
 		// TODO: waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
@@ -648,10 +641,6 @@ public class ValidatorTest  extends TestCase {
 		} catch (ValidationException e) {
 			fail();
 		}
-	}
-	
-	public void testValidSafeHTML() {
-//		getValidSafeHTML(String, String, int, boolean, ValidationErrorList)
 	}
 	
 }
