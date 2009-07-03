@@ -271,7 +271,7 @@ public interface HTTPUtilities {
      * 		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param response
      * @param location
-     * 		the URL to forward to
+     * 		the URL to forward to, including parameters
      * 
      * @throws AccessControlException
      * @throws ServletException

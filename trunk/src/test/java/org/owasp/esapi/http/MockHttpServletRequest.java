@@ -62,7 +62,9 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     private String scheme = "https";
     
-    private String host = "64.14.103.52";
+    private String remoteHost = "64.14.103.52";
+    
+    private String serverHost = "64.14.103.52";
     
     private String uri = "/test";
 
@@ -92,7 +94,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
 
     public MockHttpServletRequest( URL url ) {
     	scheme = url.getProtocol();
-    	host = url.getHost();
+    	serverHost = url.getHost();
     	uri = url.getPath();
     }
     
@@ -589,7 +591,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getRemoteAddr() {
-    	return "192.168.1.200";
+    	return remoteHost;
     }
 
     /**
@@ -597,7 +599,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getRemoteHost() {
-    	return host;
+    	return remoteHost;
     }
 
     /**
@@ -631,7 +633,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public String getServerName() {
-    	return host;
+    	return serverHost;
     }
 
     /**

@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
@@ -41,7 +42,8 @@ public class HTMLValidationRule extends StringValidationRule {
 	
 	/** OWASP AntiSamy markup verification policy */
 	private static Policy antiSamyPolicy = null;
-
+	private static Logger logger = ESAPI.getLogger( "HTMLValidationRule" ); 
+	
 	static {
 		try {
 			if ( antiSamyPolicy == null ) {
@@ -98,17 +100,10 @@ public class HTMLValidationRule extends StringValidationRule {
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(canonical, antiSamyPolicy);
 			
-			/* 
-			//WWWILLLLLIIAAMSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
-			// if there are any errors, wrap them up and throw a ValidationException
 			List errors = test.getErrorMessages();
 			if ( errors.size() > 0 ) {
-				ValidationException e = new ValidationException( "Invalid HTML input: context=" + context, "Invalid HTML input: context=" + context + ", error=" + errors, context );
-				if ( throwException ) {
-					throw e;
-				}
+				logger.info( Logger.EVENT_SUCCESS, "Cleaned up invalid HTML input: " + errors );
 			}
-			*/
 			
 			return(test.getCleanHTML().trim());
 			
