@@ -134,7 +134,6 @@ public class ESAPIRequest extends HttpServletRequestWrapper implements HttpServl
      */
     public Cookie[] getCookies() {
         Cookie[] cookies = getHttpServletRequest().getCookies();
-        //must protect against NPE (found by Anderson)
         if (cookies == null) return new Cookie[0];
         
         List newCookies = new ArrayList();
