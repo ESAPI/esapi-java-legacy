@@ -163,7 +163,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		StringValidationRule rvr = new StringValidationRule( type, encoder );
 		Pattern p = ESAPI.securityConfiguration().getValidationPattern( type );
 		if ( p != null ) {
-			rvr.addWhitelistPattern( p.pattern() );
+			rvr.addWhitelistPattern( p );
 		} else {
 			rvr.addWhitelistPattern( type );
 		}
