@@ -23,6 +23,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -1009,7 +1010,7 @@ public interface Validator {
 	 * 
 	 * @throws IntrusionException
 	 */
-	boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException;
+	boolean isValidRedirectLocation(String context, String input, boolean allowNull);
 
 	/**
 	 * Returns a canonicalized and validated redirect location as a String. Invalid input will generate a descriptive ValidationException, and input that is clearly an attack

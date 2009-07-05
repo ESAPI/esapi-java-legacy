@@ -38,7 +38,9 @@ import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.User;
+import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncodingException;
@@ -74,6 +76,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	private final int MAX_COOKIE_LEN = 4096;			// From RFC 2109
 	// private final int MAX_COOKIE_PAIRS = 20;			// From RFC 2109
 	static final String CSRF_TOKEN_NAME = "ct";
+	static final String ESAPI_STATE = "ESAPIState";
 	
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("HTTPUtilities");
@@ -109,7 +112,61 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		currentRequest.set(null);
 		currentResponse.set(null);
 	}
-	
+
+    
+    
+	/**
+	 * {@inheritDoc}
+	 */
+    public void addCookie(HttpServletResponse response, Cookie cookie) {
+        String name = cookie.getName();
+        String value = cookie.getValue();
+        int maxAge = cookie.getMaxAge();
+        String domain = cookie.getDomain();
+        String path = cookie.getPath();
+        boolean secure = cookie.getSecure();
+
+        // validate the name and value
+        ValidationErrorList errors = new ValidationErrorList();
+        String cookieName = ESAPI.validator().getValidInput("cookie name", name, "HTTPCookieName", 50, false, errors);
+        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", 5000, false, errors);
+
+        // if there are no errors, then set the cookie either with a header or normally
+        if (errors.size() == 0) {
+        	if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+	            String header = createCookieHeader(name, value, maxAge, domain, path, secure);
+	            addHeader(response, "Set-Cookie", header);
+        	} else {
+        		response.addCookie(cookie);
+        	}
+            return;
+        }
+        logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (skip mode). Skipping cookie and continuing.");
+    }
+
+    private String createCookieHeader(String name, String value, int maxAge, String domain, String path, boolean secure) {
+        // create the special cookie header instead of creating a Java cookie
+        // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
+        // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
+        String header = name + "=" + value;
+        header += "; Max-Age=" + maxAge;
+        if (domain != null) {
+            header += "; Domain=" + domain;
+        }
+        if (path != null) {
+            header += "; Path=" + path;
+        }
+        if ( secure || ESAPI.securityConfiguration().getForceSecureCookies() ) {
+            header += "; Secure";
+        }
+        if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+            header += "; HttpOnly";
+        }
+        return header;
+    }
+
+    
+    
 	/**
 	 * {@inheritDoc}
 	 */
@@ -124,15 +181,62 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		return href.indexOf( '?') != -1 ? href + "&" + token : href + "?" + token;
 	}
 
-
     /**
-     *
-	 * {@inheritDoc}
-	 *
-     * Returns the first cookie matching the provided name.
-     * @param request
+     * Add a header to the response after ensuring that there are no encoded or
+     * illegal characters in the name and name and value. This implementation
+     * follows the following recommendation: "A recipient MAY replace any linear
+     * white space with a single SP before interpreting the field value or
+     * forwarding the message downstream."
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+     * @param name
+     * @param value
      */
-	public Cookie getCookie(HttpServletRequest request, String name) {
+    public void addHeader(HttpServletResponse response, String name, String value) {
+        try {
+            String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
+            String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
+            String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", 20, false);
+            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", 500, false);
+            response.addHeader(safeName, safeValue);
+        } catch (ValidationException e) {
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
+        }
+    }
+
+	
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getHeader( HttpServletRequest request, String name ) throws ValidationException {
+        String value = request.getHeader(name);
+        return ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getCookie( HttpServletRequest request, String name ) throws ValidationException {
+        Cookie c = getFirstCookie( request, name );
+        if ( c == null ) return null;
+		String value = c.getValue(); 
+		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", 1000, false);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getParameter( HttpServletRequest request, String name ) throws ValidationException {
+	    String value = request.getHeader(name);
+	    return ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, false);
+	}
+
+	/**
+     * Utility to return the first cookie matching the provided name.
+     * @param request
+     * @param name
+     */
+	private Cookie getFirstCookie(HttpServletRequest request, String name) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
 			for (int i = 0; i < cookies.length; i++) {
@@ -144,7 +248,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -289,21 +393,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      */
     public Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
-		Cookie[] cookies = request.getCookies();
-		if ( cookies == null ) return new HashMap();
-		
-		Cookie c = null;
-		for ( int i = 0; i < cookies.length; i++ ) {
-			if ( cookies[i].getName().equals( "state" ) ) {
-				c = cookies[i];
-			}
-		}
-		if ( c == null ) return new HashMap();
-		
-		String encrypted = c.getValue();
-		String plaintext = ESAPI.encryptor().decrypt(encrypted);
-		
-		return queryToMap( plaintext );
+    	try {
+    		String encrypted = getCookie( request, ESAPI_STATE );
+    		if ( encrypted == null ) return new HashMap();		
+    		String plaintext = ESAPI.encryptor().decrypt(encrypted);		
+    		return queryToMap( plaintext );
+    	} catch( ValidationException e ) {
+        	return null;
+    	}
     }
 
     /**
@@ -344,13 +441,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	
 		String encrypted = ESAPI.encryptor().encrypt(sb.toString());
 		
-		if ( encrypted.length() > (MAX_COOKIE_LEN - 12) ) {	 // Leave some room for "Set-Cookie: "
+		if ( encrypted.length() > (MAX_COOKIE_LEN ) ) {
 			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry");
-			throw new EncryptionException("Encryption failure", "Encrypted state too long");
+			throw new EncryptionException("Encryption failure", "Encrypted cookie state of " + encrypted.length() + " longer than allowed " + MAX_COOKIE_LEN );
 		}
 		
-    	Cookie cookie = new Cookie( "state", encrypted );
-    	response.addCookie( cookie );
+    	Cookie cookie = new Cookie( ESAPI_STATE, encrypted );
+    	addCookie( response, cookie );
     }
     
     /**
@@ -363,8 +460,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      * @return list of File objects for new files in final directory
 	 */
-    public List getSafeFileUploads(HttpServletRequest request) throws ValidationException {
-    	return getSafeFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory());
+    public List getFileUploads(HttpServletRequest request) throws ValidationException {
+    	return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory());
     }
 
 	/**
@@ -377,7 +474,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      * @return list of File objects for new files in final directory
 	 */
-	public List getSafeFileUploads(HttpServletRequest request, File finalDir) throws ValidationException {
+	public List getFileUploads(HttpServletRequest request, File finalDir) throws ValidationException {
         File tempDir = ESAPI.securityConfiguration().getUploadTempDirectory();
 		if ( !tempDir.exists() ) {
 		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
@@ -513,7 +610,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
 		String path = "//";
 		String domain="";
-		Cookie cookie = ESAPI.httpUtilities().getCookie(request, name);
+		Cookie cookie = getFirstCookie(request, name);
 		if ( cookie != null ) {
 			path = cookie.getPath();
 			domain = cookie.getDomain();
@@ -551,7 +648,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      * @param response
      */
-	public void safeSendForward(HttpServletRequest request, HttpServletResponse response, String context, String location) throws AccessControlException,ServletException,IOException {
+	public void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException,ServletException,IOException {
 		if (!location.startsWith("WEB-INF")) {
 			throw new AccessControlException("Forward failed", "Bad forward location: " + location);
 		}
@@ -559,11 +656,26 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		dispatcher.forward( request, response );
 	}
 
-
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This implementation checks against the list of safe redirect locations defined in ESAPI.properties.
+     *
+     * @param request
+     * @param response
+     */
+    public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
+        if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
+            logger.fatal(Logger.SECURITY_FAILURE, "Bad redirect location: " + location);
+            throw new IOException("Redirect failed");
+        }
+        response.sendRedirect(location);
+    }
+    
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setSafeContentType(HttpServletResponse response) {
+	public void setContentType(HttpServletResponse response) {
 		response.setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
@@ -604,6 +716,28 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         currentResponse.set(response);
     }
 
+    /**
+     * Add a header to the response after ensuring that there are no encoded or
+     * illegal characters in the name and value. "A recipient MAY replace any
+     * linear white space with a single SP before interpreting the field value
+     * or forwarding the message downstream."
+     * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+     * @param name 
+     * @param value
+     */
+    public void setHeader(HttpServletResponse response, String name, String value) {
+        try {
+            String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
+            String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
+            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 20, false);
+            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", 500, false);
+            response.setHeader(safeName, safeValue);
+        } catch (ValidationException e) {
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);
+        }
+    }
+    
+    
     public void logHTTPRequest(HttpServletRequest request, Logger logger) {
     	logHTTPRequest( request, logger, null );
     }
@@ -648,7 +782,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
         logger.info(Logger.SECURITY_SUCCESS, msg);
     }
-
+    
+    
     /**
      * Defines the ThreadLocalRequest to store the current request for this thread.
      */

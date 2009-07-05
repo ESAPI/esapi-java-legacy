@@ -25,7 +25,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -91,7 +90,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
     private static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
     
-    private static final String FORCE_HTTPONLY = "HttpUtilities.ForceHTTPOnly";
+    private static final String FORCE_HTTPONLYSESSION = "HttpUtilities.ForceHttpOnlySession";
+    private static final String FORCE_SECURESESSION = "HttpUtilities.SecureSession";
+    private static final String FORCE_HTTPONLYCOOKIES = "HttpUtilities.ForceHttpOnlyCookies";
+    private static final String FORCE_SECURECOOKIES = "HttpUtilities.ForceSecureCookies";
     private static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";    
     private static final String UPLOAD_TEMP_DIRECTORY = "HttpUtilities.UploadTempDir";    
     private static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
@@ -683,10 +685,30 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-    public boolean getForceHTTPOnly() {
-    	return getESAPIProperty( FORCE_HTTPONLY, true );
+    public boolean getForceHttpOnlySession() {
+    	return getESAPIProperty( FORCE_HTTPONLYSESSION, true );
+    }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getForceSecureSession() {
+    	return getESAPIProperty( FORCE_SECURESESSION, true );
     }
 
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getForceHttpOnlyCookies() {
+    	return getESAPIProperty( FORCE_HTTPONLYCOOKIES, true );
+    }
+
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getForceSecureCookies() {
+    	return getESAPIProperty( FORCE_SECURECOOKIES, true );
+    }
 
     /**
 	 * {@inheritDoc}

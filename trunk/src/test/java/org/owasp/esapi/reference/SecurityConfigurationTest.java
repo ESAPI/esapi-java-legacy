@@ -80,7 +80,10 @@ public class SecurityConfigurationTest extends TestCase {
 	public void testGetEncryptionImplementation() { ESAPI.securityConfiguration().getEncryptionImplementation(); }
 	public void testGetEncryptionKeyLength() { ESAPI.securityConfiguration().getEncryptionKeyLength(); }
 	public void testGetExecutorImplementation() { ESAPI.securityConfiguration().getExecutorImplementation(); }
-	public void testGetForceHTTPOnly() { ESAPI.securityConfiguration().getForceHTTPOnly(); }
+	public void testGetForceHttpOnlySession() { ESAPI.securityConfiguration().getForceHttpOnlySession(); }
+	public void testGetForceSecureSession() { ESAPI.securityConfiguration().getForceSecureSession(); }
+	public void testGetForceHttpOnlyCookies() { ESAPI.securityConfiguration().getForceHttpOnlyCookies(); }
+	public void testGetForceSecureCookies() { ESAPI.securityConfiguration().getForceSecureCookies(); }
 	public void testGetHashAlgorithm() { ESAPI.securityConfiguration().getHashAlgorithm(); }
 	public void testGetHashIterations() { ESAPI.securityConfiguration().getHashIterations(); }
 	public void testGetHTTPUtilitiesImplementation() { ESAPI.securityConfiguration().getHTTPUtilitiesImplementation(); }

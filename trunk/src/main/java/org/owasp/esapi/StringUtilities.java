@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * String utilities used in various filters.
@@ -26,11 +27,16 @@ import java.util.Arrays;
  */
 public class StringUtilities {
 
+	private static final Pattern p = Pattern.compile( "\\s");
+	public static String replaceLinearWhiteSpace( String input ) {
+		return p.matcher(input).replaceAll( " " );
+	}
+	
 	/**
 	 * Removes all unprintable characters from a string 
-	 * and replaces with a space for use in an HTTP header
+	 * and replaces with a space.
 	 * @param input
-	 * @return the stripped header
+	 * @return the stripped value
 	 */
 	public static String stripControls( String input ) {
 		StringBuffer sb = new StringBuffer();

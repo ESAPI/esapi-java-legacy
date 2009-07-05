@@ -283,13 +283,24 @@ public interface SecurityConfiguration {
     public File getResourceFile( String filename );
     
 	/**
-	 * Forces new cookie headers with HttpOnly on first and second responses
-	 * in public HttpSession org.owasp.esapi.filters.SafeRequest.getSession() and 
-	 * org.owasp.esapi.filters.getSession(boolean create) 
-     *
-     * @param force whether to override JSESSIONID cookie
+	 * Forces new cookies to have HttpOnly flag set.
      */
-    public boolean getForceHTTPOnly() ;
+    public boolean getForceHttpOnlySession() ;
+
+	/**
+	 * Forces session cookies to have Secure flag set.
+     */
+    public boolean getForceSecureSession() ;
+
+	/**
+	 * Forces new cookies to have HttpOnly flag set.
+     */
+    public boolean getForceHttpOnlyCookies() ;
+
+	/**
+	 * Forces new cookies to have Secure flag set.
+     */
+    public boolean getForceSecureCookies() ;
 
 	/**
 	 * Gets an InputStream to a file in the resource directory

@@ -26,6 +26,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -33,9 +34,9 @@ import org.owasp.esapi.errors.ValidationException;
  * This response wrapper simply overrides unsafe methods in the
  * HttpServletResponse API with safe versions.
  */
-public class ESAPIResponse extends HttpServletResponseWrapper implements HttpServletResponse {
+public class SecurityWrapperResponse extends HttpServletResponseWrapper implements HttpServletResponse {
 
-    private final Logger logger = ESAPI.getLogger("SafeResponse");
+    private final Logger logger = ESAPI.getLogger("SecurityWrapperResponse");
 
     // modes are "log", "skip", "sanitize", "throw"
     // TODO: move this to SecurityConfiguration
@@ -47,7 +48,7 @@ public class ESAPIResponse extends HttpServletResponseWrapper implements HttpSer
      * 
      * @param response
      */
-    public ESAPIResponse(HttpServletResponse response) {
+    public SecurityWrapperResponse(HttpServletResponse response) {
     	super( response );
     }
 
@@ -56,7 +57,7 @@ public class ESAPIResponse extends HttpServletResponseWrapper implements HttpSer
      * @param response
      * @param mode
      */
-    public ESAPIResponse(HttpServletResponse response, String mode) {
+    public SecurityWrapperResponse(HttpServletResponse response, String mode) {
     	super( response );
         this.mode = mode;
     }
