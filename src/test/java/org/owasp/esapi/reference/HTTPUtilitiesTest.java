@@ -31,12 +31,12 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.filters.ESAPIResponse;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
@@ -200,7 +200,7 @@ public class HTTPUtilitiesTest extends TestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request1, response);
         try {
-            ESAPI.httpUtilities().getSafeFileUploads(request1, home);
+            ESAPI.httpUtilities().getFileUploads(request1, home);
             fail();
         } catch( ValidationException e ) {
         	// expected
@@ -210,7 +210,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request2.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request2, response);
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(request2, home);
+            List list = ESAPI.httpUtilities().getFileUploads(request2, home);
             Iterator i = list.iterator();
             while ( i.hasNext() ) {
             	File f = (File)i.next();
@@ -226,7 +226,7 @@ public class HTTPUtilitiesTest extends TestCase {
         ESAPI.httpUtilities().setCurrentHTTP(request4, response);
         System.err.println("UPLOAD DIRECTORY: " + ESAPI.securityConfiguration().getUploadDirectory());
         try {
-            List list = ESAPI.httpUtilities().getSafeFileUploads(request4, home);
+            List list = ESAPI.httpUtilities().getFileUploads(request4, home);
             Iterator i = list.iterator();
             while ( i.hasNext() ) {
             	File f = (File)i.next();
@@ -242,7 +242,7 @@ public class HTTPUtilitiesTest extends TestCase {
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
         try {
-            ESAPI.httpUtilities().getSafeFileUploads(request3, home);
+            ESAPI.httpUtilities().getFileUploads(request3, home);
             fail();
         } catch (ValidationException e) {
         	// expected
@@ -292,16 +292,14 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killAllCookies");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
         list.add(new Cookie("test1", "1"));
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().killAllCookies(request, safeResponse);
-        // this tests getHeaders because we're using addHeader in our setCookie method
-        assertTrue(response.getHeaderNames().size() == 3);
+        ESAPI.httpUtilities().killAllCookies(request, response);
+        assertTrue(response.getCookies().size() == 3);
     }
 
     /**
@@ -311,7 +309,6 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("killCookie");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         assertTrue(response.getCookies().isEmpty());
         ArrayList list = new ArrayList();
@@ -319,9 +316,8 @@ public class HTTPUtilitiesTest extends TestCase {
         list.add(new Cookie("test2", "2"));
         list.add(new Cookie("test3", "3"));
         request.setCookies(list);
-        ESAPI.httpUtilities().killCookie( request, safeResponse, "test1" );
-        // this tests getHeaders because we're using addHeader in our setCookie method
-        assertTrue(response.getHeaderNames().size() == 1);
+        ESAPI.httpUtilities().killCookie( request, response, "test1" );
+        assertTrue(response.getCookies().size() == 1);
     }
 
     /**
@@ -330,24 +326,23 @@ public class HTTPUtilitiesTest extends TestCase {
      * @throws ValidationException the validation exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public void testSendSafeRedirect() throws ValidationException, IOException {
+    public void testSendSafeRedirect() throws Exception {
         System.out.println("sendSafeRedirect");
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
         try {
-        	safeResponse.sendRedirect("/test1/abcdefg");
-            safeResponse.sendRedirect("/test2/1234567");
+        	ESAPI.httpUtilities().sendRedirect(response, "/test1/abcdefg");
+        	ESAPI.httpUtilities().sendRedirect(response,"/test2/1234567");
         } catch (IOException e) {
             fail();
         }
         try {
-        	safeResponse.sendRedirect("http://www.aspectsecurity.com");
+        	ESAPI.httpUtilities().sendRedirect(response,"http://www.aspectsecurity.com");
             fail();
         } catch (IOException e) {
             // expected
         }
         try {
-            safeResponse.sendRedirect("/ridiculous");
+        	ESAPI.httpUtilities().sendRedirect(response,"/ridiculous");
             fail();
         } catch (IOException e) {
             // expected
@@ -359,22 +354,22 @@ public class HTTPUtilitiesTest extends TestCase {
      */
     public void testSetCookie() {
         System.out.println("setCookie");
+        HTTPUtilities instance = ESAPI.httpUtilities(); 
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
-        assertTrue(response.getCookies().isEmpty());
+        assertTrue(response.getHeaderNames().isEmpty());
         
-		safeResponse.addCookie( new Cookie( "test1", "test1" ) );
+		instance.addCookie( response, new Cookie( "test1", "test1" ) );
 	    assertTrue(response.getHeaderNames().size() == 1);
 	    
-	    safeResponse.addCookie( new Cookie( "test2", "test2" ) );
+	    instance.addCookie( response, new Cookie( "test2", "test2" ) );
 	    assertTrue(response.getHeaderNames().size() == 2);
 
 	    // test illegal name
-	    safeResponse.addCookie( new Cookie( "tes<t3", "test3" ) );
+	    instance.addCookie( response, new Cookie( "tes<t3", "test3" ) );
 	    assertTrue(response.getHeaderNames().size() == 2);
 
 	    // test illegal value
-	    safeResponse.addCookie( new Cookie( "test3", "tes<t3" ) );
+	    instance.addCookie( response, new Cookie( "test3", "tes<t3" ) );
 	    assertTrue(response.getHeaderNames().size() == 2);
 	}
 
@@ -386,7 +381,6 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("getStateFromEncryptedCookie");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
         
         // test null cookie array
         Map empty = ESAPI.httpUtilities().decryptStateFromCookie(request);
@@ -397,10 +391,10 @@ public class HTTPUtilitiesTest extends TestCase {
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse, map);
+	        ESAPI.httpUtilities().encryptStateInCookie(response, map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-	        request.setCookie( "state", encrypted );
+	        request.setCookie( DefaultHTTPUtilities.ESAPI_STATE, encrypted );
 	        Map state = ESAPI.httpUtilities().decryptStateFromCookie(request);
 	        Iterator i = map.entrySet().iterator();
 	        while ( i.hasNext() ) {
@@ -423,14 +417,13 @@ public class HTTPUtilitiesTest extends TestCase {
         System.out.println("saveStateInEncryptedCookie");
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         HashMap map = new HashMap();
         map.put( "one", "aspect" );
         map.put( "two", "ridiculous" );
         map.put( "test_hard", "&(@#*!^|;,." );
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse,map);
+	        ESAPI.httpUtilities().encryptStateInCookie(response,map);
 	        String value = response.getHeader( "Set-Cookie" );
 	        String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
         	ESAPI.encryptor().decrypt( encrypted );
@@ -448,7 +441,6 @@ public class HTTPUtilitiesTest extends TestCase {
 
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
-        ESAPIResponse safeResponse = new ESAPIResponse( response );
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
 
         String foo = ESAPI.randomizer().getRandomString(4096, DefaultEncoder.CHAR_ALPHANUMERICS);
@@ -456,7 +448,7 @@ public class HTTPUtilitiesTest extends TestCase {
         HashMap map = new HashMap();
         map.put("long", foo);
         try {
-	        ESAPI.httpUtilities().encryptStateInCookie(safeResponse, map);
+	        ESAPI.httpUtilities().encryptStateInCookie(response, map);
 	        fail("Should have thrown an exception");
         }
         catch (EncryptionException expected) {

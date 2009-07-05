@@ -108,7 +108,7 @@ public class ESAPIFilter implements Filter {
 			chain.doFilter(request, response);
 
 			// set up response with content type
-			ESAPI.httpUtilities().setSafeContentType( response );
+			ESAPI.httpUtilities().setContentType( response );
 
             // set no-cache headers on every response
             // only do this if the entire site should not be cached

@@ -34,7 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -50,6 +49,7 @@ import org.owasp.esapi.errors.AuthenticationCredentialsException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.AuthenticationLoginException;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.EnterpriseSecurityException;
 
 /**
  * Reference implementation of the Authenticator interface. This reference implementation is backed by a simple text
@@ -465,44 +465,37 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * and existing account, or hashed password does not match user's hashed password.
      */
     protected DefaultUser getUserFromRememberToken()  {
-    	Cookie token = ESAPI.httpUtilities().getCookie( ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
-    	if ( token == null ) {
-    		return null;
+    	try {
+    		String token = ESAPI.httpUtilities().getCookie( ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+    		if ( token == null ) return null;
+    		
+    		String[] data = ESAPI.encryptor().unseal( token ).split( "\\|" );
+    		if ( data.length != 2 ) {
+    	    	logger.warning(Logger.SECURITY_FAILURE, "Found corrupt or expired remember token" );
+    	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+    			return null;
+    		}
+    		
+    		String username = data[0];
+    		String password = data[1];
+    		System.out.println( "DATA0: " + username );
+    		System.out.println( "DATA1:" + password );
+        	DefaultUser user = (DefaultUser) getUser( username );
+    		if ( user == null ) {
+    			logger.warning( Logger.SECURITY_FAILURE, "Found valid remember token but no user matching " + username );
+    			return null;
+    		}
+    		
+    		logger.info( Logger.SECURITY_SUCCESS, "Logging in user with remember token: " + user.getAccountName() );
+	    	user.loginWithPassword(password);
+	    	return user;
+    	} catch (AuthenticationException ae) {
+    		logger.warning( Logger.SECURITY_FAILURE, "Login via remember me cookie failed", ae);
+    	} catch( EnterpriseSecurityException e ) {
+	    	logger.warning(Logger.SECURITY_FAILURE, "Remember token was missing, corrupt, or expired" );
     	}
-
-    	String[] data = null;
-		try {
-			data = ESAPI.encryptor().unseal( token.getValue() ).split( "\\|" );
-		} catch (EncryptionException e) {	
-	    	logger.warning(Logger.SECURITY_FAILURE, "Found corrupt or expired remember token" );
-	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
-	    	return null;
-    	}
-
-		if ( data.length != 2 ) {
-	    	logger.warning(Logger.SECURITY_FAILURE, "Found corrupt or expired remember token" );
-	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
-			return null;
-		}
-		String username = data[0];
-		String password = data[1];
-		System.out.println( "DATA0: " + username );
-		System.out.println( "DATA1:" + password );
-    	DefaultUser user = (DefaultUser) getUser( username );
-		if ( user == null ) {
-			logger.warning( Logger.SECURITY_FAILURE, "Found valid remember token but no user matching " + username );
-			return null;
-		}
-		
-		logger.warning( Logger.SECURITY_SUCCESS, "Logging in user with remember token: " + user.getAccountName() );
-		try {
-			user.loginWithPassword(password);
-		} catch (AuthenticationException ae) {
-			logger.warning( Logger.SECURITY_FAILURE, "Login via remember me cookie failed for user " + username, ae);
-	    	ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
-			return null;
-		}
-		return user;
+	    ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
+		return null;
     }
 
     /**

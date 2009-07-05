@@ -46,8 +46,12 @@ import org.owasp.esapi.errors.ValidationException;
 public interface HTTPUtilities {
 
     /** Key for remember token cookie */
-    public final static String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
+    final static String REMEMBER_TOKEN_COOKIE_NAME = "ESAPIRememberToken";
 
+	final static int PARAMETER = 0;
+	final static int HEADER = 1;
+	final static int COOKIE = 2;
+	
 
 	/**
 	 * Nullifies HTTP Request/Response threadLocal variables.
@@ -79,12 +83,50 @@ public interface HTTPUtilities {
     String addCSRFToken(String href);
     
     /**
-     * Get the first cookie with the matching name.
+     * Add a cookie to the response after ensuring that there are no encoded or
+     * illegal characters in the name and name and value. This method also sets
+     * the secure and HttpOnly flags on the cookie if they're required in ESAPI.properties.
+     * This implementation uses a custom "set-cookie" header rather than Java's
+     * cookie interface which doesn't allow the use of HttpOnly.
+     * @param cookie
+     */
+    public void addCookie(HttpServletResponse response, Cookie cookie);
+    
+    /**
+     * A safer replacement for getCookies() in HttpServletRequest that returns the canonicalized
+     * value of the named cookie after "global" validation against the
+     * general type defined in ESAPI.properties. This should not be considered a replacement for
+     * more specific validation.
+     * 
      * @param request
      * @param name
-     * @return the requested cookie
+     * @return the requested cookie value
      */
-	Cookie getCookie(HttpServletRequest request, String name);
+	String getCookie(HttpServletRequest request, String name) throws ValidationException;
+
+    /**
+     * A safer replacement for getHeader() in HttpServletRequest that returns the canonicalized
+     * value of the named header after "global" validation against the
+     * general type defined in ESAPI.properties. This should not be considered a replacement for
+     * more specific validation.
+     * 
+     * @param request
+     * @param name
+     * @return the requested header value
+     */
+	String getHeader(HttpServletRequest request, String name) throws ValidationException;
+	
+    /**
+     * A safer replacement for getParameter() in HttpServletRequest that returns the canonicalized
+     * value of the named parameter after "global" validation against the
+     * general type defined in ESAPI.properties. This should not be considered a replacement for
+     * more specific validation.
+     * 
+     * @param request
+     * @param name
+     * @return the requested parameter value
+     */
+	String getParameter(HttpServletRequest request, String name) throws ValidationException;
     
     /**
      * Returns the current user's CSRF token. If there is no current user then return null.
@@ -92,7 +134,6 @@ public interface HTTPUtilities {
      * @return the current users CSRF token
      */
     String getCSRFToken();
-
 
     /**
      * Invalidate the old session after copying all of its contents to a newly created session with a new session id.
@@ -213,7 +254,7 @@ public interface HTTPUtilities {
      * @throws ValidationException 
      * 		if the file fails validation
      */
-    List getSafeFileUploads(HttpServletRequest request, File destinationDir) throws ValidationException;
+    List getFileUploads(HttpServletRequest request, File destinationDir) throws ValidationException;
 
     /**
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
@@ -272,7 +313,26 @@ public interface HTTPUtilities {
      * @throws ServletException
      * @throws IOException
      */
-	void safeSendForward(HttpServletRequest request, HttpServletResponse response, String context, String location) throws AccessControlException,ServletException,IOException;
+	void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException,ServletException,IOException;
+	
+    /**
+     * This method performs a forward to any resource located inside the WEB-INF directory. Forwarding to
+     * publicly accessible resources can be dangerous, as the request will have already passed the URL
+     * based access control check. This method ensures that you can only forward to non-publicly
+     * accessible resources.
+	 * 
+     * @param request
+     * @param context
+     * 		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param response
+     * @param location
+     * 		the URL to forward to, including parameters
+     * 
+     * @throws AccessControlException
+     * @throws ServletException
+     * @throws IOException
+     */
+	void sendRedirect(HttpServletResponse response, String location) throws AccessControlException,IOException;
 	
 
     /**
@@ -291,7 +351,7 @@ public interface HTTPUtilities {
 	 * @param response
 	 * 		The servlet response to set the content type for.
      */
-    void setSafeContentType(HttpServletResponse response);
+    void setContentType(HttpServletResponse response);
 
     
     /**
@@ -384,6 +444,6 @@ public interface HTTPUtilities {
     /**
 	 * Parse a multipart HTTP request and extract any files therein.
 	 */
-	List getSafeFileUploads(HttpServletRequest request) throws ValidationException;
+	List getFileUploads(HttpServletRequest request) throws ValidationException;
 
 }

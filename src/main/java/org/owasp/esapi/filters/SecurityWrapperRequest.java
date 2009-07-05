@@ -44,9 +44,9 @@ import org.owasp.esapi.errors.ValidationException;
  * where possible. The wrapper returns a safe value when a validation error is
  * detected, including stripped or empty strings.
  */
-public class ESAPIRequest extends HttpServletRequestWrapper implements HttpServletRequest {
+public class SecurityWrapperRequest extends HttpServletRequestWrapper implements HttpServletRequest {
 
-    private final Logger logger = ESAPI.getLogger("SafeRequest");
+    private final Logger logger = ESAPI.getLogger("SecurityWrapperRequest");
 
     /**
      * Construct a safe request that overrides the default request methods with
@@ -54,7 +54,7 @@ public class ESAPIRequest extends HttpServletRequestWrapper implements HttpServl
      * 
      * @param request
      */
-    public ESAPIRequest(HttpServletRequest request) {
+    public SecurityWrapperRequest(HttpServletRequest request) {
     	super( request );
     }
 
@@ -628,7 +628,7 @@ public class ESAPIRequest extends HttpServletRequestWrapper implements HttpServl
 		// user.addSession( session );
 		
 		// send a new cookie header with HttpOnly on first and second responses
-	    if (ESAPI.securityConfiguration().getForceHTTPOnly()) {
+	    if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 				session.setAttribute("HTTP_ONLY", "set");
 				Cookie cookie = new Cookie("JSESSIONID", session.getId());
@@ -658,7 +658,7 @@ public class ESAPIRequest extends HttpServletRequestWrapper implements HttpServl
         // user.addSession( session );
 
         // send a new cookie header with HttpOnly on first and second responses
-        if (ESAPI.securityConfiguration().getForceHTTPOnly()) {
+        if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 	            session.setAttribute("HTTP_ONLY", "set");
 	            Cookie cookie = new Cookie("JSESSIONID", session.getId());
