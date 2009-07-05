@@ -64,6 +64,10 @@ public class StringValidationRule extends BaseValidationRule {
 		}
 	}
 
+	public void addWhitelistPattern( Pattern p ) {
+		whitelistPatterns.add( p );
+	}
+	
 	public void addBlacklistPattern( String pattern ) {
 		try {
 			Pattern p = Pattern.compile( pattern );
@@ -71,6 +75,10 @@ public class StringValidationRule extends BaseValidationRule {
 		} catch( Exception e ) {
 			throw new RuntimeException( "Validation misconfiguration, problem with specified pattern: " + pattern, e );
 		}
+	}
+
+	public void addBlacklistPattern( Pattern p ) {
+		blacklistPatterns.add( p );
 	}
 	
 	public void setMinimumLength( int length ) {

@@ -22,8 +22,10 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -148,7 +150,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
     public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
 
-    
+    private static final Map patternCache = new HashMap();
     
     /*
      * Absolute path to the userDirectory
@@ -754,9 +756,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	*/
     public Pattern getValidationPattern( String key ) {
     	String value = getESAPIProperty( "Validator." + key, "" );
+    	// check cache
+    	Pattern p = (Pattern)patternCache.get( value );
+    	if ( p != null ) return p;
+    	
+    	// compile a new pattern
     	if ( value == null || value.equals( "" ) ) return null;
     	try {
-    		return Pattern.compile(value);
+    		Pattern q = Pattern.compile(value);
+    		patternCache.put( value, q );
+    		return q;
     	} catch ( PatternSyntaxException e ) {
     		logSpecial( "SecurityConfiguration for " + key + " not a valid regex in ESAPI.properties. Returning null", null );
     		return null;
