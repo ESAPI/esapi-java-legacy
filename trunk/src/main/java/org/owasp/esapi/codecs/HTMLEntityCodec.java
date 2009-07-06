@@ -152,7 +152,7 @@ public class HTMLEntityCodec extends Codec {
 	 * @throws NumberFormatException
 	 */
 	private Character parseNumber( PushbackString input ) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while( input.hasNext() ) {
 			Character c = input.peek();
 			
@@ -192,7 +192,7 @@ public class HTMLEntityCodec extends Codec {
 	 * @throws NumberFormatException
 	 */
 	private Character parseHex( PushbackString input ) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while( input.hasNext() ) {
 			Character c = input.peek();
 			
@@ -242,7 +242,7 @@ public class HTMLEntityCodec extends Codec {
 	 */
 	private Character getNamedEntity( PushbackString input ) {
 		// search through the rest of the string up to 6 characters
-		StringBuffer possible = new StringBuffer();
+		StringBuilder possible = new StringBuilder();
 		int len = Math.min( input.remainder().length(), 7 );
 		for ( int i=0; i<len; i++ ) {
 			possible.append( Character.toLowerCase(input.next().charValue()) );

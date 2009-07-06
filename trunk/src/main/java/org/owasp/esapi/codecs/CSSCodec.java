@@ -83,7 +83,7 @@ public class CSSCodec extends Codec {
         // look for \HHH format
         if (input.isHexDigit(second)) {
             // Search for up to 6 hex digits following until a space
-            StringBuffer sb = new StringBuffer();
+        	StringBuilder sb = new StringBuilder();
             sb.append(second);
             for (int i = 0; i < 5; i++) {
                 Character c = input.next();

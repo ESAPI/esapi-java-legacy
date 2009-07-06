@@ -136,7 +136,7 @@ public abstract class BaseValidationRule implements ValidationRule {
 	 * @see org.owasp.esapi.reference.validation.IValidationRule#whitelist(java.lang.String, char[])
 	 */
 	public String whitelist( String input, char[] list ) {
-		StringBuffer stripped = new StringBuffer();
+		StringBuilder stripped = new StringBuilder();
 		char c;
 		for (int i = 0; i < input.length(); i++) {
 			c = input.charAt(i);

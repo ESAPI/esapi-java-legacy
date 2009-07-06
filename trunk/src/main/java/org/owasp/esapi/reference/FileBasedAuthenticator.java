@@ -756,7 +756,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	 * 		a line containing properly formatted information to save regarding the user
 	 */
 	private String save(DefaultUser user) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append( user.getAccountId() );
 		sb.append( " | " );
 		sb.append( user.getAccountName() );
@@ -795,7 +795,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	 * 		a comma separated list containing the values in c
 	 */
 	private String dump( Collection c ) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Iterator i = c.iterator();
 		while ( i.hasNext() ) {
 			String s = (String)i.next();

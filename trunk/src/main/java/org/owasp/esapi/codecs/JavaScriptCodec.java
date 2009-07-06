@@ -133,7 +133,7 @@ public class JavaScriptCodec extends Codec {
 		// look for \\xXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
 			// Search for exactly 2 hex digits following
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for ( int i=0; i<2; i++ ) {
 				Character c = input.nextHex();
 				if ( c != null ) sb.append( c );
@@ -157,7 +157,7 @@ public class JavaScriptCodec extends Codec {
 		// look for \\uXXXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'u') {
 			// Search for exactly 4 hex digits following
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for ( int i=0; i<4; i++ ) {
 				Character c = input.nextHex();
 				if ( c != null ) sb.append( c );
@@ -180,7 +180,7 @@ public class JavaScriptCodec extends Codec {
 			
 		// look for one, two, or three octal digits
 		} else if ( input.isOctalDigit( second.charValue() ) ) {
-            StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
             // get digit 1
             sb.append(second);
             

@@ -265,7 +265,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    	return null;	
 	    }
 		// TODO: replace with LDAP codec
-		StringBuffer sb = new StringBuffer();
+	    StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
 			switch (c) {
@@ -299,7 +299,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    	return null;	
 	    }
 		// TODO: replace with DN codec
-		StringBuffer sb = new StringBuffer();
+	    StringBuilder sb = new StringBuilder();
 		if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
 			sb.append('\\'); // add the leading backslash if needed
 		}

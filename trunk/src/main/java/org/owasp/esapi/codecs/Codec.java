@@ -63,7 +63,7 @@ public abstract class Codec {
 	 * @return the encoded String
 	 */
     public String encode(char[] immune, String input) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             sb.append(encodeCharacter(immune, new Character(c)));
@@ -99,7 +99,7 @@ public abstract class Codec {
 	 *		the decoded String
 	 */
     public String decode(String input) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         PushbackString pbs = new PushbackString(input);
         while (pbs.hasNext()) {
             Character c = decodeCharacter(pbs);

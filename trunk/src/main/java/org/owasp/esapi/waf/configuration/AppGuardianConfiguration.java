@@ -142,7 +142,7 @@ public class AppGuardianConfiguration {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer( "WAF Configuration\n" );
+		StringBuilder sb = new StringBuilder( "WAF Configuration\n" );
 		sb.append( "Before body rules:\n" );
 		for ( Rule rule : beforeBodyRules ) sb.append( "  " + rule.toString() + "\n" );
 		sb.append( "After body rules:\n" );
