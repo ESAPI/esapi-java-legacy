@@ -425,7 +425,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @throws EncryptionException
      */
     public void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException {
-    	StringBuffer sb = new StringBuffer();    	
+    	StringBuilder sb = new StringBuilder();    	
     	Iterator i = cleartext.entrySet().iterator();
     	while ( i.hasNext() ) {
     		try {
@@ -752,7 +752,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param request
      */
     public void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate) {
-        StringBuffer params = new StringBuffer();
+    	StringBuilder params = new StringBuilder();
         Iterator i = request.getParameterMap().keySet().iterator();
         while (i.hasNext()) {
             String key = (String) i.next();

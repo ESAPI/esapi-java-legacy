@@ -961,7 +961,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			throw new ValidationAvailabilityException( "Invalid input", "Invalid readline. Must read a positive number of bytes from the stream");
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int count = 0;
 		int c;
 

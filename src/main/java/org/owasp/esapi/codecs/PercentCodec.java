@@ -78,7 +78,7 @@ public class PercentCodec extends Codec {
 		}
 				
 		// Search for exactly 2 hex digits following
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for ( int i=0; i<2; i++ ) {
 			Character c = input.nextHex();
 			if ( c != null ) sb.append( c );

@@ -169,18 +169,18 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	}
 	
 	public String toString() {
-		StringBuffer stringBuffer = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		Iterator keys = policyProperties.getMap().keySet().iterator();
 		String currentKey;
 		while(keys.hasNext()) {
 			currentKey = (String)keys.next();
-			stringBuffer.append(currentKey);
-			stringBuffer.append("=");
-			stringBuffer.append(policyProperties.get(currentKey));
+			sb.append(currentKey);
+			sb.append("=");
+			sb.append(policyProperties.get(currentKey));
 			if(keys.hasNext()) {
-				stringBuffer.append(",");
+				sb.append(",");
 			}
 		}
-		return stringBuffer.toString();
+		return sb.toString();
 	}
 }

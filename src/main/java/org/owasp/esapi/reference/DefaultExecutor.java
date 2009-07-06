@@ -157,7 +157,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     private String readStream( InputStream is ) throws IOException {
 	    InputStreamReader isr = new InputStreamReader(is);
 	    BufferedReader br = new BufferedReader(isr);
-	    StringBuffer sb = new StringBuffer();
+	    StringBuilder sb = new StringBuilder();
 	    String line;
 	    while ((line = br.readLine()) != null) {
 	        sb.append(line + "\n");

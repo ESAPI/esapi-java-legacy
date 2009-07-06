@@ -39,7 +39,7 @@ public class StringUtilities {
 	 * @return the stripped value
 	 */
 	public static String stripControls( String input ) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt( i );
 			if ( c > 0x20 && c < 0x7f ) {
@@ -60,7 +60,7 @@ public class StringUtilities {
      * @return the char[]
      */
     public static char[] union(char[] c1, char[] c2) {
-        StringBuffer sb = new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
         for (int i = 0; i < c1.length; i++) {
             if (!contains(sb, c1[i]))
                 sb.append(c1[i]);
@@ -77,12 +77,12 @@ public class StringUtilities {
 
 
 	/**
-     * Returns true if the character is contained in the provided StringBuffer.
+     * Returns true if the character is contained in the provided StringBuilder.
      * @param input 
      * @param c 
      * @return
      */
-    public static boolean contains(StringBuffer input, char c) {
+    public static boolean contains(StringBuilder input, char c) {
         for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) == c)
                 return true;

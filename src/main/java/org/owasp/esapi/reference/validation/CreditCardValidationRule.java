@@ -68,7 +68,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
 	    String canonical = (String)ccrule.getValid( context, input );
 
 		// perform Luhn algorithm checking
-		StringBuffer digitsOnly = new StringBuffer();
+	    StringBuilder digitsOnly = new StringBuilder();
 		char c;
 		for (int i = 0; i < canonical.length(); i++) {
 			c = canonical.charAt(i);
