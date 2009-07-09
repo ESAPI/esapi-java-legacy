@@ -450,34 +450,27 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public List getFileUploads() throws ValidationException {
-    	return getFileUploads( getCurrentRequest(), ESAPI.securityConfiguration().getUploadDirectory() );
+    	return getFileUploads( getCurrentRequest(), ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions() );
     }
 
     /**
-	 * Uses the Apache Commons FileUploader to parse the multipart HTTP request
-	 * and extract any files therein. Note that the progress of any uploads is
-	 * put into a session attribute, where it can be retrieved with a simple
-	 * JSP.  Places the file in the default upload directory declared in ESAPI.properties.
-	 * 
-	 * 
-     * @param request
-     * @return list of File objects for new files in final directory
+	 * {@inheritDoc}
 	 */
     public List getFileUploads(HttpServletRequest request) throws ValidationException {
-    	return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory());
+    	return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions());
+    }
+	
+    /**
+	 * {@inheritDoc}
+	 */
+    public List getFileUploads(HttpServletRequest request, File finalDir ) throws ValidationException {
+    	return getFileUploads(request, finalDir, ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
 	
 	/**
-	 * Uses the Apache Commons FileUploader to parse the multipart HTTP request
-	 * and extract any files therein. Note that the progress of any uploads is
-	 * put into a session attribute, where it can be retrieved with a simple
-	 * JSP.
-	 * 
-	 * 
-     * @param request
-     * @return list of File objects for new files in final directory
+	 * {@inheritDoc}
 	 */
-	public List getFileUploads(HttpServletRequest request, File finalDir) throws ValidationException {
+	public List getFileUploads(HttpServletRequest request, File finalDir, List allowedExtensions) throws ValidationException {
         File tempDir = ESAPI.securityConfiguration().getUploadTempDirectory();
 		if ( !tempDir.exists() ) {
 		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
@@ -494,8 +487,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			}
 			finalDir = ESAPI.securityConfiguration().getUploadDirectory();
 		}
-		
-		
 		
 		List newFiles = new ArrayList();
 		try {
@@ -539,8 +530,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 					String[] fparts = item.getName().split("[\\/\\\\]");
 					String filename = fparts[fparts.length - 1];
 
-					if (!ESAPI.validator().isValidFileName("upload", filename, false)) {
-						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + ESAPI.securityConfiguration().getAllowedFileExtensions(), "Upload failed isValidFileName check");
+					if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false)) {
+						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + allowedExtensions, "Upload failed isValidFileName check");
 					}
 
 					logger.info(Logger.SECURITY_SUCCESS, "File upload requested: " + filename);
