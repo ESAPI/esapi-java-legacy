@@ -250,39 +250,6 @@ public class HTTPUtilitiesTest extends TestCase {
         
     }
 
-    /**
-     * Test of isValidHTTPRequest method, of class org.owasp.esapi.HTTPUtilities.
-     */
-    public void testIsValidHTTPRequest() {
-        System.out.println("isValidHTTPRequest");
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter("p1", "v1");
-        request.addParameter("p2", "v3");
-        request.addParameter("p3", "v2");
-        request.addHeader("h1","v1");
-        request.addHeader("h2","v1");
-        request.addHeader("h3","v1");
-        ArrayList list = new ArrayList();
-        list.add(new Cookie("c1", "v1"));
-        list.add(new Cookie("c2", "v2"));
-        list.add(new Cookie("c3", "v3"));
-        request.setCookies(list);
-        
-        // should throw IntrusionException which will be caught in isValidHTTPRequest and return false
-        request.setMethod("JEFF");
-        assertFalse( ESAPI.validator().isValidHTTPRequest( request ) );
-         
-        request.setMethod("POST");
-        assertTrue( ESAPI.validator().isValidHTTPRequest( request ) );
-        request.setMethod("GET");
-        assertTrue( ESAPI.validator().isValidHTTPRequest( request) );
-        request.addParameter("bad_name", "bad*value");
-        request.addHeader("bad_name", "bad*value");
-        list.add(new Cookie("bad_name", "bad*value"));
-        
-        // call the validator directly, since the safe request will shield this from failing
-        assertFalse( ((DefaultValidator)ESAPI.validator()).isValidHTTPRequest( request ) );
-     }
     
     
     /**

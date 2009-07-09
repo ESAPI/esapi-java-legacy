@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.DateFormat;
@@ -36,7 +37,6 @@ import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
-import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
@@ -85,31 +85,6 @@ public class ValidatorTest  extends TestCase {
 		ValidationRule rule = new StringValidationRule( "ridiculous" );
 		validator.addRule(rule);
 		assertEquals( rule, validator.getRule("ridiculous") );
-	}
-
-	public void testAssertIsValidHTTPRequestParameterSet() {
-		System.out.println("getValidCreditCard");
-		Validator instance = ESAPI.validator();
-		ValidationErrorList errors = new ValidationErrorList();
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		request.addParameter("p1","value");
-		request.addParameter("p2","value");
-		request.addParameter("p3","value");
-		Set required = new HashSet();
-		required.add( "p1" );
-		required.add( "p2" );
-		Set optional = new HashSet();
-		optional.add( "p3" );
-		instance.assertIsValidHTTPRequestParameterSet("test", required, optional, errors);
-		assertEquals( 0, errors.size() );
-		optional.add( "p4" );
-		instance.assertIsValidHTTPRequestParameterSet("test", required, optional, errors);
-		assertEquals( 0, errors.size() );
-		required.add( "p5" );
-		instance.assertIsValidHTTPRequestParameterSet("test", required, optional, errors);
-		assertEquals( 1, errors.size() );
 	}
 
 	public void testAssertValidFileUpload() {
@@ -169,12 +144,14 @@ public class ValidatorTest  extends TestCase {
 		System.out.println("getValidDirectoryPath");
 		Validator instance = ESAPI.validator();
 		ValidationErrorList errors = new ValidationErrorList();
-		String path = ESAPI.securityConfiguration().getResourceFile("ESAPI.properties").getCanonicalPath();
-		instance.getValidDirectoryPath("dirtest1", path, true, errors);
+		// find a directory that exists
+		File parent = new File("/");
+		String path = ESAPI.securityConfiguration().getResourceFile("ESAPI.properties").getParentFile().getCanonicalPath();
+		instance.getValidDirectoryPath("dirtest1", path, parent, true, errors);
 		assertEquals( 0, errors.size() );
-		instance.getValidDirectoryPath("dirtest2", null, false, errors);
+		instance.getValidDirectoryPath("dirtest2", null, parent, false, errors);
 		assertEquals( 1, errors.size() );
-		instance.getValidDirectoryPath("dirtest3", "ridicul%00ous", false, errors);
+		instance.getValidDirectoryPath("dirtest3", "ridicul%00ous", parent, false, errors);
 		assertEquals( 2, errors.size() );
 	}
 	
@@ -212,7 +189,7 @@ public class ValidatorTest  extends TestCase {
 		Validator instance = ESAPI.validator();
 		ValidationErrorList errors = new ValidationErrorList();
 		String testName = "aspe%20ct.jar";
-		assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, false, errors) );
+		assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, ESAPI.securityConfiguration().getAllowedFileExtensions(), false, errors) );
 	}
 		
 	public void testGetValidInput() {
@@ -316,44 +293,45 @@ public class ValidatorTest  extends TestCase {
 		Validator instance = new DefaultValidator( encoder );
 		
 		boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1 ) ? true : false;
+		File parent = new File( "/" );
 		
 		if ( isWindows ) {
 			// Windows paths that don't exist and thus should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", false));
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", false));
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", parent, false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", parent, false));
 
-			// Windows paths that should pass
-			assertTrue(instance.isValidDirectoryPath("test", "C:\\", false));								// Windows root directory
-			assertTrue(instance.isValidDirectoryPath("test", "C:\\Windows", false));						// Windows always exist directory
-			assertTrue(instance.isValidDirectoryPath("test", "C:\\Windows\\System32\\cmd.exe", false));		// Windows command shell	
+			// Windows paths
+			assertTrue(instance.isValidDirectoryPath("test", "C:\\", parent, false));								// Windows root directory
+			assertTrue(instance.isValidDirectoryPath("test", "C:\\Windows", parent, false));						// Windows always exist directory
+			assertFalse(instance.isValidDirectoryPath("test", "C:\\Windows\\System32\\cmd.exe", parent, false));		// Windows command shell	
 			
 			// Unix specific paths should not pass
-			assertFalse(instance.isValidDirectoryPath("test", "/tmp", false));		// Unix Temporary directory
-			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Unix Standard shell	
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/config", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/tmp", parent, false));		// Unix Temporary directory
+			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", parent, false));	// Unix Standard shell	
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/config", parent, false));
 			
 			// Unix specific paths that should not exist or work
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", false));
-			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", parent, false));
+			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", parent, false));
 		} else {
 			// Windows paths should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", false));
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", parent, false));
 
 			// Standard Windows locations should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\", false));								// Windows root directory
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\temp", false));					// Windows temporary directory
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\System32\\cmd.exe", false));	// Windows command shell	
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\", parent, false));								// Windows root directory
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\temp", parent, false));					// Windows temporary directory
+			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\System32\\cmd.exe", parent, false));	// Windows command shell	
 			
 			// Unix specific paths should pass
-			assertTrue(instance.isValidDirectoryPath("test", "/", false));			// Root directory
-			assertTrue(instance.isValidDirectoryPath("test", "/bin", false));		// Always exist directory
-			assertTrue(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Standard shell	
+			assertTrue(instance.isValidDirectoryPath("test", "/", parent, false));			// Root directory
+			assertTrue(instance.isValidDirectoryPath("test", "/bin", parent, false));		// Always exist directory
+			assertTrue(instance.isValidDirectoryPath("test", "/bin/sh", parent, false));	// Standard shell	
 			
 			// Unix specific paths that should not exist or work
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", false));
-			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
+			assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", parent, false));
+			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", parent, false));
 		}
 	}
 	
@@ -384,57 +362,17 @@ public class ValidatorTest  extends TestCase {
 		System.out.println("isValidFileUpload");
 		String filepath = System.getProperty( "user.dir" );
 		String filename = "aspect.jar";
+		File parent = new File( "/" );
 		byte[] content = "This is some file content".getBytes();
 		Validator instance = ESAPI.validator();
-		assertTrue(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
+		assertTrue(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false));
 		
 		filepath = "/ridiculous";
 		filename = "aspect.jar";
 		content = "This is some file content".getBytes();
-		assertFalse(instance.isValidFileUpload("test", filepath, filename, content, 100, false));
+		assertFalse(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false));
 	}
-	
-	public void testIsValidHTTPRequest() throws Exception {
-		Validator validator = ESAPI.validator();
-		try {
-			((DefaultValidator)validator).assertIsValidHTTPRequest( null );
-			fail();
-		} catch( ValidationException e ) {
-			 // expected
-		}
-        MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("p1","value");
-		request.addParameter("p2","value");
-		request.setCookie("c1","value");
-		request.setCookie("c2","value");
-		request.addHeader("h1","value");
-		request.addHeader("h2","value");
-		validator.assertIsValidHTTPRequest(request);
-		try{
-			request.addParameter("ridiculous", "\0foobar");
-			validator.assertIsValidHTTPRequest(request);
-			fail();
-		} catch( ValidationException e ) {
-			// expected
-		}
-		try{
-			request.clearParameters();
-			request.setCookie("ridiculous", "\0foobar");
-			validator.assertIsValidHTTPRequest(request);
-			fail();
-		} catch( ValidationException e ) {
-			// expected
-		}
-		try{
-			request.clearCookies();
-			request.addHeader("ridiculous", "\0foobar");
-			validator.assertIsValidHTTPRequest(request);
-			fail();
-		} catch( ValidationException e ) {
-			// expected
-		}
-	}
-	
+		
 	public void testIsValidHTTPRequestParameterSet() {
 //		isValidHTTPRequestParameterSet(String, Set, Set)
 	}
@@ -560,13 +498,13 @@ public class ValidatorTest  extends TestCase {
 		request.addParameter("p3","value");
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		Validator instance = ESAPI.validator();		
-		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
+		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", ESAPI.currentRequest(), requiredNames, optionalNames));
 		request.addParameter("p4","value");
 		request.addParameter("p5","value");
 		request.addParameter("p6","value");
-		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
+		assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", ESAPI.currentRequest(),requiredNames, optionalNames));
 		request.removeParameter("p1");
-		assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", requiredNames, optionalNames));
+		assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", ESAPI.currentRequest(),requiredNames, optionalNames));
 	}
 	
     public void testIsValidPrintable() {
