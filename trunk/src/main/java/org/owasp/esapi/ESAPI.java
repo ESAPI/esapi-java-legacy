@@ -59,9 +59,28 @@ public final class ESAPI {
 	}
 	
 	/**
-	 * Required call to clear threadlocal variables in ESAPI *MUST* be made before request is abandoned.
-	 * Because threads may be reused in some containers, clearing these is critical for security. The
-	 * advantages of having identity everywhere are worth the risk here.
+    /**
+	 * Clears the current User, HttpRequest, and HttpResponse associated with the current thread. This method
+	 * MUST be called as some containers do not properly clear threadlocal variables when the execution of
+	 * a thread is complete. The suggested approach is to put this call in a finally block inside a filter.
+	 * <pre>
+		public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException {
+			try {
+				HttpServletRequest request = (HttpServletRequest) req;
+				HttpServletResponse response = (HttpServletResponse) resp;
+				ESAPI.httpUtilities().setCurrentHTTP(request, response);
+				ESAPI.authenticator().login();
+				chain.doFilter(request, response);
+			} catch (Exception e) {
+				logger.error( Logger.SECURITY_FAILURE, "Error in ESAPI security filter: " + e.getMessage(), e );
+			} finally {
+				// VERY IMPORTANT
+				// clear out ThreadLocal variables
+				ESAPI.clearCurrent();
+			}
+		}
+	 * </pre>
+	 * The advantages of having identity everywhere are worth the risk here.
 	 */
 	public static void clearCurrent() {
 		authenticator().clearCurrent();

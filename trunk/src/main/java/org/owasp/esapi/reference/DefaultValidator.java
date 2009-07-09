@@ -39,9 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
-import org.owasp.esapi.codecs.HTMLEntityCodec;
-import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
@@ -52,15 +51,12 @@ import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.IntegerValidationRule;
 import org.owasp.esapi.reference.validation.NumberValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
-import org.owasp.esapi.ValidationRule;
 
 /**
  * Reference implementation of the Validator interface. This implementation
  * relies on the ESAPI Encoder, Java Pattern (regex), Date,
  * and several other classes to provide basic validation functions. This library
- * has a heavy emphasis on whitelist validation and canonicalization. All double-encoded
- * characters, even in multiple encoding schemes, such as <PRE>&amp;lt;</PRE> or
- * <PRE>%26lt;<PRE> or even <PRE>%25%26lt;</PRE> are disallowed.
+ * has a heavy emphasis on whitelist validation and canonicalization.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim.manico .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>

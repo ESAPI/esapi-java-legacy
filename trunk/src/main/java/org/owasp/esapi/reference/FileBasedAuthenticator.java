@@ -808,6 +808,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	/**
 	* {@inheritDoc}
 	*/
+    public User login() throws AuthenticationException {
+    	return login( ESAPI.currentRequest(), ESAPI.currentResponse() );
+    }
+    
+	/**
+	* {@inheritDoc}
+	*/
     public User login(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
     	if ( request == null || response == null ) {

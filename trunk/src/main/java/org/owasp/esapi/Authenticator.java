@@ -72,6 +72,13 @@ public interface Authenticator {
 	void clearCurrent();
 
 	/**
+	 * Calls login with the *current* request and response.
+	 * @return
+	 * @see HttpUtililties#setCurrent()
+	 */
+	User login() throws AuthenticationException;
+	
+	/**
 	 * This method should be called for every HTTP request, to login the current user either from the session of HTTP
      * request. This method will set the current user so that getCurrentUser() will work properly. 
 	 * 
