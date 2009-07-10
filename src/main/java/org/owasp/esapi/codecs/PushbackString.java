@@ -85,7 +85,7 @@ public class PushbackString {
 		if ( input == null ) return null;
 		if ( input.length() == 0 ) return null;
 		if ( index >= input.length() ) return null;		
-		return new Character( input.charAt(index++) );
+		return Character.valueOf( input.charAt(index++) );
 	}
 	
     /**
@@ -141,7 +141,7 @@ public static boolean isOctalDigit( Character c ) {
 		if ( input == null ) return null;
 		if ( input.length() == 0 ) return null;
 		if ( index >= input.length() ) return null;		
-		return new Character( input.charAt(index) );
+		return Character.valueOf( input.charAt(index) );
 	}
 	
     /**

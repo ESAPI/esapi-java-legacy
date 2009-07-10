@@ -55,7 +55,7 @@ public class VBScriptCodec extends Codec {
 			} else {
 				if ( inquotes && i < input.length() ) sb.append( "\"" );
 				if ( i > 0 ) sb.append( "&" );
-				sb.append( encodeCharacter( immune, new Character( c ) ) );
+				sb.append( encodeCharacter( immune, Character.valueOf( c ) ) );
 				inquotes = false;
 				encoding = true;
 			}

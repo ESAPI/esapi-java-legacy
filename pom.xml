@@ -17,6 +17,9 @@
 		<name>The Open Web Application Security Project (OWASP)</name>
 	</organization>
 	<url>http://www.esapi.org</url>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
 	<repositories>
 		<repository>
 			<id>ibiblio</id>
@@ -40,7 +43,7 @@
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
 			<scope>test</scope>
-		</dependency>	
+		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>
@@ -90,11 +93,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.12</version>
-            <scope>compile</scope>
-        </dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.12</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>xom</groupId>
 			<artifactId>xom</artifactId>
@@ -108,6 +111,26 @@
 	</dependencies>
 	<build>
 		<plugins>
+
+
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<input message="Keystore password?" addproperty="storepass" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
@@ -115,7 +138,38 @@
 					<target>1.5</target>
 					<debug>true</debug>
 				</configuration>
-			</plugin>		
+			</plugin>
+
+
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.2</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.owasp.esapi.reference.DefaultEncryptor</mainClass>
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+						</manifest>
+						<manifestEntries>
+							<Sealed>true</Sealed>
+						</manifestEntries>
+					</archive>
+					<keystore>c:/users/jwilliams/desktop/keystore</keystore>
+					<alias>esapi</alias>
+					<storepass>73456111</storepass>
+					<verify>true</verify>
+				</configuration>
+			</plugin>
+
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -124,42 +178,28 @@
 				</configuration>
 			</plugin>
 
-<!-- This doesn't seem to work reliably
-			<plugin>
+			<!--
+				This doesn't seem to work reliably <plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.3</version>
-				<executions>
-				<execution>
-					<id>compile</id>
-					<phase>compile</phase>
-					<configuration>
-						<tasks>
-							<taskdef name="Convert2UTF8" classname="org.owasp.esapi.Convert2UTF8" classpath="target/classes"/>
-							<mkdir dir="./target/classes/properties/utf8"/>
-							<Convert2UTF8 srcDir="target/classes/properties" destDir="./target/classes/properties/utf8" />
-							<delete>
-								<fileset dir="./target/classes/properties" includes="*.*"/>
-							</delete>
-							<native2ascii encoding="UTF8" dest="target/classes/properties" src="./target/classes/properties/utf8" includes="*.utf8" ext=".properties" />
-							<delete dir="./target/classes/properties/utf8"/>
-						</tasks>
-					</configuration>
-					<goals>
-						<goal>run</goal>
-					</goals>
-				</execution>
-			 </executions>
-			 <dependencies>
-				  <dependency>
-					   <groupId>ant</groupId>
-					   <artifactId>ant-nodeps</artifactId>
-					   <version>1.6.5</version>
-				  </dependency>
-			 </dependencies>
-			</plugin>
--->
-			
+				<artifactId>maven-antrun-plugin</artifactId> <version>1.3</version>
+				<executions> <execution> <id>compile</id> <phase>compile</phase>
+				<configuration> <tasks> <taskdef name="Convert2UTF8"
+				classname="org.owasp.esapi.Convert2UTF8"
+				classpath="target/classes"/> <mkdir
+				dir="./target/classes/properties/utf8"/> <Convert2UTF8
+				srcDir="target/classes/properties"
+				destDir="./target/classes/properties/utf8" /> <delete> <fileset
+				dir="./target/classes/properties" includes="*.*"/> </delete>
+				<native2ascii encoding="UTF8" dest="target/classes/properties"
+				src="./target/classes/properties/utf8" includes="*.utf8"
+				ext=".properties" /> <delete
+				dir="./target/classes/properties/utf8"/> </tasks> </configuration>
+				<goals> <goal>run</goal> </goals> </execution> </executions>
+				<dependencies> <dependency> <groupId>ant</groupId>
+				<artifactId>ant-nodeps</artifactId> <version>1.6.5</version>
+				</dependency> </dependencies> </plugin>
+			-->
+
 		</plugins>
 	</build>
 	<reporting>
@@ -179,6 +219,10 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
+				<configuration>
+					<targetJdk>1.5</targetJdk>
+			        <sourceEncoding>utf-8</sourceEncoding>
+				</configuration>
 			</plugin>
 		</plugins>
 	</reporting>

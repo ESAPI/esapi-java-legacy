@@ -592,7 +592,7 @@ public class EncoderTest extends TestCase {
         PushbackString epbs = new PushbackString("");
         assertEquals(null, win.decodeCharacter(epbs));
         
-        Character c = new Character('<');
+        Character c = Character.valueOf('<');
         PushbackString cpbs = new PushbackString(win.encodeCharacter(immune, c));
         Character decoded = win.decodeCharacter(cpbs);
         assertEquals(c, decoded);
@@ -623,7 +623,7 @@ public class EncoderTest extends TestCase {
         PushbackString npbs = new PushbackString("n");
         assertEquals(null, unix.decodeCharacter(npbs));
 
-        Character c = new Character('<');
+        Character c = Character.valueOf('<');
         PushbackString cpbs = new PushbackString(unix.encodeCharacter(immune, c));
         Character decoded = unix.decodeCharacter(cpbs);
         assertEquals(c, decoded);

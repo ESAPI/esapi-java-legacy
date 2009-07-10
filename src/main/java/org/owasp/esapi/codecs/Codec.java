@@ -66,7 +66,7 @@ public abstract class Codec {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            sb.append(encodeCharacter(immune, new Character(c)));
+            sb.append(encodeCharacter(immune, Character.valueOf(c)));
         }
         return sb.toString();
     }

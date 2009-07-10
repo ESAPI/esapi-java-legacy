@@ -175,7 +175,7 @@ public class HTMLEntityCodec extends Codec {
 			int i = Integer.parseInt(sb.toString());
 			// TODO: in Java 1.5 you can test whether this is a valid code point
 			// with Character.isValidCodePoint() et al.
-			return new Character( (char)i );
+			return Character.valueOf( (char)i );
 		} catch( NumberFormatException e ) {
 			// throw an exception for malformed entity?
 			return null;
@@ -215,7 +215,7 @@ public class HTMLEntityCodec extends Codec {
 			int i = Integer.parseInt(sb.toString(), 16);
 			// TODO: in Java 1.5 you can test whether this is a valid code point
 			// with Character.isValidCodePoint() et al.
-			return new Character( (char)i );
+			return Character.valueOf( (char)i );
 		} catch( NumberFormatException e ) {
 			// throw an exception for malformed entity?
 			return null;
@@ -773,7 +773,7 @@ public class HTMLEntityCodec extends Codec {
 		entityToCharacterMap = new HashMap(entityValues.length);
 		for (int i = 0; i < entityNames.length; i++) {
 			String e = entityNames[i];
-			Character c = new Character(entityValues[i]);
+			Character c = Character.valueOf(entityValues[i]);
 			entityToCharacterMap.put(e, c);
 			characterToEntityMap.put(c, e);
 		}

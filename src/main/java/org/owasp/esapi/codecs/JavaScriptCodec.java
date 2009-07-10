@@ -110,25 +110,25 @@ public class JavaScriptCodec extends Codec {
 		
 		// \0 collides with the octal decoder and is non-standard
 		// if ( second.charValue() == '0' ) {
-		//	return new Character( (char)0x00 );
+		//	return Character.valueOf( (char)0x00 );
 		if ( second.charValue() == 'b' ) {
-			return new Character( (char)0x08 );
+			return Character.valueOf( (char)0x08 );
 		} else if ( second.charValue() == 't' ) {
-			return new Character( (char)0x09 );
+			return Character.valueOf( (char)0x09 );
 		} else if ( second.charValue() == 'n' ) {
-			return new Character( (char)0x0a );
+			return Character.valueOf( (char)0x0a );
 		} else if ( second.charValue() == 'v' ) {
-			return new Character( (char)0x0b );
+			return Character.valueOf( (char)0x0b );
 		} else if ( second.charValue() == 'f' ) {
-			return new Character( (char)0x0c );
+			return Character.valueOf( (char)0x0c );
 		} else if ( second.charValue() == 'r' ) {
-			return new Character( (char)0x0d );
+			return Character.valueOf( (char)0x0d );
 		} else if ( second.charValue() == '\"' ) {
-			return new Character( (char)0x22 );
+			return Character.valueOf( (char)0x22 );
 		} else if ( second.charValue() == '\'' ) {
-			return new Character( (char)0x27 );
+			return Character.valueOf( (char)0x27 );
 		} else if ( second.charValue() == '\\' ) {
-			return new Character( (char)0x5c );
+			return Character.valueOf( (char)0x5c );
 			
 		// look for \\xXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
@@ -147,7 +147,7 @@ public class JavaScriptCodec extends Codec {
 				int i = Integer.parseInt(sb.toString(), 16);
 				// TODO: in Java 1.5 you can test whether this is a valid code point
 				// with Character.isValidCodePoint() et al.
-				return new Character( (char)i );
+				return Character.valueOf( (char)i );
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				input.reset();
@@ -171,7 +171,7 @@ public class JavaScriptCodec extends Codec {
 				int i = Integer.parseInt(sb.toString(), 16);
 				// TODO: in Java 1.5 you can test whether this is a valid code point
 				// with Character.isValidCodePoint() et al.
-				return new Character( (char)i );
+				return Character.valueOf( (char)i );
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				input.reset();
@@ -203,7 +203,7 @@ public class JavaScriptCodec extends Codec {
 				int i = Integer.parseInt(sb.toString(), 8);
 				// TODO: in Java 1.5 you can test whether this is a valid code point
 				// with Character.isValidCodePoint() et al.
-				return new Character( (char)i );
+				return Character.valueOf( (char)i );
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				input.reset();
