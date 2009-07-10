@@ -101,7 +101,7 @@ public class CSSCodec extends Codec {
                 int i = Integer.parseInt(sb.toString(), 16);
                 // TODO: in Java 1.5 you can test whether this is a valid code point
                 // with Character.isValidCodePoint() et al.
-                return new Character((char) i);
+                return Character.valueOf((char) i);
             } catch (NumberFormatException e) {
                 // throw an exception for malformed entity?
                 // just continue which will reset and return null

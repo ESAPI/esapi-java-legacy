@@ -169,7 +169,7 @@ public class MySQLCodec extends Codec {
 			input.reset();
 			return null;
 		}
-		return( new Character( '\'' ) );
+		return( Character.valueOf( '\'' ) );
 	}
 
 	/**
@@ -201,27 +201,27 @@ public class MySQLCodec extends Codec {
 		}
 		
 		if ( second.charValue() == '0' ) {
-			return new Character( (char)0x00 );
+			return Character.valueOf( (char)0x00 );
 		} else if ( second.charValue() == 'b' ) {
-			return new Character( (char)0x08 );
+			return Character.valueOf( (char)0x08 );
 		} else if ( second.charValue() == 't' ) {
-			return new Character( (char)0x09 );
+			return Character.valueOf( (char)0x09 );
 		} else if ( second.charValue() == 'n' ) {
-			return new Character( (char)0x0a );
+			return Character.valueOf( (char)0x0a );
 		} else if ( second.charValue() == 'r' ) {
-			return new Character( (char)0x0d );
+			return Character.valueOf( (char)0x0d );
 		} else if ( second.charValue() == 'z' ) {
-			return new Character( (char)0x1a );
+			return Character.valueOf( (char)0x1a );
 		} else if ( second.charValue() == '\"' ) {
-			return new Character( (char)0x22 );
+			return Character.valueOf( (char)0x22 );
 		} else if ( second.charValue() == '%' ) {
-			return new Character( (char)0x25 );
+			return Character.valueOf( (char)0x25 );
 		} else if ( second.charValue() == '\'' ) {
-			return new Character( (char)0x27 );
+			return Character.valueOf( (char)0x27 );
 		} else if ( second.charValue() == '\\' ) {
-			return new Character( (char)0x5c );
+			return Character.valueOf( (char)0x5c );
 		} else if ( second.charValue() == '_' ) {
-			return new Character( (char)0x5f );
+			return Character.valueOf( (char)0x5f );
 		} else {
 			return second;
 		}
