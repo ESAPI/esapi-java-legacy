@@ -93,7 +93,6 @@ public class ExecutorTest extends TestCase {
 		System.out.println("executeSystemCommand");
 		Executor instance = ESAPI.executor();
 		File executable = new File( "C:\\Windows\\System32\\cmd.exe" );
-		File working = new File("C:\\");
 		List params = new ArrayList();
 		try {
 			params.add("/C");
@@ -168,11 +167,11 @@ public class ExecutorTest extends TestCase {
 			return;
 		}
 		
+		// FIXME: need more test cases to use this codec
 		Codec codec = new UnixCodec();
 		
 		Executor instance = ESAPI.executor();
 		File executable = new File( "/bin/sh" );
-		File working = new File("/");
 		List params = new ArrayList();
 		try {
 			params.add("-c");
@@ -201,7 +200,6 @@ public class ExecutorTest extends TestCase {
 			// expected
 		}
 		try {
-			File workdir = new File( "ridiculous" );
 			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
@@ -215,23 +213,6 @@ public class ExecutorTest extends TestCase {
 		} catch (Exception e) {
 			fail();
 		}
-
-//		try {
-//			params.set( params.size()-1, "c:\\autoexec.bat" );
-//			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
-//			System.out.println( "RESULT: " + result );
-//		} catch (Exception e) {
-//			fail();
-//		}
-//
-//        try {
-//            params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-//            String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
-//            System.out.println( "RESULT: " + result );
-//        } catch (Exception e) {
-//            fail();
-//        }
 	}
 	
-
 }

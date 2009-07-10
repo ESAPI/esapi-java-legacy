@@ -4,14 +4,17 @@ package org.owasp.esapi;
  * @author Pawan Singh
  */
 
-import java.util.regex.*;
-import java.util.*;
-import java.io.*;
-import java.text.*;
-import java.lang.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 
-import org.apache.tools.ant.Task;
 import org.apache.tools.ant.BuildException;
+import org.apache.tools.ant.Task;
 
 public class Convert2UTF8 extends Task {
 	private String srcDir;

@@ -20,7 +20,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.reference.DefaultUser;
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)

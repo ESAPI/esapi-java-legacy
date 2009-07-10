@@ -755,23 +755,20 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 		return map;
 	}	
-	
+
 	/**
- * {@inheritDoc}
- * 
- * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
- * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
-    *
-    * @param request
-    * @param response
-    */
-public void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException,ServletException,IOException {
-	if (!location.startsWith("WEB-INF")) {
-		throw new AccessControlException("Forward failed", "Bad forward location: " + location);
+	 * {@inheritDoc}
+	 * 
+	 * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
+	 * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
+	 */
+	public void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException,ServletException,IOException {
+		if (!location.startsWith("WEB-INF")) {
+			throw new AccessControlException("Forward failed", "Bad forward location: " + location);
+		}
+		RequestDispatcher dispatcher = request.getRequestDispatcher(location);
+		dispatcher.forward( request, response );
 	}
-	RequestDispatcher dispatcher = request.getRequestDispatcher(location);
-	dispatcher.forward( request, response );
-}
 
 	/**
 	 * {@inheritDoc}
@@ -872,6 +869,8 @@ public void sendForward(HttpServletRequest request, HttpServletResponse response
 	}
         
 	/**
+	 * {@inheritDoc}
+	 * 
 	 * Save the user's remember me data in an encrypted cookie and send it to the user. 
 	 * Any old remember me cookie is destroyed first. Setting this cookie will keep the user 
 	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
@@ -919,8 +918,8 @@ public void sendForward(HttpServletRequest request, HttpServletResponse response
 
     /**
 	 * {@inheritDoc}
-	 * This implementation uses the parameter name to store the token. This makes the CSRF
-	 * token a bit harder to search for in an XSS attack.
+	 * 
+	 * This implementation uses the CSRF_TOKEN_NAME parameter for the token.
      *
      * @param request
      */	  

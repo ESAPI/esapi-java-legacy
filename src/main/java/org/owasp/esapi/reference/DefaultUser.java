@@ -121,8 +121,8 @@ public class DefaultUser implements User, Serializable {
 	 * @param accountName
 	 * 		The name of this user's account.
 	 */
-	DefaultUser(String accountName) {
-		setAccountName(accountName);
+	DefaultUser(String value) {
+		setAccountName(value);
 		while( true ) {
 			long id = Math.abs( ESAPI.randomizer().getRandomLong() );
 			if ( ESAPI.authenticator().getUser( id ) == null && id != 0 ) {

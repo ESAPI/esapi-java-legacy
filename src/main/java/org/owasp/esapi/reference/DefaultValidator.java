@@ -22,9 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -33,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.owasp.esapi.ESAPI;
@@ -75,9 +72,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/** The encoder to use for file system */
 	private static Validator fileValidator = null;
 	
-	private static final int MAX_PARAMETER_NAME_LENGTH = 100;
-	private static final int MAX_PARAMETER_VALUE_LENGTH = 65535;
-
 	/** Initialize file validator with an appropriate set of codecs */
 	static {
 		List list = new ArrayList();

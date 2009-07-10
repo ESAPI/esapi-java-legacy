@@ -22,7 +22,6 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.reference.DefaultEncoder;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 
 /**

@@ -22,8 +22,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.http.MockHttpServletResponse;
-import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
-import org.owasp.esapi.waf.internal.InterceptingServletOutputStream;
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)

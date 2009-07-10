@@ -425,7 +425,9 @@ public interface User extends Principal, Serializable {
 	 */
     public final User ANONYMOUS = new User() {
 
-    	private String csrfToken = "";
+		private static final long serialVersionUID = -1850916950784965502L;
+
+		private String csrfToken = "";
     	private Set sessions = new HashSet();
 		private Locale locale = null;
     	
