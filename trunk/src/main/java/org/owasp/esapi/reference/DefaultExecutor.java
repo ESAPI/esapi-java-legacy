@@ -115,9 +115,9 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             
             // set the command into the list and create command array
             params.add(0, executable.getCanonicalPath());
-            String[] command = (String[])params.toArray( new String[0] );
 
             // Legacy - this is how to implement in Java 1.4
+            // String[] command = (String[])params.toArray( new String[0] );
             // Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
             
             // The following is host to implement in Java 1.5+

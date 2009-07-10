@@ -19,10 +19,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encryptor;
-import org.owasp.esapi.User;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;

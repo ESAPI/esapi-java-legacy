@@ -104,7 +104,7 @@ public class ValidatorTest  extends TestCase {
 		ValidationRule rule = new StringValidationRule( "rule" );
 		validator.addRule(rule);
 		assertEquals( rule, validator.getRule("rule") );
-		this.assertFalse( rule == validator.getRule("ridiculous") );
+		assertFalse( rule == validator.getRule("ridiculous") );
 	}
 
 	public void testGetValidCreditCard() {
@@ -196,21 +196,21 @@ public class ValidatorTest  extends TestCase {
 		System.out.println("getValidInput");
 		Validator instance = ESAPI.validator();
 		ValidationErrorList errors = new ValidationErrorList();
-		// getValidInput(String, String, String, int, boolean, ValidationErrorList)
+		// instance.getValidInput(String, String, String, int, boolean, ValidationErrorList)
 	}
 	
 	public void testGetValidInteger() {
 		System.out.println("getValidInteger");
 		Validator instance = ESAPI.validator();
 		ValidationErrorList errors = new ValidationErrorList();
-		// getValidInteger(String, String, int, int, boolean, ValidationErrorList)
+		// instance.getValidInteger(String, String, int, int, boolean, ValidationErrorList)
 	}
 	
 	public void testGetValidListItem() {
 		System.out.println("getValidListItem");
 		Validator instance = ESAPI.validator();
 		ValidationErrorList errors = new ValidationErrorList();
-		// getValidListItem(String, String, List, ValidationErrorList)
+		// instance.getValidListItem(String, String, List, ValidationErrorList)
 	}
 	
 	public void testGetValidNumber() {

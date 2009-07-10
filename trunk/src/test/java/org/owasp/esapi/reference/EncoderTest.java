@@ -25,13 +25,9 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
-import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
-import org.owasp.esapi.codecs.HTMLEntityCodec;
-import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
-import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.PushbackString;
 import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;

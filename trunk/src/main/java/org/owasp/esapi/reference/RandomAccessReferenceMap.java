@@ -39,6 +39,8 @@ import org.owasp.esapi.errors.AccessControlException;
  */
 public class RandomAccessReferenceMap implements AccessReferenceMap {
 	
+	private static final long serialVersionUID = 8544133840739803001L;
+
 	/** The itod (indirect to direct) */
 	HashMap itod = new HashMap();
 

@@ -37,8 +37,7 @@ import org.owasp.esapi.Logger;
  */
 public class EnterpriseSecurityException extends Exception {
 
-    /** The Constant serialVersionUID. */
-    private static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
 
     /** The logger. */
     protected final Logger logger = ESAPI.getLogger("EnterpriseSecurityException");

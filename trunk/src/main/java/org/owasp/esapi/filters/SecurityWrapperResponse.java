@@ -26,7 +26,6 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 

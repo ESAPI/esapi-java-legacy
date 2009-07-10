@@ -50,10 +50,6 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
-	private static final String USER_EVENT_MAP = "ESAPIUserEventMap";
-    /**
-     *
-     */
     public DefaultIntrusionDetector() {
 	}
 	

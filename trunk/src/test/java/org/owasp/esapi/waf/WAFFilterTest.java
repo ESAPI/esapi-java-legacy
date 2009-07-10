@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.FilterConfig;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import junit.framework.Test;
