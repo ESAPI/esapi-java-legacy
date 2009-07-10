@@ -10,15 +10,15 @@ import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.reference.accesscontrol.policyloader.ACRPolicyFileLoader;
 import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyDTO;
 
-public class DefaultAccessController implements AccessController {
+public class ExperimentalAccessController implements AccessController {
 	private Map ruleMap;
 
 	protected final Logger logger = ESAPI.getLogger("DefaultAccessController");
 	
-	public DefaultAccessController(Map ruleMap) {
+	public ExperimentalAccessController(Map ruleMap) {
 		this.ruleMap = ruleMap;	
 	}
-	public DefaultAccessController() throws AccessControlException {
+	public ExperimentalAccessController() throws AccessControlException {
 		ACRPolicyFileLoader policyDescriptor = new ACRPolicyFileLoader();
 		PolicyDTO policyDTO = policyDescriptor.load();		
 		ruleMap = policyDTO.getAccessControlRules();

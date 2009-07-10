@@ -11,7 +11,7 @@ import org.owasp.esapi.AccessController;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.reference.accesscontrol.AlwaysFalseACR;
 import org.owasp.esapi.reference.accesscontrol.AlwaysTrueACR;
-import org.owasp.esapi.reference.accesscontrol.DefaultAccessController;
+import org.owasp.esapi.reference.accesscontrol.ExperimentalAccessController;
 
 /**
  * Answers the question: is the AccessController itself working properly?
@@ -28,7 +28,7 @@ public class AccessControllerTest {
 		accessControlRules.put("AlwaysTrue", new AlwaysTrueACR());
 		accessControlRules.put("AlwaysFalse", new AlwaysFalseACR());		
 		accessControlRules.put("EchoRuntimeParameter", new EchoRuntimeParameterACR());
-		accessController = new DefaultAccessController(accessControlRules);
+		accessController = new ExperimentalAccessController(accessControlRules);
 	}
 	
 	@Test 

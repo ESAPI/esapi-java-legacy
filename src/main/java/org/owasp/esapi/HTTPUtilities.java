@@ -253,16 +253,22 @@ public interface HTTPUtilities {
     HttpServletResponse getCurrentResponse();
 
 	/**
-	 * Calls getFileUploads with the *current* request.
+	 * Calls getFileUploads with the *current* request, default upload directory, and default allowed file extensions
 	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
 	 */
 	List getFileUploads() throws ValidationException;
 	
     /**
-	 * Parse a multipart HTTP request and extract any files therein.
+	 * Call getFileUploads with the specified request, default upload directory, and default allowed file extensions
 	 */
 	List getFileUploads(HttpServletRequest request) throws ValidationException;
 
+    /**
+	 * Call getFileUploads with the specified request, specified upload directory, and default allowed file extensions
+	 */
+    List getFileUploads(HttpServletRequest request, File finalDir ) throws ValidationException;
+	
+	
     /**
      * Extract uploaded files from a multipart HTTP requests. Implementations must check the content to ensure that it
      * is safe before making a permanent copy on the local filesystem. Checks should include length and content checks,
@@ -279,7 +285,7 @@ public interface HTTPUtilities {
      * @throws ValidationException 
      * 		if the file fails validation
      */
-    List getFileUploads(HttpServletRequest request, File destinationDir) throws ValidationException;
+    List getFileUploads(HttpServletRequest request, File destinationDir, List allowedExtensions) throws ValidationException;
 
 
 	/**

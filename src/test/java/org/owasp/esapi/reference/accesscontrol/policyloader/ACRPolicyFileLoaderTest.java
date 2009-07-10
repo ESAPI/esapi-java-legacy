@@ -25,7 +25,7 @@ public class ACRPolicyFileLoaderTest {
 
 	@Test
 	public void testSetup() throws AccessControlException {
-		assertTrue("AccessController is the correct class", accessController instanceof org.owasp.esapi.reference.accesscontrol.DefaultAccessController);
+		assertTrue("AccessController is the correct class", accessController instanceof org.owasp.esapi.reference.accesscontrol.ExperimentalAccessController);
 		/**
 		 * This tests the policy file
 		 */
