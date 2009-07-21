@@ -83,7 +83,7 @@ public class CSSCodec extends Codec {
         // look for \HHH format
         if (input.isHexDigit(second)) {
             // Search for up to 6 hex digits following until a space
-        	StringBuilder sb = new StringBuilder();
+            StringBuffer sb = new StringBuffer();
             sb.append(second);
             for (int i = 0; i < 5; i++) {
                 Character c = input.next();
@@ -101,7 +101,7 @@ public class CSSCodec extends Codec {
                 int i = Integer.parseInt(sb.toString(), 16);
                 // TODO: in Java 1.5 you can test whether this is a valid code point
                 // with Character.isValidCodePoint() et al.
-                return Character.valueOf((char) i);
+                return new Character((char) i);
             } catch (NumberFormatException e) {
                 // throw an exception for malformed entity?
                 // just continue which will reset and return null

@@ -18,7 +18,9 @@ package org.owasp.esapi.reference;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Stack;
+import java.util.WeakHashMap;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -35,10 +37,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * minute period. Or if there are more than 3 authentication problems in a 10
  * second period. More complex implementations are certainly possible, such as
  * one that establishes a baseline of expected behavior, and then detects
- * deviations from that baseline. This implementation stores state in the
- * user's session, so that it will be properly cleaned up when the session is
- * terminated. State is not otherwise persisted, so attacks that span sessions
- * will not be detectable.
+ * deviations from that baseline.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -50,6 +49,11 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
+	private Map userEvents = new WeakHashMap();
+	
+    /**
+     *
+     */
     public DefaultIntrusionDetector() {
 	}
 	
@@ -60,9 +64,9 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
 	public void addException(Exception e) {
         if ( e instanceof EnterpriseSecurityException ) {
-            logger.warning( Logger.SECURITY_FAILURE, ((EnterpriseSecurityException)e).getLogMessage(), e );
+            logger.warning( Logger.SECURITY, false, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
-            logger.warning( Logger.SECURITY_FAILURE, e.getMessage(), e );
+            logger.warning( Logger.SECURITY, false, e.getMessage(), e );
         }
 
         // add the exception to the current user, which may trigger a detector 
@@ -91,7 +95,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * {@inheritDoc}
 	 */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
-        logger.warning( Logger.SECURITY_FAILURE, "Security event " + eventName + " received : " + logMessage );
+        logger.warning( Logger.SECURITY, false, "Security event " + eventName + " received : " + logMessage );
 
         // add the event to the current user, which may trigger a detector 
         User user = ESAPI.authenticator().getCurrentUser();
@@ -119,7 +123,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
     private void takeSecurityAction( String action, String message ) {
         if ( action.equals( "log" ) ) {
-            logger.fatal( Logger.SECURITY_FAILURE, "INTRUSION - " + message );
+            logger.fatal( Logger.SECURITY, false, "INTRUSION - " + message );
         }
         User user = ESAPI.authenticator().getCurrentUser();
         if (user == User.ANONYMOUS)
@@ -142,20 +146,20 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * 			The name of the event that occurred.
 	 */
 	private void addSecurityEvent(User user, String eventName) {
-		if ( user.isAnonymous() ) return;
-		
-		HashMap eventMap = user.getEventMap();
-		
-		// if there is a threshold, then track this event
-		Threshold threshold = ESAPI.securityConfiguration().getQuota( eventName );
-		if ( threshold != null ) {
-			Event event = (Event)eventMap.get( eventName );
-			if ( event == null ) {
-				event = new Event( eventName );
-				eventMap.put( eventName, event );
-			}
-			// increment
-			event.increment(threshold.count, threshold.interval);
+		Map events = (Map) userEvents.get(user.getAccountName());
+		if (events == null) {
+			events = new HashMap();
+			userEvents.put(user.getAccountName(), events);
+		}
+		Event event = (Event)events.get( eventName );
+		if ( event == null ) {
+			event = new Event( eventName );
+			events.put( eventName, event );
+		}
+
+		Threshold q = ESAPI.securityConfiguration().getQuota( eventName );
+		if ( q.count > 0 ) {
+			event.increment(q.count, q.interval);
 		}
 	}
 

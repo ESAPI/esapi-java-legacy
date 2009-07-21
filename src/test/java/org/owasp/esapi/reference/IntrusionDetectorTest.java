@@ -19,15 +19,14 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.IntegrityException;
 import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.http.MockHttpServletRequest;
-import org.owasp.esapi.http.MockHttpServletResponse;
+import org.owasp.esapi.http.TestHttpServletRequest;
+import org.owasp.esapi.http.TestHttpServletResponse;
 
 /**
  * The Class IntrusionDetectorTest.
@@ -83,15 +82,13 @@ public class IntrusionDetectorTest extends TestCase {
 	 */
 	public void testAddException() throws AuthenticationException {
 		System.out.println("addException");
-		ESAPI.intrusionDetector().addException( new RuntimeException("message") );
-		ESAPI.intrusionDetector().addException( new ValidationException("user message", "log message") );
 		ESAPI.intrusionDetector().addException( new IntrusionException("user message", "log message") );
 		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
         Authenticator auth = ESAPI.authenticator();
 		User user = auth.createUser(username, "addException", "addException");
 		user.enable();
-	    MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+	    TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		user.loginWithPassword("addException");
 		
@@ -116,8 +113,8 @@ public class IntrusionDetectorTest extends TestCase {
         Authenticator auth = ESAPI.authenticator();
 		User user = auth.createUser(username, "addEvent", "addEvent");
 		user.enable();
-	    MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+	    TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		user.loginWithPassword("addEvent");
         

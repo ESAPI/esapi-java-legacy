@@ -15,21 +15,15 @@
  */
 package org.owasp.esapi.reference;
 
-import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
-import java.security.Provider;
 import java.security.PublicKey;
 import java.security.SecureRandom;
-import java.security.Security;
 import java.security.Signature;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeMap;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -45,6 +39,7 @@ import org.owasp.esapi.errors.IntegrityException;
  * layers on the JCE provided cryptographic package. Algorithms used are
  * configurable in the ESAPI.properties file.
  * 
+ * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -56,73 +51,37 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     private static SecretKeySpec secretKeySpec = null;
     private static String encryptAlgorithm = "AES";
     private static String encoding = "UTF-8"; 
-    private static int encryptionKeyLength = 256;
-    
+    private static int keysize = 128;   // 192 and 256 bits may not be available until Java 1.5
+
     // digital signatures
     private static PrivateKey privateKey = null;
 	private static PublicKey publicKey = null;
 	private static String signatureAlgorithm = "SHAwithDSA";
     private static String randomAlgorithm = "SHA1PRNG";
-	private static int signatureKeyLength = 1024;
 	
 	// hashing
 	private static String hashAlgorithm = "SHA-512";
-	private static int hashIterations = 1024;
+	
 	
     /**
-     * Generates a new strongly random secret key and salt that can be used in the ESAPI properties file.
-     * 
+     *
      * @param args
      * @throws java.lang.Exception
      */
     public static void main( String[] args ) throws Exception {
-		System.out.println( "Generating a new secret key" );
-		System.out.println( "   use -print to show available algorithms" );
-		
-		// print out available ciphers
-		if ( args.length == 1 && args[0].equalsIgnoreCase("-print" ) ) {
-			System.out.println( "AVAILABLE ALGORITHMS" );
-					
-			Provider[] providers = Security.getProviders();
-			TreeMap tm = new TreeMap();
-			for (int i = 0; i != providers.length; i++) {
-				Iterator it = providers[i].keySet().iterator();
-				while (it.hasNext()) {
-		            String key = (String) it.next();
-		            String value = providers[i].getProperty( key );
-		            tm.put(key, value);
-				}
-			}
-			Iterator it = tm.entrySet().iterator();
-			while( it.hasNext() ) {
-				Map.Entry entry = (Map.Entry)it.next();
-				String key = (String)entry.getKey();
-				String value = (String)entry.getValue();
-	        	System.out.println( "   " + key + " -> "+ value );
-			}
-		}
-		
-        // setup algorithms
-        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
-		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
-		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
-
+        System.out.println( "Generating a new secret key" );
         KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
-		SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-        kgen.init( encryptionKeyLength, random );
-        SecretKey secretKey = kgen.generateKey();        
+        kgen.init(keysize);
+        SecretKey secretKey = kgen.generateKey();
         byte[] raw = secretKey.getEncoded();
-        byte[] salt = new byte[20];
-        random.nextBytes( salt );
         System.out.println( "\nCopy and paste this into ESAPI.properties\n" );
-        System.out.println( "Encryptor.MasterKey=" + ESAPI.encoder().encodeForBase64(raw, false) );
-        System.out.println( "Encryptor.MasterSalt=" + ESAPI.encoder().encodeForBase64(salt, false) );
+        System.out.println( ESAPI.encoder().encodeForBase64(raw, false) );
         System.out.println();
     }
 	
     
     /**
-     * {@inheritDoc}
+     *
      */
     public JavaEncryptor() {
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
@@ -133,21 +92,18 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
 		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
 		hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
-		hashIterations = ESAPI.securityConfiguration().getHashIterations();
-		encoding = ESAPI.securityConfiguration().getCharacterEncoding();
-		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
-        signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
-        
+		
 		try {
             // Set up encryption and decryption
             secretKeySpec = new SecretKeySpec(skey, encryptAlgorithm );
+			encoding = ESAPI.securityConfiguration().getCharacterEncoding();
 
 			// Set up signing keypair using the master password and salt
-			KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm);
+			KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
 			SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
 			byte[] seed = hash(new String(skey),new String(salt)).getBytes();
 			random.setSeed(seed);
-			keyGen.initialize(signatureKeyLength, random);
+			keyGen.initialize(1024, random);
 			KeyPair pair = keyGen.generateKeyPair();
 			privateKey = pair.getPrivate();
 			publicKey = pair.getPublic();
@@ -157,24 +113,18 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		}
 	}
 
-	/**
-     * {@inheritDoc}
-     * 
-	 * Hashes the data with the supplied salt and the number of iterations specified in
-	 * the ESAPI SecurityConfiguration.
-	 */
-	public String hash(String plaintext, String salt) throws EncryptionException {
-		return hash( plaintext, salt, hashIterations );
-	}
+	
+	
+	
 	
 	/**
      * {@inheritDoc}
      * 
 	 * Hashes the data using the specified algorithm and the Java MessageDigest class. This method
-	 * first adds the salt, a separator (":"), and the data, and then rehashes the specified number of iterations
-	 * in order to help strengthen weak passwords.
+	 * first adds the salt, a separator (":"), and the data, and then rehashes 1024 times to help 
+	 * strengthen weak passwords.
 	 */
-	public String hash(String plaintext, String salt, int iterations) throws EncryptionException {
+	public String hash(String plaintext, String salt) throws EncryptionException {
 		byte[] bytes = null;
 		try {
 			MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
@@ -185,7 +135,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
 			// rehash a number of times to help strengthen weak passwords
 			bytes = digest.digest();
-			for (int i = 0; i < iterations; i++) {
+			for (int i = 0; i < 1024; i++) {
 				digest.reset();
 				bytes = digest.digest(bytes);
 			}
@@ -207,8 +157,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			byte[] output = plaintext.getBytes(encoding);
 			byte[] enc = encrypter.doFinal(output);
 			return ESAPI.encoder().encodeForBase64(enc,false);
-		} catch (InvalidKeyException ike) {
-			throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
 		} catch (Exception e) {
 			throw new EncryptionException("Encryption failure", "Encryption problem: " + e.getMessage(), e);
 		}
@@ -225,8 +173,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			byte[] dec = ESAPI.encoder().decodeFromBase64(ciphertext);
 			byte[] output = decrypter.doFinal(dec);
 			return new String(output, encoding);
-		} catch (InvalidKeyException ike) {
-			throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
 		} catch (Exception e) {
 			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
 		}
@@ -236,14 +182,13 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	* {@inheritDoc}
 	*/
 	public String sign(String data) throws EncryptionException {
+		String signatureAlgorithm="SHAwithDSA";
 		try {
 			Signature signer = Signature.getInstance(signatureAlgorithm);
 			signer.initSign(privateKey);
 			signer.update(data.getBytes());
 			byte[] bytes = signer.sign();
-			return ESAPI.encoder().encodeForBase64(bytes, false);
-		} catch (InvalidKeyException ike) {
-			throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
+			return ESAPI.encoder().encodeForBase64(bytes,true);
 		} catch (Exception e) {
 			throw new EncryptionException("Signature failure", "Can't find signature algorithm " + signatureAlgorithm, e);
 		}
@@ -275,11 +220,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		try {
 			// mix in some random data so even identical data and timestamp produces different seals
 			String random = ESAPI.randomizer().getRandomString(10, DefaultEncoder.CHAR_ALPHANUMERICS);
-			String plaintext = expiration + ":" + random + ":" + data;
-			// add integrity check
-			String sig = this.sign( plaintext );
-			String ciphertext = this.encrypt( plaintext + ":" + sig );
-			return ciphertext;
+			return this.encrypt(expiration + ":" + random + ":" + data);
 		} catch( EncryptionException e ) {
 			throw new IntegrityException( e.getUserMessage(), e.getLogMessage(), e );
 		}
@@ -289,34 +230,29 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	* {@inheritDoc}
 	*/
 	public String unseal(String seal) throws EncryptionException {
+		
 		String plaintext = null;
 		try {
-			System.out.println( "DECRYPTING: " + seal );
 			plaintext = decrypt(seal);
-
-			String[] parts = plaintext.split(":");
-			if (parts.length != 4) {
-				throw new EncryptionException("Invalid seal", "Seal was not formatted properly");
-			}
-	
-			String timestring = parts[0];
-			long now = new Date().getTime();
-			long expiration = Long.parseLong(timestring);
-			if (now > expiration) {
-				throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
-			}
-			String random = parts[1];
-			String data = parts[2];
-			String sig = parts[3];
-			if (!this.verifySignature(sig, timestring + ":" + random + ":" + data ) ) {
-				throw new EncryptionException("Invalid seal", "Seal integrity check failed");
-			}	
-			return data;
 		} catch (EncryptionException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new EncryptionException("Invalid seal", "Invalid seal:" + e.getMessage(), e);
+			throw new EncryptionException("Invalid seal", "Seal did not decrypt properly", e);
 		}
+
+		int index = plaintext.indexOf(":");
+		if (index == -1) {
+			throw new EncryptionException("Invalid seal", "Seal did not contain properly formatted separator");
+		}
+
+		String timestring = plaintext.substring(0, index);
+		long now = new Date().getTime();
+		long expiration = Long.parseLong(timestring);
+		if (now > expiration) {
+			throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
+		}
+
+		index = plaintext.indexOf(":", index+1);
+		String sealedValue = plaintext.substring(index + 1);
+		return sealedValue;
 	}
 
 	
@@ -346,21 +282,4 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		return new Date().getTime() + offset;
 	}
 
-   /**
-    * Compute an HMAC for a String.  Experimental
-    */
-	/******
-	private String computeHMAC( String input ) throws EncryptionException {
-		try {
-			Mac hmac = Mac.getInstance("HMacMD5");
-			hmac.init(secretKeySpec);
-			byte[] bytes = hmac.doFinal(input.getBytes());
-			return ESAPI.encoder().encodeForBase64(bytes, false);
-		} catch (InvalidKeyException ike) {
-			throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
-	    } catch (Exception e) {
-	    	throw new EncryptionException("Could not compute HMAC", "Problem computing HMAC for " + input, e );
-	    }
-	}
-	*****/
 }

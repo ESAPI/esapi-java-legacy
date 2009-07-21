@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<policy>
+
+	<aliases>
+		<!-- if attribute "type" is not specified or is set to "string", assumed to be literal string -->
+		<alias name="INPUT_VALIDATION_ERROR">/security/input.jsp</alias>
+		<alias name="ADMIN_PATH" type="regex">^/admin/.*</alias>
+
+	</aliases>
+
+	<settings>
+		<mode>block</mode> <!-- mode can be "block" or "log" -->
+		<error-handling>
+			<default-page>/security/error.jsp</default-page>
+			<default-status>403</default-status>
+		</error-handling>
+	</settings>
+
+	<authentication-rules path="/.*"> <!--  key="sessionuserObjKey"  -->
+		<path-exception>/</path-exception>
+		<path-exception>/index.html</path-exception>
+		<path-exception>/login.jsp</path-exception>
+		<path-exception>/index.jsp</path-exception>
+		<path-exception type="regex">/images/.*</path-exception>
+		<path-exception type="regex">/css/.*</path-exception>
+		<path-exception type="regex">/help/.*</path-exception>
+	</authentication-rules>
+
+	<authorization-rules>
+
+		<restrict-source-ip type="regex" ip-regex="(192\.168\.1\\..*|127.0.0.1)">/admin/.*</restrict-source-ip>
+
+		<!-- operator contains,equals,inList,exists -->
+		<must-match path="^/admin/.*" variable="request.header.x-roles" operator="contains" value="admin"/>
+
+	</authorization-rules>
+
+	<url-rules>
+		<restrict-extension deny=".jpg"/>
+
+		<restrict-method deny="GET" path=".*\.do$"/>
+		<restrict-method allow="(GET|POST|TRACE)"/>
+
+		<enforce-https path="/.*">
+			<path-exception>/index.html</path-exception>
+			<path-exception>/index.jsp</path-exception>
+			<path-exception type="regex">/images/.*</path-exception>
+			<path-exception type="regex">/css/.*</path-exception>
+			<path-exception type="regex">/help/.*</path-exception>
+		</enforce-https>
+	</url-rules>
+
+
+	<!-- act on incoming headers and parameters -->
+	<header-rules>
+
+		<restrict-content-type deny="multipart" />
+		<restrict-content-type allow="text/plain" />
+		<restrict-content-type allow="x-www-form-urlencoded" />
+
+		<restrict-user-agent deny=".*GoogleBot.*" />
+		<restrict-user-agent allow=".*" />
+
+	</header-rules>
+
+	<!-- expert rules, not for faint of heart -->
+	<custom-rules>
+		<rule>
+			<match-and>
+				<match-not variable="request.URI" operator="regex">/(zz|foo|bar|zaz).jsp</match-not>
+				<match variable="request.parameters.*" operator="regex">![NY|MO|CA]</match>
+			</match-and>
+			<actions>
+				<redirect status="500"/>
+				<log>custom message</log>
+				<invalidate/>
+			</actions>
+		</rule>
+	</custom-rules>
+
+	<virtual-patches>
+		<virtual-patch id="1234" path="/foo.jsp" variable="request.parameters.bar" pattern="[0-9a-zA-Z]" message="zomg attax"/>
+	</virtual-patches>
+
+	<!-- act on outbound headers and data -->
+	<outbound-rules>
+
+		<add-header name="FOO" value="BAR" path="/.*">
+			<path-exception path="/foobar/.*"/>
+		</add-header>
+
+		<add-http-only-flag>
+			<cookie name=".*" />
+		</add-http-only-flag>
+
+		<add-secure-flag>
+			<cookie name=".*" />
+		</add-secure-flag>
+
+		<dynamic-insertion pattern="&lt;/body&gt;">
+			<replacement><![CDATA[this is a test]]></replacement>
+		</dynamic-insertion>
+
+		<detect-content content-type=".*text/.*" pattern=".*2008.*"/>
+
+	</outbound-rules>
+</policy>
+
+<!-- canonicalize, status -->

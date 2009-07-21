@@ -16,7 +16,6 @@
 package org.owasp.esapi;
 
 import java.util.Arrays;
-import java.util.regex.Pattern;
 
 /**
  * String utilities used in various filters.
@@ -27,19 +26,14 @@ import java.util.regex.Pattern;
  */
 public class StringUtilities {
 
-	private static final Pattern p = Pattern.compile( "\\s");
-	public static String replaceLinearWhiteSpace( String input ) {
-		return p.matcher(input).replaceAll( " " );
-	}
-	
 	/**
 	 * Removes all unprintable characters from a string 
-	 * and replaces with a space.
+	 * and replaces with a space for use in an HTTP header
 	 * @param input
-	 * @return the stripped value
+	 * @return the stripped header
 	 */
 	public static String stripControls( String input ) {
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt( i );
 			if ( c > 0x20 && c < 0x7f ) {
@@ -60,7 +54,7 @@ public class StringUtilities {
      * @return the char[]
      */
     public static char[] union(char[] c1, char[] c2) {
-    	StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         for (int i = 0; i < c1.length; i++) {
             if (!contains(sb, c1[i]))
                 sb.append(c1[i]);
@@ -77,12 +71,12 @@ public class StringUtilities {
 
 
 	/**
-     * Returns true if the character is contained in the provided StringBuilder.
+     * Returns true if the character is contained in the provided StringBuffer.
      * @param input 
      * @param c 
      * @return
      */
-    public static boolean contains(StringBuilder input, char c) {
+    public static boolean contains(StringBuffer input, char c) {
         for (int i = 0; i < input.length(); i++) {
             if (input.charAt(i) == c)
                 return true;

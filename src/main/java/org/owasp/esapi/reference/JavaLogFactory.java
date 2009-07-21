@@ -1,10 +1,8 @@
 package org.owasp.esapi.reference;
 
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.logging.Level;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
@@ -17,32 +15,36 @@ import org.owasp.esapi.User;
  * log message with the currently logged in user and the word "SECURITY" for security related events. See the 
  * <a href="JavaLogFactory.JavaLogger.html">JavaLogFactory.JavaLogger</a> Javadocs for the details on the JavaLogger reference implementation.
  * 
- * @author Mike Fauzy (mike.fauzy@aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.LogFactory
  * @see org.owasp.esapi.reference.JavaLogFactory.JavaLogger
  */
 public class JavaLogFactory implements LogFactory {
+
+	private String applicationName;
 	
-	private HashMap<Serializable, Logger> loggersMap = new HashMap<Serializable, Logger>();
+	private HashMap loggersMap = new HashMap();
 	
 	/**
-	* Null argument constructor for this implementation of the LogFactory interface
-	* needed for dynamic configuration.
+	* Constructor for this implementation of the LogFactory interface.
+	* 
+	* @param applicationName The name of this application this logger is being constructed for.
 	*/
-	public JavaLogFactory() {}
+	public JavaLogFactory(String applicationName) {
+		this.applicationName = applicationName;
+	}
 	
 	/**
 	* {@inheritDoc}
 	*/
-	public Logger getLogger(Class clazz) {
+    public Logger getLogger(Class clazz) {
     	
     	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
     	Logger classLogger = (Logger) loggersMap.get(clazz);
     	
     	if (classLogger == null) {
-    		classLogger = new JavaLogger(clazz.getName());
+    		classLogger = new JavaLogger(applicationName, clazz.getName());
     		loggersMap.put(clazz, classLogger);
     	}
 		return classLogger;
@@ -57,7 +59,7 @@ public class JavaLogFactory implements LogFactory {
     	Logger moduleLogger = (Logger) loggersMap.get(moduleName);
     	
     	if (moduleLogger == null) {
-    		moduleLogger = new JavaLogger(moduleName);
+    		moduleLogger = new JavaLogger(applicationName, moduleName);
     		loggersMap.put(moduleName, moduleLogger);    		
     	}
 		return moduleLogger;
@@ -69,9 +71,7 @@ public class JavaLogFactory implements LogFactory {
      */
     public static class JavaLoggerLevel extends Level {
 
-        protected static final long serialVersionUID = 1L;
-
-        /**
+    	/**
     	 * Defines a custom error level below SEVERE but above WARNING since this level isn't defined directly
     	 * by java.util.Logger already.
     	 */
@@ -105,26 +105,32 @@ public class JavaLogFactory implements LogFactory {
     	/** The jlogger object used by this class to log everything. */
         private java.util.logging.Logger jlogger = null;
 
+        /** The application name using this log. */
+        private String applicationName = null;
+
         /** The module name using this log. */
         private String moduleName = null;
 
-        /** The application name defined in ESAPI.properties */
-    	private String applicationName=ESAPI.securityConfiguration().getApplicationName();
-
-        /** Log the application name? */
-    	private static boolean logAppName = ESAPI.securityConfiguration().getLogApplicationName();
-
-    	/** Log the server ip? */
-    	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
-    	
+        // Initialize the current logging level to the value defined in the configuration properties file
+        /** The current level that logging is set to. */ 
+        private static Level currentLevel = 
+        	convertESAPILeveltoLoggerLevel( ESAPI.securityConfiguration().getLogLevel() );
+        
         /**
          * Public constructor should only ever be called via the appropriate LogFactory
          * 
+         * @param applicationName the application name
          * @param moduleName the module name
          */
-        private JavaLogger(String moduleName) {
+        private JavaLogger(String applicationName, String moduleName) {
+            this.applicationName = applicationName;
             this.moduleName = moduleName;
             this.jlogger = java.util.logging.Logger.getLogger(applicationName + ":" + moduleName);
+            
+            // Set the logging level defined in the config file.
+            // Beware getting info from SecurityConfiguration, since it logs. We made sure it doesn't log in the
+            // constructor and the getLogLevel() method, so this should work.
+            this.jlogger.setLevel( JavaLogger.currentLevel );
         }
 
         /**
@@ -136,10 +142,10 @@ public class JavaLogFactory implements LogFactory {
         public void setLevel(int level)
         {
         	try {
-        		jlogger.setLevel(convertESAPILeveltoLoggerLevel( level ));
+        		JavaLogger.currentLevel = convertESAPILeveltoLoggerLevel( level );
         	}
         	catch (IllegalArgumentException e) {
-       			this.error(Logger.SECURITY_FAILURE, "", e);    		
+       			this.error(Logger.SECURITY, false, "", e);    		
         	}
          }
         
@@ -169,85 +175,85 @@ public class JavaLogFactory implements LogFactory {
         /**
     	* {@inheritDoc}
     	*/
-        public void trace(EventType type, String message, Throwable throwable) {
-            log(Level.FINEST, type, message, throwable);
+        public void trace(EventType type, boolean success, String message, Throwable throwable) {
+            log(Level.FINEST, type, success, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void trace(EventType type, String message) {
-            log(Level.FINEST, type, message, null);
+        public void trace(EventType type, boolean success, String message) {
+            log(Level.FINEST, type, success, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void debug(EventType type, String message, Throwable throwable) {
-            log(Level.FINE, type, message, throwable);
+        public void debug(EventType type, boolean success, String message, Throwable throwable) {
+            log(Level.FINE, type, success, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void debug(EventType type, String message) {
-            log(Level.FINE, type, message, null);
+        public void debug(EventType type, boolean success, String message) {
+            log(Level.FINE, type, success, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void info(EventType type, String message) {
-            log(Level.INFO, type, message, null);
+        public void info(EventType type, boolean success, String message) {
+            log(Level.INFO, type, success, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void info(EventType type, String message, Throwable throwable) {
-            log(Level.INFO, type, message, throwable);
+        public void info(EventType type, boolean success, String message, Throwable throwable) {
+            log(Level.INFO, type, success, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void warning(EventType type, String message, Throwable throwable) {
-            log(Level.WARNING, type, message, throwable);
+        public void warning(EventType type, boolean success, String message, Throwable throwable) {
+            log(Level.WARNING, type, success, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void warning(EventType type, String message) {
-            log(Level.WARNING, type, message, null);
+        public void warning(EventType type, boolean success, String message) {
+            log(Level.WARNING, type, success, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void error(EventType type, String message, Throwable throwable) {
-            log(Level.SEVERE, type, message, throwable);
+        public void error(EventType type, boolean success, String message, Throwable throwable) {
+            log(Level.SEVERE, type, success, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void error(EventType type, String message) {
-            log(Level.SEVERE, type, message, null);
+        public void error(EventType type, boolean success, String message) {
+            log(Level.SEVERE, type, success, message, null);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void fatal(EventType type, String message, Throwable throwable) {
-            log(Level.SEVERE, type, message, throwable);
+        public void fatal(EventType type, boolean success, String message, Throwable throwable) {
+            log(Level.SEVERE, type, success, message, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
-        public void fatal(EventType type, String message) {
-            log(Level.SEVERE, type, message, null);
+        public void fatal(EventType type, boolean success, String message) {
+            log(Level.SEVERE, type, success, message, null);
         }
 
         /**
@@ -265,24 +271,29 @@ public class JavaLogFactory implements LogFactory {
          * @param message the message
          * @param throwable the throwable
          */
-        private void log(Level level, EventType type, String message, Throwable throwable) {
+        private void log(Level level, EventType type, boolean success, String message, Throwable throwable) {
+
+        	// Set the current logging level to the current value since it 'might' have been changed for some other log.
+        	this.jlogger.setLevel( JavaLogger.currentLevel );
         	
-        	// Check to see if we need to log
+        	// Before we waste all kinds of time preparing this event for the log, let check to see if its loggable
         	if (!jlogger.isLoggable( level )) return;
-        	
+       	
+        	User user = ESAPI.authenticator().getCurrentUser();
+            
             // create a random session number for the user to represent the user's 'session', if it doesn't exist already
-            String sid = null;
-            HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-            if ( request != null ) {
-                HttpSession session = request.getSession( false );
-                if ( session != null ) {
-	                sid = (String)session.getAttribute("ESAPI_SESSION");
-	                // if there is no session ID for the user yet, we create one and store it in the user's session
-		            if ( sid == null ) {
-		            	sid = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
-		            	session.setAttribute("ESAPI_SESSION", sid);
-		            }
-                }
+            String userSessionIDforLogging = "unknown";
+
+            try {
+                HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession( false );
+                userSessionIDforLogging = (String)session.getAttribute("ESAPI_SESSION");
+                // if there is no session ID for the user yet, we create one and store it in the user's session
+	            if ( userSessionIDforLogging == null ) {
+	            	userSessionIDforLogging = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+	            	session.setAttribute("ESAPI_SESSION", userSessionIDforLogging);
+	            }
+            } catch( NullPointerException e ) {
+            	// continue
             }
             
             // ensure there's something to log
@@ -299,31 +310,31 @@ public class JavaLogFactory implements LogFactory {
                 }
             }
             
-			// log user information - username:session@ipaddr
-        	User user = ESAPI.authenticator().getCurrentUser();            
-			String userInfo = "";
-			if ( user != null && type != null) {
-				userInfo = user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
-			}
-
-			// log server, port, app name, module name -- server:80/app/module
-			StringBuilder appInfo = new StringBuilder();
-			if ( ESAPI.currentRequest() != null && logServerIP ) {
-				appInfo.append( ESAPI.currentRequest().getLocalAddr() + ":" + ESAPI.currentRequest().getLocalPort() );
-			}
-			if ( logAppName ) {
-				appInfo.append( "/" + applicationName );
-			}
-			appInfo.append( "/"  + moduleName );
-			
-			// log the message
-			jlogger.log(level, "[" + userInfo + " -> " + appInfo + "] " + clean, throwable);
+            // convert the stack trace into something that can be logged
+            if ( throwable != null ) {
+            	String fqn = throwable.getClass().getName();
+            	int index = fqn.lastIndexOf('.');
+            	if ( index > 0 ) fqn = fqn.substring(index + 1);
+            	StackTraceElement ste = throwable.getStackTrace()[0];
+            	clean += "\n    " + fqn + " @ " + ste.getClassName() + "." + ste.getMethodName() + "(" + ste.getFileName() 
+            		+ ":" + ste.getLineNumber() + ")";
+            	clean += "\n	" + throwable.getMessage();
+            }
+            
+            // create the message to log
+            String msg = "";
+            if ( user != null ) {
+            	msg = type + "-" + (success ? "SUCCESS" : "FAILURE" ) + " " + user.getAccountName() + "@"+ user.getLastHostAddress() +":" + userSessionIDforLogging + " -- " + clean;
+            }
+            
+            jlogger.logp(level, applicationName, moduleName, msg);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isDebugEnabled() {
+            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.FINE);
         }
 
@@ -331,6 +342,7 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isErrorEnabled() {
+            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(JavaLoggerLevel.ERROR_LEVEL);
         }
 
@@ -338,6 +350,7 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isFatalEnabled() {
+            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.SEVERE);
         }
 
@@ -345,6 +358,7 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isInfoEnabled() {
+            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.INFO);
         }
 
@@ -352,6 +366,7 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isTraceEnabled() {
+            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.FINEST);
         }
 
@@ -359,7 +374,9 @@ public class JavaLogFactory implements LogFactory {
     	* {@inheritDoc}
     	*/
         public boolean isWarningEnabled() {
+            this.jlogger.setLevel( JavaLogger.currentLevel );
     	    return jlogger.isLoggable(Level.WARNING);
         }
+
     }
 }

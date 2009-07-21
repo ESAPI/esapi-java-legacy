@@ -30,10 +30,8 @@ public class JavaScriptCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Returns backslash encoded numeric format. Does not use backslash character escapes
-	 * such as, \" or \' as these may cause parsing problems. For example, if a javascript
-	 * attribute, such as onmouseover, contains a \" that will close the entire attribute and
-	 * allow an attacker to inject another script attribute.
+	 * Returns backslash encoded character. This implementation does not support
+	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
      *
      * @param immune
      */
@@ -81,12 +79,11 @@ public class JavaScriptCodec extends Codec {
 	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
-	 * See http://www.planetpdf.com/codecuts/pdfs/tutorial/jsspec.pdf 
+	 * 
 	 * Formats all are legal both upper/lower case:
 	 *   \\a - special characters
 	 *   \\xHH
 	 *   \\uHHHH
-	 *   \\OOO (1, 2, or 3 digits)
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
@@ -108,106 +105,69 @@ public class JavaScriptCodec extends Codec {
 			return null;
 		}
 		
-		// \0 collides with the octal decoder and is non-standard
-		// if ( second.charValue() == '0' ) {
-		//	return Character.valueOf( (char)0x00 );
-		if ( second.charValue() == 'b' ) {
-			return Character.valueOf( (char)0x08 );
+		if ( second.charValue() == '0' ) {
+			return new Character( (char)0x00 );
+		} else if ( second.charValue() == 'b' ) {
+			return new Character( (char)0x08 );
 		} else if ( second.charValue() == 't' ) {
-			return Character.valueOf( (char)0x09 );
+			return new Character( (char)0x09 );
 		} else if ( second.charValue() == 'n' ) {
-			return Character.valueOf( (char)0x0a );
+			return new Character( (char)0x0a );
 		} else if ( second.charValue() == 'v' ) {
-			return Character.valueOf( (char)0x0b );
+			return new Character( (char)0x0b );
 		} else if ( second.charValue() == 'f' ) {
-			return Character.valueOf( (char)0x0c );
+			return new Character( (char)0x0c );
 		} else if ( second.charValue() == 'r' ) {
-			return Character.valueOf( (char)0x0d );
+			return new Character( (char)0x0d );
 		} else if ( second.charValue() == '\"' ) {
-			return Character.valueOf( (char)0x22 );
+			return new Character( (char)0x22 );
 		} else if ( second.charValue() == '\'' ) {
-			return Character.valueOf( (char)0x27 );
+			return new Character( (char)0x27 );
 		} else if ( second.charValue() == '\\' ) {
-			return Character.valueOf( (char)0x5c );
+			return new Character( (char)0x5c );
 			
 		// look for \\xXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
 			// Search for exactly 2 hex digits following
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			for ( int i=0; i<2; i++ ) {
 				Character c = input.nextHex();
 				if ( c != null ) sb.append( c );
-				else {
+			}
+			if ( sb.length() == 2 ) {
+				try {
+					// parse the hex digit and create a character
+					int i = Integer.parseInt(sb.toString(), 16);
+					// TODO: in Java 1.5 you can test whether this is a valid code point
+					// with Character.isValidCodePoint() et al.
+					return new Character( (char)i );
+				} catch( NumberFormatException e ) {
+					// throw an exception for malformed entity?
 					input.reset();
 					return null;
 				}
-			}
-			try {
-				// parse the hex digit and create a character
-				int i = Integer.parseInt(sb.toString(), 16);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
-			} catch( NumberFormatException e ) {
-				// throw an exception for malformed entity?
-				input.reset();
-				return null;
 			}
 			
 		// look for \\uXXXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'u') {
 			// Search for exactly 4 hex digits following
-			StringBuilder sb = new StringBuilder();
+			StringBuffer sb = new StringBuffer();
 			for ( int i=0; i<4; i++ ) {
 				Character c = input.nextHex();
 				if ( c != null ) sb.append( c );
-				else {
+			}
+			if ( sb.length() == 4 ) {
+				try {
+					// parse the hex digit and create a character
+					int i = Integer.parseInt(sb.toString(), 16);
+					// TODO: in Java 1.5 you can test whether this is a valid code point
+					// with Character.isValidCodePoint() et al.
+					return new Character( (char)i );
+				} catch( NumberFormatException e ) {
+					// throw an exception for malformed entity?
 					input.reset();
 					return null;
 				}
-			}
-			try {
-				// parse the hex string and create a character
-				int i = Integer.parseInt(sb.toString(), 16);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
-			} catch( NumberFormatException e ) {
-				// throw an exception for malformed entity?
-				input.reset();
-				return null;
-			}
-			
-		// look for one, two, or three octal digits
-		} else if ( input.isOctalDigit( second.charValue() ) ) {
-			StringBuilder sb = new StringBuilder();
-            // get digit 1
-            sb.append(second);
-            
-            // get digit 2 if present
-            Character c2 = input.next();
-            if ( !input.isOctalDigit(c2) ) {
-            	input.pushback( c2 );
-            } else {
-            	sb.append( c2 );
-	            // get digit 3 if present
-	            Character c3 = input.next();
-	            if ( !input.isOctalDigit(c3) ) {
-	            	input.pushback( c3 );
-	            } else {
-	            	sb.append( c3 );
-	            }
-            }
-			try {
-				// parse the octal string and create a character
-				int i = Integer.parseInt(sb.toString(), 8);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
-			} catch( NumberFormatException e ) {
-				// throw an exception for malformed entity?
-				input.reset();
-				return null;
 			}
 		}
 		

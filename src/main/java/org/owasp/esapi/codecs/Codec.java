@@ -35,7 +35,7 @@ public abstract class Codec {
 	 * string for that character to save time later. If the character shouldn't be
 	 * encoded, then store null.
 	 */
-	private static final String[] hex = new String[256];
+	protected static final String[] hex = new String[256];
 
 	static {
 		for ( char c = 0; c < 0xFF; c++ ) {
@@ -63,19 +63,14 @@ public abstract class Codec {
 	 * @return the encoded String
 	 */
     public String encode(char[] immune, String input) {
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            sb.append(encodeCharacter(immune, Character.valueOf(c)));
+            sb.append(encodeCharacter(immune, new Character(c)));
         }
         return sb.toString();
     }
-    
-//    public abstract String encodeString( String input ) ;
-	
-//    public abstract String encodeDate( String input ) ;
-	
-//    public abstract String encodeNumber( String input ) ;
+
 	
 	/**
 	 * Default implementation that should be overridden in specific codecs.
@@ -99,7 +94,7 @@ public abstract class Codec {
 	 *		the decoded String
 	 */
     public String decode(String input) {
-        StringBuilder sb = new StringBuilder();
+        StringBuffer sb = new StringBuffer();
         PushbackString pbs = new PushbackString(input);
         while (pbs.hasNext()) {
             Character c = decodeCharacter(pbs);
@@ -137,14 +132,14 @@ public abstract class Codec {
 		return hex[c];
 	}
 
-	public static String toOctal( char c ) {
-		if ( c > 0xFF ) return null;
-		return Integer.toOctalString( c );
-	}
-
+	/**
+	 * Return the hex value of a character as a string without leading zeroes.
+     *
+     * @param c
+     * @return
+     */
 	public static String toHex( char c ) {
-		if ( c > 0xFF ) return null;
-		return Integer.toHexString( c );
+		return Integer.toHexString(c);
 	}
 
 	/**

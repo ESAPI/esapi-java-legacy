@@ -119,7 +119,7 @@ public class CodecTest extends TestCase {
      */
     public void testEncodeCharacter() {
         System.out.println("encodeCharacter");
-        Character c = Character.valueOf('<');
+        Character c = new Character('<');
         char[] immune = new char[0];
         
         // htmlCodec
@@ -138,7 +138,7 @@ public class CodecTest extends TestCase {
         assertEquals( "\\3c ", cssCodec.encodeCharacter(immune, c) );
 
         // mySQLCodecANSI
-        assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(immune, Character.valueOf('\'')) );
+        assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(immune, new Character('\'')) );
 
         // mySQLCodecStandard
         assertEquals( "\\<", mySQLCodecStandard.encodeCharacter(immune, c) );
@@ -198,7 +198,7 @@ public class CodecTest extends TestCase {
      */
     public void testDecodeCharacter() {
         System.out.println("decodeCharacter");
-        Character c = Character.valueOf('<');
+        Character c = new Character('<');
 
         // htmlCodec
         assertEquals( c, htmlCodec.decodeCharacter(new PushbackString("&lt;")) );
@@ -216,7 +216,7 @@ public class CodecTest extends TestCase {
         assertEquals( c, cssCodec.decodeCharacter(new PushbackString("\\3c") ));
 
         // mySQLCodecANSI
-        assertEquals( Character.valueOf('\''), mySQLCodecANSI.decodeCharacter(new PushbackString("\'\'") ));
+        assertEquals( new Character('\''), mySQLCodecANSI.decodeCharacter(new PushbackString("\'\'") ));
 
         // mySQLCodecStandard
         assertEquals( c, mySQLCodecStandard.decodeCharacter(new PushbackString("\\<") ));

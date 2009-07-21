@@ -10,7 +10,6 @@
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
- * @author Mike Fauzy <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -20,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.regex.Pattern;
+
 
 /**
  * The SecurityConfiguration interface stores all configuration information
@@ -53,63 +52,6 @@ public interface SecurityConfiguration {
 	public String getApplicationName();
 	
 	/**
-	 * Returns the fully qualified classname of the ESAPI Logging implementation.
-	 */
-	public String getLogImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Authentication implementation.
-	 */
-	public String getAuthenticationImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Encoder implementation.
-	 */
-	public String getEncoderImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Access Control implementation.
-	 */
-	public String getAccessControlImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Intrusion Detection implementation.
-	 */
-	public String getIntrusionDetectionImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Randomizer implementation.
-	 */
-	public String getRandomizerImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Encryption implementation.
-	 */
-	public String getEncryptionImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI Validation implementation.
-	 */
-	public String getValidationImplementation();
-	
-	/**
-	 * Returns the validation pattern for a particular type
-	 * @param type
-	 * @return the validation pattern
-	 */
-    public Pattern getValidationPattern( String typeName );
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI OS Execution implementation.
-	 */
-	public String getExecutorImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI HTTPUtilities implementation.
-	 */
-	public String getHTTPUtilitiesImplementation();
-	
-	/**
 	 * Gets the master key. This password is used to encrypt/decrypt other files or types
 	 * of data that need to be protected by your application.
 	 * 
@@ -118,24 +60,12 @@ public interface SecurityConfiguration {
 	public byte[] getMasterKey();
 
 	/**
-     * Retrieves the upload directory as specified in the ESAPI.properties file.
-     * @return the upload directory
-     */
-    public File getUploadDirectory();
-	
-    /**
-     * Retrieves the temp directory to use when uploading files, as specified in ESAPI.properties.
-     * @return the temp directory
-     */
-    public File getUploadTempDirectory();
-
-	/**
-	 * Gets the key length to use in cryptographic operations declared in the ESAPI properties file.
+	 * Gets the keystore used to hold any encryption keys used by your application.
 	 * 
-	 * @return the key length.
+	 * @return the current keystore
 	 */
-    public int getEncryptionKeyLength();
-    
+	public File getKeystore();
+
 	/**
 	 * Gets the master salt that is used to salt stored password hashes and any other location 
 	 * where a salt is needed.
@@ -143,13 +73,6 @@ public interface SecurityConfiguration {
 	 * @return the current master salt
 	 */
 	public byte[] getMasterSalt();
-
-	/**
-	 * Gets the allowed executables to run with the Executor.
-	 * 
-	 * @return a list of the current allowed file extensions
-	 */
-	public List getAllowedExecutables();
 
 	/**
 	 * Gets the allowed file extensions for files that are uploaded to this application.
@@ -194,13 +117,6 @@ public interface SecurityConfiguration {
 	public String getHashAlgorithm();
 
 	/**
-	 * Gets the hash iterations used by ESAPI to hash data.
-	 * 
-	 * @return the current hashing algorithm
-	 */
-	public int getHashIterations();
-
-	/**
 	 * Gets the character encoding scheme supported by this application. This is used to set the
 	 * character encoding scheme on requests and responses when setCharacterEncoding() is called
 	 * on SafeRequests and SafeResponses. This scheme is also used for encoding/decoding URLs 
@@ -214,33 +130,12 @@ public interface SecurityConfiguration {
 	public String getCharacterEncoding();
 
 	/**
-	 * Return true if multiple encoding is allowed
-	 * 
-	 * @return whether multiple encoding is allowed when canonicalizing data
-	 */
-	public boolean getAllowMultipleEncoding();
-
-	/**
-	 * Returns the List of Codecs to use when canonicalizing data
-	 * 
-	 * @return the codec list
-	 */
-	public List getDefaultCanonicalizationCodecs();
-
-	/**
 	 * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
 	 * 
 	 * @return the current digital signature algorithm
 	 */
 	public String getDigitalSignatureAlgorithm();
 
-	/**
-	 * Gets the digital signature key length used by ESAPI to generate and verify signatures.
-	 * 
-	 * @return the current digital signature key length
-	 */
-	public int getDigitalSignatureKeyLength();
-		   
 	/**
 	 * Gets the random number generation algorithm used to generate random numbers where needed.
 	 * 
@@ -281,26 +176,6 @@ public interface SecurityConfiguration {
      * @return
      */
     public File getResourceFile( String filename );
-    
-	/**
-	 * Forces new cookies to have HttpOnly flag set.
-     */
-    public boolean getForceHttpOnlySession() ;
-
-	/**
-	 * Forces session cookies to have Secure flag set.
-     */
-    public boolean getForceSecureSession() ;
-
-	/**
-	 * Forces new cookies to have HttpOnly flag set.
-     */
-    public boolean getForceHttpOnlyCookies() ;
-
-	/**
-	 * Forces new cookies to have Secure flag set.
-     */
-    public boolean getForceSecureCookies() ;
 
 	/**
 	 * Gets an InputStream to a file in the resource directory
@@ -355,36 +230,22 @@ public interface SecurityConfiguration {
 	 */
 	public int getSessionAbsoluteTimeoutLength();
 	
-	
 	/**
 	 * Returns whether HTML entity encoding should be applied to log entries.
 	 * 
 	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
 	 */
 	public boolean getLogEncodingRequired();
-	
-	/**
-	 * Returns whether ESAPI should log the application name. This might be clutter in some
-	 * single-server/single-app environments.
-	 * 
-	 * @return True if ESAPI should log the application name, False otherwise
-	 */
-	public boolean getLogApplicationName();
 
-	/**
-	 * Returns whether ESAPI should log the server IP. This might be clutter in some
-	 * single-server environments.
-	 * 
-	 * @return True if ESAPI should log the server IP and port, False otherwise
-	 */
-	public boolean getLogServerIP();
-
-	/**
-	 * Returns the current log level.
-	 * @return
-	 */
+    /**
+     * Get the log level specified in the ESAPI configuration properties file. Return a default 
+     * value if it is not specified in the properties file.
+     * 
+     * @return the logging level defined in the properties file. If none is specified, the default 
+     * of Logger.WARNING is returned.
+     */
     public int getLogLevel();
-	
+
     /**
      * Get the name of the log file specified in the ESAPI configuration properties file. Return a default value 
      * if it is not specified.
@@ -421,8 +282,7 @@ public interface SecurityConfiguration {
 		 */
 		public long interval = 0;
 		
-		/**
-		 * The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
+		/** The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
 		 * your implementation could have this be a list of any type of 'actions' you wish to define. 
 		 */
 		public List actions = null;
@@ -444,9 +304,4 @@ public interface SecurityConfiguration {
 			this.actions = actions;
 		}
 	}
-
-	/**
-	 * Returns the default working directory for executing native processes with Runtime.exec().
-	 */
-	public File getWorkingDirectory();
 }

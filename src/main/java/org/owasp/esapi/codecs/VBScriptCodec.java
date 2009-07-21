@@ -37,7 +37,7 @@ public class VBScriptCodec extends Codec {
 	 * @return the encoded String
 	 */
     public String encode(char[] immune, String input) {
-    	StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		boolean encoding = false;
 		boolean inquotes = false;
 		for ( int i=0; i<input.length(); i++ ) {
@@ -55,7 +55,7 @@ public class VBScriptCodec extends Codec {
 			} else {
 				if ( inquotes && i < input.length() ) sb.append( "\"" );
 				if ( i > 0 ) sb.append( "&" );
-				sb.append( encodeCharacter( immune, Character.valueOf( c ) ) );
+				sb.append( encodeCharacter( immune, new Character( c ) ) );
 				inquotes = false;
 				encoding = true;
 			}

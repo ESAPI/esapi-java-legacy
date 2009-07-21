@@ -24,8 +24,6 @@ package org.owasp.esapi.errors;
  */
 public class ValidationException extends EnterpriseSecurityException {
 
-    protected static final long serialVersionUID = 1L;
-
 	/** The UI reference that caused this ValidationException */
 	private String context;
 

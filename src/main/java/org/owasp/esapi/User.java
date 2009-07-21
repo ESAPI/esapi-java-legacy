@@ -15,12 +15,9 @@
  */
 package org.owasp.esapi;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -46,16 +43,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * @since June 1, 2007
  */
 
-public interface User extends Principal, Serializable {
-	/**
-	 * @return the locale
-	 */
-	public Locale getLocale();
-
-	/**
-	 * @param locale the locale to set
-	 */
-	public void setLocale(Locale locale);
+public interface User extends Principal {
 
     /**
      * Adds a role to this user's account.
@@ -411,11 +399,6 @@ public interface User extends Principal, Serializable {
 	 */
 	void setLastPasswordChangeTime(Date lastPasswordChangeTime);
 
-	/**
-	 * Returns the hashmap used to store security events for this user. Used by the
-	 * IntrusionDetector.
-	 */
-	HashMap getEventMap();
 	
 
 	/**
@@ -425,11 +408,8 @@ public interface User extends Principal, Serializable {
 	 */
     public final User ANONYMOUS = new User() {
 
-		private static final long serialVersionUID = -1850916950784965502L;
-
-		private String csrfToken = "";
+    	private String csrfToken = "";
     	private Set sessions = new HashSet();
-		private Locale locale = null;
     	
     	/**
          * {@inheritDoc}
@@ -742,25 +722,5 @@ public interface User extends Principal, Serializable {
         public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
         	throw new RuntimeException("Invalid operation for the anonymous user");
         }
-        
-        /**
-         *  {@inheritDoc}
-         */
-        public HashMap getEventMap() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
-        }
-         /**
-    	 * @return the locale
-    	 */
-    	public Locale getLocale() {
-    		return locale;
-    	}
-
-    	/**
-    	 * @param locale the locale to set
-    	 */
-    	public void setLocale(Locale locale) {
-    		this.locale = locale;
-    	}
     };
 }

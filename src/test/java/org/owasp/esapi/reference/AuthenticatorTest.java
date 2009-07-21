@@ -29,8 +29,8 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.http.MockHttpServletRequest;
-import org.owasp.esapi.http.MockHttpServletResponse;
+import org.owasp.esapi.http.TestHttpServletRequest;
+import org.owasp.esapi.http.TestHttpServletResponse;
 
 /**
  * The Class AuthenticatorTest.
@@ -169,8 +169,8 @@ public class AuthenticatorTest extends TestCase {
 		User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
 		User user2 = instance.createUser(username2, "getCurrentUser", "getCurrentUser");		
 		user1.enable();
-	    MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+	    TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		user1.loginWithPassword("getCurrentUser");
 		User currentUser = instance.getCurrentUser();
@@ -182,21 +182,21 @@ public class AuthenticatorTest extends TestCase {
 			private int count = 1;
             private boolean result = false;
 			public void run() {
-		        Authenticator auth = ESAPI.authenticator();
+		        Authenticator instance = ESAPI.authenticator();
 				User a = null;
 				try {
-					String password = auth.generateStrongPassword();
+					String password = instance.generateStrongPassword();
 					String accountName = "TestAccount" + count++;
-					a = auth.getUser(accountName);
+					a = instance.getUser(accountName);
 					if ( a != null ) {
-						auth.removeUser(accountName);
+						instance.removeUser(accountName);
 					}
-					a = auth.createUser(accountName, password, password);
-					auth.setCurrentUser(a);
+					a = instance.createUser(accountName, password, password);
+					instance.setCurrentUser(a);
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
 				}
-				User b = auth.getCurrentUser();
+				User b = instance.getCurrentUser();
 				result &= a.equals(b);
 			}
 		};
@@ -237,11 +237,10 @@ public class AuthenticatorTest extends TestCase {
 		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		User user = instance.createUser(accountName, password, password);
 		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		
-		System.out.println("getUserFromRememberToken - expecting failure");
 		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
 		try {
 			instance.login( request, response );  // wrong cookie will fail
@@ -249,13 +248,11 @@ public class AuthenticatorTest extends TestCase {
 			// expected
 		}
 
-		System.out.println("getUserFromRememberToken - expecting success");
-		request = new MockHttpServletRequest();
+		request = new TestHttpServletRequest();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		ESAPI.authenticator().setCurrentUser(user);
 		String newToken = ESAPI.httpUtilities().setRememberToken(request, response, password, 10000, "test.com", request.getContextPath() );
 		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, newToken );
-        user.logout();  // logout the current user so we can log them in with the remember cookie
 		User test2 = instance.login( request, response );
 		assertSame( user, test2 );
 	}
@@ -276,10 +273,10 @@ public class AuthenticatorTest extends TestCase {
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
 		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
+		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.addParameter("username", accountName);
 		request.addParameter("password", password);
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP( request, response );
 		instance.login( request, response);
 		User test = instance.getUserFromSession();
@@ -337,10 +334,10 @@ public class AuthenticatorTest extends TestCase {
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(username, password, password);
 		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
+		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.addParameter("username", username);
 		request.addParameter("password", password);
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		User test = instance.login( request, response);
 		assertTrue( test.isLoggedIn() );
 	}
@@ -394,8 +391,8 @@ public class AuthenticatorTest extends TestCase {
 		String user2 = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_UPPERS);
 		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
 		userOne.enable();
-	    MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+	    TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		userOne.loginWithPassword("getCurrentUser");
 		User currentUser = instance.getCurrentUser();
@@ -412,7 +409,7 @@ public class AuthenticatorTest extends TestCase {
 					String password = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 					u = instance.createUser("test" + count++, password, password);
 					instance.setCurrentUser(u);
-					ESAPI.getLogger("test").info( Logger.SECURITY_SUCCESS, "Got current user" );
+					ESAPI.getLogger("test").info( Logger.SECURITY, true, "Got current user" );
 					// ESAPI.authenticator().removeUser( u.getAccountName() );
 				} catch (AuthenticationException e) {
 					e.printStackTrace();
@@ -439,10 +436,10 @@ public class AuthenticatorTest extends TestCase {
 		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
 		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
+		TestHttpServletRequest request = new TestHttpServletRequest();
 		request.addParameter("username", accountName);
 		request.addParameter("password", password);
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		instance.login( request, response );
 		assertEquals( user, instance.getCurrentUser() );
 		try {

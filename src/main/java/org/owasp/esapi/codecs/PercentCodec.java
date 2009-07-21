@@ -78,7 +78,7 @@ public class PercentCodec extends Codec {
 		}
 				
 		// Search for exactly 2 hex digits following
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<2; i++ ) {
 			Character c = input.nextHex();
 			if ( c != null ) sb.append( c );
@@ -89,7 +89,7 @@ public class PercentCodec extends Codec {
 				int i = Integer.parseInt(sb.toString(), 16);
 				// TODO: in Java 1.5 you can test whether this is a valid code point
 				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
+				return new Character( (char)i );
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				// just continue which will reset and return null

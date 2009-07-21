@@ -109,7 +109,7 @@ public class MySQLCodec extends Codec {
 		if ( ch == 0x09 ) return "\\t";
 		if ( ch == 0x0a ) return "\\n";
 		if ( ch == 0x0d ) return "\\r";
-		if ( ch == 0x1a ) return "\\Z";
+		if ( ch == 0x1a ) return "\\z";
 		if ( ch == 0x22 ) return "\\\"";
 		if ( ch == 0x25 ) return "\\%";
 		if ( ch == 0x27 ) return "\\'";
@@ -169,7 +169,7 @@ public class MySQLCodec extends Codec {
 			input.reset();
 			return null;
 		}
-		return( Character.valueOf( '\'' ) );
+		return( new Character( '\'' ) );
 	}
 
 	/**
@@ -201,27 +201,27 @@ public class MySQLCodec extends Codec {
 		}
 		
 		if ( second.charValue() == '0' ) {
-			return Character.valueOf( (char)0x00 );
+			return new Character( (char)0x00 );
 		} else if ( second.charValue() == 'b' ) {
-			return Character.valueOf( (char)0x08 );
+			return new Character( (char)0x08 );
 		} else if ( second.charValue() == 't' ) {
-			return Character.valueOf( (char)0x09 );
+			return new Character( (char)0x09 );
 		} else if ( second.charValue() == 'n' ) {
-			return Character.valueOf( (char)0x0a );
+			return new Character( (char)0x0a );
 		} else if ( second.charValue() == 'r' ) {
-			return Character.valueOf( (char)0x0d );
+			return new Character( (char)0x0d );
 		} else if ( second.charValue() == 'z' ) {
-			return Character.valueOf( (char)0x1a );
+			return new Character( (char)0x1a );
 		} else if ( second.charValue() == '\"' ) {
-			return Character.valueOf( (char)0x22 );
+			return new Character( (char)0x22 );
 		} else if ( second.charValue() == '%' ) {
-			return Character.valueOf( (char)0x25 );
+			return new Character( (char)0x25 );
 		} else if ( second.charValue() == '\'' ) {
-			return Character.valueOf( (char)0x27 );
+			return new Character( (char)0x27 );
 		} else if ( second.charValue() == '\\' ) {
-			return Character.valueOf( (char)0x5c );
+			return new Character( (char)0x5c );
 		} else if ( second.charValue() == '_' ) {
-			return Character.valueOf( (char)0x5f );
+			return new Character( (char)0x5f );
 		} else {
 			return second;
 		}

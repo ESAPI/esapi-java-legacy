@@ -25,9 +25,13 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
+import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.PushbackString;
 import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;
@@ -79,6 +83,26 @@ public class EncoderTest extends TestCase {
     }
     
 	/**
+	 * Test of DefaultEncoder constructor - check that only codecs are allowed
+	 * 
+	 * @throws EncodingException
+	 */
+	public void testDefaultEncoderException() throws EncodingException {
+		System.out.println("testDefaultEncoderException");
+		
+        ArrayList list = new ArrayList();
+        list.add( new HTMLEntityCodec() );
+	    list.add( new Object() );
+	    try {
+	    	Encoder instance = new DefaultEncoder( list );
+	    	fail();
+	    }
+	    catch (IllegalArgumentException expected) {
+	    	// expected
+	    }
+	}
+
+	/**
 	 * Test of canonicalize method, of class org.owasp.esapi.Encoder.
 	 * 
 	 * @throws EncodingException
@@ -86,8 +110,8 @@ public class EncoderTest extends TestCase {
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
         ArrayList list = new ArrayList();
-        list.add( "HTMLEntityCodec" );
-	    list.add( "PercentCodec" );
+        list.add( new HTMLEntityCodec() );
+	    list.add( new PercentCodec() );
 		Encoder instance = new DefaultEncoder( list );
 		
 		// Test null paths
@@ -200,7 +224,7 @@ public class EncoderTest extends TestCase {
         
         // javascript escape syntax
         ArrayList js = new ArrayList();
-        js.add( "JavaScriptCodec" );
+        js.add( new JavaScriptCodec() );
         instance = new DefaultEncoder( js );
         System.out.println( "JavaScript Decoding" );
 
@@ -228,7 +252,7 @@ public class EncoderTest extends TestCase {
         // css escape syntax
         // be careful because some codecs see \0 as null byte
         ArrayList css = new ArrayList();
-        css.add( "CSSCodec" );
+        css.add( new CSSCodec() );
         instance = new DefaultEncoder( css );
         System.out.println( "CSS Decoding" );
         assertEquals( "<", instance.canonicalize("\\3c"));  // add strings to prevent null byte
@@ -516,12 +540,6 @@ public class EncoderTest extends TestCase {
         } catch ( Exception e ) {
             fail();
         }
-        try {
-        	instance.decodeFromURL( "%3xridiculous" );
-        	fail();
-        } catch( Exception e ) {
-        	// expected
-        }
     }
     
     /**
@@ -592,7 +610,7 @@ public class EncoderTest extends TestCase {
         PushbackString epbs = new PushbackString("");
         assertEquals(null, win.decodeCharacter(epbs));
         
-        Character c = Character.valueOf('<');
+        Character c = new Character('<');
         PushbackString cpbs = new PushbackString(win.encodeCharacter(immune, c));
         Character decoded = win.decodeCharacter(cpbs);
         assertEquals(c, decoded);
@@ -623,7 +641,7 @@ public class EncoderTest extends TestCase {
         PushbackString npbs = new PushbackString("n");
         assertEquals(null, unix.decodeCharacter(npbs));
 
-        Character c = Character.valueOf('<');
+        Character c = new Character('<');
         PushbackString cpbs = new PushbackString(unix.encodeCharacter(immune, c));
         Character decoded = unix.decodeCharacter(cpbs);
         assertEquals(c, decoded);
@@ -647,97 +665,5 @@ public class EncoderTest extends TestCase {
         assertEquals("\\/etc\\/hosts", instance.encodeForOS(unix, "/etc/hosts"));
         assertEquals("\\/etc\\/hosts\\;\\ ls\\ -l", instance.encodeForOS(unix, "/etc/hosts; ls -l"));
     }
-    
-    public void testCanonicalizePerformance() throws Exception {
-        System.out.println("Canonicalization Performance");
-    	Encoder encoder = ESAPI.encoder();
-    	int iterations = 100;
-    	String normal = "The quick brown fox jumped over the lazy dog";
-    	
-    	long start = System.currentTimeMillis();
-        for ( int i=0; i< iterations; i++ ) {
-        	String temp = normal;
-        }
-    	long stop = System.currentTimeMillis();
-        System.out.println( "Normal: " + (stop-start) );
-        
-    	start = System.currentTimeMillis();
-        for ( int i=0; i< iterations; i++ ) {
-        	String temp = encoder.canonicalize( normal, false );
-        }
-    	stop = System.currentTimeMillis();
-        System.out.println( "Normal Loose: " + (stop-start) );
-        
-    	start = System.currentTimeMillis();
-        for ( int i=0; i< iterations; i++ ) {
-        	String temp = encoder.canonicalize( normal, true );
-        }
-    	stop = System.currentTimeMillis();
-        System.out.println( "Normal Strict: " + (stop-start) );
-
-    	String attack = "%2&#x35;2%3525&#x32;\\u0036lt;\r\n\r\n%&#x%%%3333\\u0033;&%23101;";
-    	
-    	start = System.currentTimeMillis();
-        for ( int i=0; i< iterations; i++ ) {
-        	String temp = attack;
-        }
-    	stop = System.currentTimeMillis();
-        System.out.println( "Attack: " + (stop-start) );
-        
-    	start = System.currentTimeMillis();
-        for ( int i=0; i< iterations; i++ ) {
-        	String temp = encoder.canonicalize( attack, false );
-        }
-    	stop = System.currentTimeMillis();
-        System.out.println( "Attack Loose: " + (stop-start) );
-        
-    	start = System.currentTimeMillis();
-        for ( int i=0; i< iterations; i++ ) {
-        	try {
-        		String temp = encoder.canonicalize( attack, true );
-        	} catch( IntrusionException e ) { 
-        		// expected
-        	}
-        }
-    	stop = System.currentTimeMillis();
-        System.out.println( "Attack Strict: " + (stop-start) );
-    }
-    
-
-    public void testConcurrency() {
-        System.out.println("Encoder Concurrency");
-		for (int i = 0; i < 10; i++) {
-			new Thread( new EncoderConcurrencyMock( i )).start();
-		}
-	}
-
-    /**
-     *  A simple class that calls the Encoder to test thread safety
-     */
-    public class EncoderConcurrencyMock implements Runnable {
-    	public int num = 0;
-    	public EncoderConcurrencyMock( int num ) {
-    		this.num = num;
-    	}
-	    public void run() {
-			while( true ) {
-				String nonce = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS );
-				String result = javaScriptEncode( nonce );
-				// randomize the threads
-				try {
-					Thread.sleep( ESAPI.randomizer().getRandomInteger( 100, 500 ) );
-				} catch (InterruptedException e) {
-					// just continue
-				}
-				assertTrue( result.equals ( javaScriptEncode( nonce ) ) );
-			}
-		}
-		
-	    public String javaScriptEncode(String str) {
-			DefaultEncoder encoder = new DefaultEncoder();
-			return encoder.encodeForJavaScript(str);
-		}
-    }
-    
 }
 

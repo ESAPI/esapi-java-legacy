@@ -31,9 +31,9 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.http.MockHttpServletRequest;
-import org.owasp.esapi.http.MockHttpServletResponse;
-import org.owasp.esapi.http.MockHttpSession;
+import org.owasp.esapi.http.TestHttpServletRequest;
+import org.owasp.esapi.http.TestHttpServletResponse;
+import org.owasp.esapi.http.TestHttpSession;
 
 /**
  * The Class UserTest.
@@ -212,8 +212,8 @@ public class UserTest extends TestCase {
 		System.out.println("failedLoginLockout");
 		DefaultUser user = createTestUser("failedLoginLockout");
 		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
         
 		user.loginWithPassword("failedLoginLockout");
@@ -363,11 +363,11 @@ public class UserTest extends TestCase {
         String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
         String password = ESAPI.authenticator().generateStrongPassword();
         User user = instance.createUser(accountName, password, password);
-        HttpSession session1 = new MockHttpSession();
+        HttpSession session1 = new TestHttpSession();
         user.addSession( session1 );
-        HttpSession session2 = new MockHttpSession();
+        HttpSession session2 = new TestHttpSession();
         user.addSession( session2 );
-        HttpSession session3 = new MockHttpSession();
+        HttpSession session3 = new TestHttpSession();
         user.addSession( session3 );
         Set sessions = user.getSessions();
         Iterator i = sessions.iterator();
@@ -404,8 +404,8 @@ public class UserTest extends TestCase {
 		DefaultUser user = createTestUser("incrementFailedLoginCount");
 		user.enable();
 		assertEquals(0, user.getFailedLoginCount());
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		try {
 			user.loginWithPassword("ridiculous");
@@ -495,10 +495,10 @@ public class UserTest extends TestCase {
 		DefaultUser user = createTestUser(oldPassword);
 		long now = System.currentTimeMillis();
 		// setup request and response
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		MockHttpSession session = (MockHttpSession)request.getSession();
+		TestHttpSession session = (TestHttpSession)request.getSession();
 				
 		// set session creation -3 hours (default is 2 hour timeout)		
 		session.setCreationTime( now - (1000 * 60 * 60 * 3) );
@@ -523,10 +523,10 @@ public class UserTest extends TestCase {
 		DefaultUser user = createTestUser(oldPassword);
 		long now = System.currentTimeMillis();
 		// setup request and response
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		MockHttpSession session = (MockHttpSession)request.getSession();
+		TestHttpSession session = (TestHttpSession)request.getSession();
 		
 		// set creation -30 mins (default is 20 min timeout)
 		session.setAccessedTime( now - 1000 * 60 * 30 );
@@ -562,8 +562,8 @@ public class UserTest extends TestCase {
 	 */
 	public void testLoginWithPassword() throws AuthenticationException {
 		System.out.println("loginWithPassword");
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpSession session = (MockHttpSession) request.getSession();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpSession session = (TestHttpSession) request.getSession();
 		assertFalse(session.getInvalidated());
 		DefaultUser user = createTestUser("loginWithPassword");
 		user.enable();
@@ -602,9 +602,9 @@ public class UserTest extends TestCase {
 	 */
 	public void testLogout() throws AuthenticationException {
 		System.out.println("logout");
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		MockHttpSession session = (MockHttpSession) request.getSession();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
+		TestHttpSession session = (TestHttpSession) request.getSession();
 		assertFalse(session.getInvalidated());
 		Authenticator instance = ESAPI.authenticator();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
@@ -615,7 +615,7 @@ public class UserTest extends TestCase {
 		user.loginWithPassword(oldPassword);
 		assertTrue(user.isLoggedIn());
 		// get new session after user logs in
-		session = (MockHttpSession) request.getSession();
+		session = (TestHttpSession) request.getSession();
 		assertFalse(session.getInvalidated());
 		user.logout();
 		assertFalse(user.isLoggedIn());

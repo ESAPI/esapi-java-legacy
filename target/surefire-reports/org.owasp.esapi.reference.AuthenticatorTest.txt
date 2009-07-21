@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: org.owasp.esapi.reference.AuthenticatorTest
--------------------------------------------------------------------------------
-Tests run: 16, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.337 sec

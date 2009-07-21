@@ -18,10 +18,8 @@ package org.owasp.esapi.reference;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpSession;
@@ -69,7 +67,7 @@ public class DefaultUser implements User, Serializable {
 	private String screenName = "";
 
 	/** This user's CSRF token. */
-	private String csrfToken = resetCSRFToken();
+	private String csrfToken = "";
 
 	/** This user's assigned roles. */
 	private Set roles = new HashSet();
@@ -98,20 +96,14 @@ public class DefaultUser implements User, Serializable {
 	/** The expiration date/time for this user's account. */
 	private Date expirationTime = new Date(Long.MAX_VALUE);
 
-	/** The sessions this user is associated with */
-	private transient Set sessions = new HashSet();
-	
-	/** The event map for this User */ 
-	private transient HashMap eventMap = new HashMap();
+	/** The session's this user is associated with */
+	private Set sessions = new HashSet();
 	
 	/* A flag to indicate that the password must be changed before the account can be used. */
 	// private boolean requiresPasswordChange = true;
 	
 	/** The failed login count for this user's account. */
 	private int failedLoginCount = 0;
-	
-	/** This user's Locale. */
-	private Locale locale;
     
     private final int MAX_ROLE_LENGTH = 250;
     
@@ -121,8 +113,8 @@ public class DefaultUser implements User, Serializable {
 	 * @param accountName
 	 * 		The name of this user's account.
 	 */
-	DefaultUser(String value) {
-		setAccountName(value);
+	DefaultUser(String accountName) {
+		setAccountName(accountName);
 		while( true ) {
 			long id = Math.abs( ESAPI.randomizer().getRandomLong() );
 			if ( ESAPI.authenticator().getUser( id ) == null && id != 0 ) {
@@ -139,7 +131,7 @@ public class DefaultUser implements User, Serializable {
 		String roleName = role.toLowerCase();
 		if ( ESAPI.validator().isValidInput("addRole", roleName, "RoleName", MAX_ROLE_LENGTH, false) ) {
 			roles.add(roleName);
-			logger.info(Logger.SECURITY_SUCCESS, "Role " + roleName + " added to " + getAccountName() );
+			logger.info(Logger.SECURITY, true, "Role " + roleName + " added to " + getAccountName() );
 		} else {
 			throw new AuthenticationAccountsException( "Add role failed", "Attempt to add invalid role " + roleName + " to " + getAccountName() );
 		}
@@ -167,7 +159,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void disable() {
 		enabled = false;
-		logger.info( Logger.SECURITY_SUCCESS, "Account disabled: " + getAccountName() );
+		logger.info( Logger.SECURITY, true, "Account disabled: " + getAccountName() );
 	}
 	
 	/**
@@ -175,7 +167,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void enable() {
 		this.enabled = true;
-		logger.info( Logger.SECURITY_SUCCESS, "Account enabled: " + getAccountName() );
+		logger.info( Logger.SECURITY, true, "Account enabled: " + getAccountName() );
 	}
 
 	/**
@@ -235,7 +227,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public String getLastHostAddress() {
 		if ( lastHostAddress == null ) {
-			return "unknown";
+			return "local";
 		}
         return lastHostAddress;
     }
@@ -385,7 +377,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void lock() {
 		this.locked = true;
-		logger.info(Logger.SECURITY_SUCCESS, "Account locked: " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "Account locked: " + getAccountName() );
 	}
 
 	/**
@@ -426,8 +418,8 @@ public class DefaultUser implements User, Serializable {
 			ESAPI.httpUtilities().changeSessionIdentifier( ESAPI.currentRequest() );
 			ESAPI.authenticator().setCurrentUser(this);
 			setLastLoginTime(new Date());
-            setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteAddr() );
-			logger.trace(Logger.SECURITY_SUCCESS, "User logged in: " + accountName );
+            setLastHostAddress( ESAPI.httpUtilities().getCurrentRequest().getRemoteHost() );
+			logger.trace(Logger.SECURITY, true, "User logged in: " + accountName );
 		} else {
 			loggedIn = false;
 			setLastFailedLoginTime(new Date());
@@ -453,7 +445,7 @@ public class DefaultUser implements User, Serializable {
 		}
 		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), "JSESSIONID");
 		loggedIn = false;
-		logger.info(Logger.SECURITY_SUCCESS, "Logout successful" );
+		logger.info(Logger.SECURITY, true, "Logout successful" );
 		ESAPI.authenticator().setCurrentUser(User.ANONYMOUS);
 	}
 
@@ -462,7 +454,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void removeRole(String role) {
 		roles.remove(role.toLowerCase());
-		logger.trace(Logger.SECURITY_SUCCESS, "Role " + role + " removed from " + getAccountName() );
+		logger.trace(Logger.SECURITY, true, "Role " + role + " removed from " + getAccountName() );
 	}
 
 	/**
@@ -498,12 +490,8 @@ public class DefaultUser implements User, Serializable {
 	public void setAccountName(String accountName) {
 		String old = getAccountName();
 		this.accountName = accountName.toLowerCase();
-		if (old != null) {
-			if ( old.equals( "" ) ) {
-				old = "[nothing]";
-			}
-			logger.info(Logger.SECURITY_SUCCESS, "Account name changed from " + old + " to " + getAccountName() );
-		}
+		if (old != null)
+			logger.info(Logger.SECURITY, true, "Account name changed from " + old + " to " + getAccountName() );
 	}
 
 	/**
@@ -511,7 +499,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void setExpirationTime(Date expirationTime) {
 		this.expirationTime = new Date( expirationTime.getTime() );
-		logger.info(Logger.SECURITY_SUCCESS, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "Account expiration time set to " + expirationTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -519,7 +507,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void setLastFailedLoginTime(Date lastFailedLoginTime) {
 		this.lastFailedLoginTime = lastFailedLoginTime;
-		logger.info(Logger.SECURITY_SUCCESS, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
 	}
 	
 	/**
@@ -538,7 +526,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void setLastLoginTime(Date lastLoginTime) {
 		this.lastLoginTime = lastLoginTime;
-		logger.info(Logger.SECURITY_SUCCESS, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "Set last successful login time to " + lastLoginTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -546,7 +534,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
 		this.lastPasswordChangeTime = lastPasswordChangeTime;
-		logger.info(Logger.SECURITY_SUCCESS, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "Set last password change time to " + lastPasswordChangeTime + " for " + getAccountName() );
 	}
 
 	/**
@@ -555,7 +543,7 @@ public class DefaultUser implements User, Serializable {
 	public void setRoles(Set roles) throws AuthenticationException {
 		this.roles = new HashSet();
 		addRoles(roles);
-		logger.info(Logger.SECURITY_SUCCESS, "Adding roles " + roles + " to " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "Adding roles " + roles + " to " + getAccountName() );
 	}
 
 	/**
@@ -563,7 +551,7 @@ public class DefaultUser implements User, Serializable {
 	 */
 	public void setScreenName(String screenName) {
 		this.screenName = screenName;
-		logger.info(Logger.SECURITY_SUCCESS, "ScreenName changed to " + screenName + " for " + getAccountName() );
+		logger.info(Logger.SECURITY, true, "ScreenName changed to " + screenName + " for " + getAccountName() );
 	}
 
 	/**
@@ -581,7 +569,7 @@ public class DefaultUser implements User, Serializable {
 	public void unlock() {
 		this.locked = false;
 		this.failedLoginCount = 0;
-		logger.info( Logger.SECURITY_SUCCESS, "Account unlocked: " + getAccountName() );
+		logger.info( Logger.SECURITY, true, "Account unlocked: " + getAccountName() );
 	}
 	
 	/**
@@ -598,23 +586,6 @@ public class DefaultUser implements User, Serializable {
      */
     public final Object clone() throws java.lang.CloneNotSupportedException {
     	  throw new java.lang.CloneNotSupportedException();
-    }
-	/**
-	 * @return the locale
-	 */
-	public Locale getLocale() {
-		return locale;
-	}
-
-	/**
-	 * @param locale the locale to set
-	 */
-	public void setLocale(Locale locale) {
-		this.locale = locale;
-	}
-    
-    public HashMap getEventMap() {
-    	return eventMap;
     }
     
 }

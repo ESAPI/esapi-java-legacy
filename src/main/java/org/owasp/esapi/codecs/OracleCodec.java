@@ -18,9 +18,8 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Implementation of the Codec interface for Oracle strings. See http://www.oracle.com/technology/tech/pl_sql/pdf/how_to_write_injection_proof_plsql.pdf
- * for more information. There are three types of SQL literal: text, datetime, and numeric. The "alternative quoting"
- * mechanism available in Oracle that uses braces around a string must not be used for text literals.
+ * Implementation of the Codec interface for Oracle strings. See http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm
+ * for more information.
  * 
  * @see <a href="http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm">Special Characters in Oracle Queries</a>
  * 
@@ -35,7 +34,7 @@ public class OracleCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Encode a single character with a backslash
+	 * Encode a single character with a quote mark
      *
      * @param immune
      */

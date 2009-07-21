@@ -36,10 +36,6 @@ package org.owasp.esapi;
  * <li>trace (lowest value)</li>
  * </ul>
  * 
- * ESAPI also allows for the definition of the type of log event that is being generated. The Logger interface  
- * predefines 4 types of Log events: SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE. 
- * Your implementation can extend or change this list if desired. 
- * 
  * This Logger allows callers to determine which logging levels are enabled, and to submit events 
  * at different severity levels.<br>
  * <br>Implementors of this interface should:
@@ -72,8 +68,9 @@ package org.owasp.esapi;
  * social security numbers, etc.</li>
  * </ol>
  * 
- * There are both Log4j and native Java Logging default implementations. JavaLogger uses the java.util.logging package as the basis for its logging 
- * implementation. Both default implementations implements requirements #1 thru #5 above.<br>
+ * In the default implementation, this interface is implemented by JavaLogger, which is an inner class 
+ * in JavaLogFactory.java. JavaLogger uses the java.util.logging package as the basis for its logging 
+ * implementation. This default implementation implements requirements #1 thru #5 above.<br>
  * <br>
  * Customization: It is expected that most organizations will implement their own custom Logger class in 
  * order to integrate ESAPI logging with their logging infrastructure. The ESAPI Reference Implementation 
@@ -86,46 +83,39 @@ package org.owasp.esapi;
 public interface Logger {
 
 	/**
-     * A security type of log event that has succeeded. This is one of 4 predefined
-     * ESAPI logging events. New events can be added.
+     * The SECURITY type of log event. 
      */
-	public static final EventType SECURITY_SUCCESS = new EventType( "SECURITY SUCCESS", true);
+	public static final EventType SECURITY = new EventType( "SECURITY" );
 
 	/**
-     * A security type of log event that has failed. This is one of 4 predefined
-     * ESAPI logging events. New events can be added.
+     * The USABILITY type of log event. 
      */
-	public static final EventType SECURITY_FAILURE = new EventType( "SECURITY FAILURE", false);
+	public static final EventType USABILITY = new EventType( "USABILITY" );
 
 	/**
-     * A non-security type of log event that has succeeded. This is one of 4 predefined
-     * ESAPI logging events. New events can be added.
+     * The PERFORMANCE type of log event. 
      */
-	public static final EventType EVENT_SUCCESS = new EventType( "EVENT SUCCESS", true);
+	public static final EventType PERFORMANCE = new EventType( "PERFORMANCE" );
 	
 	/**
-     * A non-security type of log event that has failed. This is one of 4 predefined
-     * ESAPI logging events. New events can be added.
+     * The FUNCTIONALITY type of log event. This is the type of event that non-security focused loggers typically log.
+     * If you are going to log your existing non-security events in the same log with your security events, you 
+     * probably want to use this type of log event.  
      */
-	public static final EventType EVENT_FAILURE = new EventType( "EVENT FAILURE", false);
+	public static final EventType FUNCTIONALITY = new EventType( "FUNCTIONALITY" );
 
 	/**
 	 * Defines the type of log event that is being generated. The Logger interface defines 4 types of Log events: 
-	 * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE. 
-     * Your implementation can extend or change this list if desired. 
+	 * SECURITY, USABILITY, PERFORMANCE, FUNCTIONALITY. 
+     * Your implementation can extend or change this list if desired. The ESAPI reference implementation 
+     * generates only SECURITY events.
 	 */
 	public class EventType {
 		
 		private String type;
-		private boolean success;
 		
-		EventType (String name, boolean newSuccess) {
-			this.type = name;
-			this.success = newSuccess;
-		}
-		
-		public boolean isSuccess() {
-			return success;
+		EventType (String name) {
+			type = name;
 		}
 		
         /**
@@ -187,10 +177,13 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      */
-	void fatal(EventType type, String message);
+	void fatal(EventType type, boolean success, String message);
 	
 	/**
      * Log a fatal level security event if 'fatal' level logging is enabled 
@@ -198,12 +191,15 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      * @param throwable 
      * 		the exception to be logged
      */
-	void fatal(EventType type, String message, Throwable throwable);
+	void fatal(EventType type, boolean success, String message, Throwable throwable);
 
 	/**
 	 * Allows the caller to determine if messages logged at this level
@@ -217,11 +213,14 @@ public interface Logger {
      * Log an error level security event if 'error' level logging is enabled.
      * 
      * @param type 
-     * 		the type of event 
+     * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      */
-	void error(EventType type, String message);
+	void error(EventType type, boolean success, String message);
 	
 	/**
      * Log an error level security event if 'error' level logging is enabled 
@@ -229,12 +228,15 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      * @param throwable 
      * 		the exception to be logged
      */
-	void error(EventType type, String message, Throwable throwable);
+	void error(EventType type, boolean success, String message, Throwable throwable);
 
 	/**
 	 * Allows the caller to determine if messages logged at this level
@@ -248,24 +250,30 @@ public interface Logger {
      * Log a warning level security event if 'warning' level logging is enabled.
      * 
      * @param type 
-     * 		the type of event 
+     * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      */
-	void warning(EventType type, String message);
+	void warning(EventType type, boolean success, String message);
 	
 	/**
      * Log a warning level security event if 'warning' level logging is enabled 
      * and also record the stack trace associated with the event.
      * 
      * @param type 
-     * 		the type of event 
+     * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      * @param throwable 
      * 		the exception to be logged
      */
-	void warning(EventType type, String message, Throwable throwable);
+	void warning(EventType type, boolean success, String message, Throwable throwable);
 
 	/**
 	 * Allows the caller to determine if messages logged at this level
@@ -279,11 +287,14 @@ public interface Logger {
      * Log an info level security event if 'info' level logging is enabled.
      * 
      * @param type 
-     * 		the type of event 
+     * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      */
-	void info(EventType type, String message);
+	void info(EventType type, boolean success, String message);
 	
 	/**
      * Log an info level security event if 'info' level logging is enabled 
@@ -291,12 +302,15 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      * @param throwable 
      * 		the exception to be logged
      */
-	void info(EventType type, String message, Throwable throwable);
+	void info(EventType type, boolean success, String message, Throwable throwable);
 
 	/**
 	 * Allows the caller to determine if messages logged at this level
@@ -311,10 +325,13 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      */
-	void debug(EventType type, String message);
+	void debug(EventType type, boolean success, String message);
 	
 	/**
      * Log a debug level security event if 'debug' level logging is enabled 
@@ -322,12 +339,15 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      * @param throwable 
      * 		the exception to be logged
      */
-	void debug(EventType type, String message, Throwable throwable);
+	void debug(EventType type, boolean success, String message, Throwable throwable);
 
 	/**
 	 * Allows the caller to determine if messages logged at this level
@@ -342,23 +362,29 @@ public interface Logger {
      * 
      * @param type 
      * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      */
-	void trace(EventType type, String message);
+	void trace(EventType type, boolean success, String message);
 	
 	/**
      * Log a trace level security event if 'trace' level logging is enabled 
      * and also record the stack trace associated with the event.
      * 
      * @param type 
-     * 		the type of event 
+     * 		the type of event
+     * @param success
+     * 		False indicates this was a failed event (the typical value).
+     * 		True indicates this was a successful event.  
      * @param message 
      * 		the message to log
      * @param throwable 
      * 		the exception to be logged
      */
-	void trace(EventType type, String message, Throwable throwable);
+	void trace(EventType type, boolean success, String message, Throwable throwable);
 
 	/**
 	 * Allows the caller to determine if messages logged at this level

@@ -170,63 +170,13 @@ public class EncryptorTest extends TestCase {
     public void testVerifySeal() throws EnterpriseSecurityException {
         System.out.println("verifySeal");
         Encryptor instance = ESAPI.encryptor(); 
-        String plaintext = "ridiculous";
+        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000*60 ) );
-        try {
-        	assertTrue( instance.verifySeal( seal ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( plaintext ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt( plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(100 + ":" + plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":" + plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":random:" + plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":random:" + plaintext+ ":badsig"  ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertTrue( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":random:" + plaintext + ":"+ instance.sign( Long.MAX_VALUE + ":random:" + plaintext ) ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
+        assertTrue( instance.verifySeal( seal ) );
+        assertFalse( instance.verifySeal( "ridiculous" ) );
+        assertFalse( instance.verifySeal( instance.encrypt("ridiculous") ) );
+        assertFalse( instance.verifySeal( instance.encrypt(100 + ":" + "ridiculous" ) ) );
+        assertTrue( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":" + "ridiculous" ) ) );
     }
-
-    
-    /**
-     * Test of main method, of class org.owasp.esapi.Encryptor.
-     * @throws Exception
-     */
-    public void testMain() throws Exception {
-        System.out.println("Encryptor Main");
-        String[] args = {};
-        JavaEncryptor.main( args );        
-        String[] args1 = {"-print"};
-        JavaEncryptor.main( args1 );        
-    }
-    
-    
     
 }

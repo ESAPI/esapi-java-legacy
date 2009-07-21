@@ -56,7 +56,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
 	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
 	private CSSCodec cssCodec = new CSSCodec();
-
+	
 	private final Logger logger = ESAPI.getLogger("Encoder");
 	
 	/**
@@ -79,20 +79,33 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * Instantiates a new DefaultEncoder
 	 */
 	public DefaultEncoder() {
+		// initialize the codec list to use for canonicalization
 		codecs.add( htmlCodec );
 		codecs.add( percentCodec );
 		codecs.add( javaScriptCodec );
+
+		// leave this out because it eats / characters
+		// codecs.add( cssCodec );
+
+		// leave this out because it eats " characters
+		// codecs.add( vbScriptCodec );
 	}
-	
-	public DefaultEncoder( List<String> codecNames ) {
-		for ( String clazz : codecNames ) {
-			try {
-				if ( clazz.indexOf( '.' ) == -1 ) clazz = "org.owasp.esapi.codecs." + clazz;
-				codecs.add( Class.forName( clazz ).newInstance() );
-			} catch ( Exception e ) {
-				logger.warning( Logger.EVENT_FAILURE, "Codec " + clazz + " listed in ESAPI.properties not on classpath" );
-			}
-		}
+
+	/**
+	 * Instantiates a new DefaultEncoder
+	 * 
+	 * @param codecs A list of codecs to use by the Encoder class
+	 * @throws java.lang.IllegalArgumentException If the encoder is not an instance of the Codec interface
+	 */
+	public DefaultEncoder( List codecs ) {
+	    Iterator i = codecs.iterator();
+	    while ( i.hasNext() ) {
+	       Object o = i.next();
+	       if ( !( o instanceof Codec ) ){
+	           throw new java.lang.IllegalArgumentException( "Codec list must contain only Codec instances" );
+	       }
+	    }
+	    this.codecs = codecs;
 	}
 	
 	/**
@@ -116,7 +129,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		
         String working = input;
         Codec codecFound = null;
-        int mixedCount = 1;
+        boolean mixed = false;
         int foundCount = 0;
         boolean clean = false;
         while( !clean ) {
@@ -130,7 +143,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
                 working = codec.decode( working );
                 if ( !old.equals( working ) ) {
                     if ( codecFound != null && codecFound != codec ) {
-                        mixedCount++;
+                        mixed = true;
                     }
                     codecFound = codec;
                     if ( clean ) {
@@ -142,25 +155,25 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
         }
         
         // do strict tests and handle if any mixed, multiple, nested encoding were found
-        if ( foundCount >= 2 && mixedCount > 1 ) {
+        if ( foundCount >= 2 && mixed ) {
             if ( strict ) {
-                throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
+                throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
+                logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) and mixed encoding detected in " + input );
             }
         }
         else if ( foundCount >= 2 ) {
             if ( strict ) {
                 throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) encoding detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) encoding detected in " + input );
+                logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) encoding detected in " + input );
             }
         }
-        else if ( mixedCount > 1 ) {
+        else if ( mixed ) {
             if ( strict ) {
-                throw new IntrusionException( "Input validation failure", "Mixed encoding ("+ mixedCount +"x) detected in " + input );
+                throw new IntrusionException( "Input validation failure", "Mixed encoding detected in " + input );
             } else {
-                logger.warning( Logger.SECURITY_FAILURE, "Mixed encoding ("+ mixedCount +"x) detected in " + input );
+                logger.warning( Logger.SECURITY, false, "Mixed encoding detected in " + input );
             }
         }
         return working;
@@ -265,7 +278,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    	return null;	
 	    }
 		// TODO: replace with LDAP codec
-	    StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
 			switch (c) {
@@ -299,7 +312,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    	return null;	
 	    }
 		// TODO: replace with DN codec
-	    StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
 			sb.append('\\'); // add the leading backslash if needed
 		}
@@ -379,9 +392,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		try {
 			return URLEncoder.encode(input, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
-			throw new EncodingException("Encoding failure", "Character encoding not supported", ex);
+			throw new EncodingException("Encoding failure", "Encoding not supported", ex);
 		} catch (Exception e) {
-			throw new EncodingException("Encoding failure", "Problem URL encoding input", e);
+			throw new EncodingException("Encoding failure", "Problem URL decoding input", e);
 		}
 	}
 
@@ -396,7 +409,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		try {
 			return URLDecoder.decode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
-			throw new EncodingException("Decoding failed", "Character encoding not supported", ex);
+			throw new EncodingException("Decoding failed", "Encoding not supported", ex);
 		} catch (Exception e) {
 			throw new EncodingException("Decoding failed", "Problem URL decoding input", e);
 		}
