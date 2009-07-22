@@ -15,11 +15,11 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.AccessControlException;
+
 import java.io.Serializable;
 import java.util.Iterator;
 import java.util.Set;
-
-import org.owasp.esapi.errors.AccessControlException;
 
 
 /**
@@ -62,8 +62,9 @@ import org.owasp.esapi.errors.AccessControlException;
  * <P>
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
+ * @author Chris Schmidt (chrisisbeef@gmail.com)
  */
-public interface AccessReferenceMap extends Serializable {
+public interface AccessReferenceMap<K> extends Serializable {
 
 	/**
 	 * Get an iterator through the direct object references. No guarantee is made as 
@@ -85,7 +86,7 @@ public interface AccessReferenceMap extends Serializable {
 	 * @return 
 	 * 		the indirect reference
 	 */
-	String getIndirectReference(Object directReference);
+	<T> K getIndirectReference(T directReference);
 
 	/**
 	 * Get the original direct object reference from an indirect reference.
@@ -93,6 +94,37 @@ public interface AccessReferenceMap extends Serializable {
 	 * request to translate it back into the real direct reference. If an
 	 * invalid indirect reference is requested, then an AccessControlException is
 	 * thrown.
+    *
+    * If a type is implied the requested object will be cast to that type, if the
+    * object is not of the requested type, a AccessControlException will be thrown to
+    * the caller.
+    *
+    * For example:
+    * <pre>
+    * UserProfile profile = arm.getDirectReference( indirectRef );
+    * </pre>
+    *
+    * Will throw a AccessControlException if the object stored in memory is not of type
+    * UserProfile.
+    *
+    * However,
+    * <pre>
+    * Object uncastObject = arm.getDirectReference( indirectRef );
+    * </pre>
+    *
+    * Will never throw a AccessControlException as long as the object exists. If you are
+    * unsure of the object type of that an indirect reference references you should get
+    * the uncast object and test for type in the calling code.
+    * <pre>
+    * Object uncastProfile = arm.getDirectReference( indirectRef );
+    * if ( uncastProfile instanceof UserProfile ) {
+    *     UserProfile userProfile = (UserProfile) uncastProfile;
+    *     // ...
+    * } else {
+    *     EmployeeProfile employeeProfile = (EmployeeProfile) uncastProfile;
+    *     // ...
+    * }
+    * </pre>
 	 * 
 	 * @param indirectReference
 	 * 		the indirect reference
@@ -102,8 +134,10 @@ public interface AccessReferenceMap extends Serializable {
 	 * 
 	 * @throws AccessControlException 
 	 * 		if no direct reference exists for the specified indirect reference
+    * @throws ClassCastException
+    *       if the implied type is not the same as the referenced object type
 	 */
-	Object getDirectReference(String indirectReference) throws AccessControlException;
+	<T> T getDirectReference(K indirectReference) throws AccessControlException;
 
 	/**
 	 * Adds a direct reference to the AccessReferenceMap, then generates and returns 
@@ -115,7 +149,7 @@ public interface AccessReferenceMap extends Serializable {
 	 * @return 
 	 * 		the corresponding indirect reference
 	 */
-	String addDirectReference(Object direct);
+	<T> K addDirectReference(T direct);
 	
 	/**
 	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
@@ -127,8 +161,9 @@ public interface AccessReferenceMap extends Serializable {
 	 * 		the corresponding indirect reference
 	 * 
 	 * @throws AccessControlException
+    *          if the reference does not exist.
 	 */
-	String removeDirectReference(Object direct) throws AccessControlException;
+	<T> K removeDirectReference(T direct) throws AccessControlException;
 
 	/**
 	 * Updates the access reference map with a new set of direct references, maintaining
@@ -141,5 +176,4 @@ public interface AccessReferenceMap extends Serializable {
 	 * 		a Set of direct references to add
 	 */
 	void update(Set directReferences);
-
 }
