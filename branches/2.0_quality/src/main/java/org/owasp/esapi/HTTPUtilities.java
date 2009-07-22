@@ -15,22 +15,17 @@
  */
 package org.owasp.esapi;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import org.owasp.esapi.errors.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -153,13 +148,13 @@ public interface HTTPUtilities {
 	 * @return a Map object containing the decrypted querystring
 	 * @throws EncryptionException
 	 */
-	Map decryptQueryString(String encrypted) throws EncryptionException;
+	Map<String,String> decryptQueryString(String encrypted) throws EncryptionException;
 
     /**
      * Calls decryptStateFromCookie with the *current* request.
 	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
      */
-    Map decryptStateFromCookie() throws EncryptionException;
+    Map<String,String> decryptStateFromCookie() throws EncryptionException;
 	
     /**
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
@@ -168,7 +163,7 @@ public interface HTTPUtilities {
      * @return a map containing the decrypted cookie state value
 	 * @throws EncryptionException
      */
-    Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException;
+    Map<String,String> decryptStateFromCookie(HttpServletRequest request) throws EncryptionException;
 
     /**
      * Encrypts a hidden field value for use in HTML.
@@ -192,7 +187,7 @@ public interface HTTPUtilities {
 	 * Calls encryptStateInCookie with the *current* response.
 	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
 	 */
-    void encryptStateInCookie( Map cleartext) throws EncryptionException;
+    void encryptStateInCookie( Map<String,String> cleartext) throws EncryptionException;
     
     /**
      * Stores a Map of data in an encrypted cookie. Generally the session is a better
@@ -204,7 +199,7 @@ public interface HTTPUtilities {
      * @param cleartext
      * @throws EncryptionException
      */
-    void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException;
+    void encryptStateInCookie(HttpServletResponse response, Map<String,String> cleartext) throws EncryptionException;
 
     /**
 	 * Calls getCookie with the *current* response.
@@ -271,8 +266,7 @@ public interface HTTPUtilities {
 	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
      * 
      * @param request
-     * @param destination directory 
-     * 
+     *
      * @return List of new File objects from upload
      * 
      * @throws ValidationException 
@@ -392,7 +386,6 @@ public interface HTTPUtilities {
      * accessible resources.
 	 * 
      * @param request
-     * @param context A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param response
      * @param location the URL to forward to, including parameters
      * 
@@ -416,9 +409,6 @@ public interface HTTPUtilities {
      * based access control check. This method ensures that you can only forward to non-publicly
      * accessible resources.
 	 * 
-     * @param request
-     * @param context
-     * 		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param response
      * @param location
      * 		the URL to forward to, including parameters
