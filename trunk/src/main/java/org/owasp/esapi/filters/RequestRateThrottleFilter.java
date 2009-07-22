@@ -78,7 +78,7 @@ public class RequestRateThrottleFilter implements Filter
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession(true);
         
-        synchronized( session ) {
+        synchronized( session.getId().intern() ) {
 	        Stack times = (Stack) session.getAttribute("times");
 	        if (times == null)
 	        {
