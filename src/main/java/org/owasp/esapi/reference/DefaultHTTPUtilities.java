@@ -15,15 +15,12 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.ProgressListener;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.owasp.esapi.*;
+import org.owasp.esapi.errors.*;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -31,24 +28,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.ProgressListener;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Logger;
-import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.User;
-import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncodingException;
-import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.errors.IntegrityException;
-import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.errors.ValidationUploadException;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation
@@ -77,13 +60,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
      * Defines the ThreadLocalRequest to store the current request for this thread.
      */
-    private class ThreadLocalRequest extends InheritableThreadLocal {
+    private class ThreadLocalRequest extends InheritableThreadLocal<HttpServletRequest> {
         
         public HttpServletRequest getRequest() {
-            return (HttpServletRequest)super.get();
+            return super.get();
         }
         
-        public Object initialValue() {
+        public HttpServletRequest initialValue() {
         	return null;
         }
 
@@ -95,13 +78,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
      * Defines the ThreadLocalResponse to store the current response for this thread.
      */
-    private class ThreadLocalResponse extends InheritableThreadLocal {
+    private class ThreadLocalResponse extends InheritableThreadLocal<HttpServletResponse> {
         
         public HttpServletResponse getResponse() {
-            return (HttpServletResponse)super.get();
+            return super.get();
         }
         
-        public Object initialValue() {
+        public HttpServletResponse initialValue() {
         	return null;
         }
 
@@ -258,7 +241,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		HttpSession oldSession = request.getSession();
 		
 		// make a copy of the session content
-		Map temp = new HashMap();
+		Map<String,Object> temp = new ConcurrentHashMap<String,Object>();
 		Enumeration e = oldSession.getAttributeNames();
 		while (e != null && e.hasMoreElements()) {
 			String name = (String) e.nextElement();
@@ -274,11 +257,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		user.removeSession( oldSession );
 		
 		// copy back the session content
-		Iterator i = temp.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry entry = (Map.Entry) i.next();
-			newSession.setAttribute((String) entry.getKey(), entry.getValue());
-		}
+      for (Map.Entry<String, Object> stringObjectEntry : temp.entrySet())
+      {
+         newSession.setAttribute(stringObjectEntry.getKey(), stringObjectEntry.getValue());
+      }
 		return newSession;
 	}
 	
@@ -325,7 +307,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Map decryptQueryString(String encrypted) throws EncryptionException {
+	public Map<String,String> decryptQueryString(String encrypted) throws EncryptionException {
 		String plaintext = ESAPI.encryptor().decrypt(encrypted);
 		return queryToMap(plaintext);
 	}
@@ -333,7 +315,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Map decryptStateFromCookie() throws EncryptionException {
+	public Map<String,String> decryptStateFromCookie() throws EncryptionException {
 		return decryptStateFromCookie( getCurrentRequest() );
     }
 
@@ -342,10 +324,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      *
      * @param request
      */
-    public Map decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
+    public Map<String,String> decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
     	try {
     		String encrypted = getCookie( request, ESAPI_STATE );
-    		if ( encrypted == null ) return new HashMap();		
+    		if ( encrypted == null ) return new HashMap<String,String>();
     		String plaintext = ESAPI.encryptor().decrypt(encrypted);		
     		return queryToMap( plaintext );
     	} catch( ValidationException e ) {
@@ -370,7 +352,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
      */
-    public void encryptStateInCookie(HttpServletResponse response, Map cleartext) throws EncryptionException {
+    public void encryptStateInCookie(HttpServletResponse response, Map<String,String> cleartext) throws EncryptionException {
     	StringBuilder sb = new StringBuilder();    	
     	Iterator i = cleartext.entrySet().iterator();
     	while ( i.hasNext() ) {
@@ -378,7 +360,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	    		Map.Entry entry = (Map.Entry)i.next();
 	    		String name = ESAPI.encoder().encodeForURL( entry.getKey().toString() );
 	    		String value = ESAPI.encoder().encodeForURL( entry.getValue().toString() );
-	    		sb.append( name + "=" + value );
+             sb.append(name).append("=").append(value);
 	    		if ( i.hasNext() ) sb.append( "&" );
     		} catch( EncodingException e ) {
     			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry", e );
@@ -399,7 +381,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void encryptStateInCookie( Map cleartext ) throws EncryptionException {
+	public void encryptStateInCookie( Map<String,String> cleartext ) throws EncryptionException {
 		encryptStateInCookie( getCurrentResponse(), cleartext );
     }
 
@@ -435,7 +417,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public HttpServletRequest getCurrentRequest() {
-    	return (HttpServletRequest)currentRequest.get();
+    	return currentRequest.get();
     }
 
 	
@@ -443,35 +425,35 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public HttpServletResponse getCurrentResponse() {
-        return (HttpServletResponse)currentResponse.get();
+        return currentResponse.get();
     }
 	
 	/**
 	 * {@inheritDoc}
 	 */
-    public List getFileUploads() throws ValidationException {
+    public List<File> getFileUploads() throws ValidationException {
     	return getFileUploads( getCurrentRequest(), ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions() );
     }
 
     /**
 	 * {@inheritDoc}
 	 */
-    public List getFileUploads(HttpServletRequest request) throws ValidationException {
+    public List<File> getFileUploads(HttpServletRequest request) throws ValidationException {
     	return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
 	
     /**
 	 * {@inheritDoc}
 	 */
-    public List getFileUploads(HttpServletRequest request, File finalDir ) throws ValidationException {
+    public List<File> getFileUploads(HttpServletRequest request, File finalDir ) throws ValidationException {
     	return getFileUploads(request, finalDir, ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public List getFileUploads(HttpServletRequest request, File finalDir, List allowedExtensions) throws ValidationException {
-        File tempDir = ESAPI.securityConfiguration().getUploadTempDirectory();
+	public List<File> getFileUploads(HttpServletRequest request, File finalDir, List allowedExtensions) throws ValidationException {
+      File tempDir = ESAPI.securityConfiguration().getUploadTempDirectory();
 		if ( !tempDir.exists() ) {
 		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
 		}
@@ -488,7 +470,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			finalDir = ESAPI.securityConfiguration().getUploadDirectory();
 		}
 		
-		List newFiles = new ArrayList();
+		List<File> newFiles = new ArrayList<File>();
 		try {
 			final HttpSession session = request.getSession(false);
 			if (!ServletFileUpload.isMultipartContent(request)) {
@@ -522,46 +504,50 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			};
 			upload.setProgressListener(progressListener);
 
-			List items = upload.parseRequest(request);
-			Iterator i = items.iterator();
-			while (i.hasNext()) {
-				FileItem item = (FileItem) i.next();
-				if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")) ) {
-					String[] fparts = item.getName().split("[\\/\\\\]");
-					String filename = fparts[fparts.length - 1];
+			List<FileItem> items = upload.parseRequest(request);
+         for (FileItem item : items)
+         {
+            if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")))
+            {
+               String[] fparts = item.getName().split("[\\/\\\\]");
+               String filename = fparts[fparts.length - 1];
 
-					if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false)) {
-						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + allowedExtensions, "Upload failed isValidFileName check");
-					}
+               if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false))
+               {
+                  throw new ValidationUploadException("Upload only simple filenames with the following extensions " + allowedExtensions, "Upload failed isValidFileName check");
+               }
 
-					logger.info(Logger.SECURITY_SUCCESS, "File upload requested: " + filename);
-					File f = new File(finalDir, filename);
-					if (f.exists()) {
-						String[] parts = filename.split("\\/.");
-						String extension = "";
-						if (parts.length > 1) {
-							extension = parts[parts.length - 1];
-						}
-						String filenm = filename.substring(0, filename.length() - extension.length());
-						f = File.createTempFile(filenm, "." + extension, finalDir);
-					}
-					item.write(f);
-					newFiles.add( f );
-					// delete temporary file
-					item.delete();
-					logger.fatal(Logger.SECURITY_SUCCESS, "File successfully uploaded: " + f);
-					if ( session != null ) {
-					    session.setAttribute("progress", Long.toString(0));
-					}
-				}
-			}
+               logger.info(Logger.SECURITY_SUCCESS, "File upload requested: " + filename);
+               File f = new File(finalDir, filename);
+               if (f.exists())
+               {
+                  String[] parts = filename.split("\\/.");
+                  String extension = "";
+                  if (parts.length > 1)
+                  {
+                     extension = parts[parts.length - 1];
+                  }
+                  String filenm = filename.substring(0, filename.length() - extension.length());
+                  f = File.createTempFile(filenm, "." + extension, finalDir);
+               }
+               item.write(f);
+               newFiles.add(f);
+               // delete temporary file
+               item.delete();
+               logger.fatal(Logger.SECURITY_SUCCESS, "File successfully uploaded: " + f);
+               if (session != null)
+               {
+                  session.setAttribute("progress", Long.toString(0));
+               }
+            }
+         }
 		} catch (Exception e) {
 			if (e instanceof ValidationUploadException) {
 				throw (ValidationException)e;
 			}
 			throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
 		}
-		return newFiles;
+		return Collections.synchronizedList(newFiles);
 	}
 
 
@@ -574,12 +560,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	private Cookie getFirstCookie(HttpServletRequest request, String name) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
-				Cookie cookie = cookies[i];
-				if (cookie.getName().equals(name)) {
-					return cookie;
-				}
-			}
+         for (Cookie cookie : cookies)
+         {
+            if (cookie.getName().equals(name))
+            {
+               return cookie;
+            }
+         }
 		}
 		return null;
 	}
@@ -646,10 +633,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	public void killAllCookies(HttpServletRequest request, HttpServletResponse response) {
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
-			for (int i = 0; i < cookies.length; i++) {
-				Cookie cookie = cookies[i];
-				killCookie(request, response, cookie.getName());
-			}
+         for (Cookie cookie : cookies)
+         {
+            killCookie(request, response, cookie.getName());
+         }
 		}
 	}
 
@@ -715,7 +702,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		        String key = (String) i.next();
 		        String[] value = (String[]) request.getParameterMap().get(key);
 		        for (int j = 0; j < value.length; j++) {
-		            params.append(key + "=");
+                 params.append(key).append("=");
 		            if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
 		                params.append("********");
 		            } else {
@@ -730,29 +717,35 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		    }
 		    Cookie[] cookies = request.getCookies();
 		    if ( cookies != null ) {
-		            for ( int c=0; c<cookies.length; c++ ) {
-		                    if ( !cookies[c].getName().equals("JSESSIONID")) {
-		                            params.append( "+" + cookies[c].getName() + "=" + cookies[c].getValue() );
-		                    }
-		            }
+             for (Cookie cooky : cookies)
+             {
+                if (!cooky.getName().equals("JSESSIONID"))
+                {
+                   params.append("+").append(cooky.getName()).append("=").append(cooky.getValue());
+                }
+             }
 		    }
 		    String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
 		    logger.info(Logger.SECURITY_SUCCESS, msg);
 		}
 
-	private Map queryToMap(String query) {
-		TreeMap map = new TreeMap();
+	private Map<String,String> queryToMap(String query) {
+		TreeMap<String,String> map = new TreeMap<String,String>();
 		String[] parts = query.split("&");
-		for ( int j = 0; j < parts.length; j++ ) {
-			try {
-				String[] nvpair = parts[j].split("=");
-				String name = ESAPI.encoder().decodeFromURL(nvpair[0]);
-				String value = ESAPI.encoder().decodeFromURL(nvpair[1]);
-				map.put( name, value);
-			} catch( EncodingException e ) {
-				// skip the nvpair with the encoding problem - note this is already logged.
-			}
-		}
+      for (String part : parts)
+      {
+         try
+         {
+            String[] nvpair = part.split("=");
+            String name = ESAPI.encoder().decodeFromURL(nvpair[0]);
+            String value = ESAPI.encoder().decodeFromURL(nvpair[1]);
+            map.put(name, value);
+         }
+         catch (EncodingException e)
+         {
+            // skip the nvpair with the encoding problem - note this is already logged.
+         }
+      }
 		return map;
 	}	
 
@@ -782,7 +775,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * 
 	 * This implementation checks against the list of safe redirect locations defined in ESAPI.properties.
      *
-     * @param request
      * @param response
      */
     public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
@@ -812,7 +804,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
 	public void setContentType(HttpServletResponse response) {
-		response.setContentType(((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getResponseContentType());
+		response.setContentType((ESAPI.securityConfiguration()).getResponseContentType());
 	}
 
     /**
@@ -934,6 +926,5 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		if ( !user.getCSRFToken().equals( token ) ) {
 			throw new IntrusionException("Authentication failed", "Possibly forged HTTP request without proper CSRF token detected");
 		}
-	};
-    
+	}
 }
