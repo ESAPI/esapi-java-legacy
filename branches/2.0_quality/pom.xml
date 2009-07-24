@@ -26,6 +26,11 @@
 			<name>ibiblio</name>
 			<url>http://www.ibiblio.com/maven</url>
 		</repository>
+		<repository>
+			<id>AntiSamy</id>
+			<name>AntiSamy</name>
+			<url>http://dist.wso2.org/maven2/</url>
+		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
@@ -75,10 +80,10 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>OWASP</groupId>
-			<artifactId>AntiSamy</artifactId>
-			<version>1.2</version>
+			<groupId>antisamy</groupId>
+			<artifactId>antisamy-bin</artifactId>
 			<scope>compile</scope>
+			<version>1.2</version>
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
