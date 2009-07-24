@@ -15,18 +15,14 @@
  */
 package org.owasp.esapi.filters;
 
+import org.owasp.esapi.ESAPI;
+
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Stack;
-
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * A simple servlet filter that limits the request rate to a certain threshold of requests per second.
@@ -78,11 +74,11 @@ public class RequestRateThrottleFilter implements Filter
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession(true);
         
-        synchronized( session ) {
-	        Stack times = (Stack) session.getAttribute("times");
+        synchronized( session.getId().intern() ) {
+	        Stack<Date> times = ESAPI.httpUtilities().getSessionAttribute("times");
 	        if (times == null)
 	        {
-	            times = new Stack();
+	            times = new Stack<Date>();
 	            times.push(new Date(0));
 	            session.setAttribute("times", times);
 	        }
@@ -91,8 +87,8 @@ public class RequestRateThrottleFilter implements Filter
 	        {
 	            times.removeElementAt(0);
 	        }
-	        Date newest = (Date) times.get(times.size() - 1);
-	        Date oldest = (Date) times.get(0);
+	        Date newest = times.get(times.size() - 1);
+	        Date oldest = times.get(0);
 	        long elapsed = newest.getTime() - oldest.getTime();        
 	        if (elapsed < period * 1000) // seconds
 	        {
