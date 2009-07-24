@@ -15,20 +15,9 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
@@ -40,6 +29,13 @@ import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * The Class HTTPUtilitiesTest.
@@ -464,4 +460,30 @@ public class HTTPUtilitiesTest extends TestCase {
 		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
 	    // assertEquals( user.getRememberToken(), value );
 	}
+
+    public void testGetSessionAttribute() throws Exception {
+        HttpServletRequest request = new MockHttpServletRequest();
+        HttpSession session = request.getSession();
+        session.setAttribute("testAttribute", 43f);
+
+        try {
+            Integer test1 = ESAPI.httpUtilities().getSessionAttribute( session, "testAttribute" );
+            fail();
+        } catch ( ClassCastException cce ) {}
+
+        Float test2 = ESAPI.httpUtilities().getSessionAttribute( session, "testAttribute" );
+        assertEquals( test2, 43f );
+    }
+
+    public void testGetRequestAttribute() throws Exception {
+        HttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute( "testAttribute", 43f );
+        try {
+            Integer test1 = ESAPI.httpUtilities().getRequestAttribute( request, "testAttribute" );
+            fail();
+        } catch ( ClassCastException cce ) {}
+
+        Float test2 = ESAPI.httpUtilities().getRequestAttribute( request, "testAttribute" );
+        assertEquals( test2, 43f );
+    }
 }

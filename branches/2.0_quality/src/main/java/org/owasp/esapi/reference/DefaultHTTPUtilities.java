@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -49,23 +49,23 @@ import java.util.concurrent.ConcurrentHashMap;
  * own code. In either case, you *must* call ESAPI.clearCurrent() to clear threadlocal
  * variables before the thread is reused. The advantages of having identity everywhere
  * outweigh the disadvantages of this approach.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.HTTPUtilities
  */
 public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
-	
+
 	/**
      * Defines the ThreadLocalRequest to store the current request for this thread.
      */
     private class ThreadLocalRequest extends InheritableThreadLocal<HttpServletRequest> {
-        
+
         public HttpServletRequest getRequest() {
             return super.get();
         }
-        
+
         public HttpServletRequest initialValue() {
         	return null;
         }
@@ -74,16 +74,16 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             super.set(newRequest);
         }
     }
-    
+
 	/**
      * Defines the ThreadLocalResponse to store the current response for this thread.
      */
     private class ThreadLocalResponse extends InheritableThreadLocal<HttpServletResponse> {
-        
+
         public HttpServletResponse getResponse() {
             return super.get();
         }
-        
+
         public HttpServletResponse initialValue() {
         	return null;
         }
@@ -92,7 +92,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             super.set(newResponse);
         }
     }
-	
+
     /** The logger. */
 	private final Logger logger = ESAPI.getLogger("HTTPUtilities");
 
@@ -114,15 +114,15 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      */
     private ThreadLocalResponse currentResponse = new ThreadLocalResponse();
 
-    
-    
+
+
 	/**
      * No arg constructor.
      */
     public DefaultHTTPUtilities() {
 	}
 
-	
+
 	/**
 	 * {@inheritDoc}
      * This implementation uses a custom "set-cookie" header rather than Java's
@@ -165,13 +165,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (skip mode). Skipping cookie and continuing.");
     }
 
-    
-    
+
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String addCSRFToken(String href) {
-		User user = ESAPI.authenticator().getCurrentUser();		
+		User user = ESAPI.authenticator().getCurrentUser();
 		if (user.isAnonymous()) {
 			return href;
 		}
@@ -187,7 +187,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     public void addHeader(String name, String value) {
     	addHeader( getCurrentResponse(), name, value );
     }
-	
+
     /**
 	 * {@inheritDoc}
      */
@@ -203,7 +203,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
     }
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -224,22 +224,22 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			throw new AccessControlException( "Insecure request received", "Received request using " + receivedMethod + " when only " + requiredMethod + " is allowed" );
 		}
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public HttpSession changeSessionIdentifier() throws AuthenticationException {
     	return changeSessionIdentifier( getCurrentRequest() );
     }
-	
+
 	/**
 	 * {@inheritDoc}
      */
 	public HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException {
-		
+
 		// get the current session
 		HttpSession oldSession = request.getSession();
-		
+
 		// make a copy of the session content
 		Map<String,Object> temp = new ConcurrentHashMap<String,Object>();
 		Enumeration e = oldSession.getAttributeNames();
@@ -255,7 +255,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		User user = ESAPI.authenticator().getCurrentUser();
 		user.addSession( newSession );
 		user.removeSession( oldSession );
-		
+
 		// copy back the session content
       for (Map.Entry<String, Object> stringObjectEntry : temp.entrySet())
       {
@@ -263,7 +263,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
       }
 		return newSession;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -292,7 +292,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
         return header;
     }
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -311,7 +311,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		String plaintext = ESAPI.encryptor().decrypt(encrypted);
 		return queryToMap(plaintext);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -328,32 +328,32 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	try {
     		String encrypted = getCookie( request, ESAPI_STATE );
     		if ( encrypted == null ) return new HashMap<String,String>();
-    		String plaintext = ESAPI.encryptor().decrypt(encrypted);		
+    		String plaintext = ESAPI.encryptor().decrypt(encrypted);
     		return queryToMap( plaintext );
     	} catch( ValidationException e ) {
         	return null;
     	}
     }
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encryptHiddenField(String value) throws EncryptionException {
     	return ESAPI.encryptor().encrypt(value);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encryptQueryString(String query) throws EncryptionException {
 		return ESAPI.encryptor().encrypt( query );
 	}
-	
+
 	/**
 	 * {@inheritDoc}
      */
     public void encryptStateInCookie(HttpServletResponse response, Map<String,String> cleartext) throws EncryptionException {
-    	StringBuilder sb = new StringBuilder();    	
+    	StringBuilder sb = new StringBuilder();
     	Iterator i = cleartext.entrySet().iterator();
     	while ( i.hasNext() ) {
     		try {
@@ -366,18 +366,18 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry", e );
     		}
     	}
-    	
+
 		String encrypted = ESAPI.encryptor().encrypt(sb.toString());
-		
+
 		if ( encrypted.length() > (MAX_COOKIE_LEN ) ) {
 			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry");
 			throw new EncryptionException("Encryption failure", "Encrypted cookie state of " + encrypted.length() + " longer than allowed " + MAX_COOKIE_LEN );
 		}
-		
+
     	Cookie cookie = new Cookie( ESAPI_STATE, encrypted );
     	addCookie( response, cookie );
     }
-		
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -385,34 +385,34 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		encryptStateInCookie( getCurrentResponse(), cleartext );
     }
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getCookie( HttpServletRequest request, String name ) throws ValidationException {
         Cookie c = getFirstCookie( request, name );
         if ( c == null ) return null;
-		String value = c.getValue(); 
+		String value = c.getValue();
 		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", 1000, false);
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
     public String getCookie( String name ) throws ValidationException {
     	return getCookie( getCurrentRequest(), name );
     }
-    
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String getCSRFToken() {
-		User user = ESAPI.authenticator().getCurrentUser();		
+		User user = ESAPI.authenticator().getCurrentUser();
 		if (user == null) return null;
 		return user.getCSRFToken();
 	}
-	
-	
+
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -420,14 +420,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	return currentRequest.get();
     }
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
     public HttpServletResponse getCurrentResponse() {
         return currentResponse.get();
     }
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -441,14 +441,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     public List<File> getFileUploads(HttpServletRequest request) throws ValidationException {
     	return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
-	
+
     /**
 	 * {@inheritDoc}
 	 */
     public List<File> getFileUploads(HttpServletRequest request, File finalDir ) throws ValidationException {
     	return getFileUploads(request, finalDir, ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -457,19 +457,19 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		if ( !tempDir.exists() ) {
 		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
 		}
-		
+
 		if( finalDir != null){
-			if ( !finalDir.exists() ) { 
+			if ( !finalDir.exists() ) {
 				if ( !finalDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + finalDir.getAbsolutePath() );
 			}
 		}
 		else {
-			if ( !ESAPI.securityConfiguration().getUploadDirectory().exists()) { 
+			if ( !ESAPI.securityConfiguration().getUploadDirectory().exists()) {
 				if ( !ESAPI.securityConfiguration().getUploadDirectory().mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + ESAPI.securityConfiguration().getUploadDirectory().getAbsolutePath() );
 			}
 			finalDir = ESAPI.securityConfiguration().getUploadDirectory();
 		}
-		
+
 		List<File> newFiles = new ArrayList<File>();
 		try {
 			final HttpSession session = request.getSession(false);
@@ -551,7 +551,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	}
 
 
-	
+
 	/**
      * Utility to return the first cookie matching the provided name.
      * @param request
@@ -579,7 +579,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         return ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
 	}
 
-    
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -587,7 +587,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	return getHeader( getCurrentRequest(), name );
     }
 
-    
+
     /**
 	 * {@inheritDoc}
 	 */
@@ -616,14 +616,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	    return url.startsWith( "https" );
 	}
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
     public void killAllCookies() {
     	killAllCookies( getCurrentRequest(), getCurrentResponse() );
-    }	
-	
+    }
+
 	/**
 	 * {@inheritDoc}
      *
@@ -640,7 +640,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 	}
 
-	
+
 	/**
 	 * {@inheritDoc}
      *
@@ -661,9 +661,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		if ( domain != null ) deleter.setDomain( domain );
 		if ( path != null ) deleter.setPath( path );
 		response.addCookie( deleter );
-	}	
-	
-	
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -671,7 +671,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	killCookie( getCurrentRequest(), getCurrentResponse(), name );
     }
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -684,15 +684,15 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
     public void logHTTPRequest(HttpServletRequest request, Logger logger) {
     	logHTTPRequest( request, logger, null );
-    }	
-	
+    }
+
 		/**
 		 * Formats an HTTP request into a log suitable string. This implementation logs the remote host IP address (or
 		 * hostname if available), the request method (GET/POST), the URL, and all the querystring and form parameters. All
 		 * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
 		 * match items in the parameterNamesToObfuscate are shown as eight asterisks.
-		 * 
-		 * 
+		 *
+		 *
 		 * @param request
 		 */
 		public void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate) {
@@ -747,11 +747,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
          }
       }
 		return map;
-	}	
+	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
 	 * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
 	 */
@@ -768,11 +768,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
     public void sendForward( String location )  throws AccessControlException,ServletException,IOException {
     	sendForward( getCurrentRequest(), getCurrentResponse(), location);
-    }	
-    
+    }
+
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * This implementation checks against the list of safe redirect locations defined in ESAPI.properties.
      *
      * @param response
@@ -784,14 +784,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
         response.sendRedirect(location);
     }
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
     public void sendRedirect( String location )  throws AccessControlException,IOException {
     	sendRedirect( getCurrentResponse(), location);
     }
-    
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -830,22 +830,22 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
     }
 
-    
+
 	/**
 	 * {@inheritDoc}
 	 */
     public void setHeader( String name, String value ) {
     	setHeader( getCurrentResponse(), name, value );
     }
-    
-    
+
+
     /**
 	 * {@inheritDoc}
 	 */
     public void setNoCacheHeaders() {
     	setNoCacheHeaders( getCurrentResponse() );
     }
-    
+
 	/**
 	 * {@inheritDoc}
      *
@@ -859,21 +859,21 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		response.setHeader("Pragma","no-cache");
 		response.setDateHeader("Expires", -1);
 	}
-        
+
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * Save the user's remember me data in an encrypted cookie and send it to the user. 
-	 * Any old remember me cookie is destroyed first. Setting this cookie will keep the user 
+	 *
+	 * Save the user's remember me data in an encrypted cookie and send it to the user.
+	 * Any old remember me cookie is destroyed first. Setting this cookie will keep the user
 	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
 	 * If the cookie exists for the current user, it will automatically be used by ESAPI to
-	 * log the user in, if the data is valid and not expired. 
+	 * log the user in, if the data is valid and not expired.
      *
      * @param request
      * @param response
      */
 	public String setRememberToken( HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path ) {
-		User user = ESAPI.authenticator().getCurrentUser();		
+		User user = ESAPI.authenticator().getCurrentUser();
 		try {
 			killCookie(request, response, REMEMBER_TOKEN_COOKIE_NAME );
 			// seal already contains random data
@@ -892,15 +892,15 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			return null;
 		}
 	}
-    
+
     /**
 	 * {@inheritDoc}
 	 */
     public String setRememberToken( String password, int maxAge, String domain, String path ) {
     	return setRememberToken( getCurrentRequest(), getCurrentResponse(), password, maxAge, domain, path );
     }
-    
-    
+
+
     /**
 	 * {@inheritDoc}
 	 */
@@ -910,14 +910,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
     /**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * This implementation uses the CSRF_TOKEN_NAME parameter for the token.
      *
      * @param request
-     */	  
+     */
 	public void verifyCSRFToken(HttpServletRequest request) throws IntrusionException {
 		User user = ESAPI.authenticator().getCurrentUser();
-		
+
 		// check if user authenticated with this request - no CSRF protection required
 		if( request.getAttribute(user.getCSRFToken()) != null ) {
 			return;
@@ -927,4 +927,38 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			throw new IntrusionException("Authentication failed", "Possibly forged HTTP request without proper CSRF token detected");
 		}
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T> T getSessionAttribute( String key ) {
+        final HttpSession session = ESAPI.currentRequest().getSession(false);
+        if ( session != null )
+            return (T) session.getAttribute(key);
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T> T getSessionAttribute(HttpSession session, String key)
+    {
+        return (T) session.getAttribute(key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T> T getRequestAttribute(String key)
+    {
+        return (T)  ESAPI.currentRequest().getAttribute(key);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public <T> T getRequestAttribute(HttpServletRequest request, String key)
+    {
+        return (T) request.getAttribute( key );
+    }
 }
