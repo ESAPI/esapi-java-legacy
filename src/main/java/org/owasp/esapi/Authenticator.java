@@ -15,13 +15,12 @@
  */
 package org.owasp.esapi;
 
-import java.util.Set;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncryptionException;
+import java.util.Set;
 
 
 /**
@@ -74,7 +73,7 @@ public interface Authenticator {
 	/**
 	 * Calls login with the *current* request and response.
 	 * @return
-	 * @see HttpUtililties#setCurrent()
+	 * @see HTTPUtilities#setCurrentHTTP(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	User login() throws AuthenticationException;
 	
