@@ -3,6 +3,9 @@ package org.owasp.esapi.codecs;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
+// CHECKME: Version at http://iharder.net/base64 is up to v2.3.3. Some semantic changes
+// starting with v2.3. Should we upgrade and then add ESAPI logging or stay at 2.2.2 base? - Kevin Wall
+
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
  * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
@@ -160,7 +163,7 @@ public class Base64
     
     /** The 64 valid Base64 values. */
     //private final static byte[] ALPHABET;
-	/* Host platform me be something funny like EBCDIC, so we hardcode these values. */
+	/* Host platform me be something funny like EBCDIC, so we hard code these values. */
 	private final static byte[] _STANDARD_ALPHABET =
     {
         (byte)'A', (byte)'B', (byte)'C', (byte)'D', (byte)'E', (byte)'F', (byte)'G',
@@ -884,6 +887,9 @@ public class Base64
 
             return 3;
             }catch( Exception e){
+            	// CHECKME: Shouldn't these all be done in a single logger.error() call so they can't
+            	// become interleaved with other log entries from other threads? Sure, it's very
+            	// rare that this would ever happen, but it's definitely possible. Murphy rules! - Kevin Wall
                 logger.error( Logger.SECURITY_FAILURE, "Problem writing object", e );
                 logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset]+ ": " + ( DECODABET[ source[ srcOffset     ] ]  ) );
                 logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+1]+  ": " + ( DECODABET[ source[ srcOffset + 1 ] ]  ) );
@@ -992,7 +998,12 @@ public class Base64
         }
         catch( java.io.UnsupportedEncodingException uee )
         {
-            bytes = s.getBytes();
+            bytes = s.getBytes();	// Uses native encoding
+            // CHECKME: Is this correct? Should it be a warning instead since nothing re-thrown?
+            // I do think that some sort of logging is in order especially since UTF-8 should
+            // always be available on all platforms. - Kevin Wall
+            logger.error( Logger.SECURITY_FAILURE, "Problem decoding string using " +
+            			  PREFERRED_ENCODING + "; substituting native platform encoding instead", uee );
         }
         
         // Decode
