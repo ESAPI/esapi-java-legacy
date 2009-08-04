@@ -39,6 +39,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	private static final String CONFIGURATION_FILE_PARAM = "configuration";
 	private static final String LOGGING_FILE_PARAM = "log_settings";
+	private static final String PREFERRED_ENCODING = "UTF-8";
 
 	private String configurationFilename = null;
 
@@ -54,7 +55,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		try {
 			appGuardConfig = ConfigurationParser.readConfigurationFile(is);
 		} catch (ConfigurationException e ) {
-			e.printStackTrace(); // FIXME
+			// e.printStackTrace(); // FIXME
+			// Is this what someone had in mind by the FIXME comment? If not, then what?
+			logger.error("Error reading or parsing configuration file.", e);
 		}
 	}
 	
@@ -413,7 +416,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		response.reset();
 		response.resetBuffer();
 		response.setStatus(appGuardConfig.getDefaultResponseCode());
-		response.getOutputStream().write(finalJavaScript.getBytes());
+		response.getOutputStream().write(finalJavaScript.getBytes(response.getCharacterEncoding()));
 		response.commit();
 	}
 
