@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -72,8 +73,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
     /**
      * Generates a new strongly random secret key and salt that can be used in the ESAPI properties file.
      * 
-     * @param args
-     * @throws java.lang.Exception
+     * @param args Set first argument to "-print" to display available algorithms on standard output.
+     * @throws java.lang.Exception	To cover a multitude of sins, mostly in configuring ESAPI.properties.
      */
     public static void main( String[] args ) throws Exception {
 		System.out.println( "Generating a new secret key" );
@@ -114,7 +115,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         byte[] raw = secretKey.getEncoded();
         byte[] salt = new byte[20];
         random.nextBytes( salt );
-        System.out.println( "\nCopy and paste this into ESAPI.properties\n" );
+        String eol = System.getProperty("line.separator", "\n"); // So it works on Windows too.
+        System.out.println( eol + "Copy and paste this into ESAPI.properties" + eol);
         System.out.println( "Encryptor.MasterKey=" + ESAPI.encoder().encodeForBase64(raw, false) );
         System.out.println( "Encryptor.MasterSalt=" + ESAPI.encoder().encodeForBase64(salt, false) );
         System.out.println();
@@ -145,7 +147,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			// Set up signing keypair using the master password and salt
 			KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm);
 			SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-			byte[] seed = hash(new String(skey),new String(salt)).getBytes();
+			byte[] seed = hash(new String(skey, encoding),new String(salt, encoding)).getBytes(encoding);
 			random.setSeed(seed);
 			keyGen.initialize(signatureKeyLength, random);
 			KeyPair pair = keyGen.generateKeyPair();
@@ -180,8 +182,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
 			digest.reset();
 			digest.update(ESAPI.securityConfiguration().getMasterSalt());
-			digest.update(salt.getBytes());
-			digest.update(plaintext.getBytes());
+			digest.update(salt.getBytes(encoding));
+			digest.update(plaintext.getBytes(encoding));
 
 			// rehash a number of times to help strengthen weak passwords
 			bytes = digest.digest();
@@ -193,6 +195,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			return encoded;
 		} catch (NoSuchAlgorithmException e) {
 			throw new EncryptionException("Internal error", "Can't find hash algorithm " + hashAlgorithm, e);
+		} catch (UnsupportedEncodingException ex) {
+			throw new EncryptionException("Internal error", "Can't find encoding for " + encoding, ex);
 		}
 	}
 	
@@ -239,7 +243,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		try {
 			Signature signer = Signature.getInstance(signatureAlgorithm);
 			signer.initSign(privateKey);
-			signer.update(data.getBytes());
+			signer.update(data.getBytes(encoding));
 			byte[] bytes = signer.sign();
 			return ESAPI.encoder().encodeForBase64(bytes, false);
 		} catch (InvalidKeyException ike) {
@@ -257,7 +261,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			byte[] bytes = ESAPI.encoder().decodeFromBase64(signature);
 			Signature signer = Signature.getInstance(signatureAlgorithm);
 			signer.initVerify(publicKey);
-			signer.update(data.getBytes());
+			signer.update(data.getBytes(encoding));
 			return signer.verify(bytes);
 		} catch (Exception e) {
 			new EncryptionException("Invalid signature", "Problem verifying signature: " + e.getMessage(), e);
