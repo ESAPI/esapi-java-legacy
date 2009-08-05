@@ -53,26 +53,25 @@ public class StringUtilities {
 
 	
     /**
-     * Union two character arrays.
+     * Union multiple character arrays.
      * 
-     * @param c1 the c1
-     * @param c2 the c2
-     * @return the char[]
+     * @param list the char[]s to union
+     * @return the union of the char[]s
      */
-    public static char[] union(char[] c1, char[] c2) {
+    public static char[] union(char[]... list) {
     	StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < c1.length; i++) {
-            if (!contains(sb, c1[i]))
-                sb.append(c1[i]);
-        }
-        for (int i = 0; i < c2.length; i++) {
-            if (!contains(sb, c2[i]))
-                sb.append(c2[i]);
-        }
-        char[] c3 = new char[sb.length()];
-        sb.getChars(0, sb.length(), c3, 0);
-        Arrays.sort(c3);
-        return c3;
+    	
+    	for (char[] characters : list) {
+	        for (int i = 0; i < list.length; i++) {
+	            if (!contains(sb, characters[i]))
+	                sb.append(list[i]);
+	        }
+    	}
+
+        char[] toReturn = new char[sb.length()];
+        sb.getChars(0, sb.length(), toReturn, 0);
+        Arrays.sort(toReturn);
+        return toReturn;
     }
 
 

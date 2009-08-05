@@ -85,7 +85,7 @@ public class ValidationErrorList {
 	/**
 	 * Error list of ValidationException's
 	 */
-	private HashMap errorList = new HashMap();
+	private HashMap<String, ValidationException> errorList = new HashMap<String, ValidationException>();
 
 	/**
 	 * Adds a new error to list with a unique named context.
@@ -107,8 +107,8 @@ public class ValidationErrorList {
 	 * 
 	 * @return List
 	 */
-	public List errors() {
-		return new ArrayList( errorList.values() );
+	public List<ValidationException> errors() {
+		return new ArrayList<ValidationException>( errorList.values() );
 	}
 
 	/**
@@ -119,7 +119,7 @@ public class ValidationErrorList {
 	 */
 	public ValidationException getError(String context) {
 		if (context == null) return null;		
-		return (ValidationException)errorList.get(context);
+		return errorList.get(context);
 	}
 
 	/**
