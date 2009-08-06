@@ -64,7 +64,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
 public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	/** A map of validation rules */
-	private Map rules = new HashMap();
+	private Map<String, ValidationRule> rules = new HashMap<String, ValidationRule>();
 
 	/** The encoder to use for canonicalization */
 	private Encoder encoder = null;
@@ -74,7 +74,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/** Initialize file validator with an appropriate set of codecs */
 	static {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<String>();
 		list.add( "HTMLEntityCodec" );
 		list.add( "PercentCodec" );
 		Encoder fileEncoder = new DefaultEncoder( list );
@@ -111,7 +111,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Get a validation rule from the registry with the "type name" of the rule as the key.
 	 */
 	public ValidationRule getRule( String name ) {
-		return (ValidationRule)rules.get( name );
+		return rules.get( name );
 	}
 
 	
@@ -159,7 +159,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
-		return (String)rvr.getValid(context, input);
+		return rvr.getValid(context, input);
 	}
 	
 	/**
@@ -203,7 +203,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
 		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
 		dvr.setAllowNull(allowNull);
-		return (Date)dvr.getValid(context, input);
+		return dvr.getValid(context, input);
 	}
 	
 	/**
@@ -240,7 +240,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		HTMLValidationRule hvr = new HTMLValidationRule( "safehtml", encoder );
 		hvr.setMaximumLength(maxLength);
 		hvr.setAllowNull(allowNull);
-		return (String)hvr.getValid(context, input);
+		return hvr.getValid(context, input);
 	}
 	
 	/**
@@ -274,7 +274,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public String getValidCreditCard(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
 		CreditCardValidationRule ccvr = new CreditCardValidationRule( "creditcard", encoder );
 		ccvr.setAllowNull(allowNull);
-		return (String)ccvr.getValid(context, input);
+		return ccvr.getValid(context, input);
 	}
 	
 	/**
@@ -373,7 +373,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * {@inheritDoc}
 	 */
-	public boolean isValidFileName(String context, String input, List allowedExtensions, boolean allowNull) throws IntrusionException {
+	public boolean isValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws IntrusionException {
 		try {
 			getValidFileName( context, input, allowedExtensions, allowNull);
 			return true;
@@ -385,7 +385,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getValidFileName(String context, String input, List allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException {
+	public String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException {
 		String canonical = "";
 		// detect path manipulation
 		try {
@@ -426,7 +426,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String getValidFileName(String context, String input, List allowedParameters, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
+	public String getValidFileName(String context, String input, List<String> allowedParameters, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 		try {
 			return getValidFileName(context, input, allowedParameters, allowNull);
 		} catch (ValidationException e) {
@@ -488,7 +488,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		NumberValidationRule nvr = new NumberValidationRule( "number", encoder, minValue, maxValue );
 		nvr.setAllowNull(allowNull);
-		return (Double)nvr.getValid(context, input);
+		return nvr.getValid(context, input);
 	}
 	
 	/**
@@ -522,7 +522,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException {
 		IntegerValidationRule ivr = new IntegerValidationRule( "number", encoder, minValue, maxValue );
 		ivr.setAllowNull(allowNull);
-		return (Integer)ivr.getValid(context, input);
+		return ivr.getValid(context, input);
 	}
 	
 	/**
@@ -595,7 +595,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void assertValidFileUpload(String context, String directorypath, String filename, File parent, byte[] content, int maxBytes, List allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException {
+	public void assertValidFileUpload(String context, String directorypath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException {
 		getValidFileName( context, filename, allowedExtensions, allowNull );
 		getValidDirectoryPath( context, directorypath, parent, allowNull );
 		getValidFileContent( context, content, maxBytes, allowNull );
@@ -604,7 +604,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List allowedExtensions, boolean allowNull, ValidationErrorList errors) 
+	public void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull, ValidationErrorList errors) 
 		throws IntrusionException {
 		try {
 			assertValidFileUpload(context, filepath, filename, parent, content, maxBytes, allowedExtensions, allowNull);
@@ -618,7 +618,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 *
 	 * Returns true if input is a valid list item.
 	 */
-	public boolean isValidListItem(String context, String input, List list) {
+	public boolean isValidListItem(String context, String input, List<String> list) {
 		try {
 			getValidListItem( context, input, list);
 			return true;
@@ -632,7 +632,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * will generate a descriptive ValidationException, and input that is clearly an attack
 	 * will generate a descriptive IntrusionException. 
 	 */
-	public String getValidListItem(String context, String input, List list) throws ValidationException, IntrusionException {
+	public String getValidListItem(String context, String input, List<String> list) throws ValidationException, IntrusionException {
 		if (list.contains(input)) return input;		
 		throw new ValidationException( context + ": Invalid list item", "Invalid list item: context=" + context + ", input=" + input, context );
 	}
@@ -643,7 +643,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      *
      * @param errors
      */
-	public String getValidListItem(String context, String input, List list, ValidationErrorList errors) throws IntrusionException {	
+	public String getValidListItem(String context, String input, List<String> list, ValidationErrorList errors) throws IntrusionException {	
 		try {
 			return getValidListItem(context, input, list);
 		} catch (ValidationException e) {
@@ -656,7 +656,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 /**
 	 * {@inheritDoc}
      */
-	public boolean isValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set requiredNames, Set optionalNames) {
+	public boolean isValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> requiredNames, Set<String> optionalNames) {
 		try {
 			assertValidHTTPRequestParameterSet( context, request, requiredNames, optionalNames);
 			return true;
@@ -672,18 +672,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * 
 	 * Uses current HTTPRequest
 	 */
-	public void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set required, Set optional) throws ValidationException, IntrusionException {
-		Set actualNames = request.getParameterMap().keySet();
+	public void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional) throws ValidationException, IntrusionException {
+		Set<String> actualNames = request.getParameterMap().keySet();
 		
 		// verify ALL required parameters are present
-		Set missing = new HashSet(required);
+		Set<String> missing = new HashSet<String>(required);
 		missing.removeAll(actualNames);
 		if (missing.size() > 0) {
 			throw new ValidationException( context + ": Invalid HTTP request missing parameters", "Invalid HTTP request missing parameters " + missing + ": context=" + context, context );
 		}
 		
 		// verify ONLY optional + required parameters are present
-		Set extra = new HashSet(actualNames);
+		Set<String> extra = new HashSet<String>(actualNames);
 		extra.removeAll(required);
 		extra.removeAll(optional);
 		if (extra.size() > 0) {
@@ -697,7 +697,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Uses current HTTPRequest saved in ESAPI Authenticator
      * @param errors
      */
-	public void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set required, Set optional, ValidationErrorList errors) throws IntrusionException {
+	public void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional, ValidationErrorList errors) throws IntrusionException {
 		try {
 			assertValidHTTPRequestParameterSet(context, request, required, optional);
 		} catch (ValidationException e) {

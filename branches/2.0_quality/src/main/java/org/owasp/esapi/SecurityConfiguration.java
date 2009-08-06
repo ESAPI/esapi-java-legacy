@@ -149,14 +149,14 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	public List getAllowedExecutables();
+	public List<String> getAllowedExecutables();
 
 	/**
 	 * Gets the allowed file extensions for files that are uploaded to this application.
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	public List getAllowedFileExtensions();
+	public List<String> getAllowedFileExtensions();
 
 	/**
 	 * Gets the maximum allowed file upload size.
@@ -225,7 +225,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the codec list
 	 */
-	public List getDefaultCanonicalizationCodecs();
+	public List<String> getDefaultCanonicalizationCodecs();
 
 	/**
 	 * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
@@ -425,7 +425,7 @@ public interface SecurityConfiguration {
 		 * The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
 		 * your implementation could have this be a list of any type of 'actions' you wish to define. 
 		 */
-		public List actions = null;
+		public List<String> actions = null;
 
 		/**
 		 * Constructs a threshold that is composed of its name, its threshold count, the time window for
@@ -437,7 +437,7 @@ public interface SecurityConfiguration {
 		 * trigger this threshold.
 		 * @param actions The list of actions to take if the threshold is met.
 		 */
-		public Threshold(String name, int count, long interval, List actions) {
+		public Threshold(String name, int count, long interval, List<String> actions) {
 			this.name = name;
 			this.count = count;
 			this.interval = interval;
