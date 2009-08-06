@@ -214,7 +214,7 @@ public interface Validator {
 	/**
 	 * Calls getValidFileName and returns true if no exceptions are thrown. 
 	 */
-	boolean isValidFileName(String context, String input, List allowedExtensions, boolean allowNull) throws IntrusionException;
+	boolean isValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws IntrusionException;
 
 	/**
 	 * Returns a canonicalized and validated file name as a String. Implementors should check for allowed file extensions here, as well as allowed file name characters, as declared in "ESAPI.properties". Invalid input
@@ -233,12 +233,12 @@ public interface Validator {
      * @throws ValidationException
      * @throws IntrusionException
 	 */
-	String getValidFileName(String context, String input, List allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
+	String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
 	
 	/**
 	 * Calls getValidFileName with the supplied errorList to capture ValidationExceptions
 	 */
-	String getValidFileName(String context, String input, List allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
+	String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 		
 	/**
 	 * Calls getValidNumber and returns true if no exceptions are thrown. 
@@ -396,17 +396,17 @@ public interface Validator {
 	 * @throws ValidationException
 	 * @throws IntrusionException
 	 */
-	void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
+	void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
 
 	/**
 	 * Calls getValidFileUpload with the supplied errorList to capture ValidationExceptions
 	 */
-	void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
+	void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 	
 	/**
 	 * Calls getValidListItem and returns true if no exceptions are thrown. 
 	 */
-	boolean isValidListItem(String context, String input, List list) throws IntrusionException;
+	boolean isValidListItem(String context, String input, List<String> list) throws IntrusionException;
 
 	/**
 	 * Returns the list item that exactly matches the canonicalized input. Invalid or non-matching input
@@ -425,17 +425,17 @@ public interface Validator {
 	 * @throws ValidationException
 	 * @throws IntrusionException
 	 */
-	String getValidListItem(String context, String input, List list) throws ValidationException, IntrusionException;
+	String getValidListItem(String context, String input, List<String> list) throws ValidationException, IntrusionException;
 
 	/**
 	 * Calls getValidListItem with the supplied errorList to capture ValidationExceptions
 	 */
-	String getValidListItem(String context, String input, List list, ValidationErrorList errorList) throws IntrusionException;
+	String getValidListItem(String context, String input, List<String> list, ValidationErrorList errorList) throws IntrusionException;
 	
 	/**
 	 * Calls assertValidHTTPRequestParameterSet and returns true if no exceptions are thrown. 
 	 */
-	boolean isValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set required, Set optional) throws IntrusionException;
+	boolean isValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional) throws IntrusionException;
 
 	/**
 	 * Validates that the parameters in the current request contain all required parameters and only optional ones in
@@ -452,12 +452,12 @@ public interface Validator {
 	 * @throws ValidationException
 	 * @throws IntrusionException 
 	 */
-	void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set required, Set optional) throws ValidationException, IntrusionException;
+	void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional) throws ValidationException, IntrusionException;
 	
 	/**
 	 * Calls getValidHTTPRequestParameterSet with the supplied errorList to capture ValidationExceptions
 	 */
-	void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set required, Set optional, ValidationErrorList errorList) throws IntrusionException;
+	void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional, ValidationErrorList errorList) throws IntrusionException;
 	
 	/**
 	 * Calls getValidPrintable and returns true if no exceptions are thrown. 

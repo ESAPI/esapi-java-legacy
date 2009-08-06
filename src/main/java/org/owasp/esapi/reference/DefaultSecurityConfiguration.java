@@ -150,7 +150,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
     public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
 
-    private static final Map patternCache = new HashMap();
+    private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
     
     /*
      * Absolute path to the userDirectory
@@ -167,7 +167,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     private static String resourceDirectory = ".esapi";
     
-    private static long lastModified = -1;
+//    private static long lastModified = -1;
 
     /**
      * Instantiates a new configuration.
@@ -295,7 +295,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-	public List getAllowedExecutables() {
+	public List<String> getAllowedExecutables() {
     	String def = "";
         String[] exList = getESAPIProperty(APPROVED_EXECUTABLES,def).split(",");
         return Arrays.asList(exList);
@@ -304,7 +304,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-	public List getAllowedFileExtensions() {
+	public List<String> getAllowedFileExtensions() {
     	String def = ".zip,.pdf,.tar,.gz,.xls,.properties,.txt,.xml";
         String[] extList = getESAPIProperty(APPROVED_UPLOAD_EXTENSIONS,def).split(",");
         return Arrays.asList(extList);
@@ -458,7 +458,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ) );
     	// get validation properties and merge them into the main properties
     	Properties validationProperties = loadPropertiesFromStream( getResourceStream( getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties") ) );
-    	Iterator i = validationProperties.keySet().iterator();
+    	Iterator<?> i = validationProperties.keySet().iterator();
     	while( i.hasNext() ) {
     		String key = (String)i.next();
     		String value = validationProperties.getProperty(key);
@@ -467,7 +467,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	
         logSpecial("  ========Master Configuration========", null);
         System.out.println( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
-        Iterator j = new TreeSet( properties.keySet() ).iterator();
+        Iterator<?> j = new TreeSet<Object>( properties.keySet() ).iterator();
         while (j.hasNext()) {
             String key = (String)j.next();
             // print out properties, but not sensitive ones like MasterKey and MasterSalt
@@ -540,8 +540,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
-	public List getDefaultCanonicalizationCodecs() {
-		List def = new ArrayList();
+	public List<String> getDefaultCanonicalizationCodecs() {
+		List<String> def = new ArrayList<String>();
 		def.add( "org.owasp.esapi.codecs.HTMLEntityCodec" );
 		def.add( "org.owasp.esapi.codecs.PercentCodec" );
 		def.add( "org.owasp.esapi.codecs.JavaScriptCodec" );
@@ -605,7 +605,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	public Threshold getQuota(String eventName) {
         int count = getESAPIProperty("IntrusionDetector." + eventName + ".count", 0);
         int interval =  getESAPIProperty("IntrusionDetector." + eventName + ".interval", 0);
-        List actions = new ArrayList();
+        List<String> actions = new ArrayList<String>();
         String actionString = getESAPIProperty("IntrusionDetector." + eventName + ".actions", "");
         if (actionString != null) {
             String[] actionList = actionString.split(",");
@@ -757,7 +757,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public Pattern getValidationPattern( String key ) {
     	String value = getESAPIProperty( "Validator." + key, "" );
     	// check cache
-    	Pattern p = (Pattern)patternCache.get( value );
+    	Pattern p = patternCache.get( value );
     	if ( p != null ) return p;
     	
     	// compile a new pattern
@@ -844,14 +844,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * @param def
 	 * @return
 	 */
-	private List getESAPIProperty( String key, List def ) {
+	private List<String> getESAPIProperty( String key, List<String> def ) {
 		String property = properties.getProperty( key );
 		if ( property == null ) {
     		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
     		return def;
 		}
 		String[] parts = property.split(",");
-		List list = Arrays.asList( parts );
+		List<String> list = Arrays.asList( parts );
 		return list;
 	}
 		
