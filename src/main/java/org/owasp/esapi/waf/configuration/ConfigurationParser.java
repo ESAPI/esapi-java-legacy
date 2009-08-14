@@ -13,7 +13,7 @@ import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
-import org.owasp.esapi.waf.ConfigurationException;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.waf.rules.AddHeaderRule;
 import org.owasp.esapi.waf.rules.AddSecureFlagRule;
