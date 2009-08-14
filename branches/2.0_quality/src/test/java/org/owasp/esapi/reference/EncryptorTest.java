@@ -118,6 +118,26 @@ public class EncryptorTest extends TestCase {
         }
     }
 
+    // TODO - Because none of the encryption / decryption tests persists
+    //		  encrypted data across runs, that means everything is run
+    //		  under same JVM at same time thus always with the same
+    //		  _native_ byte encoding.
+    //
+    //		  Need test(s) such that data is persisted across JVM runs
+    //		  so we can test a run on (say) a Windows Intel box can decrypt
+    //		  encrypted data produced by the reference Encyrptor on
+    //		  (say) a Solaris SPARC box. I.e., test that the change to
+    //		  JavaEncryptor to use UTF-8 encoding throughout works as
+    //		  desired.
+    //
+    //		  Files saved across tests need to be added to SVN (under
+    //		  resources or where) and they should be named so we know
+    //		  where and how they were created. E.g., WinOS-AES-ECB.dat,
+    //		  Sparc-Solaris-AEC-CBC-PKCS5Padding.dat, etc.
+    //
+    //				-kevin wall
+    
+
     /**
 	 * Test of sign method, of class org.owasp.esapi.Encryptor.
 	 * 
