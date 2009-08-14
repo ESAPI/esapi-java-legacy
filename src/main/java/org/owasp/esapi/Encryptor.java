@@ -87,7 +87,6 @@ public interface Encryptor {
 	 *      the hashing of 'plaintext'
 	 */
 	String hash(String plaintext, String salt, int iterations) throws EncryptionException;
-
 	
 	/**
 	 * Encrypts the provided plaintext and returns a ciphertext string.
@@ -96,13 +95,21 @@ public interface Encryptor {
 	 *      the plaintext String to encrypt
 	 * 
 	 * @return 
-	 * 		the encrypted String representation of 'plaintext'
+	 * 		the encrypted, base64-encoded String representation of 'plaintext'
 	 * 
 	 * @throws EncryptionException
 	 *      if the specified encryption algorithm could not be found or another problem exists with 
 	 *      the encryption of 'plaintext'
 	 */
 	String encrypt(String plaintext) throws EncryptionException;
+
+	/**
+	 * TODO
+	 * @param plaintext
+	 * @return
+	 * @throws EncryptionException
+	 */
+	 CipherText encrypt(byte[] plaintext) throws EncryptionException;
 
 	/**
 	 * Decrypts the provided ciphertext string (encrypted with the encrypt
@@ -120,6 +127,14 @@ public interface Encryptor {
 	 */
 	String decrypt(String ciphertext) throws EncryptionException;
 
+	/**
+	 * TODO
+	 * @param ciphertext
+	 * @return
+	 * @throws EncryptionException
+	 */
+	byte[] decrypt(CipherText ciphertext) throws EncryptionException;
+	
 	/**
 	 * Create a digital signature for the provided data and return it in a
 	 * string.
