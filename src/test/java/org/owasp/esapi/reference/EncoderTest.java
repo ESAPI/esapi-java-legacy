@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -42,6 +43,8 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class EncoderTest extends TestCase {
     
+	private static final String PREFERRED_ENCODING = "UTF-8";
+	
     /**
 	 * Instantiates a new encoder test.
 	 * 
@@ -85,7 +88,8 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
-        ArrayList list = new ArrayList();
+
+        ArrayList<String> list = new ArrayList<String>();
         list.add( "HTMLEntityCodec" );
 	    list.add( "PercentCodec" );
 		Encoder instance = new DefaultEncoder( list );
@@ -199,7 +203,7 @@ public class EncoderTest extends TestCase {
         assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript&#x3E;alert%28%22hello&#34%29%3B%3C%2Fscript%3E", false) );
         
         // javascript escape syntax
-        ArrayList js = new ArrayList();
+        ArrayList<String> js = new ArrayList<String>();
         js.add( "JavaScriptCodec" );
         instance = new DefaultEncoder( js );
         System.out.println( "JavaScript Decoding" );
@@ -227,7 +231,7 @@ public class EncoderTest extends TestCase {
 
         // css escape syntax
         // be careful because some codecs see \0 as null byte
-        ArrayList css = new ArrayList();
+        ArrayList<String> css = new ArrayList<String>();
         css.add( "CSSCodec" );
         instance = new DefaultEncoder( css );
         System.out.println( "CSS Decoding" );
@@ -536,7 +540,7 @@ public class EncoderTest extends TestCase {
             assertEquals(null, instance.encodeForBase64(null, true));
             assertEquals(null, instance.decodeFromBase64(null));
             for ( int i=0; i < 100; i++ ) {
-                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes();
+                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
                 String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
                 byte[] decoded = instance.decodeFromBase64( encoded );
                 assertTrue( Arrays.equals( r, decoded ) );
@@ -554,7 +558,7 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
         for ( int i=0; i < 100; i++ ) {
             try {
-                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes();
+                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
                 String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
                 byte[] decoded = instance.decodeFromBase64( encoded );
                 assertTrue( Arrays.equals( r, decoded ) );
@@ -564,10 +568,12 @@ public class EncoderTest extends TestCase {
         }
         for ( int i=0; i < 100; i++ ) {
             try {
-                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes();
+                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
                 String encoded = ESAPI.randomizer().getRandomString(1, DefaultEncoder.CHAR_ALPHANUMERICS) + instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
 	            byte[] decoded = instance.decodeFromBase64( encoded );
 	            assertFalse( Arrays.equals(r, decoded) );
+            } catch( UnsupportedEncodingException ex) {
+            	fail();
             } catch ( IOException e ) {
             	// expected
             }
@@ -655,22 +661,23 @@ public class EncoderTest extends TestCase {
     	String normal = "The quick brown fox jumped over the lazy dog";
     	
     	long start = System.currentTimeMillis();
+    	String temp = null;		// Trade in 1/2 doz warnings in Eclipse for one (never read)
         for ( int i=0; i< iterations; i++ ) {
-        	String temp = normal;
+        	temp = normal;
         }
     	long stop = System.currentTimeMillis();
         System.out.println( "Normal: " + (stop-start) );
         
     	start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	String temp = encoder.canonicalize( normal, false );
+        	temp = encoder.canonicalize( normal, false );
         }
     	stop = System.currentTimeMillis();
         System.out.println( "Normal Loose: " + (stop-start) );
         
     	start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	String temp = encoder.canonicalize( normal, true );
+        	temp = encoder.canonicalize( normal, true );
         }
     	stop = System.currentTimeMillis();
         System.out.println( "Normal Strict: " + (stop-start) );
@@ -679,14 +686,14 @@ public class EncoderTest extends TestCase {
     	
     	start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	String temp = attack;
+        	temp = attack;
         }
     	stop = System.currentTimeMillis();
         System.out.println( "Attack: " + (stop-start) );
         
     	start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	String temp = encoder.canonicalize( attack, false );
+        	temp = encoder.canonicalize( attack, false );
         }
     	stop = System.currentTimeMillis();
         System.out.println( "Attack Loose: " + (stop-start) );
@@ -694,7 +701,7 @@ public class EncoderTest extends TestCase {
     	start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
         	try {
-        		String temp = encoder.canonicalize( attack, true );
+        		temp = encoder.canonicalize( attack, true );
         	} catch( IntrusionException e ) { 
         		// expected
         	}
