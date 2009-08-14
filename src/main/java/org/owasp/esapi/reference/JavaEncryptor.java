@@ -37,6 +37,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.owasp.esapi.CipherText;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
@@ -85,7 +86,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			System.out.println( "AVAILABLE ALGORITHMS" );
 					
 			Provider[] providers = Security.getProviders();
-			TreeMap tm = new TreeMap();
+			TreeMap<String, String> tm = new TreeMap<String, String>();
 			for (int i = 0; i != providers.length; i++) {
 				Iterator it = providers[i].keySet().iterator();
 				while (it.hasNext()) {
@@ -204,7 +205,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	* {@inheritDoc}
 	*/
 	public String encrypt(String plaintext) throws EncryptionException {
-		// Note - Cipher is not threadsafe so we create one locally
+		// Note - Cipher is not thread-safe so we create one locally
 		try {
 			Cipher encrypter = Cipher.getInstance(encryptAlgorithm);
 			encrypter.init(Cipher.ENCRYPT_MODE, secretKeySpec);
@@ -219,10 +220,21 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	}
 
 	/**
+	 * TODO
+	 * @param plaintext
+	 * @return
+	 * @throws EncryptionException
+	 */
+	 public CipherText encrypt(byte[] plaintext) throws EncryptionException {
+		 // TODO
+		 return null;
+	 }
+
+	/**
 	* {@inheritDoc}
 	*/
 	public String decrypt(String ciphertext) throws EncryptionException {
-		// Note - Cipher is not threadsafe so we create one locally
+		// Note - Cipher is not thread-safe so we create one locally
 		try {
 			Cipher decrypter = Cipher.getInstance(encryptAlgorithm);
 			decrypter.init(Cipher.DECRYPT_MODE, secretKeySpec);
@@ -236,6 +248,17 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		}
 	}
 
+	/**
+	 * TODO
+	 * @param ciphertext
+	 * @return
+	 * @throws EncryptionException
+	 */
+	public byte[] decrypt(CipherText ciphertext) throws EncryptionException {
+		// TODO
+		return null;
+	}
+	
 	/**
 	* {@inheritDoc}
 	*/
