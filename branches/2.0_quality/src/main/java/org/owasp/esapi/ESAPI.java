@@ -19,8 +19,8 @@ package org.owasp.esapi;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.owasp.esapi.reference.DefaultMessageUtil;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.util.*;
 
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
@@ -109,17 +109,8 @@ public final class ESAPI {
 	public static AccessController accessController() {
 		if (accessController == null) {
 			String accessControllerName = securityConfiguration().getAccessControlImplementation();
-		    try {
-		        Class theClass  = Class.forName(accessControllerName);
-		        accessController = (AccessController)theClass.newInstance();
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " AccessController class (" + accessControllerName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " AccessController class (" + accessControllerName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " AccessController class (" + accessControllerName + ") must have a no-arg constructor.");
-		    }
-		} 
+			accessController =  (new ObjFactory<AccessController>()).make(accessControllerName, "AccessController");
+		}
 		return accessController;
 	}
 
@@ -138,18 +129,8 @@ public final class ESAPI {
 	public static Authenticator authenticator() {
 		if (authenticator == null) {
 			String authenticatorName = securityConfiguration().getAuthenticationImplementation();
-		    try {
-		        Class theClass  = Class.forName(authenticatorName);
-		        authenticator = (Authenticator)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Authenticator class (" + authenticatorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Authenticator class (" + authenticatorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Authenticator class (" + authenticatorName + ") must have a no-arg constructor.");
-		    }
-		} 
+			authenticator =  (new ObjFactory<Authenticator>()).make(authenticatorName, "Authenticator");
+		}
 		return authenticator;
 	}
 
@@ -168,17 +149,7 @@ public final class ESAPI {
 	public static Encoder encoder() {
 		if (encoder == null) {
 			String encoderName = securityConfiguration().getEncoderImplementation();
-		    try {
-		        Class theClass  = Class.forName(encoderName);
-		        encoder = (Encoder)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Encoder class (" + encoderName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Encoder class (" + encoderName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Encoder class (" + encoderName + ") must have a no-arg constructor.");
-		    }
+			encoder =  (new ObjFactory<Encoder>()).make(encoderName, "Encoder");
 		} 
 		return encoder;
 	}
@@ -198,17 +169,9 @@ public final class ESAPI {
 	public static Encryptor encryptor() {
 		if (encryptor == null) {
 			String encryptorName = securityConfiguration().getEncryptionImplementation();
-		    try {
-		        Class theClass  = Class.forName(encryptorName);
-		        encryptor = (Encryptor)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Encryptor class (" + encryptorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Encryptor class (" + encryptorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Encryptor class (" + encryptorName + ") must have a no-arg constructor.");
-		    }
+			encryptor =  (new ObjFactory<Encryptor>()).make(encryptorName, "Encryptor");
+			// TODO: Change to call CTOR that takes cipher transform or
+		    //		 call "setter" after constructing to set cipher xform, IV, etc.
 		} 
 		return encryptor;
 	}
@@ -228,17 +191,7 @@ public final class ESAPI {
 	public static Executor executor() {
 		if (executor == null) {
 			String executorName = securityConfiguration().getExecutorImplementation();
-		    try {
-		        Class theClass  = Class.forName(executorName);
-		        executor = (Executor)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Executor class (" + executorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Executor class (" + executorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Executor class (" + executorName + ") must have a no-arg constructor.");
-		    }
+			executor =  (new ObjFactory<Executor>()).make(executorName, "Executor");
 		} 
 		return executor;
 	}
@@ -259,17 +212,7 @@ public final class ESAPI {
 	public static HTTPUtilities httpUtilities() {
 		if (httpUtilities == null) {
 			String httpUtilitiesName = securityConfiguration().getHTTPUtilitiesImplementation();
-		    try {
-		        Class theClass  = Class.forName(httpUtilitiesName);
-		        httpUtilities = (HTTPUtilities)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must have a no-arg constructor.");
-		    }
+			httpUtilities =  (new ObjFactory<HTTPUtilities>()).make(httpUtilitiesName, "HTTPUtilities");
 		} 
 		return httpUtilities;
 	}
@@ -289,17 +232,7 @@ public final class ESAPI {
 	public static IntrusionDetector intrusionDetector() {
 		if (intrusionDetector == null) {
 			String intrusionDetectorName = securityConfiguration().getIntrusionDetectionImplementation();
-		    try {
-		        Class theClass  = Class.forName(intrusionDetectorName);
-		        intrusionDetector = (IntrusionDetector)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must have a no-arg constructor.");
-		    }
+			intrusionDetector =  (new ObjFactory<IntrusionDetector>()).make(intrusionDetectorName, "IntrusionDetector");
 		} 
 		return intrusionDetector;
 	}
@@ -321,16 +254,7 @@ public final class ESAPI {
 	private static LogFactory logFactory() {
 		if (logFactory == null) {
 			String logFactoryName = securityConfiguration().getLogImplementation();
-		    try {
-		        Class theClass  = Class.forName(logFactoryName);
-		        logFactory = (LogFactory)theClass.newInstance();		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " LogFactory class (" + logFactoryName + ") must have a no-arg constructor.");
-		    }
+			logFactory =  (new ObjFactory<LogFactory>()).make(logFactoryName, "LogFactory");
 		} 
 		return logFactory;
 	}
@@ -339,6 +263,7 @@ public final class ESAPI {
 	 * @param clazz The class to associate the logger with.
 	 * @return The current Logger associated with the specified class.
 	 */
+	@SuppressWarnings("unchecked")		// Because Eclipse wants Class<T> instead.
 	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
@@ -375,17 +300,7 @@ public final class ESAPI {
 	public static Randomizer randomizer() {
 		if (randomizer == null) {
 			String randomizerName = securityConfiguration().getRandomizerImplementation();
-		    try {
-		        Class theClass = Class.forName(randomizerName);
-		        randomizer = (Randomizer)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Randomizer class (" + randomizerName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Randomizer class (" + randomizerName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Randomizer class (" + randomizerName + ") must have a no-arg constructor.");
-		    }
+			randomizer =  (new ObjFactory<Randomizer>()).make(randomizerName, "Randomizer");
 		} 
 		return randomizer;
 	}
@@ -411,12 +326,20 @@ public final class ESAPI {
 
 	/**
 	 * Change the current ESAPI SecurityConfiguration to the SecurityConfiguration provided. 
+	 * CHECKME: Why not return the previous value here? Also, doesn't it make sense to check for null in all setters?
 	 * @param securityConfiguration
 	 *            the SecurityConfiguration to set to be the current ESAPI SecurityConfiguration. 
 	 */
 	public static void setSecurityConfiguration(
 			SecurityConfiguration securityConfiguration) {
-		ESAPI.securityConfiguration = securityConfiguration;
+		// CHECMKE: Or perhaps use assertions? They can be disabled, but IMO, better than not checking for null at all.
+		//			Whatever approach is taken, it should be used consistently throughout.
+		if ( securityConfiguration != null ) {
+			ESAPI.securityConfiguration = securityConfiguration;
+		} else {
+			// CHECKME: Alternately we could throw NullPointerException with meaningful message here.
+			System.out.println("ESAPI.setSecurityConfiguration(): null passed in. Security configuration unchanged.");
+		}
 	}
 
 	/**
@@ -425,28 +348,17 @@ public final class ESAPI {
 	public static Validator validator() {
 		if (validator == null) {
 			String validatorName = securityConfiguration().getValidationImplementation();
-		    try {
-		        Class theClass = Class.forName(validatorName);
-		        validator = (Validator)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Validator class (" + validatorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Validator class (" + validatorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Validator class (" + validatorName + ") must have a no-arg constructor.");
-		    }
+			validator =  (new ObjFactory<Validator>()).make(validatorName, "Validator");
 		} 
 		return validator;
 	}
 
 	/**
-	 * Change the current ESAPI Validator to the Validator provided. 
+	 * Change the current ESAPI Validator to the Validator provided.
 	 * @param validator
 	 *            the Validator to set to be the current ESAPI Validator. 
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
 	}
-
 }
