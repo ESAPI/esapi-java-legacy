@@ -128,4 +128,12 @@ public class ObjFactory<T> {
 			throw new ConfigurationException(errMsg, ex);
 		}
 	}
+	
+	/**
+	 * Private CTOR to prevent instantiation.
+	 */
+	private ObjFactory()
+	{
+		; // Empty
+	}
 }
