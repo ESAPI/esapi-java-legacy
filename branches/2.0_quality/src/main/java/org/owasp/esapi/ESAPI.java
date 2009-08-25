@@ -22,6 +22,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.owasp.esapi.util.*;
 
+// DISCUSS: Many of these 'setter' methods seem like they should require proper access control
+//		    checks. By default, permissions could be granted to everyone, but if we have something
+//			to check these (e.g., when a SecurityManager is used) for proper Permissions, we should
+//			able to accomplish this w/out too much difficulty. Overkill? Perhaps...it depends on
+//			your threat model. I'm more thinking preventing stupidity than maliciousness though.
+//			A developer may try to get around something by sub-classing something and perhaps intend
+//			it is only done for a moment, and then change it back to what it was, but has an exception
+//			and there is no 'finally' block or whatever to restore the original setting and then
+//			you are running with some potentially weaker version in your whole J2EE container the
+//			rest of the time. If we require special permissions to do this, then at deployment
+//			we could set it up so that appropriate Permissions need to be granted BEFORE allow
+//			things like Authenticator, Encryptor, IntrusionDetector, etc. to be changed. (Presumably
+//			a DIFFERENT party other than developers would be responsible for granting these Permissions.)
+//
+//			Which brings me to the SECOND thing... IMHO, these 'setters' should NOT be of type 'void',
+//			but be of whatever type that they are setting so that they can set the new value and return
+//			the PREVIOUS value so that things can be restored as they were. The only way to do this
+//			now is the somewhat clumsy:
+//
+//						// Note: There are some thread-safety issues here as well, but that's not what
+//						//       I'm trying to illustrate here.
+//					Authenticator savedAuthenticator = ESAPI.authenticator();
+//					ESAPI.setAuthenticator( new MySpecialAuthenticator() );
+//					... use MySpecialAuthenticator for awhile for some special cases ...
+//						// Sometime later ...
+//					ESAPI.setAuthenticator( savedAuthenticator ); // Restore what we were using
+//
+//			Is there any reason NOT to have these 'setters' return something useful? Their return
+//			values can always be ignored if you are not interested in it.
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
  * Use the set methods to override the reference implementations with instances of any custom ESAPI implementations.
@@ -170,8 +199,10 @@ public final class ESAPI {
 		if (encryptor == null) {
 			String encryptorName = securityConfiguration().getEncryptionImplementation();
 			encryptor =  (new ObjFactory<Encryptor>()).make(encryptorName, "Encryptor");
-			// TODO: Change to call CTOR that takes cipher transform or
-		    //		 call "setter" after constructing to set cipher xform, IV, etc.
+			// DISCUSS: Figure out a way to easily encrypt w/ different keys. Probably easiest
+			//		    way is to add 2 additional encrypt / decrypt methods to Encryptor interface
+			//          that takes a SecretKey as the first argument. However, there are already a
+			//		    ton of methods there, so perhaps this should just be re-thought completely.
 		} 
 		return encryptor;
 	}
