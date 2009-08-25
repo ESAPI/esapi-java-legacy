@@ -88,13 +88,18 @@ public interface SecurityConfiguration {
 	public String getEncryptionImplementation();
 	
 	/**
+	 * Returns the fully qualified classname of the ESAPI CipherText implementation.
+	 */
+    public String getCipherTextImplementation();
+    
+	/**
 	 * Returns the fully qualified classname of the ESAPI Validation implementation.
 	 */
 	public String getValidationImplementation();
 	
 	/**
 	 * Returns the validation pattern for a particular type
-	 * @param type
+	 * @param typeName
 	 * @return the validation pattern
 	 */
     public Pattern getValidationPattern( String typeName );
@@ -187,6 +192,82 @@ public interface SecurityConfiguration {
 	public String getEncryptionAlgorithm();
 
 	/**
+	 * Retrieve the <i>cipher transformation</i>. In general, the cipher transformation
+	 * is a specification of cipher algorithm, cipher mode, and padding scheme
+	 * and in general, is a {@code String} that takes the following form:
+	 * <pre>
+	 * 		<i>cipher_alg</i>/<i>cipher_mode[bits]</i>/<i>padding_scheme</i>
+	 * </pre>
+	 * where <i>cipher_alg</i> is the JCE cipher algorithm (e.g., "DESede"),
+	 * <i>cipher_mode</i> is the cipher mode (e.g., "CBC", "CFB", "CTR", etc.),
+	 * and <i>padding_scheme</i> is the cipher padding scheme (e.g., "NONE" for
+	 * no padding, "PKCS5Padding" for PKCS#5 padding, etc.) and where
+	 * <i>[bits]</i> is an optional bit size that applies to certain cipher
+	 * modes such as {@code CFB} and {@code OFB}. Using modes such as CFB and
+	 * OFB, block ciphers can encrypt data in units smaller than the cipher's
+	 * actual block size. When requesting such a mode, you may optionally
+	 * specify the number of bits to be processed at a time. This generally must
+	 * be an integral multiple of 8-bits so that it can specify a whole number
+	 * of octets. 
+	 * </p><p>
+	 * Examples are:
+	 * <pre>
+	 * 		"AES/ECB/NoPadding"		// Default for ESAPI Java 1.4 (insecure)
+	 * 		"AES/CBC/PKCS5Padding"	// Default for ESAPI Java 2.0
+	 * 		"DESede/OFB32/PKCS5Padding"
+	 * </pre>
+	 * <b>NOTE:</b> Occasionally, in cryptographic literature, you may also
+	 * see the key size (in bits) specified after the cipher algorithm in the
+	 * cipher transformation. Generally, this is done to account for cipher
+	 * algorithms that have variable key sizes. The Blowfish cipher for example
+	 * supports key sizes from 32 to 448 bits. So for Blowfish, you might see
+	 * a cipher transformation something like this:
+	 * <pre>
+	 * 		"Blowfish-192/CFB8/PKCS5Padding"
+	 * </pre>
+	 * in the cryptographic literature. It should be noted that the Java
+	 * Cryptography Extensions (JCE) do not generally support this (at least
+	 * not the reference JCE implementation of "SunJCE"), and therefore it
+	 * should be avoided.
+	 * @return	The cipher transformation.
+	 */
+    public String getCipherTransformation();
+
+// TODO - DISCUSS: Where should this web page go? Maybe with the Javadoc? But where?
+//				   Think it makes more sense as part of the release notes, but OTOH, I
+//				   really don't want to rewrite this as a Wiki page either.
+    /**
+     * Determines whether the {@code CipherText} should be used with a Message
+     * Integrity Code (MIC). Generally this makes for a more robust cryptographic
+     * scheme, but there are some minor performance implications.
+     * For further details, see the "Advanced Usage" section of
+     * <a href="http://www.owasp.org/ESAPI_2.0_ReleaseNotes_CryptoChanges.html">
+     * Why Is OWASP Changing ESAPI Encryption?</a>.
+     * @return	{@code true} if a MIC should be used, otherwise {@code false}.
+     */
+    public boolean useMICforCipherText();
+
+    /**
+     * Get a string indicating how to compute an Initialization Vector (IV).
+     * Currently supported modes are "random" to generate a random IV or
+     * "fixed" to use a fixed (static) IV. If a "fixed" IV is chosen, then the
+     * the value of this fixed IV must be specified as the property
+     * {@code Encryptor.fixedIV} and be of the appropriate length.
+     * 
+     * @see #getFixedIV()
+     * 
+     * @return A string specifying the IV type. Should be "random" or "fixed".
+     */
+    public String getIVType();
+    
+    /**
+     * If a "fixed" (i.e., static) Initialization Vector (IV) is to be used,
+     * this will return the IV value as a hex-encoded string.
+     * @return The fixed IV as a hex-encoded string.
+     */
+    public String getFixedIV();
+
+	/**
 	 * Gets the hashing algorithm used by ESAPI to hash data.
 	 * 
 	 * @return the current hashing algorithm
@@ -277,8 +358,8 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets a file from the resource directory
      *
-     * @param filename
-     * @return
+     * @param filename The file name resource.
+     * @return A {@code File} object representing the specified file name.
      */
     public File getResourceFile( String filename );
     
@@ -305,9 +386,9 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets an InputStream to a file in the resource directory
      *
-     * @param filename
-     * @return
-     * @throws IOException
+     * @param filename A file name in the resource directory.
+     * @return An {@code InputStream} to the specified file name in the resource directory.
+     * @throws IOException If the specified file name cannot be found or opened for reading.
      */
     public InputStream getResourceStream( String filename ) throws IOException;
 
@@ -381,7 +462,7 @@ public interface SecurityConfiguration {
 
 	/**
 	 * Returns the current log level.
-	 * @return
+	 * @return	An integer representing the current log level.
 	 */
     public int getLogLevel();
 	
