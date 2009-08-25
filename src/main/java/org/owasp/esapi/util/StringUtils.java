@@ -90,4 +90,22 @@ public class StringUtils
       return p[n];
     }
 
+    /**
+     * Check to see if a {@code String} is null or empty (after optional
+     * trimming of leading and trailing whitespace). Usually used with
+     * assertions.
+     * 
+     * @param str	The {@code String} to be checked.
+     * @param trim	If {@code true}, the string is first trimmed before checking
+     * 				to see if it is empty, otherwise it is not.
+     * @return		True if the string is null or empty (after possible
+     * 				trimming); otherwise false.
+     */
+    public static boolean notNullOrEmpty(String str, boolean trim) {
+    	if ( trim ) {
+    		return ( str == null || str.trim().equals("") );
+    	} else {
+    		return ( str == null || str.equals("") );
+    	}
+    }
 }
