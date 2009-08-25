@@ -6,7 +6,7 @@
 	<packaging>jar</packaging>
 	<version>2.0</version>
 	<name>ESAPI</name>
-	<description>The Enterprise Security API project is an OWASP project
+	<description>The Enterprise Security API (ESAPI) project is an OWASP project
 		to create simple strong security controls for every web platform.
 		Security controls are not simple to build. You can read about the
 		hundreds of pitfalls for unwary developers on the OWASP website. By
@@ -16,7 +16,7 @@
 	<organization>
 		<name>The Open Web Application Security Project (OWASP)</name>
 	</organization>
-	<url>http://www.esapi.org</url>
+	<url>http://www.esapi.org/</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -117,7 +117,6 @@
 	<build>
 		<plugins>
 
-
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -128,7 +127,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<input message="Keystore password?" addproperty="storepass" />
+								<input message="Keystore password?"
+                                       addproperty="storepass" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -159,7 +159,15 @@
 				<configuration>
 					<archive>
 						<manifest>
+                        <!-- Hmmm... there is NO 'DefaultEncryptor', but there
+                             is a 'JavaEncryptor' and it has a main(). There's
+                             also a 'DefaultEncryptedProperties' with a main().
+                             I'm going to guess it's the JavaEncryptor one.
+                        -->
+                        <!--
 							<mainClass>org.owasp.esapi.reference.DefaultEncryptor</mainClass>
+                        -->
+							<mainClass>org.owasp.esapi.reference.JavaEncryptor</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>
@@ -167,9 +175,23 @@
 							<Sealed>true</Sealed>
 						</manifestEntries>
 					</archive>
-					<keystore>c:/users/jwilliams/desktop/keystore</keystore>
-					<alias>esapi</alias>
-					<storepass>73456111</storepass>
+					<!-- <keystore>c:/users/jwilliams/desktop/keystore</keystore> -->
+                        <!-- NOTE: Right now, this is just a simple self-signed
+                             cert used for jar signing for use by developers
+                             so there is no concern. However, beware that
+                             Maven does the following:
+                                1) Places the JKS keystore in the ESAPI jar.
+                                2) Places the pom.xml (with password!) in the
+                                   ESAPI jar.
+                             (It also places all the subversion 'svn' junk
+                             there too, but that's not a security risk.)
+                        -->
+					<keystore>src/main/resources/owasp-esapi-dev.jks</keystore>
+					<alias>owasp-esapi</alias>
+					<!-- <storepass>73456111</storepass> -->
+                    <!-- BTW, this keystore passphrase here doesn't seem to
+                         do anything. You are still prompted for it. -->
+					<storepass>changeme</storepass>
 					<verify>true</verify>
 				</configuration>
 			</plugin>
