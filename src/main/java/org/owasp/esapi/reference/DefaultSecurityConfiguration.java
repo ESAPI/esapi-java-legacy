@@ -34,7 +34,10 @@ import java.util.regex.PatternSyntaxException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.errors.ConfigurationException;
 
+// DISCUSS: Is there a good way for us to determine if they have changed the master key and salt, and if not,
+//			at _least_ log a warning? Need to distinguish the "as-shipped" versions from the current versions.
 
 /**
  * The reference SecurityConfiguration manages all the settings used by the ESAPI in a single place. In this reference
@@ -44,13 +47,16 @@ import org.owasp.esapi.SecurityConfiguration;
  * <p>
  * 2) Inside the System.getProperty( "org.owasp.esapi.resources" ) directory.
  * You can set this on the java command line
- * as follows (for example): java -Dorg.owasp.esapi.resources="C:\temp\resources". You may have to add this
- * to the batch script that starts your web server. For example, in the "catalina" script that
- * starts Tomcat, you can set the JAVA_OPTS variable to the -D string above.
+ * as follows (for example):
+ * <pre>
+ * 		java -Dorg.owasp.esapi.resources="C:\temp\resources"
+ * </pre>
+ * You may have to add this to the start-up script that starts your web server. For example, for Tomcat,
+ * in the "catalina" script that starts Tomcat, you can set the JAVA_OPTS variable to the {@code -D} string above.
  * <p>
  * 3) Inside the System.getProperty( "user.home" ) + "/.esapi" directory
  * <p>
- * 4) In an ".esapi" directory on the classpath
+ * 4) The first ".esapi" directory on the classpath
  * <p>
  * Once the Configuration is initialized with a resource directory, you can edit it to set things like master
  * keys and passwords, logging locations, error thresholds, and allowed file extensions.
@@ -88,6 +94,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String RANDOM_ALGORITHM = "Encryptor.RandomAlgorithm";
     private static final String DIGITAL_SIGNATURE_ALGORITHM = "Encryptor.DigitalSignatureAlgorithm";
     private static final String DIGITAL_SIGNATURE_KEY_LENGTH = "Encryptor.DigitalSignatureKeyLength";
+    			// ==================================//
+    			//		New in ESAPI Java 2.0		 //
+    			// ================================= //
+    private static final String CIPHERTEXT_USE_MIC = "Encryptor.CipherText.useMIC";
+    private static final String IV_TYPE = "Encryptor.ChooseIVMethod";
+    private static final String FIXED_IV = "Encryptor.fixedIV";
     
     private static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
     private static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
@@ -120,7 +132,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
 	public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     protected final int MAX_REDIRECT_LOCATION = 1000;
-    protected final int MAX_FILE_NAME_LENGTH = 1000;
+    protected final int MAX_FILE_NAME_LENGTH = 1000;	// DISCUSS: Is this for given directory or refer to canonicalized full path name?
+    													// Too long if the former! (Usually 255 is limit there.) Hard to tell since not used
+    													// here and it's protected.
 
     /*
      * Implementation Keys
@@ -135,6 +149,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	private static final String EXECUTOR_IMPLEMENTATION = "ESAPI.Executor";
 	private static final String VALIDATOR_IMPLEMENTATION = "ESAPI.Validator";
 	private static final String HTTP_UTILITIES_IMPLEMENTATION = "ESAPI.HTTPUtilities";
+	
+				// ==================================//
+				//		New in ESAPI Java 2.0		 //
+				// ================================= //
+    private static final String CIPHERTEXT_IMPLEMENTATION = "ESAPI.CipherText";
+    private static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
     
     /*
      * Default Implementations
@@ -149,6 +169,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultExecutor";
     public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
     public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
+        
+    			// ==================================//
+    			//		New in ESAPI Java 2.0		 //
+    			// ================================= //
+    public static final String DEFAULT_CIPHERTEXT_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultCipherText";
+
 
     private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
     
@@ -224,6 +250,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
    
     /**
+     * {@inheritDoc}
+     */
+    public String getCipherTextImplementation() {
+    	return getESAPIProperty(CIPHERTEXT_IMPLEMENTATION, DEFAULT_CIPHERTEXT_IMPLEMENTATION);
+    }
+    
+    /**
 	 * {@inheritDoc}
 	 */
     public String getIntrusionDetectionImplementation() {
@@ -282,7 +315,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
     
     public int getEncryptionKeyLength() {
-    	return getESAPIProperty(KEY_LENGTH, 256 );
+    	return getESAPIProperty(KEY_LENGTH, 128 );
     }
     
     /**
@@ -332,9 +365,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /**
 	 * {@inheritDoc}
-     *
-     * @param filename
-     * @return
      */
     public File getResourceFile( String filename ) {
     	File f = null;
@@ -362,7 +392,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	}
 
     	// if not found, then try the programatically set resource directory (this defaults to SystemResource directory/.esapi
-    	URL fileUrl = ClassLoader.getSystemResource(this.resourceDirectory + "/" + filename);
+    	URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + "/" + filename);
     	if(fileUrl != null) {
     		String fileLocation = fileUrl.getFile();
         	f = new File( fileLocation );
@@ -373,7 +403,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             	logSpecial( "  Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath(), null );
         	}	
     	} else {
-    		logSpecial( "  Not found in SystemResource Directory/resourceDirectory: " + this.resourceDirectory + "/" + filename, null );
+    		logSpecial( "  Not found in SystemResource Directory/resourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory + "/" + filename, null );
     	}
     	
     	// if not found, then try the default set resource directory    	
@@ -425,8 +455,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * the setResourceDirectory() location, then the System.getProperty( "org.owasp.esapi.resources" ) location,
      * then the System.getProperty( "user.home" ) location, and then the classpath.
      * @param filename
-     * @return
-     * @throws IOException
+     * @return	An {@code InputStream} associated with the specified file name as a resource
+     * 			stream.
+     * @throws IOException	If the file cannot be found or opened for reading.
      */
     public InputStream getResourceStream( String filename ) throws IOException {
     	try {
@@ -508,7 +539,69 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public String getEncryptionAlgorithm() {
         return getESAPIProperty(ENCRYPTION_ALGORITHM, "AES");
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String getCipherTransformation() {
+    	return getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
+    							"AES/CBC/PKCS5Padding");
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public boolean useMICforCipherText() {
+    	String value = getESAPIProperty(CIPHERTEXT_USE_MIC, "true");
+    	
+    	if ( value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on") ) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public String getIVType() {
+    	String value = getESAPIProperty(IV_TYPE, "random");
+    	if ( value.equalsIgnoreCase("fixed") || value.equalsIgnoreCase("random") ) {
+    		return value;
+    	} else if ( value.equalsIgnoreCase("specified") ) {
+    		// This is planned for future implementation where setting
+    		// Encryptor.ChooseIVMethod=specified   will require setting some
+    		// other TBD property that will specify an implementation class that
+    		// will generate appropriate IVs. The intent of this would be to use
+    		// such a class with various feedback modes where it is imperative
+    		// that for a given key, any particular IV is *NEVER* reused. For
+    		// now, we will assume that generating a random IV is usually going
+    		// to be sufficient to prevent this.
+    		throw new ConfigurationException("'" + IV_TYPE + "=specified' is not yet implemented. Use 'fixed' or 'random'");
+    	} else {
+    		// TODO: Once 'specified' is legal, adjust exception msg, below.
+    		// DISCUSS: Could just log this and then silently return "random" instead.
+    		throw new ConfigurationException(value + " is illegal value for " + IV_TYPE +
+    										 ". Use 'random' (preferred) or 'fixed'.");
+    	}
+    }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+    public String getFixedIV() {
+    	if ( getIVType().equals("fixed") ) {
+    		String ivAsHex = getESAPIProperty(FIXED_IV, "");
+    		if ( ivAsHex == null || ivAsHex.trim().equals("") ) {
+    			throw new ConfigurationException("Fixed IV requires property " +
+    						FIXED_IV + " to be set, but it is not.");
+    		}
+    		return ivAsHex;		// We do no further checks here as we have no context.
+    	} else {
+    		throw new ConfigurationException("IV type not 'fixed', so no fixed IV");
+    	}
+    }
+    
     /**
 	 * {@inheritDoc}
 	 */
