@@ -1,0 +1,319 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=iso-8859-1">
+<title>Encryption in OWASP ESAPI Java 2.0</title>
+</head>
+<body>
+<h1 align="center">Why Is OWASP Changing ESAPI Encryption?</h1>
+<h2>Reasons for Change</h2>
+<p>
+The existing ESAPI 1.4 uses the cipher mode Electronic Code Book (ECB) for
+encryption with Encryptor and the reference implementation, JavaEncryptor.
+ECB cipher mode is the simplest cipher mode to use, but it is also
+cryptographically very weak. If more than one block of plaintext is
+encrypted with the same key, those identical blocks of ciphertext always
+encrypt to the same ciphertext block, thus revealing patterns in the plaintext
+input. For example, these images from Wikipedia's
+<a href="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">
+Block cipher modes of operation</a> illustrate this point well:
+<table border="0" cellspacing="0" cellpadding="4" align="center">
+<tr align="center">
+<td><a href="http://en.wikipedia.org/wiki/File:Tux.jpg" class="image"
+title="Original Tux image"><img alt="Original Tux image" src="http://upload.wikimedia.org/wikipedia/commons/5/56/Tux.jpg" width="196" height="216" /></a></td>
+<td><a href="http://en.wikipedia.org/wiki/File:Tux_ecb.jpg" class="image"
+title="Tux image encrypted using ECB mode"><img alt="Tux image encrypted using ECB mode" src="http://upload.wikimedia.org/wikipedia/commons/f/f0/Tux_ecb.jpg" width="196" height="216" /></a></td>
+<td><a href="http://en.wikipedia.org/wiki/File:Tux_secure.jpg" class="image"
+title="Tux image encrypted with other cipher modes, such as CBC"><img alt="Tux image encrypted with other modes
+such as CBC" src="http://upload.wikimedia.org/wikipedia/commons/a/a0/Tux_secure.jpg" width="196" height="216" /></a></td>
+</tr>
+<tr align="center">
+<td><i>Original Tux image</i></td>
+<td><i>Image encrypted using ECB mode</i></td>
+<td><i>Image encrypted using modes other than ECB</i></td>
+</tr>
+</table>
+</p>
+<p>
+Ciphertext encrypted with ECB cipher mode are also subject to "block
+replay attacks". See Bruce Schneier's
+<a href="http://www.google.com/url?sa=t&source=web&ct=res&cd=2&url=http%3A%2F%2Fbooks.google.com%2Fbooks%3Fid%3DA6ZO2D6ayNwC%26pg%3DPT216%26lpg%3DPT216%26dq%3Decb%2B%2522block%2Breplay%2522%26source%3Dbl%26ots%3DiEbAWQpu0e%26sig%3D8xiUva4XKaAOfPJEPsULPAJPk88%26hl%3Den%26ei%3Da6yISoLQPJOuMI-Z_OkE%26sa%3DX%26oi%3Dbook_result%26ct%3Dresult%26resnum%3D2&ei=a6yISoLQPJOuMI-Z_OkE&rct=j&q=ecb+%22block+replay%22&usg=AFQjCNF-IjrE4dL7M2LELh48hYPP6A_bpQ">
+<i>Applied Cryptography: protocols, algorithms, and source code</i>
+</a>
+for details.
+</p>
+<p>
+Also, because ESAPI 1.4 only supports ECB cipher mode with no padding, it
+cannot be used to decrypt data encrypted with anything other than an algorithm
+using ECB cipher mode and no padding. Most encryption (outside of ESAPI) uses
+some other cipher mode (e.g., Cipher Block Chaining (CBC) mode) and some sort
+of padding scheme, such as PKCS#5 padding.
+</p>
+<h2>The Encryption Changes in ESAPI Java 2.0</h2>
+Briefly speaking, the changes being implemented for ESAPI Java 2.0 are:
+<ol>
+<li>
+The <i>default</i> cipher transformation is changing from "AES-256/ECB/None"
+(i.e., 256-bit AES in ECB cipher mode and no padding) used in ESAPI Java 1.4
+to "AES-128/CBC/PKCS5Padding" (i.e., 128-bit AES in CBC cipher mode and
+PKCS#5 padding) in ESAPI Java 2.0.
+<p>
+128-bit AES is slightly faster than 256-bit AES, and it does not require
+you downloading the unlimited jurisdiction strength policy files from
+Sun Microsystems.  For those believing that 128-bit AES is not sufficiently
+strong--bruting forcing it (except perhaps with a reasonable quantum
+computer) is still not feasible--and certain key related attacks (see
+Biryukov, Dunkelman, Keller, Khovratovich, and Shamir's
+<a href="http://eprint.iacr.org/2009/374">
+Cryptology ePrint Archive: Report 2009/374 --
+Key Recovery Attacks of Practical Complexity on AES Variants With Up To 10 Rounds
+</a>
+for further details) show that longer key sizes in AES may not
+always be the best.
+</li>
+<li>
+Because most other cipher modes other than ECB and CTR require an
+Initialization Vector (IV), a mechanism to handle both fixed and random
+IVs has been added.
+</li>
+<li>
+A mechanism to attempt to preserve backward compatibility with ESAPI Java 1.4
+has been added, but because of the secuity implications of using the ECB cipher
+mode, you are encouraged to stop using this as soon as possible. (In fact,
+this backward compatibility mechanism should be considered deprecated and
+likely will be dropped in some future ESAPI Java release.)
+</li>
+<li>
+The byte-encoding has been changed from native byte encoding for wherever the
+JVM happens to be running to UTF-8 byte-encoding throughout. (Note: Backward
+compatibility mode does <i>NOT</i> account for this difference.) This was
+needed so that one could (say) encrypt on a Sparc running Solaris and then
+move the encrypted data to an Intel host running Windows and still be able
+to decrypt the data. Without this change, this could not be guaranteed.
+</li>
+</ol>
+<h2>The Good, the Bad, and the Ugly</h2>
+Or put another way, there are always tradeoffs to be made...
+<h3>The Good</h3>
+We get improved security by encouraging the use of stronger cipher modes
+(and ESAPI is all about "enterprise security", right?).
+<p>
+Frankly if I were a PCI or SOX auditor and I found a company that was
+encrypting credit card, bank account, or social security numbers using
+ECB mode, I'd rap someone across the knuckles. But I'll let it go this
+time. :-)
+</p>
+<h3>The Bad</h3>
+With cipher modes that require an IV, the same IV must be used both to
+encrypt and decrypt. While it is not required that the IV be kept secret
+from adversaries, there are some attacks that are possible if the adversary is
+permitted to alter the IV at will and observe the results.
+<p>
+So that leaves two choices for the IV:
+<ul>
+<li>
+Using a <i><b>fixed IV</b></i>: The IV can be agreed upon out-of-band by the
+parties exchanging encrypted messages. In this way, the encrypted data that
+is stored and/or transmitted can be limited to only the <i>raw</i> ciphertext.
+</li>
+<li>
+Using a <i><b>random IV</b></i>: Most cryptographers prefer to use a random
+IV, typically a different one with each message to be encrypted. However,
+doing so on encrypted data that will be persisted (e.g., to a database) or
+transmitted to the recipient this random IV must be stored / made known.
+Therefore, the raw ciphertext can no longer suffice; whatever random IV
+that was chosen must be communicated.
+</li>
+</ul>
+</p>
+<p>
+Likewise, the use of padding is going to add some overhead to the length
+of the ciphertext.
+</P>
+<p>
+For short plaintext of 16-24 bytes, this overhead can be around 30%
+of the total message size. Here is a table that may help:
+<table border="2" cellspacing="0" cellpadding="4" align="center">
+<tr align="center">
+<td>
+Original input length
+<br>
+(# bytes)
+</td>
+<td>
+Base64-encoded length of
+<br>
+ciphertext (with IV and padding)
+</td>
+</tr>
+<tr align="left">
+<td>0-15</td>
+<td>20</td>
+</tr>
+<tr align="left">
+<td>16-31</td>
+<td>44</td>
+</tr>
+<tr align="left">
+<td>32-47</td>
+<td>64</td>
+</tr>
+<tr align="left">
+<td>48-63</td>
+<td>64</td>
+</tr>
+<tr align="left">
+<td>48-63</td>
+<td>84</td>
+</tr>
+</table>
+</p>
+<p>
+As you can see, since the size of the IV and the amount of padding bytes
+are fixed at a maximum, this overhead goes down as the length of the
+plaintext message increases. The IV is always a fixed length for a given
+cipher; it is always the same as the cipher blocksize. The padding can
+vary, but for PKCS5 padding, the padding will be between 1 to the
+cipher blocksize / 8 bytes. Typically, a cipher's block size is 64-bits
+so the padding would be between 1 to 8 bytes and the IV would be 8 bytes.
+So the worst case is for 1 byte of input, it would require 8 bytes for
+the IV, 1 bytes for the actual encrypted raw ciphertext, and 7 bytes
+for padding for a total of 16 bytes, but that's before base64 encoding.
+(<font color="red"><b>CHECKME</b></font>; seems wrong)
+<h3>The Ugly</h3>
+Well, so far, this "bad" news may be bad for you but good for your
+database and/or storage vendor, but you probably can live with it,
+especially if you are willing to do a little bit of recoding.
+<p>
+But wait Skippy, don't go running off just quite yet. As Robert Heinlein
+wrote in his 1966 novel <i>The Moon is a Harsh Mistress</i>
+"There ain't no such thing as a free lunch". (Some of us more hardened
+cynics know it more commonly as <i>TANSTAAFL</i>.)
+</p>
+<p>
+All this backward compatibility and flexibility comes at the additonal
+cost of complexity, and not <i>merely</i> additional complexity in
+the reference implementation. There is also some additional complexity
+in the ESAPI <code>Encryptor</code> interfaces as well.
+</p>
+<p>
+In particular, there is a new <code>CipherText</code> class to coalesce
+all this complexity of handling the ciphertext result from encryption
+operations as well as a reference implementation
+(<code>DefaultCipherText</code>) for it as well. And then there is one new
+encryption and one new decryption method for the <code>Encryptor</code>
+interface. Specifically, we have:
+<pre>
+    String decrypt(CipherText ciphertext) throws EncryptionException
+</pre>
+and
+<pre>
+    CipherText encrypt(byte[] plaintext) throws EncryptionException
+</pre>
+The two existing interfaces
+<pre>
+    String encrypt(String plaintext) throws EncryptionException
+</pre>
+and
+<pre>
+    String decrypt(String ciphertext) throws EncryptionException
+</pre>
+from ESAPI 1.4 (and earlier?) have been deprecated, mainly because
+they only support relatively weak cipher modes such as ECB that
+do not support an IV. Details are provided in the <code>Encryptor</code>
+Javadoc. While you can use these deprecated methods for backward compatibility
+with ESAPI Java 1.4, these methods likely will be removed in a future
+ESAPI release. If you wish to use similar simple methods but desire to
+use stronger cryptography, then take a look at the encrypt() and decrypt()
+methods in the new <code>org.owasp.esapi.util.CryptoHelper</code> class.
+</p>
+<h2>Using the New Encryptor Methods</h2>
+<h3>The Relevant New / Changed ESAPI.properties Properties</h3>
+<pre>
+    Encryptor.CipherTransformation=AES/CBC/PKCS5Padding
+    Encryptor.EncryptionKeyLength=128
+    Encryptor.ChooseIVMethod=random
+    # Only use when  Encryptor.ChooseIVMethod=fixed, otherwise a random IV is used.
+    Encryptor.fixedIV=dbd1a3636024b7b402da7d6fe3fb056e
+    Encryptor.CipherText.useMIC=true
+</pre>
+<h3>How the Old (Deprecated) Methods Were Used</h3>
+To encrypt / decrypt using the old deprecated methods from ESAPI 1.4,
+code similar to the following would be used:
+<pre>
+    String myplaintext = "My plaintext";
+    try {
+        String ciphertext = ESAPI.encryptor().encrypt(myplaintext);
+        String decrypted  = ESAPI.encryptor().decrypt(ciphertext);
+        assert decrypted.equals(myplaintext);
+    } catch(EncryptionException ex) {
+        // Log error then return error designation however appropriate
+    }
+</pre>
+For compatibility reasons with ESAPI 1.4, this will use the cipher
+transformation "AES-256/ECB/None" unless changed via the ESAPI property
+<code>Encryptor.ESAPICompatibilityVersion</code> is set to "1.4" and
+the property <code>Encryptor.CipherTransformation.1.4</code> is set
+to the desired cipher transformation. (Note that this property does
+not have any effect on the new <code>Encryptor</code> encrypt() and
+decrypt() methods.)
+<h3>Encrypting / Decrypting with the New Methods -- The Simple Usage</h3>
+Using the new encryption / decryption methods is somewhat more complicated,
+but this is in part because they are more flexible and that flexibility
+means that more information needs to be communicated as to the details
+of the encryption.
+<p>
+A code snippet using the new methods would look something like this:
+<pre>
+    String myplaintext = "My plaintext";
+    try {
+        CipherText ciphertext =
+            ESAPI.encryptor().encrypt(myplaintext.getBytes("UTF-8");
+        String decrypted = new String(
+                                        ESAPI.encrypted().decrypt(ciphertext),
+                                        "UTF-8"
+                                     );
+        assert decrypted.equals(myplaintext);
+    } catch(UnsupportedEncodingException ex) {
+        // Should never happen as UF-8 should be in std JRE. If it does,
+        // log error and re-throw or otherwise indicate error.
+    } catch(EncryptionException ex) {
+        // Log error then return error designation however appropriate
+    }
+</pre>
+Yes, this is a bit more complicated, but it will work across different
+hardware platforms and operating systems whereas the older methods may not.
+Also, part of the complication arises because the new method allows a general
+byte array to be encrypted, not just a Java String. If one needed to
+encrypt a byte array with the old methods one would first have to use
+<pre>
+    byte[] plaintextByteArray = { /* byte array to be encrypted */ };
+    String plaintext = new String(plaintextByteArray, "UTF-8");
+</pre>
+all the while catching the required <code>UnsupportedEncodingException</code>.
+</p>
+<p>
+Because the most common use of is encrypting Java Strings, some
+additional helper methods have been provided:
+</p>
+<pre>
+    String myplaintext = "My plaintext";
+    try {
+        String ciphertext = CryptoHelper.encrypt(myplaintext);
+        String decrypted  = CryptoHelper.decrypt(ciphertext);
+        assert decrypted.equals(myplaintext);
+    } catch(EncryptionException ex) {
+        // Log error then return error designation however appropriate
+    }
+</pre>
+so you can get that simplicity if you really need it. However, you should
+really get used to encrypting byte arrays rather than strings. That's because
+byte arrays respresenting sensitive data should be overwritten after your
+application has encrypted them and is through accessing them. Java Strings
+on the other hand are immutable so that they cannot be overwritten. You
+can use <code>CryptoHelper.overwrite(byte[] bytes)</code> to overwrite
+a sensitive byte array.
+<h3>Encrypting / Decrypting with the New Methods -- Advanced Usage</h3>
+<font color="red"><b>TODO</b></font>
+</body>
+</html>
