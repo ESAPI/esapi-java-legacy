@@ -1,24 +1,41 @@
+/*
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ */
 package org.owasp.esapi;
 
+import java.io.Serializable;
+
+// DISCUSS: Do we want to treat this as if it should be replaceable too???
+//			If so, perhaps we need to define the service provider side.
+//			Also, check the method names to see if they make sense / are intuitive.
+
 /**
- * An interface the result of encrypting plaintext and some additional
- * information about the encryption algorithm, the IV (if pertinent), and
- * an optional Message Integrity Code (MIC).
+ * A {@code Serializable} interface representing the result of encrypting
+ * plaintext and some additional information about the encryption algorithm,
+ * the IV (if pertinent), and an optional Message Integrity Code (MIC).
  * <p>
  * Copyright (c) 2009 - The OWASP Foundation
  * </p>
  * @author kevin.w.wall@gmail.com
  * @since 2.0
  */
-public interface CipherText {
+public interface CipherText extends Serializable {
+	
+	long serialVersionUID = 20090819;
 
 	/**
 	 * Obtain the String representing the cipher transformation used to encrypt
 	 * the plaintext. The cipher transformation represents the cipher algorithm,
 	 * the cipher mode, and the padding scheme used to do the encryption. An
 	 * example would be "AES/CBC/PKCS5Padding". See Appendix A in the
-	 * {@linkplain http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA
-	 * Java Cryptography Architecture Reference Guide}
+	 * <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA">
+	 * Java Cryptography Architecture Reference Guide</a>
 	 * for information about standard supported cipher transformation names.
 	 * <p>
 	 * The cipher transformation name is usually sufficient to be passed to
@@ -38,6 +55,24 @@ public interface CipherText {
 	 * 		   encryption resulting in this ciphertext.
 	 */
 	public String getCipherAlgorithm();
+	
+	/**
+	 * Retrieve the key size used with the cipher algorithm that was used to
+	 * encrypt data to produce this ciphertext.
+	 * 
+	 * @return The key size in bits. We work in bits because that's the crypto way!
+	 */
+	public int getKeySize();
+	
+	/**
+	 * Retrieve the block size (in bytes!) of the cipher used for encryption.
+	 * (Note: If an IV is used, this will also be the IV length.)
+	 * 
+	 * @return The block size in bytes. (Bits, bytes! It's confusing I know. Blame
+	 * 									the cryptographers; we've just following
+	 * 									convention.)
+	 */
+	public int getBlockSize();
 	
 	/**
 	 * Get the name of the cipher mode used to encrypt some plaintext.
@@ -67,6 +102,11 @@ public interface CipherText {
 	 */
 	public byte[] getIV();
 	
+	/** 
+	 * Return true if the cipher mode used requires an IV.
+	 */
+	public boolean requiresIV();
+	
 	/**
 	 * Get the raw ciphertext byte array associated with encrypting some
 	 * plaintext.
@@ -74,15 +114,51 @@ public interface CipherText {
 	 * @return The raw ciphertext.
 	 */
 	public byte[] getRawCipherText();
+
+	/**
+	 * Return a base64-encoded representation of the raw ciphertext alone. Even
+	 * in the case where an IV is used, the IV is not prepended before the
+	 * base64-encoding is performed.
+	 * 
+	 * @see #getEncodedIVCipherText()
+	 */
+	public String getBase64EncodedRawCipherText();
 	
 	/**
 	 * Return the ciphertext as a base64-encoded <code>String</code>. If an
 	 * IV was used, the IV if first prepended to the raw ciphertext before
-	 * base64-encoding.
+	 * base64-encoding. If an IV is not used, then this method returns the same
+	 * value as {@link #getBase64EncodedRawCipherText()}.
 	 * 
 	 * @return The base64-encoded ciphertext or base64-encoded IV + ciphertext.
 	 */
-	public String getEncodedCipherText();
+	public String getEncodedIVCipherText();
+
+	/**
+	 * Compute and store the Message Integrity Code (MIC) if the ESAPI property
+	 * {@code Encryptor.CipherText.useMIC} is set to {@code true}. If it
+	 * is, the MIC is calculated as:
+	 * <pre>
+	 * 		HMAC-SHA1(nonce, IV + secret_key)
+	 * </pre>
+	 * </p><p>
+	 * As a side-effect, may set a nonce if it has not yet been calculated.
+	 * </p><p>
+	 * <b>Perceived Benefits</b>: There are certain cases where if an attacker
+	 * is able to change the IV
+	 * </p><p>
+	 * <b>CAVEAT</b>: Even though an HMAC is used to compute this, since the HMAC
+	 * key (the nonce) is contained in this {@code CipherText}, this is really a
+	 * MIC and not an MAC. If there is some strange cryptographic attack that
+	 * doing this permits (I am not aware of any, but that doesn't mean one
+	 * doesn't exist; check with your own cryptography experts), then you might
+	 * decide that the benefits don't outweigh the risks. Using a digital
+	 * signature for this would be more secure, but is also much more computationally
+	 * expensive.
+	 * 
+	 * @param secret_key The secret key with which the plaintext is encrypted.
+	 */
+	public void computeAndStoreMIC(byte[] secret_key);
 	
 	/**
 	 * Validate the message integrity code (MIC) associated with the ciphertext.
@@ -91,11 +167,12 @@ public interface CipherText {
 	 * <i>not</i> detect the case where an attacker simply substitutes one
 	 * valid ciphertext with another ciphertext.
 	 * 
+	 * @param ciphertext	The raw ciphertext bytes.
 	 * @return True if the ciphertext has not be tampered with, and false otherwise.
 	 * 
 	 * @see #getNonce()
-	 */ 
-	public boolean validateMIC();
+	 */
+	public boolean validateMIC(byte[] ciphertext);
 	
 	/**
 	 * Obtain the nonce used to calculate the message integrity code (MIC).
@@ -109,7 +186,8 @@ public interface CipherText {
 	 * 
 	 * @return	The nonce (number used once) used in creating the MIC.
 	 * 
-	 * @see #validateMIC()
+	 * @see #validateMIC(byte[])
 	 */
 	byte[] getNonce();
+
 }
