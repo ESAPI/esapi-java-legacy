@@ -15,7 +15,9 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -32,15 +34,24 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+import javax.crypto.spec.IvParameterSpec;
 
 import org.owasp.esapi.CipherText;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.codecs.Hex;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.util.CipherSpec;
+import org.owasp.esapi.util.CryptoHelper;
 
 /**
  * Reference implementation of the Encryptor interface. This implementation
@@ -49,13 +60,14 @@ import org.owasp.esapi.errors.IntegrityException;
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
- * @since June 1, 2007
+ * @author kevin.w.wall@gmail.com
+ * @since June 1, 2007; some methods since ESAPI Java 2.0
  * @see org.owasp.esapi.Encryptor
  */
 public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
     // encryption
-    private static SecretKeySpec secretKeySpec = null;
+    private static SecretKeySpec secretKeySpec = null; // Why static? Implies one key?!?
     private static String encryptAlgorithm = "AES";
     private static String encoding = "UTF-8"; 
     private static int encryptionKeyLength = 256;
@@ -71,6 +83,10 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	private static String hashAlgorithm = "SHA-512";
 	private static int hashIterations = 1024;
 	
+	// Logging - DISCUSS: This "sticks" us with a specific logger to whatever it was when
+	//					  this class is loaded. Is that a big limitation?
+	private static Logger logger = ESAPI.getLogger("JavaEncryptor");
+	
     /**
      * Generates a new strongly random secret key and salt that can be used in the ESAPI properties file.
      * 
@@ -78,8 +94,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
      * @throws java.lang.Exception	To cover a multitude of sins, mostly in configuring ESAPI.properties.
      */
     public static void main( String[] args ) throws Exception {
-		System.out.println( "Generating a new secret key" );
-		System.out.println( "   use -print to show available algorithms" );
+		System.out.println( "Generating a new secret master key" );
+		System.out.println( "   use -print to show available crypto algorithms" );
 		
 		// print out available ciphers
 		if ( args.length == 1 && args[0].equalsIgnoreCase("-print" ) ) {
@@ -87,6 +103,14 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 					
 			Provider[] providers = Security.getProviders();
 			TreeMap<String, String> tm = new TreeMap<String, String>();
+			// DISCUSS: Note: We go through multiple providers, yet nowhere do I
+			//			see where we print out the provider name. Not all providers
+			//			will implement the same algorithms and some "partner" with
+			//			whom we are exchanging different cryptographic messages may
+			//			have _different_ providers in their java.security file. So
+			//			it would be useful to know the provider name where each
+			//			algorithm is implemented. Might be good to prepend the provider
+			//			name to the 'key' with something like "providerName: ". Thoughts?
 			for (int i = 0; i != providers.length; i++) {
 				Iterator it = providers[i].keySet().iterator();
 				while (it.hasNext()) {
@@ -114,20 +138,23 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         kgen.init( encryptionKeyLength, random );
         SecretKey secretKey = kgen.generateKey();        
         byte[] raw = secretKey.getEncoded();
-        byte[] salt = new byte[20];
+        byte[] salt = new byte[20];	// Or 160-bits
         random.nextBytes( salt );
         String eol = System.getProperty("line.separator", "\n"); // So it works on Windows too.
-        System.out.println( eol + "Copy and paste this into ESAPI.properties" + eol);
+        System.out.println( eol + "Copy and paste these lines into ESAPI.properties" + eol);
+        System.out.println( "#==============================================================");
         System.out.println( "Encryptor.MasterKey=" + ESAPI.encoder().encodeForBase64(raw, false) );
         System.out.println( "Encryptor.MasterSalt=" + ESAPI.encoder().encodeForBase64(salt, false) );
-        System.out.println();
+        System.out.println( "#==============================================================" + eol);
     }
 	
     
     /**
-     * {@inheritDoc}
+     * CTOR for {@code JavaEncryptor}.
+     * @throws EncryptionException if can't construct this object for some reason.
+     * 					Original exception will be attached as the 'cause'.
      */
-    public JavaEncryptor() {
+    public JavaEncryptor() throws EncryptionException {
 		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
 		byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
@@ -156,7 +183,15 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			publicKey = pair.getPublic();
 		} catch (Exception e) {
 			// can't throw this exception in initializer, but this will log it
-			new EncryptionException("Encryption failure", "Error creating Encryptor", e);
+			// CHECKME: Huh? This is not in a _static_ initializer. Just declare
+			//          this CTOR with a 'throws EncryptionException'. In fact, it's
+			//			WRONG to NOT throw here otherwise you are returning an improperly
+			//			constructed object that most assuredly will cause problems somewhere
+			//			downstream. And those problems will be much harder to troubleshoot.
+			//		    Besides, even if it were used in a static initializer it's better
+			//			to throw here and use a try / catch in the static initializer.
+			throw	// Added!!!
+				new EncryptionException("Encryption failure", "Error creating Encryptor", e);
 		}
 	}
 
@@ -204,7 +239,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/**
 	* {@inheritDoc}
 	*/
-	public String encrypt(String plaintext) throws EncryptionException {
+	@Deprecated public String encrypt(String plaintext) throws EncryptionException {
 		// Note - Cipher is not thread-safe so we create one locally
 		try {
 			Cipher encrypter = Cipher.getInstance(encryptAlgorithm);
@@ -220,20 +255,97 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	}
 
 	/**
-	 * TODO
-	 * @param plaintext
-	 * @return
-	 * @throws EncryptionException
+	 * {@inheritDoc}
 	 */
 	 public CipherText encrypt(byte[] plaintext) throws EncryptionException {
-		 // TODO
-		 return null;
+		 // Now more of a convenience function for using the master key.
+		 return encrypt(secretKeySpec, plaintext, false, false);
 	 }
+	 
+	 /**
+	  * TODO: Javadoc
+	  */
+	 public CipherText encrypt(SecretKey key, byte[] plaintext, boolean overwriteKey, boolean overwritePlaintext)
+	 						throws EncryptionException
+	 {
+		 boolean success = false;	// Used in 'finally' clause.
+		 try {
+			 assert key != null : "Encryption key may not be null";
+
+			 String xform = ESAPI.securityConfiguration().getCipherTransformation();
+			 	// Note - Cipher is not thread-safe so we create one locally
+			 Cipher encrypter = Cipher.getInstance(xform);
+			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
+			 int keySize = key.getEncoded().length * 8;
+			 
+			 // DISCUSS: OK, what do we want to do here if keyLen != keySize? If use keyLen, encryption
+			 //		     will fail with an exception, but perhaps that's what we want. Or we may just be
+			 //			 OK with silently using keySize as long as keySize >= keyLen, which then interprets
+			 //			 ESAPI.EncryptionKeyLength as the *minimum* key size, but as long as we have something
+			 //			 stronger it's OK to use it. For now, I am just going to log warning if different, but use
+			 //			 keySize unless keySize is SMALLER than keyLen, in which case I'm going to throw.
+			 //
+			 if ( keySize != keyLen ) {
+				 logger.warning(Logger.SECURITY_FAILURE, "Specified encryption key length (ESAPI.EncryptionKeyLength) is " +
+						 			keyLen + "bits, but length of actual encryption is " + keySize + " bits.");
+			 }
+			 if ( keySize < keyLen ) {
+				 throw new ConfigurationException("Actual key size of " + keySize + " bits smaller than specified " +
+						 						  "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits.");
+			 }
+			 byte[] ivBytes = null;
+			 CipherSpec cipherSpec = new CipherSpec(encrypter, keySize);
+			 if ( cipherSpec.requiresIV() ) {
+				 String ivType = ESAPI.securityConfiguration().getIVType();
+				 IvParameterSpec ivSpec = null;
+				 if ( ivType.equalsIgnoreCase("random") ) {
+					 ivBytes = ESAPI.randomizer().getRandomBytes(encrypter.getBlockSize());
+				 } else if ( ivType.equalsIgnoreCase("fixed") ) {
+					 String fixedIVAsHex = ESAPI.securityConfiguration().getFixedIV();
+					 ivBytes = Hex.decode(fixedIVAsHex);
+/* FUTURE		 } else if ( ivType.equalsIgnoreCase("specified")) {
+					 // FUTURE - TODO  - Create instance of specified class to use for IV generation and
+					 //					 use it to create the ivBytes. (The intent is to make sure that
+					 //				     1) IVs are not repeated for cipher modes like OFB and CFB, and
+					 //					 2) to screen for weak IVs for the particular cipher algorithm.
+ */
+				 } else {
+					 // TODO: Update to add 'specified' once that is supported.
+					 throw new ConfigurationException("Property Encryptor.ChooseIVMethod must be set to 'random' or 'fixed'");
+				 }
+				 ivSpec = new IvParameterSpec(ivBytes);
+				 cipherSpec.setIV(ivBytes);
+				 encrypter.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+			 } else {
+				 encrypter.init(Cipher.ENCRYPT_MODE, key);
+			 }			 
+			 byte[] raw = encrypter.doFinal(plaintext);
+			 CipherText ciphertext = new DefaultCipherText(cipherSpec, raw);
+			 ciphertext.computeAndStoreMIC(key.getEncoded());
+			 success = true;	// W00t!!!
+			 return ciphertext;
+		 } catch (InvalidKeyException ike) {
+			 throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
+		 } catch (ConfigurationException cex) {
+			 throw new EncryptionException("Encryption failure", "Check encryption keys vs. ESAPI.EncryptionKeyLength", cex);
+		 } catch (Exception e) {
+			 throw new EncryptionException("Encryption failure", "Encryption problem: " + e.getMessage(), e);
+		 } finally {
+			 // Don't overwrite anything in the case of exceptions because they may wish to retry.
+			 if ( success && overwriteKey ) {
+				 // CHECKME: Not sure this will work. Need to test. SecretKey.getEncoded() might return a copy.
+				 CryptoHelper.overwrite( key.getEncoded() );
+			 }
+			 if ( success && overwritePlaintext ) {
+				 CryptoHelper.overwrite(plaintext);
+			 }
+		 }
+	}
 
 	/**
 	* {@inheritDoc}
 	*/
-	public String decrypt(String ciphertext) throws EncryptionException {
+	@Deprecated public String decrypt(String ciphertext) throws EncryptionException {
 		// Note - Cipher is not thread-safe so we create one locally
 		try {
 			Cipher decrypter = Cipher.getInstance(encryptAlgorithm);
@@ -242,23 +354,95 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			byte[] output = decrypter.doFinal(dec);
 			return new String(output, encoding);
 		} catch (InvalidKeyException ike) {
-			throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
+			throw new EncryptionException("Decryption failure", "Must install unlimited strength crypto extension from Sun", ike);
+		} catch (NoSuchAlgorithmException e) {
+			throw new EncryptionException("Decryption failed", "Decryption problem - unknown algorithm: " + e.getMessage(), e);
+		} catch (NoSuchPaddingException e) {
+			// Shouldn't happen; this deprecated method does not use padding.
+			throw new EncryptionException("Decryption failed", "Decryption problem - unknown padding: " + e.getMessage(), e);
+		} catch (IOException e) {
+			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
+		} catch (IllegalBlockSizeException e) {
+			throw new EncryptionException("Decryption failed", "Decryption problem - invalid block size: " + e.getMessage(), e);
+		} catch (BadPaddingException e) {
+			// This could happen though, BECAUSE padding is not used.
+			throw new EncryptionException("Decryption failed", "Decryption padding problem: " + e.getMessage(), e);
+		}
+/*		
+	 	Shame on you! Don't you read your own advisories! ;-)
+	 			See		http://www.owasp.org/index.php/Overly-Broad_Catch_Block
 		} catch (Exception e) {
 			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
 		}
+*/
+
 	}
 
 	/**
-	 * TODO
-	 * @param ciphertext
-	 * @return
-	 * @throws EncryptionException
+	 * {@inheritDoc}
 	 */
 	public byte[] decrypt(CipherText ciphertext) throws EncryptionException {
-		// TODO
-		return null;
+		 // Now more of a convenience function for using the master key.
+		 return decrypt(secretKeySpec, ciphertext);
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public byte[] decrypt(SecretKey key, CipherText ciphertext) throws EncryptionException
+	{
+		try {
+			assert key != null : "Encryption key may not be null";
+			assert ciphertext != null : "Ciphertext may not be null";
+			
+			Cipher decrypter = Cipher.getInstance(ciphertext.getCipherTransformation());
+			if ( ciphertext.requiresIV() ) {
+				decrypter.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(ciphertext.getIV()));
+			} else {
+				decrypter.init(Cipher.DECRYPT_MODE, key);
+			}
+			byte[] output = decrypter.doFinal(ciphertext.getRawCipherText());
+				// The decryption was "successful", but there are rare instances (approximately
+				// 1 in a 1000) where the wrong key or IV was used but the ciphertext still
+				// decrypts correctly, but simply results in garbage. (The other 999 times out
+				// of 1000 it will fail with a BadPaddingException [assuming PKCS#5 padding].)
+				// Thus at this point, we check (optionally) validate the MIC. If it returns
+				// false, rather than returning the (presumably) garbage plaintext, we return
+				// throw an exception.
+			boolean success = ciphertext.validateMIC(ciphertext.getRawCipherText());
+			if ( !success ) {
+					// Stop the debugger here if you don't believe us.
+				throw new EncryptionException("Decryption verification failed.",
+									"Decryption returned without throwing but MIC verification  " +
+						          	"failed, meaning returned plaintext was garbarge");
+			}
+			return output;
+		} catch (InvalidKeyException ike) {
+			throw new EncryptionException("Decryption failure", "Must install unlimited strength crypto extension from Sun", ike);
+		} catch (NoSuchAlgorithmException e) {
+			throw new EncryptionException("Decryption failed", "Invalid algorithm for available JCE providers - " +
+						ciphertext.getCipherTransformation() + ": " + e.getMessage(), e);
+		} catch (NoSuchPaddingException e) {
+			throw new EncryptionException("Decryption failed", "Invalid padding scheme (" +
+						ciphertext.getPaddingScheme() + ") for cipher transformation " + ciphertext.getCipherTransformation() +
+						": " + e.getMessage(), e);
+		} catch (InvalidAlgorithmParameterException e) {
+			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
+		} catch (IllegalBlockSizeException e) {
+			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
+		} catch (BadPaddingException e) {
+			boolean success = ciphertext.validateMIC(ciphertext.getRawCipherText());
+			if ( success ) {
+				throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
+			} else {
+				throw new EncryptionException("Decryption failed",
+						"Decryption problem: WARNING: Adversary may have tampered with " +
+						"CipherText object orCipherText object mangled in transit: " + e.getMessage(), e);
+			}
+		}
+
+	}
+
 	/**
 	* {@inheritDoc}
 	*/
@@ -379,7 +563,11 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/******
 	private String computeHMAC( String input ) throws EncryptionException {
 		try {
-			Mac hmac = Mac.getInstance("HMacMD5");
+			Mac hmac = Mac.getInstance("HMacMD5"); // DISCUSS: Change to HMacSHA1. MD5 badly broken
+												   //          SHA1 should really be avoided, but using
+												   //		   for HMAC-SHA1 is acceptable for now. Plan
+												   //		   to migrate to SHA-256 or NIST replacement for
+												   //		   SHA1 in not to distant future.
 			hmac.init(secretKeySpec);
 			byte[] bytes = hmac.doFinal(input.getBytes());
 			return ESAPI.encoder().encodeForBase64(bytes, false);
