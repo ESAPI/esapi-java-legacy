@@ -1,3 +1,12 @@
+/*
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ */
 package org.owasp.esapi.util;
 
 import org.owasp.esapi.errors.ConfigurationException;
@@ -118,7 +127,9 @@ public class ObjFactory<T> {
 		} catch( Exception ex ) {
 			// Because we are using reflection, we want to catch any checked or unchecked Exceptions and
 			// re-throw them in a way we can handle them. Because using reflection to construct the object,
-			// we can't have the compiler notify us of uncaught exceptions.
+			// we can't have the compiler notify us of uncaught exceptions. For example, JavaEncryptor()
+			// CTOR can throw [well, now it can] an EncryptionException if something goes wrong. That case
+			// is taken care of here.
 			//
 			// CHECKME: Should we first catch RuntimeExceptions so we just let unchecked Exceptions go through
 			//		    unaltered???
@@ -130,9 +141,9 @@ public class ObjFactory<T> {
 	}
 	
 	/**
-	 * Private CTOR to prevent instantiation.
+	 * Public, do nothing CTOR.
 	 */
-	private ObjFactory()
+	public ObjFactory()
 	{
 		; // Empty
 	}
