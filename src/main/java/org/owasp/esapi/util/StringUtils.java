@@ -31,7 +31,7 @@ public class StringUtils
      * is 2, since GUMBO transforms into GAMBOL by replacing the 'U' with an 'A' and
      * adding an 'L'.
      *
-     * Original Implementation of this algorythm by Michael Gilleland, adapted by
+     * Original Implementation of this algorithm by Michael Gilleland, adapted by
      * Chas Emerick for the Apache-Commons project
      * http://www.merriampark.com/ldjava.htm
      *
@@ -91,9 +91,13 @@ public class StringUtils
     }
 
     /**
-     * Check to see if a {@code String} is null or empty (after optional
+     * Check to ensure that a {@code String} is not null or empty (after optional
      * trimming of leading and trailing whitespace). Usually used with
-     * assertions.
+     * assertions, as in
+     * <pre>
+     * 		assert StringUtils.notNullOrEmpty(cipherXform, true) :
+     * 								"Cipher transformation may not be null or empty!";
+     * </pre> 
      * 
      * @param str	The {@code String} to be checked.
      * @param trim	If {@code true}, the string is first trimmed before checking
@@ -103,9 +107,9 @@ public class StringUtils
      */
     public static boolean notNullOrEmpty(String str, boolean trim) {
     	if ( trim ) {
-    		return ( str == null || str.trim().equals("") );
+    		return !( str == null || str.trim().equals("") );
     	} else {
-    		return ( str == null || str.equals("") );
+    		return !( str == null || str.equals("") );
     	}
     }
 }
