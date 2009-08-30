@@ -590,15 +590,18 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public String getFixedIV() {
-    	if ( getIVType().equals("fixed") ) {
-    		String ivAsHex = getESAPIProperty(FIXED_IV, "");
+    	if ( getIVType().equalsIgnoreCase("fixed") ) {
+    		String ivAsHex = getESAPIProperty(FIXED_IV, ""); // No default
     		if ( ivAsHex == null || ivAsHex.trim().equals("") ) {
     			throw new ConfigurationException("Fixed IV requires property " +
     						FIXED_IV + " to be set, but it is not.");
     		}
     		return ivAsHex;		// We do no further checks here as we have no context.
     	} else {
-    		throw new ConfigurationException("IV type not 'fixed', so no fixed IV");
+    		// DISCUSS: Should we just log a warning here and return null instead?
+    		//			If so, may cause NullPointException somewhere later.
+    		throw new ConfigurationException("IV type not 'fixed' (set to '" +
+    										 getIVType() + "'), so no fixed IV applicable.");
     	}
     }
     
