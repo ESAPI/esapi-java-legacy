@@ -33,7 +33,7 @@
 		<mode>redirect</mode>
 		<error-handling>
 			<default-page>/security/error.jsp</default-page>
-			<default-status>403</default-status>
+			<default-status>301</default-status>
 		</error-handling>
 	</settings>
 
@@ -61,7 +61,7 @@
 	<authorization-rules>
 		<restrict-source-ip type="regex"
 			ip-regex="(192\.168\.1\..*|127.0.0.1)">/admin/.*</restrict-source-ip>
-		<must-match path="^/admin/.*" variable="request.header.x-roles"
+		<must-match path="^/admin/.*" variable="request.headers.x-roles"
 			operator="contains" value="admin" />
 	</authorization-rules>
 
@@ -92,9 +92,9 @@
 		Set rules for incoming headers and parameters.
 	-->
 	<header-rules>
-		<restrict-content-type deny="multipart" />
-		<restrict-content-type allow="text/plain" />
-		<restrict-content-type allow="x-www-form-urlencoded" />
+		<restrict-content-type deny=".*multipart.*">
+			<path-exception type="regex">/fileupload.jsp</path-exception>
+		</restrict-content-type>
 		<restrict-user-agent deny=".*GoogleBot.*" />
 		<restrict-user-agent allow=".*" />
 	</header-rules>
@@ -110,8 +110,7 @@
 			<match-and>
 				<match-not variable="request.URI" operator="regex">
 					/(zz|foo|bar|zaz).jsp</match-not>
-				<match variable="request.parameters.*" operator="regex">![NY|MO|CA]
-				</match>
+				<match variable="request.parameters.*" operator="regex">![NY|MO|CA]</match>
 			</match-and>
 			<actions>
 				<redirect status="500" />
@@ -128,19 +127,18 @@
 		Set virtual patches to match specific vulnerability patterns.
 	-->
 	<virtual-patches>
-		<virtual-patch id="1234" path="/foo.jsp" variable="request.parameters.bar"
-			pattern="[0-9a-zA-Z]" message="zomg attax" />
+		<virtual-patch id="1234" path="/virtualpatch.jsp" variable="request.parameters.bar"
+			pattern="[0-9a-zA-Z]*" message="zomg attax" />
 	</virtual-patches>
 
 
 
-	<!--
-		Set rules for outbound headers and data
+	<!-- Set rules for outbound headers and data -->
 
 	<outbound-rules>
 
 		<add-header name="FOO" value="BAR" path="/.*">
-			<path-exception path="/foobar/.*" />
+			<path-exception regex="/foobar/.*" />
 		</add-header>
 
 		<add-http-only-flag>
@@ -163,8 +161,6 @@
 		<detect-content content-type=".*text/.*" pattern=".*2008.*" />
 
 	</outbound-rules>
-
--->
 
 </policy>
 

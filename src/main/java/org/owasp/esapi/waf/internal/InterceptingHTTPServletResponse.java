@@ -28,6 +28,9 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
 	public InterceptingHTTPServletResponse(HttpServletResponse response, boolean buffering, List<Rule> cookieRules) throws IOException {
 
 		super(response);
+		
+		this.contentType = response.getContentType();
+		
 		this.isos = new InterceptingServletOutputStream(response.getOutputStream(), buffering);
 		this.ipw = new InterceptingPrintWriter(new PrintWriter(isos));
 

@@ -14,7 +14,7 @@
 		<mode>redirect</mode>
 		<error-handling>
 			<default-page>/security/error.jsp</default-page>
-			<default-status>403</default-status>
+			<default-status>301</default-status>
 		</error-handling>
 	</settings>
 

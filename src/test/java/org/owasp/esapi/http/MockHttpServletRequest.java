@@ -590,10 +590,14 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * {@inheritDoc}
      * @return
      */
-    public String getRemoteAddr() {
+	public String getRemoteAddr() {
     	return remoteHost;
     }
 
+	public void setRemoteAddr(String remoteHost) {
+    	this.remoteHost = remoteHost;
+    }
+	
     /**
      * {@inheritDoc}
      * @return

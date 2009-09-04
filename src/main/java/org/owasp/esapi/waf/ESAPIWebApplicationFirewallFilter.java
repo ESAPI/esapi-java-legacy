@@ -45,8 +45,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	private String logSettingsFilename = null;
 
 	private static final String SESSION_COOKIE_NAME = "JSESSIONID";
-	private static final String FAUX_SESSION_COOKIE = "self_monster";
-	private static final String SESSION_COOKIE_CANARY = "sid_canary";
+	private static final String FAUX_SESSION_COOKIE = "JSESSIONID_2";
+	private static final String SESSION_COOKIE_CANARY = "org.owasp.esapi.waf.canary";
 
 	private static Logger logger = Logger.getLogger(ESAPIWebApplicationFirewallFilter.class);
 
@@ -74,7 +74,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		String realLogSettingsFilename = fc.getServletContext().getRealPath(logSettingsFilename);
 
 		if ( ! new File(realLogSettingsFilename).exists() ) {
-			throw new ServletException("[AppGuard] Could not find log file at resolved path: " + realLogSettingsFilename);
+			throw new ServletException("[ESAPI WAF] Could not find log file at resolved path: " + realLogSettingsFilename);
 		}
 
 		/*
@@ -86,7 +86,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		String realConfigFilename = fc.getServletContext().getRealPath(configurationFilename);
 
 		if ( ! new File(realConfigFilename).exists() ) {
-			throw new ServletException("[AppGuard] Could not find configuration file at resolved path: " + realConfigFilename);
+			throw new ServletException("[ESAPI WAF] Could not find configuration file at resolved path: " + realConfigFilename);
 		}
 
 		/*
@@ -141,8 +141,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 //		logger.info(">> Starting Stage 0" );
 
-		if ( httpRequest.getSession(false) == null && ( AppGuardianConfiguration.FORCE_SECURE_FLAG_TO_SESSION ||
-				 AppGuardianConfiguration.FORCE_HTTP_ONLY_FLAG_TO_SESSION ) ) {
+		if ( httpRequest.getSession(false) == null && ( appGuardConfig.isUsingHttpOnlyFlagOnSessionCookie() ||
+				appGuardConfig.isUsingSecureFlagOnSessionCookie() ) ) {
 
 			for(int i=0;httpRequest.getCookies() != null && i<httpRequest.getCookies().length;i++) {
 
@@ -292,7 +292,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 						case AppGuardianConfiguration.REDIRECT:
 							redirectUserToErrorPage(response);
-							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
 							return;
 					}
 				}

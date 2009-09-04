@@ -41,13 +41,15 @@ public class ReplaceContentRule extends Rule {
 			String s = new String(bytes,response.getCharacterEncoding());
 
 			Matcher m = pattern.matcher(s);
-			m.replaceAll(replacement);
-
+			String canary = m.replaceAll(replacement);
+			
 			try {
-				response.getInterceptingServletOutputStream().setResponseBytes(s.getBytes(response.getCharacterEncoding()));
-
-				logger.log(AppGuardianConfiguration.LOG_LEVEL, "Successfully replaced pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "'");
-
+				
+				if ( ! s.equals(canary) ) {
+					response.getInterceptingServletOutputStream().setResponseBytes(canary.getBytes(response.getCharacterEncoding()));
+					logger.log(AppGuardianConfiguration.LOG_LEVEL, "Successfully replaced pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "'");
+				}
+				
 			} catch (IOException ioe) {
 				logger.log(AppGuardianConfiguration.LOG_LEVEL, "Failed to replace pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "' due to [" + ioe.getMessage() + "]");
 			}
