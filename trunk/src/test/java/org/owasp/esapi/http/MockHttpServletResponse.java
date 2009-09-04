@@ -49,6 +49,8 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	StringBuffer body = new StringBuffer();
 
+	String contentType = "text/html; charset=ISO-8895-1";
+
 	public String getBody() {
 		return body.toString();
 	}
@@ -327,7 +329,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * @return
 	 */
 	public String getContentType() {
-		return "text/html";
+		return contentType;
 	}
 
 	/**
@@ -429,7 +431,7 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * @param type
 	 */
 	public void setContentType(String type) {
-
+		contentType = type;
 	}
 
 	/**

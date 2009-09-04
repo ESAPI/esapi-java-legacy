@@ -13,12 +13,12 @@
 		<mode>redirect</mode>
 		<error-handling>
 			<default-page>/security/error.jsp</default-page>
-			<default-status>403</default-status>
+			<default-status>301</default-status>
 		</error-handling>
 	</settings>
 
 	<header-rules>
-		<restrict-content-type deny="multipart">
+		<restrict-content-type deny=".*multipart.*">
 			<path-exception type="regex">/fileupload.jsp</path-exception>
 		</restrict-content-type>
 

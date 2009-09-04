@@ -16,13 +16,13 @@
 		<mode>redirect</mode>
 		<error-handling>
 			<default-page>/security/error.jsp</default-page>
-			<default-status>403</default-status>
+			<default-status>301</default-status>
 		</error-handling>
 	</settings>
 	
 	<outbound-rules>
 		<add-header name="FOO" value="BAR" path="/.*">
-			<path-exception type="regexp">/marketing/.*</path-exception>
+			<path-exception type="regex">/marketing/.*</path-exception>
 		</add-header>
 	</outbound-rules>
 	

@@ -42,9 +42,6 @@ public class AppGuardianConfiguration {
 	public static String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 	public static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_CHARACTER_ENCODING;
 
-	public static boolean FORCE_HTTP_ONLY_FLAG_TO_SESSION = false;
-	public static boolean FORCE_SECURE_FLAG_TO_SESSION = false;
-
 	/*
 	 * The JavaScript to redirect users to the default error page. Have
 	 * to use this because response.sendRedirect() can't have an arbitrary
@@ -64,6 +61,10 @@ public class AppGuardianConfiguration {
 	private String defaultErrorPage;
 	private int defaultResponseCode;
 
+	private boolean forceHttpOnlyFlagToSession = false;
+	private boolean forceSecureFlagToSession = false;
+
+	
 	/*
 	 * The object-level rules encapsulated by the stage in which they are executed.
 	 */
@@ -133,14 +134,22 @@ public class AppGuardianConfiguration {
 		cookieRules.add(r);
 	}
 
-	public void applyHTTPOnlyFlagToSessionCookie() {
-		FORCE_HTTP_ONLY_FLAG_TO_SESSION = true;
+	public void setApplyHTTPOnlyFlagToSessionCookie(boolean shouldApply) {
+		forceHttpOnlyFlagToSession = shouldApply;
 	}
 
-	public void applySecureFlagToSessionCookie() {
-		FORCE_SECURE_FLAG_TO_SESSION = true;
+	public void setApplySecureFlagToSessionCookie(boolean shouldApply) {
+		forceSecureFlagToSession = shouldApply;
+	}
+	
+	public boolean isUsingHttpOnlyFlagOnSessionCookie() {
+		return forceHttpOnlyFlagToSession;
 	}
 
+	public boolean isUsingSecureFlagOnSessionCookie() {
+		return forceSecureFlagToSession;
+	}
+	
 	public String toString() {
 		StringBuilder sb = new StringBuilder( "WAF Configuration\n" );
 		sb.append( "Before body rules:\n" );

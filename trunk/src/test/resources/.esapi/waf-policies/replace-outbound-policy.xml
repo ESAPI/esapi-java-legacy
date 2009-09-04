@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 	<!--
-	This test file exemplifies an add-secure-flag rule.
+	This test file exemplifies a dynamic-insertion rule.
 
-	Protection #1: Any cookie set by the application will have the secure flag set. This
-	               should apply to the application session ID as well as any custom cookies.
+	Protection #1: All instances of "</body>" in the response body will be replaced by
+	               "this is a test".
 
 	-->
 
@@ -17,11 +17,11 @@
 			<default-status>301</default-status>
 		</error-handling>
 	</settings>
-	
+
 	<outbound-rules>
-		<add-secure-flag>
-			<cookie name=".*"/>
-		</add-secure-flag>
+		<dynamic-insertion pattern="&lt;/body&gt;">
+			<replacement><![CDATA[this is a test]]></replacement>
+		</dynamic-insertion>
 	</outbound-rules>
 	
 </policy>

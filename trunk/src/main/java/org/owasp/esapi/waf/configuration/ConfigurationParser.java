@@ -392,7 +392,7 @@ public class ConfigurationParser {
 					config.addCookieRule(ahfr);
 
 					if ( ahfr.doesCookieMatch(JEESESSIONID) ) {
-						config.applyHTTPOnlyFlagToSessionCookie();
+						config.setApplyHTTPOnlyFlagToSessionCookie(true);
 					}
 				}
 
@@ -418,7 +418,7 @@ public class ConfigurationParser {
 					config.addCookieRule(asfr);
 
 					if ( asfr.doesCookieMatch(JEESESSIONID) ) {
-						config.applySecureFlagToSessionCookie();
+						config.setApplySecureFlagToSessionCookie(true);
 					}
 
 				}
