@@ -32,7 +32,7 @@ public class CipherSpec implements Serializable {
 	
 	private String  cipher_xform_   = ESAPI.securityConfiguration().getCipherTransformation();
 	private int     keySize_        = ESAPI.securityConfiguration().getEncryptionKeyLength(); // In bits
-	private int     blockSize_      = 8;   // In bytes!
+	private int     blockSize_      = 16;   // In bytes! I.e., 128 bits!!!
 	private byte[]  iv_             = null;
 	
 	private static final int ALG     = 0;
@@ -139,7 +139,7 @@ public class CipherSpec implements Serializable {
 	private CipherSpec setCipherTransformation(String cipherXform, boolean fromCipher) {
 		assert StringUtils.notNullOrEmpty(cipherXform, true) : "cipherXform may not be null or empty";
 		int parts = cipherXform.split("/").length;
-		assert ( !fromCipher && parts != 3 ) :
+		assert ( !fromCipher ? (parts == 3) : true ) :
 			"Malformed cipherXform (" + cipherXform + "); must have form: \"alg/mode/paddingscheme\"";
 		if ( fromCipher && (parts != 3)  ) {
 				// Indicates cipherXform was set based on Cipher.getAlgorithm()
@@ -160,7 +160,7 @@ public class CipherSpec implements Serializable {
 								cipherXform + "' must have form \"alg/mode/paddingscheme\"");
 			}
 		}
-		assert cipherXform.split("/").length == 3 : "Implementation error isetCipherTransformation()";
+		assert cipherXform.split("/").length == 3 : "Implementation error setCipherTransformation()";
 		this.cipher_xform_ = cipherXform;
 		return this;
 	}
@@ -275,6 +275,26 @@ public class CipherSpec implements Serializable {
 			return false;
 		}
 		return true;
+	}
+	
+	/**
+	 * Override {@code Object.toString()} to provide something more useful.
+	 * @return A meaningful string describing this object.
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder("CipherSpec: ");
+		sb.append( getCipherTransformation() ).append("; keysize= ").append( getKeySize() );
+		sb.append(" bits; blocksize= ").append( getBlockSize() ).append(" bytes");
+		byte[] iv = getIV();
+		String ivLen = null;
+		if ( iv != null ) {
+			ivLen = "" + iv.length;	// Convert length to a string
+		} else {
+			ivLen = "[No IV present (not set or not required)]";
+		}
+		sb.append("; IV length = ").append( ivLen ).append(" bytes.");
+		return sb.toString();
 	}
 	
 	/**
