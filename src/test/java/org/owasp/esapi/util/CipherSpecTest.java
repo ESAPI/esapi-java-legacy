@@ -79,6 +79,7 @@ public class CipherSpecTest {
     	assertTrue( cipherSpec.getCipherAlgorithm().equals("AES"));
     	assertTrue( cipherSpec.getCipherMode().equals("ECB") );
     	assertTrue( cipherSpec.getPaddingScheme().equals("NoPadding") );
+    	// System.out.println("testCipherSpecInt(): " + cipherSpec);
 	}
 
 	/** Test CipherSpec(final byte[] iv) */
