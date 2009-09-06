@@ -54,9 +54,9 @@ import org.owasp.esapi.util.CipherSpec;
 import org.owasp.esapi.util.CryptoHelper;
 
 /**
- * Reference implementation of the Encryptor interface. This implementation
+ * Reference implementation of the {@code Encryptor} interface. This implementation
  * layers on the JCE provided cryptographic package. Algorithms used are
- * configurable in the ESAPI.properties file.
+ * configurable in the {@code ESAPI.properties} file.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -128,6 +128,13 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			}
 		}
 		
+		// TODO - Change this to create Encryptor.MasterKey based on new ESAPI
+		//		  encryption which may differ from old 1.4 version. (E.g., default
+		//		  key size is not 128-bits rather than 256-bits, etc.)
+		//
+		//		  Can use CryptoHelper.generateSecretKey() and simplify the below.
+		//
+		
         // setup algorithms
         encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
 		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
@@ -138,7 +145,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         kgen.init( encryptionKeyLength, random );
         SecretKey secretKey = kgen.generateKey();        
         byte[] raw = secretKey.getEncoded();
-        byte[] salt = new byte[20];	// Or 160-bits
+        byte[] salt = new byte[20];	// Or 160-bits; big enough for SHA1, but not SHA-256 or SHA-512.
         random.nextBytes( salt );
         String eol = System.getProperty("line.separator", "\n"); // So it works on Windows too.
         System.out.println( eol + "Copy and paste these lines into ESAPI.properties" + eol);
@@ -259,13 +266,13 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	 */
 	 public CipherText encrypt(byte[] plaintext) throws EncryptionException {
 		 // Now more of a convenience function for using the master key.
-		 return encrypt(secretKeySpec, plaintext, false, false);
+		 return encrypt(secretKeySpec, plaintext, false);
 	 }
 	 
 	 /**
-	  * TODO: Javadoc
+	  * {@inheritDoc}
 	  */
-	 public CipherText encrypt(SecretKey key, byte[] plaintext, boolean overwriteKey, boolean overwritePlaintext)
+	 public CipherText encrypt(SecretKey key, byte[] plaintext, boolean overwritePlaintext)
 	 						throws EncryptionException
 	 {
 		 boolean success = false;	// Used in 'finally' clause.
@@ -276,7 +283,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			 	// Note - Cipher is not thread-safe so we create one locally
 			 Cipher encrypter = Cipher.getInstance(xform);
 			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
-			 int keySize = key.getEncoded().length * 8;
+			 int keySize = key.getEncoded().length * 8;	// Convert to # bits
 			 
 			 // DISCUSS: OK, what do we want to do here if keyLen != keySize? If use keyLen, encryption
 			 //		     will fail with an exception, but perhaps that's what we want. Or we may just be
@@ -287,7 +294,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			 //
 			 if ( keySize != keyLen ) {
 				 logger.warning(Logger.SECURITY_FAILURE, "Specified encryption key length (ESAPI.EncryptionKeyLength) is " +
-						 			keyLen + "bits, but length of actual encryption is " + keySize + " bits.");
+						 			keyLen + " bits, but length of actual encryption is " + keySize +
+						 			" bits.  Did you remember to regenerate your master key (if that is what you are using)???");
 			 }
 			 if ( keySize < keyLen ) {
 				 throw new ConfigurationException("Actual key size of " + keySize + " bits smaller than specified " +
@@ -321,7 +329,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			 }			 
 			 byte[] raw = encrypter.doFinal(plaintext);
 			 CipherText ciphertext = new DefaultCipherText(cipherSpec, raw);
-			 ciphertext.computeAndStoreMIC(key.getEncoded());
+			 ciphertext.computeAndStoreMIC(key.getEncoded());	// DISCUSS: Or use plaintext bytes here?
+			 logger.debug(Logger.EVENT_SUCCESS, "JavaEncryptor.encrypt(SecretKey,byte[],boolean,boolean): " + ciphertext);
 			 success = true;	// W00t!!!
 			 return ciphertext;
 		 } catch (InvalidKeyException ike) {
@@ -332,10 +341,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			 throw new EncryptionException("Encryption failure", "Encryption problem: " + e.getMessage(), e);
 		 } finally {
 			 // Don't overwrite anything in the case of exceptions because they may wish to retry.
-			 if ( success && overwriteKey ) {
-				 // CHECKME: Not sure this will work. Need to test. SecretKey.getEncoded() might return a copy.
-				 CryptoHelper.overwrite( key.getEncoded() );
-			 }
 			 if ( success && overwritePlaintext ) {
 				 CryptoHelper.overwrite(plaintext);
 			 }
@@ -371,6 +376,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 /*		
 	 	Shame on you! Don't you read your own advisories! ;-)
 	 			See		http://www.owasp.org/index.php/Overly-Broad_Catch_Block
+	 	OK for JUnit tests, but not production code.
 		} catch (Exception e) {
 			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
 		}
@@ -394,7 +400,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		try {
 			assert key != null : "Encryption key may not be null";
 			assert ciphertext != null : "Ciphertext may not be null";
-			
+			logger.debug(Logger.EVENT_SUCCESS, "JavaEncryptor.decrypt(SecretKey,CipherText): " + ciphertext);
 			Cipher decrypter = Cipher.getInstance(ciphertext.getCipherTransformation());
 			if ( ciphertext.requiresIV() ) {
 				decrypter.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(ciphertext.getIV()));
@@ -409,11 +415,15 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 				// Thus at this point, we check (optionally) validate the MIC. If it returns
 				// false, rather than returning the (presumably) garbage plaintext, we return
 				// throw an exception.
-			boolean success = ciphertext.validateMIC(ciphertext.getRawCipherText());
+				//
+				// Note: If it is desired to use the MIC, but it was not computed or stored (as in
+				// the case with CryptoHelper encrypt() / decrypt() methods), we return true when
+				// we call CipherText.validateMIC() but we also log the discrepancy.
+			boolean success = ciphertext.validateMIC( key.getEncoded() );	// DISCUSS: Or plaintext bytes???
 			if ( !success ) {
 					// Stop the debugger here if you don't believe us.
 				throw new EncryptionException("Decryption verification failed.",
-									"Decryption returned without throwing but MIC verification  " +
+									"Decryption returned without throwing but MIC verification " +
 						          	"failed, meaning returned plaintext was garbarge");
 			}
 			return output;
@@ -431,7 +441,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		} catch (IllegalBlockSizeException e) {
 			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
 		} catch (BadPaddingException e) {
-			boolean success = ciphertext.validateMIC(ciphertext.getRawCipherText());
+			boolean success = ciphertext.validateMIC( key.getEncoded() );	// DISCUSS: Can't use plaintext bytes here as decryption failed.
 			if ( success ) {
 				throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
 			} else {
