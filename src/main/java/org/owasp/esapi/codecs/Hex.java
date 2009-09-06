@@ -46,7 +46,13 @@ public class Hex {
         return toHex(b, leading0x);
     }
 
-    /** Decode hexadecimal-encoded string and return raw byte array.
+    /**
+     * Decode hexadecimal-encoded string and return raw byte array.
+     * Important note: This method preserves leading 0 filled bytes on the
+     * conversion process, which is important for cryptographic operations
+     * in dealing with things like keys, initialization vectors, etc. For
+     * example, the string "0x0000face" is going to return a byte array
+     * whose length is 4, not 2.
      * 
      * @param hexStr	Hexadecimal-encoded string, with or without leading "0x".
      * @return			The equivalent byte array.
