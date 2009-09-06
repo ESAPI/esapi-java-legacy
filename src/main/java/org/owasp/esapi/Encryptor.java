@@ -158,10 +158,6 @@ public interface Encryptor {
 	  * @param plaintext	The byte stream to be encrypted. Note if a Java
 	  * 				{@code String} is to be encrypted, it should be converted
 	  * 				using {@code "some string".getBytes("UTF-8")}.
-	  * @param overwriteKey		If {@code true}, the {@code key} is overwritten
-	  * 				after the encryption is finished successfully. Only set
-	  * 				to true if the key has safely been saved elsewhere or by
-	  * 				the intended recipient of the encrypted message.
 	  * @param overwritePlaintext	f {@code true}, the {@code plaintext} is
 	  * 				overwritten after the encryption has finished successfully.
 	  * 				Only set this to true if you have no longer need the plaintext
@@ -178,8 +174,8 @@ public interface Encryptor {
 	  * 				etc.
 	  * @see #encrypt(byte[])
 	  */
-	 CipherText encrypt(SecretKey key, byte[] plaintext, boolean overwriteKey, boolean overwritePlaintext)
-	 throws EncryptionException;
+	 CipherText encrypt(SecretKey key, byte[] plaintext, boolean overwritePlaintext)
+	 		throws EncryptionException;
 
 	/**
 	 * Decrypts the provided ciphertext string (encrypted with the encrypt
