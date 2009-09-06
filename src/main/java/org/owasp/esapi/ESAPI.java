@@ -35,6 +35,11 @@ import org.owasp.esapi.util.*;
 //			we could set it up so that appropriate Permissions need to be granted BEFORE allow
 //			things like Authenticator, Encryptor, IntrusionDetector, etc. to be changed. (Presumably
 //			a DIFFERENT party other than developers would be responsible for granting these Permissions.)
+//			So for example, if someone needed to call setEncryptor() method, they might need to be
+//			granted CryptoAllPermissions in order to do so, etc. And if these permissions were carefully
+//			controlled, that would ensure some sort of review. To do this, we'd only make these restrictions
+//			when a SecurityManager was being used; it would not mandate the use of a SecurityManager so
+//			that without a security manager, everyone is allowed permissions.
 //
 //			Which brings me to the SECOND thing... IMHO, these 'setters' should NOT be of type 'void',
 //			but be of whatever type that they are setting so that they can set the new value and return
@@ -199,11 +204,7 @@ public final class ESAPI {
 		if (encryptor == null) {
 			String encryptorName = securityConfiguration().getEncryptionImplementation();
 			encryptor =  (new ObjFactory<Encryptor>()).make(encryptorName, "Encryptor");
-			// DISCUSS: Figure out a way to easily encrypt w/ different keys. Probably easiest
-			//		    way is to add 2 additional encrypt / decrypt methods to Encryptor interface
-			//          that takes a SecretKey as the first argument. However, there are already a
-			//		    ton of methods there, so perhaps this should just be re-thought completely.
-		} 
+		}
 		return encryptor;
 	}
 
