@@ -12,7 +12,8 @@ package org.owasp.esapi;
 import java.io.Serializable;
 
 // DISCUSS: Do we want to treat this as if it should be replaceable too???
-//			If so, perhaps we need to define the service provider side.
+//			If so, perhaps we need to define the service provider side and define
+//			some appropriate 'setters'. More details in DefaultCipherText.
 //			Also, check the method names to see if they make sense / are intuitive.
 
 /**
@@ -119,7 +120,12 @@ public interface CipherText extends Serializable {
 	 * Return a base64-encoded representation of the raw ciphertext alone. Even
 	 * in the case where an IV is used, the IV is not prepended before the
 	 * base64-encoding is performed.
-	 * 
+	 * <p>
+	 * If there is a need to store an encrypted value, say in a database, this
+	 * is <i>not</i> the method you should use unless you are using a <i>fixed</i>
+	 * IV. If you are <i>not</i> using a fixed IV, you should normally use
+	 * {@link #getEncodedIVCipherText()} instead.
+	 * </p>
 	 * @see #getEncodedIVCipherText()
 	 */
 	public String getBase64EncodedRawCipherText();
@@ -129,8 +135,14 @@ public interface CipherText extends Serializable {
 	 * IV was used, the IV if first prepended to the raw ciphertext before
 	 * base64-encoding. If an IV is not used, then this method returns the same
 	 * value as {@link #getBase64EncodedRawCipherText()}.
-	 * 
+	 * <p>
+	 * Generally, this is the method that you should use unless you only
+	 * are using a fixed IV and a storing that IV separately, in which case
+	 * using {@link #getBase64EncodedRawCipherText()} can reduce the storage
+	 * overhead.
+	 * </p>
 	 * @return The base64-encoded ciphertext or base64-encoded IV + ciphertext.
+	 * @see #getBase64EncodedRawCipherText()
 	 */
 	public String getEncodedIVCipherText();
 
@@ -157,7 +169,15 @@ public interface CipherText extends Serializable {
 	 * expensive.
 	 * 
 	 * @param secret_key The secret key with which the plaintext is encrypted.
-	 */
+	 */		// DISCUSS - Should this be secret_key or plaintext or neither? Have
+			//			 post out to two former colleagues with more crypto knowledge.
+			//			 May post to sci.crypt.research or elsewhere if no response.
+			//			 Secret key would be preferable since we can test MIC via
+			//			 validateMIC() even when decryption fails and results in
+			//			 BadPaddingException. If we definitely decide its safe to
+			//			 use the secret key, recommend changing arg for this method
+			//			 and validateMIC() to use SecretKey rather than the encoded
+			//			 secret key bytes.
 	public void computeAndStoreMIC(byte[] secret_key);
 	
 	/**
@@ -167,27 +187,8 @@ public interface CipherText extends Serializable {
 	 * <i>not</i> detect the case where an attacker simply substitutes one
 	 * valid ciphertext with another ciphertext.
 	 * 
-	 * @param ciphertext	The raw ciphertext bytes.
+	 * @param secretKey		The raw bytes of the secret encryption key.
 	 * @return True if the ciphertext has not be tampered with, and false otherwise.
-	 * 
-	 * @see #getNonce()
 	 */
-	public boolean validateMIC(byte[] ciphertext);
-	
-	/**
-	 * Obtain the nonce used to calculate the message integrity code (MIC).
-	 * The purpose of this is two-fold: first is to ensure the integrity of
-	 * the ciphertext and second is to help us detect if the wrong encryption
-	 * key was used to attempt to decrypt (something that is very important
-	 * when one occasionally does key change operations [i.e., rotates keys]).
-	 * <p>
-	 * Note that the nonce itself should be treated as an opaque object. That
-	 * is, no meaning should be inferred from it by users of this class.
-	 * 
-	 * @return	The nonce (number used once) used in creating the MIC.
-	 * 
-	 * @see #validateMIC(byte[])
-	 */
-	byte[] getNonce();
-
+	public boolean validateMIC(byte[] ciphertext);	// DISCUSS: See above discussion.
 }
