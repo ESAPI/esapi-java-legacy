@@ -5,6 +5,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.security.Key;
+
+import javax.crypto.spec.SecretKeySpec;
+
 import org.owasp.esapi.errors.ConfigurationException;
 
 public class ObjFactoryTest extends TestCase {
@@ -54,7 +57,7 @@ public class ObjFactoryTest extends TestCase {
     /** Test that NullCipher object is correctly returned. */
     public void testMakeNullCipher() throws ConfigurationException {
     	String className = "javax.crypto.NullCipher";
-    	javax.crypto.NullCipher nullCipher =
+    	javax.crypto.Cipher nullCipher =
     			(new ObjFactory<javax.crypto.NullCipher>()).make(className, "NullCipher");
     	assertTrue( nullCipher instanceof javax.crypto.NullCipher );
     	System.out.println("W00t! Watch out NSA...we have a NullCipher and we're not afraid to use it!");
@@ -156,6 +159,33 @@ public class ObjFactoryTest extends TestCase {
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
 			assertTrue( cause instanceof UnsupportedOperationException);
+    	}
+    }
+    
+    /** Test case where typeName is null or empty string. */
+    public void testNullorEmptyTypeName() throws ConfigurationException {
+    	String className = "javax.crypto.NullCipher";
+    	javax.crypto.Cipher nullCipher =
+    			(new ObjFactory<javax.crypto.NullCipher>()).make(className, null);
+    	assertTrue( nullCipher instanceof javax.crypto.NullCipher );
+    	nullCipher =
+			(new ObjFactory<javax.crypto.NullCipher>()).make(className, "");
+    	assertTrue( nullCipher instanceof javax.crypto.NullCipher );
+    }
+    
+    /** Test case where no-arg CTOR does not exist. By all indications from
+     * Javadoc for {@code Class.newInstance()} one would think this should
+     * throw an {@code IllegalAccessException} because {@code SecretKeySpec}
+     * has two public CTORs that both take arguments. */
+    public void testMakeCipher() throws ConfigurationException {
+    	try {
+    		String className = "javax.crypto.spec.SecretKeySpec";
+    		javax.crypto.spec.SecretKeySpec skeySpec =
+    			(SecretKeySpec) (new ObjFactory<java.lang.Object>()).make(className, "SecretKeySpec");
+    		assertTrue( skeySpec != null );
+    	} catch(ConfigurationException ex) {
+    		Throwable cause = ex.getCause();
+    		assertTrue( cause instanceof InstantiationException);
     	}
     }
 }
