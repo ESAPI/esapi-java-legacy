@@ -15,15 +15,21 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.UnsupportedEncodingException;
+
+import javax.crypto.SecretKey;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.owasp.esapi.CipherText;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.util.CryptoHelper;
 
 /**
  * The Class EncryptorTest.
@@ -59,8 +65,9 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Suite.
-	 * 
+     * Run all the test cases in this suite.
+     * This is to allow running from {@code org.owasp.esapi.AllTests}.
+     * 
 	 * @return the test
 	 */
     public static Test suite() {
@@ -86,7 +93,7 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of encrypt method, of class org.owasp.esapi.Encryptor.
+	 * Test of old, deprecated encrypt method, of class org.owasp.esapi.Encryptor.
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
@@ -101,7 +108,7 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of decrypt method, of class org.owasp.esapi.Encryptor.
+	 * Test of old, deprecated decrypt method, of class org.owasp.esapi.Encryptor.
 	 */
     public void testDecrypt() {
         System.out.println("decrypt");
@@ -118,6 +125,68 @@ public class EncryptorTest extends TestCase {
         }
     }
 
+    /**
+     * Test of new encrypt / decrypt methods added in ESAPI 2.0.
+     */
+    public void testNewEncryptDecrypt() {
+    	try {
+			runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
+			runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
+			runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
+			runNewEncryptDecryptTestCase("AES/ECB/NoPadding", 256, "test1234test1234".getBytes("UTF-8"));
+			runNewEncryptDecryptTestCase("DES/ECB/NoPadding", 56, "test1234".getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			fail("OK, who stole UTF-8 encoding from the Java rt.jar ???");
+		}
+    	
+    }
+    
+    private void runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
+    	System.out.println("New encrypt / decrypt: " + cipherXform);
+    	// Let's try it with a 2 key version of 3DES. If we were to use the 3 key version
+    	// if would force all the ESAPI developers to download the unlimited export JCE
+    	// jurisdiction policy files.
+    	try { 
+			SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);	
+			assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
+			String cipherAlg = cipherXform.split("/")[0];
+			
+			// NOTE: Key size that encrypt() method is using is 192 bits!!!
+    		//        which is 3 times 64 bits, but DES key size is only 56 bits.
+    		// See 'DISCUSS' note, JavaEncryptor, near line 288. It's a "feature"!!!
+			if ( cipherAlg.equals( "DESede" ) ) {
+				keySize = 192;
+			} else if ( cipherAlg.equals( "DES" ) ) {
+				keySize = 64;
+			} // Else... use specified keySize.
+			assertTrue( keySize / 8 == skey.getEncoded().length );
+System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.getEncoded().length);
+
+			// Change the cipher transform from whatever it is to specified cipherXform.
+	    	String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
+System.out.println("Cipher xform changed from " + oldCipherXform + " to \"" + cipherXform + "\"");
+	    	Encryptor instance = ESAPI.encryptor();
+	    	String origPlaintext = new String(plaintextBytes, "UTF-8");
+	    	byte[] ptBytes = origPlaintext.getBytes("UTF-8");
+	    	CipherText ciphertext = instance.encrypt(skey, ptBytes, true);	// New encrypt() method.
+System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
+	    	assertTrue( ciphertext != null );
+	    	assertTrue( checkByteArray(ptBytes, (byte)'*') );
+	    	byte[] resultBytes = instance.decrypt(skey, ciphertext);		// New decrypt() method.
+	    	String plaintextString = new String(resultBytes, "UTF-8");
+	    	assertTrue( plaintextString.equals(origPlaintext) );
+	    	String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
+	    	assertTrue( previousCipherXform.equals( cipherXform ) );
+	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
+	    	assertTrue( defaultCipherXform.equals( oldCipherXform ) );
+		} catch (Exception e) {
+			// OK if not counted toward code coverage.
+			System.err.println("testNewEncryptDecrypt(): Caught unexpected exception: " + e.getClass().getName());
+			e.printStackTrace(System.err);
+			fail("Caught unexpected exception; msg was: " + e.getMessage());
+		}
+    }
+    
     // TODO - Because none of the encryption / decryption tests persists
     //		  encrypted data across runs, that means everything is run
     //		  under same JVM at same time thus always with the same
@@ -125,7 +194,7 @@ public class EncryptorTest extends TestCase {
     //
     //		  Need test(s) such that data is persisted across JVM runs
     //		  so we can test a run on (say) a Windows Intel box can decrypt
-    //		  encrypted data produced by the reference Encyrptor on
+    //		  encrypted data produced by the reference Encryptor on
     //		  (say) a Solaris SPARC box. I.e., test that the change to
     //		  JavaEncryptor to use UTF-8 encoding throughout works as
     //		  desired.
@@ -247,6 +316,13 @@ public class EncryptorTest extends TestCase {
         JavaEncryptor.main( args1 );        
     }
     
-    
+	private boolean checkByteArray(byte[] ba, byte b) {
+		for(int i = 0; i < ba.length; i++ ) {
+			if ( ba[i] != b ) {
+				return false;
+			}
+		}
+		return true;
+	}
     
 }
