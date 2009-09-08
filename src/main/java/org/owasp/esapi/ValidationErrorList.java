@@ -92,8 +92,8 @@ public class ValidationErrorList {
 	 * No action taken if either element is null. 
 	 * Existing contexts will be overwritten.
 	 * 
-	 * @param context unique named context for this ValidationErrorList
-	 * @param ve
+	 * @param context Unique named context for this {@code ValidationErrorList}.
+	 * @param vex	A {@code ValidationException}.
 	 */
 	public void addError(String context, ValidationException vex) {
 		if ( context == null ) throw new RuntimeException( "Context for cannot be null: " + vex.getLogMessage(), vex );
