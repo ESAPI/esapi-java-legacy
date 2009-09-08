@@ -6,9 +6,10 @@ import junit.framework.TestSuite;
 
 public class StringUtilsTest extends TestCase {
 
-	   /**
-	 * Suite.
-	 * 
+	/**
+     * Run all the test cases in this suite.
+     * This is to allow running from {@code org.owasp.esapi.AllTests}.
+     * 
 	 * @return the test
 	 */
     public static Test suite() {
