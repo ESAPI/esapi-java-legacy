@@ -45,7 +45,7 @@ public class CryptoHelperTest {
 			fail("Caught unexpected EncryptionException; msg was " + e.getMessage() );
 		}
 	}
-	
+
 	@Test(expected=EncryptionException.class)
 	public final void testGenerateSecretKeyEncryptionException() throws EncryptionException
 	{
@@ -72,32 +72,32 @@ public class CryptoHelperTest {
 		assertTrue( checkByteArray(src, (byte)'A') );	// Still filled with 'A'
 		assertTrue( checkByteArray(dest, (byte)'A') );	// Now filled with 'B'
 	}
-	
+
 	@Test(expected=NullPointerException.class)
 	public final void testCopyByteArraySrcNullPointerException() {
 		byte[] ba = new byte[16];
 		CryptoHelper.copyByteArray(null, ba, ba.length);
 	}
-	
+
 	@Test(expected=NullPointerException.class)
 	public final void testCopyByteArrayDestNullPointerException() {
 		byte[] ba = new byte[16];
 		CryptoHelper.copyByteArray(ba, null, ba.length);
 	}
-	
+
 	@Test(expected=IndexOutOfBoundsException.class)
 	public final void testCopyByteArrayIndexOutOfBoundsException() {
 		byte[] ba8 = new byte[8];
 		byte[] ba16 = new byte[16];
 		CryptoHelper.copyByteArray(ba8, ba16, ba16.length);
 	}
-	
+
 	private void fillByteArray(byte[] ba, byte b) {
 		for(int i = 0; i < ba.length; i++ ) {
 			ba[i] = b;
 		}
 	}
-	
+
 	private boolean checkByteArray(byte[] ba, byte b) {
 		for(int i = 0; i < ba.length; i++ ) {
 			if ( ba[i] != b ) {
@@ -106,4 +106,17 @@ public class CryptoHelperTest {
 		}
 		return true;
 	}
+
+
+	/**
+	 * Run all the test cases in this suite.
+	 * This is to allow running from {@code org.owasp.esapi.AllTests}.
+	 */
+	public static junit.framework.Test suite() {
+		junit.framework.TestSuite suite =
+			new junit.framework.TestSuite(CryptoHelperTest.class);
+
+		return suite;
+	}
+
 }
