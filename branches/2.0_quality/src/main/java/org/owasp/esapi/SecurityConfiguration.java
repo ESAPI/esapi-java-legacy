@@ -232,6 +232,30 @@ public interface SecurityConfiguration {
 	 * @return	The cipher transformation.
 	 */
     public String getCipherTransformation();
+    
+    /**
+     * Set the cipher transformation. This allows a different cipher transformation
+     * to be used without changing the {@code ESAPI.properties} file. For instance
+     * you may normally want to use AES/CBC/PKCS5Padding, but have some legacy
+     * encryption where you have ciphertext that was encrypted using 3DES.
+     * 
+     * @param cipherXform	The new cipher transformation. See
+     * 						{@link #getCipherTransformation} for format. If
+     * 						{@code null} is passed as the parameter, the cipher
+     * 						transformation will be set to the the default taken
+     * 						from the property {@code Encryptor.CipherTransformation}
+     * 						in the {@code ESAPI.properties} file. <b>BEWARE:</b>
+     * 						there is <b>NO</b> sanity checking here (other than
+     * 						the empty string, and then, only if Java assertions are
+     * 						enabled), so if you set this wrong, you will not get
+     * 						any errors until you letter try to use it to encrypt
+     * 						or decrypt data.
+     * @return	The previous cipher transformation is returned for convenience,
+     * 			with the assumption that you may wish to restore it once you have
+     * 			completed the encryption / decryption with the new cipher
+     * 			transformation.
+     */
+    public String setCipherTransformation(String cipherXform);
 
 // TODO - DISCUSS: Where should this web page go? Maybe with the Javadoc? But where?
 //				   Think it makes more sense as part of the release notes, but OTOH, I
