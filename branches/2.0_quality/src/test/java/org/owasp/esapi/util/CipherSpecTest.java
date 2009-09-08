@@ -1,6 +1,7 @@
 package org.owasp.esapi.util;
 
 import static org.junit.Assert.*;
+import junit.framework.TestSuite;
 
 import javax.crypto.Cipher;
 
@@ -195,4 +196,14 @@ public class CipherSpecTest {
 		assertTrue( cipherSpec.requiresIV() == false );
 		assertTrue( new CipherSpec(dfltOtherCipher).requiresIV() );
 	}
+	
+    /**
+     * Run all the test cases in this suite.
+     * This is to allow running from {@code org.owasp.esapi.AllTests}.
+     */
+    public static junit.framework.Test suite() {
+        TestSuite suite = new TestSuite(CipherSpecTest.class);
+
+        return suite;
+    }
 }
