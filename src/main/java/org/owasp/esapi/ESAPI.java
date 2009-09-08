@@ -150,7 +150,7 @@ public final class ESAPI {
 
 	/**
 	 * Change the current ESAPI AccessController to the AccessController provided. 
-	 * @param accessController
+	 * @param controller
 	 *            the AccessController to set to be the current ESAPI AccessController. 
 	 */
 	public static void setAccessController(AccessController controller) {
