@@ -140,7 +140,7 @@ public interface Encryptor {
 	 * 				cipher mode, or padding scheme not being supported, specifying
 	 * 				an unsupported key size, specifying an IV of incorrect length,
 	 * 				etc.
-	 * @see #encrypt(SecretKey, byte[], boolean, boolean)
+	 * @see #encrypt(SecretKey, byte[], boolean)
 	 */
 	 CipherText encrypt(byte[] plaintext) throws EncryptionException;
 
