@@ -72,6 +72,9 @@ import org.owasp.esapi.errors.ConfigurationException;
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private Properties properties = null;
+    private String cipherXformFromESAPIProp = null;	// New in ESAPI 2.0
+    private String cipherXformCurrent = null;		// New in ESAPI 2.0
+
     
     private static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
     private static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
@@ -152,6 +155,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	
 				// ==================================//
 				//		New in ESAPI Java 2.0		 //
+				//   Not implementation classes!!!   //
 				// ================================= //
     private static final String CIPHERTEXT_IMPLEMENTATION = "ESAPI.CipherText";
     private static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
@@ -192,7 +196,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * be used to load the file.
      */
     private static String resourceDirectory = ".esapi";
-    
+        
 //    private static long lastModified = -1;
 
     /**
@@ -202,6 +206,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	// load security configuration
     	try {
         	loadConfiguration();
+        		// See SecurityConfiguration..setCipherTransformation() for
+        		// explanation of this.
+        	cipherXformFromESAPIProp =
+    			getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
+    							 "AES/CBC/PKCS5Padding");
+        	cipherXformCurrent = cipherXformFromESAPIProp;
         } catch( IOException e ) {
 	        logSpecial("Failed to load security configuration", e );
         }
@@ -544,10 +554,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * {@inheritDoc}
      */
     public String getCipherTransformation() {
-    	return getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
-    							"AES/CBC/PKCS5Padding");
+    	assert cipherXformCurrent != null : "Current cipher transformation is null";
+    	return cipherXformCurrent;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public String setCipherTransformation(String cipherXform) {
+    	String previous = getCipherTransformation();
+    	if ( cipherXform == null ) {
+    		// Special case... means set it to original value from ESAPI.properties
+    		cipherXformCurrent = cipherXformFromESAPIProp;
+    	} else {
+    		assert ! cipherXform.trim().equals("") :
+    			"Cipher transformation cannot be just white space or empty string";
+    		cipherXformCurrent = cipherXform;	// Note: No other sanity checks!!!
+    	}
+    	return previous;
+    }
+    
     /**
      * {@inheritDoc}
      */
