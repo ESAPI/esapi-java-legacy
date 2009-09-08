@@ -104,7 +104,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			Provider[] providers = Security.getProviders();
 			TreeMap<String, String> tm = new TreeMap<String, String>();
 			// DISCUSS: Note: We go through multiple providers, yet nowhere do I
-			//			see where we print out the provider name. Not all providers
+			//			see where we print out the PROVIDER NAME. Not all providers
 			//			will implement the same algorithms and some "partner" with
 			//			whom we are exchanging different cryptographic messages may
 			//			have _different_ providers in their java.security file. So
@@ -112,6 +112,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			//			algorithm is implemented. Might be good to prepend the provider
 			//			name to the 'key' with something like "providerName: ". Thoughts?
 			for (int i = 0; i != providers.length; i++) {
+				// DISCUSS: Print security provider name here???
 				Iterator it = providers[i].keySet().iterator();
 				while (it.hasNext()) {
 		            String key = (String) it.next();
@@ -128,22 +129,13 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			}
 		}
 		
-		// TODO - Change this to create Encryptor.MasterKey based on new ESAPI
-		//		  encryption which may differ from old 1.4 version. (E.g., default
-		//		  key size is not 128-bits rather than 256-bits, etc.)
-		//
-		//		  Can use CryptoHelper.generateSecretKey() and simplify the below.
-		//
-		
         // setup algorithms
         encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
 		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
 		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
 
-        KeyGenerator kgen = KeyGenerator.getInstance( encryptAlgorithm );
 		SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-        kgen.init( encryptionKeyLength, random );
-        SecretKey secretKey = kgen.generateKey();        
+		SecretKey secretKey = CryptoHelper.generateSecretKey(encryptAlgorithm, encryptionKeyLength);
         byte[] raw = secretKey.getEncoded();
         byte[] salt = new byte[20];	// Or 160-bits; big enough for SHA1, but not SHA-256 or SHA-512.
         random.nextBytes( salt );
@@ -273,36 +265,86 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	  * {@inheritDoc}
 	  */
 	 public CipherText encrypt(SecretKey key, byte[] plaintext, boolean overwritePlaintext)
-	 						throws EncryptionException
+	 			throws EncryptionException
 	 {
+		 assert key != null : "Encryption key may not be null";
+		 
 		 boolean success = false;	// Used in 'finally' clause.
-		 try {
-			 assert key != null : "Encryption key may not be null";
+		 String xform = null;
+		 int keySize = key.getEncoded().length * 8;	// Convert to # bits
 
-			 String xform = ESAPI.securityConfiguration().getCipherTransformation();
-			 	// Note - Cipher is not thread-safe so we create one locally
+		 try {
+			 xform = ESAPI.securityConfiguration().getCipherTransformation();
+			 // Note - Cipher is not thread-safe so we create one locally
 			 Cipher encrypter = Cipher.getInstance(xform);
 			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
-			 int keySize = key.getEncoded().length * 8;	// Convert to # bits
-			 
+
 			 // DISCUSS: OK, what do we want to do here if keyLen != keySize? If use keyLen, encryption
-			 //		     will fail with an exception, but perhaps that's what we want. Or we may just be
+			 //		     could fail with an exception, but perhaps that's what we want. Or we may just be
 			 //			 OK with silently using keySize as long as keySize >= keyLen, which then interprets
 			 //			 ESAPI.EncryptionKeyLength as the *minimum* key size, but as long as we have something
 			 //			 stronger it's OK to use it. For now, I am just going to log warning if different, but use
-			 //			 keySize unless keySize is SMALLER than keyLen, in which case I'm going to throw.
+			 //			 keySize unless keySize is SMALLER than ESAPI.EncryptionKeyLength, in which case I'm going
+			 //			 to log an error.
+			 //
+			 //			 IMPORTANT NOTE:	When we generate key sizes for both DES and DESede the result of
+			 //								SecretKey.getEncoding().length includes the TRUE key size (i.e.,
+			 //								*with* the even parity bits) rather than the EFFECTIVE key size
+			 //								(which incidentally is what KeyGenerator.init() expects for DES
+			 //								and DESede). This leads to the following dilemma:
+			 //
+			 //													EFFECTIVE Key Size		TRUE Key Size
+			 //													(KeyGenerator.init())	(SecretKey.getEncoding().length)
+			 //									========================================================================
+			 //									For DES:			56 bits					64 bits
+			 //									For DESede:			112 bits / 168 bits		192 bits
+			 //
+			 //								We are trying to automagically determine the key size from SecretKey
+			 //								based on 8 * SecretKey.getEncoding().length, but as you can see, the
+			 //								2 key 3DES and the 3 key 3DES both use the same key size (192 bits)
+			 //								regardless of what is passed to KeyGenerator.init(). There are no advertised
+			 //								methods to get the key size specified by the init() method so I'm not sure how
+			 //								this is actually working internally. However, it does present a problem if we
+			 //								wish to communicate the 3DES key size to a recipient for later decryption as
+			 //								they would not be able to distinguish 2 key 3DES from 3 key 3DES.
+			 //
+			 //								The only workaround I know is to pass the explicit key size down. However, if
+			 //								we are going to do that, I'd propose passing in a CipherSpec object so we could
+			 //								tell what cipher transformation to use as well instead of just the key size. Then
+			 //								we would extract keySize from the CipherSpec object of from the SecretKey object.
 			 //
 			 if ( keySize != keyLen ) {
 				 logger.warning(Logger.SECURITY_FAILURE, "Specified encryption key length (ESAPI.EncryptionKeyLength) is " +
-						 			keyLen + " bits, but length of actual encryption is " + keySize +
-						 			" bits.  Did you remember to regenerate your master key (if that is what you are using)???");
+						 keyLen + " bits, but length of actual encryption is " + keySize +
+				 " bits.  Did you remember to regenerate your master key (if that is what you are using)???");
 			 }
 			 if ( keySize < keyLen ) {
-				 throw new ConfigurationException("Actual key size of " + keySize + " bits smaller than specified " +
-						 						  "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits.");
+				 // ESAPI.EncryptionKeyLength defaults to 128, but that means that we can't use DES (as weak as it
+				 // is) even for legacy code. Therefore, this has been changed to a warning.
+				 //				 throw new ConfigurationException("Actual key size of " + keySize + " bits smaller than specified " +
+				 //						  "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits.");
+				 logger.warning(Logger.SECURITY_FAILURE, "Actual key size of " + keySize + " bits SMALLER THAN specified " +
+						 "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits.");
 			 }
+			 if ( keySize < 80 ) {		// Most cryptographers today consider 80-bits to be the minimally safe key size.
+				 logger.warning(Logger.SECURITY_FAILURE, "Potentially unsecure encryption. Key size not sufficiently long. " +
+				 "Should use appropriate algorithm with key size greater than 80 bits.");
+			 }
+			 // Check if algorithm mentioned in SecretKey is same as that being used for Cipher object.
+			 // They should be the same. If they are different, things could fail. (E.g., DES and DESede
+			 // require keys with even parity. Even if key was sufficient size, if it didn't have the correct
+			 // parity it could fail.)
+			 //
+			 String cipherAlg = encrypter.getAlgorithm();
+			 String skeyAlg   = key.getAlgorithm();
+			 if ( !( cipherAlg.startsWith( skeyAlg + "/" ) || cipherAlg.equals( skeyAlg ) ) ) {
+				 // DISCUSS: Should we thrown a ConfigurationException here or just log a warning???
+				 logger.warning(Logger.SECURITY_FAILURE, "Encryption mismatch between cipher algorithm (" +
+						 cipherAlg + ") and SecretKey algorithm (" + skeyAlg + ")." );
+			 }
+
 			 byte[] ivBytes = null;
-			 CipherSpec cipherSpec = new CipherSpec(encrypter, keySize);
+			 CipherSpec cipherSpec = new CipherSpec(encrypter, keySize);	// Could pass the ACTUAL (intended) key size
 			 if ( cipherSpec.requiresIV() ) {
 				 String ivType = ESAPI.securityConfiguration().getIVType();
 				 IvParameterSpec ivSpec = null;
@@ -311,14 +353,16 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 				 } else if ( ivType.equalsIgnoreCase("fixed") ) {
 					 String fixedIVAsHex = ESAPI.securityConfiguration().getFixedIV();
 					 ivBytes = Hex.decode(fixedIVAsHex);
-/* FUTURE		 } else if ( ivType.equalsIgnoreCase("specified")) {
+					 /* FUTURE		 } else if ( ivType.equalsIgnoreCase("specified")) {
 					 // FUTURE - TODO  - Create instance of specified class to use for IV generation and
 					 //					 use it to create the ivBytes. (The intent is to make sure that
-					 //				     1) IVs are not repeated for cipher modes like OFB and CFB, and
+					 //				     1) IVs are never repeated for cipher modes like OFB and CFB, and
 					 //					 2) to screen for weak IVs for the particular cipher algorithm.
- */
+					 //		In meantime, use 'random' for block cipher in feedback mode. Unlikely they will
+					 //		be repeated unless you are salting SecureRandom with same value each time.
+					  */
 				 } else {
-					 // TODO: Update to add 'specified' once that is supported.
+					 // TODO: Update to add 'specified' once that is supported and added above.
 					 throw new ConfigurationException("Property Encryptor.ChooseIVMethod must be set to 'random' or 'fixed'");
 				 }
 				 ivSpec = new IvParameterSpec(ivBytes);
@@ -326,7 +370,8 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 				 encrypter.init(Cipher.ENCRYPT_MODE, key, ivSpec);
 			 } else {
 				 encrypter.init(Cipher.ENCRYPT_MODE, key);
-			 }			 
+			 }
+			 logger.debug(Logger.EVENT_SUCCESS, "Encrypting with " + cipherSpec);
 			 byte[] raw = encrypter.doFinal(plaintext);
 			 CipherText ciphertext = new DefaultCipherText(cipherSpec, raw);
 			 ciphertext.computeAndStoreMIC(key.getEncoded());	// DISCUSS: Or use plaintext bytes here?
@@ -334,18 +379,33 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			 success = true;	// W00t!!!
 			 return ciphertext;
 		 } catch (InvalidKeyException ike) {
-			 throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
+			 throw new EncryptionException("Encryption failure: Invalid key exception.",
+					 "Requested key size: " + keySize + "bits greater than 128 bits. Must install unlimited strength crypto extension from Sun", ike);
 		 } catch (ConfigurationException cex) {
-			 throw new EncryptionException("Encryption failure", "Check encryption keys vs. ESAPI.EncryptionKeyLength", cex);
-		 } catch (Exception e) {
-			 throw new EncryptionException("Encryption failure", "Encryption problem: " + e.getMessage(), e);
+			 throw new EncryptionException("Encryption failure: Configuration error. Details in log.", "Key size mismatch or unsupported IV method. " +
+					 "Check encryption key size vs. ESAPI.EncryptionKeyLength or Encryptor.ChooseIVMethod property.", cex);
+		 } catch (InvalidAlgorithmParameterException e) {
+			 throw new EncryptionException("Encryption failure (invalid IV)",
+					 "Encryption problem: Invalid IV spec: " + e.getMessage(), e);
+		 } catch (IllegalBlockSizeException e) {
+			 throw new EncryptionException("Encryption failure (no padding used; invalid input size)",
+					 "Encryption problem: Invalid input size without padding (" + xform + "). " + e.getMessage(), e);
+		 } catch (BadPaddingException e) {
+			 throw new EncryptionException("Encryption failure",
+					 "[Note: Should NEVER happen in encryption mode.] Encryption problem: " + e.getMessage(), e);
+		 } catch (NoSuchAlgorithmException e) {
+			 throw new EncryptionException("Encryption failure (unavailable cipher)",
+					 "Encryption problem: specified algorithm in cpher xform " + xform + " not available: " + e.getMessage(), e);
+		 } catch (NoSuchPaddingException e) {
+			 throw new EncryptionException("Encryption failure (unavailable padding scheme)",
+					 "Encryption problem: specified padding scheme in cpher xform " + xform + " not available: " + e.getMessage(), e);
 		 } finally {
 			 // Don't overwrite anything in the case of exceptions because they may wish to retry.
 			 if ( success && overwritePlaintext ) {
 				 CryptoHelper.overwrite(plaintext);
 			 }
 		 }
-	}
+	 }
 
 	/**
 	* {@inheritDoc}
@@ -548,7 +608,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		try {
 			unseal( seal );
 			return true;
-		} catch( Exception e ) {
+		} catch( EncryptionException e ) {
 			return false;
 		}
 	}
@@ -573,17 +633,17 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	/******
 	private String computeHMAC( String input ) throws EncryptionException {
 		try {
-			Mac hmac = Mac.getInstance("HMacMD5"); // DISCUSS: Change to HMacSHA1. MD5 badly broken
+			Mac hmac = Mac.getInstance("HMacMD5"); // DISCUSS: Change to HMacSHA1. MD5 *badly* broken
 												   //          SHA1 should really be avoided, but using
 												   //		   for HMAC-SHA1 is acceptable for now. Plan
 												   //		   to migrate to SHA-256 or NIST replacement for
-												   //		   SHA1 in not to distant future.
+												   //		   SHA1 in not too distant future.
 			hmac.init(secretKeySpec);
-			byte[] bytes = hmac.doFinal(input.getBytes());
+			byte[] bytes = hmac.doFinal(input.getBytes("UTF-8"));
 			return ESAPI.encoder().encodeForBase64(bytes, false);
 		} catch (InvalidKeyException ike) {
 			throw new EncryptionException("Encryption failure", "Must install unlimited strength crypto extension from Sun", ike);
-	    } catch (Exception e) {
+	    } catch (Exception e) {		// <<== Evil! ;-)
 	    	throw new EncryptionException("Could not compute HMAC", "Problem computing HMAC for " + input, e );
 	    }
 	}
