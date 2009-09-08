@@ -250,7 +250,7 @@ public final class DefaultCipherText implements CipherText {
 	/**
 	 * {@inheritDoc}
 	 */ 
-	public boolean validateMIC(byte[] ciphertext) {
+	public boolean validateMIC(byte[] secretKey) {
 		boolean usesMIC = ESAPI.securityConfiguration().useMICforCipherText();
 
 		if (  usesMIC && micComputed() ) {	// Uses MIC and it was computed
@@ -258,7 +258,7 @@ public final class DefaultCipherText implements CipherText {
 			// compare to stored value (mic_). If same, then return true,
 			// else return false.
 			assert getNonce() != null : "Cannot validate MIC while nonce is null.";
-			byte[] mic = computeMIC(ciphertext);
+			byte[] mic = computeMIC(secretKey);
 			assert mic.length == mic_.length : "MICs are of differnt lengths. Should both be the same.";
 			for ( int i = 0; i < mic.length; i++ ) {
 				if ( mic[i] != mic_[i] ) {
