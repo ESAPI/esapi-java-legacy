@@ -190,5 +190,5 @@ public interface CipherText extends Serializable {
 	 * @param secretKey		The raw bytes of the secret encryption key.
 	 * @return True if the ciphertext has not be tampered with, and false otherwise.
 	 */
-	public boolean validateMIC(byte[] ciphertext);	// DISCUSS: See above discussion.
+	public boolean validateMIC(byte[] secretKey);	// DISCUSS: See above discussion.
 }
