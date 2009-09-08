@@ -65,6 +65,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 */
 	public synchronized String getProperty(String key) throws EncryptionException {
 		try {
+			// TODO: Change this to use CryptoHelper.decrypt()
 			return ESAPI.encryptor().decrypt(properties.getProperty(key));
 		} catch (Exception e) {
 			throw new EncryptionException("Property retrieval failure", "Couldn't decrypt property", e);
@@ -76,6 +77,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 */
 	public synchronized String setProperty(String key, String value) throws EncryptionException {
 		try {
+			// TODO: Change this to use CryptoHelper.encrypt()
 			return (String)properties.setProperty(key, ESAPI.encryptor().encrypt(value));
 		} catch (Exception e) {
 			throw new EncryptionException("Property setting failure", "Couldn't encrypt property", e);
