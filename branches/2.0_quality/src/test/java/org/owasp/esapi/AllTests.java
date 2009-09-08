@@ -26,6 +26,10 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.filters.ClickjackFilterTest;
 import org.owasp.esapi.filters.SafeRequestTest;
+import org.owasp.esapi.util.CipherSpecTest;
+import org.owasp.esapi.util.CryptoHelperTest;
+import org.owasp.esapi.util.ObjFactoryTest;
+import org.owasp.esapi.util.StringUtilsTest;
 import org.owasp.esapi.waf.WAFFilterTest;
 
 /**
@@ -124,7 +128,16 @@ public class AllTests extends TestCase {
         suite.addTest(WAFFilterTest.suite());
         suite.addTest(ClickjackFilterTest.suite());
         suite.addTest(SafeRequestTest.suite());
+        
+        // util
+        		// Note: Apparently one can't mix JUnit 4 and JUnit 3 tests.
+        		//		 Perhaps it might work if this AllTests were a JUnit 4
+        		//		 test???
+        // suite.addTest(CipherSpecTest.suite());		// JUnit 4
+        // suite.addTest(CryptoHelperTest.suite());		// JUnit 4
+        suite.addTest(ObjFactoryTest.suite());
+        suite.addTest(StringUtilsTest.suite());
+        
         return suite;
     }
-
 }
