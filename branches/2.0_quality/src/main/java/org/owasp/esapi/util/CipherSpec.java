@@ -18,7 +18,7 @@ import org.owasp.esapi.util.StringUtils;
 
 /**
  * Specifies all the relevant configuration data needed in constructing and
- * using a @{link {@link javax.crypto.Cipher} except for the encryption key.
+ * using a {@link javax.crypto.Cipher} except for the encryption key.
  * </p><p>
  * The "setters" all return a reference to {@code this} so that they can be
  * strung together.
