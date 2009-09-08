@@ -77,9 +77,9 @@ public class StringUtilities {
 
 	/**
      * Returns true if the character is contained in the provided StringBuilder.
-     * @param input 
-     * @param c 
-     * @return
+     * @param input 	The input
+     * @param c 		The character to check for to see if {@code input} contains.
+     * @return			True if the specified character is contained; false otherwise.
      */
     public static boolean contains(StringBuilder input, char c) {
         for (int i = 0; i < input.length(); i++) {
