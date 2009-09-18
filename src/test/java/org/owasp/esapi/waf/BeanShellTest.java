@@ -15,29 +15,33 @@
  */
 package org.owasp.esapi.waf;
 
+import java.net.URL;
+
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.owasp.esapi.http.MockFilterChain;
+import org.owasp.esapi.http.MockHttpServletRequest;
 
 import junit.framework.TestSuite;
 
-public class RestrictUserAgentTest extends WAFTestCase {
+public class BeanShellTest extends WAFTestCase {
+
 	public static TestSuite suite() {
-		return new TestSuite(RestrictUserAgentTest.class);
+		return new TestSuite(BeanShellTest.class);
 	}
-	
-	public void testBadUserAgent() throws Exception {
-		request.addHeader("User-Agent","GoogleBot");
-		
-		WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/restrict-user-agent-policy.xml", request, response );
+
+	public void testRedirectBeanShellRule() throws Exception {
+
+		request = new MockHttpServletRequest( new URL( "http://www.example.com/beanshelltest" ) );
+
+    	WAFTestUtility.createAndExecuteWAFTransaction("waf-policies/bean-shell-policy.xml", request, response, new MockFilterChain() );
     	
-		assert(response.getStatus() == HttpServletResponse.SC_MOVED_PERMANENTLY);
-	}
-	
-	public void testGoodUserAgent() throws Exception {
-		request.addHeader("User-Agent","MSIE NT Compatible");
-		
-		WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/restrict-user-agent-policy.xml", request, response );
+    	HttpSession session = request.getSession();
     	
-		assert(response.getStatus() == HttpServletResponse.SC_OK);
+    	assert(session.getAttribute("simple_waf_test") != null);
+    	assert(response.getStatus() == HttpServletResponse.SC_MOVED_PERMANENTLY);
+
 	}
-	
+
 }
