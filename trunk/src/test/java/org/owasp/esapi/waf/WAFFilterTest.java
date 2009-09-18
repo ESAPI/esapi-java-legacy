@@ -5,13 +5,14 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2009 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
- * @created 2007
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
  */
 package org.owasp.esapi.waf;
 
@@ -29,9 +30,6 @@ import junit.framework.TestSuite;
  * so the small policy files test the strict functionality, while the
  * larger policy files (hopefully) give us assurance that the rules 
  * won't interfere with each other.
- * 
- * @author Jeff Williams (jeff.williams@aspectsecurity.com)
- * @author Arshan Dabirsiaghi (arshan.dabirsiaghi@aspectsecurity.com)
  */
 
 public class WAFFilterTest extends TestCase {
@@ -56,6 +54,7 @@ public class WAFFilterTest extends TestCase {
     	TestSuite suite = new TestSuite(WAFFilterTest.class);
 
         suite.addTest(AddHeaderTest.suite());
+        suite.addTest(BeanShellTest.suite());
         suite.addTest(DetectOutboundTest.suite());
         suite.addTest(EnforceAuthenticationTest.suite());
         suite.addTest(EnforceHTTPSTest.suite());

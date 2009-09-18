@@ -1,6 +1,23 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
+ */
 package org.owasp.esapi.waf.configuration;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +35,7 @@ import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.waf.rules.AddHeaderRule;
 import org.owasp.esapi.waf.rules.AddSecureFlagRule;
 import org.owasp.esapi.waf.rules.AuthenticatedRule;
+import org.owasp.esapi.waf.rules.BeanShellRule;
 import org.owasp.esapi.waf.rules.DetectOutboundContentRule;
 import org.owasp.esapi.waf.rules.EnforceHTTPSRule;
 import org.owasp.esapi.waf.rules.HTTPMethodRule;
@@ -29,6 +47,8 @@ import org.owasp.esapi.waf.rules.RestrictContentTypeRule;
 import org.owasp.esapi.waf.rules.RestrictUserAgentRule;
 import org.owasp.esapi.waf.rules.SimpleVirtualPatchRule;
 
+import bsh.EvalError;
+
 
 public class ConfigurationParser {
 
@@ -37,6 +57,12 @@ public class ConfigurationParser {
 	private static final String JEESESSIONID = "JSESSIONID";
 	private static final int DEFAULT_RESPONSE_CODE = 403;
 
+	private static final String[] STAGES = {
+		"before-request-body",
+		"after-request-body",
+		"before-response"
+	};
+	
 	public static AppGuardianConfiguration readConfigurationFile(InputStream stream) throws ConfigurationException {
 
 		AppGuardianConfiguration config = new AppGuardianConfiguration();
@@ -59,7 +85,9 @@ public class ConfigurationParser {
 			Element customRulesRoot = root.getFirstChildElement("custom-rules");;
 			Element virtualPatchesRoot = root.getFirstChildElement("virtual-patches");
 			Element outboundRoot = root.getFirstChildElement("outbound-rules");
-
+			Element beanShellRoot = root.getFirstChildElement("bean-shell-rules");
+			
+			
 			/**
 			 * Parse the 'aliases' section.
 			 */
@@ -466,6 +494,53 @@ public class ConfigurationParser {
 				}
 
 			}
+			
+			/**
+			 * Parse the 'bean-shell-rules' section.
+			 */
+			
+			if ( beanShellRoot != null ) {
+				Elements beanShellRules = beanShellRoot.getChildElements("bean-shell-script");
+				
+				for (int i=0;i<beanShellRules.size(); i++) {
+
+					Element e = beanShellRules.get(i);
+					
+					String ruleName = e.getAttributeValue("name");
+					String fileName = e.getAttributeValue("file");
+					String stage = e.getAttributeValue("stage"); //
+
+					if ( ruleName == null ) {
+						throw new ConfigurationException("bean shell rules all require a unique 'ruleName' attribute");
+					}
+					
+					if ( fileName == null ) {
+						throw new ConfigurationException("bean shell rules all require a unique 'file' attribute that has the location of the .bsh script" );
+					}
+					
+					try {
+						
+						BeanShellRule bsr = new BeanShellRule(fileName, ruleName);
+						
+						if ( STAGES[0].equals(stage) ) {
+							config.addBeforeBodyRule(bsr);
+						} else if ( STAGES[1].equals(stage)) {
+							config.addAfterBodyRule(bsr);
+						} else if ( STAGES[2].equals(stage)) {
+							config.addBeforeResponseRule(bsr);
+						} else {
+							throw new ConfigurationException("bean shell rules all require a 'stage' attribute when the rule should be fired (valid values are " + STAGES[0] + ", " + STAGES[1] + ", or " + STAGES[2] + ")" );
+						}
+												
+					} catch (FileNotFoundException fnfe) {
+						throw new ConfigurationException ("bean shell rule '" + ruleName + "' had a source file that could not be found (" + fileName + ")");
+					} catch (EvalError ee) {
+						throw new ConfigurationException ("bean shell rule '" + ruleName + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
+					}
+					
+				}
+			}
+
 
 		} catch (ValidityException e) {
 			throw new ConfigurationException(e);
