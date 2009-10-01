@@ -53,7 +53,14 @@
 	</authentication-rules>
 
 
-
+	<bean-shell-rules>	
+			<bean-shell-script 
+				name="example1" 
+				file="src/test/resources/.esapi/waf-policies/bean-shell-rule.bsh" 
+				stage="before-request-body"/>
+	
+	</bean-shell-rules>
+	
 	<!--
 		Set authorization rules by path. Types are: regex Operators for
 		must-match are: contains,equals,inList,exists
@@ -134,8 +141,7 @@
 
 
 
-	<!--
-		Set rules for outbound headers and data
+	<!-- Set rules for outbound headers and data -->
 
 	<outbound-rules>
 
@@ -163,8 +169,6 @@
 		<detect-content content-type=".*text/.*" pattern=".*2008.*" />
 
 	</outbound-rules>
-
--->
 
 </policy>
 

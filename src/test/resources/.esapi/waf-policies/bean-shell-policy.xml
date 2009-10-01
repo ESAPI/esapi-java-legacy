@@ -20,13 +20,11 @@
 	<!--
 		Import the rules.
 	-->
-	<bean-shell-rules>
-	
+	<bean-shell-rules>	
 		<bean-shell-script 
 			name="example1" 
 			file="src/test/resources/.esapi/waf-policies/bean-shell-rule.bsh" 
 			stage="before-request-body"/>
-	
 	</bean-shell-rules>
 
 </policy>
