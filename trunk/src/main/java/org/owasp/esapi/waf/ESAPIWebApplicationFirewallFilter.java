@@ -179,7 +179,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	 * 
 	 * This method performs the runtime checking of rules on inbound requests and outbound responses. There is
 	 * a considerable hack in this function to accomplish setting the HTTPOnly/secure flags on the container's
-	 * session cookies, which involves a  single extra request-response cycle strictly devoted to that goal. 
+	 * session cookies, which involves a single extra request-response cycle strictly devoted to that goal. 
 	 * 
 	 * Because this extra cycle isn't ideal, you should consider enabling this protection in your container's 
 	 * configuration instead. Like many other features of the WAF, this should only be done to implement 
@@ -220,9 +220,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * The normal HttpRequest-type objects will suffice us until we get to
 		 * stage 2.
 		 *
-		 * 1st arg = the response to base this on
-		 * 2nd arg = should we bother intercepting the egress response?
-		 * 3rd arg = cookie rules cuz thats where they mostly get acted on
+		 * 1st argument = the response to base the instance on
+		 * 2nd argument = should we bother intercepting the egress response?
+		 * 3rd argument = cookie rules because thats where they mostly get acted on
 		 */
 
 		response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
@@ -340,7 +340,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Create the InterceptingHTTPServletRequest.
 		 */
-
+		
 		try {
 			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
 		} catch (UploadTooLargeException utle) {
@@ -362,8 +362,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			logger.debug( "  Applying BEFORE CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
-			 * The rules execute in check(). The check() method will also log. All we have
-			 * to do is decide what other actions to take.
+			 * The rules execute in check(). The check() method will take care of logging. 
+			 * All we have to do is decide what other actions to take.
 			 */
 			Action action = rule.check(request, response);
 
