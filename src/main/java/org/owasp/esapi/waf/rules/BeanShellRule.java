@@ -21,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
@@ -43,7 +44,8 @@ public class BeanShellRule extends Rule {
 	}
 	
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		/*
 		 * Run the beanshell that we've already parsed
@@ -59,7 +61,13 @@ public class BeanShellRule extends Rule {
 			
 			i.set("action", a);
 			i.set("request", request);
-			i.set("response", response);
+			
+			if ( response != null ) {
+				i.set("response", response);	
+			} else {
+				i.set("response", httpResponse);
+			}
+			
 			i.set("session", request.getSession());
 			i.eval(script);
 		

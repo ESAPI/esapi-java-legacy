@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -45,7 +46,8 @@ public class EnforceHTTPSRule extends Rule {
 	}
 
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		if ( ! request.isSecure() ) {
 

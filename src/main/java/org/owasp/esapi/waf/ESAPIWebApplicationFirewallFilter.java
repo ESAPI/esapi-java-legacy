@@ -86,10 +86,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	 * This function is used in testing to dynamically alter the configuration.
 	 * @param is The InputStream from which to read the XML configuration file.
 	 */
-	public void setConfiguration( InputStream is ) {
+	public void setConfiguration( String policyFilePath ) throws FileNotFoundException {
 		try {
-			appGuardConfig = ConfigurationParser.readConfigurationFile(is);
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(new File(policyFilePath)));
 			lastConfigReadTime = System.currentTimeMillis();
+			configurationFilename = policyFilePath;
 		} catch (ConfigurationException e ) {
 			e.printStackTrace();
 		}
@@ -224,9 +225,12 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * 2nd argument = should we bother intercepting the egress response?
 		 * 3rd argument = cookie rules because thats where they mostly get acted on
 		 */
-
-		response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
-
+		
+		if ( 	appGuardConfig.getCookieRules().size() + 
+				appGuardConfig.getBeforeResponseRules().size() > 0) {
+			response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
+		}
+		
 		/*
 		 * Stage 0: Apply any cookie rules for incoming requests that don't yet have sessions.
 		 */
@@ -311,7 +315,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			 * The rules execute in check(). The check() method will also log. All we have
 			 * to do is decide what other actions to take.
 			 */
-			Action action = rule.check(httpRequest, response);
+			Action action = rule.check(httpRequest, response, httpResponse);
 
 			if ( action.isActionNecessary() ) {
 
@@ -319,7 +323,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
-					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					sendRedirect(response, httpResponse, ((RedirectAction)action).getRedirectURL()); 
 					return;
 
 				} else if ( action instanceof DefaultAction ) {
@@ -329,8 +333,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							redirectUserToErrorPage(response);
-							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							sendRedirect(response, httpResponse);
 							return;
 					}
 				}
@@ -365,7 +368,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			 * The rules execute in check(). The check() method will take care of logging. 
 			 * All we have to do is decide what other actions to take.
 			 */
-			Action action = rule.check(request, response);
+			Action action = rule.check(request, response, httpResponse);
 
 			if ( action.isActionNecessary() ) {
 
@@ -373,7 +376,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
-					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					sendRedirect(response, httpResponse, ((RedirectAction)action).getRedirectURL());
 					return;
 
 				} else if ( action instanceof DefaultAction ) {
@@ -383,8 +386,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							redirectUserToErrorPage(response);
-							response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							sendRedirect(response, httpResponse);
 							return;
 					}
 				}
@@ -392,24 +394,10 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		}
 
 		/*
-		 * Create the InterceptingHTTPServletRequest.
-		 */
-
-		try {
-			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
-		} catch (UploadTooLargeException utle) {
-			logger.error("Upload too large for processing: " + utle.getMessage());
-			utle.printStackTrace();
-		} catch (FileUploadException fue) {
-			logger.error("Upload read error: " + fue.getMessage());
-			fue.printStackTrace();
-		}
-
-		/*
 		 * In between stages 2 and 3 is the application's processing of the input.
 		 */
 		logger.debug(">> Calling the FilterChain: " + chain );
-		chain.doFilter(request, response);
+		chain.doFilter(request, response != null ? response : httpResponse);
 
 		/*
 		 * Stage 3: Before the response has been sent back to the user.
@@ -427,7 +415,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			 * The rules execute in check(). The check() method will also log. All we have
 			 * to do is decide what other actions to take.
 			 */
-			Action action = rule.check(request, response);
+			Action action = rule.check(request, response, httpResponse);
 
 			if ( action.isActionNecessary() ) {
 
@@ -435,7 +423,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
-					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					sendRedirect(response, httpResponse, ((RedirectAction)action).getRedirectURL());
 					return;
 
 				} else if ( action instanceof DefaultAction ) {
@@ -445,8 +433,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							redirectUserToErrorPage(response);
-							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							sendRedirect(response, httpResponse);
 							return;
 					}
 				}
@@ -454,29 +441,32 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		}
 
 		/*
-		 * Create the InterceptingHTTPServletRequest.
-		 */
-
-		try {
-			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
-		} catch (UploadTooLargeException utle) {
-			utle.printStackTrace();
-		} catch (FileUploadException fue) {
-			fue.printStackTrace();
-		}
-
-
-		/*
 		 * Now that we've run our last set of rules we can allow the response to go through if
 		 * we were intercepting.
 		 */
-		if ( appGuardConfig.getBeforeResponseRules().size() + appGuardConfig.getCookieRules().size() > 0 ) {
+		
+		if ( response != null ) {
 			logger.debug(">>> committing reponse" );
+			response.commit();
 		}
-		response.commit();
 	}
 
-
+	/*
+	 * Utility method to send HTTP redirects that automatically determines which response class to use.
+	 */
+	private void sendRedirect(InterceptingHTTPServletResponse response,
+			HttpServletResponse httpResponse, String redirectURL) throws IOException {
+		
+		if ( response != null ) { // if we've been buffering everything we clean it all out before sending back.
+			response.reset();
+			response.resetBuffer();
+			response.sendRedirect(redirectURL);
+			response.commit();
+		} else {
+			httpResponse.sendRedirect(redirectURL);
+		}
+		
+	}
 
 	/**
 	 * Remove a browser cookie in an app-server-neutral way.
@@ -500,15 +490,29 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 	}
 
-	private void redirectUserToErrorPage(InterceptingHTTPServletResponse response) throws IOException {
+	
+	private void sendRedirect(InterceptingHTTPServletResponse response, HttpServletResponse httpResponse) throws IOException {
 		String finalJavaScript = AppGuardianConfiguration.JAVASCRIPT_REDIRECT;
 		finalJavaScript = finalJavaScript.replaceAll(AppGuardianConfiguration.JAVASCRIPT_TARGET_TOKEN, appGuardConfig.getDefaultErrorPage());
 
-		response.reset();
-		response.resetBuffer();
-		response.setStatus(appGuardConfig.getDefaultResponseCode());
-		response.getOutputStream().write(finalJavaScript.getBytes());
-		response.commit();
+		if ( response != null ) {
+			response.reset();
+			response.resetBuffer();
+			response.setStatus(appGuardConfig.getDefaultResponseCode());
+			response.getOutputStream().write(finalJavaScript.getBytes());
+			response.commit();
+		} else {
+			if ( ! httpResponse.isCommitted() ) {
+				httpResponse.sendRedirect(appGuardConfig.getDefaultErrorPage());
+			} else {
+				/*
+				 * Can't send redirect because response is already committed. I'm not sure 
+				 * how this could happen, but I didn't want to cause IOExceptions in case
+				 * if it ever does. 
+				 */
+			}
+			
+		}
 	}
-
+	
 }

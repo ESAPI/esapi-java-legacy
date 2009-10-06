@@ -19,6 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -38,7 +39,8 @@ public class DetectOutboundContentRule extends Rule {
 	}
 
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
@@ -46,18 +48,34 @@ public class DetectOutboundContentRule extends Rule {
 		 * First thing to decide is if the content type is one we'd like to search for output patterns.
 		 */
 
-		if ( response.getContentType() == null ) {
-			response.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+		String inboundContentType;
+		String charEnc;
+		
+		if ( response != null ) {
+			if ( response.getContentType() == null ) {
+				response.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+			}
+			inboundContentType = response.getContentType();
+			charEnc = response.getCharacterEncoding();
+			
+		} else {
+			if ( httpResponse.getContentType() == null ) {
+				httpResponse.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+			}
+			inboundContentType = httpResponse.getContentType();
+			charEnc = httpResponse.getCharacterEncoding();
 		}
+		
+		
 
-		if ( contentType.matcher(response.getContentType()).matches() ) {
+		if ( contentType.matcher(inboundContentType).matches() ) {
 			/*
 			 * Depending on the encoding, search through the bytes
 			 * for the pattern.
 			 */
 			try {
 
-				String s = new String(bytes,response.getCharacterEncoding());
+				String s = new String(bytes,charEnc);
 
 				if ( pattern.matcher(s).matches() ) {
 

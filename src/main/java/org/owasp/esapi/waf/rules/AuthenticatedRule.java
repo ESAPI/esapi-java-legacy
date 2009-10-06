@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.waf.actions.Action;
@@ -41,7 +42,8 @@ public class AuthenticatedRule extends Rule {
 	}
 
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		HttpSession session = request.getSession();
 		String uri = request.getRequestURI();

@@ -16,6 +16,7 @@
 package org.owasp.esapi.waf.rules;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.owasp.esapi.waf.actions.Action;
@@ -27,7 +28,7 @@ public abstract class Rule {
 	protected String id = "(no rule ID)";
 	protected static Logger logger = Logger.getLogger(Rule.class);
 
-	public abstract Action check( HttpServletRequest request, InterceptingHTTPServletResponse response );
+	public abstract Action check( HttpServletRequest request, InterceptingHTTPServletResponse response, HttpServletResponse httpResponse );
 
 	public void log( HttpServletRequest request, String message ) {
 

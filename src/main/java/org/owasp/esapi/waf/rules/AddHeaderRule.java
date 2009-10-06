@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
@@ -39,7 +40,10 @@ public class AddHeaderRule extends Rule {
 		this.exceptions = exceptions;
 	}
 
-	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response) {
+	public Action check(
+			HttpServletRequest request, 
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		DoNothingAction action = new DoNothingAction();
 
@@ -68,7 +72,11 @@ public class AddHeaderRule extends Rule {
 			action.setFailed(true);
 			action.setActionNecessary(false);
 
-			response.setHeader(header, value);
+			if ( response != null ) {
+				response.setHeader(header, value);
+			} else {
+				httpResponse.setHeader(header, value);
+			}
 
 		}
 
