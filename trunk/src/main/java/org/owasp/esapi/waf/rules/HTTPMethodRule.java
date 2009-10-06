@@ -18,6 +18,7 @@ package org.owasp.esapi.waf.rules;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -37,7 +38,9 @@ public class HTTPMethodRule extends Rule {
 		setId(id);
 	}
 
-	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response) {
+	public Action check(HttpServletRequest request,
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		/*
 		 * If no path is specified, apply rule globally.

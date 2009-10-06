@@ -16,6 +16,8 @@
  */
 package org.owasp.esapi.waf;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,15 +64,16 @@ public class WAFTestUtility {
 
     public static int createAndExecuteWAFTransaction ( ESAPIWebApplicationFirewallFilter waf, MockHttpServletRequest request, MockHttpServletResponse response, MockFilterChain filterChain ) throws Exception {
 
-		return WAFTestUtility.checkWAFResult(waf, request, response, filterChain);
+
+    	return WAFTestUtility.checkWAFResult(waf, request, response, filterChain);
 		
 	}
     
     public static int createAndExecuteWAFTransaction ( String policy, MockHttpServletRequest request, MockHttpServletResponse response ) throws Exception {
 
     	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
-    	InputStream is = ESAPI.securityConfiguration().getResourceStream( policy );
-    	waf.setConfiguration(is);
+    	File f = ESAPI.securityConfiguration().getResourceFile(policy);
+    	waf.setConfiguration(f.getAbsolutePath());
 
 		return createAndExecuteWAFTransaction(waf, request, response );
 		
@@ -79,8 +82,8 @@ public class WAFTestUtility {
     public static int createAndExecuteWAFTransaction ( String policy, MockHttpServletRequest request, MockHttpServletResponse response, MockFilterChain filterChain ) throws Exception {
 
     	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
-    	InputStream is = ESAPI.securityConfiguration().getResourceStream( policy );
-    	waf.setConfiguration(is);
+    	File f = ESAPI.securityConfiguration().getResourceFile(policy);        
+    	waf.setConfiguration(f.getAbsolutePath());
 
 		return createAndExecuteWAFTransaction(waf, request, response, filterChain );
 		

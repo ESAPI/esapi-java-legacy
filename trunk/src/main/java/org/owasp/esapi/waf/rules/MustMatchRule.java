@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -51,7 +52,8 @@ public class MustMatchRule extends Rule {
 	}
 
 	public Action check(HttpServletRequest req,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response,
+			HttpServletResponse httpResponse) {
 
 		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
 

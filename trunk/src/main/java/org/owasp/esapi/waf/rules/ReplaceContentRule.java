@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
@@ -43,14 +44,15 @@ public class ReplaceContentRule extends Rule {
 	 */
 
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
 		/*
 		 * First thing to decide is if the content type is one we'd like to search for output patterns.
 		 */
-
+		
 		try {
 
 			String s = new String(bytes,response.getCharacterEncoding());
