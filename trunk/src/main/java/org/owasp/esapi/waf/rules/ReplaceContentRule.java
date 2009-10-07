@@ -32,10 +32,14 @@ public class ReplaceContentRule extends Rule {
 
 	private Pattern pattern;
 	private String replacement;
-
-	public ReplaceContentRule(String id, Pattern pattern, String replacement) {
+	private Pattern contentType;
+	private Pattern path;
+	
+	public ReplaceContentRule(String id, Pattern pattern, String replacement, Pattern contentType, Pattern path) {
 		this.pattern = pattern;
 		this.replacement = replacement;
+		this.path = path;
+		this.contentType = contentType;
 		setId(id);
 	}
 
@@ -50,8 +54,22 @@ public class ReplaceContentRule extends Rule {
 		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
 		/*
-		 * First thing to decide is if the content type is one we'd like to search for output patterns.
+		 * First early fail: if the URL doesn't match the paths we're interested in.
 		 */
+		
+		if ( path != null && ! path.matcher(request.getRequestURL().toString()).matches() ) {
+			return new DoNothingAction();
+		}
+		
+		/*
+		 * Second early fail: if the content type is one we'd like to search for output patterns.
+		 */
+
+		if ( contentType != null ) {
+			if ( response.getContentType() != null && ! contentType.matcher(response.getContentType()).matches() ) {
+				return new DoNothingAction();
+			}
+		}
 		
 		try {
 

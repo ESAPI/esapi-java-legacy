@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,18 +36,28 @@ public class BeanShellRule extends Rule {
 	private Interpreter i;
 	private String script;
 	private String ruleName;
+	private Pattern path;
 	
-	public BeanShellRule(String fileLocation, String ruleName) throws IOException, EvalError { 
+	public BeanShellRule(String fileLocation, String ruleName, Pattern path) throws IOException, EvalError { 
 		i = new Interpreter();
 		i.set("logger", logger);
 		this.script = getFileContents(new File(fileLocation));
 		this.ruleName = ruleName;
+		this.path = path;
 	}
 	
 	public Action check(HttpServletRequest request,
 			InterceptingHTTPServletResponse response, 
 			HttpServletResponse httpResponse) {
 
+		/*
+		 * Early fail: if the URL doesn't match one we're interested in.
+		 */
+		
+		if ( path != null && ! path.matcher(request.getRequestURL().toString()).matches() ) {
+			return new DoNothingAction();
+		}
+		
 		/*
 		 * Run the beanshell that we've already parsed
 		 * and pre-compiled. Populate the "request"
@@ -55,7 +66,6 @@ public class BeanShellRule extends Rule {
 		 */
 		
 		try {
-
 		
 			Action a = null;
 			

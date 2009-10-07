@@ -31,10 +31,12 @@ public class DetectOutboundContentRule extends Rule {
 
 	private Pattern contentType;
 	private Pattern pattern;
-
-	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern) {
+	private Pattern url;
+	
+	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern, Pattern url) {
 		this.contentType = contentType;
 		this.pattern = pattern;
+		this.url = url;
 		setId(id);
 	}
 
@@ -45,7 +47,14 @@ public class DetectOutboundContentRule extends Rule {
 		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
 		/*
-		 * First thing to decide is if the content type is one we'd like to search for output patterns.
+		 * Early fail: if URL doesn't match.
+		 */
+		if ( url != null && ! url.matcher(request.getRequestURL().toString()).matches() ) {
+			return new DoNothingAction(); 
+		}
+
+		/*
+		 * Early fail: if the content type is one we'd like to search for output patterns.
 		 */
 
 		String inboundContentType;
@@ -65,9 +74,7 @@ public class DetectOutboundContentRule extends Rule {
 			inboundContentType = httpResponse.getContentType();
 			charEnc = httpResponse.getCharacterEncoding();
 		}
-		
-		
-
+	
 		if ( contentType.matcher(inboundContentType).matches() ) {
 			/*
 			 * Depending on the encoding, search through the bytes

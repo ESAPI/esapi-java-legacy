@@ -86,8 +86,7 @@
 		<enforce-https path="/.*">
 			<path-exception>/index.html</path-exception>
 			<path-exception>/index.jsp</path-exception>
-			<path-exception type="regex">/images/.*
-			</path-exception>
+			<path-exception type="regex">/images/.*</path-exception>
 			<path-exception type="regex">/css/.*</path-exception>
 			<path-exception type="regex">/help/.*</path-exception>
 		</enforce-https>
@@ -105,30 +104,6 @@
 		<restrict-user-agent deny=".*GoogleBot.*" />
 		<restrict-user-agent allow=".*" />
 	</header-rules>
-
-
-
-	<!--
-		Set custom manual rules. These are expert rules, not for faint of
-		heart.
-	-->
-	<custom-rules>
-		<rule>
-			<match-and>
-				<match-not variable="request.URI" operator="regex">
-					/(zz|foo|bar|zaz).jsp</match-not>
-				<match variable="request.parameters.*" operator="regex">![NY|MO|CA]
-				</match>
-			</match-and>
-			<actions>
-				<redirect status="500" />
-				<log>custom message</log>
-				<invalidate />
-			</actions>
-		</rule>
-	</custom-rules>
-
-
 
 
 	<!--
