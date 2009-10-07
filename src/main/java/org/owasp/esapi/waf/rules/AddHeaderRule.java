@@ -63,7 +63,8 @@ public class AddHeaderRule extends Rule {
 					if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
 						action.setFailed(false);
 						action.setActionNecessary(false);
-						return action;					}
+						return action;					
+					}
 				}
 
 			}

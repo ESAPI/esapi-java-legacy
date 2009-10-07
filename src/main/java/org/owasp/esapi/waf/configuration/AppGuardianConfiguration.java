@@ -40,11 +40,18 @@ public class AppGuardianConfiguration {
 	public static final int OPERATOR_EXISTS = 3;
 
 	/*
-	 * Logging settings.
+	 * We have static copies of the log settings so that the Rule objects
+	 * can access them, because they don't have access to the instance of
+	 * the configuration object.
 	 */
-	public static Level LOG_LEVEL = Level.INFO;
+	public static Level LOG_LEVEL = Level.INFO;	
 	public static String LOG_DIRECTORY = "/WEB-INF/logs";
 
+	/*
+	 * Logging settings.
+	 */
+	private Level logLevel = Level.INFO;
+	private String logDirectory = "/WEB-INF/logs";
 
 	/*
 	 * Default settings.
@@ -97,6 +104,25 @@ public class AppGuardianConfiguration {
 		aliases = new HashMap<String,Object>();
 	}
 
+	public Level getLogLevel() {
+		return logLevel;
+	}
+	
+	public void setLogLevel(Level level) {
+		LOG_LEVEL = level;
+		this.logLevel = level;
+	}
+	
+	
+	public void setLogDirectory(String dir) {
+		LOG_DIRECTORY = dir;
+		this.logDirectory = dir;
+	}
+	
+	public String getLogDirectory() {
+		return logDirectory;
+	}
+	
 	public String getDefaultErrorPage() {
 		return defaultErrorPage;
 	}
