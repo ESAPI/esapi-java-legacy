@@ -16,6 +16,9 @@ import org.owasp.esapi.User;
  * log message with the currently logged in user and the word "SECURITY" for security related events. See the 
  * <a href="JavaLogFactory.JavaLogger.html">JavaLogFactory.JavaLogger</a> Javadocs for the details on the JavaLogger reference implementation.
  * 
+ * At class initialization time, the file log4j.properties or log4j.xml file will be loaded from the classpath. This configuration file is 
+ * fundamental to make log4j work for you. Please see http://logging.apache.org/log4j/1.2/manual.html for more information. 
+ * 
  * @author Mike H. Fauzy (mike.fauzy@aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim.manico .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
