@@ -18,13 +18,16 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Implementation of the Codec interface for Oracle strings. See http://www.oracle.com/technology/tech/pl_sql/pdf/how_to_write_injection_proof_plsql.pdf
- * for more information. There are three types of SQL literal: text, datetime, and numeric. The "alternative quoting"
- * mechanism available in Oracle that uses braces around a string must not be used for text literals.
+ * Implementation of the Codec interface for Oracle strings. This function will only protect you from SQLi in the case of user data
+ * bring placed within an Oracle quoted string such as:
  * 
- * @see <a href="http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm">Special Characters in Oracle Queries</a>
+ * select * from table where user_name='  USERDATA    ';
+ * 
+ * @see <a href="http://oraqa.com/2006/03/20/how-to-escape-single-quotes-in-strings/">how-to-escape-single-quotes-in-strings</a>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
+ *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico(jim.manico .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
@@ -35,25 +38,14 @@ public class OracleCodec extends Codec {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Encode a single character with a backslash
+	 * Encodes ' to ''
      *
      * @param immune
      */
 	public String encodeCharacter( char[] immune, Character c ) {
-		char ch = c.charValue();
-		
-		// check for immune characters
-		if ( containsCharacter( ch, immune ) ) {
-			return ""+ch;
-		}
-		
-		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
-		if ( hex == null ) {
-			return ""+ch;
-		}
-		
-		return "\\" + c;
+		if ( c.charValue() == '\'' )
+        	return "\'\'";
+        return ""+c;
 	}
 	
 
@@ -64,7 +56,7 @@ public class OracleCodec extends Codec {
 	 * null if no decoding is possible.
 	 * 
 	 * Formats all are legal
-	 *   \c decodes to c
+	 *   '' decodes to '
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
@@ -75,7 +67,7 @@ public class OracleCodec extends Codec {
 		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '\\' ) {
+		if ( first.charValue() != '\'' ) {
 			input.reset();
 			return null;
 		}
@@ -86,7 +78,12 @@ public class OracleCodec extends Codec {
 			return null;
 		}
 		
-		return( second );
+		// if this is not an encoded character, return null
+		if ( second.charValue() != '\'' ) {
+			input.reset();
+			return null;
+		}
+		return( Character.valueOf( '\'' ) );
 	}
 
 }
