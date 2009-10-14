@@ -465,8 +465,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     		properties.put( key, value);
     	}
     	
+    	
+    	//FIXME - make this chunk configurable
+    	/*
         logSpecial("  ========Master Configuration========", null);
-        System.out.println( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
+        //System.out.println( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
         Iterator j = new TreeSet( properties.keySet() ).iterator();
         while (j.hasNext()) {
             String key = (String)j.next();
@@ -475,6 +478,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             		logSpecial("  |   " + key + "=" + properties.get(key), null);
         	}
         }
+        */
     }
 
     /**
@@ -486,7 +490,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     private void logSpecial(String message, Throwable e) {
 		System.out.println(message);
-   }
+    }
     
     /**
 	 * {@inheritDoc}
