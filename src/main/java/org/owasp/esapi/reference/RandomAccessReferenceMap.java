@@ -47,9 +47,6 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	/** The dtoi (direct to indirect) */
 	HashMap dtoi = new HashMap();
 
-	/** The random. */
-	Randomizer random = ESAPI.randomizer();
-
 	/**
 	 * This AccessReferenceMap implementation uses short random strings to
 	 * create a layer of indirection. Other possible implementations would use
@@ -99,7 +96,7 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 	private String getUniqueRandomReference() {
 		String candidate = null;
 		do {
-			candidate = random.getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
+			candidate = ESAPI.randomizer().getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
 		} while (itod.keySet().contains(candidate));
 		return candidate;
 	}
