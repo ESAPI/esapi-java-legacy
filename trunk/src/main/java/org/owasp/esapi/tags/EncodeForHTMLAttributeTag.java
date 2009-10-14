@@ -5,7 +5,6 @@ import java.io.IOException;
 import javax.servlet.jsp.JspTagException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTag;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
 import org.owasp.esapi.ESAPI;
@@ -20,26 +19,7 @@ public class EncodeForHTMLAttributeTag extends BodyTagSupport {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private String name;
-	
-    /**
-     *
-     */
-    public EncodeForHTMLAttributeTag() {}
-	
-	
-	
-    /**
-     *
-     * @return
-     */
-    public int doStartTag() {
-					
-		//return EVAL_BODY_TAG; <-- Deprecated
-		return BodyTag.EVAL_BODY_BUFFERED;
-	}
-
+	private static final long serialVersionUID = 2L;
 	
     /**
      *
@@ -58,33 +38,14 @@ public class EncodeForHTMLAttributeTag extends BodyTagSupport {
 			
 			Encoder e = ESAPI.encoder();
 			
-			out.println( e.encodeForHTMLAttribute(content) );
+			out.print( e.encodeForHTMLAttribute(content) );
 			body.clearBody();
 			
-			return EVAL_PAGE;
+			return SKIP_BODY;
 			
 		} catch (IOException ioe) {
-			throw new JspTagException("error in encodeForHTML tag doAfterBody()",ioe);
+			throw new JspTagException("error writing to body's enclosing writer",ioe);
 		}
 		
 	}
-
-	
-    /**
-     *
-     * @return
-     */
-    public String getName() {
-		return name;
-	}
-	
-    /**
-     *
-     * @param name
-     */
-    public void setName(String name) {
-		this.name = name;
-	}
-
-	
 }
