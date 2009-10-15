@@ -498,9 +498,12 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		if ( response != null ) {
 			response.reset();
 			response.resetBuffer();
+			/*
 			response.setStatus(appGuardConfig.getDefaultResponseCode());
 			response.getOutputStream().write(finalJavaScript.getBytes());
-			response.commit();
+			*/
+			response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+			
 		} else {
 			if ( ! httpResponse.isCommitted() ) {
 				httpResponse.sendRedirect(appGuardConfig.getDefaultErrorPage());

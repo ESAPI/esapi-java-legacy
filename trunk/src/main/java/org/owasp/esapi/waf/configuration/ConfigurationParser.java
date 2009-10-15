@@ -124,10 +124,10 @@ public class ConfigurationParser {
 	
 				Element errorHandlingRoot = settingsRoot.getFirstChildElement("error-handling");
 	
-				config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-page").getValue() );
+				config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-redirect-page").getValue() );
 	
 				try {
-					config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("default-status").getValue()) );
+					config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("block-status").getValue()) );
 				} catch (Exception e) {
 					config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
 				}

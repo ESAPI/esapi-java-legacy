@@ -35,7 +35,7 @@ public class EnforceHTTPSTest extends WAFTestCase {
     	WAFTestUtility.setWAFPolicy( waf, "waf-policy.xml" );
 	}
 
-	public void testGoodScheme() throws Exception {
+	public void testGoodSchemeSSLRequired() throws Exception {
 	    // test good scheme
 		url = new URL( "https://www.example.com/" );
 		System.out.println( "\nTest good scheme (https): " + url );
@@ -46,14 +46,23 @@ public class EnforceHTTPSTest extends WAFTestCase {
 	}
 
      
-	public void testBadScheme () throws Exception {
+	public void testBadSchemeSSLNotRequired () throws Exception {
 	    // test bad scheme
 	    url = new URL( "http://www.example.com/images/test.jpg" );
-		System.out.println( "\nTest bad scheme (no ssl): " + url );
+		System.out.println( "\nTest bad scheme (no ssl - but its not required): " + url );
+	    request = new MockHttpServletRequest( url );
+	    request.getSession(true);
+		response = new MockHttpServletResponse();
+		createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_OK );		
+	}
+
+	public void testBadSchemeSSLRequired () throws Exception {
+	    // test bad scheme
+	    url = new URL( "http://www.example.com/secure" );
+		System.out.println( "\nTest bad scheme (no ssl - but its required): " + url );
 	    request = new MockHttpServletRequest( url );
 	    request.getSession(true);
 		response = new MockHttpServletResponse();
 		createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_MOVED_PERMANENTLY );		
 	}
-
 }
