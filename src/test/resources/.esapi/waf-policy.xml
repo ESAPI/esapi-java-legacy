@@ -32,8 +32,8 @@
 	<settings>
 		<mode>redirect</mode>
 		<error-handling>
-			<default-page>/security/error.jsp</default-page>
-			<default-status>301</default-status>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
 		</error-handling>
 	</settings>
 
@@ -53,7 +53,14 @@
 	</authentication-rules>
 
 
-
+	<bean-shell-rules>	
+			<bean-shell-script 
+				name="example1" 
+				file="src/test/resources/.esapi/waf-policies/bean-shell-rule.bsh" 
+				stage="before-request-body"/>
+	
+	</bean-shell-rules>
+	
 	<!--
 		Set authorization rules by path. Types are: regex Operators for
 		must-match are: contains,equals,inList,exists
@@ -79,8 +86,7 @@
 		<enforce-https path="/.*">
 			<path-exception>/index.html</path-exception>
 			<path-exception>/index.jsp</path-exception>
-			<path-exception type="regex">/images/.*
-			</path-exception>
+			<path-exception type="regex">/images/.*</path-exception>
 			<path-exception type="regex">/css/.*</path-exception>
 			<path-exception type="regex">/help/.*</path-exception>
 		</enforce-https>
@@ -92,43 +98,20 @@
 		Set rules for incoming headers and parameters.
 	-->
 	<header-rules>
-		<restrict-content-type deny=".*multipart.*">
-			<path-exception type="regex">/fileupload.jsp</path-exception>
-		</restrict-content-type>
+		<restrict-content-type deny="multipart" />
+		<restrict-content-type allow="text/plain" />
+		<restrict-content-type allow="x-www-form-urlencoded" />
 		<restrict-user-agent deny=".*GoogleBot.*" />
 		<restrict-user-agent allow=".*" />
 	</header-rules>
-
-
-
-	<!--
-		Set custom manual rules. These are expert rules, not for faint of
-		heart.
-	-->
-	<custom-rules>
-		<rule>
-			<match-and>
-				<match-not variable="request.URI" operator="regex">
-					/(zz|foo|bar|zaz).jsp</match-not>
-				<match variable="request.parameters.*" operator="regex">![NY|MO|CA]</match>
-			</match-and>
-			<actions>
-				<redirect status="500" />
-				<log>custom message</log>
-				<invalidate />
-			</actions>
-		</rule>
-	</custom-rules>
-
-
 
 
 	<!--
 		Set virtual patches to match specific vulnerability patterns.
 	-->
 	<virtual-patches>
-		<virtual-patch id="1234" path="/virtualpatch.jsp" variable="request.parameters.bar"
-			pattern="[0-9a-zA-Z]*" message="zomg attax" />
+		<virtual-patch id="1234" path="/foo.jsp" variable="request.parameters.bar"
+			pattern="[0-9a-zA-Z]" message="zomg attax" />
 	</virtual-patches>
 
 
@@ -138,7 +121,7 @@
 	<outbound-rules>
 
 		<add-header name="FOO" value="BAR" path="/.*">
-			<path-exception regex="/foobar/.*" />
+			<path-exception type="regex">/foobar/.*</path-exception>
 		</add-header>
 
 		<add-http-only-flag>
@@ -163,5 +146,3 @@
 	</outbound-rules>
 
 </policy>
-
-	<!-- canonicalize, status -->

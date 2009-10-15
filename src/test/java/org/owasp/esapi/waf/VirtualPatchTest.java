@@ -46,7 +46,7 @@ public class VirtualPatchTest extends WAFTestCase {
 	
 	public void testAttackAfterVirtualPatch() throws Exception {
 		// should fail
-        url = new URL( "https://www.example.com/virtualpatch.jsp" );
+        url = new URL( "https://www.example.com/foo.jsp" );
 		System.out.println( "Testing attack after virtual patch on URL: " + url );
         request = new MockHttpServletRequest( url );
         request.getSession(true);
