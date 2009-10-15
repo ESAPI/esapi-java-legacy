@@ -1,51 +1,39 @@
+/*
+ * OWASP Enterprise Security API (ESAPI)
+ *
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2007 - The OWASP Foundation
+ *
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ *
+ * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2007
+ */
+
 package org.owasp.esapi.tags;
 
-import java.io.IOException;
-
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTagSupport;
-
-import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 
 /**
- *
- * @author jwilliams
+ * JSP tag that encode's it's body for use in HTML.
  */
-public class EncodeForHTMLTag extends BodyTagSupport {
+public class EncodeForHTMLTag extends BaseEncodeTag
+{
+	private static final long serialVersionUID = 3L;
 
 	/**
-	 * 
+	 * Encode tag's content for usage in HTML.
+	 * @param content The tag's content as a String
+	 * @param enc Encoder used to call
+	 * 	{@link Encoder#encodeForHTML}
+	 * @return content encoded for usage in HTML
 	 */
-	private static final long serialVersionUID = 2L;
-	
-    /**
-     *
-     * @return
-     * @throws javax.servlet.jsp.JspTagException
-     */
-    public int doAfterBody() throws JspTagException {
-
-		
-		try {
-			
-			BodyContent body = getBodyContent();
-			
-			String content = body.getString();
-			JspWriter out = body.getEnclosingWriter();
-			
-			Encoder e = ESAPI.encoder();
-			
-			out.print( e.encodeForHTML(content) );
-			body.clearBody();
-			
-			return SKIP_BODY;
-			
-		} catch (IOException ioe) {
-			throw new JspTagException("error writing to body's enclosing writer",ioe);
-		}
-		
+	protected String encode(String content, Encoder enc)
+	{
+		return enc.encodeForHTML(content);
 	}
 }
