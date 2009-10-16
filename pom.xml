@@ -17,6 +17,7 @@
 		<name>The Open Web Application Security Project (OWASP)</name>
 	</organization>
 	<url>http://www.esapi.org</url>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -25,6 +26,11 @@
 			<id>ibiblio</id>
 			<name>ibiblio</name>
 			<url>http://www.ibiblio.com/maven</url>
+		</repository>
+		<repository>
+			<id>googlecode-snapshots.oss.sonatype.com</id>
+			<name></name>
+			<url>http://oss.sonatype.org/content/repositories/googlecode-snapshots</url>
 		</repository>
 	</repositories>
 	<dependencies>
@@ -75,12 +81,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>OWASP</groupId>
-			<artifactId>AntiSamy</artifactId>
-			<version>1.2</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>xerces</groupId>
 			<artifactId>xercesImpl</artifactId>
 			<version>2.9.1</version>
@@ -112,6 +112,11 @@
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh-core</artifactId>
 			<version>2.0b4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.owasp</groupId>
+			<artifactId>antisamy</artifactId>
+			<version>1.3-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
