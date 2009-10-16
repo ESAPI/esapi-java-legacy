@@ -117,7 +117,7 @@
 	<build>
 		<plugins>
 
-
+			<!--
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
@@ -134,7 +134,7 @@
 					</execution>
 				</executions>
 			</plugin>
-
+			-->
 
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -145,7 +145,7 @@
 				</configuration>
 			</plugin>
 
-
+			<!--
 			<plugin>
 				<artifactId>maven-jar-plugin</artifactId>
 				<version>2.2</version>
@@ -167,13 +167,9 @@
 							<Sealed>true</Sealed>
 						</manifestEntries>
 					</archive>
-					<keystore>c:/users/jwilliams/desktop/keystore</keystore>
-					<alias>esapi</alias>
-					<storepass>73456111</storepass>
-					<verify>true</verify>
 				</configuration>
 			</plugin>
-
+			-->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
