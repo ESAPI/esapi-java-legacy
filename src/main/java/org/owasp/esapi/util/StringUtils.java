@@ -104,6 +104,7 @@ public class StringUtils
      * 				to see if it is empty, otherwise it is not.
      * @return		True if the string is null or empty (after possible
      * 				trimming); otherwise false.
+     * @since 2.0
      */
     public static boolean notNullOrEmpty(String str, boolean trim) {
     	if ( trim ) {
