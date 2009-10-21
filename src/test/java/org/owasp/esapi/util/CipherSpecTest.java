@@ -1,46 +1,48 @@
 package org.owasp.esapi.util;
 
-import static org.junit.Assert.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import javax.crypto.Cipher;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.codecs.Hex;
 
 /** JUnit test to test CipherSpec class. */
-public class CipherSpecTest {
+public class CipherSpecTest extends TestCase {
 
 	private Cipher dfltAESCipher = null;
 	private Cipher dfltECBCipher = null;	// will be "AES/ECB/NoPadding";
 	private Cipher dfltOtherCipher = null;
 	private CipherSpec cipherSpec = null;
 	private static byte[] myIV = null;
-	
-	@BeforeClass public static void setUpBeforeClass() {
+
+	@Before public void setUp() throws Exception {
 			// This will throw ConfigurationException if IV type is not set to
 			// 'fixed', which it's not. (We have it set to 'random'.)
 		// myIV = Hex.decode( ESAPI.securityConfiguration().getFixedIV() );
-		
 		myIV = Hex.decode( "0x000102030405060708090a0b0c0d0e0f" );
 
-	}
+		dfltAESCipher   = Cipher.getInstance("AES");
+		dfltECBCipher   = Cipher.getInstance("AES/ECB/NoPadding");
+		dfltOtherCipher = Cipher.getInstance("Blowfish/OFB8/PKCS5Padding");
 
-	@Before public void setUp() throws Exception {
-    	dfltAESCipher   = Cipher.getInstance("AES");
-    	dfltECBCipher   = Cipher.getInstance("AES/ECB/NoPadding");
-    	dfltOtherCipher = Cipher.getInstance("Blowfish/OFB8/PKCS5Padding");
+		assertTrue( dfltAESCipher != null );
+		assertTrue( dfltECBCipher != null );
+		assertTrue( dfltOtherCipher != null );
 
-    	assertTrue( dfltAESCipher != null );
-    	assertTrue( dfltECBCipher != null );
-    	assertTrue( dfltOtherCipher != null );
-    	
-    	cipherSpec = new CipherSpec(dfltOtherCipher);
-    	assertTrue( cipherSpec != null );
+		cipherSpec = new CipherSpec(dfltOtherCipher);
+		assertTrue( cipherSpec != null );
 	}
 
 	@After public void tearDown() throws Exception {
@@ -85,6 +87,8 @@ public class CipherSpecTest {
 
 	/** Test CipherSpec(final byte[] iv) */
 	@Test public void testCipherSpecByteArray() {
+		assertTrue( myIV != null );
+		assertTrue( myIV.length > 0 );
 		cipherSpec = new CipherSpec(myIV);
 		assertTrue( cipherSpec.getKeySize() == 
 						ESAPI.securityConfiguration().getEncryptionKeyLength() );
@@ -195,6 +199,41 @@ public class CipherSpecTest {
 		assertTrue( cipherSpec.getCipherMode().equals("ECB") );
 		assertTrue( cipherSpec.requiresIV() == false );
 		assertTrue( new CipherSpec(dfltOtherCipher).requiresIV() );
+	}
+	
+	/** Test serialization */
+	@Test public void testSerialization() {
+        try {
+            String filename = "cipherspec.ser";
+            File serializedFile = new File(filename);
+            serializedFile.delete();	// Delete any old serialized file.
+            
+            cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
+            FileOutputStream fos = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fos);
+            out.writeObject(cipherSpec);
+            out.close();
+            fos.close();
+
+            FileInputStream fis = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fis);
+            CipherSpec restoredCipherSpec = (CipherSpec)in.readObject();
+            in.close();
+            fis.close();
+
+            // check that cipherSpec and restoredCipherSpec are equal. Just
+            // compare them via their string representations.
+            assertEquals("Serialized restored CipherSpec differs from saved CipherSpec",
+            			 cipherSpec.toString(), restoredCipherSpec.toString() );
+            
+            
+        } catch(IOException ex) {
+            ex.printStackTrace(System.err);
+            fail("testSerialization(): Unexpected IOException: " + ex);
+        } catch(ClassNotFoundException ex) {
+            ex.printStackTrace(System.err);
+            fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
+        }
 	}
 	
     /**
