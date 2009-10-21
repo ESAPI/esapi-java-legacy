@@ -2,10 +2,22 @@ package org.owasp.esapi.reference;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
+import junit.framework.JUnit4TestAdapter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +26,6 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.util.CipherSpec;
 import org.owasp.esapi.util.CryptoHelper;
-import org.owasp.esapi.util.ObjFactory;
 
 public class DefaultCipherTextTest {
 
@@ -39,14 +50,8 @@ public class DefaultCipherTextTest {
 	/** Test the default CTOR */
 	@Test
 	public final void testDefaultCipherText() {
-		// Make sure we can get this via reflection.
-		String cipherTextImpl = ESAPI.securityConfiguration().getCipherTextImplementation();
-		CipherText ct =  (new ObjFactory<CipherText>()).make(cipherTextImpl, "CipherText");
+		CipherText ct =  new DefaultCipherText();
 
-		assertTrue( ct != null );
-				// If someone overrides this in ESAPI.properties this would fail. While
-				// not likely, it could happen.
-		// assertTrue( ct.getClass().getName().equals(DefaultCipherText.class.getName()));
 		cipherSpec = new CipherSpec();
 		assertTrue( ct.getCipherTransformation().equals( cipherSpec.getCipherTransformation()));
 		assertTrue( ct.getBlockSize() == cipherSpec.getBlockSize() );
@@ -139,21 +144,23 @@ public class DefaultCipherTextTest {
 			byte[] ctraw = encryptor.doFinal("Hello".getBytes("UTF8"));
 			DefaultCipherText ct = new DefaultCipherText(cipherSpec, ctraw);
 			assertTrue( ct.getIV() != null && ct.getIV().length > 0 );
-			ct.computeAndStoreMIC(key.getEncoded());
+			SecretKey authKey = CryptoHelper.computeDerivedKey(key, key.getEncoded().length * 8, "authenticity");
+			ct.computeAndStoreMAC( authKey ); 
 			try {
 				ct.setIVandCiphertext(ivSpec.getIV(), ctraw);	// Expected to log & throw.
 			} catch( Exception ex ) {
 				assertTrue( ex instanceof EncryptionException );
 			}
 			try {
-				ct.setCiphertext(ctraw);	// Expected to log and throw.
+				ct.setCiphertext(ctraw);	// Expected to log and throw message about
+											// not being able to store raw ciphertext.
 			} catch( Exception ex ) {
 				assertTrue( ex instanceof EncryptionException );
 			}
-			decryptor.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec(ct.getIV()));
+			decryptor.init(Cipher.DECRYPT_MODE, key, new IvParameterSpec( ct.getIV() ) );
 			byte[] ptraw = decryptor.doFinal( ct.getRawCipherText() );
 			assertTrue( ptraw != null && ptraw.length > 0 );
-			ct.validateMIC( key.getEncoded() );
+			ct.validateMAC( authKey );
 		} catch( Exception ex) {
 			// As far as test coverage goes, we really don't want this to be covered.
 			ex.printStackTrace(System.err);
@@ -162,4 +169,74 @@ public class DefaultCipherTextTest {
 		}
 	}
 
+	/** Test serialization */
+	@Test public void testSerialization() {
+        try {
+            String filename = "ciphertext.ser";
+            File serializedFile = new File(filename);
+            serializedFile.delete();	// Delete any old serialized file.
+            
+            CipherSpec cipherSpec = new CipherSpec(encryptor, 128);
+			cipherSpec.setIV(ivSpec.getIV());
+			SecretKey key =
+				CryptoHelper.generateSecretKey(cipherSpec.getCipherAlgorithm(), 128);
+			encryptor.init(Cipher.ENCRYPT_MODE, key, ivSpec);
+			byte[] raw = encryptor.doFinal("Hello".getBytes("UTF8"));
+			CipherText ciphertext = new DefaultCipherText(cipherSpec, raw);
+
+            FileOutputStream fos = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fos);
+            out.writeObject(ciphertext);
+            out.close();
+            fos.close();
+
+            FileInputStream fis = new FileInputStream(filename);
+            ObjectInputStream in = new ObjectInputStream(fis);
+            CipherText restoredCipherText = (CipherText)in.readObject();
+            in.close();
+            fis.close();
+
+            // check that ciphertext and restoredCipherText are equal. Requires
+            // multiple checks. (Hmmm... maybe overriding equals() and hashCode()
+            // is in order???)
+            assertEquals("1: Serialized restored CipherText differs from saved CipherText",
+            			 ciphertext.toString(), restoredCipherText.toString());
+            assertArrayEquals("2: Serialized restored CipherText differs from saved CipherText",
+            			 ciphertext.getIV(), restoredCipherText.getIV());
+            assertEquals("3: Serialized restored CipherText differs from saved CipherText",
+            			 ciphertext.getBase64EncodedRawCipherText(),
+            			 restoredCipherText.getBase64EncodedRawCipherText());
+            
+        } catch(IOException ex) {
+            ex.printStackTrace(System.err);
+            fail("testSerialization(): Unexpected IOException: " + ex);
+        } catch(ClassNotFoundException ex) {
+            ex.printStackTrace(System.err);
+            fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
+        } catch (EncryptionException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected EncryptionException: " + ex);
+		} catch (IllegalBlockSizeException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected IllegalBlockSizeException: " + ex);
+		} catch (BadPaddingException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected BadPaddingException: " + ex);
+		} catch (InvalidKeyException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected InvalidKeyException: " + ex);
+		} catch (InvalidAlgorithmParameterException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected InvalidAlgorithmParameterException: " + ex);
+		}
+	}
+	
+	/**
+	 * Run all the test cases in this suite.
+	 * This is to allow running from {@code org.owasp.esapi.AllTests} which
+	 * uses a JUnit 3 test runner.
+	 */
+	public static junit.framework.Test suite() {
+		return new JUnit4TestAdapter(DefaultCipherTextTest.class);
+	}
 }
