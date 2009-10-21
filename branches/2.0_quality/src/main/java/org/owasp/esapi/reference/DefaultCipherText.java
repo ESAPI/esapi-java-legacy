@@ -39,20 +39,20 @@ import org.owasp.esapi.util.CryptoHelper;
 //			But if we do wish to restrict it to use from JavaEncryptor,
 //			it I can assume this class will be used correctly and not be
 //			concerned about making it act like it is immutable once everything
-//			has been collected and the MIC has been computed...all of which make
+//			has been collected and the MAC has been computed...all of which make
 //			this class much more complex than it otherwise needs to be. But if
 //			we are uncertain as to the context of how it will be used, then it's
 //			probably best to be defensive.
 /**
  * Reference implementation of <code>CipherText</code>. This object is both
  * serializable, and once all the required information has been collected and
- * the Message Integrity Code (MIC) has been computed, it acts as though it is
+ * the Message Authentication Code (MAC) has been computed, it acts as though it is
  * immutable as well. At that point, one can no longer call any of the 'setter'
  * methods.
  * <p>
  * <b>NOTE:</b> This class is <i>not</i> thread-safe.
  * </p><p>
- * Copyright (c) 2009 - The OWASP Foundation
+ * Copyright &copy; 2009 - The OWASP Foundation
  * </p>
  * @author kevin.w.wall@gmail.com
  * @since 2.0
@@ -64,8 +64,7 @@ public final class DefaultCipherText implements CipherText {
 	
 	private CipherSpec cipherSpec_     = null;
 	private byte[]     raw_ciphertext_ = null;
-	private byte[]     nonce_          = null;
-	private byte[]     mic_            = null;
+	private byte[]     mac_            = null;
 
 	// All the various pieces that can be set, either directly or indirectly
 	// via CipherSpec.
@@ -234,43 +233,43 @@ public final class DefaultCipherText implements CipherText {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void computeAndStoreMIC(byte[] raw_ciphertext) {
-		assert !micComputed() : "Programming error: Can't store message integrity code while encrypting; " +
-										  "computeAndStoreMIC() called multiple times.";
-		assert collectedAll() : "Have not collected all required information to compute and store MIC.";
-		byte[] result = computeMIC(raw_ciphertext);
+	public void computeAndStoreMAC(SecretKey authKey) {
+		assert !macComputed() : "Programming error: Can't store message integrity code while encrypting; " +
+										  "computeAndStoreMAC() called multiple times.";
+		assert collectedAll() : "Have not collected all required information to compute and store MAC.";
+		byte[] result = computeMAC(authKey);
 		if ( result != null ) {
-			mic_ = new byte[ result.length ];
-			CryptoHelper.copyByteArray(result, mic_);
-			assert micComputed();
+			mac_ = new byte[ result.length ];
+			CryptoHelper.copyByteArray(result, mac_);
+			assert macComputed();
 		}
-		// If 'result' is null, we already logged this in computeMIC().
+		// If 'result' is null, we already logged this in computeMAC().
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 */ 
-	public boolean validateMIC(byte[] secretKey) {
-		boolean usesMIC = ESAPI.securityConfiguration().useMICforCipherText();
+	public boolean validateMAC(SecretKey authKey) {
+		boolean usesMAC = ESAPI.securityConfiguration().useMACforCipherText();
 
-		if (  usesMIC && micComputed() ) {	// Uses MIC and it was computed
-			// Calculate MIC from HMAC-SHA1(nonce, IV + plaintext) and
-			// compare to stored value (mic_). If same, then return true,
+		if (  usesMAC && macComputed() ) {	// Uses MAC and it was computed
+			// Calculate MAC from HMAC-SHA1(nonce, IV + plaintext) and
+			// compare to stored value (mac_). If same, then return true,
 			// else return false.
-			assert getNonce() != null : "Cannot validate MIC while nonce is null.";
-			byte[] mic = computeMIC(secretKey);
-			assert mic.length == mic_.length : "MICs are of differnt lengths. Should both be the same.";
-			for ( int i = 0; i < mic.length; i++ ) {
-				if ( mic[i] != mic_[i] ) {
+			byte[] mac = computeMAC(authKey);
+			assert mac.length == mac_.length : "MACs are of differnt lengths. Should both be the same.";
+			for ( int i = 0; i < mac.length; i++ ) {
+				if ( mac[i] != mac_[i] ) {
 					return false;
 				}
 			}
 			return true;
-		} else if ( ! usesMIC ) {			// Doesn't use MIC
+		} else if ( ! usesMAC ) {			// Doesn't use MAC
 			return true;
-		} else {							// Uses MIC but it has not been computed / stored.
-			logger.warning(Logger.SECURITY_FAILURE, "Cannot validate MIC as it was never computed and stored. Decryption result may be garbage.");
-			return true;	// Need to return 'true' here because of CryptoHelper encrypt() / decrypt() methods.
+		} else {							// Uses MAC but it has not been computed / stored.
+			logger.warning(Logger.SECURITY_FAILURE, "Cannot validate MAC as it was never computed and stored. " +
+					                                "Decryption result may be garbage even when decryption succeeds.");
+			return true;	// Need to return 'true' here because of encrypt() / decrypt() methods don't support this.
 		}
 	}
 
@@ -278,13 +277,13 @@ public final class DefaultCipherText implements CipherText {
 	/**
 	 * Set the raw ciphertext.
 	 * @param ciphertext	The raw ciphertext.
-	 * @throws EncryptionException	Thrown if the MIC has already been computed
-	 * 				via {@link #computeAndStoreMIC(byte[])}.
+	 * @throws EncryptionException	Thrown if the MAC has already been computed
+	 * 				via {@link #computeAndStoreMAC(byte[])}.
 	 */
 	public void setCiphertext(byte[] ciphertext)
 		throws EncryptionException
 	{
-		if ( ! micComputed() ) {
+		if ( ! macComputed() ) {
 			if ( ciphertext == null || ciphertext.length == 0 ) {
 				throw new EncryptionException("Encryption faled; no ciphertext",
 											  "Ciphertext may not be null or 0 length!");
@@ -295,7 +294,7 @@ public final class DefaultCipherText implements CipherText {
 			raw_ciphertext_ = new byte[ ciphertext.length ];
 			CryptoHelper.copyByteArray(ciphertext, raw_ciphertext_);
 		} else {
-			String logMsg = "Programming error: Attempt to set ciphertext after MIC already computed.";
+			String logMsg = "Programming error: Attempt to set ciphertext after MAC already computed.";
 			logger.error(Logger.SECURITY_FAILURE, logMsg);
 			throw new EncryptionException("Cannot store raw ciphertext.", logMsg);
 		}
@@ -316,7 +315,7 @@ public final class DefaultCipherText implements CipherText {
 		if ( isCollected(CipherTextFlags.CIPHERTEXT) ) {
 			logger.warning(Logger.SECURITY_FAILURE, "Raw ciphertext was already set; resetting.");
 		}
-		if ( ! micComputed() ) {
+		if ( ! macComputed() ) {
 			if ( ciphertext == null || ciphertext.length == 0 ) {
 				throw new EncryptionException("Encryption faled; no ciphertext",
 											  "Ciphertext may not be null or 0 length!");
@@ -335,7 +334,7 @@ public final class DefaultCipherText implements CipherText {
 			setCiphertext( ciphertext );
 			received(CipherTextFlags.CIPHERTEXT);
 		} else {
-			String logMsg = "MIC already computed from previously set IV and raw ciphertext; may not be reset -- object is immutable.";
+			String logMsg = "MAC already computed from previously set IV and raw ciphertext; may not be reset -- object is immutable.";
 			logger.error(Logger.SECURITY_FAILURE, logMsg);	// Discuss: By throwing, this gets logged as warning, but it's really error! Why is an exception only a warning???
 			throw new EncryptionException("Validation of decryption failed.", logMsg);
 		}
@@ -355,9 +354,9 @@ public final class DefaultCipherText implements CipherText {
 	public String toString() {
 		StringBuilder sb = new StringBuilder( "DefaultCipherText: " );
 		String rawCipherText = (( getRawCipherText() != null ) ? "present" : "absent");
-		String mic = (( mic_ != null ) ? "present" : "absent");
+		String mac = (( mac_ != null ) ? "present" : "absent");
 		sb.append("raw ciphertext is ").append(rawCipherText);
-		sb.append(", MIC is ").append(mic).append("; ");
+		sb.append(", MAC is ").append(mac).append("; ");
 		sb.append( cipherSpec_.toString() );
 		return sb.toString();
 	}
@@ -365,61 +364,42 @@ public final class DefaultCipherText implements CipherText {
 	////////////////////////////////////  P R I V A T E  /////////////////////////////////////////
 	
 	/**
-	 * Compute a MIC, but do not store it. May set the nonce value as a
-	 * side-effect.  The MIC is calculated as:
+	 * Compute a MAC, but do not store it. May set the nonce value as a
+	 * side-effect.  The MAC is calculated as:
 	 * <pre>
 	 * 		HMAC-SHA1(nonce, IV + plaintext)
 	 * </pre>
-	 * @param ciphertext	The ciphertext value for which the MIC is computed.
-	 * @return The value for the MIC.
+	 * @param ciphertext	The ciphertext value for which the MAC is computed.
+	 * @return The value for the MAC.
 	 */ 
-	private byte[] computeMIC(byte[] ciphertext) {
-		assert ciphertext != null && ciphertext.length != 0 : "Plaintext may not be null or empty.";
+	private byte[] computeMAC(SecretKey authKey) {
+		assert raw_ciphertext_ != null && raw_ciphertext_.length != 0 : "Raw ciphertext may not be null or empty.";
+		assert authKey != null && authKey.getEncoded().length != 0 : "Authenticity secret key may not be null or zero length.";
 		try {
-			KeyGenerator kg = KeyGenerator.getInstance("HmacSHA1");
-			SecretKey sk = null;
-			if ( nonce_ == null ) {
-				sk = kg.generateKey();
-			} else {
-				sk = new SecretKeySpec(nonce_, "HmacSHA1");
-			}
+			SecretKey sk = new SecretKeySpec(authKey.getEncoded(), "HmacSHA1");
 			Mac mac = Mac.getInstance("HmacSHA1");
 			mac.init(sk);
-			byte[] result = mac.doFinal(ciphertext);
-			// POSSIBLE SIDE-EFFECT !!!!
-			if ( nonce_ == null ) {
-				nonce_ = sk.getEncoded();	// Side-effect -- nonce set here!
-				assert nonce_ != null : "Failed to create nonce value.";
+			if ( requiresIV() ) {
+				mac.update( getIV() );
 			}
+			byte[] result = mac.doFinal( getRawCipherText() );
 			return result;
 		} catch (NoSuchAlgorithmException e) {
 			e.printStackTrace(System.err);
-			logger.error(Logger.SECURITY_FAILURE, "Cannot compute MIC w/out HmacSHA1.", e);
+			logger.error(Logger.SECURITY_FAILURE, "Cannot compute MAC w/out HmacSHA1.", e);
 			return null;
 		} catch (InvalidKeyException e) {
 			e.printStackTrace(System.err);
-			logger.error(Logger.SECURITY_FAILURE, "Cannot comput MIC; invalid 'key' for HmacSHA1.", e);
+			logger.error(Logger.SECURITY_FAILURE, "Cannot comput MAC; invalid 'key' for HmacSHA1.", e);
 			return null;
 		}
 	}
 	
 	/**
-	 * Return true if the MIC has already been computed (i.e., not null).
+	 * Return true if the MAC has already been computed (i.e., not null).
 	 */
-	private boolean micComputed() {
-		return (mic_ != null);
-	}
-
-	/**
-	 *  Retrieve the nonce value used in the calculation of the MIC.
-	 */
-	private byte[] getNonce() {
-		if ( micComputed() ) {
-			return nonce_;
-		} else {
-			logger.error(Logger.SECURITY_FAILURE, "Nonce for MIC not set yet; unable to retrieve; returning null");
-			return null;
-		}
+	private boolean macComputed() {
+		return (mac_ != null);
 	}
 
 	/**
