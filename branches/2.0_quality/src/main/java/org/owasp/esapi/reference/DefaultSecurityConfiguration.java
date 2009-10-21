@@ -38,9 +38,12 @@ import org.owasp.esapi.errors.ConfigurationException;
 
 // DISCUSS: Is there a good way for us to determine if they have changed the master key and salt, and if not,
 //			at _least_ log a warning? Need to distinguish the "as-shipped" versions from the current versions.
+//
+//			Proposed solution: We will leave these 2 properties empty in the ESAPI.properties file and the
+//			installation instructions will show how to set them.
 
 /**
- * The reference SecurityConfiguration manages all the settings used by the ESAPI in a single place. In this reference
+ * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
  * implementation, resources can be put in several locations, which are searched in the following order:
  * <p>
  * 1) Inside a directory set with a call to SecurityConfiguration.setResourceDirectory( "C:\temp\resources" ).
@@ -67,6 +70,7 @@ import org.owasp.esapi.errors.ConfigurationException;
  * @author Jim Manico (jim.manico@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author kevin.w.wall@gmail.com
  */
 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
@@ -100,7 +104,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     			// ==================================//
     			//		New in ESAPI Java 2.0		 //
     			// ================================= //
-    private static final String CIPHERTEXT_USE_MIC = "Encryptor.CipherText.useMIC";
+    private static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
+    private static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
     private static final String IV_TYPE = "Encryptor.ChooseIVMethod";
     private static final String FIXED_IV = "Encryptor.fixedIV";
     
@@ -137,7 +142,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     protected final int MAX_REDIRECT_LOCATION = 1000;
     protected final int MAX_FILE_NAME_LENGTH = 1000;	// DISCUSS: Is this for given directory or refer to canonicalized full path name?
     													// Too long if the former! (Usually 255 is limit there.) Hard to tell since not used
-    													// here and it's protected.
+    													// here in this class and it's protected, so not sure what it's intent is.
 
     /*
      * Implementation Keys
@@ -157,7 +162,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				//		New in ESAPI Java 2.0		 //
 				//   Not implementation classes!!!   //
 				// ================================= //
-    private static final String CIPHERTEXT_IMPLEMENTATION = "ESAPI.CipherText";
+	private static final String PRINT_PROPERTIES_WHEN_LOADED = "ESAPI.printProperties";
     private static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
     
     /*
@@ -173,12 +178,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultExecutor";
     public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
     public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
-        
-    			// ==================================//
-    			//		New in ESAPI Java 2.0		 //
-    			// ================================= //
-    public static final String DEFAULT_CIPHERTEXT_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultCipherText";
-
 
     private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
     
@@ -206,7 +205,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	// load security configuration
     	try {
         	loadConfiguration();
-        		// See SecurityConfiguration..setCipherTransformation() for
+        		// TODO: FUTURE: Replace by CryptoControls ???
+        		// See SecurityConfiguration.setCipherTransformation() for
         		// explanation of this.
         	cipherXformFromESAPIProp =
     			getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
@@ -258,13 +258,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public String getEncryptionImplementation() {
     	return getESAPIProperty(ENCRYPTION_IMPLEMENTATION, DEFAULT_ENCRYPTION_IMPLEMENTATION);
     }
-   
-    /**
-     * {@inheritDoc}
-     */
-    public String getCipherTextImplementation() {
-    	return getESAPIProperty(CIPHERTEXT_IMPLEMENTATION, DEFAULT_CIPHERTEXT_IMPLEMENTATION);
-    }
     
     /**
 	 * {@inheritDoc}
@@ -306,7 +299,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public byte[] getMasterKey() {
-    	return getESAPIPropertyEncoded( MASTER_KEY, null );
+    	byte[] key = getESAPIPropertyEncoded( MASTER_KEY, null );
+    	if ( key == null || key.length == 0 ) {
+    		throw new ConfigurationException("Property '" + MASTER_KEY +
+    							"' missing or empty in ESAPI.properties file.");
+    	}
+    	return key;
     }
 
     /**
@@ -332,7 +330,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public byte[] getMasterSalt() {
-        return getESAPIPropertyEncoded(MASTER_SALT, null);
+    	byte[] salt = getESAPIPropertyEncoded( MASTER_SALT, null );
+    	if ( salt == null || salt.length == 0 ) {
+    		throw new ConfigurationException("Property '" + MASTER_SALT +
+    							"' missing or empty in ESAPI.properties file.");
+    	}
+    	return salt;
     }
 
     /**
@@ -361,11 +364,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     
-    private Properties loadPropertiesFromStream( InputStream is ) throws IOException {
+    private Properties loadPropertiesFromStream( InputStream is, String name ) throws IOException {
     	Properties config = new Properties();
         try {
 	        config.load(is);
-	        logSpecial("Loaded properties file", null);
+	        logSpecial("Loaded '" + name + "' properties file", null);
         } finally {
             if ( is != null ) try { is.close(); } catch( Exception e ) {}
         }
@@ -383,7 +386,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	//Note: relative directories are relative to the SystemResource directory
     	//  The SystemResource directory is defined by ClassLoader.getSystemResource(
     	//  Relative directories use URLs, so they must be specified using / as 
-    	//  the pathSeparater, not the file system dependent pathSeparator. 
+    	//  the pathSeparator, not the file system dependent pathSeparator. 
     	//First, load from the absolute directory specified in customDirectory
     	//Second, load from the relative directory specified in resourceDirectory
     	//Third, load from the relative resource-default-directory which is .esapi
@@ -394,11 +397,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	
     	// first, allow command line overrides. -Dorg.owasp.esapi.resources directory
 		f = new File( customDirectory, filename );
-    	if ( customDirectory != null && f.exists() ) {
+    	if ( customDirectory != null && f.canRead() ) {
         	logSpecial( "  Found in 'org.owasp.esapi.resources' directory: " + f.getAbsolutePath(), null );
         	return f;
     	} else {
-        	logSpecial( "  Not found in 'org.owasp.esapi.resources' directory: " + f.getAbsolutePath(), null );
+        	logSpecial( "  Not found in 'org.owasp.esapi.resources' directory or file not readable: " + f.getAbsolutePath(), null );
     	}
 
     	// if not found, then try the programatically set resource directory (this defaults to SystemResource directory/.esapi
@@ -493,37 +496,42 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     * Load configuration.
+     * Load configuration and optionally print properties. Never prints
+     * the master encryption key and master salt properties though.
      */
 	private void loadConfiguration() throws IOException {
-    	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ) );
+    	properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ), "ESAPI.properties" );
     	// get validation properties and merge them into the main properties
-    	Properties validationProperties = loadPropertiesFromStream( getResourceStream( getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties") ) );
+    	String validationPropFname = getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties");
+    	Properties validationProperties = loadPropertiesFromStream( getResourceStream( validationPropFname ), validationPropFname );
     	Iterator<?> i = validationProperties.keySet().iterator();
     	while( i.hasNext() ) {
     		String key = (String)i.next();
     		String value = validationProperties.getProperty(key);
     		properties.put( key, value);
     	}
-    	
-        logSpecial("  ========Master Configuration========", null);
-        System.out.println( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
-        Iterator<?> j = new TreeSet<Object>( properties.keySet() ).iterator();
-        while (j.hasNext()) {
-            String key = (String)j.next();
-            // print out properties, but not sensitive ones like MasterKey and MasterSalt
-            if ( !key.contains( "Master" ) ) {
-            		logSpecial("  |   " + key + "=" + properties.get(key), null);
+
+        if ( shouldPrintProperties() ) {
+            logSpecial("  ========Master Configuration========", null);
+            logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory, null );
+        	Iterator<?> j = new TreeSet<Object>( properties.keySet() ).iterator();
+        	while (j.hasNext()) {
+        		String key = (String)j.next();
+        		// print out properties, but not sensitive ones like MasterKey and MasterSalt
+        		if ( !key.contains( "Master" ) ) {
+        			logSpecial("  |   " + key + "=" + properties.get(key), null);
+        		}
         	}
         }
     }
 
     /**
      * Used to log errors to the console during the loading of the properties file itself. Can't use
-     * standard logging in this case, since the Logger is not initialized yet.
+     * standard logging in this case, since the Logger is not initialized yet. Output is sent to
+     * {@code PrintStream} {@code System.out}.
      *  
      * @param message The message to send to the console.
-     * @param e The error that occured (this value is currently ignored).
+     * @param e The error that occurred (this value is currently ignored).
      */
     private void logSpecial(String message, Throwable e) {
 		System.out.println(message);
@@ -577,8 +585,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * {@inheritDoc}
      */
-    public boolean useMICforCipherText() {
-    	String value = getESAPIProperty(CIPHERTEXT_USE_MIC, "true");
+    public boolean useMACforCipherText() {
+    	String value = getESAPIProperty(CIPHERTEXT_USE_MAC, "true");
     	
     	if ( value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on") ) {
     		return true;
@@ -587,6 +595,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	}
     }
     
+    /**
+     * {@inheritDoc}
+     */
+    public boolean overwritePlainText() {
+    	String yesOrNo = getESAPIProperty(PLAINTEXT_OVERWRITE, "true");
+    	
+    	if ( yesOrNo.equalsIgnoreCase("true") ||
+    		 yesOrNo.equalsIgnoreCase("on")   ||
+    		 yesOrNo.equalsIgnoreCase("yes") ) {
+    		return true;
+    	} else {
+    		return false;
+    	}
+    }
     /**
 	 * {@inheritDoc}
 	 */
@@ -975,6 +997,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		String[] parts = property.split(",");
 		List<String> list = Arrays.asList( parts );
 		return list;
+	}
+	
+	private boolean shouldPrintProperties() {
+		boolean yesOrNo = getESAPIProperty(PRINT_PROPERTIES_WHEN_LOADED, true);		// Default: Behave as ESAPI 1.4 and print them.
+		return yesOrNo;
 	}
 		
 }
