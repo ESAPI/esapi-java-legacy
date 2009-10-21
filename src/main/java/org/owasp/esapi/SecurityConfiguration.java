@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * The SecurityConfiguration interface stores all configuration information
+ * The {@code SecurityConfiguration} interface stores all configuration information
  * that directs the behavior of the ESAPI implementation.
  * <br><br>
  * Protection of this configuration information is critical to the secure
@@ -33,11 +33,16 @@ import java.util.regex.Pattern;
  * <br><br>
  * Please note that adding another layer of encryption does not make the
  * attackers job much more difficult. Somewhere there must be a master "secret"
- * that is stored unencrypted on the application platform. Creating another
- * layer of indirection doesn't provide any real additional security. Its up to the
- * reference implementation to decide whether this file should be encrypted or not.
- * The ESAPI reference implementation (DefaultSecurityConfiguration.java) does not encrypt
- * its properties file.
+ * that is stored unencrypted on the application platform (unless you are
+ * willing to prompt for some passphrase when you application starts or insert
+ * a USB thumb drive or an HSM card, etc., in which case this master "secret"
+ * it would only be in memory). Creating another layer of indirection provides
+ * additional obfuscation, but doesn't provide any real additional security.
+ * It's up to the reference implementation to decide whether this file should
+ * be encrypted or not.
+ * <br><br>
+ * The ESAPI reference implementation (DefaultSecurityConfiguration.java) does
+ * <i>not</i> encrypt its properties file.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -86,11 +91,6 @@ public interface SecurityConfiguration {
 	 * Returns the fully qualified classname of the ESAPI Encryption implementation.
 	 */
 	public String getEncryptionImplementation();
-	
-	/**
-	 * Returns the fully qualified classname of the ESAPI CipherText implementation.
-	 */
-    public String getCipherTextImplementation();
     
 	/**
 	 * Returns the fully qualified classname of the ESAPI Validation implementation.
@@ -257,20 +257,36 @@ public interface SecurityConfiguration {
      */
     public String setCipherTransformation(String cipherXform);
 
-// TODO - DISCUSS: Where should this web page go? Maybe with the Javadoc? But where?
+// TODO - DISCUSS: Where should this web page (below) go? Maybe with the Javadoc? But where?
 //				   Think it makes more sense as part of the release notes, but OTOH, I
 //				   really don't want to rewrite this as a Wiki page either.
     /**
      * Determines whether the {@code CipherText} should be used with a Message
-     * Integrity Code (MIC). Generally this makes for a more robust cryptographic
+     * Authentication Code (MAC). Generally this makes for a more robust cryptographic
      * scheme, but there are some minor performance implications.
      * For further details, see the "Advanced Usage" section of
      * <a href="http://www.owasp.org/ESAPI_2.0_ReleaseNotes_CryptoChanges.html">
-     * Why Is OWASP Changing ESAPI Encryption?</a>.
+     * "Why Is OWASP Changing ESAPI Encryption?"</a>.
      * @return	{@code true} if a MIC should be used, otherwise {@code false}.
      */
-    public boolean useMICforCipherText();
+    public boolean useMACforCipherText();
 
+    /**
+     * Indicates whether the {@code PlainText} objects may be overwritten after
+     * they have been encrypted. Generally this is a good idea, especially if
+     * your VM is shared by multiple applications (e.g., multiple applications
+     * running in the same J2EE container) or if there is a possibility that
+     * your VM may leave a core dump (say because it is running non-native
+     * Java code.
+     * <p>
+     * Controlled by the property {@code Encryptor.PlainText.overwrite} in
+     * the {@code ESAPI.properties} file.
+     * </p>
+     * @return	True if it is OK to overwrite the {@code PlainText} objects
+     *			after encrypting, false otherwise.
+     */
+    public boolean overwritePlainText();
+    
     /**
      * Get a string indicating how to compute an Initialization Vector (IV).
      * Currently supported modes are "random" to generate a random IV or
