@@ -16,8 +16,8 @@
 <H1 ALIGN=CENTER>Why Is OWASP Changing ESAPI Encryption?</H1>
 <H2>Reasons for Change</H2>
 <P STYLE="margin-bottom: 0in">The existing ESAPI 1.4 uses the cipher
-mode Electronic Code Book (ECB) for encryption with <CODE><FONT SIZE=2>Encryptor</FONT></CODE>
-and the reference implementation, <CODE><FONT SIZE=2>JavaEncryptor</FONT></CODE>.
+mode Electronic Code Book (ECB) for encryption with <CODE>Encryptor</CODE>
+and the reference implementation, <CODE>JavaEncryptor</CODE>.
 ECB cipher mode is the simplest cipher mode to use, but it is also
 cryptographically very weak. If more than one block of plaintext is
 encrypted with the same key, those identical blocks of ciphertext
@@ -89,7 +89,7 @@ are:
 	</P>
 	<LI><P STYLE="margin-bottom: 0in">A mechanism to attempt to preserve
 	backward compatibility with ESAPI Java 1.4 (via
-	<CODE><FONT SIZE=2>org.owasp.esapi.reference.LegacyJavaEncryptor</FONT></CODE>)
+	<CODE>org.owasp.esapi.reference.LegacyJavaEncryptor</CODE>)
 	has been added, but because of the security implications of using
 	the ECB cipher mode, you are encouraged to stop using this as soon
 	as possible. (In fact, this backward compatibility mechanism should
@@ -144,9 +144,10 @@ observe the results.
 <P>Likewise, the use of padding is going to add some overhead to the
 length of the ciphertext. 
 </P>
-<P STYLE="margin-bottom: 0in">For short plaintext of 16-24 bytes,
-this overhead can be around 30% of the total message size. Here is a
-table that may help: 
+<P STYLE="margin-bottom: 0in">For example, a short plaintext of 0-15 bytes,
+this overhead can be around 200% of the total plaintext size. This
+overhead diminishes (as a percent of the total plaintext size) as the
+plaintext size increases. Here is a table that illustrates this: 
 </P>
 <TABLE WIDTH=348 BORDER=1 CELLPADDING=4 CELLSPACING=0>
 	<COL WIDTH=126>
@@ -166,7 +167,7 @@ table that may help:
 			<P ALIGN=LEFT>0-15</P>
 		</TD>
 		<TD WIDTH=204>
-			<P ALIGN=LEFT>20</P>
+			<P ALIGN=LEFT>44</P>
 		</TD>
 	</TR>
 	<TR>
@@ -174,7 +175,7 @@ table that may help:
 			<P ALIGN=LEFT>16-31</P>
 		</TD>
 		<TD WIDTH=204>
-			<P ALIGN=LEFT>44</P>
+			<P ALIGN=LEFT>64</P>
 		</TD>
 	</TR>
 	<TR>
@@ -182,7 +183,7 @@ table that may help:
 			<P ALIGN=LEFT>32-47</P>
 		</TD>
 		<TD WIDTH=204>
-			<P ALIGN=LEFT>64</P>
+			<P ALIGN=LEFT>88</P>
 		</TD>
 	</TR>
 	<TR>
@@ -190,15 +191,23 @@ table that may help:
 			<P ALIGN=LEFT>48-63</P>
 		</TD>
 		<TD WIDTH=204>
-			<P ALIGN=LEFT>64</P>
+			<P ALIGN=LEFT>108</P>
 		</TD>
 	</TR>
 	<TR>
 		<TD WIDTH=126>
-			<P ALIGN=LEFT>48-63</P>
+			<P ALIGN=LEFT>64-79</P>
 		</TD>
 		<TD WIDTH=204>
-			<P ALIGN=LEFT>84</P>
+			<P ALIGN=LEFT>128</P>
+		</TD>
+	</TR>
+	<TR>
+		<TD WIDTH=126>
+			<P ALIGN=LEFT>Etc. Each additional 16 bytes of plaintext...</P>
+		</TD>
+		<TD WIDTH=204>
+			<P ALIGN=LEFT>...adds 20 additional bytes</P>
 		</TD>
 	</TR>
 </TABLE>
@@ -207,14 +216,20 @@ bytes are fixed at a maximum, this overhead goes down as the length
 of the plaintext message increases. The IV is always a fixed length
 for a given cipher; it is always the same as the cipher block size.
 The padding can vary, but for PKCS5 padding, the padding will be
-between 1 to the cipher block size / 8 bytes. Typically, a cipher's
-block size is 64-bits so the padding would be between 1 to 8 bytes
-and the IV would be 8 bytes. So the worst case is for 1 byte of
-input, it would require 8 bytes for the IV, 1 bytes for the actual
-encrypted raw ciphertext, and 7 bytes for padding for a total of 16
-bytes, but that's before base64 encoding. (<FONT COLOR="#ff0000"><B>CHECKME</B></FONT>;
-seems wrong) 
-</P>
+between 1 to the cipher block size (in bits) / 8 bytes. For AES,
+the cipher block size is 128-bits, but more typically, a cipher's
+block size is 64-bits so the padding would be between 1 to 16 bytes for
+AES and 1 to 8 bytes for a 64-bit block size cipher and the IV would be
+IV would be 16 bytes for AES and 8 bytes for most other ciphers.
+(Note: If space were truly a concern, say because of legacy database
+tables, etc., then one could set the properties
+<PRE>
+	Encryptor.ChooseIVMethod=fixed
+	Encryptor.fixedIV=&lt;your_hex_encoded_IV_here&gt;
+</PRE>
+in <code>ESAPI.properties</code> and then
+store only the raw ciphertext bytes, but this is not quite as
+secure as using a random IV for each plaintext that is encrypted.)
 <H3>The Ugly</H3>
 <P>Well, so far, this &quot;bad&quot; news may be bad for you but
 good for your database and/or storage vendor, but you probably can
@@ -229,22 +244,24 @@ more hardened cynics know it more commonly as <I>TANSTAAFL</I>.)
 <P>All this backward compatibility and flexibility comes at the
 additional cost of complexity, and not <I>merely</I> additional
 complexity in the reference implementation. There is also some
-additional complexity in the ESAPI <CODE><FONT SIZE=2>Encryptor</FONT></CODE>
+additional complexity in the ESAPI <CODE>Encryptor</CODE>
 interfaces as well. 
 </P>
-<P>In particular, there is a new <CODE><FONT SIZE=2>CipherText</FONT></CODE>
+<P>In particular, there is a new <CODE>CipherText</CODE>
 class to coalesce all this complexity of handling the ciphertext
 result from encryption operations as well as a reference
-implementation (<CODE><FONT SIZE=2>DefaultCipherText</FONT></CODE>)
+implementation (<CODE>DefaultCipherText</CODE>)
 for it as well. And then there is one new encryption and one new
-decryption method for the <CODE><FONT SIZE=2>Encryptor</FONT></CODE>
+decryption method for the <CODE>Encryptor</CODE>
 interface. Specifically, the encrypt and decrypt methods have been
 generalized as: 
 </P>
-<PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">C<FONT COLOR="#000000"><FONT FACE="Monospace"><FONT SIZE=2>ipherText encrypt(SecretKey key, PlainText plaintext) throws EncryptionException;</FONT></FONT></FONT></PRE><P>
+<PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in"><FONT
+COLOR="#000000"><FONT FACE="Monospace">CipherText encrypt(SecretKey key, PlainText plaintext) throws EncryptionException;</FONT></FONT></PRE><P>
 and 
 </P>
-<PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in"><FONT COLOR="#000000"><FONT FACE="Monospace"><FONT SIZE=2>PlainText decrypt(SecretKey key, CipherText ciphertext) throws EncryptionException</FONT></FONT></FONT></PRE><P>
+<PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in"><FONT
+COLOR="#000000"><FONT FACE="Monospace">PlainText decrypt(SecretKey key, CipherText ciphertext) throws EncryptionException</FONT></FONT></PRE><P>
 The two existing interfaces from ESAPI 1.4 and earlier</P>
 <PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">String encrypt(String plaintext) throws EncryptionException</PRE><P>
 and 
@@ -262,8 +279,8 @@ previously encrypted using ESAPI 1.4 or earlier, you will not be able
 to decrypt it using the ESAPI 2.0</P>
 <PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">String decrypt(String ciphertext) throws EncryptionException</PRE><P>
 method. If you require such compatibility, you should set
-<CODE><FONT SIZE=2>org.owasp.esapi.reference.LegacyJavaEncryptor</FONT></CODE>
-for the property <CODE><FONT SIZE=2>ESAPI.Encryptor</FONT></CODE> in
+<CODE>org.owasp.esapi.reference.LegacyJavaEncryptor</CODE>
+for the property <CODE>ESAPI.Encryptor</CODE> in
 your <B>ESAPI.properties</B> file, this class likely will be removed
 in a future ESAPI release. (This class is intended only to provide
 backward compatibility so that you may decrypt previously encrypted
@@ -273,7 +290,7 @@ use the stronger CBC cipher mode with a random IV, they still do not
 ensure authenticity and integrity so the more general encrypt() /
 decrypt() methods should be preferred over the String-based ones.
 (See below for examples of how to use these new methods.)</P>
-<P>Further details are provided in the <CODE><FONT SIZE=2>Encryptor</FONT></CODE>
+<P>Further details are provided in the <CODE>Encryptor</CODE>
 Javadoc.</P>
 <H2>Symmetric Encryption in ESAPI 2.0</H2>
 <H3>ESAPI.properties Properties Relevant to Symmetric Encryption</H3>
@@ -299,9 +316,11 @@ would replace.</P>
     <FONT COLOR="#ff0000">Encryptor.ChooseIVMethod=random</FONT>
 
         # This is only used when  Encryptor.ChooseIVMethod=fixed     is set, otherwise a random IV is used.
-        # Should only be used for compatibility with legacy systems. In such cases, you should
-        # set it to whatever fixed IF is required using hexadecimal representation. Note however
-        # use of a random IV is always preferable.
+        # Should only be used for compatibility with legacy systems when space
+        # to store the encrypted values is at a premium or your partner in
+        # encryption requires you to use a specific IV. In such cases, you
+        # should set it to whatever fixed IV is required using hexadecimal representation.
+        # Note however use of a random IV is always preferable.
     <FONT COLOR="#ff0000">Encryptor.fixedIV=</FONT><FONT COLOR="#0000FF">0xdbd1a3636024b7b402da7d6fe3fb056e</FONT>
     <FONT COLOR="#ff0000">Encryptor.CipherText.useMAC=true</FONT>
 </PRE>
@@ -323,13 +342,13 @@ used.
 </PRE>
 <P>
 This code will still work, however if you are using the standard
-(default) reference for <CODE><FONT SIZE=2>ESAPI.Encryptor</FONT></CODE>,
-which is <CODE><FONT SIZE=2>org.owasp.esapi.reference.JavaEncryptor</FONT></CODE>,
+(default) reference for <CODE>ESAPI.Encryptor</CODE>,
+which is <CODE>org.owasp.esapi.reference.JavaEncryptor</CODE>,
 the cipher transformation used with be that specified by the property
-<CODE><FONT SIZE=2>Encryptor.CipherTransformation</FONT></CODE> with
+<CODE>Encryptor.CipherTransformation</CODE> with
 a key size (when the algorithm supports a variable key size) of that
-specified by <CODE><FONT SIZE=2>Encryptor.EncryptionKeyLength</FONT></CODE>
-and the IV type specified by <CODE><FONT SIZE=2>Encryptor.ChooseIVMethod</FONT></CODE>.
+specified by <CODE>Encryptor.EncryptionKeyLength</CODE>
+and the IV type specified by <CODE>Encryptor.ChooseIVMethod</CODE>.
 This is opposed to the old ESAPI 1.4 default of 256-bit AES in ECB
 mode with no padding (and obviously no IV). If you have no need to
 decrypt data that was previously encrypted using ESAPI 1.4, this
@@ -341,7 +360,7 @@ to use the so-called legacy encryption. This is done by setting:</P>
 which will cause these two String-based encrypt / decrypt methods to
 use 256-bit AES with cipher transformation “AES/ECB/None”. Note
 that the new encryption / decryption methods continue to work as they
-do as if you were using the <CODE><FONT SIZE=2>JavaEncryptor</FONT></CODE>
+do as if you were using the <CODE>JavaEncryptor</CODE>
 class. Note that the legacy encryption can <I>only </I><SPAN STYLE="font-style: normal">use
 the master encryption key, but that is all that is required for
 compatibility with ESAPI 1.4.</SPAN></P>
@@ -376,7 +395,7 @@ array with the old methods one would first have to use
 </P>
 <PRE>    byte[] plaintextByteArray = { /* byte array to be encrypted */ };
     String plaintext = new String(plaintextByteArray, &quot;UTF-8&quot;);</PRE><P>
-all the while catching the required <CODE><FONT SIZE=2>UnsupportedEncodingException</FONT></CODE>.
+all the while catching the required <CODE>UnsupportedEncodingException</CODE>.
 For example, to handle this in ESAPI 1.4, one would have to write:</P>
 <PRE>    try {
         byte[] plaintextByteArray = { /* byte array to be encrypted */ };
@@ -385,7 +404,7 @@ For example, to handle this in ESAPI 1.4, one would have to write:</P>
         String decrypted  = ESAPI.encryptor().decrypt(ciphertext);
         byte[] recoveredBytes = decrypted.getBytes(“UFT-8”);
         assert java.util.Arrays.equals( plaintextByteArray, recoveredBytes );
-    } catch( <CODE><FONT SIZE=2>UnsupportedEncodingException</FONT></CODE> ex) {
+    } catch( <CODE>UnsupportedEncodingException</CODE> ex) {
         // Should not happen but need to catch and deal with it anyhow.
         // Log error then return error designation however appropriate.
     } catch(EncryptionException ex) {
@@ -409,17 +428,17 @@ plaintext sensitive data to be left lying around after it is
 encrypted. Instead, you should overwrite them after their value as
 been used. However, when you are using immutable Strings, this is not
 possible using native Java methods. But if you are able to pass in
-byte arrays that are passed directly to <CODE><FONT SIZE=2>PlainText</FONT></CODE>
+byte arrays that are passed directly to <CODE>PlainText</CODE>
 objects (as shown above), the <I>default</I> is to overwrite this
 after they are encrypted. If the default for
-<CODE><FONT SIZE=2>Encryptor.PlainText.overwrite</FONT></CODE> of
-<CODE><FONT SIZE=2><B>true</B></FONT></CODE> had been used, then the
-array <CODE><FONT SIZE=2>plaintextByteArray</FONT></CODE> would have
+<CODE>Encryptor.PlainText.overwrite</CODE> of
+<CODE><B>true</B></CODE> had been used, then the
+array <CODE>plaintextByteArray</CODE> would have
 been overwritten with ASCII “*” characters.</P>
 <H3>Encrypting / Decrypting with the New Methods -- Advanced Usage</H3>
 <P>
 ESAPI 1.4 and earlier only allowed you to use the master key
-</code>Encryptor.MasterKey</code> to encrypt and decrypt with.
+<code>Encryptor.MasterKey</code> to encrypt and decrypt with.
 But encryption with a single key is not always sufficient. For
 instance, lets say that your application has a need to encrypt both
 bank account numbers and credit card numbers. The encrypted bank account
@@ -473,7 +492,6 @@ Second, these keys would be printed out and stored somewhere secure
 by our application, perhaps using something like ESAPI's
 <code>EncryptedProperties</code> class, where they could later be
 retrieved and used.
-</P>
 <P>
 In the following code, we assume that the <code>SecretKey</code> values
 have already been initialized elsewhere.
@@ -499,6 +517,5 @@ have already been initialized elsewhere.
         // Log error then return error designation however appropriate.
     }
 </PRE>
-</P>
 </BODY>
 </HTML>
