@@ -5,25 +5,30 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2009 - The OWASP Foundation
+ * Copyright &copy; 2009 - The OWASP Foundation
  */
 package org.owasp.esapi;
 
 import java.io.Serializable;
 
-// DISCUSS: Do we want to treat this as if it should be replaceable too???
+import javax.crypto.SecretKey;
+
+// DISCUSS: Do we want to treat this as if it should be replaceable too? I.e.,
+//			to allow ESAPI users to replace the reference model DefaultCipherText.
 //			If so, perhaps we need to define the service provider side and define
 //			some appropriate 'setters'. More details in DefaultCipherText.
 //			Also, check the method names to see if they make sense / are intuitive.
+//			However, I did not do this so it would take some additional work. -kww
 
 /**
  * A {@code Serializable} interface representing the result of encrypting
  * plaintext and some additional information about the encryption algorithm,
- * the IV (if pertinent), and an optional Message Integrity Code (MIC).
+ * the IV (if pertinent), and an optional Message Authentication Code (MAC).
  * <p>
- * Copyright (c) 2009 - The OWASP Foundation
+ * Copyright &copy; 2009 - The OWASP Foundation
  * </p>
  * @author kevin.w.wall@gmail.com
+ * @see PlainText
  * @since 2.0
  */
 public interface CipherText extends Serializable {
@@ -104,15 +109,17 @@ public interface CipherText extends Serializable {
 	public byte[] getIV();
 	
 	/** 
-	 * Return true if the cipher mode used requires an IV.
+	 * Return true if the cipher mode used requires an IV. Usually this will
+	 * be true unless ECB mode (which should be avoided whenever possible) is
+	 * used.
 	 */
 	public boolean requiresIV();
 	
 	/**
-	 * Get the raw ciphertext byte array associated with encrypting some
+	 * Get the raw ciphertext byte array resulting from encrypting some
 	 * plaintext.
 	 * 
-	 * @return The raw ciphertext.
+	 * @return The raw ciphertext as a byte array.
 	 */
 	public byte[] getRawCipherText();
 
@@ -147,48 +154,73 @@ public interface CipherText extends Serializable {
 	public String getEncodedIVCipherText();
 
 	/**
-	 * Compute and store the Message Integrity Code (MIC) if the ESAPI property
-	 * {@code Encryptor.CipherText.useMIC} is set to {@code true}. If it
-	 * is, the MIC is calculated as:
+	 * Compute and store the Message Authentication Code (MAC) if the ESAPI property
+	 * {@code Encryptor.CipherText.useMAC} is set to {@code true}. If it
+	 * is, the MAC is conceptually calculated as:
 	 * <pre>
-	 * 		HMAC-SHA1(nonce, IV + secret_key)
+	 * 		authKey = DerivedKey(secret_key, "authenticate")
+	 * 		HMAC-SHA1(authKey, IV + secret_key)
 	 * </pre>
-	 * </p><p>
-	 * As a side-effect, may set a nonce if it has not yet been calculated.
+	 * where derived key is an HMacSHA1, possibly repeated multiple times.
+	 * (See {@link org.owasp.esapi.util.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
+	 * for details.)
 	 * </p><p>
 	 * <b>Perceived Benefits</b>: There are certain cases where if an attacker
-	 * is able to change the IV
+	 * is able to change the IV. When one uses a authenticity key that is
+	 * derived from the "master" key, it also makes it possible to know when
+	 * the incorrect key was attempted to be used to decrypt the ciphertext.
 	 * </p><p>
-	 * <b>CAVEAT</b>: Even though an HMAC is used to compute this, since the HMAC
-	 * key (the nonce) is contained in this {@code CipherText}, this is really a
-	 * MIC and not an MAC. If there is some strange cryptographic attack that
-	 * doing this permits (I am not aware of any, but that doesn't mean one
-	 * doesn't exist; check with your own cryptography experts), then you might
-	 * decide that the benefits don't outweigh the risks. Using a digital
-	 * signature for this would be more secure, but is also much more computationally
-	 * expensive.
+	 * <b>NOTE:</b> The purpose of this MAC (which is always computed by the
+	 * ESAPI reference model implementing {@code Encryptor}) is to ensure the
+	 * authenticity of the IV and ciphertext. Among other things, this prevents
+	 * an adversary from substituting the IV with one of their own choosing.
+	 * Because we don't know whether or not the recipient of this {@code CipherText}
+	 * object will want to validate the authenticity or not, the reference
+	 * implementation of {@code Encryptor} always computes it and includes it.
+	 * The recipient of the ciphertext can then choose whether or not to validate
+	 * it.
 	 * 
-	 * @param secret_key The secret key with which the plaintext is encrypted.
-	 */		// DISCUSS - Should this be secret_key or plaintext or neither? Have
-			//			 post out to two former colleagues with more crypto knowledge.
-			//			 May post to sci.crypt.research or elsewhere if no response.
-			//			 Secret key would be preferable since we can test MIC via
-			//			 validateMIC() even when decryption fails and results in
-			//			 BadPaddingException. If we definitely decide its safe to
-			//			 use the secret key, recommend changing arg for this method
-			//			 and validateMIC() to use SecretKey rather than the encoded
-			//			 secret key bytes.
-	public void computeAndStoreMIC(byte[] secret_key);
+	 * @param authKey The secret key that is used for proving authenticity of
+	 * 				the IV and ciphertext. This key should be derived from
+	 * 				the {@code SecretKey} passed to the
+	 * 				{@link Encryptor#encrypt(javax.crypto.SecretKey, PlainText)}
+	 *				and
+	 *				{@link Encryptor#decrypt(javax.crypto.SecretKey, CipherText)}
+	 *				methods or the "master" key when those corresponding
+	 *				encrypt / decrypt methods are used. This authenticity key
+	 *				should be the same length and for the same cipher algorithm
+	 *				as this {@code SecretKey}. The method
+	 *				{@link org.owasp.esapi.util.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
+	 *				is a secure way to produce this derived key.
+	 */		// DISCUSS - Cryptographers David Wagner, Ian Grigg, and others suggest
+			// computing authenticity using derived key and HmacSHA1 of IV + ciphertext.
+			// However they also argue that what should be returned and treated as
+			// (i.e., stored as) ciphertext would be something like this:
+			//		len_of_raw_ciphertext + IV + raw_ciphertext + MAC
+			// I don't really think all that's necessary. If they want the equivalent,
+			// then let then serialize this object.
+	public void computeAndStoreMAC(SecretKey authKey);
 	
 	/**
-	 * Validate the message integrity code (MIC) associated with the ciphertext.
+	 * Validate the message authentication code (MAC) associated with the ciphertext.
 	 * This is mostly meant to ensure that an attacker has not replaced the IV
 	 * or raw ciphertext with something arbitrary. Note however that it will
 	 * <i>not</i> detect the case where an attacker simply substitutes one
 	 * valid ciphertext with another ciphertext.
 	 * 
-	 * @param secretKey		The raw bytes of the secret encryption key.
+	 * @param authKey The secret key that is used for proving authenticity of
+	 * 				the IV and ciphertext. This key should be derived from
+	 * 				the {@code SecretKey} passed to the
+	 * 				{@link Encryptor#encrypt(javax.crypto.SecretKey, PlainText)}
+	 *				and
+	 *				{@link Encryptor#decrypt(javax.crypto.SecretKey, CipherText)}
+	 *				methods or the "master" key when those corresponding
+	 *				encrypt / decrypt methods are used. This authenticity key
+	 *				should be the same length and for the same cipher algorithm
+	 *				as this {@code SecretKey}. The method
+	 *				{@link org.owasp.esapi.util.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
+	 *				is a secure way to produce this derived key.
 	 * @return True if the ciphertext has not be tampered with, and false otherwise.
 	 */
-	public boolean validateMIC(byte[] secretKey);	// DISCUSS: See above discussion.
+	public boolean validateMAC(SecretKey authKey);
 }
