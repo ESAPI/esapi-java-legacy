@@ -117,7 +117,8 @@ public final class PlainText implements Serializable {
 	// DISCUSS: Should we set 'rawBytes' to null??? Won't make it eligible for
 	//			GC unless this PlainText object is set to null which can't do
 	//			from here. If we set it to null, most methods will cause
-	//			NullPointerException to be thrown.
+	//			NullPointerException to be thrown. Also will have to change a
+	//			lot of JUnit tests.
 	/**
 	 * First overwrite the bytes of plaintext with the character '*'.
 	 */
