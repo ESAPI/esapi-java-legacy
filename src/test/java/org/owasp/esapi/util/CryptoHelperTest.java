@@ -2,35 +2,23 @@ package org.owasp.esapi.util;
 
 import static org.junit.Assert.*;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import javax.crypto.SecretKey;
+
+import junit.framework.JUnit4TestAdapter;
 import org.owasp.esapi.errors.EncryptionException;
 
 public class CryptoHelperTest {
-
+	
 	@Before
 	public void setUp() throws Exception {
 	}
 
 	@After
 	public void tearDown() throws Exception {
-	}
-
-	@Test
-	public final void testEncryptDecrypt() {
-		try {
-			String orig = "An Extremely Simple Test";
-			String ciphertext = CryptoHelper.encrypt(orig);
-			String plaintext  = CryptoHelper.decrypt(ciphertext);
-			assertTrue( orig.equals(plaintext) );
-		} catch (EncryptionException e) {
-			// OK if not covered in code coverage -- not expected.
-			fail("Caught unexpected EncryptionException; msg was " + e.getMessage() );
-		}
 	}
 
 	@Test
@@ -51,6 +39,7 @@ public class CryptoHelperTest {
 	{
 		SecretKey key =
 			CryptoHelper.generateSecretKey("NoSuchAlg", 128);
+		assertTrue( key == null );	// Not reached!
 	}
 
 	@Test
@@ -107,16 +96,12 @@ public class CryptoHelperTest {
 		return true;
 	}
 
-
 	/**
 	 * Run all the test cases in this suite.
-	 * This is to allow running from {@code org.owasp.esapi.AllTests}.
+	 * This is to allow running from {@code org.owasp.esapi.AllTests} which
+	 * uses a JUnit 3 test runner.
 	 */
 	public static junit.framework.Test suite() {
-		junit.framework.TestSuite suite =
-			new junit.framework.TestSuite(CryptoHelperTest.class);
-
-		return suite;
+		return new JUnit4TestAdapter(CryptoHelperTest.class);
 	}
-
 }
