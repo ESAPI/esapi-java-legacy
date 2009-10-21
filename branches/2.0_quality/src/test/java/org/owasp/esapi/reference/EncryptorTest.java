@@ -26,6 +26,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.CipherText;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encryptor;
+import org.owasp.esapi.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
@@ -82,7 +83,7 @@ public class EncryptorTest extends TestCase {
      * @throws EncryptionException
      */
     public void testHash() throws EncryptionException {
-        System.out.println("hash");
+        System.out.println("testHash()");
         Encryptor instance = ESAPI.encryptor();
         String hash1 = instance.hash("test1", "salt");
         String hash2 = instance.hash("test2", "salt");
@@ -93,25 +94,25 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of old, deprecated encrypt method, of class org.owasp.esapi.Encryptor.
+	 * Test of deprecated encrypt method for Strings.
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
 	 */
     public void testEncrypt() throws EncryptionException {
-        System.out.println("encrypt");
+        System.out.println("testEncrypt()");
         Encryptor instance = ESAPI.encryptor();
-        String plaintext = "test123";
+        String plaintext = "test123456";	// Not multiple of block cipher size
         String ciphertext = instance.encrypt(plaintext);
     	String result = instance.decrypt(ciphertext);
         assertEquals(plaintext, result);
     }
 
     /**
-	 * Test of old, deprecated decrypt method, of class org.owasp.esapi.Encryptor.
+	 * Test of deprecated decrypt method for Strings.
 	 */
     public void testDecrypt() {
-        System.out.println("decrypt");
+        System.out.println("testDecrypt()");
         Encryptor instance = ESAPI.encryptor();
         try {
             String plaintext = "test123";
@@ -129,6 +130,7 @@ public class EncryptorTest extends TestCase {
      * Test of new encrypt / decrypt methods added in ESAPI 2.0.
      */
     public void testNewEncryptDecrypt() {
+    	System.out.println("testNewEncryptDecrypt()");
     	try {
 			runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
 			runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
@@ -141,16 +143,25 @@ public class EncryptorTest extends TestCase {
     	
     }
     
-    private void runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
+    /**
+     * Helper method to test new encryption / decryption.
+     * @param cipherXform	Cipher transformation
+     * @param keySize	Size of key, in bits.
+     * @param plaintextBytes Byte array of plaintext.
+     * @return The base64-encoded IV+ciphertext (or just ciphertext if no IV).
+     */
+    private String runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
     	System.out.println("New encrypt / decrypt: " + cipherXform);
     	// Let's try it with a 2 key version of 3DES. If we were to use the 3 key version
     	// if would force all the ESAPI developers to download the unlimited export JCE
-    	// jurisdiction policy files.
-    	try { 
+    	// jurisdiction policy files just to run our JUnit test cases.
+    	try {
+    		// Generate an appropriate random secret key
 			SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);	
 			assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
 			String cipherAlg = cipherXform.split("/")[0];
 			
+			// Adjust key size for DES and DESede special oddities.
 			// NOTE: Key size that encrypt() method is using is 192 bits!!!
     		//        which is 3 times 64 bits, but DES key size is only 56 bits.
     		// See 'DISCUSS' note, JavaEncryptor, near line 288. It's a "feature"!!!
@@ -159,32 +170,73 @@ public class EncryptorTest extends TestCase {
 			} else if ( cipherAlg.equals( "DES" ) ) {
 				keySize = 64;
 			} // Else... use specified keySize.
-			assertTrue( keySize / 8 == skey.getEncoded().length );
+			assertTrue( (keySize / 8) == skey.getEncoded().length );
 System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.getEncoded().length);
 
-			// Change the cipher transform from whatever it is to specified cipherXform.
+			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
+			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
+			// Change the cipher transform from whatever it currently is to the specified cipherXform.
 	    	String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
-System.out.println("Cipher xform changed from " + oldCipherXform + " to \"" + cipherXform + "\"");
+	    	if ( ! cipherXform.equals(oldCipherXform) ) {
+	    		System.out.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
+	    	}
+	    	
+	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
 	    	Encryptor instance = ESAPI.encryptor();
-	    	String origPlaintext = new String(plaintextBytes, "UTF-8");
-	    	byte[] ptBytes = origPlaintext.getBytes("UTF-8");
-	    	CipherText ciphertext = instance.encrypt(skey, ptBytes, true);	// New encrypt() method.
-System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
+	    	PlainText plaintext = new PlainText(plaintextBytes);
+	    	PlainText origPlainText = new PlainText( plaintext.toString() ); // Make _copy_ of original for comparison.
+	    	
+	    	// Do the encryption with the new encrypt() method and get back the CipherText.
+	    	CipherText ciphertext = instance.encrypt(skey, plaintext);	// The new encrypt() method.
+	    	System.out.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
 	    	assertTrue( ciphertext != null );
-	    	assertTrue( checkByteArray(ptBytes, (byte)'*') );
-	    	byte[] resultBytes = instance.decrypt(skey, ciphertext);		// New decrypt() method.
-	    	String plaintextString = new String(resultBytes, "UTF-8");
-	    	assertTrue( plaintextString.equals(origPlaintext) );
+//	    	System.out.println("DEBUG: After encryption: base64-encoded IV+ciphertext: " + ciphertext.getEncodedIVCipherText());
+//	    	System.out.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getEncodedIVCipherText()) );
+//	    	System.out.println("DEBUG: After encryption: base64-encoded raw ciphertext: " + ciphertext.getBase64EncodedRawCipherText());
+//	    	System.out.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getBase64EncodedRawCipherText()) );
+
+	    	// If we are supposed to have overwritten the plaintext, check this to see
+	    	// if origPlainText was indeed overwritten.
+			boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
+			if ( overwritePlaintext ) {
+				assertTrue( isPlaintextOverwritten(plaintext) );
+			}
+	    	
+	    	// Take the resulting ciphertext and decrypt w/ new decryption method.
+	    	PlainText decryptedPlaintext  = instance.decrypt(skey, ciphertext);		// The new decrypt() method.
+	    	
+	    	// Make sure we got back the same thing we started with.
+	    	System.out.println("\tOriginal plaintext: " + origPlainText);
+	    	System.out.println("\tResult after decryption: " + decryptedPlaintext);
+			assertTrue( "Failed to decrypt properly.", origPlainText.toString().equals( decryptedPlaintext.toString() ) );
+	    	
+	    	// Restore the previous cipher transformation.
 	    	String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
 	    	assertTrue( previousCipherXform.equals( cipherXform ) );
 	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
 	    	assertTrue( defaultCipherXform.equals( oldCipherXform ) );
+	    	
+	    	return ciphertext.getEncodedIVCipherText();
 		} catch (Exception e) {
 			// OK if not counted toward code coverage.
-			System.err.println("testNewEncryptDecrypt(): Caught unexpected exception: " + e.getClass().getName());
-			e.printStackTrace(System.err);
+			System.out.println("testNewEncryptDecrypt(): Caught unexpected exception: " + e.getClass().getName());
+			e.printStackTrace(System.out);
 			fail("Caught unexpected exception; msg was: " + e.getMessage());
 		}
+		return null;
+    }
+    
+    private static boolean isPlaintextOverwritten(PlainText plaintext) {
+    	// Note: An assumption here that the original plaintext did not consist
+    	// entirely of all '*' characters.
+    	byte[] ptBytes = plaintext.asBytes();
+    	
+    	for ( int i = 0; i < ptBytes.length; i++ ) {
+    		if ( ptBytes[i] != '*' ) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
     
     // TODO - Because none of the encryption / decryption tests persists
@@ -202,7 +254,14 @@ System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
     //		  Files saved across tests need to be added to SVN (under
     //		  resources or where) and they should be named so we know
     //		  where and how they were created. E.g., WinOS-AES-ECB.dat,
-    //		  Sparc-Solaris-AEC-CBC-PKCS5Padding.dat, etc.
+    //		  Sparc-Solaris-AEC-CBC-PKCS5Padding.dat, etc., but they should be
+    //		  able to be decrypted from any platform. May wish to place that
+    //		  under a separate JUnit test.
+    //
+    // TODO - Need to test rainy day paths of new encrypt / decrypt so can
+    //		  verify that exception handling working OK, etc. Maybe also in
+    //		  a separate JUnit test, since everything here seems to be sunny
+    //		  day path.
     //
     //				-kevin wall
     
@@ -214,7 +273,7 @@ System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
 	 *             the encryption exception
 	 */
     public void testSign() throws EncryptionException {
-        System.out.println("sign");        
+        System.out.println("testSign()");        
         Encryptor instance = ESAPI.encryptor();
         String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
@@ -230,7 +289,7 @@ System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
 	 *             the encryption exception
 	 */
     public void testVerifySignature() throws EncryptionException {
-        System.out.println("verifySignature");
+        System.out.println("testVerifySignature()");
         Encryptor instance = ESAPI.encryptor();
         String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
@@ -244,7 +303,7 @@ System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
      * @throws IntegrityException
 	 */
     public void testSeal() throws IntegrityException {
-        System.out.println("seal");
+        System.out.println("testSeal()");
         Encryptor instance = ESAPI.encryptor(); 
         String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
@@ -257,7 +316,7 @@ System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
      * @throws EnterpriseSecurityException
 	 */
     public void testVerifySeal() throws EnterpriseSecurityException {
-        System.out.println("verifySeal");
+        System.out.println("testVerifySeal()");
         Encryptor instance = ESAPI.encryptor(); 
         String plaintext = "ridiculous";
         String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000*60 ) );
@@ -309,10 +368,14 @@ System.out.println("Encrypt(): Returned ciphertext -- " + ciphertext);
      * @throws Exception
      */
     public void testMain() throws Exception {
-        System.out.println("Encryptor Main");
+        System.out.println("testMain(): Encryptor Main");
         String[] args = {};
         JavaEncryptor.main( args );        
         String[] args1 = {"-print"};
+        // It probably would be a better if System.out were changed to be
+        // a file or a byte stream so that the output could be slurped up
+        // and checked against (at least some of) the expected output.
+        // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         JavaEncryptor.main( args1 );        
     }
     
