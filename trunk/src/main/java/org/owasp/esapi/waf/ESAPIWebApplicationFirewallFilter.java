@@ -124,11 +124,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
 
 		String realLogSettingsFilename = fc.getServletContext().getRealPath(logSettingsFilename);
-
-		if ( ! new File(realLogSettingsFilename).exists() ) {
+		
+		if ( realLogSettingsFilename == null || (! new File(realLogSettingsFilename).exists()) ) {
 			throw new ServletException("[ESAPI WAF] Could not find log file at resolved path: " + realLogSettingsFilename);
 		}
-		
+
 		/*
 		 * Pull main configuration file.
 		 */
@@ -136,8 +136,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		configurationFilename = fc.getInitParameter(CONFIGURATION_FILE_PARAM);
 
 		String realConfigFilename = fc.getServletContext().getRealPath(configurationFilename);
-
-		if ( ! new File(realConfigFilename).exists() ) {
+		
+		if ( realConfigFilename == null || ! new File(realConfigFilename).exists() ) {
 			throw new ServletException("[ESAPI WAF] Could not find configuration file at resolved path: " + realConfigFilename);
 		}
 
