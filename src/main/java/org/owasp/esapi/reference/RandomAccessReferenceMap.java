@@ -37,9 +37,6 @@ public class RandomAccessReferenceMap extends AbstractAccessReferenceMap<String>
 	
 	private static final long serialVersionUID = 8544133840739803001L;
 
-	/** The random. */
-	Randomizer random = ESAPI.randomizer();
-
    public RandomAccessReferenceMap()
    {
    }
@@ -65,7 +62,7 @@ public class RandomAccessReferenceMap extends AbstractAccessReferenceMap<String>
 	protected synchronized String getUniqueReference() {
 		String candidate;
 		do {
-			candidate = random.getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
+			candidate = ESAPI.randomizer().getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
 		} while (itod.keySet().contains(candidate));
 		return candidate;
 	}
