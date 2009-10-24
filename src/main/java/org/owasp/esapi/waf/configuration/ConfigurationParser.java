@@ -1,6 +1,23 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
+ */
 package org.owasp.esapi.waf.configuration;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +30,13 @@ import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
-import org.owasp.esapi.errors.ConfigurationException;
+import org.apache.log4j.Level;
+import org.owasp.esapi.waf.ConfigurationException;
 import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.waf.rules.AddHeaderRule;
 import org.owasp.esapi.waf.rules.AddSecureFlagRule;
 import org.owasp.esapi.waf.rules.AuthenticatedRule;
+import org.owasp.esapi.waf.rules.BeanShellRule;
 import org.owasp.esapi.waf.rules.DetectOutboundContentRule;
 import org.owasp.esapi.waf.rules.EnforceHTTPSRule;
 import org.owasp.esapi.waf.rules.HTTPMethodRule;
@@ -29,6 +48,8 @@ import org.owasp.esapi.waf.rules.RestrictContentTypeRule;
 import org.owasp.esapi.waf.rules.RestrictUserAgentRule;
 import org.owasp.esapi.waf.rules.SimpleVirtualPatchRule;
 
+import bsh.EvalError;
+
 
 public class ConfigurationParser {
 
@@ -37,6 +58,12 @@ public class ConfigurationParser {
 	private static final String JEESESSIONID = "JSESSIONID";
 	private static final int DEFAULT_RESPONSE_CODE = 403;
 
+	private static final String[] STAGES = {
+		"before-request-body",
+		"after-request-body",
+		"before-response"
+	};
+	
 	public static AppGuardianConfiguration readConfigurationFile(InputStream stream) throws ConfigurationException {
 
 		AppGuardianConfiguration config = new AppGuardianConfiguration();
@@ -59,7 +86,9 @@ public class ConfigurationParser {
 			Element customRulesRoot = root.getFirstChildElement("custom-rules");;
 			Element virtualPatchesRoot = root.getFirstChildElement("virtual-patches");
 			Element outboundRoot = root.getFirstChildElement("outbound-rules");
-
+			Element beanShellRoot = root.getFirstChildElement("bean-shell-rules");
+			
+			
 			/**
 			 * Parse the 'aliases' section.
 			 */
@@ -95,22 +124,21 @@ public class ConfigurationParser {
 	
 				Element errorHandlingRoot = settingsRoot.getFirstChildElement("error-handling");
 	
-				config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-page").getValue() );
+				config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-redirect-page").getValue() );
 	
 				try {
-					config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("default-status").getValue()) );
+					config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("block-status").getValue()) );
 				} catch (Exception e) {
 					config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
 				}
 			}
 			
-			/*
+			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
 			if ( loggingRoot != null ) {
-				Element loggingRoot = settingsRoot.getFirstChildElement("logging");
-				AppGuardianConfiguration.LOG_DIRECTORY = loggingRoot.getFirstChildElement("log-directory").getValue();
-				AppGuardianConfiguration.LOG_LEVEL = Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue());
+				config.setLogDirectory(loggingRoot.getFirstChildElement("log-directory").getValue());
+				config.setLogLevel(Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
 			}
-			*/
+			
 
 			/**
 			 * Parse the 'authentication-rules' section if they have one.
@@ -142,6 +170,7 @@ public class ConfigurationParser {
 					Element restrictNodeRoot = restrictNodes.get(i);
 					String id = restrictNodeRoot.getAttributeValue("id");
 					Pattern ips = Pattern.compile(restrictNodeRoot.getAttributeValue("ip-regex"));
+					
 					if ( REGEX.equalsIgnoreCase(restrictNodeRoot.getAttributeValue("type")) ) {
 						config.addBeforeBodyRule( new IPRule(id, ips, Pattern.compile(restrictNodeRoot.getValue())));
 					} else {
@@ -307,7 +336,7 @@ public class ConfigurationParser {
 					}
 
 					if ( allow != null ) {
-
+						
 						config.addBeforeBodyRule( new RestrictUserAgentRule(id, Pattern.compile(allow), null) );
 
 					} else if ( deny != null ) {
@@ -335,13 +364,16 @@ public class ConfigurationParser {
 				}
 			}
 
+			// Haven't implemented this yet. Not sure what we want those rules to look like.
+			/*
 			if ( customRulesRoot != null ) {
 				Elements rules = customRulesRoot.getChildElements("rule");
-				/*
-				 * Parse the complex rules.
-				 */
+				
+				 // Parse the complex rules.
+				 
 			}
-
+			*/
+			
 			if ( outboundRoot != null ) {
 
 				/*
@@ -392,7 +424,7 @@ public class ConfigurationParser {
 					config.addCookieRule(ahfr);
 
 					if ( ahfr.doesCookieMatch(JEESESSIONID) ) {
-						config.applyHTTPOnlyFlagToSessionCookie();
+						config.setApplyHTTPOnlyFlagToSessionCookie(true);
 					}
 				}
 
@@ -418,7 +450,7 @@ public class ConfigurationParser {
 					config.addCookieRule(asfr);
 
 					if ( asfr.doesCookieMatch(JEESESSIONID) ) {
-						config.applySecureFlagToSessionCookie();
+						config.setApplySecureFlagToSessionCookie(true);
 					}
 
 				}
@@ -434,9 +466,17 @@ public class ConfigurationParser {
 					Element e = dynamicInsertionNodes.get(i);
 					String pattern = e.getAttributeValue("pattern");
 					String id = e.getAttributeValue("id");
+					String contentType = e.getAttributeValue("content-type");
+					String urlPaths = e.getAttributeValue("path");
 					Element replacement = e.getFirstChildElement("replacement");
 
-					ReplaceContentRule rcr = new ReplaceContentRule(id, Pattern.compile(pattern,Pattern.DOTALL), replacement.getValue());
+					ReplaceContentRule rcr = new ReplaceContentRule(
+							id, 
+							Pattern.compile(pattern,Pattern.DOTALL), 
+							replacement.getValue(),
+							contentType != null ? Pattern.compile(contentType) : null,
+							urlPaths != null ? Pattern.compile(urlPaths) : null);
+					
 					config.addBeforeResponseRule(rcr);
 
 				}
@@ -453,6 +493,7 @@ public class ConfigurationParser {
 					String token = e.getAttributeValue("pattern");
 					String contentType = e.getAttributeValue("content-type");
 					String id = e.getAttributeValue("id");
+					String path = e.getAttributeValue("path");
 
 					if ( token == null ) {
 						throw new ConfigurationException("<detect-content> rules must contain a 'pattern' attribute");
@@ -460,12 +501,69 @@ public class ConfigurationParser {
 						throw new ConfigurationException("<detect-content> rules must contain a 'content-type' attribute");
 					}
 
-					DetectOutboundContentRule docr = new DetectOutboundContentRule(id, Pattern.compile(contentType),Pattern.compile(token,Pattern.DOTALL));
+					DetectOutboundContentRule docr = new DetectOutboundContentRule(
+							id, 
+							Pattern.compile(contentType),
+							Pattern.compile(token,Pattern.DOTALL),
+							path != null ? Pattern.compile(path) : null);
+					
 					config.addBeforeResponseRule(docr);
 
 				}
 
 			}
+			
+			/**
+			 * Parse the 'bean-shell-rules' section.
+			 */
+			
+			if ( beanShellRoot != null ) {
+			
+				Elements beanShellRules = beanShellRoot.getChildElements("bean-shell-script");
+				
+				for (int i=0;i<beanShellRules.size(); i++) {
+
+					Element e = beanShellRules.get(i);
+					
+					String ruleName = e.getAttributeValue("name");
+					String fileName = e.getAttributeValue("file");
+					String stage = e.getAttributeValue("stage"); //
+					String path = e.getAttributeValue("path");
+					
+					if ( ruleName == null ) {
+						throw new ConfigurationException("bean shell rules all require a unique 'ruleName' attribute");
+					}
+					
+					if ( fileName == null ) {
+						throw new ConfigurationException("bean shell rules all require a unique 'file' attribute that has the location of the .bsh script" );
+					}
+					
+					try {
+						
+						BeanShellRule bsr = new BeanShellRule(
+								fileName, 
+								ruleName,
+								path != null ? Pattern.compile(path) : null);
+						
+						if ( STAGES[0].equals(stage) ) {
+							config.addBeforeBodyRule(bsr);
+						} else if ( STAGES[1].equals(stage)) {
+							config.addAfterBodyRule(bsr);
+						} else if ( STAGES[2].equals(stage)) {
+							config.addBeforeResponseRule(bsr);
+						} else {
+							throw new ConfigurationException("bean shell rules all require a 'stage' attribute when the rule should be fired (valid values are " + STAGES[0] + ", " + STAGES[1] + ", or " + STAGES[2] + ")" );
+						}
+												
+					} catch (FileNotFoundException fnfe) {
+						throw new ConfigurationException ("bean shell rule '" + ruleName + "' had a source file that could not be found (" + fileName + ")");
+					} catch (EvalError ee) {
+						throw new ConfigurationException ("bean shell rule '" + ruleName + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
+					}
+					
+				}
+			}
+
 
 		} catch (ValidityException e) {
 			throw new ConfigurationException(e);

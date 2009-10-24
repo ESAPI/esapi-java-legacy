@@ -1,3 +1,18 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
+ */
 package org.owasp.esapi.waf.configuration;
 
 import java.util.ArrayList;
@@ -25,11 +40,18 @@ public class AppGuardianConfiguration {
 	public static final int OPERATOR_EXISTS = 3;
 
 	/*
-	 * Logging settings.
+	 * We have static copies of the log settings so that the Rule objects
+	 * can access them, because they don't have access to the instance of
+	 * the configuration object.
 	 */
-	public static Level LOG_LEVEL = Level.INFO;
+	public static Level LOG_LEVEL = Level.INFO;	
 	public static String LOG_DIRECTORY = "/WEB-INF/logs";
 
+	/*
+	 * Logging settings.
+	 */
+	private Level logLevel = Level.INFO;
+	private String logDirectory = "/WEB-INF/logs";
 
 	/*
 	 * Default settings.
@@ -41,9 +63,6 @@ public class AppGuardianConfiguration {
 	// TODO: use UTF-8
 	public static String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 	public static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_CHARACTER_ENCODING;
-
-	public static boolean FORCE_HTTP_ONLY_FLAG_TO_SESSION = false;
-	public static boolean FORCE_SECURE_FLAG_TO_SESSION = false;
 
 	/*
 	 * The JavaScript to redirect users to the default error page. Have
@@ -64,6 +83,10 @@ public class AppGuardianConfiguration {
 	private String defaultErrorPage;
 	private int defaultResponseCode;
 
+	private boolean forceHttpOnlyFlagToSession = false;
+	private boolean forceSecureFlagToSession = false;
+
+	
 	/*
 	 * The object-level rules encapsulated by the stage in which they are executed.
 	 */
@@ -81,6 +104,25 @@ public class AppGuardianConfiguration {
 		aliases = new HashMap<String,Object>();
 	}
 
+	public Level getLogLevel() {
+		return logLevel;
+	}
+	
+	public void setLogLevel(Level level) {
+		LOG_LEVEL = level;
+		this.logLevel = level;
+	}
+	
+	
+	public void setLogDirectory(String dir) {
+		LOG_DIRECTORY = dir;
+		this.logDirectory = dir;
+	}
+	
+	public String getLogDirectory() {
+		return logDirectory;
+	}
+	
 	public String getDefaultErrorPage() {
 		return defaultErrorPage;
 	}
@@ -133,14 +175,22 @@ public class AppGuardianConfiguration {
 		cookieRules.add(r);
 	}
 
-	public void applyHTTPOnlyFlagToSessionCookie() {
-		FORCE_HTTP_ONLY_FLAG_TO_SESSION = true;
+	public void setApplyHTTPOnlyFlagToSessionCookie(boolean shouldApply) {
+		forceHttpOnlyFlagToSession = shouldApply;
 	}
 
-	public void applySecureFlagToSessionCookie() {
-		FORCE_SECURE_FLAG_TO_SESSION = true;
+	public void setApplySecureFlagToSessionCookie(boolean shouldApply) {
+		forceSecureFlagToSession = shouldApply;
+	}
+	
+	public boolean isUsingHttpOnlyFlagOnSessionCookie() {
+		return forceHttpOnlyFlagToSession;
 	}
 
+	public boolean isUsingSecureFlagOnSessionCookie() {
+		return forceSecureFlagToSession;
+	}
+	
 	public String toString() {
 		StringBuilder sb = new StringBuilder( "WAF Configuration\n" );
 		sb.append( "Before body rules:\n" );

@@ -1,3 +1,18 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
+ */
 package org.owasp.esapi.waf.rules;
 
 import java.io.IOException;
@@ -6,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
@@ -16,10 +32,14 @@ public class ReplaceContentRule extends Rule {
 
 	private Pattern pattern;
 	private String replacement;
-
-	public ReplaceContentRule(String id, Pattern pattern, String replacement) {
+	private Pattern contentType;
+	private Pattern path;
+	
+	public ReplaceContentRule(String id, Pattern pattern, String replacement, Pattern contentType, Pattern path) {
 		this.pattern = pattern;
 		this.replacement = replacement;
+		this.path = path;
+		this.contentType = contentType;
 		setId(id);
 	}
 
@@ -28,26 +48,43 @@ public class ReplaceContentRule extends Rule {
 	 */
 
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
 		/*
-		 * First thing to decide is if the content type is one we'd like to search for output patterns.
+		 * First early fail: if the URL doesn't match the paths we're interested in.
+		 */
+		
+		if ( path != null && ! path.matcher(request.getRequestURL().toString()).matches() ) {
+			return new DoNothingAction();
+		}
+		
+		/*
+		 * Second early fail: if the content type is one we'd like to search for output patterns.
 		 */
 
+		if ( contentType != null ) {
+			if ( response.getContentType() != null && ! contentType.matcher(response.getContentType()).matches() ) {
+				return new DoNothingAction();
+			}
+		}
+		
 		try {
 
 			String s = new String(bytes,response.getCharacterEncoding());
 
 			Matcher m = pattern.matcher(s);
-			m.replaceAll(replacement);
-
+			String canary = m.replaceAll(replacement);
+			
 			try {
-				response.getInterceptingServletOutputStream().setResponseBytes(s.getBytes(response.getCharacterEncoding()));
-
-				logger.log(AppGuardianConfiguration.LOG_LEVEL, "Successfully replaced pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "'");
-
+				
+				if ( ! s.equals(canary) ) {
+					response.getInterceptingServletOutputStream().setResponseBytes(canary.getBytes(response.getCharacterEncoding()));
+					logger.log(AppGuardianConfiguration.LOG_LEVEL, "Successfully replaced pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "'");
+				}
+				
 			} catch (IOException ioe) {
 				logger.log(AppGuardianConfiguration.LOG_LEVEL, "Failed to replace pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "' due to [" + ioe.getMessage() + "]");
 			}
