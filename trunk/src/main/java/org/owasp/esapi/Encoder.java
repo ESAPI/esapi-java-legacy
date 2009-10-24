@@ -52,53 +52,80 @@ import org.owasp.esapi.errors.EncodingException;
  * @since June 1, 2007
  */
 public interface Encoder {
+	
+	/**
+	 * Standard character sets
+	 */
 
-	/** Standard character sets */
-	public final static char[] CHAR_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	/**  
+	 * @deprecated Use {@link EncoderConstants#CHAR_LOWERS} instead*/
+	@Deprecated
+	public final static char[] CHAR_LOWERS = EncoderConstants.CHAR_LOWERS;
     /**
-     *
-     */
-    public final static char[] CHAR_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	 * @deprecated Use {@link EncoderConstants#CHAR_UPPERS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_UPPERS = EncoderConstants.CHAR_UPPERS;
     /**
-     *
-     */
-    public final static char[] CHAR_DIGITS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' };
+	 * @deprecated Use {@link EncoderConstants#CHAR_DIGITS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_DIGITS = EncoderConstants.CHAR_DIGITS;
     /**
-     *
-     */
-    public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
+	 * @deprecated Use {@link EncoderConstants#CHAR_SPECIALS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_SPECIALS = EncoderConstants.CHAR_SPECIALS;
     /**
-     *
-     */
-    public final static char[] CHAR_LETTERS = StringUtilities.union(CHAR_LOWERS, CHAR_UPPERS);
+	 * @deprecated Use {@link EncoderConstants#CHAR_LETTERS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_LETTERS = EncoderConstants.CHAR_LETTERS;
     /**
-     *
-     */
-    public final static char[] CHAR_ALPHANUMERICS = StringUtilities.union(CHAR_LETTERS, CHAR_DIGITS);
+	 * @deprecated Use {@link EncoderConstants#CHAR_ALPHANUMERICS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_ALPHANUMERICS = EncoderConstants.CHAR_ALPHANUMERICS;
 	
 	
 	/**
 	 * Password character set, is alphanumerics (without l, i, I, o, O, and 0)
 	 * selected specials like + (bad for URL encoding, | is like i and 1,
 	 * etc...)
+	 * @deprecated Use {@link EncoderConstants#CHAR_PASSWORD_LOWERS} instead
 	 */
-	public final static char[] CHAR_PASSWORD_LOWERS = { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'j', 'k', 'm', 'n', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+	@Deprecated
+	public final static char[] CHAR_PASSWORD_LOWERS = EncoderConstants.CHAR_PASSWORD_LOWERS;
     /**
-     *
-     */
-    public final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
+	 * @deprecated Use {@link EncoderConstants#CHAR_PASSWORD_UPPERS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_PASSWORD_UPPERS = EncoderConstants.CHAR_PASSWORD_UPPERS;
     /**
-     *
-     */
-    public final static char[] CHAR_PASSWORD_DIGITS = { '2', '3', '4', '5', '6', '7', '8', '9' };
+	 * @deprecated Use {@link EncoderConstants#CHAR_PASSWORD_DIGITS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_PASSWORD_DIGITS = EncoderConstants.CHAR_PASSWORD_DIGITS;
     /**
-     *
-     */
-    public final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
+	 * @deprecated Use {@link EncoderConstants#CHAR_PASSWORD_SPECIALS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_PASSWORD_SPECIALS = EncoderConstants.CHAR_PASSWORD_SPECIALS;
     /**
-     *
-     */
-    public final static char[] CHAR_PASSWORD_LETTERS = StringUtilities.union( CHAR_PASSWORD_LOWERS, CHAR_PASSWORD_UPPERS );
+	 * @deprecated Use {@link EncoderConstants#CHAR_PASSWORD_LETTERS} instead
+	 *
+	 */
+	@Deprecated
+	public final static char[] CHAR_PASSWORD_LETTERS = EncoderConstants.CHAR_PASSWORD_LETTERS;
+    
 
 
 	/**
