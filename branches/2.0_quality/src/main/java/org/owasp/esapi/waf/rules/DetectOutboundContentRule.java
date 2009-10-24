@@ -1,9 +1,25 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
+ */
 package org.owasp.esapi.waf.rules;
 
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -15,34 +31,58 @@ public class DetectOutboundContentRule extends Rule {
 
 	private Pattern contentType;
 	private Pattern pattern;
-
-	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern) {
+	private Pattern url;
+	
+	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern, Pattern url) {
 		this.contentType = contentType;
 		this.pattern = pattern;
+		this.url = url;
 		setId(id);
 	}
 
 	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
+			InterceptingHTTPServletResponse response, 
+			HttpServletResponse httpResponse) {
 
 		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
 		/*
-		 * First thing to decide is if the content type is one we'd like to search for output patterns.
+		 * Early fail: if URL doesn't match.
 		 */
-
-		if ( response.getContentType() == null ) {
-			response.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+		if ( url != null && ! url.matcher(request.getRequestURL().toString()).matches() ) {
+			return new DoNothingAction(); 
 		}
 
-		if ( contentType.matcher(response.getContentType()).matches() ) {
+		/*
+		 * Early fail: if the content type is one we'd like to search for output patterns.
+		 */
+
+		String inboundContentType;
+		String charEnc;
+		
+		if ( response != null ) {
+			if ( response.getContentType() == null ) {
+				response.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+			}
+			inboundContentType = response.getContentType();
+			charEnc = response.getCharacterEncoding();
+			
+		} else {
+			if ( httpResponse.getContentType() == null ) {
+				httpResponse.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+			}
+			inboundContentType = httpResponse.getContentType();
+			charEnc = httpResponse.getCharacterEncoding();
+		}
+	
+		if ( contentType.matcher(inboundContentType).matches() ) {
 			/*
 			 * Depending on the encoding, search through the bytes
 			 * for the pattern.
 			 */
 			try {
 
-				String s = new String(bytes,response.getCharacterEncoding());
+				String s = new String(bytes,charEnc);
 
 				if ( pattern.matcher(s).matches() ) {
 

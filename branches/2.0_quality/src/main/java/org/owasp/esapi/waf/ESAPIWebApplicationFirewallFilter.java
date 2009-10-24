@@ -1,3 +1,18 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2009 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @created 2009
+ */
 package org.owasp.esapi.waf;
 
 import java.io.File;
@@ -20,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
-import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.BlockAction;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -32,7 +46,15 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 import org.owasp.esapi.waf.rules.Rule;
 
 /**
- * Entry point for the ESAPI's web application firewall (codename AppGuard?).
+ * This is the main class for the ESAPI Web Application Firewall (WAF). It is a standard J2EE servlet filter
+ * that, in different methods, invokes the reading of the configuration file and handles the runtime processing
+ * and enforcing of the developer-specified rules.
+ * 
+ * Ideally the filter should be configured to catch all requests (/*) in web.xml. If there are URL segments that
+ * need to be extremely fast and don't require any protection, the pattern may be modified with extreme caution.
+ *  
+ * @author Arshan Dabirsiaghi
+ *
  */
 public class ESAPIWebApplicationFirewallFilter implements Filter {
 
@@ -40,25 +62,37 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	private static final String CONFIGURATION_FILE_PARAM = "configuration";
 	private static final String LOGGING_FILE_PARAM = "log_settings";
-	private static final String PREFERRED_ENCODING = "UTF-8";
-
+	private static final String POLLING_TIME_PARAM = "polling_time";
+	
+	private static final int DEFAULT_POLLING_TIME = 30000;
+	
 	private String configurationFilename = null;
 
 	private String logSettingsFilename = null;
 
+	private long pollingTime;
+	
+	private long lastConfigReadTime;
+	
 	private static final String SESSION_COOKIE_NAME = "JSESSIONID";
-	private static final String FAUX_SESSION_COOKIE = "self_monster";
-	private static final String SESSION_COOKIE_CANARY = "sid_canary";
+	private static final String FAUX_SESSION_COOKIE = "JSESSIONID_2";
+	private static final String SESSION_COOKIE_CANARY = "org.owasp.esapi.waf.canary";
 
+	private FilterConfig fc;
+	
 	private static Logger logger = Logger.getLogger(ESAPIWebApplicationFirewallFilter.class);
 
-	public void setConfiguration( InputStream is ) {
+	/**
+	 * This function is used in testing to dynamically alter the configuration.
+	 * @param is The InputStream from which to read the XML configuration file.
+	 */
+	public void setConfiguration( String policyFilePath ) throws FileNotFoundException {
 		try {
-			appGuardConfig = ConfigurationParser.readConfigurationFile(is);
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(new File(policyFilePath)));
+			lastConfigReadTime = System.currentTimeMillis();
+			configurationFilename = policyFilePath;
 		} catch (ConfigurationException e ) {
-			// e.printStackTrace(); // FIXME
-			// Is this what someone had in mind by the FIXME comment? If not, then what?
-			logger.error("Error reading or parsing configuration file.", e);
+			e.printStackTrace();
 		}
 	}
 	
@@ -66,9 +100,23 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		return appGuardConfig;
 	}
 	
+	
+	/**
+	 * 
+	 * This function is invoked at application startup and when the configuration file
+	 * polling period has elapsed and a change in the configuration file has been detected.
+	 * 
+	 * It's main purpose is to read the configuration file and establish the configuration
+	 * object model for use at runtime during the <code>doFilter()</code> method. 
+	 */
 	public void init(FilterConfig fc) throws ServletException {
 
-//		logger.info( ">> Initializing WAF" );
+		/*
+		 * This variable is saved so that we can retrieve it later to re-invoke this function.
+		 */
+		this.fc = fc;
+		
+		logger.debug( ">> Initializing WAF" );
 		/*
 		 * Pull logging file.
 		 */
@@ -76,9 +124,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
 
 		String realLogSettingsFilename = fc.getServletContext().getRealPath(logSettingsFilename);
-
-		if ( ! new File(realLogSettingsFilename).exists() ) {
-			throw new ServletException("[AppGuard] Could not find log file at resolved path: " + realLogSettingsFilename);
+		
+		if ( realLogSettingsFilename == null || (! new File(realLogSettingsFilename).exists()) ) {
+			throw new ServletException("[ESAPI WAF] Could not find log file at resolved path: " + realLogSettingsFilename);
 		}
 
 		/*
@@ -88,11 +136,24 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		configurationFilename = fc.getInitParameter(CONFIGURATION_FILE_PARAM);
 
 		String realConfigFilename = fc.getServletContext().getRealPath(configurationFilename);
-
-		if ( ! new File(realConfigFilename).exists() ) {
-			throw new ServletException("[AppGuard] Could not find configuration file at resolved path: " + realConfigFilename);
+		
+		if ( realConfigFilename == null || ! new File(realConfigFilename).exists() ) {
+			throw new ServletException("[ESAPI WAF] Could not find configuration file at resolved path: " + realConfigFilename);
 		}
 
+		/*
+		 * Find out polling time from a parameter. If none is provided, use
+		 * the default (10 seconds).
+		 */
+		
+		String sPollingTime = fc.getInitParameter(POLLING_TIME_PARAM);
+		
+		if ( sPollingTime != null ) {
+			pollingTime = Long.parseLong(sPollingTime);
+		} else {
+			pollingTime = DEFAULT_POLLING_TIME;
+		}
+		
 		/*
 		 * Open up configuration file and populate the AppGuardian configuration object.
 		 */
@@ -103,6 +164,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 			DOMConfigurator.configure(realLogSettingsFilename);
 
+			lastConfigReadTime = System.currentTimeMillis();
+			
 		} catch (FileNotFoundException e) {
 			throw new ServletException(e);
 		} catch (ConfigurationException e) {
@@ -111,13 +174,39 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	}
 
-	/*
-	 * Entry point for every request - this piece must be extremely efficient.
+	
+	
+	/**
+	 * 
+	 * This method performs the runtime checking of rules on inbound requests and outbound responses. There is
+	 * a considerable hack in this function to accomplish setting the HTTPOnly/secure flags on the container's
+	 * session cookies, which involves a single extra request-response cycle strictly devoted to that goal. 
+	 * 
+	 * Because this extra cycle isn't ideal, you should consider enabling this protection in your container's 
+	 * configuration instead. Like many other features of the WAF, this should only be done to implement 
+	 * short-to-medium term fixes.   
 	 */
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain chain) throws IOException, ServletException {
 
-//		logger.info(">>In WAF doFilter");
+		/*
+		 * Check to see if polling time has elapsed. If it has, that means
+		 * we should check to see if the config file has been changed. If
+		 * it has, then re-read it.
+		 */
+		
+		if ( (System.currentTimeMillis() - lastConfigReadTime) > pollingTime ) {
+			File f = new File(configurationFilename);
+			if ( f.lastModified() > lastConfigReadTime ) {
+				/*
+				 * The file has been altered since it was
+				 * read in the last time. Must re-read it.
+				 */
+				init(fc);
+			}
+		}
+		
+		logger.debug(">>In WAF doFilter");
 
 		HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
 		HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
@@ -132,21 +221,24 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * The normal HttpRequest-type objects will suffice us until we get to
 		 * stage 2.
 		 *
-		 * 1st arg = the response to base this on
-		 * 2nd arg = should we bother intercepting the egress response?
-		 * 3rd arg = cookie rules cuz thats where they mostly get acted on
+		 * 1st argument = the response to base the instance on
+		 * 2nd argument = should we bother intercepting the egress response?
+		 * 3rd argument = cookie rules because thats where they mostly get acted on
 		 */
-
-		response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
-
+		
+		if ( 	appGuardConfig.getCookieRules().size() + 
+				appGuardConfig.getBeforeResponseRules().size() > 0) {
+			response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
+		}
+		
 		/*
 		 * Stage 0: Apply any cookie rules for incoming requests that don't yet have sessions.
 		 */
 
-//		logger.info(">> Starting Stage 0" );
+		logger.debug(">> Starting Stage 0" );
 
-		if ( httpRequest.getSession(false) == null && ( AppGuardianConfiguration.FORCE_SECURE_FLAG_TO_SESSION ||
-				 AppGuardianConfiguration.FORCE_HTTP_ONLY_FLAG_TO_SESSION ) ) {
+		if ( httpRequest.getSession(false) == null && ( appGuardConfig.isUsingHttpOnlyFlagOnSessionCookie() ||
+				appGuardConfig.isUsingSecureFlagOnSessionCookie() ) ) {
 
 			for(int i=0;httpRequest.getCookies() != null && i<httpRequest.getCookies().length;i++) {
 
@@ -210,20 +302,20 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 1: Rules that do not need the request body.
 		 */
-//		logger.info(">> Starting stage 1" );
+		logger.debug(">> Starting stage 1" );
 
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-			logger.info( "  Applying BEFORE rule:  " + rule.getClass().getName() );
+			logger.debug( "  Applying BEFORE rule:  " + rule.getClass().getName() );
 			
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
 			 * to do is decide what other actions to take.
 			 */
-			Action action = rule.check(httpRequest, response);
+			Action action = rule.check(httpRequest, response, httpResponse);
 
 			if ( action.isActionNecessary() ) {
 
@@ -231,7 +323,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
-					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					sendRedirect(response, httpResponse, ((RedirectAction)action).getRedirectURL()); 
 					return;
 
 				} else if ( action instanceof DefaultAction ) {
@@ -241,8 +333,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							redirectUserToErrorPage(response);
-							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							sendRedirect(response, httpResponse);
 							return;
 					}
 				}
@@ -252,7 +343,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Create the InterceptingHTTPServletRequest.
 		 */
-
+		
 		try {
 			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
 		} catch (UploadTooLargeException utle) {
@@ -264,20 +355,20 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 2: After the body has been read, but before the the application has gotten it.
 		 */
-//		logger.info(">> Starting Stage 2" );
+		logger.debug(">> Starting Stage 2" );
 
 		rules = this.appGuardConfig.getAfterBodyRules();
 
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-			logger.info( "  Applying BEFORE CHAIN rule:  " + rule.getClass().getName() );
+			logger.debug( "  Applying BEFORE CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
-			 * The rules execute in check(). The check() method will also log. All we have
-			 * to do is decide what other actions to take.
+			 * The rules execute in check(). The check() method will take care of logging. 
+			 * All we have to do is decide what other actions to take.
 			 */
-			Action action = rule.check(request, response);
+			Action action = rule.check(request, response, httpResponse);
 
 			if ( action.isActionNecessary() ) {
 
@@ -285,7 +376,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
-					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					sendRedirect(response, httpResponse, ((RedirectAction)action).getRedirectURL());
 					return;
 
 				} else if ( action instanceof DefaultAction ) {
@@ -295,8 +386,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							redirectUserToErrorPage(response);
-							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							sendRedirect(response, httpResponse);
 							return;
 					}
 				}
@@ -304,40 +394,28 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		}
 
 		/*
-		 * Create the InterceptingHTTPServletRequest.
-		 */
-
-		try {
-			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
-		} catch (UploadTooLargeException utle) {
-			utle.printStackTrace();
-		} catch (FileUploadException fue) {
-			fue.printStackTrace();
-		}
-
-		/*
 		 * In between stages 2 and 3 is the application's processing of the input.
 		 */
-//		logger.info(">> Calling the FilterChain: " + chain );
-		chain.doFilter(request, response);
+		logger.debug(">> Calling the FilterChain: " + chain );
+		chain.doFilter(request, response != null ? response : httpResponse);
 
 		/*
 		 * Stage 3: Before the response has been sent back to the user.
 		 */
-//		logger.info(">> Starting Stage 3" );
+		logger.debug(">> Starting Stage 3" );
 
 		rules = this.appGuardConfig.getBeforeResponseRules();
 
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-			logger.info( "  Applying AFTER CHAIN rule:  " + rule.getClass().getName() );
+			logger.debug( "  Applying AFTER CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
 			 * to do is decide what other actions to take.
 			 */
-			Action action = rule.check(request, response);
+			Action action = rule.check(request, response, httpResponse);
 
 			if ( action.isActionNecessary() ) {
 
@@ -345,7 +423,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
-					response.sendRedirect(((RedirectAction)action).getRedirectURL());
+					sendRedirect(response, httpResponse, ((RedirectAction)action).getRedirectURL());
 					return;
 
 				} else if ( action instanceof DefaultAction ) {
@@ -355,8 +433,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
-							redirectUserToErrorPage(response);
-							//response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+							sendRedirect(response, httpResponse);
 							return;
 					}
 				}
@@ -364,29 +441,32 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		}
 
 		/*
-		 * Create the InterceptingHTTPServletRequest.
-		 */
-
-		try {
-			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
-		} catch (UploadTooLargeException utle) {
-			utle.printStackTrace();
-		} catch (FileUploadException fue) {
-			fue.printStackTrace();
-		}
-
-
-		/*
 		 * Now that we've run our last set of rules we can allow the response to go through if
 		 * we were intercepting.
 		 */
-		if ( appGuardConfig.getBeforeResponseRules().size() + appGuardConfig.getCookieRules().size() > 0 ) {
-			System.out.println( "      >>> committing reponse" );
+		
+		if ( response != null ) {
+			logger.debug(">>> committing reponse" );
+			response.commit();
 		}
-		response.commit();
 	}
 
-
+	/*
+	 * Utility method to send HTTP redirects that automatically determines which response class to use.
+	 */
+	private void sendRedirect(InterceptingHTTPServletResponse response,
+			HttpServletResponse httpResponse, String redirectURL) throws IOException {
+		
+		if ( response != null ) { // if we've been buffering everything we clean it all out before sending back.
+			response.reset();
+			response.resetBuffer();
+			response.sendRedirect(redirectURL);
+			response.commit();
+		} else {
+			httpResponse.sendRedirect(redirectURL);
+		}
+		
+	}
 
 	/**
 	 * Remove a browser cookie in an app-server-neutral way.
@@ -410,15 +490,32 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 	}
 
-	public void redirectUserToErrorPage(InterceptingHTTPServletResponse response) throws IOException {
+	
+	private void sendRedirect(InterceptingHTTPServletResponse response, HttpServletResponse httpResponse) throws IOException {
 		String finalJavaScript = AppGuardianConfiguration.JAVASCRIPT_REDIRECT;
 		finalJavaScript = finalJavaScript.replaceAll(AppGuardianConfiguration.JAVASCRIPT_TARGET_TOKEN, appGuardConfig.getDefaultErrorPage());
 
-		response.reset();
-		response.resetBuffer();
-		response.setStatus(appGuardConfig.getDefaultResponseCode());
-		response.getOutputStream().write(finalJavaScript.getBytes(response.getCharacterEncoding()));
-		response.commit();
+		if ( response != null ) {
+			response.reset();
+			response.resetBuffer();
+			/*
+			response.setStatus(appGuardConfig.getDefaultResponseCode());
+			response.getOutputStream().write(finalJavaScript.getBytes());
+			*/
+			response.sendRedirect(appGuardConfig.getDefaultErrorPage());
+			
+		} else {
+			if ( ! httpResponse.isCommitted() ) {
+				httpResponse.sendRedirect(appGuardConfig.getDefaultErrorPage());
+			} else {
+				/*
+				 * Can't send redirect because response is already committed. I'm not sure 
+				 * how this could happen, but I didn't want to cause IOExceptions in case
+				 * if it ever does. 
+				 */
+			}
+			
+		}
 	}
-
+	
 }
