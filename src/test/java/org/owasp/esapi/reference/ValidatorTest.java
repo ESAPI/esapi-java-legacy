@@ -20,6 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -51,6 +52,8 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  */
 public class ValidatorTest  extends TestCase {
 
+	private static final String PREFERRED_ENCODING = "UTF-8";
+	
 	public static Test suite() {
 		return new TestSuite(ValidatorTest.class);
 	}
@@ -177,7 +180,12 @@ public class ValidatorTest  extends TestCase {
 		System.out.println("getValidFileContent");
 		Validator instance = ESAPI.validator();
 		ValidationErrorList errors = new ValidationErrorList();
-		byte[] bytes = "12345".getBytes();
+		byte[] bytes = null;
+		try {
+			bytes = "12345".getBytes(PREFERRED_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			fail(PREFERRED_ENCODING + " not a supported encoding?!?!!");
+		}
 		instance.getValidFileContent("test", bytes, 5, true, errors);
 		assertEquals( 0, errors.size() );
 		instance.getValidFileContent("test", bytes, 4, true, errors);
@@ -345,7 +353,12 @@ public class ValidatorTest  extends TestCase {
 	
 	public void testIsValidFileContent() {
 		System.out.println("isValidFileContent");
-		byte[] content = "This is some file content".getBytes();
+		byte[] content = null;
+		try {
+			content = "This is some file content".getBytes(PREFERRED_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			fail(PREFERRED_ENCODING + " not a supported encoding?!?!!!");
+		}
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileContent("test", content, 100, false));
 	}
@@ -363,13 +376,22 @@ public class ValidatorTest  extends TestCase {
 		String filepath = System.getProperty( "user.dir" );
 		String filename = "aspect.jar";
 		File parent = new File( "/" );
-		byte[] content = "This is some file content".getBytes();
+		byte[] content = null;
+		try {
+			content = "This is some file content".getBytes(PREFERRED_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			fail(PREFERRED_ENCODING + " not a supported encoding?!?!!!");
+		}
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false));
 		
 		filepath = "/ridiculous";
 		filename = "aspect.jar";
-		content = "This is some file content".getBytes();
+		try {
+			content = "This is some file content".getBytes(PREFERRED_ENCODING);
+		} catch (UnsupportedEncodingException e) {
+			fail(PREFERRED_ENCODING + " not a supported encoding?!?!!!");
+		}
 		assertFalse(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false));
 	}
 		
@@ -541,7 +563,13 @@ public class ValidatorTest  extends TestCase {
 	public void testSafeReadLine() {
 		System.out.println("safeReadLine");
 		
-		ByteArrayInputStream s = new ByteArrayInputStream("testString".getBytes());
+		byte[] bytes = null;
+		try {
+			bytes = "testString".getBytes(PREFERRED_ENCODING);
+		} catch (UnsupportedEncodingException e1) {
+			fail(PREFERRED_ENCODING + " not a supported encoding?!?!!!");
+		}
+		ByteArrayInputStream s = new ByteArrayInputStream(bytes);
 		Validator instance = ESAPI.validator();
 		try {
 			instance.safeReadLine(s, -1);

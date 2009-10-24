@@ -15,20 +15,9 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.Cookie;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
@@ -41,13 +30,20 @@ import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * The Class HTTPUtilitiesTest.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class HTTPUtilitiesTest extends TestCase {
-
+	
     /**
      * Suite.
      * 
@@ -196,8 +192,8 @@ public class HTTPUtilitiesTest extends TestCase {
         File home = new File( System.getProperty("user.home" ) + "/.esapi", "uploads" );
         String content = "--ridiculous\r\nContent-Disposition: form-data; name=\"upload\"; filename=\"testupload.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nThis is a test of the multipart broadcast system.\r\nThis is only a test.\r\nStop.\r\n\r\n--ridiculous\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\nSubmit Query\r\n--ridiculous--\r\nEpilogue";
         
-        MockHttpServletRequest request1 = new MockHttpServletRequest("/test", content.getBytes());
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        MockHttpServletResponse response = new MockHttpServletResponse();    
+        MockHttpServletRequest request1 = new MockHttpServletRequest("/test", content.getBytes(response.getCharacterEncoding()));
         ESAPI.httpUtilities().setCurrentHTTP(request1, response);
         try {
             ESAPI.httpUtilities().getFileUploads(request1, home);
@@ -206,7 +202,7 @@ public class HTTPUtilitiesTest extends TestCase {
         	// expected
         }
         
-        MockHttpServletRequest request2 = new MockHttpServletRequest("/test", content.getBytes());
+        MockHttpServletRequest request2 = new MockHttpServletRequest("/test", content.getBytes(response.getCharacterEncoding()));
         request2.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request2, response);
         try {
@@ -221,7 +217,7 @@ public class HTTPUtilitiesTest extends TestCase {
             fail();
         }
         
-        MockHttpServletRequest request4 = new MockHttpServletRequest("/test", content.getBytes());
+        MockHttpServletRequest request4 = new MockHttpServletRequest("/test", content.getBytes(response.getCharacterEncoding()));
         request4.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request4, response);
         System.err.println("UPLOAD DIRECTORY: " + ESAPI.securityConfiguration().getUploadDirectory());
@@ -238,7 +234,7 @@ public class HTTPUtilitiesTest extends TestCase {
             fail();
         }
         
-        MockHttpServletRequest request3 = new MockHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes());
+        MockHttpServletRequest request3 = new MockHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes(response.getCharacterEncoding()));
         request3.setContentType( "multipart/form-data; boundary=ridiculous");
         ESAPI.httpUtilities().setCurrentHTTP(request3, response);
         try {
@@ -464,4 +460,30 @@ public class HTTPUtilitiesTest extends TestCase {
 		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
 	    // assertEquals( user.getRememberToken(), value );
 	}
+
+    public void testGetSessionAttribute() throws Exception {
+        HttpServletRequest request = new MockHttpServletRequest();
+        HttpSession session = request.getSession();
+        session.setAttribute("testAttribute", 43f);
+
+        try {
+            Integer test1 = ESAPI.httpUtilities().getSessionAttribute( session, "testAttribute" );
+            fail();
+        } catch ( ClassCastException cce ) {}
+
+        Float test2 = ESAPI.httpUtilities().getSessionAttribute( session, "testAttribute" );
+        assertEquals( test2, 43f );
+    }
+
+    public void testGetRequestAttribute() throws Exception {
+        HttpServletRequest request = new MockHttpServletRequest();
+        request.setAttribute( "testAttribute", 43f );
+        try {
+            Integer test1 = ESAPI.httpUtilities().getRequestAttribute( request, "testAttribute" );
+            fail();
+        } catch ( ClassCastException cce ) {}
+
+        Float test2 = ESAPI.httpUtilities().getRequestAttribute( request, "testAttribute" );
+        assertEquals( test2, 43f );
+    }
 }

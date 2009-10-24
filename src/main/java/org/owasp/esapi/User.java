@@ -15,18 +15,14 @@
  */
 package org.owasp.esapi;
 
-import java.io.Serializable;
-import java.security.Principal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Set;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.AuthenticationHostException;
+import org.owasp.esapi.errors.EncryptionException;
 
 import javax.servlet.http.HttpSession;
-
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncryptionException;
+import java.io.Serializable;
+import java.security.Principal;
+import java.util.*;
 
 /**
  * The User interface represents an application user or user account. There is quite a lot of information that an
@@ -41,8 +37,8 @@ import org.owasp.esapi.errors.EncryptionException;
  * after the expiration date has been reached. The User must be enabled, not expired, and unlocked in order to pass
  * authentication.
  * 
- * @author <a href="mailto:jeff.williams@aspectsecurity.com?subject=ESAPI question">Jeff Williams</a> at <a
- * href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author <a href="mailto:jeff.williams@aspectsecurity.com?subject=ESAPI question">Jeff Williams</a> at <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Chris Schmidt (chrisisbeef .at. gmail.com) <a href="http://www.digital-ritual.com">Digital Ritual Software</a>
  * @since June 1, 2007
  */
 
@@ -77,7 +73,7 @@ public interface User extends Principal, Serializable {
      * @throws AuthenticationException 
      * 		the authentication exception
      */
-    void addRoles(Set newRoles) throws AuthenticationException;
+    void addRoles(Set<String> newRoles) throws AuthenticationException;
 
     /**
      * Sets the user's password, performing a verification of the user's old password, the equality of the two new
@@ -183,7 +179,7 @@ public interface User extends Principal, Serializable {
      * 
      * @return an immutable set of roles
      */
-    Set getRoles();
+    Set<String> getRoles();
 
     /**
      * Gets the screen name (alias) for the current user.
@@ -355,7 +351,7 @@ public interface User extends Principal, Serializable {
      * @throws AuthenticationException 
      * 		the authentication exception
      */
-    void setRoles(Set roles) throws AuthenticationException;
+    void setRoles(Set<String> roles) throws AuthenticationException;
 
     /**
      * Sets the screen name (username alias) for this user.
@@ -395,7 +391,7 @@ public interface User extends Principal, Serializable {
 	 * 
 	 * @param remoteHost The address of the user's current source host.
 	 */
-	void setLastHostAddress(String remoteHost);
+	void setLastHostAddress(String remoteHost) throws AuthenticationHostException;
 	
 	/**
 	 * Set the time of the last successful login for this user.
@@ -543,8 +539,8 @@ public interface User extends Principal, Serializable {
         /**
          * {@inheritDoc}
          */
-        public Set getRoles() {
-	        return new HashSet();
+        public Set<String> getRoles() {
+	        return new HashSet<String>();
         }
 
         /**
