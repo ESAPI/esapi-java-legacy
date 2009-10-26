@@ -123,7 +123,7 @@ public class StringValidationRule extends BaseValidationRule {
 			if (allowNull) {
 				return null;
 			}
-   			throw new ValidationException( context + ": Input required.", "Input required: context=" + context + "), input=" + input, context );
+   			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Input required.", "Input required: context=" + context + "), input=" + input, context );
 	    }
 	    
 	    // canonicalize
@@ -131,29 +131,29 @@ public class StringValidationRule extends BaseValidationRule {
 	    try {
 	    	canonical = encoder.canonicalize( input );
 	    } catch (EncodingException e) {
-	        throw new ValidationException( context + ": Invalid input. Encoding problem detected.", "Error canonicalizing user input", e, context);
+	        throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Encoding problem detected.", "Error canonicalizing user input", e, context);
 	    }
 
 		// check length
 		if (canonical.length() < minLength) {
-			throw new ValidationException( context + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input, context );
+			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input, context );
 		}
 
 		if (canonical.length() > maxLength) {
-			throw new ValidationException( context + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + ", input=" + input, context );
+			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (canonical.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + ", input=" + input, context );
 		}
 		
 		// check whitelist patterns
 		for (Pattern p : whitelistPatterns) {
 			if ( !p.matcher(canonical).matches() ) {
-    			throw new ValidationException( context + ": Invalid input. Please conform to regex " + p.pattern() + ( maxLength == Integer.MAX_VALUE ? "" : " with a maximum length of " + maxLength ), "Invalid input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input, context );
+    			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Please conform to regex " + p.pattern() + ( maxLength == Integer.MAX_VALUE ? "" : " with a maximum length of " + maxLength ), "Invalid input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input, context );
 			}
 		}
 		
 		// check blacklist patterns
 		for (Pattern p : blacklistPatterns) {
 			if ( p.matcher(canonical).matches() ) {
-    			throw new ValidationException( context + ": Invalid input. Dangerous input matching " + p.pattern() + " detected.", "Dangerous input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input, context );
+    			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Dangerous input matching " + p.pattern() + " detected.", "Dangerous input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input, context );
 			}
 		}
 		
