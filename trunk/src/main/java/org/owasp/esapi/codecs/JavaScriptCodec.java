@@ -38,17 +38,16 @@ public class JavaScriptCodec extends Codec {
      * @param immune
      */
 	public String encodeCharacter( char[] immune, Character c ) {
-		char ch = c.charValue();
-		
+
 		// check for immune characters
-		if ( containsCharacter( ch, immune ) ) {
-			return ""+ch;
+		if ( containsCharacter(c, immune ) ) {
+			return ""+c;
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = Codec.getHexForNonAlphanumeric(c);
 		if ( hex == null ) {
-			return ""+ch;
+			return ""+c;
 		}
 				
 		// Do not use these shortcuts as they can be used to break out of a context
@@ -64,8 +63,8 @@ public class JavaScriptCodec extends Codec {
 		// if ( ch == 0x5c ) return "\\\\";
 
 		// encode up to 256 with \\xHH
-        String temp = Integer.toHexString((int)ch);
-		if ( ch < 256 ) {
+        String temp = Integer.toHexString(c);
+		if ( c < 256 ) {
 	        String pad = "00".substring(temp.length() );
 	        return "\\x" + pad + temp.toUpperCase();
 		}
@@ -97,7 +96,7 @@ public class JavaScriptCodec extends Codec {
 		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '\\' ) {
+		if (first != '\\' ) {
 			input.reset();
 			return null;
 		}
@@ -111,24 +110,24 @@ public class JavaScriptCodec extends Codec {
 		// \0 collides with the octal decoder and is non-standard
 		// if ( second.charValue() == '0' ) {
 		//	return Character.valueOf( (char)0x00 );
-		if ( second.charValue() == 'b' ) {
-			return Character.valueOf( (char)0x08 );
-		} else if ( second.charValue() == 't' ) {
-			return Character.valueOf( (char)0x09 );
-		} else if ( second.charValue() == 'n' ) {
-			return Character.valueOf( (char)0x0a );
-		} else if ( second.charValue() == 'v' ) {
-			return Character.valueOf( (char)0x0b );
-		} else if ( second.charValue() == 'f' ) {
-			return Character.valueOf( (char)0x0c );
-		} else if ( second.charValue() == 'r' ) {
-			return Character.valueOf( (char)0x0d );
-		} else if ( second.charValue() == '\"' ) {
-			return Character.valueOf( (char)0x22 );
-		} else if ( second.charValue() == '\'' ) {
-			return Character.valueOf( (char)0x27 );
-		} else if ( second.charValue() == '\\' ) {
-			return Character.valueOf( (char)0x5c );
+		if (second == 'b' ) {
+			return 0x08;
+		} else if (second == 't' ) {
+			return 0x09;
+		} else if (second == 'n' ) {
+			return 0x0a;
+		} else if (second == 'v' ) {
+			return 0x0b;
+		} else if (second == 'f' ) {
+			return 0x0c;
+		} else if (second == 'r' ) {
+			return 0x0d;
+		} else if (second == '\"' ) {
+			return 0x22;
+		} else if (second == '\'' ) {
+			return 0x27;
+		} else if (second == '\\' ) {
+			return 0x5c;
 			
 		// look for \\xXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
@@ -145,9 +144,9 @@ public class JavaScriptCodec extends Codec {
 			try {
 				// parse the hex digit and create a character
 				int i = Integer.parseInt(sb.toString(), 16);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
+                if (Character.isValidCodePoint(i)) {
+                    return (char) i;
+                }
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				input.reset();
@@ -169,9 +168,9 @@ public class JavaScriptCodec extends Codec {
 			try {
 				// parse the hex string and create a character
 				int i = Integer.parseInt(sb.toString(), 16);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
+                if (Character.isValidCodePoint(i)) {
+                    return (char) i;
+                }
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				input.reset();
@@ -179,20 +178,20 @@ public class JavaScriptCodec extends Codec {
 			}
 			
 		// look for one, two, or three octal digits
-		} else if ( input.isOctalDigit( second.charValue() ) ) {
+		} else if ( PushbackString.isOctalDigit(second) ) {
 			StringBuilder sb = new StringBuilder();
             // get digit 1
             sb.append(second);
             
             // get digit 2 if present
             Character c2 = input.next();
-            if ( !input.isOctalDigit(c2) ) {
+            if ( !PushbackString.isOctalDigit(c2) ) {
             	input.pushback( c2 );
             } else {
             	sb.append( c2 );
 	            // get digit 3 if present
 	            Character c3 = input.next();
-	            if ( !input.isOctalDigit(c3) ) {
+	            if ( !PushbackString.isOctalDigit(c3) ) {
 	            	input.pushback( c3 );
 	            } else {
 	            	sb.append( c3 );
@@ -201,9 +200,9 @@ public class JavaScriptCodec extends Codec {
 			try {
 				// parse the octal string and create a character
 				int i = Integer.parseInt(sb.toString(), 8);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
+                if (Character.isValidCodePoint(i)) {
+                    return (char) i;
+                }
 			} catch( NumberFormatException e ) {
 				// throw an exception for malformed entity?
 				input.reset();

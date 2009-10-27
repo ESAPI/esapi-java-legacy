@@ -111,4 +111,13 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     	return UUID.randomUUID().toString();
     }
     	
+    /**
+     * {@inheritDoc}
+     */
+    public byte[] getRandomBytes(int n) {
+    	byte[] result = new byte[ n ];
+    	secureRandom.nextBytes(result);
+    	return result;
+    }
+    	
 }

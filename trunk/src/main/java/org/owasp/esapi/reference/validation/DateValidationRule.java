@@ -18,6 +18,7 @@ package org.owasp.esapi.reference.validation;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
@@ -33,7 +34,6 @@ import org.owasp.esapi.errors.ValidationException;
  * @see org.owasp.esapi.Validator
  */
 public class DateValidationRule extends BaseValidationRule {
-	
 	private DateFormat format = DateFormat.getDateInstance();
 	
 	public DateValidationRule( String typeName, Encoder encoder, DateFormat newFormat ) {
@@ -41,38 +41,73 @@ public class DateValidationRule extends BaseValidationRule {
 		setDateFormat( newFormat );
 	}
 	
-    public void setDateFormat( DateFormat newFormat ) {
-        if (newFormat == null) throw new RuntimeException("DateValidationRule.setDateFormat requires a non-null DateFormat");
+    public final void setDateFormat( DateFormat newFormat ) {
+        if (newFormat == null) {
+			throw new IllegalArgumentException("DateValidationRule.setDateFormat requires a non-null DateFormat");
+		}
+    	// CHECKME fail fast?
+/*		
+  		try {
+			newFormat.parse(new Date());
+		} catch (ParseException e) {
+			throw new IllegalArgumentException(e);
+		}
+*/
         this.format = newFormat;
     }
 
-	public Object getValid( String context, String input ) throws ValidationException {
+    /**
+     * {@inheritDoc}
+     */
+	public Date getValid( String context, String input ) throws ValidationException {
+		return safelyParse(context, input);
+	}
 
-		// check null
-	    if ( input == null || input.length()==0 ) {
-			if (allowNull) return null;
-			throw new ValidationException( context + ": Input date required", "Input date required: context=" + context + ", input=" + input, context );
+    /**
+     * {@inheritDoc}
+     * 
+     * Calls sanitize(String, String, DateFormat) with DateFormat.getInstance()
+     */
+	@Override
+	public Date sanitize( String context, String input )  {
+		Date date = new Date(0);
+		try {
+			date = safelyParse(context, input);
+		} catch (ValidationException e) {
+			// do nothing
 	    }
+		return date;
+	}
 	    
-	    // canonicalize
+	private Date safelyParse(String context, String input)
+			throws ValidationException {
+		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+		if (StringUtils.isEmpty(input)) {
+			if (allowNull) {
+				return null;
+			}
+			throw new ValidationException(context + ": Input date required",
+					"Input date required: context=" + context + ", input="
+							+ input, context);
+		}
+
 	    String canonical = null;
 	    try {
-	    	canonical = encoder.canonicalize( input );
+			canonical = encoder.canonicalize(input);
 	    } catch (EncodingException e) {
-	        throw new ValidationException( context + ": Invalid date input. Encoding problem detected.", "Error canonicalizing user input", e, context);
+			throw new ValidationException(context
+					+ ": Invalid date input. Encoding problem detected.",
+					"Error canonicalizing user input", e, context);
 	    }
 
-		try {			
-			Date date = format.parse( canonical );
-			// validation passed
-			return date;
+		try {
+			return format.parse(canonical);
 		} catch (Exception e) {
-			throw new ValidationException( context + ": Invalid date must follow the " + format.getNumberFormat() + " format", "Invalid date: context=" + context + ", format=" + format + ", input=" + input, e, context);
+			throw new ValidationException(context
+					+ ": Invalid date must follow the "
+					+ format.getNumberFormat() + " format",
+					"Invalid date: context=" + context + ", format=" + format
+							+ ", input=" + input, e, context);
 		}
 	}
-	
-	public Object sanitize( String context, String input )  {
-		return new Date();
-	}
-	
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a restrict-extension rule.
+
+	Protection #1: any URI ending with .log will be rejected
+	Protection #2: any URI ending with .jsp will be allowed
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<url-rules>
+		<restrict-extension deny="\.log$" />
+		<restrict-extension allow="\.jsp$" />
+	</url-rules>
+
+</policy>

@@ -15,37 +15,25 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.servlet.http.HttpSession;
-
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
-import org.owasp.esapi.errors.AuthenticationAccountsException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.AuthenticationHostException;
-import org.owasp.esapi.errors.AuthenticationLoginException;
-import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.*;
+
+import javax.servlet.http.HttpSession;
+import java.io.Serializable;
+import java.util.*;
 
 /**
  * Reference implementation of the User interface. This implementation is serialized into a flat file in a simple format.
  * 
- * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
- *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Chris Schmidt (chrisisbeef .at. gmail.com) <a href="http://www.digital-ritual.com">Digital Ritual Software</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.User
  */
 public class DefaultUser implements User, Serializable {
-
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
@@ -72,7 +60,7 @@ public class DefaultUser implements User, Serializable {
 	private String csrfToken = resetCSRFToken();
 
 	/** This user's assigned roles. */
-	private Set roles = new HashSet();
+	private Set<String> roles = new HashSet<String>();
 
 	/** Whether this user's account is locked. */
 	private boolean locked = false;
@@ -99,7 +87,7 @@ public class DefaultUser implements User, Serializable {
 	private Date expirationTime = new Date(Long.MAX_VALUE);
 
 	/** The sessions this user is associated with */
-	private transient Set sessions = new HashSet();
+	private transient Set<HttpSession> sessions = new HashSet<HttpSession>();
 	
 	/** The event map for this User */ 
 	private transient HashMap eventMap = new HashMap();
@@ -117,12 +105,12 @@ public class DefaultUser implements User, Serializable {
     
 	/**
 	 * Instantiates a new user.
-	 * 
+	 *
 	 * @param accountName
 	 * 		The name of this user's account.
 	 */
-	DefaultUser(String value) {
-		setAccountName(value);
+	DefaultUser(String accountName) {
+		setAccountName(accountName);
 		while( true ) {
 			long id = Math.abs( ESAPI.randomizer().getRandomLong() );
 			if ( ESAPI.authenticator().getUser( id ) == null && id != 0 ) {
@@ -148,10 +136,10 @@ public class DefaultUser implements User, Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void addRoles(Set newRoles) throws AuthenticationException {
-		Iterator i = newRoles.iterator();
-		while(i.hasNext()) {
-			addRole((String)i.next());
+	public void addRoles(Set<String> newRoles) throws AuthenticationException {
+        for (String newRole : newRoles)
+        {
+            addRole(newRole);
 		}
 	}
 
@@ -266,7 +254,7 @@ public class DefaultUser implements User, Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set getRoles() {
+	public Set<String> getRoles() {
 		return Collections.unmodifiableSet(roles);
 	}
 	
@@ -525,10 +513,11 @@ public class DefaultUser implements User, Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setLastHostAddress(String remoteHost) {
+	public void setLastHostAddress(String remoteHost) throws AuthenticationHostException
+    {
 		if ( lastHostAddress != null && !lastHostAddress.equals(remoteHost)) {
         	// returning remote address not remote hostname to prevent DNS lookup
-			new AuthenticationHostException("Host change", "User session just jumped from " + lastHostAddress + " to " + remoteHost );
+			throw new AuthenticationHostException("Host change", "User session just jumped from " + lastHostAddress + " to " + remoteHost );
 		}
 		lastHostAddress = remoteHost;
     }
@@ -552,8 +541,8 @@ public class DefaultUser implements User, Serializable {
 	/**
 	 * {@inheritDoc}
 	 */
-	public void setRoles(Set roles) throws AuthenticationException {
-		this.roles = new HashSet();
+	public void setRoles(Set<String> roles) throws AuthenticationException {
+		this.roles = new HashSet<String>();
 		addRoles(roles);
 		logger.info(Logger.SECURITY_SUCCESS, "Adding roles " + roles + " to " + getAccountName() );
 	}

@@ -27,9 +27,9 @@ import java.util.HashMap;
  */
 public class HTMLEntityCodec extends Codec {
 	
-	private static HashMap characterToEntityMap;
+	private static HashMap<Character,String> characterToEntityMap;
 
-	private static HashMap entityToCharacterMap;
+	private static HashMap<String,Character> entityToCharacterMap;
 
 	static {
 		initializeMaps();
@@ -48,21 +48,20 @@ public class HTMLEntityCodec extends Codec {
      * @param immune
      */
 	public String encodeCharacter( char[] immune, Character c ) {
-		char ch = c.charValue();
-		
+
 		// check for immune characters
-		if ( containsCharacter( ch, immune ) ) {
-			return ""+ch;
+		if ( containsCharacter(c, immune ) ) {
+			return ""+c;
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = Codec.getHexForNonAlphanumeric(c);
 		if ( hex == null ) {
-			return ""+ch;
+			return ""+c;
 		}
 		
 		// check for illegal characters
-		if ( ( ch <= 0x1f && ch != '\t' && ch != '\n' && ch != '\r' ) || ( ch >= 0x7f && ch <= 0x9f ) ) {
+		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) ) {
 			return( " " );
 		}
 		
@@ -96,7 +95,7 @@ public class HTMLEntityCodec extends Codec {
 		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '&' ) {
+		if (first != '&' ) {
 			input.reset();
 			return null;
 		}
@@ -108,7 +107,7 @@ public class HTMLEntityCodec extends Codec {
 			return null;
 		}
 		
-		if ( second.charValue() == '#' ) {
+		if (second == '#' ) {
 			// handle numbers
 			Character c = getNumericEntity( input );
 			if ( c != null ) return c;
@@ -135,7 +134,7 @@ public class HTMLEntityCodec extends Codec {
 		Character first = input.peek();
 		if ( first == null ) return null;
 
-		if ( first.charValue() == 'x' || first.charValue() == 'X' ) {
+		if (first == 'x' || first == 'X' ) {
 			input.next();
 			return parseHex( input );
 		}
@@ -162,7 +161,7 @@ public class HTMLEntityCodec extends Codec {
 				input.next();
 				
 			// if character is a semi-colon, eat it and quit
-			} else if ( c.charValue() == ';' ) {
+			} else if (c == ';' ) {
 				input.next();
 				break;
 				
@@ -173,14 +172,14 @@ public class HTMLEntityCodec extends Codec {
 		}
 		try {
 			int i = Integer.parseInt(sb.toString());
-			// TODO: in Java 1.5 you can test whether this is a valid code point
-			// with Character.isValidCodePoint() et al.
-			return Character.valueOf( (char)i );
+            if (Character.isValidCodePoint(i)) {
+                return (char) i;
+            }
 		} catch( NumberFormatException e ) {
 			// throw an exception for malformed entity?
+		}
 			return null;
 		}
-	}
 	
 	/**
 	 * Parse a hex encoded entity
@@ -197,12 +196,12 @@ public class HTMLEntityCodec extends Codec {
 			Character c = input.peek();
 			
 			// if character is a hex digit then add it on and keep going
-			if ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 ) {
+			if ( "0123456789ABCDEFabcdef".indexOf(c) != -1 ) {
 				sb.append( c );
 				input.next();
 				
 			// if character is a semi-colon, eat it and quit
-			} else if ( c.charValue() == ';' ) {
+			} else if (c == ';' ) {
 				input.next();
 				break;
 				
@@ -213,14 +212,14 @@ public class HTMLEntityCodec extends Codec {
 		}
 		try {
 			int i = Integer.parseInt(sb.toString(), 16);
-			// TODO: in Java 1.5 you can test whether this is a valid code point
-			// with Character.isValidCodePoint() et al.
-			return Character.valueOf( (char)i );
+            if (Character.isValidCodePoint(i)) {
+                return (char) i;
+            }
 		} catch( NumberFormatException e ) {
 			// throw an exception for malformed entity?
+		}
 			return null;
 		}
-	}
 	
 	/**
 	 * 
@@ -769,11 +768,11 @@ public class HTMLEntityCodec extends Codec {
 		/* &clubs; : black club suit */, 9829
 		/* &hearts; : black heart suit */, 9830
 		/* &diams; : black diamond suit */, };
-		characterToEntityMap = new HashMap(entityNames.length);
-		entityToCharacterMap = new HashMap(entityValues.length);
+		characterToEntityMap = new HashMap<Character,String>(entityNames.length);
+		entityToCharacterMap = new HashMap<String,Character>(entityValues.length);
 		for (int i = 0; i < entityNames.length; i++) {
 			String e = entityNames[i];
-			Character c = Character.valueOf(entityValues[i]);
+			Character c = entityValues[i];
 			entityToCharacterMap.put(e, c);
 			characterToEntityMap.put(c, e);
 		}

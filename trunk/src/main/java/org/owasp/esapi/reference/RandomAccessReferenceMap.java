@@ -15,15 +15,10 @@
  */
 package org.owasp.esapi.reference;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
-import java.util.TreeSet;
-
-import org.owasp.esapi.AccessReferenceMap;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Randomizer;
-import org.owasp.esapi.errors.AccessControlException;
+
+import java.util.Set;
 
 /**
  * Reference implementation of the AccessReferenceMap interface. This
@@ -34,18 +29,22 @@ import org.owasp.esapi.errors.AccessControlException;
  * reference.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
+ * @author Chris Schmidt (chrisisbeef@gmail.com)
  * @since June 1, 2007
  * @see org.owasp.esapi.AccessReferenceMap
  */
-public class RandomAccessReferenceMap implements AccessReferenceMap {
+public class RandomAccessReferenceMap extends AbstractAccessReferenceMap<String> {
 	
 	private static final long serialVersionUID = 8544133840739803001L;
 
-	/** The itod (indirect to direct) */
-	HashMap itod = new HashMap();
+   public RandomAccessReferenceMap()
+   {
+   }
 
-	/** The dtoi (direct to indirect) */
-	HashMap dtoi = new HashMap();
+   public RandomAccessReferenceMap(int initialSize)
+   {
+      super(initialSize);
+   }
 
 	/**
 	 * This AccessReferenceMap implementation uses short random strings to
@@ -56,102 +55,19 @@ public class RandomAccessReferenceMap implements AccessReferenceMap {
 		// call update to set up the references
 	}
 
-	/**
-	 * Instantiates a new access reference map with a set of direct references.
-	 * 
-	 * @param directReferences
-	 *            the direct references
-	 */
-	public RandomAccessReferenceMap(Set directReferences) {
-		update(directReferences);
+   public RandomAccessReferenceMap(Set<Object> directReferences, int initialSize)
+   {
+      super(directReferences, initialSize);
 	}
 
 	/**
 	* {@inheritDoc}
 	*/
-	public Iterator iterator() {
-		TreeSet sorted = new TreeSet(dtoi.keySet());
-		return sorted.iterator();
-	}
-	
-	/**
-	* {@inheritDoc}
-	*/
-	public String addDirectReference(Object direct) {
-		if ( dtoi.keySet().contains( direct ) ) {
-			return (String)dtoi.get( direct );
-		}
-		String indirect = getUniqueRandomReference();
-		itod.put(indirect, direct);
-		dtoi.put(direct, indirect);
-		return indirect;
-	}
-	
-	/**
-	 * Create a new random reference that is guaranteed to be unique.
-	 * 
-	 *  @return 
-	 *  	a random reference that is guaranteed to be unique
-	 */
-	private String getUniqueRandomReference() {
-		String candidate = null;
+	protected synchronized String getUniqueReference() {
+		String candidate;
 		do {
 			candidate = ESAPI.randomizer().getRandomString(6, DefaultEncoder.CHAR_ALPHANUMERICS);
 		} while (itod.keySet().contains(candidate));
 		return candidate;
-	}
-	
-	/**
-	* {@inheritDoc}
-	*/
-	public String removeDirectReference(Object direct) throws AccessControlException {
-		String indirect = (String)dtoi.get(direct);
-		if ( indirect != null ) {
-			itod.remove(indirect);
-			dtoi.remove(direct);
-		}
-		return indirect;
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	final public void update(Set directReferences) {
-		HashMap dtoi_old = (HashMap) dtoi.clone();
-		dtoi.clear();
-		itod.clear();
-
-		Iterator i = directReferences.iterator();
-		while (i.hasNext()) {
-			Object direct = i.next();
-
-			// get the old indirect reference
-			String indirect = (String) dtoi_old.get(direct);
-
-			// if the old reference is null, then create a new one that doesn't
-			// collide with any existing indirect references
-			if (indirect == null) {
-				indirect = getUniqueRandomReference();
-			}
-			itod.put(indirect, direct);
-			dtoi.put(direct, indirect);
-		}
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public String getIndirectReference(Object directReference) {
-		return (String) dtoi.get(directReference);
-	}
-
-	/**
-	* {@inheritDoc}
-	*/
-	public Object getDirectReference(String indirectReference) throws AccessControlException {
-		if (itod.containsKey(indirectReference)) {
-			return itod.get(indirectReference);
-		}
-		throw new AccessControlException("Access denied", "Request for invalid indirect reference: " + indirectReference);
 	}
 }

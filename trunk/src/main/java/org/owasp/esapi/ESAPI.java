@@ -19,9 +19,43 @@ package org.owasp.esapi;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.owasp.esapi.reference.DefaultMessageUtil;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.util.*;
 
+// DISCUSS: Many of these 'setter' methods seem like they should require proper access control
+//		    checks. By default, permissions could be granted to everyone, but if we have something
+//			to check these (e.g., when a SecurityManager is used) for proper Permissions, we should
+//			able to accomplish this w/out too much difficulty. Overkill? Perhaps...it depends on
+//			your threat model. I'm more thinking preventing stupidity than maliciousness though.
+//			A developer may try to get around something by sub-classing something and perhaps intend
+//			it is only done for a moment, and then change it back to what it was, but has an exception
+//			and there is no 'finally' block or whatever to restore the original setting and then
+//			you are running with some potentially weaker version in your whole J2EE container the
+//			rest of the time. If we require special permissions to do this, then at deployment
+//			we could set it up so that appropriate Permissions need to be granted BEFORE allow
+//			things like Authenticator, Encryptor, IntrusionDetector, etc. to be changed. (Presumably
+//			a DIFFERENT party other than developers would be responsible for granting these Permissions.)
+//			So for example, if someone needed to call setEncryptor() method, they might need to be
+//			granted CryptoAllPermissions in order to do so, etc. And if these permissions were carefully
+//			controlled, that would ensure some sort of review. To do this, we'd only make these restrictions
+//			when a SecurityManager was being used; it would not mandate the use of a SecurityManager so
+//			that without a security manager, everyone is allowed permissions.
+//
+//			Which brings me to the SECOND thing... IMHO, these 'setters' should NOT be of type 'void',
+//			but be of whatever type that they are setting so that they can set the new value and return
+//			the PREVIOUS value so that things can be restored as they were. The only way to do this
+//			now is the somewhat clumsy:
+//
+//						// Note: There are some thread-safety issues here as well, but that's not what
+//						//       I'm trying to illustrate here.
+//					Authenticator savedAuthenticator = ESAPI.authenticator();
+//					ESAPI.setAuthenticator( new MySpecialAuthenticator() );
+//					... use MySpecialAuthenticator for awhile for some special cases ...
+//						// Sometime later ...
+//					ESAPI.setAuthenticator( savedAuthenticator ); // Restore what we were using
+//
+//			Is there any reason NOT to have these 'setters' return something useful? Their return
+//			values can always be ignored if you are not interested in it.
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
  * Use the set methods to override the reference implementations with instances of any custom ESAPI implementations.
@@ -109,23 +143,14 @@ public final class ESAPI {
 	public static AccessController accessController() {
 		if (accessController == null) {
 			String accessControllerName = securityConfiguration().getAccessControlImplementation();
-		    try {
-		        Class theClass  = Class.forName(accessControllerName);
-		        accessController = (AccessController)theClass.newInstance();
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " AccessController class (" + accessControllerName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " AccessController class (" + accessControllerName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " AccessController class (" + accessControllerName + ") must have a no-arg constructor.");
+			accessController =  (new ObjFactory<AccessController>()).make(accessControllerName, "AccessController");
 		    }
-		} 
 		return accessController;
 	}
 
 	/**
 	 * Change the current ESAPI AccessController to the AccessController provided. 
-	 * @param accessController
+	 * @param controller
 	 *            the AccessController to set to be the current ESAPI AccessController. 
 	 */
 	public static void setAccessController(AccessController controller) {
@@ -138,18 +163,8 @@ public final class ESAPI {
 	public static Authenticator authenticator() {
 		if (authenticator == null) {
 			String authenticatorName = securityConfiguration().getAuthenticationImplementation();
-		    try {
-		        Class theClass  = Class.forName(authenticatorName);
-		        authenticator = (Authenticator)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Authenticator class (" + authenticatorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Authenticator class (" + authenticatorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Authenticator class (" + authenticatorName + ") must have a no-arg constructor.");
+			authenticator =  (new ObjFactory<Authenticator>()).make(authenticatorName, "Authenticator");
 		    }
-		} 
 		return authenticator;
 	}
 
@@ -168,17 +183,7 @@ public final class ESAPI {
 	public static Encoder encoder() {
 		if (encoder == null) {
 			String encoderName = securityConfiguration().getEncoderImplementation();
-		    try {
-		        Class theClass  = Class.forName(encoderName);
-		        encoder = (Encoder)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Encoder class (" + encoderName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Encoder class (" + encoderName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Encoder class (" + encoderName + ") must have a no-arg constructor.");
-		    }
+			encoder =  (new ObjFactory<Encoder>()).make(encoderName, "Encoder");
 		} 
 		return encoder;
 	}
@@ -198,18 +203,8 @@ public final class ESAPI {
 	public static Encryptor encryptor() {
 		if (encryptor == null) {
 			String encryptorName = securityConfiguration().getEncryptionImplementation();
-		    try {
-		        Class theClass  = Class.forName(encryptorName);
-		        encryptor = (Encryptor)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Encryptor class (" + encryptorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Encryptor class (" + encryptorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Encryptor class (" + encryptorName + ") must have a no-arg constructor.");
+			encryptor =  (new ObjFactory<Encryptor>()).make(encryptorName, "Encryptor");
 		    }
-		} 
 		return encryptor;
 	}
 
@@ -228,17 +223,7 @@ public final class ESAPI {
 	public static Executor executor() {
 		if (executor == null) {
 			String executorName = securityConfiguration().getExecutorImplementation();
-		    try {
-		        Class theClass  = Class.forName(executorName);
-		        executor = (Executor)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Executor class (" + executorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Executor class (" + executorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Executor class (" + executorName + ") must have a no-arg constructor.");
-		    }
+			executor =  (new ObjFactory<Executor>()).make(executorName, "Executor");
 		} 
 		return executor;
 	}
@@ -259,17 +244,7 @@ public final class ESAPI {
 	public static HTTPUtilities httpUtilities() {
 		if (httpUtilities == null) {
 			String httpUtilitiesName = securityConfiguration().getHTTPUtilitiesImplementation();
-		    try {
-		        Class theClass  = Class.forName(httpUtilitiesName);
-		        httpUtilities = (HTTPUtilities)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " HTTPUtilities class (" + httpUtilitiesName + ") must have a no-arg constructor.");
-		    }
+			httpUtilities =  (new ObjFactory<HTTPUtilities>()).make(httpUtilitiesName, "HTTPUtilities");
 		} 
 		return httpUtilities;
 	}
@@ -289,17 +264,7 @@ public final class ESAPI {
 	public static IntrusionDetector intrusionDetector() {
 		if (intrusionDetector == null) {
 			String intrusionDetectorName = securityConfiguration().getIntrusionDetectionImplementation();
-		    try {
-		        Class theClass  = Class.forName(intrusionDetectorName);
-		        intrusionDetector = (IntrusionDetector)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " IntrusionDetector class (" + intrusionDetectorName + ") must have a no-arg constructor.");
-		    }
+			intrusionDetector =  (new ObjFactory<IntrusionDetector>()).make(intrusionDetectorName, "IntrusionDetector");
 		} 
 		return intrusionDetector;
 	}
@@ -321,16 +286,7 @@ public final class ESAPI {
 	private static LogFactory logFactory() {
 		if (logFactory == null) {
 			String logFactoryName = securityConfiguration().getLogImplementation();
-		    try {
-		        Class theClass  = Class.forName(logFactoryName);
-		        logFactory = (LogFactory)theClass.newInstance();		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " LogFactory class (" + logFactoryName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " LogFactory class (" + logFactoryName + ") must have a no-arg constructor.");
-		    }
+			logFactory =  (new ObjFactory<LogFactory>()).make(logFactoryName, "LogFactory");
 		} 
 		return logFactory;
 	}
@@ -339,6 +295,7 @@ public final class ESAPI {
 	 * @param clazz The class to associate the logger with.
 	 * @return The current Logger associated with the specified class.
 	 */
+	@SuppressWarnings("unchecked")		// Because Eclipse wants Class<T> instead.
 	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
@@ -375,17 +332,7 @@ public final class ESAPI {
 	public static Randomizer randomizer() {
 		if (randomizer == null) {
 			String randomizerName = securityConfiguration().getRandomizerImplementation();
-		    try {
-		        Class theClass = Class.forName(randomizerName);
-		        randomizer = (Randomizer)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Randomizer class (" + randomizerName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Randomizer class (" + randomizerName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Randomizer class (" + randomizerName + ") must have a no-arg constructor.");
-		    }
+			randomizer =  (new ObjFactory<Randomizer>()).make(randomizerName, "Randomizer");
 		} 
 		return randomizer;
 	}
@@ -411,12 +358,20 @@ public final class ESAPI {
 
 	/**
 	 * Change the current ESAPI SecurityConfiguration to the SecurityConfiguration provided. 
+	 * CHECKME: Why not return the previous value here? Also, doesn't it make sense to check for null in all setters?
 	 * @param securityConfiguration
 	 *            the SecurityConfiguration to set to be the current ESAPI SecurityConfiguration. 
 	 */
 	public static void setSecurityConfiguration(
 			SecurityConfiguration securityConfiguration) {
+		// CHECMKE: Or perhaps use assertions? They can be disabled, but IMO, better than not checking for null at all.
+		//			Whatever approach is taken, it should be used consistently throughout.
+		if ( securityConfiguration != null ) {
 		ESAPI.securityConfiguration = securityConfiguration;
+		} else {
+			// CHECKME: Alternately we could throw NullPointerException with meaningful message here.
+			System.out.println("ESAPI.setSecurityConfiguration(): null passed in. Security configuration unchanged.");
+	}
 	}
 
 	/**
@@ -425,28 +380,17 @@ public final class ESAPI {
 	public static Validator validator() {
 		if (validator == null) {
 			String validatorName = securityConfiguration().getValidationImplementation();
-		    try {
-		        Class theClass = Class.forName(validatorName);
-		        validator = (Validator)theClass.newInstance();
-		        
-		    } catch ( ClassNotFoundException ex ) {
-				System.out.println( ex + " Validator class (" + validatorName + ") must be in class path.");
-		    } catch( InstantiationException ex ) {
-		        System.out.println( ex + " Validator class (" + validatorName + ") must be concrete.");
-		    } catch( IllegalAccessException ex ) {
-		        System.out.println( ex + " Validator class (" + validatorName + ") must have a no-arg constructor.");
-		    }
+			validator =  (new ObjFactory<Validator>()).make(validatorName, "Validator");
 		} 
 		return validator;
 	}
 
 	/**
-	 * Change the current ESAPI Validator to the Validator provided. 
+	 * Change the current ESAPI Validator to the Validator provided.
 	 * @param validator
 	 *            the Validator to set to be the current ESAPI Validator. 
 	 */
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
 	}
-
 }

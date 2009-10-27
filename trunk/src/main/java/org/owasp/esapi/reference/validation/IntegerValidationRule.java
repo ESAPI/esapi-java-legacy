@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.reference.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
@@ -42,13 +43,24 @@ public class IntegerValidationRule extends BaseValidationRule {
 		super( typeName, encoder );
 		this.minValue = minValue;
 		this.maxValue = maxValue;
+		
+		// CHECKME fail fast?
+//		if (minValue > maxValue) {
+//			throw new IllegalArgumentException("minValue cannot be greater than maxValue");
+//		}
 	}
 
-	public Object getValid( String context, String input ) throws ValidationException {
+	public Integer getValid( String context, String input ) throws ValidationException {
+		return safelyParse(context, input);
+	}
 
-		// check null
-	    if ( input == null || input.length()==0 ) {
-			if (allowNull) return null;
+	private Integer safelyParse(String context, String input)
+			throws ValidationException {
+		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+	    if ( StringUtils.isEmpty(input) ) {
+			if (allowNull) {
+				return null;
+			}
 			throw new ValidationException( context + ": Input number required", "Input number required: context=" + context + ", input=" + input, context );
 	    }
 	    
@@ -66,17 +78,28 @@ public class IntegerValidationRule extends BaseValidationRule {
 		
 		// validate min and max
 		try {
-			Integer i = new Integer(canonical);
-			if (i.intValue() < minValue) throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
-			if (i.intValue() > maxValue) throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );			
+			int i = Integer.valueOf(canonical);
+			if (i < minValue) {
+				throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
+			}
+			if (i > maxValue) {
+				throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
+			}			
 			return i;
 		} catch (NumberFormatException e) {
 			throw new ValidationException( context + ": Invalid number input", "Invalid number input format: context=" + context + ", input=" + input, e, context);
 		}
 	}
 
-	public Object sanitize( String context, String input ) {
-		return Integer.valueOf( 0 );
+	@Override
+	public Integer sanitize( String context, String input ) {
+		Integer toReturn = Integer.valueOf( 0 );
+		try {
+			toReturn = safelyParse(context, input);
+		} catch (ValidationException e ) {
+			// do nothing
+	}
+		return toReturn;
 	}
 	
 }

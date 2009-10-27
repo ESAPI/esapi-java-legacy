@@ -138,4 +138,11 @@ public interface Randomizer {
      */
     String getRandomGUID() throws EncryptionException;
            
+    /**
+     * Generates a specified number of random bytes.
+     * @param n	The requested number of random bytes.
+     * @return The {@code n} random bytes are returned.
+     */
+    public byte[] getRandomBytes(int n);
+           
 }

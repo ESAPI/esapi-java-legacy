@@ -58,6 +58,10 @@ public class EnterpriseSecurityException extends Exception {
      * Creates a new instance of EnterpriseSecurityException. This exception is automatically logged, so that simply by
      * using this API, applications will generate an extensive security log. In addition, this exception is
      * automatically registered with the IntrusionDetector, so that quotas can be checked.
+     *
+     * It should be noted that messages that are intended to be displayed to the user should be safe for display. In
+     * other words, don't pass in unsanitized data here. Also could hold true for the logging message depending on the
+     * context of the exception.
      * 
      * @param userMessage 
      * 			  the message displayed to the user
@@ -73,7 +77,11 @@ public class EnterpriseSecurityException extends Exception {
     /**
      * Creates a new instance of EnterpriseSecurityException that includes a root cause Throwable.
      * 
-     * @param userMessage 
+     * It should be noted that messages that are intended to be displayed to the user should be safe for display. In
+     * other words, don't pass in unsanitized data here. Also could hold true for the logging message depending on the
+     * context of the exception.
+     *
+     * @param userMessage
      * 			  the message displayed to the user
      * @param logMessage
 	 * 			  the message logged
@@ -86,7 +94,10 @@ public class EnterpriseSecurityException extends Exception {
     }
     
     /**
-     * Returns message that is safe to display to users
+     * Returns message meant for display to users
+     *
+     * Note that if you are unsure of what set this message, it would probably be a good idea to encode this message
+     * before displaying it to the end user.
      * 
      * @return a String containing a message that is safe to display to users
      */

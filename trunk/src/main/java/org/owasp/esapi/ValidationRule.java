@@ -1,36 +1,81 @@
 package org.owasp.esapi;
 
+import java.util.Set;
+
 import org.owasp.esapi.errors.ValidationException;
 
 public interface ValidationRule {
 
-	public abstract Object getValid(String context, String input)
+	/**
+	 * Parse the input, throw exceptions if validation fails
+	 * 
+	 * @param context
+	 *            for logging
+	 * @param input
+	 *            the value to be parsed
+	 * @return a validated value
+	 * @throws ValidationException
+	 *             if any validation rules fail
+	 */
+	Object getValid(String context, String input)
 			throws ValidationException;
 
-	public abstract void setAllowNull(boolean flag);
+	/**
+	 * Whether or not a valid valid can be null. getValid will throw an
+	 * Exception and getSafe will return the default value if flag is set to
+	 * true
+	 * 
+	 * @param flag
+	 *            whether or not null values are valid/safe
+	 */
+	void setAllowNull(boolean flag);
 
-	public abstract String getTypeName();
+	/**
+	 * Programmatically supplied name for the validator
+	 * @return a name, describing the validator
+	 */
+	String getTypeName();
 
-	public abstract void setTypeName(String typeName);
+	/**
+	 * @param typeName a name, describing the validator
+	 */
+	void setTypeName(String typeName);
 
-	public abstract void setEncoder(Encoder encoder);
+	/**
+	 * @param encoder the encoder to use
+	 */
+	void setEncoder(Encoder encoder);
 
-	public abstract void assertValid(String context, String input)
+	/**
+	 * Check if the input is valid, throw an Exception otherwise 
+	 */
+	void assertValid(String context, String input)
 			throws ValidationException;
 
-	public abstract Object getValid(String context, String input,
+	/**
+	 * Get a validated value, add the errors to an existing error list
+	 */
+	Object getValid(String context, String input,
 			ValidationErrorList errorList) throws ValidationException;
 
 	/**
-	 * Return a best-effort safe value even in the case of input errors.
-	 * @param context
-	 * @param input
-	 * @return
+	 * Try to call get valid, then call sanitize, finally return a default value
 	 */
-	public abstract Object getSafe(String context, String input);
+	Object getSafe(String context, String input);
+	
+	/**
+	 * @return true if the input passes validation
+	 */
+	boolean isValid(String context, String input);
 
-	public abstract boolean isValid(String context, String input);
-
-	public abstract String whitelist(String input, char[] list);
+	/**
+	 * String the input of all chars contained in the list
+	 */
+	String whitelist(String input, char[] list);
+	
+	/**
+	 * String the input of all chars contained in the list
+	 */
+	String whitelist(String input, Set<Character> list);
 
 }

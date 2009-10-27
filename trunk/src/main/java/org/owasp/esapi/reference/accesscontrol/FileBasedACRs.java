@@ -134,7 +134,7 @@ public class FileBasedACRs {
 	}
 
     /**
-	* {@inheritDoc}
+	* TODO Javadoc
 	*/
     public boolean isAuthorizedForFunction(String functionName) throws AccessControlException {
     	if (functionMap==null || functionMap.isEmpty()) {
@@ -144,7 +144,7 @@ public class FileBasedACRs {
 	}
   
     /**
-	* {@inheritDoc}
+	* TODO Javadoc
 	*/
     public boolean isAuthorizedForData(String action, Object data) throws AccessControlException{
     	if (dataMap==null || dataMap.isEmpty()) {
@@ -154,7 +154,7 @@ public class FileBasedACRs {
     }
     
     /**
-	* {@inheritDoc}
+	* TODO Javadoc
 	*/
     public boolean isAuthorizedForFile(String filepath) throws AccessControlException {
 		if (fileMap==null || fileMap.isEmpty()) {
@@ -164,7 +164,7 @@ public class FileBasedACRs {
 	}
 
     /**
-	* {@inheritDoc}
+	* TODO Javadoc
 	*/
     public boolean isAuthorizedForService(String serviceName) throws AccessControlException {    	
 		if (serviceMap==null || serviceMap.isEmpty()) {
