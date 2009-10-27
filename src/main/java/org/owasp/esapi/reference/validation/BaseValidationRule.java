@@ -15,10 +15,14 @@
  */
 package org.owasp.esapi.reference.validation;
 
+
+import java.util.HashSet;
+import java.util.Set;
+
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
-import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.errors.ValidationException;
 
 
@@ -42,111 +46,151 @@ public abstract class BaseValidationRule implements ValidationRule {
 	}
 	
 	public BaseValidationRule( String typeName ) {
+		this();
 		setEncoder( ESAPI.encoder() );
 		setTypeName( typeName );
 	}
 	
 	public BaseValidationRule( String typeName, Encoder encoder ) {
+		this();
 		setEncoder( encoder );
 		setTypeName( typeName );
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#getValid(java.lang.String, java.lang.String)
-	 */
-	public abstract Object getValid( String context, String input ) throws ValidationException;
-
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#setAllowNull(boolean)
+    /**
+     * {@inheritDoc}
 	 */
 	public void setAllowNull( boolean flag ) {
 		allowNull = flag;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#getTypeName()
+    /**
+     * {@inheritDoc}
 	 */
 	public String getTypeName() {
 		return typeName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#setTypeName(java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
-	public void setTypeName( String typeName ) {
+	public final void setTypeName( String typeName ) {
 		this.typeName = typeName;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#setEncoder(org.owasp.esapi.Encoder)
+    /**
+     * {@inheritDoc}
 	 */
-	public void setEncoder( Encoder encoder ) {
+	public final void setEncoder( Encoder encoder ) {
 		this.encoder = encoder;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#assertValid(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public void assertValid( String context, String input ) throws ValidationException {
 		getValid( context, input, null );
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#getValid(java.lang.String, java.lang.String, org.owasp.esapi.ValidationErrorList)
+    /**
+     * {@inheritDoc}
 	 */
 	public Object getValid( String context, String input, ValidationErrorList errorList ) throws ValidationException {
+		Object valid = null;
 		try {
-			return getValid( context, input );
+			valid = getValid( context, input );
 		} catch (ValidationException e) {
 			errorList.addError(context, e);
 		}
-		return null;
+		return valid;
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#getSafe(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public Object getSafe( String context, String input ) {
+		Object valid = null;
 		try {
-			Object o = getValid( context, input );
-			return o;
+			valid = getValid( context, input );
 		} catch ( ValidationException e ) {
 			return sanitize( context, input );
 		}
+		return valid;
 	}
 
+	/**
+	 * The method is similar to ValidationRuile.getSafe except that it returns a
+	 * harmless object that <b>may or may not have any similarity to the original
+	 * input (in some cases you may not care)</b>. In most cases this should be the
+	 * same as the getSafe method only instead of throwing an exception, return
+	 * some default value.
+	 * 
+	 * @param context
+	 * @param input
+	 * @return a parsed version of the input or a default value.
+	 */
 	protected abstract Object sanitize( String context, String input );
 	
-	
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#isValid(java.lang.String, java.lang.String)
+    /**
+     * {@inheritDoc}
 	 */
 	public boolean isValid( String context, String input ) {
+		boolean valid = false;
 		try {
 			getValid( context, input );
-			return true;
-		} catch( ValidationException e ) {
-			return false;
+			valid = true;
 		} catch( Exception e ) {
-			return false;
+			valid = false;
 		}
+		
+		return valid;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.reference.validation.IValidationRule#whitelist(java.lang.String, char[])
+    /**
+     * {@inheritDoc}
 	 */
-	public String whitelist( String input, char[] list ) {
+	public String whitelist( String input, char[] whitelist) {
+		return whitelist(input, charArrayToSet(whitelist));
+	}
+	
+	/**
+	 * Removes characters that aren't in the whitelist from the input String.  
+	 * O(input.length) whitelist performance
+	 * @param input String to be sanitized
+	 * @param whitelist allowed characters
+	 * @return input stripped of all chars that aren't in the whitelist 
+	 */
+	public String whitelist( String input, Set<Character> whitelist) {
 		StringBuilder stripped = new StringBuilder();
-		char c;
 		for (int i = 0; i < input.length(); i++) {
-			c = input.charAt(i);
-			if (Character.isDigit(c)) {
+			char c = input.charAt(i);
+			if (whitelist.contains(c)) {
 				stripped.append(c);
 			}
 		}
 		return stripped.toString();
 	}
 	
+	/**
+	 * CHECKME should be moved to some utility class (Would potentially be used by new EncoderConstants class)
+	 * Is there a standard way to convert an array of primitives to a Collection 
+	 * @param array
+	 * @return
+	 */
+	public static Set<Character> charArrayToSet(char[] array) {
+		Set<Character> toReturn = new HashSet<Character>(array.length);
+		for (char c : array) {
+			toReturn.add(c);
+		}
+		return toReturn;
+	}
 	
+	public boolean isAllowNull() {
+		return allowNull;
+	}
+
+	public Encoder getEncoder() {
+		return encoder;
+	}
 }
 

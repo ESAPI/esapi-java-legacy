@@ -3,6 +3,13 @@ package org.owasp.esapi.codecs;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
+// CHECKME: Version at http://iharder.net/base64 is up to v2.3.3. Some semantic changes
+// starting with v2.3. Should we upgrade and then add ESAPI logging or stay at 2.2.2 base?
+// I think that really depends on how much OWASP ESAPI plans on tracking changes to this
+// version vs. if the plan was just to fork from it and maintain OWASP's own version.
+// At this point, I think I prefer split from tracking Harder's original, but I'm easily
+// persuaded otherwise. - Kevin Wall
+
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
  * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
@@ -147,6 +154,9 @@ public class Base64
     /** Preferred encoding. */
     private final static String PREFERRED_ENCODING = "UTF-8";
     
+    /** End of line character. */
+    private final static String EOL = System.getProperty("line.separator", "\n");
+	
 	
     // I think I end up not using the BAD_ENCODING indicator.
     //private final static byte BAD_ENCODING    = -9; // Indicates error in encoding
@@ -160,7 +170,7 @@ public class Base64
     
     /** The 64 valid Base64 values. */
     //private final static byte[] ALPHABET;
-	/* Host platform me be something funny like EBCDIC, so we hardcode these values. */
+	/* Host platform me be something funny like EBCDIC, so we hard code these values. */
 	private final static byte[] _STANDARD_ALPHABET =
     {
         (byte)'A', (byte)'B', (byte)'C', (byte)'D', (byte)'E', (byte)'F', (byte)'G',
@@ -884,11 +894,29 @@ public class Base64
 
             return 3;
             }catch( Exception e){
-                logger.error( Logger.SECURITY_FAILURE, "Problem writing object", e );
-                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset]+ ": " + ( DECODABET[ source[ srcOffset     ] ]  ) );
-                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+1]+  ": " + ( DECODABET[ source[ srcOffset + 1 ] ]  ) );
-                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+2]+  ": " + ( DECODABET[ source[ srcOffset + 2 ] ]  ) );
-                logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+3]+  ": " + ( DECODABET[ source[ srcOffset + 3 ] ]  ) );
+            	
+        // Remove these after checking -- for context only.
+                // logger.error( Logger.SECURITY_FAILURE, "Problem writing object", e );
+                // logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset]+ ": " + ( DECODABET[ source[ srcOffset     ] ]  ) );
+                // logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+1]+  ": " + ( DECODABET[ source[ srcOffset + 1 ] ]  ) );
+                // logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+2]+  ": " + ( DECODABET[ source[ srcOffset + 2 ] ]  ) );
+                // logger.error( Logger.SECURITY_FAILURE, ""+source[srcOffset+3]+  ": " + ( DECODABET[ source[ srcOffset + 3 ] ]  ) );
+            	
+            	// CHECKME: I replaced the 5 separate logger.error() calls above with a single logger.error() call so they can't
+            	// become interleaved with other log entries from other threads. Normally this would have placed log entries
+            	// on separate lines, so I also added line terminators here as well. (Probably don't want it all on one single
+            	// really long log entry, do we?) Anyhow, somebody should check the formatting to ensure that it's
+            	// esthetically pleasing, etc. But this works for me. I'm also OK if you want to remove all the line terminators
+            	// in which case the declaration for EOL should be removed as well.		- Kevin Wall
+                
+                StringBuilder sb = new StringBuilder("Problem writing object:");
+                sb.append(EOL);
+                sb.append( source[srcOffset]   ).append(": ").append( ( DECODABET[ source[ srcOffset     ] ]  ) ).append(EOL);
+                sb.append( source[srcOffset+1] ).append(": ").append( ( DECODABET[ source[ srcOffset + 1 ] ]  ) ).append(EOL);
+                sb.append( source[srcOffset+2] ).append(": ").append( ( DECODABET[ source[ srcOffset + 2 ] ]  ) ).append(EOL);
+                sb.append( source[srcOffset+3] ).append(": ").append( ( DECODABET[ source[ srcOffset + 3 ] ]  ) ).append(EOL);
+                
+                logger.error( Logger.SECURITY_FAILURE, sb.toString(), e );
                 return -1;
             }   // end catch
         }
@@ -992,7 +1020,12 @@ public class Base64
         }
         catch( java.io.UnsupportedEncodingException uee )
         {
-            bytes = s.getBytes();
+            bytes = s.getBytes();	// Uses native encoding
+            // CHECKME: Is this correct? I think it should be a warning instead of an error since nothing
+            // is re-thrown. I do think that *some* sort of logging is in order here  especially since UTF-8 should
+            // always be available on all platforms. If it's not, then all bets are off on your runtime env. - Kevin Wall
+            logger.warning( Logger.SECURITY_FAILURE, "Problem decoding string using " +
+            			  PREFERRED_ENCODING + "; substituting native platform encoding instead", uee );
         }
         
         // Decode

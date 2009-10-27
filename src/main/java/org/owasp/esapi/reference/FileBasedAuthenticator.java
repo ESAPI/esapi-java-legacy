@@ -15,41 +15,15 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.owasp.esapi.*;
+import org.owasp.esapi.errors.*;
+import org.owasp.esapi.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.Logger;
-import org.owasp.esapi.Randomizer;
-import org.owasp.esapi.User;
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.AuthenticationAccountsException;
-import org.owasp.esapi.errors.AuthenticationCredentialsException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.AuthenticationLoginException;
-import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.errors.EnterpriseSecurityException;
+import java.io.*;
+import java.util.*;
 
 /**
  * Reference implementation of the Authenticator interface. This reference implementation is backed by a simple text
@@ -69,8 +43,8 @@ import org.owasp.esapi.errors.EnterpriseSecurityException;
  * 
  * </PRE>
  * 
- * @author <a href="mailto:jeff.williams@aspectsecurity.com?subject=ESAPI question">Jeff Williams</a> at <a
- * href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author <a href="mailto:jeff.williams@aspectsecurity.com?subject=ESAPI question">Jeff Williams</a> at <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Chris Schmidt (chrisisbeef .at. gmail.com) <a href="http://www.digital-ritual.com">Digital Ritual Software</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Authenticator
  */
@@ -132,7 +106,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             user.addRole(role);
             user.enable();
             user.unlock();
-            auth.userMap.put(new Long(user.getAccountId()), user);
+            auth.userMap.put(user.getAccountId(), user);
             System.out.println("New user created: " + accountName);
             auth.saveUsers();
             System.out.println("User account " + user.getAccountName() + " updated");
@@ -151,7 +125,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * 		the hash to store in the user's password hash list 
      */
     private void setHashedPassword(User user, String hash) {
-    	List hashes = getAllHashedPasswords(user, true);
+    	List<String> hashes = getAllHashedPasswords(user, true);
 		hashes.add( 0, hash);
 		if (hashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes() ) 
 			hashes.remove( hashes.size() - 1 );
@@ -179,8 +153,8 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @param oldHashes
      * 		a list of the User's old password hashes     * 		
      */
-    void setOldPasswordHashes(User user, List oldHashes) {
-    	List hashes = getAllHashedPasswords(user, true);
+    void setOldPasswordHashes(User user, List<String> oldHashes) {
+    	List<String> hashes = getAllHashedPasswords(user, true);
     	if (hashes.size() > 1)
     		hashes.removeAll(hashes.subList(1, hashes.size()-1));
     	hashes.addAll(oldHashes);
@@ -200,12 +174,12 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @return
      * 		a List containing all of the specified User's password hashes
      */
-    List getAllHashedPasswords(User user, boolean create) {
-    	List hashes = (List) passwordMap.get(user);
+    List<String> getAllHashedPasswords(User user, boolean create) {
+    	List<String> hashes = passwordMap.get(user);
     	if (hashes != null)
     		return hashes;
     	if (create) {
-    		hashes = new ArrayList();
+    		hashes = new ArrayList<String>();
     		passwordMap.put(user, hashes);
     		return hashes;
     	}
@@ -221,18 +195,18 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @return
      * 		the specified User's old password hashes
      */
-    List getOldPasswordHashes(User user) {
-    	List hashes = getAllHashedPasswords(user, false);
+    List<String> getOldPasswordHashes(User user) {
+    	List<String> hashes = getAllHashedPasswords(user, false);
     	if (hashes.size() > 1)
     		return Collections.unmodifiableList(hashes.subList(1, hashes.size()-1));
-    	return Collections.EMPTY_LIST;
+    	return Collections.emptyList();
     }
     
     /** The user map. */
-    private Map userMap = new HashMap();
+    private Map<Long,User> userMap = new HashMap<Long,User>();
 
     // Map<User, List<String>>, where the strings are password hashes, with the current hash in entry 0
-    private Map passwordMap = new Hashtable();
+    private Map<User,List<String>> passwordMap = new Hashtable<User,List<String>>();
     
     /**
      * The currentUser ThreadLocal variable is used to make the currentUser available to any call in any part of an
@@ -243,20 +217,20 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      */
     private ThreadLocalUser currentUser = new ThreadLocalUser();
 
-    private class ThreadLocalUser extends InheritableThreadLocal {
+    private class ThreadLocalUser extends InheritableThreadLocal<User> {
         
-        public Object initialValue() {
+        public User initialValue() {
         	return User.ANONYMOUS;
         }
         
         public User getUser() {
-            return (User)super.get();
+            return super.get();
         }
 
         public void setUser(User newUser) {
             super.set(newUser);
         }
-    };
+    }
 
     /**
      *
@@ -299,7 +273,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		} catch (EncryptionException ee) {
 		    throw new AuthenticationException("Internal error", "Error hashing password for " + accountName, ee);
 		}
-        userMap.put(new Long( user.getAccountId() ), user);
+        userMap.put(user.getAccountId(), user);
         logger.info(Logger.SECURITY_SUCCESS, "New user created: " + accountName);
         saveUsers();
         return user;
@@ -335,7 +309,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         String passDigits = r.getRandomString( digits, DefaultEncoder.CHAR_PASSWORD_DIGITS );
         String passSpecial = r.getRandomString( 1, DefaultEncoder.CHAR_PASSWORD_SPECIALS );
         String newPassword = passLetters + passSpecial + passDigits;
+        if ( StringUtils.getLevenshteinDistance( oldPassword, newPassword ) > 5 ) {
         return newPassword;
+    }
+        return generateStrongPassword(oldPassword);
     }
 
     /**
@@ -355,7 +332,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     			throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + accountName );
     		}
     		verifyPasswordStrength(currentPassword, newPassword);
-    		((DefaultUser)user).setLastPasswordChangeTime(new Date());
+    		user.setLastPasswordChangeTime(new Date());
     		String newHash = hashPassword(newPassword, accountName);
     		if (getOldPasswordHashes(user).contains(newHash)) {
     			throw new AuthenticationCredentialsException( "Password change failed", "Password change matches a recent password for user: " + accountName );
@@ -376,7 +353,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 			String hash = hashPassword(password, accountName);
 			String currentHash = getHashedPassword(user);
 			if (hash.equals(currentHash)) {
-				((DefaultUser)user).setLastLoginTime(new Date());
+				user.setLastLoginTime(new Date());
 				((DefaultUser)user).setFailedLoginCount(0);
 				logger.info(Logger.SECURITY_SUCCESS, "Password verified for " + accountName );
 				return true;
@@ -407,7 +384,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * 
      */
     public User getCurrentUser() {
-        User user = (User) currentUser.get();
+        User user = currentUser.get();
         if (user == null) {
             user = User.ANONYMOUS;
         }
@@ -422,8 +399,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     		return User.ANONYMOUS;
     	}
         loadUsersIfNecessary();
-        User user = (User) userMap.get(new Long( accountId ));
-        return user;
+        return userMap.get(accountId );
     }
 
     /**
@@ -434,10 +410,12 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     		return User.ANONYMOUS;
     	}
         loadUsersIfNecessary();
-        Iterator i = userMap.values().iterator();
-        while( i.hasNext() ) {
-        	User u = (User)i.next();
-        	if ( u.getAccountName().equalsIgnoreCase(accountName) ) return u;
+        for (User u : userMap.values())
+        {
+            if (u.getAccountName().equalsIgnoreCase(accountName))
+            {
+                return u;
+        }
         }
         return null;
     }
@@ -451,7 +429,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     protected User getUserFromSession() {
         HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
         if ( session == null ) return null;
-        return (User)session.getAttribute(USER);
+        return ESAPI.httpUtilities().getSessionAttribute(USER);
     }
 
     /**
@@ -503,11 +481,10 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	*/
     public synchronized Set getUserNames() {
         loadUsersIfNecessary();
-    	HashSet results = new HashSet();
-    	Iterator i = userMap.values().iterator();
-    	while( i.hasNext() ) {
-    		User u = (User)i.next();
-    		results.add( u.getAccountName() );
+    	HashSet<String> results = new HashSet<String>();
+        for (User u : userMap.values())
+        {
+            results.add(u.getAccountName());
     	}
     	return results;
     }
@@ -532,7 +509,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         if ( userDB == null ) {
         	userDB = new File( System.getProperty( "user.home" ) + "/.esapi" , "users.txt" );
         	try {
-        		userDB.createNewFile();
+        		if ( !userDB.createNewFile() ) throw new IOException("Unable to create the user file");
         		logger.warning( Logger.SECURITY_SUCCESS, "Created " + userDB.getAbsolutePath() );
         	} catch( IOException e ) {
         		logger.fatal( Logger.SECURITY_FAILURE, "Could not create " + userDB.getAbsolutePath(), e );
@@ -562,16 +539,16 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	
 	        BufferedReader reader = null;
 	        try {
-	            HashMap map = new HashMap();
+	            HashMap<Long,User> map = new HashMap<Long,User>();
 	            reader = new BufferedReader(new FileReader(userDB));
-	            String line = null;
+	            String line;
 	            while ((line = reader.readLine()) != null) {
 	                if (line.length() > 0 && line.charAt(0) != '#') {
 	                    DefaultUser user = createUser(line);
                         if (map.containsKey( new Long( user.getAccountId()))) {
                             logger.fatal(Logger.SECURITY_FAILURE, "Problem in user file. Skipping duplicate user: " + user, null);
                         }
-                        map.put( new Long( user.getAccountId() ), user);
+                        map.put( user.getAccountId(), user);
                     }
 	            }
                 userMap = map;
@@ -618,9 +595,11 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 		setHashedPassword(user, password);
         
 		String[] roles = parts[3].toLowerCase().split(" *, *");
-		for (int i=0; i<roles.length; i++) 
-			if (!"".equals(roles[i]))
-					user.addRole(roles[i]);
+        for (String role : roles) {
+            if (!"".equals(role)) {
+                user.addRole(role);
+            }
+        }
 		if (!"unlocked".equalsIgnoreCase(parts[4]))
 			user.lock();
 		if ("enabled".equalsIgnoreCase(parts[5])) {
@@ -647,15 +626,13 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * 
      * @param request 
      * 		The current HTTP request
-     * @param response 
-     * 		The HTTP response being prepared
-     * @return 
+     * @return
      * 		The user that successfully authenticated
      * 
      * @throws AuthenticationException 
      * 		if the submitted credentials are invalid.
      */
-    private User loginWithUsernameAndPassword(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+    private User loginWithUsernameAndPassword(HttpServletRequest request) throws AuthenticationException {
 
         String username = request.getParameter(ESAPI.securityConfiguration().getUsernameParameterName());
         String password = request.getParameter(ESAPI.securityConfiguration().getPasswordParameterName());
@@ -693,9 +670,9 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         if (user == null) {
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
-        userMap.remove( new Long( user.getAccountId() ));
+        userMap.remove( user.getAccountId() );
         System.out.println("Removing user " +user.getAccountName());
-        passwordMap.remove(user.getAccountName());
+        passwordMap.remove(user);
         saveUsers();
     }
 
@@ -734,17 +711,21 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
      * @param writer 
      * 		the print writer to use for saving
      */
-    protected synchronized void saveUsers(PrintWriter writer) {
-        Iterator i = getUserNames().iterator();
-        while (i.hasNext()) {
-            String accountName = (String) i.next();
+    protected synchronized void saveUsers(PrintWriter writer) throws AuthenticationCredentialsException
+    {
+        for (Object o : getUserNames())
+        {
+            String accountName = (String) o;
             DefaultUser u = (DefaultUser) getUser(accountName);
-            if ( u != null && !u.isAnonymous() ) {
+            if (u != null && !u.isAnonymous())
+            {
             	writer.println(save(u));
-            } else {
-            	new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName );
             }
+            else
+            {
+                throw new AuthenticationCredentialsException("Problem saving user", "Skipping save of user " + accountName);
         }
+    }
     }
 
 	/**
@@ -794,15 +775,12 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
 	 * @return 
 	 * 		a comma separated list containing the values in c
 	 */
-	private String dump( Collection c ) {
+	private String dump( Collection<String> c ) {
 		StringBuilder sb = new StringBuilder();
-		Iterator i = c.iterator();
-		while ( i.hasNext() ) {
-			String s = (String)i.next();
-			sb.append( s );
-			if ( i.hasNext() ) sb.append( ",");
+        for ( String s : c ) {
+			sb.append( s ).append( ",");
 		}
-		return sb.toString();
+		return sb.toString().substring(0, sb.length()-1);
 	}
 
 	/**
@@ -831,7 +809,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         
     	// else try to verify credentials - throws exception if login fails
         if ( user == null ) {
-            user = (DefaultUser)loginWithUsernameAndPassword(request, response);
+            user = (DefaultUser)loginWithUsernameAndPassword(request);
         }
         
         // set last host address

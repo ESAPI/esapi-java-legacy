@@ -18,17 +18,18 @@ package org.owasp.esapi;
 
 /**
  * A parameterized string that can be used to send data to an interpreter.
- * 
- * PreparedString div = new PreparedString( “<a href=”@1” onmouseover=”alert(‘@2’)”>test</a>” );
- * div.setURL( 1, request.getParameter( “url” ) );
- * div.setJavaScriptString( 2, request.getParameter( “message” ) );
+ * <pre> 
+ * PreparedString div = new PreparedString( "&lt;a href=\"@1\" onmouseover=\"alert('@2')\"&gt;test&lt;/a&gt;" );
+ * div.setURL( 1, request.getParameter( "url" ) );
+ * div.setJavaScriptString( 2, request.getParameter( "message" ) );
  * out.println( div.toString() );
  * 
  * // escaping for SQL
- * PreparedString query = new PreparedString( “SELECT * FROM users WHERE name=@1 AND password=@2” );
- * query.setSQLString( 1, request.getParameter( “name” ) );
- * query.setSQLString( 1, request.getParameter( “pass” ) );
+ * PreparedString query = new PreparedString( "SELECT * FROM users WHERE name=@1 AND password=@2" );
+ * query.setSQLString( 1, request.getParameter( "name" ) );
+ * query.setSQLString( 1, request.getParameter( "pass" ) );
  * stmt.execute( query.toString() );
+ * </pre>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>

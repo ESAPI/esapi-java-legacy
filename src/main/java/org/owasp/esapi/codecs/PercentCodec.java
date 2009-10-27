@@ -33,20 +33,19 @@ public class PercentCodec extends Codec {
      * @param immune
      */
 	public String encodeCharacter( char[] immune, Character c ) {
-		char ch = c.charValue();
-		
+
 		// check for immune characters
-		if ( containsCharacter( ch, immune ) ) {
-			return ""+ch;
+		if ( containsCharacter(c, immune ) ) {
+			return ""+c;
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = Codec.getHexForNonAlphanumeric(c);
 		if ( hex == null ) {
-			return ""+ch;
+			return ""+c;
 		}
 		
-        if (ch < 0x10) {
+        if (c < 0x10) {
             hex = '0' + hex;
         }
 	    return '%' + hex;
@@ -72,7 +71,7 @@ public class PercentCodec extends Codec {
 		}
 		
 		// if this is not an encoded character, return null
-		if ( first.charValue() != '%' ) {
+		if (first != '%' ) {
 			input.reset();
 			return null;
 		}
@@ -87,13 +86,10 @@ public class PercentCodec extends Codec {
 			try {
 				// parse the hex digit and create a character
 				int i = Integer.parseInt(sb.toString(), 16);
-				// TODO: in Java 1.5 you can test whether this is a valid code point
-				// with Character.isValidCodePoint() et al.
-				return Character.valueOf( (char)i );
-			} catch( NumberFormatException e ) {
-				// throw an exception for malformed entity?
-				// just continue which will reset and return null
+                if (Character.isValidCodePoint(i)) {
+                    return (char) i;
 			}
+            } catch( NumberFormatException ignored ) { }
 		}
 		input.reset();
 		return null;

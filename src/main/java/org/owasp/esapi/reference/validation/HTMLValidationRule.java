@@ -15,9 +15,12 @@
  */
 package org.owasp.esapi.reference.validation;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.commons.configuration.ConfigurationRuntimeException;
+import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
@@ -42,24 +45,23 @@ public class HTMLValidationRule extends StringValidationRule {
 	
 	/** OWASP AntiSamy markup verification policy */
 	private static Policy antiSamyPolicy = null;
-	private static Logger logger = ESAPI.getLogger( "HTMLValidationRule" ); 
+	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" ); 
 	
 	static {
+        InputStream resourceStream = null;
 		try {
-			if ( antiSamyPolicy == null ) {
-		        InputStream in = null;
-	            in = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
-	            if (in != null) {
-	            	antiSamyPolicy = Policy.getInstance(in);
+			resourceStream = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
+		} catch (IOException e) {
+			throw new ConfigurationRuntimeException("Couldn't find antisamy-esapi.xml", e);
 	            }
-		        if (antiSamyPolicy == null) {
-		            throw new IllegalArgumentException ("Can't find antisamy-esapi.xml");
+        if (resourceStream != null) {
+        	try {
+				antiSamyPolicy = Policy.getInstance(resourceStream);
+			} catch (PolicyException e) {
+				throw new ConfigurationRuntimeException("Couldn't parse antisamy policy", e);
 		        }
 			}
-		} catch( Exception e ) {
-			new ValidationException( "Could not initialize AntiSamy", "AntiSamy policy failure", e );
 		}
-	}
 
 	public HTMLValidationRule( String typeName ) {
 		super( typeName );
@@ -73,39 +75,49 @@ public class HTMLValidationRule extends StringValidationRule {
 		super( typeName, encoder, whitelistPattern );
 	}
 	
-	public Object getValid( String context, String input ) throws ValidationException {
-		return invokeAntiSamy( context, input, true );
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public String getValid( String context, String input ) throws ValidationException {
+		return invokeAntiSamy( context, input );
 	}
 		
-	public Object sanitize( String context, String input ) {
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public String sanitize( String context, String input ) {
 		String safe = "";
 		try {
-			safe = invokeAntiSamy( context, input, false );
+			safe = invokeAntiSamy( context, input );
 		} catch( ValidationException e ) {
 			// just return safe
 		}
 		return safe;
 	}
 
-	private String invokeAntiSamy( String context, String input, boolean throwException ) throws ValidationException {
-		// check null
-	    if ( input == null || input.length()==0 ) {
-			if (allowNull) return null;
+	private String invokeAntiSamy( String context, String input ) throws ValidationException {
+		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+	    if ( StringUtils.isEmpty(input) ) {
+			if (allowNull) {
+				return null;
+			}
 			throw new ValidationException( context + " is required", "AntiSamy validation error: context=" + context + ", input=" + input, context );
 	    }
 	    
-		String canonical = (String)super.getValid( context, input );
+		String canonical = super.getValid( context, input );
 
 		try {
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(canonical, antiSamyPolicy);
 			
-			List errors = test.getErrorMessages();
-			if ( errors.size() > 0 ) {
-				logger.info( Logger.EVENT_SUCCESS, "Cleaned up invalid HTML input: " + errors );
+			List<String> errors = test.getErrorMessages();
+			if ( !errors.isEmpty() ) {
+				LOGGER.info( Logger.SECURITY_FAILURE, "Cleaned up invalid HTML input: " + errors );
 			}
 			
-			return(test.getCleanHTML().trim());
+			return test.getCleanHTML().trim();
 			
 		} catch (ScanException e) {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );

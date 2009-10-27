@@ -6,7 +6,7 @@
 	<packaging>jar</packaging>
 	<version>2.0</version>
 	<name>ESAPI</name>
-	<description>The Enterprise Security API project is an OWASP project
+	<description>The Enterprise Security API (ESAPI) project is an OWASP project
 		to create simple strong security controls for every web platform.
 		Security controls are not simple to build. You can read about the
 		hundreds of pitfalls for unwary developers on the OWASP website. By
@@ -16,7 +16,7 @@
 	<organization>
 		<name>The Open Web Application Security Project (OWASP)</name>
 	</organization>
-	<url>http://www.esapi.org</url>
+	<url>http://www.esapi.org/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -133,7 +133,8 @@
 						</goals>
 						<configuration>
 							<tasks>
-								<input message="Keystore password?" addproperty="storepass" />
+								<input message="Keystore password?"
+                                       addproperty="storepass" />
 							</tasks>
 						</configuration>
 					</execution>
@@ -164,7 +165,15 @@
 				<configuration>
 					<archive>
 						<manifest>
+                        <!-- Hmmm... there is NO 'DefaultEncryptor', but there
+                             is a 'JavaEncryptor' and it has a main(). There's
+                             also a 'DefaultEncryptedProperties' with a main().
+                             I'm going to guess it's the JavaEncryptor one.
+                        -->
+                        <!--
 							<mainClass>org.owasp.esapi.reference.DefaultEncryptor</mainClass>
+                        -->
+							<mainClass>org.owasp.esapi.reference.JavaEncryptor</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
 						</manifest>

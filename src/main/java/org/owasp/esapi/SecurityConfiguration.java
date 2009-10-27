@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * The SecurityConfiguration interface stores all configuration information
+ * The {@code SecurityConfiguration} interface stores all configuration information
  * that directs the behavior of the ESAPI implementation.
  * <br><br>
  * Protection of this configuration information is critical to the secure
@@ -33,11 +33,16 @@ import java.util.regex.Pattern;
  * <br><br>
  * Please note that adding another layer of encryption does not make the
  * attackers job much more difficult. Somewhere there must be a master "secret"
- * that is stored unencrypted on the application platform. Creating another
- * layer of indirection doesn't provide any real additional security. Its up to the
- * reference implementation to decide whether this file should be encrypted or not.
- * The ESAPI reference implementation (DefaultSecurityConfiguration.java) does not encrypt
- * its properties file.
+ * that is stored unencrypted on the application platform (unless you are
+ * willing to prompt for some passphrase when you application starts or insert
+ * a USB thumb drive or an HSM card, etc., in which case this master "secret"
+ * it would only be in memory). Creating another layer of indirection provides
+ * additional obfuscation, but doesn't provide any real additional security.
+ * It's up to the reference implementation to decide whether this file should
+ * be encrypted or not.
+ * <br><br>
+ * The ESAPI reference implementation (DefaultSecurityConfiguration.java) does
+ * <i>not</i> encrypt its properties file.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -94,7 +99,7 @@ public interface SecurityConfiguration {
 	
 	/**
 	 * Returns the validation pattern for a particular type
-	 * @param type
+	 * @param typeName
 	 * @return the validation pattern
 	 */
     public Pattern getValidationPattern( String typeName );
@@ -149,14 +154,14 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	public List getAllowedExecutables();
+	public List<String> getAllowedExecutables();
 
 	/**
 	 * Gets the allowed file extensions for files that are uploaded to this application.
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	public List getAllowedFileExtensions();
+	public List<String> getAllowedFileExtensions();
 
 	/**
 	 * Gets the maximum allowed file upload size.
@@ -185,6 +190,122 @@ public interface SecurityConfiguration {
 	 * @return the current encryption algorithm
 	 */
 	public String getEncryptionAlgorithm();
+
+	/**
+	 * Retrieve the <i>cipher transformation</i>. In general, the cipher transformation
+	 * is a specification of cipher algorithm, cipher mode, and padding scheme
+	 * and in general, is a {@code String} that takes the following form:
+	 * <pre>
+	 * 		<i>cipher_alg</i>/<i>cipher_mode[bits]</i>/<i>padding_scheme</i>
+	 * </pre>
+	 * where <i>cipher_alg</i> is the JCE cipher algorithm (e.g., "DESede"),
+	 * <i>cipher_mode</i> is the cipher mode (e.g., "CBC", "CFB", "CTR", etc.),
+	 * and <i>padding_scheme</i> is the cipher padding scheme (e.g., "NONE" for
+	 * no padding, "PKCS5Padding" for PKCS#5 padding, etc.) and where
+	 * <i>[bits]</i> is an optional bit size that applies to certain cipher
+	 * modes such as {@code CFB} and {@code OFB}. Using modes such as CFB and
+	 * OFB, block ciphers can encrypt data in units smaller than the cipher's
+	 * actual block size. When requesting such a mode, you may optionally
+	 * specify the number of bits to be processed at a time. This generally must
+	 * be an integral multiple of 8-bits so that it can specify a whole number
+	 * of octets. 
+	 * </p><p>
+	 * Examples are:
+	 * <pre>
+	 * 		"AES/ECB/NoPadding"		// Default for ESAPI Java 1.4 (insecure)
+	 * 		"AES/CBC/PKCS5Padding"	// Default for ESAPI Java 2.0
+	 * 		"DESede/OFB32/PKCS5Padding"
+	 * </pre>
+	 * <b>NOTE:</b> Occasionally, in cryptographic literature, you may also
+	 * see the key size (in bits) specified after the cipher algorithm in the
+	 * cipher transformation. Generally, this is done to account for cipher
+	 * algorithms that have variable key sizes. The Blowfish cipher for example
+	 * supports key sizes from 32 to 448 bits. So for Blowfish, you might see
+	 * a cipher transformation something like this:
+	 * <pre>
+	 * 		"Blowfish-192/CFB8/PKCS5Padding"
+	 * </pre>
+	 * in the cryptographic literature. It should be noted that the Java
+	 * Cryptography Extensions (JCE) do not generally support this (at least
+	 * not the reference JCE implementation of "SunJCE"), and therefore it
+	 * should be avoided.
+	 * @return	The cipher transformation.
+	 */
+    public String getCipherTransformation();
+    
+    /**
+     * Set the cipher transformation. This allows a different cipher transformation
+     * to be used without changing the {@code ESAPI.properties} file. For instance
+     * you may normally want to use AES/CBC/PKCS5Padding, but have some legacy
+     * encryption where you have ciphertext that was encrypted using 3DES.
+     * 
+     * @param cipherXform	The new cipher transformation. See
+     * 						{@link #getCipherTransformation} for format. If
+     * 						{@code null} is passed as the parameter, the cipher
+     * 						transformation will be set to the the default taken
+     * 						from the property {@code Encryptor.CipherTransformation}
+     * 						in the {@code ESAPI.properties} file. <b>BEWARE:</b>
+     * 						there is <b>NO</b> sanity checking here (other than
+     * 						the empty string, and then, only if Java assertions are
+     * 						enabled), so if you set this wrong, you will not get
+     * 						any errors until you letter try to use it to encrypt
+     * 						or decrypt data.
+     * @return	The previous cipher transformation is returned for convenience,
+     * 			with the assumption that you may wish to restore it once you have
+     * 			completed the encryption / decryption with the new cipher
+     * 			transformation.
+     */
+    public String setCipherTransformation(String cipherXform);
+
+// TODO - DISCUSS: Where should this web page (below) go? Maybe with the Javadoc? But where?
+//				   Think it makes more sense as part of the release notes, but OTOH, I
+//				   really don't want to rewrite this as a Wiki page either.
+    /**
+     * Determines whether the {@code CipherText} should be used with a Message
+     * Authentication Code (MAC). Generally this makes for a more robust cryptographic
+     * scheme, but there are some minor performance implications.
+     * For further details, see the "Advanced Usage" section of
+     * <a href="http://www.owasp.org/ESAPI_2.0_ReleaseNotes_CryptoChanges.html">
+     * "Why Is OWASP Changing ESAPI Encryption?"</a>.
+     * @return	{@code true} if a MIC should be used, otherwise {@code false}.
+     */
+    public boolean useMACforCipherText();
+
+    /**
+     * Indicates whether the {@code PlainText} objects may be overwritten after
+     * they have been encrypted. Generally this is a good idea, especially if
+     * your VM is shared by multiple applications (e.g., multiple applications
+     * running in the same J2EE container) or if there is a possibility that
+     * your VM may leave a core dump (say because it is running non-native
+     * Java code.
+     * <p>
+     * Controlled by the property {@code Encryptor.PlainText.overwrite} in
+     * the {@code ESAPI.properties} file.
+     * </p>
+     * @return	True if it is OK to overwrite the {@code PlainText} objects
+     *			after encrypting, false otherwise.
+     */
+    public boolean overwritePlainText();
+    
+    /**
+     * Get a string indicating how to compute an Initialization Vector (IV).
+     * Currently supported modes are "random" to generate a random IV or
+     * "fixed" to use a fixed (static) IV. If a "fixed" IV is chosen, then the
+     * the value of this fixed IV must be specified as the property
+     * {@code Encryptor.fixedIV} and be of the appropriate length.
+     * 
+     * @see #getFixedIV()
+     * 
+     * @return A string specifying the IV type. Should be "random" or "fixed".
+     */
+    public String getIVType();
+    
+    /**
+     * If a "fixed" (i.e., static) Initialization Vector (IV) is to be used,
+     * this will return the IV value as a hex-encoded string.
+     * @return The fixed IV as a hex-encoded string.
+     */
+    public String getFixedIV();
 
 	/**
 	 * Gets the hashing algorithm used by ESAPI to hash data.
@@ -225,7 +346,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the codec list
 	 */
-	public List getDefaultCanonicalizationCodecs();
+	public List<String> getDefaultCanonicalizationCodecs();
 
 	/**
 	 * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
@@ -277,8 +398,8 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets a file from the resource directory
      *
-     * @param filename
-     * @return
+     * @param filename The file name resource.
+     * @return A {@code File} object representing the specified file name.
      */
     public File getResourceFile( String filename );
     
@@ -305,9 +426,9 @@ public interface SecurityConfiguration {
 	/**
 	 * Gets an InputStream to a file in the resource directory
      *
-     * @param filename
-     * @return
-     * @throws IOException
+     * @param filename A file name in the resource directory.
+     * @return An {@code InputStream} to the specified file name in the resource directory.
+     * @throws IOException If the specified file name cannot be found or opened for reading.
      */
     public InputStream getResourceStream( String filename ) throws IOException;
 
@@ -381,7 +502,7 @@ public interface SecurityConfiguration {
 
 	/**
 	 * Returns the current log level.
-	 * @return
+	 * @return	An integer representing the current log level.
 	 */
     public int getLogLevel();
 	
@@ -425,7 +546,7 @@ public interface SecurityConfiguration {
 		 * The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
 		 * your implementation could have this be a list of any type of 'actions' you wish to define. 
 		 */
-		public List actions = null;
+		public List<String> actions = null;
 
 		/**
 		 * Constructs a threshold that is composed of its name, its threshold count, the time window for
@@ -437,7 +558,7 @@ public interface SecurityConfiguration {
 		 * trigger this threshold.
 		 * @param actions The list of actions to take if the threshold is met.
 		 */
-		public Threshold(String name, int count, long interval, List actions) {
+		public Threshold(String name, int count, long interval, List<String> actions) {
 			this.name = name;
 			this.count = count;
 			this.interval = interval;

@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.reference.validation;
 
+import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
@@ -42,13 +43,41 @@ public class NumberValidationRule extends BaseValidationRule {
 		super( typeName, encoder );
 		this.minValue = minValue;
 		this.maxValue = maxValue;
+
+		// CHECKME fail fast?		
+//		if (minValue > maxValue) {
+//			throw new IllegalArgumentException("Invalid number input: context Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ")");
+//		}
 	}
 
-	public Object getValid( String context, String input ) throws ValidationException {
+    /**
+     * {@inheritDoc}
+     */
+	public Double getValid( String context, String input ) throws ValidationException {
+		return safelyParse(context, input);
+	}
+	
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public Double sanitize( String context, String input ) {
+		Double toReturn = Double.valueOf(0);
+		try {
+			toReturn = safelyParse(context, input);
+		} catch (ValidationException e) {
+			// do nothing
+		}
+		return toReturn;
+	}
 
-		// check null
-	    if ( input == null || input.length()==0 ) {
-			if (allowNull) return null;
+	private Double safelyParse(String context, String input)
+			throws ValidationException {
+		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+	    if ( StringUtils.isEmpty(input) ) {
+			if (allowNull) {
+				return null;
+			}
 			throw new ValidationException( context + ": Input number required", "Input number required: context=" + context + ", input=" + input, context );
 	    }
 	    
@@ -64,21 +93,26 @@ public class NumberValidationRule extends BaseValidationRule {
 			throw new ValidationException( context + ": Invalid number input: context", "Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
 		}
 		
+		Double d;
 		// validate min and max
 		try {
-			Double d = new Double(Double.parseDouble( canonical ));
-			if (d.isInfinite()) throw new ValidationException( "Invalid number input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input, context );
-			if (d.isNaN()) throw new ValidationException( "Invalid number input: context=" + context, "Invalid double input is not a number: context=" + context + ", input=" + input, context );
-			if (d.doubleValue() < minValue) throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
-			if (d.doubleValue() > maxValue) throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );			
-			return d;
+			d = Double.valueOf(Double.parseDouble( canonical ));
 		} catch (NumberFormatException e) {
 			throw new ValidationException( context + ": Invalid number input", "Invalid number input format: context=" + context + ", input=" + input, e, context);
 		}
-	}
 	
-	public Object sanitize( String context, String input ) {
-		return new Double( 0 );
+		if (d.isInfinite()) {
+			throw new ValidationException( "Invalid number input: context=" + context, "Invalid double input is infinite: context=" + context + ", input=" + input, context );
 	}
-
+		if (d.isNaN()) {
+			throw new ValidationException( "Invalid number input: context=" + context, "Invalid double input is not a number: context=" + context + ", input=" + input, context );
+		}
+		if (d.doubleValue() < minValue) {
+			throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
+		}
+		if (d.doubleValue() > maxValue) {
+			throw new ValidationException( "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context, "Invalid number input must be between " + minValue + " and " + maxValue + ": context=" + context + ", input=" + input, context );
+		}			
+		return d;
+	}
 }

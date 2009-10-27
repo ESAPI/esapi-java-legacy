@@ -66,7 +66,7 @@ public abstract class Codec {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-            sb.append(encodeCharacter(immune, Character.valueOf(c)));
+            sb.append(encodeCharacter(immune, c));
         }
         return sb.toString();
     }
@@ -155,8 +155,8 @@ public abstract class Codec {
 	 * @return
 	 */
 	public static boolean containsCharacter( char c, char[] array ) {
-		for (int i = 0; i < array.length; i++) {
-			if (c == array[i]) return true;
+        for (char ch : array) {
+            if (c == ch) return true;
 		}
 		return false;
 	}
