@@ -151,39 +151,55 @@
 				</configuration>
 			</plugin>
 
-			<!--
-			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-					<archive>
-						<manifest>
+            <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <archive>
+                        <manifest>
                         <!-- Hmmm... there is NO 'DefaultEncryptor', but there
                              is a 'JavaEncryptor' and it has a main(). There's
                              also a 'DefaultEncryptedProperties' with a main().
                              I'm going to guess it's the JavaEncryptor one.
                         -->
                         <!--
-							<mainClass>org.owasp.esapi.reference.DefaultEncryptor</mainClass>
+                            <mainClass>org.owasp.esapi.reference.DefaultEncryptor</mainClass>
                         -->
-							<mainClass>org.owasp.esapi.reference.JavaEncryptor</mainClass>
-							<addClasspath>true</addClasspath>
-							<classpathPrefix>lib/</classpathPrefix>
-						</manifest>
-						<manifestEntries>
-							<Sealed>true</Sealed>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			-->
+                            <mainClass>org.owasp.esapi.reference.JavaEncryptor</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Sealed>true</Sealed>
+                        </manifestEntries>
+                    </archive>
+                    <!-- <keystore>c:/users/jwilliams/desktop/keystore</keystore> -->
+                        <!-- NOTE: Right now, this is just a simple self-signed
+                             cert used for jar signing for use by developers
+                             so there is no concern. However, beware that
+                             Maven does the following:
+                                1) Places the JKS keystore in the ESAPI jar.
+                                2) Places the pom.xml (with password!) in the
+                                   ESAPI jar.
+                             (It also places all the subversion 'svn' junk
+                             there too, but that's not a security risk.)
+                        -->
+                    <keystore>src/main/resources/owasp-esapi-dev.jks</keystore>
+                    <alias>owasp-esapi</alias>
+                    <!-- <storepass>73456111</storepass> -->
+                    <!-- BTW, this keystore passphrase here doesn't seem to
+                         do anything. You are still prompted for it. -->
+                    <storepass>changeme</storepass>
+                    <verify>true</verify>
+                </configuration>
+            </plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
