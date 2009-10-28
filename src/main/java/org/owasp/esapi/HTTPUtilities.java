@@ -99,19 +99,38 @@ public interface HTTPUtilities
 
 	/**
      * Calls assertSecureRequest with the *current* request.
+	 * @see {@link HTTPUtilities#assertSecureRequest(HttpServletRequest)}
+	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
 	 */
 	void assertSecureRequest() throws AccessControlException;
 
 	/**
-	 * Ensures that the request uses SSL and POST to protect any sensitive parameters
+     * Calls assertSecureChannel with the *current* request.
+	 * @see {@link HTTPUtilities#assertSecureChannel(HttpServletRequest)}
+	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
+	 */
+	void assertSecureChannel() throws AccessControlException;
+
+	/**
+	 * Ensures that the request uses both SSL and POST to protect any sensitive parameters
 	 * in the querystring from being sniffed, logged, bookmarked, included in referer header, etc...
 	 * This method should be called for any request that contains sensitive data from a web form.
      *
      * @param request
      * @throws AccessControlException if security constraints are not met
-	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
 	 */
     void assertSecureRequest(HttpServletRequest request) throws AccessControlException;
+
+	/**
+	 * Ensures the use of SSL to protect any sensitive parameters in the request and
+	 * any sensitive data in the response. This method should be called for any request
+	 * that contains sensitive data from a web form or will result in sensitive data in the
+	 * response page.
+     *
+     * @param request
+     * @throws AccessControlException if security constraints are not met
+	 */
+    void assertSecureChannel(HttpServletRequest request) throws AccessControlException;
 
 	/**
      * Calls changeSessionIdentifier with the *current* request.

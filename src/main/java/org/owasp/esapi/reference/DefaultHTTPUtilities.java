@@ -203,6 +203,34 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void assertSecureChannel() throws AccessControlException {
+    	assertSecureChannel( getCurrentRequest() );
+    }
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * This implementation ignores the built-in isSecure() method
+	 * and uses the URL to determine if the request was transmitted over SSL.
+	 * This is because SSL may have been terminated somewhere outside the
+	 * container.
+	 */
+	public void assertSecureChannel(HttpServletRequest request) throws AccessControlException {
+	    if ( request == null ) {
+	    	throw new AccessControlException( "Insecure request received", "HTTP request was null" );
+	    }
+	    StringBuffer sb = request.getRequestURL();
+	    if ( sb == null ) {
+	    	throw new AccessControlException( "Insecure request received", "HTTP request URL was null" );
+	    }
+	    String url = sb.toString();
+	    if ( !url.startsWith( "https" ) ) {
+	    	throw new AccessControlException( "Insecure request received", "HTTP request did not use SSL" );
+	    }
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -215,9 +243,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
      */
 	public void assertSecureRequest(HttpServletRequest request) throws AccessControlException {
-		if ( !isSecureChannel( request ) ) {
-			throw new AccessControlException( "Insecure request received", "Received non-SSL request: " + request.getRequestURL() );
-		}
+		assertSecureChannel( request );
 		String receivedMethod = request.getMethod();
 		String requiredMethod = "POST";
 		if ( !receivedMethod.equals( requiredMethod ) ) {
@@ -602,20 +628,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     public String getParameter( String name ) throws ValidationException {
     	return getParameter( getCurrentRequest(), name );
     }
-
-	/**
-	 * Returns true if the request was transmitted over an SSL enabled
-	 * connection. This implementation ignores the built-in isSecure() method
-	 * and uses the URL to determine if the request was transmitted over SSL.
-	 */
-	private boolean isSecureChannel(HttpServletRequest request) {
-	    if ( request == null ) return false;
-	    StringBuffer sb = request.getRequestURL();
-	    if ( sb == null ) return false;
-	    String url = sb.toString();
-	    return url.startsWith( "https" );
-	}
-
 
 	/**
 	 * {@inheritDoc}
