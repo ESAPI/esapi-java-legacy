@@ -13,8 +13,12 @@
 		providing developers with a set of strong controls, we aim to
 		eliminate some of the complexity of creating secure web applications.
 		This can result in significant cost savings across the SDLC.</description>
+	<scm>
+		<url>https://owasp-esapi-java.googlecode.com/svn/trunk</url>
+	</scm>
 	<organization>
 		<name>The Open Web Application Security Project (OWASP)</name>
+		<url>http://www.owasp.org/index.php</url>
 	</organization>
 	<url>http://www.esapi.org/</url>
 
@@ -164,14 +168,6 @@
                 <configuration>
                     <archive>
                         <manifest>
-                        <!-- Hmmm... there is NO 'DefaultEncryptor', but there
-                             is a 'JavaEncryptor' and it has a main(). There's
-                             also a 'DefaultEncryptedProperties' with a main().
-                             I'm going to guess it's the JavaEncryptor one.
-                        -->
-                        <!--
-                            <mainClass>org.owasp.esapi.reference.DefaultEncryptor</mainClass>
-                        -->
                             <mainClass>org.owasp.esapi.reference.JavaEncryptor</mainClass>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
@@ -180,7 +176,6 @@
                             <Sealed>true</Sealed>
                         </manifestEntries>
                     </archive>
-                    <!-- <keystore>c:/users/jwilliams/desktop/keystore</keystore> -->
                         <!-- NOTE: Right now, this is just a simple self-signed
                              cert used for jar signing for use by developers
                              so there is no concern. However, beware that
