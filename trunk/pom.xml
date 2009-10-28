@@ -193,7 +193,6 @@
                         -->
                     <keystore>src/main/resources/owasp-esapi-dev.jks</keystore>
                     <alias>owasp-esapi</alias>
-                    <!-- <storepass>73456111</storepass> -->
                     <!-- BTW, this keystore passphrase here doesn't seem to
                          do anything. You are still prompted for it. -->
                     <storepass>changeme</storepass>
