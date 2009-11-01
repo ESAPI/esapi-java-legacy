@@ -15,9 +15,10 @@
  */
 package org.owasp.esapi.waf.internal;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.RandomAccessFile;
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -89,17 +90,22 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 			    	 * regular form field. Our job is to stream it
 			    	 * to make sure it's not too big.
 			    	 */
+			    	
+			    	//oew=owasp esapi waf, mpc=multipart content
 
-			    	ByteArrayOutputStream baos = new ByteArrayOutputStream(request.getContentLength());
+			    	RandomAccessFile raf = new RandomAccessFile( File.createTempFile("oew-"+item.getFieldName(),"mpc"), "r");
+			    	
 			    	byte buffer[] = new byte[CHUNKED_BUFFER_SIZE];
 
 			    	int size = 0;
 			    	int len = 0;
 
-			    	while ( len != -1 || size <= AppGuardianConfiguration.MAX_FILE_SIZE ) {
+			    	while ( len != -1 && size <= AppGuardianConfiguration.MAX_FILE_SIZE ) {
 			    		len = stream.read(buffer, 0, CHUNKED_BUFFER_SIZE);
-			    		size += len;
-			    		baos.write(stream.read());
+			    		if ( len != -1 ) {
+			    			size += len;
+				    		raf.write(buffer,0,len);	
+			    		}
 			    	}
 
 		    		if ( size > AppGuardianConfiguration.MAX_FILE_SIZE) {
@@ -108,6 +114,8 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 			    }
 
 			}
+			
+			request.getInputStream().reset();
 		}
 
 	}
@@ -120,6 +128,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 				return p.getValue();
 			}
 		}
+		
 		return null;
 	}
 

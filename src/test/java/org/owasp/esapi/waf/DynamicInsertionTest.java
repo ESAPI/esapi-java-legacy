@@ -45,8 +45,9 @@ public class DynamicInsertionTest extends WAFTestCase {
     	WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/dynamic-insertion-policy.xml", request, response );
     	
     	assertTrue ( response.getStatus() == HttpServletResponse.SC_OK );
-    	assertTrue ( response.getBody().indexOf("test") > -1 );
-    	System.out.println( response.getBody() );
+    	String body = response.getBody();
+    	assertTrue ( body.indexOf("test") > -1 );
+    	System.out.println( body );
    	
 	}
 	

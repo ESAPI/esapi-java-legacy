@@ -51,8 +51,6 @@ public class ReplaceContentRule extends Rule {
 			InterceptingHTTPServletResponse response, 
 			HttpServletResponse httpResponse) {
 
-		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
-
 		/*
 		 * First early fail: if the URL doesn't match the paths we're interested in.
 		 */
@@ -70,6 +68,16 @@ public class ReplaceContentRule extends Rule {
 				return new DoNothingAction();
 			}
 		}
+
+		byte[] bytes = null;
+
+		try {
+			bytes = response.getInterceptingServletOutputStream().getResponseBytes();
+		} catch (IOException ioe) {
+			log(request,"Error matching pattern '" + pattern.pattern() + "', IOException encountered (possibly too large?): " + ioe.getMessage() + " (in response to URL: '" + request.getRequestURL() + "')");
+			return new DoNothingAction(); // yes this is a fail open!
+		}
+
 		
 		try {
 
