@@ -761,7 +761,11 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         for (String s : c) {
             sb.append(s).append(",");
         }
-        return sb.toString().substring(0, sb.length() - 1);
+        if ( c.size() > 0) {
+        	return sb.toString().substring(0, sb.length() - 1);
+        }
+        return "";
+        
     }
 
     /**

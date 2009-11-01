@@ -15,8 +15,10 @@
  */
 package org.owasp.esapi.waf.internal;
 
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 
 import javax.servlet.ServletOutputStream;
 
@@ -31,76 +33,126 @@ import javax.servlet.ServletOutputStream;
 
 public class InterceptingServletOutputStream extends ServletOutputStream {
 
+	private static final int FLUSH_BLOCK_SIZE = 1024;
 	private ServletOutputStream os;
-	private ByteArrayOutputStream bos;
 	private boolean buffering;
-
-	public InterceptingServletOutputStream(ServletOutputStream os, boolean buffered) {
+	private boolean committed;
+	private boolean closed;
+	
+	private RandomAccessFile out;
+	
+	public InterceptingServletOutputStream(ServletOutputStream os, boolean buffered) throws FileNotFoundException, IOException {
 		super();
 		this.os = os;
 		this.buffering = buffered;
-		this.bos = new ByteArrayOutputStream();
+		this.committed = false;
+		this.closed = false;
+		
+		/*
+		 * Creating a RandomAccessFile to keep track of output generated. I made
+		 * the prefix and suffix small for less processing. The "oew" is intended
+		 * to stand for "OWASP ESAPI WAF" and the "hop" for HTTP output.
+		 */
+		this.out = new RandomAccessFile ( File.createTempFile("oew", ".hop"), "rw" ); 
 	}
 
-	public void reset() {
-		bos.reset();
+	public void reset() throws IOException {
+		out.setLength(0L);
 	}
 
-	public byte[] getResponseBytes() {
-		return bos.toByteArray();
+	public byte[] getResponseBytes() throws IOException {
+		
+		byte[] buffer = new byte[(int) out.length()];
+		out.seek(0);
+		out.read(buffer, 0, (int)out.length());
+		out.seek(out.length());
+		return buffer;
+		
 	}
 
 	public void setResponseBytes(byte[] responseBytes) throws IOException {
-		if ( ! buffering && bos.toByteArray().length > 0 ) {
+		
+		if ( ! buffering && out.length() > 0 ) {
 			throw new IOException("Already committed response because not currently buffering");
 		}
 
-		bos = new ByteArrayOutputStream();
-		bos.write(responseBytes);
+		out.setLength(0L);
+		out.write(responseBytes);
 	}
 
 	public void write(int i) throws IOException {
 		if (!buffering) {
 			os.write(i);
 		}
-		bos.write(i);
+		out.write(i);
 	}
 
 	public void write(byte[] b) throws IOException {
         if (!buffering) {
         	os.write(b, 0, b.length);
         }
-        bos.write(b, 0, b.length);
+        out.write(b, 0, b.length);
     }
 
 	public void write(byte[] b, int off, int len) throws IOException {
         if (!buffering) {
         	os.write(b, off, len);
         }
-        bos.write(b, off, len);
+        out.write(b, off, len);
     }
 
 	public void flush() throws IOException {
+		
 		if (buffering) {
-			os.write(bos.toByteArray());
+		
+			synchronized(out) {
+
+				out.seek(0);
+				
+				byte[] buff = new byte[FLUSH_BLOCK_SIZE];
+				
+				for(int i=0;i<out.length();) {
+					
+					long currentPos = out.getFilePointer();
+					long totalSize = out.length();
+					int amountToWrite = FLUSH_BLOCK_SIZE;
+					
+					if ( (totalSize - currentPos) < FLUSH_BLOCK_SIZE ) {
+						amountToWrite = (int) (totalSize - currentPos);
+					}
+			
+					out.read(buff, 0, (int)amountToWrite);
+					String s = new String(buff);System.out.println(s);
+					os.write(buff,0,amountToWrite);
+					
+					i+=amountToWrite;
+					
+				}
+				
+				out.setLength(0);
+				
+			}
 		}
 
-		bos.reset();
 	}
 
 	public void commit() throws IOException {
-		if (!buffering) {
+		
+		if (!buffering) { // || committed || closed
         	return;
+        } else {
+        	flush();
         }
-        bos.writeTo(os);
-        os.close();
-        bos.close();
+		committed = true;
     }
 
     public void close() throws IOException {
+    	
         if (!buffering)  {
         	os.close();
         }
+        closed = true;
+
     }
 
 }

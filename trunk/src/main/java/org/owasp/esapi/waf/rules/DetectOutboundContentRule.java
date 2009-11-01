@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.waf.rules;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
@@ -43,8 +44,6 @@ public class DetectOutboundContentRule extends Rule {
 	public Action check(HttpServletRequest request,
 			InterceptingHTTPServletResponse response, 
 			HttpServletResponse httpResponse) {
-
-		byte[] bytes = response.getInterceptingServletOutputStream().getResponseBytes();
 
 		/*
 		 * Early fail: if URL doesn't match.
@@ -81,6 +80,15 @@ public class DetectOutboundContentRule extends Rule {
 			 * for the pattern.
 			 */
 			try {
+
+				byte[] bytes = null;
+				
+				try {
+					bytes = response.getInterceptingServletOutputStream().getResponseBytes();
+				} catch (IOException ioe) {
+					log(request,"Error matching pattern '" + pattern.pattern() + "', IOException encountered (possibly too large?): " + ioe.getMessage() + " (in response to URL: '" + request.getRequestURL() + "')");
+					return new DoNothingAction(); // yes this is a fail open!
+				}
 
 				String s = new String(bytes,charEnc);
 
