@@ -46,19 +46,25 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 		allParameters = new Vector<Parameter>();
 		allParameterNames = new Vector<String>();
 
-		Enumeration e = request.getParameterNames();
-
-		while(e.hasMoreElements()) {
-			String param = (String)e.nextElement();
-			allParameters.add(new Parameter(param,super.getParameter(param),false));
-			allParameterNames.add(param);
-		}
-
-		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 
 		/*
 		 * Get all the regular parameters.
 		 */
+
+		Enumeration e = request.getParameterNames();
+
+		while(e.hasMoreElements()) {
+			String param = (String)e.nextElement();
+			allParameters.add(new Parameter(param,request.getParameter(param),false));
+			allParameterNames.add(param);
+		}
+
+
+		/*
+		 * Get all the multipart fields.
+		 */
+
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 
 		if ( isMultipart ) {
 
