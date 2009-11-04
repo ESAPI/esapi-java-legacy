@@ -399,7 +399,7 @@ public interface SecurityConfiguration {
 	 * Gets a file from the resource directory
      *
      * @param filename The file name resource.
-     * @return A {@code File} object representing the specified file name.
+     * @return A {@code File} object representing the specified file name or null if not found.
      */
     public File getResourceFile( String filename );
     
