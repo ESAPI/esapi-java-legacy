@@ -29,7 +29,7 @@ public class EncodeForVBScriptTag extends BaseEncodeTag
 	 * Encode tag's content for usage in VBScript.
 	 * @param content The tag's content as a String
 	 * @param enc Encoder used to call
-	 * 	{@link Encoder#encodeForVBScript}
+	 * 	{@link Encoder#encodeForVBScript(String)}
 	 * @return content encoded for usage in VBScript
 	 */
 	protected String encode(String content, Encoder enc)

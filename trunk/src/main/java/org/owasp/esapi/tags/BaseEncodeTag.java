@@ -36,7 +36,7 @@ public abstract class BaseEncodeTag extends BodyTagSupport
 	 * @param enc Encoder provided as a convinence.
 	 * @return content encoded by the subclass's implementation.
 	 */
-	protected abstract String encode(String content, Encoder enc);
+	protected abstract String encode(String content, Encoder enc) throws JspTagException;
 
 	/**
 	 * After tag body parsing handler. This provides the necessary
