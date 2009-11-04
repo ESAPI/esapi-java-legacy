@@ -269,7 +269,7 @@ public class Log4JLogFactory implements LogFactory {
             
             // ensure no CRLF injection into logs for forging records
             String clean = message.replace( '\n', '_' ).replace( '\r', '_' );
-            if ( ((DefaultSecurityConfiguration)ESAPI.securityConfiguration()).getLogEncodingRequired() ) {
+            if ( ESAPI.securityConfiguration().getLogEncodingRequired() ) {
             	clean = ESAPI.encoder().encodeForHTML(message);
                 if (!message.equals(clean)) {
                     clean += " (Encoded)";
