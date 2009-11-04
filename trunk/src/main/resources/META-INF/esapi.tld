@@ -34,13 +34,13 @@
 
    <tag>
       <name>encodeForJavaScript</name>
-      <tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+      <tagclass>org.owasp.esapi.tags.EncodeForHTMLJavaScriptTag</tagclass>
       <bodycontent>JSP</bodycontent>
     </tag>
 
    <tag>
       <name>encodeForHTMLAttribute</name>
-      <tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+      <tagclass>org.owasp.esapi.tags.EncodeForHTMLAttributeTag</tagclass>
       <bodycontent>JSP</bodycontent>
     </tag>
     
