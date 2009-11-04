@@ -29,7 +29,7 @@ public class EncodeForHTMLTag extends BaseEncodeTag
 	 * Encode tag's content for usage in HTML.
 	 * @param content The tag's content as a String
 	 * @param enc Encoder used to call
-	 * 	{@link Encoder#encodeForHTML}
+	 * 	{@link Encoder#encodeForHTML(String)}
 	 * @return content encoded for usage in HTML
 	 */
 	protected String encode(String content, Encoder enc)
