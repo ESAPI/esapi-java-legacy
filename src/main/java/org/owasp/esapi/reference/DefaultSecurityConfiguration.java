@@ -395,6 +395,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	//TODO MHF consider the security implications of non-deterministic
     	//  configuration resource locations.
 
+	if(filename == null)
+		return null;	// not found.
+
     	// first, allow command line overrides. -Dorg.owasp.esapi.resources directory
 		f = new File( customDirectory, filename );
     	if ( customDirectory != null && f.canRead() ) {
