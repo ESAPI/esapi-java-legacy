@@ -28,6 +28,9 @@ import junit.framework.TestSuite;
  */
 public class CodecTest extends TestCase {
 
+    private static final char[] EMPTY_CHAR_ARRAY = new char[0];
+    private static final Character LESS_THAN = Character.valueOf('<');
+    private static final Character SINGLE_QUOTE = Character.valueOf('\'');
     private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
     private PercentCodec percentCodec = new PercentCodec();
     private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
@@ -75,160 +78,214 @@ public class CodecTest extends TestCase {
         return suite;
     }
 
-    /**
-     *
-     */
-    public void testEncode() {
-        System.out.println("encode");
+	public void testHtmlEncode()
+	{
+        	assertEquals( "test", htmlCodec.encode( EMPTY_CHAR_ARRAY, "test") );
+	}
 
-        char[] immune = new char[0];
+	public void testPercentEncode()
+	{
+        	assertEquals( "%3c", percentCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	public void testJavaScriptEncode()
+	{
+        	assertEquals( "\\x3C", javaScriptCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	public void testVBScriptEncode()
+	{
+        	assertEquals( "chrw(60)", vbScriptCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	public void testCSSEncode()
+	{
+        	assertEquals( "\\3c ", cssCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	public void testMySQLANSCIEncode()
+	{
+        	assertEquals( "\'\'", mySQLCodecANSI.encode(EMPTY_CHAR_ARRAY, "\'") );
+	}
+
+	public void testMySQLStandardEncode()
+	{
+        	assertEquals( "\\<", mySQLCodecStandard.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	public void testOracleEncode()
+	{
+        	assertEquals( "\'\'", oracleCodec.encode(EMPTY_CHAR_ARRAY, "\'") );
+	}
+
+	public void testUnixEncode()
+	{
+        	assertEquals( "\\<", unixCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	public void testWindowsEncode()
+	{
+        	assertEquals( "^<", windowsCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+	}
+
+	
+	public void testHtmlEncodeChar()
+	{
+        	assertEquals( "&lt;", htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
+
+	public void testPercentEncodeChar()
+	{
+        	assertEquals( "%3c", percentCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
+
+	public void testJavaScriptEncodeChar()
+	{
+        	assertEquals( "\\x3C", javaScriptCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
         
-        // htmlCodec
-        assertEquals( "test", htmlCodec.encode( immune, "test") );
-        
-        // percentCodec
-        assertEquals( "%3c", percentCodec.encode(immune, "<") );
+	public void testVBScriptEncodeChar()
+	{
+        	assertEquals( "chrw(60)", vbScriptCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
 
-        // javaScriptCodec
-        assertEquals( "\\x3C", javaScriptCodec.encode(immune, "<") );
-        
-        // vbScriptCodec
-        assertEquals( "chrw(60)", vbScriptCodec.encode(immune, "<") );
+	public void testCSSEncodeChar()
+	{
+        	assertEquals( "\\3c ", cssCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
 
-        // cssCodec
-        assertEquals( "\\3c ", cssCodec.encode(immune, "<") );
+	public void testMySQLANSIEncodeChar()
+	{
+        	assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(EMPTY_CHAR_ARRAY, SINGLE_QUOTE));
+	}
 
-        // mySQLCodecANSI
-        assertEquals( "\'\'", mySQLCodecANSI.encode(immune, "\'") );
+	public void testMySQLStandardEncodeChar()
+	{
+        	assertEquals( "\\<", mySQLCodecStandard.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
 
-        // mySQLCodecStandard
-        assertEquals( "\\<", mySQLCodecStandard.encode(immune, "<") );
+	public void testOracleEncodeChar()
+	{
+        	assertEquals( "\'\'", oracleCodec.encodeCharacter(EMPTY_CHAR_ARRAY, SINGLE_QUOTE) );
+	}
 
-        // oracleCodec
-        assertEquals( "\\<", oracleCodec.encode(immune, "<") );
+	public void testUnixEncodeChar()
+	{
+        	assertEquals( "\\<", unixCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+	}
 
-        // unixCodec
-        assertEquals( "\\<", unixCodec.encode(immune, "<") );
-
-        // windowsCodec
-        assertEquals( "^<", windowsCodec.encode(immune, "<") );
+	public void testWindowsEncodeChar()
+	{
+        	assertEquals( "^<", windowsCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
 	}
 	
-    /**
-     *
-     */
-    public void testEncodeCharacter() {
-        System.out.println("encodeCharacter");
-        Character c = Character.valueOf('<');
-        char[] immune = new char[0];
+	public void testHtmlDecodeDecimalEntities()
+	{
+        	assertEquals( "test!", htmlCodec.decode("&#116;&#101;&#115;&#116;!") );
+	}
+
+	public void testHtmlDecodeHexEntitites()
+	{
+        	assertEquals( "test!", htmlCodec.decode("&#x74;&#x65;&#x73;&#x74;!") );
+	}
+
+	public void testHtmlDecodeInvalidAttribute()
+	{
+        	assertEquals( "&jeff;", htmlCodec.decode("&jeff;") );
+	}
+
+	public void testPercentDecode()
+	{
+        	assertEquals( "<", percentCodec.decode("%3c") );
+	}
+
+	public void testJavaScriptDecodeBackSlashHex()
+	{
+        	assertEquals( "<", javaScriptCodec.decode("\\x3c") );
+	}
         
-        // htmlCodec
-        assertEquals( "&lt;", htmlCodec.encodeCharacter(immune, c) );
+	public void testVBScriptDecode()
+	{
+        	assertEquals( "<", vbScriptCodec.decode("\"<") );
+	}
 
-        // percentCodec
-        assertEquals( "%3c", percentCodec.encodeCharacter(immune, c) );
+	public void testCSSDecode()
+	{
+        	assertEquals( "<", cssCodec.decode("\\<") );
+	}
 
-        // javaScriptCodec
-        assertEquals( "\\x3C", javaScriptCodec.encodeCharacter(immune, c) );
-        
-        // vbScriptCodec
-        assertEquals( "chrw(60)", vbScriptCodec.encodeCharacter(immune, c) );
+	public void testMySQLANSIDecode()
+	{
+        	assertEquals( "\'", mySQLCodecANSI.decode("\'\'") );
+	}
 
-        // cssCodec
-        assertEquals( "\\3c ", cssCodec.encodeCharacter(immune, c) );
+	public void testMySQLStandardDecode()
+	{
+        	assertEquals( "<", mySQLCodecStandard.decode("\\<") );
+	}
 
-        // mySQLCodecANSI
-        assertEquals( "\'\'", mySQLCodecANSI.encodeCharacter(immune, Character.valueOf('\'')) );
+	public void testOracleDecode()
+	{
+        	assertEquals( "\'", oracleCodec.decode("\'\'") );
+	}
 
-        // mySQLCodecStandard
-        assertEquals( "\\<", mySQLCodecStandard.encodeCharacter(immune, c) );
+	public void testUnixDecode()
+	{
+        	assertEquals( "<", unixCodec.decode("\\<") );
+	}
 
-        // oracleCodec
-        assertEquals( "\\<", oracleCodec.encodeCharacter(immune, c) );
-
-        // unixCodec
-        assertEquals( "\\<", unixCodec.encodeCharacter(immune, c) );
-
-        // windowsCodec
-        assertEquals( "^<", windowsCodec.encodeCharacter(immune, c) );
+        public void testWindowsDecode()
+	{
+        	assertEquals( "<", windowsCodec.decode("^<") );
 	}
 	
-    /**
-     *
-     */
-    public void testDecode() {
-        System.out.println("decode");
-        
-        // htmlCodec
-        assertEquals( "test!", htmlCodec.decode("&#116;&#101;&#115;&#116;!") );
-        assertEquals( "test!", htmlCodec.decode("&#x74;&#x65;&#x73;&#x74;!") );
-        assertEquals( "&jeff;", htmlCodec.decode("&jeff;") );
-
-        // percentCodec
-        assertEquals( "<", percentCodec.decode("%3c") );
-
-        // javaScriptCodec
-        assertEquals( "<", javaScriptCodec.decode("\\x3c") );
-        
-        // vbScriptCodec
-        assertEquals( "<", vbScriptCodec.decode("\"<") );
-
-        // cssCodec
-        assertEquals( "<", cssCodec.decode("\\<") );
-
-        // mySQLCodecANSI
-        assertEquals( "\'", mySQLCodecANSI.decode("\'\'") );
-
-        // mySQLCodecStandard
-        assertEquals( "<", mySQLCodecStandard.decode("\\<") );
-
-        // oracleCodec
-        assertEquals( "<", oracleCodec.decode("\\<") );
-
-        // unixCodec
-        assertEquals( "<", unixCodec.decode("\\<") );
-
-        // windowsCodec
-        assertEquals( "<", windowsCodec.decode("^<") );
+	public void testHtmlDecodeCharLessThan()
+	{
+        	assertEquals( LESS_THAN, htmlCodec.decodeCharacter(new PushbackString("&lt;")) );
 	}
-	
-	
-    /**
-     *
-     */
-    public void testDecodeCharacter() {
-        System.out.println("decodeCharacter");
-        Character c = Character.valueOf('<');
 
-        // htmlCodec
-        assertEquals( c, htmlCodec.decodeCharacter(new PushbackString("&lt;")) );
-
-        // percentCodec
-        assertEquals( c, percentCodec.decodeCharacter(new PushbackString("%3c") ));
-
-        // javaScriptCodec
-        assertEquals( c, javaScriptCodec.decodeCharacter(new PushbackString("\\x3c") ));
-        
-        // vbScriptCodec
-        assertEquals( c, vbScriptCodec.decodeCharacter(new PushbackString("\"<") ));
-
-        // cssCodec
-        assertEquals( c, cssCodec.decodeCharacter(new PushbackString("\\3c") ));
-
-        // mySQLCodecANSI
-        assertEquals( Character.valueOf('\''), mySQLCodecANSI.decodeCharacter(new PushbackString("\'\'") ));
-
-        // mySQLCodecStandard
-        assertEquals( c, mySQLCodecStandard.decodeCharacter(new PushbackString("\\<") ));
-
-        // oracleCodec
-        assertEquals( c, oracleCodec.decodeCharacter(new PushbackString("\\<") ));
-
-        // unixCodec
-        assertEquals( c, unixCodec.decodeCharacter(new PushbackString("\\<") ));
-
-        // windowsCodec
-        assertEquals( c, windowsCodec.decodeCharacter(new PushbackString("^<") ));
+	public void testPercentDecodeChar()
+	{
+        	assertEquals( LESS_THAN, percentCodec.decodeCharacter(new PushbackString("%3c") ));
 	}
-	
+
+        public void testJavaScriptDecodeCharBackSlashHex()
+	{
+        	assertEquals( LESS_THAN, javaScriptCodec.decodeCharacter(new PushbackString("\\x3c") ));
+	}
+        
+	public void testVBScriptDecodeChar()
+	{
+        	assertEquals( LESS_THAN, vbScriptCodec.decodeCharacter(new PushbackString("\"<") ));
+	}
+
+	public void testCSSDecodeCharBackSlashHex()
+	{
+        	assertEquals( LESS_THAN, cssCodec.decodeCharacter(new PushbackString("\\3c") ));
+	}
+
+	public void testMySQLANSIDecodCharQuoteQuote()
+	{
+        	assertEquals( SINGLE_QUOTE, mySQLCodecANSI.decodeCharacter(new PushbackString("\'\'") ));
+	}
+
+        public void testMySQLStandardDecodeCharBackSlashLessThan()
+	{
+        	assertEquals( LESS_THAN, mySQLCodecStandard.decodeCharacter(new PushbackString("\\<") ));
+	}
+
+	public void testOracleDecodeCharBackSlashLessThan()
+	{
+        	assertEquals( SINGLE_QUOTE, oracleCodec.decodeCharacter(new PushbackString("\'\'") ));
+	}
+
+        public void testUnixDecodeCharBackSlashLessThan()
+	{
+        	assertEquals( LESS_THAN, unixCodec.decodeCharacter(new PushbackString("\\<") ));
+	}
+
+        public void testWindowsDecodeCharCarrotLessThan()
+	{
+        	assertEquals( LESS_THAN, windowsCodec.decodeCharacter(new PushbackString("^<") ));
+	}
 }
