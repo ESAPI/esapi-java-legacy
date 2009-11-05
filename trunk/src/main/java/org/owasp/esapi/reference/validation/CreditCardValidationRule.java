@@ -17,11 +17,11 @@ package org.owasp.esapi.reference.validation;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.util.StringUtils;
 
 /**
  * A validator performs syntax and possibly semantic validation of Credit Card

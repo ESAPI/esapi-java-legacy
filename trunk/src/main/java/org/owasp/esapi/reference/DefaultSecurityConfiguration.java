@@ -594,21 +594,16 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * {@inheritDoc}
      */
     public boolean useMACforCipherText() {
-    	String value = getESAPIProperty(CIPHERTEXT_USE_MAC, "true");
-
-        return value.equalsIgnoreCase("true") || value.equalsIgnoreCase("on");
+    	return getESAPIProperty(CIPHERTEXT_USE_MAC, true);
     }
 
     /**
      * {@inheritDoc}
      */
     public boolean overwritePlainText() {
-    	String yesOrNo = getESAPIProperty(PLAINTEXT_OVERWRITE, "true");
-
-        return yesOrNo.equalsIgnoreCase("true") ||
-                yesOrNo.equalsIgnoreCase("on") ||
-                yesOrNo.equalsIgnoreCase("yes");
+    	return getESAPIProperty(PLAINTEXT_OVERWRITE, true);
     }
+    
     /**
 	 * {@inheritDoc}
 	 */
@@ -940,10 +935,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
     		return def;
 		}
-		if ( property.equalsIgnoreCase("true") ) {
+		if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes" ) ) {
 			return true;
 		}
-		if ( property.equalsIgnoreCase("false") ) {
+		if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase( "no" ) ) {
 			return false;
 		}
 		logSpecial( "SecurityConfiguration for " + key + " not either \"true\" or \"false\" in ESAPI.properties. Using default: " + def, null );

@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.util.StringUtils;
 
 
 /**

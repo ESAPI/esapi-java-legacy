@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import org.apache.commons.configuration.ConfigurationRuntimeException;
-import org.apache.commons.lang.StringUtils;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
@@ -30,6 +29,7 @@ import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
 import org.owasp.validator.html.PolicyException;
 import org.owasp.validator.html.ScanException;
+import org.owasp.esapi.util.StringUtils;
 
 
 /**
