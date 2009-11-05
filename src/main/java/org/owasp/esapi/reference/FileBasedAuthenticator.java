@@ -155,7 +155,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
     /**
      * Set the specified User's old password hashes.  This will not set the User's current password hash.
      *
-     * @param user      the User's whose old password hashes will be set
+     * @param user      the User whose old password hashes will be set
      * @param oldHashes a list of the User's old password hashes     *
      */
     void setOldPasswordHashes(User user, List<String> oldHashes) {
