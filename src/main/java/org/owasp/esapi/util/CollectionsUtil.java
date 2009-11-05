@@ -11,6 +11,10 @@ import java.util.Set;
  * 
  * Are these necessary?  Are there any libraries or java.lang classes to take
  * care of the conversions?
+ * 
+ * FIXME: we can convert to using this, but it requires that the array be of Character, not char
+ *      new HashSet(Arrays.asList(array))
+ * 
  */
 public class CollectionsUtil {
 

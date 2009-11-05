@@ -196,16 +196,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			privateKey = pair.getPrivate();
 			publicKey = pair.getPublic();
 		} catch (Exception e) {
-			// can't throw this exception in initializer, but this will log it
-			// CHECKME: Huh? This is not in a _static_ initializer. Just declare
-			//          this CTOR with a 'throws EncryptionException'. In fact, it's
-			//			WRONG to NOT throw here otherwise you are returning an improperly
-			//			constructed object that most assuredly will cause problems somewhere
-			//			downstream. And those problems will be much harder to troubleshoot.
-			//		    Besides, even if it were used in a static initializer it's better
-			//			to throw here and use a try / catch in the static initializer.
-			throw	// Added!!!
-			new EncryptionException("Encryption failure", "Error creating Encryptor", e);
+			throw new EncryptionException("Encryption failure", "Error creating Encryptor", e);
 		}
 	}
 
@@ -633,7 +624,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	public String unseal(String seal) throws EncryptionException {
 		String plaintext = null;
 		try {
-			System.out.println( "DECRYPTING: " + seal );
 			plaintext = decrypt(seal);
 
 			String[] parts = plaintext.split(":");
