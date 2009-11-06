@@ -16,6 +16,7 @@
 package org.owasp.esapi.codecs;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation of the Codec interface for HTML entity encoding.
@@ -29,7 +30,7 @@ public class HTMLEntityCodec extends Codec {
 	
 	private static HashMap<Character,String> characterToEntityMap;
 
-	private static HashMap<String,Character> entityToCharacterMap;
+	private static HashTrie<Character> entityToCharacterMap;
 
 	static {
 		initializeMaps();
@@ -240,21 +241,32 @@ public class HTMLEntityCodec extends Codec {
 	 * 		Returns the decoded version of the character starting at index, or null if no decoding is possible.
 	 */
 	private Character getNamedEntity( PushbackString input ) {
-		// search through the rest of the string up to 6 characters
 		StringBuilder possible = new StringBuilder();
-		int len = Math.min( input.remainder().length(), 7 );
-		for ( int i=0; i<len; i++ ) {
-			possible.append( Character.toLowerCase(input.next().charValue()) );
-			Character entity = (Character) entityToCharacterMap.get(possible.toString());
-			if ( entity != null ) {
-				// eat any trailing semicolons
-				if ( input.peek( ';') ) {
-					input.next();
-				}
-				return entity;
-			}
-		}
-		return null;
+		Map.Entry<CharSequence,Character> entry;
+		int len;
+		
+		// kludge around PushbackString....
+		len = Math.min(input.remainder().length(), entityToCharacterMap.getMaxKeyLength());
+		for(int i=0;i<len;i++)
+			possible.append(Character.toLowerCase(input.next()));
+
+		// look up the longest match
+		entry = entityToCharacterMap.getLongestMatch(possible);
+		if(entry == null)
+			return null;	// no match, caller will reset input
+
+		// fixup input
+		input.reset();
+		input.next();	// read &
+		len = entry.getKey().length();	// what matched's length
+		for(int i=0;i<len;i++)
+			input.next();
+
+		// check for a trailing semicolen
+		if(input.peek(';'))
+			input.next();
+
+		return entry.getValue();
 	}
 
 	/**
@@ -769,7 +781,7 @@ public class HTMLEntityCodec extends Codec {
 		/* &hearts; : black heart suit */, 9830
 		/* &diams; : black diamond suit */, };
 		characterToEntityMap = new HashMap<Character,String>(entityNames.length);
-		entityToCharacterMap = new HashMap<String,Character>(entityValues.length);
+		entityToCharacterMap = new HashTrie<Character>();
 		for (int i = 0; i < entityNames.length; i++) {
 			String e = entityNames[i];
 			Character c = entityValues[i];

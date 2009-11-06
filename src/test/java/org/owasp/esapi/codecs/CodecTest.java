@@ -194,6 +194,94 @@ public class CodecTest extends TestCase {
         	assertEquals( "&jeff;", htmlCodec.decode("&jeff;") );
 	}
 
+	public void testHtmlDecodeAmp()
+	{
+		assertEquals("&", htmlCodec.decode("&amp;"));
+		assertEquals("&X", htmlCodec.decode("&amp;X"));
+		assertEquals("&", htmlCodec.decode("&amp"));
+		assertEquals("&X", htmlCodec.decode("&ampX"));
+	}
+
+	public void testHtmlDecodeLt()
+	{
+		assertEquals("<", htmlCodec.decode("&lt;"));
+		assertEquals("<X", htmlCodec.decode("&lt;X"));
+		assertEquals("<", htmlCodec.decode("&lt"));
+		assertEquals("<X", htmlCodec.decode("&ltX"));
+	}
+
+	public void testHtmlDecodeSup1()
+	{
+		assertEquals("\u00B9", htmlCodec.decode("&sup1;"));
+		assertEquals("\u00B9X", htmlCodec.decode("&sup1;X"));
+		assertEquals("\u00B9", htmlCodec.decode("&sup1"));
+		assertEquals("\u00B9X", htmlCodec.decode("&sup1X"));
+	}
+
+	public void testHtmlDecodeSup2()
+	{
+		assertEquals("\u00B2", htmlCodec.decode("&sup2;"));
+		assertEquals("\u00B2X", htmlCodec.decode("&sup2;X"));
+		assertEquals("\u00B2", htmlCodec.decode("&sup2"));
+		assertEquals("\u00B2X", htmlCodec.decode("&sup2X"));
+	}
+
+	public void testHtmlDecodeSup3()
+	{
+		assertEquals("\u00B3", htmlCodec.decode("&sup3;"));
+		assertEquals("\u00B3X", htmlCodec.decode("&sup3;X"));
+		assertEquals("\u00B3", htmlCodec.decode("&sup3"));
+		assertEquals("\u00B3X", htmlCodec.decode("&sup3X"));
+	}
+
+	public void testHtmlDecodeSup()
+	{
+		assertEquals("\u2283", htmlCodec.decode("&sup;"));
+		assertEquals("\u2283X", htmlCodec.decode("&sup;X"));
+		assertEquals("\u2283", htmlCodec.decode("&sup"));
+		assertEquals("\u2283X", htmlCodec.decode("&supX"));
+	}
+
+	public void testHtmlDecodeSupe()
+	{
+		assertEquals("\u2287", htmlCodec.decode("&supe;"));
+		assertEquals("\u2287X", htmlCodec.decode("&supe;X"));
+		assertEquals("\u2287", htmlCodec.decode("&supe"));
+		assertEquals("\u2287X", htmlCodec.decode("&supeX"));
+	}
+
+	public void testHtmlDecodePi()
+	{
+		assertEquals("\u03C0", htmlCodec.decode("&pi;"));
+		assertEquals("\u03C0X", htmlCodec.decode("&pi;X"));
+		assertEquals("\u03C0", htmlCodec.decode("&pi"));
+		assertEquals("\u03C0X", htmlCodec.decode("&piX"));
+	}
+
+	public void testHtmlDecodePiv()
+	{
+		assertEquals("\u03D6", htmlCodec.decode("&piv;"));
+		assertEquals("\u03D6X", htmlCodec.decode("&piv;X"));
+		assertEquals("\u03D6", htmlCodec.decode("&piv"));
+		assertEquals("\u03D6X", htmlCodec.decode("&pivX"));
+	}
+
+	public void testHtmlDecodeTheta()
+	{
+		assertEquals("\u03B8", htmlCodec.decode("&theta;"));
+		assertEquals("\u03B8X", htmlCodec.decode("&theta;X"));
+		assertEquals("\u03B8", htmlCodec.decode("&theta"));
+		assertEquals("\u03B8X", htmlCodec.decode("&thetaX"));
+	}
+
+	public void testHtmlDecodeThetasym()
+	{
+		assertEquals("\u03D1", htmlCodec.decode("&thetasym;"));
+		assertEquals("\u03D1X", htmlCodec.decode("&thetasym;X"));
+		assertEquals("\u03D1", htmlCodec.decode("&thetasym"));
+		assertEquals("\u03D1X", htmlCodec.decode("&thetasymX"));
+	}
+
 	public void testPercentDecode()
 	{
         	assertEquals( "<", percentCodec.decode("%3c") );
