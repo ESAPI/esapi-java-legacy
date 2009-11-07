@@ -48,7 +48,7 @@ public class EnforceHTTPSTest extends WAFTestCase {
      
 	public void testBadSchemeSSLNotRequired () throws Exception {
 	    // test bad scheme
-	    url = new URL( "http://www.example.com/images/test.jpg" );
+	    url = new URL( "http://www.example.com/images/test.gif" );
 		System.out.println( "\nTest bad scheme (no ssl - but its not required): " + url );
 	    request = new MockHttpServletRequest( url );
 	    request.getSession(true);

@@ -55,16 +55,16 @@ public class ConfigurationParser {
 
 	private static final String REGEX = "regex";
 	private static final String DEFAULT_PATH_APPLY_ALL = ".*";
-	private static final String JEESESSIONID = "JSESSIONID";
 	private static final int DEFAULT_RESPONSE_CODE = 403;
-
+	private static final String DEFAULT_SESSION_COOKIE = "JSESSIONID";
+	
 	private static final String[] STAGES = {
 		"before-request-body",
 		"after-request-body",
 		"before-response"
 	};
 	
-	public static AppGuardianConfiguration readConfigurationFile(InputStream stream) throws ConfigurationException {
+	public static AppGuardianConfiguration readConfigurationFile(InputStream stream, String webRootDir) throws ConfigurationException {
 
 		AppGuardianConfiguration config = new AppGuardianConfiguration();
 
@@ -111,9 +111,22 @@ public class ConfigurationParser {
 			/**
 			 * Parse the 'settings' section.
 			 */
-			if ( settingsRoot != null ) {
+			if ( settingsRoot == null ) {
+				throw new ConfigurationException("The <settings> section is required");
+			} else if ( settingsRoot != null ) {
+				
+				
+				try {
+					String sessionCookieName = settingsRoot.getFirstChildElement("session-cookie-name").getValue();
+					if ( ! "".equals(sessionCookieName) ) {
+						config.setSessionCookieName(sessionCookieName);
+					}
+				} catch (NullPointerException npe) {
+					config.setSessionCookieName(DEFAULT_SESSION_COOKIE);
+				}
+
 				String mode = settingsRoot.getFirstChildElement("mode").getValue();
-	
+				
 				if ( "block".equals(mode.toLowerCase() ) ) {
 					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.BLOCK;
 				} else if ( "redirect".equals(mode.toLowerCase() ) ){
@@ -170,9 +183,9 @@ public class ConfigurationParser {
 					Element restrictNodeRoot = restrictNodes.get(i);
 					String id = restrictNodeRoot.getAttributeValue("id");
 					Pattern ips = Pattern.compile(restrictNodeRoot.getAttributeValue("ip-regex"));
-					
+					String ipHeader = restrictNodeRoot.getAttributeValue("ip-header");
 					if ( REGEX.equalsIgnoreCase(restrictNodeRoot.getAttributeValue("type")) ) {
-						config.addBeforeBodyRule( new IPRule(id, ips, Pattern.compile(restrictNodeRoot.getValue())));
+						config.addBeforeBodyRule( new IPRule(id, ips, Pattern.compile(restrictNodeRoot.getValue()),ipHeader));
 					} else {
 						config.addBeforeBodyRule( new IPRule(id, ips, restrictNodeRoot.getValue()) );
 					}
@@ -235,11 +248,11 @@ public class ConfigurationParser {
 
 					if ( allow != null ) {
 
-						config.addBeforeBodyRule( new PathExtensionRule(id,Pattern.compile(allow),null) );
+						config.addBeforeBodyRule( new PathExtensionRule(id,Pattern.compile( ".*\\" + allow + "$"),null) );
 
 					} else if ( deny != null ) {
 
-						config.addBeforeBodyRule( new PathExtensionRule(id, null,Pattern.compile(deny)) );
+						config.addBeforeBodyRule( new PathExtensionRule(id, null,Pattern.compile( ".*\\" + deny + "$")) );
 
 					} else {
 						throw new ConfigurationException("restrict extension rule should have either a 'deny' or 'allow' attribute");
@@ -423,7 +436,7 @@ public class ConfigurationParser {
 					AddHTTPOnlyFlagRule ahfr = new AddHTTPOnlyFlagRule(id, patterns);
 					config.addCookieRule(ahfr);
 
-					if ( ahfr.doesCookieMatch(JEESESSIONID) ) {
+					if ( ahfr.doesCookieMatch(config.getSessionCookieName()) ) {
 						config.setApplyHTTPOnlyFlagToSessionCookie(true);
 					}
 				}
@@ -449,7 +462,7 @@ public class ConfigurationParser {
 					AddSecureFlagRule asfr = new AddSecureFlagRule(id, patterns);
 					config.addCookieRule(asfr);
 
-					if ( asfr.doesCookieMatch(JEESESSIONID) ) {
+					if ( asfr.doesCookieMatch(config.getSessionCookieName()) ) {
 						config.setApplySecureFlagToSessionCookie(true);
 					}
 
@@ -525,13 +538,13 @@ public class ConfigurationParser {
 
 					Element e = beanShellRules.get(i);
 					
-					String ruleName = e.getAttributeValue("name");
+					String id = e.getAttributeValue("id");
 					String fileName = e.getAttributeValue("file");
 					String stage = e.getAttributeValue("stage"); //
 					String path = e.getAttributeValue("path");
 					
-					if ( ruleName == null ) {
-						throw new ConfigurationException("bean shell rules all require a unique 'ruleName' attribute");
+					if ( id == null ) {
+						throw new ConfigurationException("bean shell rules all require a unique 'id' attribute");
 					}
 					
 					if ( fileName == null ) {
@@ -541,8 +554,8 @@ public class ConfigurationParser {
 					try {
 						
 						BeanShellRule bsr = new BeanShellRule(
-								fileName, 
-								ruleName,
+								webRootDir + fileName, 
+								id,
 								path != null ? Pattern.compile(path) : null);
 						
 						if ( STAGES[0].equals(stage) ) {
@@ -556,9 +569,9 @@ public class ConfigurationParser {
 						}
 												
 					} catch (FileNotFoundException fnfe) {
-						throw new ConfigurationException ("bean shell rule '" + ruleName + "' had a source file that could not be found (" + fileName + ")");
+						throw new ConfigurationException ("bean shell rule '" + id + "' had a source file that could not be found (" + fileName + "), current working directory = " + System.getProperty("user.dir") );
 					} catch (EvalError ee) {
-						throw new ConfigurationException ("bean shell rule '" + ruleName + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
+						throw new ConfigurationException ("bean shell rule '" + id + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
 					}
 					
 				}

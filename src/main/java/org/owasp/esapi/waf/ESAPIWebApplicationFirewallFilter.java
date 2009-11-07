@@ -16,6 +16,7 @@
 package org.owasp.esapi.waf;
 
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -74,8 +75,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	
 	private long lastConfigReadTime;
 	
-	private static final String SESSION_COOKIE_NAME = "JSESSIONID";
-	private static final String FAUX_SESSION_COOKIE = "JSESSIONID_2";
+	private static final String FAUX_SESSION_COOKIE = "FAUXSC";
 	private static final String SESSION_COOKIE_CANARY = "org.owasp.esapi.waf.canary";
 
 	private FilterConfig fc;
@@ -86,9 +86,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	 * This function is used in testing to dynamically alter the configuration.
 	 * @param is The InputStream from which to read the XML configuration file.
 	 */
-	public void setConfiguration( String policyFilePath ) throws FileNotFoundException {
+	public void setConfiguration( String policyFilePath, String webRootDir ) throws FileNotFoundException {
 		try {
-			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(new File(policyFilePath)));
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(new File(policyFilePath)), webRootDir);
 			lastConfigReadTime = System.currentTimeMillis();
 			configurationFilename = policyFilePath;
 		} catch (ConfigurationException e ) {
@@ -160,7 +160,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		try {
 
-			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(realConfigFilename));
+			String webRootDir = fc.getServletContext().getRealPath("");
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(realConfigFilename),webRootDir);
 
 			DOMConfigurator.configure(realLogSettingsFilename);
 
@@ -202,6 +203,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 				 * The file has been altered since it was
 				 * read in the last time. Must re-read it.
 				 */
+				logger.debug(">> Re-reading WAF policy");
 				init(fc);
 			}
 		}
@@ -237,6 +239,13 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		logger.debug(">> Starting Stage 0" );
 
+		// browser -> server (no cookies)
+		// server -> browser (regular session cookie, faux cookie (httponly))
+		// browser -> server (regular session cookie, faux cookie)
+		// server -> browser (kill session cookie)
+		// browser -> server (faux cookie)
+		// server -> browser (set regular session cookie, kill faux cookie)
+		
 		if ( httpRequest.getSession(false) == null && ( appGuardConfig.isUsingHttpOnlyFlagOnSessionCookie() ||
 				appGuardConfig.isUsingSecureFlagOnSessionCookie() ) ) {
 
@@ -257,8 +266,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 					 * the HttpOnly/Secure flags as needed.
 					 */
 
-					Cookie newCookie = new Cookie(SESSION_COOKIE_NAME, cookie.getValue());
+					Cookie newCookie = new Cookie(appGuardConfig.getSessionCookieName(), cookie.getValue());
 					cookie.setPath(httpRequest.getContextPath());
+					cookie.setDomain(httpRequest.getHeader("Host"));
 					response.addCookie(newCookie, true);
 
 					/*
@@ -287,7 +297,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 			httpRequest.getSession().setAttribute(SESSION_COOKIE_CANARY,0);
 
-			killCookie(	SESSION_COOKIE_NAME, httpRequest, response );
+			killCookie(	appGuardConfig.getSessionCookieName(), httpRequest, response );
 
 			Cookie fauxCookie = new Cookie(FAUX_SESSION_COOKIE, httpRequest.getSession().getId());
 			fauxCookie.setPath(httpRequest.getContextPath());
@@ -478,9 +488,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			HttpServletRequest request,
 			InterceptingHTTPServletResponse response) {
 
-		Cookie cookie = new Cookie(cookieName, null);
+		Cookie cookie = new Cookie(cookieName, "");
+		cookie.setDomain(request.getHeader("Host"));
         cookie.setPath( request.getContextPath() );
-        cookie.setMaxAge(-1);
+        cookie.setMaxAge(0);
+        
         response.addCookie(cookie, false);
 	}
 

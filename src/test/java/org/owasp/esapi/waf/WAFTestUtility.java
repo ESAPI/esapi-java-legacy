@@ -73,7 +73,7 @@ public class WAFTestUtility {
 
     	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
     	File f = ESAPI.securityConfiguration().getResourceFile(policy);
-    	waf.setConfiguration(f.getAbsolutePath());
+    	waf.setConfiguration(f.getAbsolutePath(),"");
 
 		return createAndExecuteWAFTransaction(waf, request, response );
 		
@@ -83,7 +83,7 @@ public class WAFTestUtility {
 
     	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
     	File f = ESAPI.securityConfiguration().getResourceFile(policy);        
-    	waf.setConfiguration(f.getAbsolutePath());
+    	waf.setConfiguration(f.getAbsolutePath(),"");
 
 		return createAndExecuteWAFTransaction(waf, request, response, filterChain );
 		
