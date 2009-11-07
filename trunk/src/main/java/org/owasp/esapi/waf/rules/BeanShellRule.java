@@ -35,14 +35,13 @@ public class BeanShellRule extends Rule {
 
 	private Interpreter i;
 	private String script;
-	private String ruleName;
 	private Pattern path;
 	
-	public BeanShellRule(String fileLocation, String ruleName, Pattern path) throws IOException, EvalError { 
+	public BeanShellRule(String fileLocation, String id, Pattern path) throws IOException, EvalError { 
 		i = new Interpreter();
 		i.set("logger", logger);
 		this.script = getFileContents(new File(fileLocation));
-		this.ruleName = ruleName;
+		this.id = id;
 		this.path = path;
 	}
 	
@@ -54,7 +53,7 @@ public class BeanShellRule extends Rule {
 		 * Early fail: if the URL doesn't match one we're interested in.
 		 */
 		
-		if ( path != null && ! path.matcher(request.getRequestURL().toString()).matches() ) {
+		if ( path != null && ! path.matcher(request.getRequestURI()).matches() ) {
 			return new DoNothingAction();
 		}
 		
@@ -77,16 +76,20 @@ public class BeanShellRule extends Rule {
 			} else {
 				i.set("response", httpResponse);
 			}
-			
+
 			i.set("session", request.getSession());
 			i.eval(script);
-		
+
+			a = (Action)i.get("action");
+	
 			if ( a != null ) {
 				return a;
 			}
 			
 		} catch (EvalError e) {
-			log(request,"Error running custom beanshell rule (" + ruleName + ") - " + e.getMessage());
+			log(request,"Error running custom beanshell rule (" + id + ") - " + e.getMessage());
+			e.printStackTrace();
+			System.out.println(e.getScriptStackTrace());
 		}
 	
 		return new DoNothingAction();
@@ -100,7 +103,7 @@ public class BeanShellRule extends Rule {
 		BufferedReader br = new BufferedReader(fr);
 		
 		while( (line=br.readLine()) != null ) {
-			sb.append(line);
+			sb.append(line + System.getProperty("line.separator"));
 		}
 		
 		return sb.toString();

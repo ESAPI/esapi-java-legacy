@@ -122,7 +122,7 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
 					}
 			
 					out.read(buff, 0, (int)amountToWrite);
-					String s = new String(buff);System.out.println(s);
+					
 					os.write(buff,0,amountToWrite);
 					
 					i+=amountToWrite;

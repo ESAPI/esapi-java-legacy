@@ -31,6 +31,7 @@
 	-->
 	<settings>
 		<mode>redirect</mode>
+		<session-cookie-name>JSESSIONID</session-cookie-name>
 		<error-handling>
 			<default-redirect-page>/security/error.jsp</default-redirect-page>
 			<block-status>403</block-status>
@@ -55,7 +56,7 @@
 
 	<bean-shell-rules>	
 			<bean-shell-script 
-				name="example1" 
+				id="example1" 
 				file="src/test/resources/.esapi/waf-policies/bean-shell-rule.bsh" 
 				stage="before-request-body"/>
 	
@@ -98,7 +99,7 @@
 		Set rules for incoming headers and parameters.
 	-->
 	<header-rules>
-		<restrict-content-type deny="multipart" />
+		<restrict-content-type deny=".*multipart.*" />
 		<restrict-content-type allow="text/plain" />
 		<restrict-content-type allow="x-www-form-urlencoded" />
 		<restrict-user-agent deny=".*GoogleBot.*" />

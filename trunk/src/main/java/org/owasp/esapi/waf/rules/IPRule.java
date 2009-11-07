@@ -31,11 +31,13 @@ public class IPRule extends Rule {
 	private String exactPath;
 	private Pattern path;
 	private boolean useExactPath = false;
+	private String ipHeader;
 
-	public IPRule(String id, Pattern allowedIP, Pattern path) {
+	public IPRule(String id, Pattern allowedIP, Pattern path, String ipHeader) {
 		this.allowedIP = allowedIP;
 		this.path = path;
 		this.useExactPath = false;
+		this.ipHeader = ipHeader;
 		setId(id);
 	}
 
@@ -54,7 +56,14 @@ public class IPRule extends Rule {
 
 		if ( (!useExactPath && path.matcher(uri).matches()) ||
 			 ( useExactPath && exactPath.equals(uri)) ) {
-			if ( ! allowedIP.matcher(request.getRemoteAddr()+"").matches() ) {
+			
+			String sourceIP = request.getRemoteAddr() + "";
+			
+			if ( ipHeader != null ) {
+				sourceIP = request.getHeader(ipHeader);
+			}
+			
+			if ( ! allowedIP.matcher(sourceIP).matches() ) {
 				log(request, "IP not allowed to access URI '" + uri + "'");
 				return new DefaultAction();
 			}

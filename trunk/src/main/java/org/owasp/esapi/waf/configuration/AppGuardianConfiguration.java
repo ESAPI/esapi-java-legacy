@@ -58,8 +58,6 @@ public class AppGuardianConfiguration {
 	 */
 	public static int DEFAULT_FAIL_ACTION = LOG;
 
-	public static int MAX_FILE_SIZE = Integer.MAX_VALUE;
-
 	// TODO: use UTF-8
 	public static String DEFAULT_CHARACTER_ENCODING = "ISO-8859-1";
 	public static String DEFAULT_CONTENT_TYPE = "text/html; charset=" + DEFAULT_CHARACTER_ENCODING;
@@ -86,7 +84,16 @@ public class AppGuardianConfiguration {
 	private boolean forceHttpOnlyFlagToSession = false;
 	private boolean forceSecureFlagToSession = false;
 
+	private String sessionCookieName;
 	
+	public String getSessionCookieName() {
+		return sessionCookieName;
+	}
+
+	public void setSessionCookieName(String sessionCookieName) {
+		this.sessionCookieName = sessionCookieName;
+	}
+
 	/*
 	 * The object-level rules encapsulated by the stage in which they are executed.
 	 */

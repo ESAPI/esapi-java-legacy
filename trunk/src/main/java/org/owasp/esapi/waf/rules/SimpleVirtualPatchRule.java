@@ -51,7 +51,8 @@ public class SimpleVirtualPatchRule extends Rule {
 
 		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
 
-		if ( ! path.matcher(request.getRequestURI()).matches() ) {
+		String uri = request.getRequestURI();
+		if ( ! path.matcher(uri).matches() ) {
 
 			return new DoNothingAction();
 
@@ -85,12 +86,12 @@ public class SimpleVirtualPatchRule extends Rule {
 			 */
 			if ( target.contains("*") || target.contains("?") ) {
 
-				target = target.replaceAll("*", ".*");
+				target = target.replaceAll("\\*", ".*");
 				Pattern p = Pattern.compile(target);
 				while (en.hasMoreElements() ) {
 					String s = (String)en.nextElement();
 					String value = null;
-					if ( p.matcher(target).matches() ) {
+					if ( p.matcher(s).matches() ) {
 						if ( parameter ) {
 							value = request.getDictionaryParameter(s);
 						} else {
@@ -102,6 +103,8 @@ public class SimpleVirtualPatchRule extends Rule {
 						}
 					}
 				}
+				
+				return new DoNothingAction();
 
 			} else {
 
@@ -126,9 +129,6 @@ public class SimpleVirtualPatchRule extends Rule {
 
 		}
 
-		log(request, "Virtual patch improperly configured (fell through)");
-
-		return new DefaultAction();
 	}
 
 }

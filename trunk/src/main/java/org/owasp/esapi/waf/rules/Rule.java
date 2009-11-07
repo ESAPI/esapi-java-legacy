@@ -34,7 +34,7 @@ public abstract class Rule {
 
 		logger.log(AppGuardianConfiguration.LOG_LEVEL,
 				"[IP=" + request.getRemoteAddr() +
-				",Rule=" + this.getClass().getSimpleName() + "] " + message);
+				",Rule=" + this.getClass().getSimpleName() + ",ID="+id+"] " + message);
 
 	}
 
