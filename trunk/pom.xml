@@ -14,8 +14,25 @@
 		eliminate some of the complexity of creating secure web applications.
 		This can result in significant cost savings across the SDLC.</description>
 	<scm>
-		<url>https://owasp-esapi-java.googlecode.com/svn/trunk</url>
+        <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/trunk</connection>
+		<developerConnection>scm:svn:https://owasp-esapi-java.googlecode.com/svn/trunk</developerConnection>
+        <!-- <url>http://owasp-esapi-java.googlecode.com/svn/trunk</url> -->
+        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
 	</scm>
+    <issueManagement>
+        <system>Google Code Issue Tracking</system>
+        <url>http://code.google.com/p/owasp-esapi-java/issues/list</url>
+    </issueManagement>
+    <mailingLists>
+        <mailingList>
+            <name>OWASP-ESAPI</name>
+            <subscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</subscribe>
+            <unsubscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</unsubscribe>
+            <post>mailto:owasp-esapi@lists.owasp.org</post>
+            <archive>https://lists.owasp.org/pipermail/owasp-esapi/</archive>
+        </mailingList>
+    </mailingLists>
+    
 	<organization>
 		<name>The Open Web Application Security Project (OWASP)</name>
 		<url>http://www.owasp.org/index.php</url>
