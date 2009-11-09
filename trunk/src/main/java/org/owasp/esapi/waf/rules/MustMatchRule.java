@@ -30,6 +30,11 @@ import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;must-match&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class MustMatchRule extends Rule {
 
 	private static final String REQUEST_PARAMETERS = "request.parameters.";

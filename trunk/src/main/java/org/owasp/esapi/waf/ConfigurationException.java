@@ -15,6 +15,13 @@
  */
 package org.owasp.esapi.waf;
 
+/**
+ * The Exception to be thrown when there is an error parsing a policy file.
+ * 
+ * @author Arshan Dabirsiaghi
+ * @see org.owasp.esapi.configuration.ConfigurationParser
+ *
+ */
 public class ConfigurationException extends Exception {
 
 	protected static final long serialVersionUID = 1L;

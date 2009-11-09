@@ -15,6 +15,12 @@
  */
 package org.owasp.esapi.waf.actions;
 
+/**
+ * The base class indicating what is to be done after a rule executes.
+ * 
+ * @author Arshan Dabirsiaghi
+ * @see org.owasp.esapi.waf.rules.Rule
+ */
 public abstract class Action {
 
 	protected boolean failed = true;

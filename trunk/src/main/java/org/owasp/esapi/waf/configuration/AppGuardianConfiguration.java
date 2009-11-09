@@ -22,6 +22,13 @@ import java.util.List;
 import org.apache.log4j.Level;
 import org.owasp.esapi.waf.rules.Rule;
 
+/**
+ * This class is the object model of the policy file. Also holds a number of constants
+ * used throughout the WAF.
+ * 
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class AppGuardianConfiguration {
 
 	/*

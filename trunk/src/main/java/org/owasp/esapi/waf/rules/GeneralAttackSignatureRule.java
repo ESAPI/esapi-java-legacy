@@ -27,6 +27,12 @@ import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletRequest;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;general-attack-signature&gt; rules, which 
+ * are not currently implemented.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class GeneralAttackSignatureRule extends Rule {
 
 	private Pattern signature;

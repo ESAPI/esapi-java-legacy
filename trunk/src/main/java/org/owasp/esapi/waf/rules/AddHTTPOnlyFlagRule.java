@@ -25,6 +25,11 @@ import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;add-http-only-flag&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class AddHTTPOnlyFlagRule extends Rule {
 
 	private List<Pattern> name;

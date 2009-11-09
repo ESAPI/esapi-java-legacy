@@ -28,6 +28,11 @@ import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;dynamic-insertion&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class ReplaceContentRule extends Rule {
 
 	private Pattern pattern;

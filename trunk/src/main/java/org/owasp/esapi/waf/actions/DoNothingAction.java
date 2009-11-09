@@ -15,6 +15,11 @@
  */
 package org.owasp.esapi.waf.actions;
 
+/**
+ * The class that indicates that no further action is necessary.
+ * 
+ * @author Arshan Dabirsiaghi
+ */
 public class DoNothingAction extends Action {
 
 	public boolean failedRule() {
