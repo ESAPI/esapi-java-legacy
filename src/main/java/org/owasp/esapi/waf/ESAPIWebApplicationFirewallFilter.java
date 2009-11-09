@@ -273,8 +273,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		
 		try {
 			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
-		} catch (UploadTooLargeException utle) {
-			utle.printStackTrace();
 		} catch (FileUploadException fue) {
 			fue.printStackTrace();
 		}

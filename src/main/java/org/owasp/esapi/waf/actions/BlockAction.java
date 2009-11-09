@@ -15,6 +15,12 @@
  */
 package org.owasp.esapi.waf.actions;
 
+/**
+ * The class that indicates the request processing should be halted and that a blank response
+ * should be returned.
+ * 
+ * @author Arshan Dabirsiaghi
+ */
 public class BlockAction extends Action {
 
 	public boolean failedRule() {

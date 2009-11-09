@@ -28,6 +28,11 @@ import org.owasp.esapi.waf.actions.DefaultAction;
 import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;authentication-rules&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class AuthenticatedRule extends Rule {
 
 	private String sessionAttribute;

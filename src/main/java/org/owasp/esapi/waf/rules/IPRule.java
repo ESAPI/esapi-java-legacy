@@ -25,6 +25,11 @@ import org.owasp.esapi.waf.actions.DefaultAction;
 import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;detect-source-ip&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class IPRule extends Rule {
 
 	private Pattern allowedIP;

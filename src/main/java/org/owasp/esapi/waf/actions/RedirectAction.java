@@ -16,8 +16,9 @@
 package org.owasp.esapi.waf.actions;
 
 /**
- * This class represents an Action where the WAF should redirect the 
- * client to some URL.
+ * The class that indicates the user should be redirected to another location.
+ * 
+ * @author Arshan Dabirsiaghi
  */
 public class RedirectAction extends Action {
 

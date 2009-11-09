@@ -28,6 +28,11 @@ import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.actions.RedirectAction;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the Rule subclass executed for &lt;enforce-https&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class EnforceHTTPSRule extends Rule {
 
 	private Pattern path;

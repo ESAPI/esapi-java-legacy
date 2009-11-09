@@ -15,6 +15,12 @@
  */
 package org.owasp.esapi.waf.actions;
 
+/**
+ * The class that indicates the default action as indicated by the policy file
+ * should be executed.
+ * 
+ * @author Arshan Dabirsiaghi
+ */
 public class DefaultAction extends Action {
 
 	public boolean failedRule() {

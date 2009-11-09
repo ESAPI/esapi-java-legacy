@@ -15,6 +15,12 @@
  */
 package org.owasp.esapi.waf.internal;
 
+/**
+ * A simple object to represent a name=value HTTP parameter.
+ * 
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class Parameter {
 
 	private String name;

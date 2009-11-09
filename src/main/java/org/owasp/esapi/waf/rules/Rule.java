@@ -23,6 +23,11 @@ import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
+/**
+ * This is the base class for the WAF rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public abstract class Rule {
 
 	protected String id = "(no rule ID)";

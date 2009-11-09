@@ -22,8 +22,12 @@ import java.util.Map;
 
 import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 
+/**
+ * This is a small utility class for use by Rule subclasses.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class RuleUtil {
-
 
 	public static boolean isInList(Map m, String s) {
 

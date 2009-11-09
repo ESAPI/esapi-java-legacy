@@ -16,8 +16,6 @@
 package org.owasp.esapi.waf.internal;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,10 +33,16 @@ import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.fileupload.util.Streams;
-import org.apache.commons.io.IOUtils;
-import org.owasp.esapi.waf.UploadTooLargeException;
-import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 
+/**
+ * The wrapper for the HttpServletRequest object which will be passed to the application
+ * being protected by the WAF. It contains logic for parsing multipart parameters out of
+ * the request and provided downstream application logic a way of accessing it like it 
+ * hasn't been touched.
+ * 
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 
 	private Vector<Parameter> allParameters;
@@ -65,7 +69,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
         return new BufferedReader(new InputStreamReader(getInputStream(), enc));
     }
 	
-	public InterceptingHTTPServletRequest(HttpServletRequest request) throws UploadTooLargeException, FileUploadException, IOException {
+	public InterceptingHTTPServletRequest(HttpServletRequest request) throws FileUploadException, IOException {
 
 		super(request);
 

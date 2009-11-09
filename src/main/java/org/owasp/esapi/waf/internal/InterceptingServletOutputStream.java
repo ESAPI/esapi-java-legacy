@@ -22,13 +22,16 @@ import java.io.RandomAccessFile;
 
 import javax.servlet.ServletOutputStream;
 
-/*
+/**
  * This class was inspired by ModSecurity for Java by Ivan Ristic. We hook
  * the response stream and queue up all outbound data so that we can apply
- * egress rules. For efficiency, we decide off the bat if we need to buffer.
+ * egress rules. For efficiency, we decide off the bat if we need to buffer
+ * responses to accomplish any of the rules in the policy file.
  *
  * If not, we just forward everything through, otherwise we write data to our
  * byte stream that we will eventually forward en totale to the user agent.
+ * 
+ * @author Arshan Dabirsiaghi
  */
 
 public class InterceptingServletOutputStream extends ServletOutputStream {

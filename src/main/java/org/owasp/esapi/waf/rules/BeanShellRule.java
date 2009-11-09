@@ -31,6 +31,11 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 import bsh.EvalError;
 import bsh.Interpreter;
 
+/**
+ * This is the Rule subclass executed for &lt;bean-shell-script&gt; rules.
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class BeanShellRule extends Rule {
 
 	private Interpreter i;

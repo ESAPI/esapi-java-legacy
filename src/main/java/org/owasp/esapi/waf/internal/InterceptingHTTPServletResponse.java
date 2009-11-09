@@ -29,6 +29,15 @@ import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.waf.rules.AddSecureFlagRule;
 import org.owasp.esapi.waf.rules.Rule;
 
+/**
+ * The wrapper for the HttpServletResponse object which will be passed to the application
+ * being protected by the WAF. It contains logic for the response building API in order
+ * to allow the WAF rules regarding responses to work. Much of the work is delegated to
+ * other classes, especially InterceptingServletOutputStream
+ * 
+ * @author Arshan Dabirsiaghi
+ *
+ */
 public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper {
 
 	private InterceptingPrintWriter ipw;
