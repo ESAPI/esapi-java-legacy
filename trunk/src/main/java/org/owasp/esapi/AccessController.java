@@ -111,7 +111,7 @@ public interface AccessController {
 	 * an <code>AccessControlRule</code>, then an <code>AccessControlException
 	 * </code> is thrown.  
 	 *  
-	 * Developers should call assertAuthorized to enforce privileged access to 
+	 * Developers should call {@code assertAuthorized} to enforce privileged access to 
 	 * the system. It should be used to answer the question: "Should execution 
 	 * continue." Ideally, the call to <code>assertAuthorized</code> should
 	 * be integrated into the application framework so that it is called 
@@ -121,10 +121,7 @@ public interface AccessController {
 	 * &lt;AccessControlPolicy&gt;&lt;AccessControlRules&gt;
 	 *     &lt;AccessControlRule name="key"
 	 * @param runtimeParameter runtimeParameter can contain anything that 
-	 *        the AccessControlRule needs from the runtime system. 
-	 * @return Returns <code>true</code> if and only if the AccessControlRule specified 
-	 *        by <code>key</code> exists and returned <code>true</code>. 
-	 *        Otherwise returns <code>false</code> 
+	 *        the AccessControlRule needs from the runtime system.
 	 */
 	public void assertAuthorized(Object key, Object runtimeParameter)
 		throws AccessControlException;

@@ -252,7 +252,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	 * @throws EncryptionException	Thrown when something goes wrong with the
 	 * 								encryption.
 	 * 
-	 * @see org.owasp.esapi.Encryptor#encrypt(byte[])
+	 * @see org.owasp.esapi.Encryptor#encrypt(PlainText)
 	 */
 	public String encrypt(String plaintext) throws EncryptionException
 	{

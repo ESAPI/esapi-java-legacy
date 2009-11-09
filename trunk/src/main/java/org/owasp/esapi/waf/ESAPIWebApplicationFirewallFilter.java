@@ -84,7 +84,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	/**
 	 * This function is used in testing to dynamically alter the configuration.
-	 * @param is The InputStream from which to read the XML configuration file.
+	 * @param policyFilePath The new XML configuration file to read and use.
+	 * @param webRootDir Root directory of web / app server.
 	 */
 	public void setConfiguration( String policyFilePath, String webRootDir ) throws FileNotFoundException {
 		try {

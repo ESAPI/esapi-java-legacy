@@ -278,7 +278,7 @@ public final class DefaultCipherText implements CipherText {
 	 * Set the raw ciphertext.
 	 * @param ciphertext	The raw ciphertext.
 	 * @throws EncryptionException	Thrown if the MAC has already been computed
-	 * 				via {@link #computeAndStoreMAC(byte[])}.
+	 * 				via {@link #computeAndStoreMAC(SecretKey)}.
 	 */
 	public void setCiphertext(byte[] ciphertext)
 		throws EncryptionException

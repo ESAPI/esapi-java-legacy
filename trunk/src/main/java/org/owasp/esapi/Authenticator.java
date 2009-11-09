@@ -72,7 +72,7 @@ public interface Authenticator {
 
 	/**
 	 * Calls login with the *current* request and response.
-	 * @return
+	 * @return Authenticated {@code User} if login is successful.
 	 * @see HTTPUtilities#setCurrentHTTP(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */
 	User login() throws AuthenticationException;

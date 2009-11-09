@@ -171,11 +171,14 @@ public abstract class BaseValidationRule implements ValidationRule {
 		return stripped.toString();
 	}
 	
+	// CHECKME should be moved to some utility class (Would potentially be used by new EncoderConstants class)
+	// Is there a standard way to convert an array of primitives to a Collection
 	/**
-	 * CHECKME should be moved to some utility class (Would potentially be used by new EncoderConstants class)
-	 * Is there a standard way to convert an array of primitives to a Collection 
-	 * @param array
-	 * @return
+	 * Convert an array of characters to a {@code Set<Character>} (so duplicates
+	 * are removed).
+	 * @param array The character array.
+	 * @return A {@code Set<Character>} of the unique characters from {@code array}
+	 *         is returned.
 	 */
 	public static Set<Character> charArrayToSet(char[] array) {
 		Set<Character> toReturn = new HashSet<Character>(array.length);
@@ -193,4 +196,3 @@ public abstract class BaseValidationRule implements ValidationRule {
 		return encoder;
 	}
 }
-

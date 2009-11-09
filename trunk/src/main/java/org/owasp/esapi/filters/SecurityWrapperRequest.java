@@ -52,7 +52,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Construct a safe request that overrides the default request methods with
      * safer versions.
      * 
-     * @param request
+     * @param request The {@code HttpServletRequest} we are wrapping.
      */
     public SecurityWrapperRequest(HttpServletRequest request) {
     	super( request );
@@ -65,7 +65,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Same as HttpServletRequest, no security changes required.
      * @param name
-     * @return
+     * @return The attribute value
      */
     public Object getAttribute(String name) {
         return getHttpServletRequest().getAttribute(name);
@@ -73,7 +73,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return An {@code Enumeration} of attribute names.
      */
     public Enumeration getAttributeNames() {
         return getHttpServletRequest().getAttributeNames();
@@ -81,7 +81,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return The authentication type
      */
     public String getAuthType() {
         return getHttpServletRequest().getAuthType();
@@ -89,7 +89,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return  The character-encoding for this {@code HttpServletRequest}
      */
     public String getCharacterEncoding() {
         return getHttpServletRequest().getCharacterEncoding();
@@ -97,7 +97,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return The content-length for this {@code HttpServletRequest}
      */
     public int getContentLength() {
         return getHttpServletRequest().getContentLength();
@@ -105,7 +105,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return The content-type for this {@code HttpServletRequest}
      */
     public String getContentType() {
         return getHttpServletRequest().getContentType();
@@ -114,7 +114,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the context path from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
-     * @return
+     * @return The context path for this {@code HttpServletRequest}
      */
     public String getContextPath() {
         String path = getHttpServletRequest().getContextPath();
@@ -130,7 +130,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the array of Cookies from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
-     * @return
+     * @return An array of {@code Cookie}s for this {@code HttpServletRequest}
      */
     public Cookie[] getCookies() {
         Cookie[] cookies = getHttpServletRequest().getCookies();
@@ -168,8 +168,11 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @param name 
-     * @return
+     * @param name Specifies the name of the HTTP request header; e.g.,
+     *             {@code If-Modified-Since}.
+     * @return a long value representing the date specified in the header
+     * expressed as the number of milliseconds since {@code January 1, 1970 GMT},
+     * or {@code -1} if the named header was not included with the request.
      */
     public long getDateHeader(String name) {
         return getHttpServletRequest().getDateHeader(name);
@@ -178,8 +181,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the named header from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
-     * @param name 
-     * @return
+     * @param name The name of an HTTP request header
+     * @return The specified header value is returned.
      */
     public String getHeader(String name) {
         String value = getHttpServletRequest().getHeader(name);
@@ -195,7 +198,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the enumeration of header names from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
-     * @return
+     * @return An {@code Enumeration} of header names associated with this request.
      */
     public Enumeration getHeaderNames() {
         Vector v = new Vector();
@@ -215,8 +218,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the enumeration of headers from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
-     * @param name
-     * @return
+     * @param name The name of an HTTP request header.
+     * @return An {@code Enumeration} of headers from the request after
+     *         canonicalizing and filtering has been performed.
      */
     public Enumeration getHeaders(String name) {
         Vector v = new Vector();
@@ -237,8 +241,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Same as HttpServletRequest, no security changes required. Note that this
      * input stream may contain attacks and the developer is responsible for
      * canonicalizing, validating, and encoding any data from this stream.
-     * @return 
-     * @throws IOException
+     * @return The {@code ServletInputStream} associated with this
+     *         {@code HttpServletRequest}.
+     * @throws IOException Thrown if an input exception is thrown, such as the
+     *         remote peer closing the connection.
      */
     public ServletInputStream getInputStream() throws IOException {
         return getHttpServletRequest().getInputStream();
@@ -246,8 +252,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @param name 
-     * @return
+     * @param name The name of an HTTP request header.
+     * @return Returns the value of the specified request header as an {@code int}.
      */
     public int getIntHeader(String name) {
         return getHttpServletRequest().getIntHeader(name);
@@ -255,7 +261,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return A {@code String} containing the IP address on which the
+     *         request was received.
      */
     public String getLocalAddr() {
         return getHttpServletRequest().getLocalAddr();
@@ -263,7 +270,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return The preferred {@code Locale} for the client.
      */
     public Locale getLocale() {
         return getHttpServletRequest().getLocale();
@@ -271,7 +278,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return An {@code Enumeration} of preferred {@code Locale}
+     *         objects for the client.
      */
     public Enumeration getLocales() {
         return getHttpServletRequest().getLocales();
@@ -279,7 +287,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return A {@code String} containing the host name of the IP on which
+     *         the request was received.
      */
     public String getLocalName() {
         return getHttpServletRequest().getLocalName();
@@ -287,7 +296,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Returns the Internet Protocol (IP) port number of the interface
+     *         on which the request was received.
      */
     public int getLocalPort() {
         return getHttpServletRequest().getLocalPort();
@@ -295,7 +305,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Returns the name of the HTTP method with which this request was made.
      */
     public String getMethod() {
         return getHttpServletRequest().getMethod();
@@ -304,8 +314,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the named parameter from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
-     * @param name
-     * @return
+     * @param name The parameter name for the request
+     * @return The "scrubbed" parameter value.
      */
     public String getParameter(String name) {
         String orig = getHttpServletRequest().getParameter(name);
@@ -321,7 +331,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the parameter map from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
-     * @return
+     * @return A {@code Map} containing scrubbed parameter names / value pairs.
      */
     public Map getParameterMap() {
         Map map = getHttpServletRequest().getParameterMap();
@@ -350,7 +360,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the enumeration of parameter names from the HttpServletRequest
      * after canonicalizing and filtering out any dangerous characters.
-     * @return
+     * @return An {@code Enumeration} of properly "scrubbed" parameter names.
      */
     public Enumeration getParameterNames() {
         Vector v = new Vector();
@@ -371,8 +381,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Returns the array of matching parameter values from the
      * HttpServletRequest after canonicalizing and filtering out any dangerous
      * characters.
-     * @param name 
-     * @return
+     * @param name The parameter name
+     * @return An array of matching "scrubbed" parameter values.
      */
     public String[] getParameterValues(String name) {
         String[] values = getHttpServletRequest().getParameterValues(name);
@@ -394,7 +404,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the path info from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
-     * @return
+     * @return Returns any extra path information, appropriately scrubbed,
+     *         associated with the URL the client sent when it made this request.
      */
     public String getPathInfo() {
         String path = getHttpServletRequest().getPathInfo();
@@ -409,7 +420,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Returns any extra path information, appropriate scrubbed,
+     *         after the servlet name but before the query string, and
+     *         translates it to a real path.
      */
     public String getPathTranslated() {
         return getHttpServletRequest().getPathTranslated();
@@ -417,7 +430,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Returns the name and version of the protocol the request uses in
+     *       the form protocol/majorVersion.minorVersion, for example, HTTP/1.1.
      */
     public String getProtocol() {
         return getHttpServletRequest().getProtocol();
@@ -426,7 +440,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the query string from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
-     * @return
+     * @return The scrubbed query string is returned.
      */
     public String getQueryString() {
         String query = getHttpServletRequest().getQueryString();
@@ -443,17 +457,20 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Same as HttpServletRequest, no security changes required. Note that this
      * reader may contain attacks and the developer is responsible for
      * canonicalizing, validating, and encoding any data from this stream.
-     * @return
-     * @throws IOException
+     * @return aA {@code BufferedReader} containing the body of the request. 
+     * @throws IOException If an input error occurred while reading the request
+     *                     body (e.g., premature EOF).
      */
     public BufferedReader getReader() throws IOException {
         return getHttpServletRequest().getReader();
     }
 
+    // CHECKME: Should this be deprecated since ServletRequest.getRealPath(String)
+    //          is deprecated? Should use ServletContext.getRealPath(String) instead.
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @param path 
-     * @return
+     * @param path A virtual path on a web or application server; e.g., "/index.htm".
+     * @return Returns a String containing the real path for a given virtual path.
      */
     public String getRealPath(String path) {
         return getHttpServletRequest().getRealPath(path);
@@ -461,7 +478,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Returns the IP address of the client or last proxy that sent the request.
      */
     public String getRemoteAddr() {
         return getHttpServletRequest().getRemoteAddr();
@@ -469,7 +486,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return 
      */
     public String getRemoteHost() {
         return getHttpServletRequest().getRemoteHost();
@@ -485,7 +502,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Returns the name of the ESAPI user associated with this getHttpServletRequest().
-     * @return
+     * @return Returns the fully qualified name of the client or the last proxy
+     *         that sent the request
      */
     public String getRemoteUser() {
         return ESAPI.authenticator().getCurrentUser().getAccountName();
@@ -495,7 +513,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Checks to make sure the path to forward to is within the WEB-INF
      * directory and then returns the dispatcher. Otherwise returns null.
      * @param path
-     * @return
+     * @return 
      */
     public RequestDispatcher getRequestDispatcher(String path) {
         if (path.startsWith("WEB-INF")) {
@@ -508,7 +526,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Returns the URI from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters. Code must be very careful not to
      * depend on the value of a requested session id reported by the user.
-     * @return
+     * @return A {@code RequestDispatcher} object that acts as a wrapper for the
+     *         resource at the specified path, or null if the servlet container
+     *         cannot return a {@code RequestDispatcher}.
      */
     public String getRequestedSessionId() {
         String id = getHttpServletRequest().getRequestedSessionId();

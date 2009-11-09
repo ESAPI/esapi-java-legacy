@@ -13,7 +13,7 @@ public class NullSafe
 	 * {@link Object#equals(Object)} that safely handles nulls.
 	 * @param a First object
 	 * @param b Second object
-	 * @returns true if a == b or a.equals(b). false otherwise.
+	 * @return true if a == b or a.equals(b). false otherwise.
 	 */
 	public static boolean equals(Object a, Object b)
 	{
@@ -27,7 +27,7 @@ public class NullSafe
 	}
 
 	/**
-	 * {@link Object#hasheCode()} of an object.
+	 * {@link Object#hashCode()} of an object.
 	 * @param o Object to get a hashCode for.
 	 * @return 0 if o is null. Otherwise o.hashCode().
 	 */
