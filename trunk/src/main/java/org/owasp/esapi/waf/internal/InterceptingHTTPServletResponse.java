@@ -110,6 +110,10 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     	isos.commit();
     }
 
+    public void addCookie(Cookie cookie) {
+    	addCookie(cookie, cookie.getMaxAge()<=0);
+    }
+    
 	public void addCookie(Cookie cookie, boolean isSession) {
 
 		boolean addSecureFlag = cookie.getSecure();

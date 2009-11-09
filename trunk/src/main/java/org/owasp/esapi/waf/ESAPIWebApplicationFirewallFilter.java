@@ -75,8 +75,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	
 	private long lastConfigReadTime;
 	
-	private static final String FAUX_SESSION_COOKIE = "FAUXSC";
-	private static final String SESSION_COOKIE_CANARY = "org.owasp.esapi.waf.canary";
+	//private static final String FAUX_SESSION_COOKIE = "FAUXSC";
+	//private static final String SESSION_COOKIE_CANARY = "org.owasp.esapi.waf.canary";
 
 	private FilterConfig fc;
 	
@@ -84,8 +84,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	/**
 	 * This function is used in testing to dynamically alter the configuration.
-	 * @param policyFilePath The new XML configuration file to read and use.
-	 * @param webRootDir Root directory of web / app server.
+	 * @param is The InputStream from which to read the XML configuration file.
+	 * @param webRootDir The root directory of the web application.
 	 */
 	public void setConfiguration( String policyFilePath, String webRootDir ) throws FileNotFoundException {
 		try {
@@ -176,17 +176,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	}
 
-	
-	
+
 	/**
-	 * 
-	 * This method performs the runtime checking of rules on inbound requests and outbound responses. There is
-	 * a considerable hack in this function to accomplish setting the HTTPOnly/secure flags on the container's
-	 * session cookies, which involves a single extra request-response cycle strictly devoted to that goal. 
-	 * 
-	 * Because this extra cycle isn't ideal, you should consider enabling this protection in your container's 
-	 * configuration instead. Like many other features of the WAF, this should only be done to implement 
-	 * short-to-medium term fixes.   
+	 * This is the where the main interception and rule-checking logic of the WAF resides.
 	 */
 	public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse,
 			FilterChain chain) throws IOException, ServletException {
@@ -234,82 +226,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			response = new InterceptingHTTPServletResponse(httpResponse, true, appGuardConfig.getCookieRules());
 		}
 		
-		/*
-		 * Stage 0: Apply any cookie rules for incoming requests that don't yet have sessions.
-		 */
-
-		logger.debug(">> Starting Stage 0" );
-
-		// browser -> server (no cookies)
-		// server -> browser (regular session cookie, faux cookie (httponly))
-		// browser -> server (regular session cookie, faux cookie)
-		// server -> browser (kill session cookie)
-		// browser -> server (faux cookie)
-		// server -> browser (set regular session cookie, kill faux cookie)
-		
-		if ( httpRequest.getSession(false) == null && ( appGuardConfig.isUsingHttpOnlyFlagOnSessionCookie() ||
-				appGuardConfig.isUsingSecureFlagOnSessionCookie() ) ) {
-
-			for(int i=0;httpRequest.getCookies() != null && i<httpRequest.getCookies().length;i++) {
-
-				Cookie cookie = httpRequest.getCookies()[i];
-
-				if ( cookie.getName().equals(FAUX_SESSION_COOKIE) ) {
-
-					/*
-					 * Kill the faux cookie.
-					 */
-
-					killCookie(	FAUX_SESSION_COOKIE, httpRequest, response );
-
-					/*
-					 * Issue the new cookie back to the user, but this time with
-					 * the HttpOnly/Secure flags as needed.
-					 */
-
-					Cookie newCookie = new Cookie(appGuardConfig.getSessionCookieName(), cookie.getValue());
-					cookie.setPath(httpRequest.getContextPath());
-					cookie.setDomain(httpRequest.getHeader("Host"));
-					response.addCookie(newCookie, true);
-
-					/*
-					 * Now that the 2-stage cookie process is handled and the user's
-					 * next request will have the properly protected cookie, force
-					 * them to come back and issue the same request and they'll
-					 * be allowed through.
-					 */
-
-					httpResponse.sendRedirect(httpRequest.getRequestURL().toString());
-
-					return;
-
-				}
-			}
-
-			/*
-			 * They don't have the faux cookie. That means they need one.
-			 */
-
-			httpRequest.getSession(true);
-
-			/*
-			 * Put a canary value in their session
-			 */
-
-			httpRequest.getSession().setAttribute(SESSION_COOKIE_CANARY,0);
-
-			killCookie(	appGuardConfig.getSessionCookieName(), httpRequest, response );
-
-			Cookie fauxCookie = new Cookie(FAUX_SESSION_COOKIE, httpRequest.getSession().getId());
-			fauxCookie.setPath(httpRequest.getContextPath());
-			fauxCookie.setMaxAge(httpRequest.getSession().getMaxInactiveInterval());
-			response.addCookie(fauxCookie, true);
-
-			response.sendRedirect(httpRequest.getRequestURL().toString());
-
-			return;
-		}
-
 		/*
 		 * Stage 1: Rules that do not need the request body.
 		 */
