@@ -79,7 +79,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @param action
 	 * @param data
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForData(java.lang.String, java.lang.Object)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForData(java.lang.String, java.lang.Object)
 	 * @deprecated
 	 */
 	public void assertAuthorizedForData(String action, Object data)
@@ -90,7 +90,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param filepath
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForFile(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForFile(java.lang.String)
 	 * @deprecated
 	 */
 	public void assertAuthorizedForFile(String filepath)
@@ -101,7 +101,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param functionName
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForFunction(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForFunction(java.lang.String)
 	 * @deprecated
 	 */
 	public void assertAuthorizedForFunction(String functionName)
@@ -112,7 +112,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param serviceName
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForService(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForService(java.lang.String)
 	 * @deprecated
 	 */
 	public void assertAuthorizedForService(String serviceName)
@@ -123,7 +123,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param url
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForURL(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForURL(java.lang.String)
 	 * @deprecated
 	 */
 	public void assertAuthorizedForURL(String url)
@@ -134,8 +134,8 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param action
 	 * @param data
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForData(java.lang.String, java.lang.Object)
+	 * @return {@code true} if access is permitted; {@code false} otherwise.
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForData(java.lang.String, java.lang.Object)
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForData(String action, Object data) {
@@ -144,8 +144,8 @@ public class ExperimentalAccessController implements AccessController {
 
 	/**
 	 * @param filepath
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForFile(java.lang.String)
+     * @return {@code true} if access is permitted; {@code false} otherwise.
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForFile(java.lang.String)
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForFile(String filepath) {
@@ -154,8 +154,8 @@ public class ExperimentalAccessController implements AccessController {
 
 	/**
 	 * @param functionName
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForFunction(java.lang.String)
+     * @return {@code true} if access is permitted; {@code false} otherwise.
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForFunction(java.lang.String)
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForFunction(String functionName) {
@@ -164,8 +164,8 @@ public class ExperimentalAccessController implements AccessController {
 
 	/**
 	 * @param serviceName
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForService(java.lang.String)
+     * @return {@code true} if access is permitted; {@code false} otherwise.
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForService(java.lang.String)
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForService(String serviceName) {
@@ -174,8 +174,8 @@ public class ExperimentalAccessController implements AccessController {
 
 	/**
 	 * @param url
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForURL(java.lang.String)
+     * @return {@code true} if access is permitted; {@code false} otherwise.
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForURL(java.lang.String)
 	 * @deprecated
 	 */
 	public boolean isAuthorizedForURL(String url) {

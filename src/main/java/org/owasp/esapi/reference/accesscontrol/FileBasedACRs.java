@@ -34,6 +34,8 @@ import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
+// CHECKME: If this exists for backward compatibility, should this
+//          class be deprecated??? If so, mark it using annotation.
 /**
  * This class exists for backwards compatibility with the AccessController 1.0 
  * reference implementation.
@@ -124,7 +126,9 @@ public class FileBasedACRs {
 	private Logger logger = ESAPI.getLogger("FileBasedACRs");
 
     /**
-	* {@inheritDoc}
+	* Check if URL is authorized.
+	* @param url The URL tested for authorization
+	* @return {@code true} if access is allowed, {@code false} otherwise.
 	*/
     public boolean isAuthorizedForURL(String url) {
 		if (urlMap==null || urlMap.isEmpty()) {

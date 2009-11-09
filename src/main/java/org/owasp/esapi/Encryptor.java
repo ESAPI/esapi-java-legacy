@@ -119,7 +119,7 @@ public interface Encryptor {
 	 * </pre>
 	 * in your <b>ESAPI.properties</b> file. 
 	 * </p><p>
-	 * <b>Why this method is deprecated:</b> Most cryptographers strong suggest
+	 * <b>Why this method is deprecated:</b> Most cryptographers strongly suggest
 	 * that if you are creating crypto functionality for general-purpose use,
 	 * at a minimum you should ensure that it provides authenticity, integrity,
 	 * and confidentiality. This method only provides confidentiality, but not
@@ -192,7 +192,7 @@ public interface Encryptor {
 	  * as defined in the <code>ESAPI.properties</code> file and the
 	  * <i>specified secret key</i>.
 	  * </p><p>
-	  * This method is similar to {@link #encrypt(byte[])} except that it
+	  * This method is similar to {@link #encrypt(PlainText)} except that it
 	  * permits a specific {@code SecretKey} to be used for encryption.
 	  *
 	  * @param key		The {@code SecretKey} to use for encrypting the plaintext.
@@ -241,7 +241,7 @@ public interface Encryptor {
 	 * </pre>
 	 * in your <b>ESAPI.properties</b> file. 
 	 * </p><p>
-	 * <b>Why this method is deprecated:</b> Most cryptographers strong suggest
+	 * <b>Why this method is deprecated:</b> Most cryptographers strongly suggest
 	 * that if you are creating crypto functionality for general-purpose use,
 	 * at a minimum you should ensure that it provides authenticity, integrity,
 	 * and confidentiality. This method only provides confidentiality, but not
