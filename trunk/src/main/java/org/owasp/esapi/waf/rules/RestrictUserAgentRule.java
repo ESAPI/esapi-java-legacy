@@ -21,8 +21,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
+import org.owasp.esapi.waf.actions.BlockAction;
 import org.owasp.esapi.waf.actions.DefaultAction;
 import org.owasp.esapi.waf.actions.DoNothingAction;
+import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
 /**
@@ -60,6 +62,15 @@ public class RestrictUserAgentRule extends Rule {
 		}
 
 		log(request, "Disallowed user agent pattern '" + deny.pattern() + "' found in user agent '" + request.getHeader(USER_AGENT_HEADER) + "'");
+	
+		/*
+		 * If we don't force this to "block", the user will infinitely blocking our bandwidth.
+		 * Better to just reject.
+		 */
+		if ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION == AppGuardianConfiguration.REDIRECT ) {
+			return new BlockAction();
+		}
+		
 		return new DefaultAction();
 	}
 

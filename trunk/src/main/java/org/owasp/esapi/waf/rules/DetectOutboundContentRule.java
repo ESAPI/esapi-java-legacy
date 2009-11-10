@@ -37,12 +37,12 @@ public class DetectOutboundContentRule extends Rule {
 
 	private Pattern contentType;
 	private Pattern pattern;
-	private Pattern url;
+	private Pattern uri;
 	
-	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern, Pattern url) {
+	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern, Pattern uri) {
 		this.contentType = contentType;
 		this.pattern = pattern;
-		this.url = url;
+		this.uri = uri;
 		setId(id);
 	}
 
@@ -51,9 +51,9 @@ public class DetectOutboundContentRule extends Rule {
 			HttpServletResponse httpResponse) {
 
 		/*
-		 * Early fail: if URL doesn't match.
+		 * Early fail: if URI doesn't match.
 		 */
-		if ( url != null && ! url.matcher(request.getRequestURL().toString()).matches() ) {
+		if ( uri != null && ! uri.matcher(request.getRequestURI()).matches() ) {
 			return new DoNothingAction(); 
 		}
 
