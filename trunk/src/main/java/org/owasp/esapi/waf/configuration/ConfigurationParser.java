@@ -575,7 +575,7 @@ public class ConfigurationParser {
 						}
 												
 					} catch (FileNotFoundException fnfe) {
-						throw new ConfigurationException ("bean shell rule '" + id + "' had a source file that could not be found (" + fileName + "), current working directory = " + System.getProperty("user.dir") );
+						throw new ConfigurationException ("bean shell rule '" + id + "' had a source file that could not be found (" + fileName + "), web directory = " + webRootDir );
 					} catch (EvalError ee) {
 						throw new ConfigurationException ("bean shell rule '" + id + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
 					}

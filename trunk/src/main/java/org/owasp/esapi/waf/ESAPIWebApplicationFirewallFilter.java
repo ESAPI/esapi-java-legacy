@@ -161,7 +161,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		try {
 
-			String webRootDir = fc.getServletContext().getRealPath("");
+			String webRootDir = fc.getServletContext().getRealPath("/");
 			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(realConfigFilename),webRootDir);
 
 			DOMConfigurator.configure(realLogSettingsFilename);
