@@ -68,7 +68,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	private static final int DEFAULT_POLLING_TIME = 30000;
 	
 	private String configurationFilename = null;
-
+	
 	private String logSettingsFilename = null;
 
 	private long pollingTime;
@@ -136,10 +136,10 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		configurationFilename = fc.getInitParameter(CONFIGURATION_FILE_PARAM);
 
-		String realConfigFilename = fc.getServletContext().getRealPath(configurationFilename);
+		configurationFilename = fc.getServletContext().getRealPath(configurationFilename);
 		
-		if ( realConfigFilename == null || ! new File(realConfigFilename).exists() ) {
-			throw new ServletException("[ESAPI WAF] Could not find configuration file at resolved path: " + realConfigFilename);
+		if ( configurationFilename == null || ! new File(configurationFilename).exists() ) {
+			throw new ServletException("[ESAPI WAF] Could not find configuration file at resolved path: " + configurationFilename);
 		}
 
 		/*
@@ -162,7 +162,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		try {
 
 			String webRootDir = fc.getServletContext().getRealPath("/");
-			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(realConfigFilename),webRootDir);
+			appGuardConfig = ConfigurationParser.readConfigurationFile(new FileInputStream(configurationFilename),webRootDir);
 
 			DOMConfigurator.configure(realLogSettingsFilename);
 
@@ -191,7 +191,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		
 		if ( (System.currentTimeMillis() - lastConfigReadTime) > pollingTime ) {
 			File f = new File(configurationFilename);
-			if ( f.lastModified() > lastConfigReadTime ) {
+			long lastModified = f.lastModified();
+			if ( lastModified > lastConfigReadTime ) {
 				/*
 				 * The file has been altered since it was
 				 * read in the last time. Must re-read it.

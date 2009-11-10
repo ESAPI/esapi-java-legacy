@@ -57,10 +57,10 @@ public class ReplaceContentRule extends Rule {
 			HttpServletResponse httpResponse) {
 
 		/*
-		 * First early fail: if the URL doesn't match the paths we're interested in.
+		 * First early fail: if the URI doesn't match the paths we're interested in.
 		 */
-		
-		if ( path != null && ! path.matcher(request.getRequestURL().toString()).matches() ) {
+		String uri = request.getRequestURI();
+		if ( path != null && ! path.matcher(uri).matches() ) {
 			return new DoNothingAction();
 		}
 		
