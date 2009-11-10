@@ -57,7 +57,7 @@
 	<bean-shell-rules>	
 			<bean-shell-script 
 				id="example1" 
-				file="src/test/resources/.esapi/waf-policies/bean-shell-rule.bsh" 
+				file="waf-policies/bean-shell-rule.bsh" 
 				stage="before-request-body"/>
 	
 	</bean-shell-rules>

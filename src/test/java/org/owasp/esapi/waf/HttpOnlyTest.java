@@ -43,6 +43,9 @@ public class HttpOnlyTest extends WAFTestCase {
      * application with addCookie().
      */
 
+	// this has been commented because we decided not to try to make this work. too much
+	// hackery.
+	/*
     public void testAddHttpOnlyOnSessionCookie() throws Exception {
     	
      	System.out.println("addHttpOnlyPolicy - Response should have httpOnly set on the session ID (JSESSIONID) cookie added to response" );
@@ -52,7 +55,8 @@ public class HttpOnlyTest extends WAFTestCase {
     	assertTrue( response.getStatus() == HttpServletResponse.SC_MOVED_PERMANENTLY );
     	
     }
-    
+    */
+	
     public void testAddHttpOnlyOnCustomCookie() throws Exception {
     	
     	System.out.println("addHttpOnlyPolicy - Response should have httpOnly set on a custom cookie (FOOBAR) added to the response" );
@@ -61,10 +65,12 @@ public class HttpOnlyTest extends WAFTestCase {
     	
     	WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/add-httponly-policy.xml", request, response, new HttpOnlyTestFilterChain() );
     	
+    	//response.dump();
+     
+    	String foo = response.getHeader("Set-Cookie");
     	assertTrue( response.getStatus() != HttpServletResponse.SC_MOVED_PERMANENTLY );
-    	assertTrue( response.getCookie("FOO") != null );
-    	response.dump();
-     	
+    	assertTrue( foo.contains("HttpOnly") );
+    	
     }
     
     class HttpOnlyTestFilterChain extends MockFilterChain {

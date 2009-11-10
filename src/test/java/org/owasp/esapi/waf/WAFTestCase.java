@@ -52,7 +52,7 @@ public abstract class WAFTestCase extends TestCase {
         response = new MockHttpServletResponse();
         waf = new ESAPIWebApplicationFirewallFilter();
         
-        WAFTestUtility.setWAFPolicy(waf, "waf-policy.xml");
+        WAFTestUtility.setWAFPolicy(waf, "/waf-policy.xml");
 	}
     
 	public void createAndExecuteWAFResponseCodeTest( ESAPIWebApplicationFirewallFilter waf, MockHttpServletRequest request, MockHttpServletResponse response, int expectedResult ) throws Exception {

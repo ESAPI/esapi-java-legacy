@@ -39,8 +39,8 @@ public class WAFTestUtility {
     public static void setWAFPolicy( ESAPIWebApplicationFirewallFilter waf, String policyFile ) throws Exception {
         Map map = new HashMap();
     	map.put( "configuration", policyFile );
-    	map.put( "log_settings", "log4j.xml");
-    	FilterConfig mfc = new MockFilterConfig( map );
+    	map.put( "log_settings", "../log4j.xml");
+    	FilterConfig mfc = new MockWafFilterConfig( map );
     	waf.init( mfc );
     }
     
