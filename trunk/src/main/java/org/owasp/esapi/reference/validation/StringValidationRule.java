@@ -208,7 +208,7 @@ public class StringValidationRule extends BaseValidationRule {
 	private String checkLength(String context, String input, String orig) throws ValidationException
 	{
 		if (input.length() < minLength) {
-			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
+			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The minimum length of " + minLength + " characters was not met.", "Input does not meet the minimum length of " + minLength + " by " + (minLength - input.length()) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
 		}
 
 		if (input.length() > maxLength) {
