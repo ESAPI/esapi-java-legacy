@@ -432,7 +432,7 @@ public class EncoderTest extends TestCase {
 
         Codec oracle = new OracleCodec();
         assertEquals("Oracle", null, instance.encodeForSQL(oracle, null));
-        assertEquals("Oracle", "Jeff\\' or \\'1\\'\\=\\'1", instance.encodeForSQL(oracle, "Jeff' or '1'='1"));
+        assertEquals("Oracle", "Jeff'' or ''1''=''1", instance.encodeForSQL(oracle, "Jeff' or '1'='1"));
     }
 
     
