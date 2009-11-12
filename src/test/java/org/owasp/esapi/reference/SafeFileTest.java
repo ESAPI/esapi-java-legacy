@@ -31,7 +31,10 @@ import org.owasp.esapi.errors.ValidationException;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class SafeFileTest extends TestCase {
+public class SafeFileTest extends TestCase
+{
+	private static final Class<SafeFileTest> CLASS = SafeFileTest.class;
+	private static final String CLASS_NAME = CLASS.getName();
 
 	/**
 	 * Instantiates a new executor test.
@@ -346,14 +349,24 @@ public class SafeFileTest extends TestCase {
     public void testCreateSafeFileURIConstructor() throws Exception {
 		System.out.println("SafeFile URI constructor");
 		// create a file to test with
-		new File(System.getProperty("user.home"), "test.file" ).createNewFile();
+
+		File testFile = null;
 
 		try {
-			String goodFile = System.getProperty("user.home") + "test.file";
-			File sf = new SafeFile(new URI("file:///" + goodFile ));
-			assertTrue( sf.exists() );
+			testFile = File.createTempFile(CLASS_NAME, null);
+			String uri = testFile.toURI().toASCIIString();
+			File sf = new SafeFile(new URI(uri));
+			assertTrue(sf.exists());
 		} catch (Exception e) {
 			// pass
+		}
+		finally
+		{
+			if(testFile != null && testFile.exists() && !testFile.delete())
+			{
+				System.err.println("Unable to delete temporary file " + testFile + ". Deletion of file at JVM exit will be attempted.");
+				testFile.deleteOnExit();
+			}
 		}
 	
 		// test uri constructor with null byte
