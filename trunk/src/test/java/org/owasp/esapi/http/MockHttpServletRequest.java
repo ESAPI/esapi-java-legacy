@@ -23,6 +23,7 @@ import java.security.Principal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -75,6 +76,8 @@ public class MockHttpServletRequest implements HttpServletRequest {
     private String contentType = null;
     
     private String method = "POST";
+
+    private Map<String,Object> attrs = new HashMap<String,Object>();
     
     /**
      *
@@ -418,8 +421,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public Object getAttribute(String name) {
-
-        return null;
+    	return attrs.get(name);
     }
 
     /**
@@ -427,8 +429,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @return
      */
     public Enumeration getAttributeNames() {
-
-        return null;
+    	return Collections.enumeration(attrs.keySet());
     }
 
     /**
@@ -662,7 +663,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @param name
      */
     public void removeAttribute(String name) {
-
+    	attrs.remove(name);
     }
 
     /**
@@ -671,7 +672,7 @@ public class MockHttpServletRequest implements HttpServletRequest {
      * @param o
      */
     public void setAttribute(String name, Object o) {
-
+    	attrs.put(name,o);
     }
 
     /**
