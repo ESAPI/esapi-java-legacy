@@ -1,0 +1,23 @@
+
+Welcome to ESAPI for Java!
+
+Here are the files included in this release:
+
+<root>/	
+JavaEE-ESAPI_2.0a_install. pdf		ESAPI install guide
+JavaEE-ESAPI_2.0a_ReleaseNotes.pdf	ESAPI release notes
+Readme.txt				ESAPI readme
+License.txt				ESAPI license
+esapi.jar				ESAPI JAR
+esapi.properties			ESAPI configuration file
+log4j.properties			Log4j configuration file
+	doc/				ESAPI documentation 
+	java/				ESAPI source code 
+	lib/				ESAPI dependencies 
+
+
+Where to go from here -- please see the installation guide and the release notes.
+
+Please address comments and questions concerning the API and this document to the ESAPI mail list, owasp-esapi@lists.owasp.org 
+
+Copyright (C) 2009 The OWASP Foundation.
