@@ -35,39 +35,41 @@ public class IntegerAccessReferenceMap extends AbstractAccessReferenceMap<String
 	/**
 	 * TODO Javadoc
 	 */
-   public IntegerAccessReferenceMap()
-   {
+	public IntegerAccessReferenceMap()
+	{
 	}
 
 	/**
 	 * TODO Javadoc
-	*/
-   public IntegerAccessReferenceMap(int initialSize)
-   {
-      super(initialSize);
+	 */
+	public IntegerAccessReferenceMap(int initialSize)
+	{
+		super(initialSize);
 	}
 
 	/**
 	 * TODO Javadoc
-	*/
-   public IntegerAccessReferenceMap(Set<Object> directReferences)
-   {
-      super(directReferences);
-			}
-
-	/**
-	 * TODO Javadoc
-	*/
-   public IntegerAccessReferenceMap(Set<Object> directReferences, int initialSize)
-   {
-      super(directReferences, initialSize);
+	 */
+	public IntegerAccessReferenceMap(Set<Object> directReferences)
+	{
+		super(directReferences.size());
+		update(directReferences);
 	}
 
 	/**
 	 * TODO Javadoc
-	*/
+	 */
+	public IntegerAccessReferenceMap(Set<Object> directReferences, int initialSize)
+	{
+		super(initialSize);
+		update(directReferences);
+	}
+
+	/**
+	 * TODO Javadoc
+	 */
 	protected synchronized String getUniqueReference() {
 		return "" + count++;  // returns a string version of the counter
-		}
-	
+	}
+
 }

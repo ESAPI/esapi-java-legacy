@@ -185,6 +185,8 @@
 					<source>1.5</source>
 					<target>1.5</target>
 					<debug>true</debug>
+					<showWarnings>true</showWarnings>
+					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
 
