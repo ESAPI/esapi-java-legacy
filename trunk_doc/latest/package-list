@@ -1,0 +1,16 @@
+org.owasp.esapi
+org.owasp.esapi.codecs
+org.owasp.esapi.errors
+org.owasp.esapi.filters
+org.owasp.esapi.http
+org.owasp.esapi.reference
+org.owasp.esapi.reference.accesscontrol
+org.owasp.esapi.reference.accesscontrol.policyloader
+org.owasp.esapi.reference.validation
+org.owasp.esapi.tags
+org.owasp.esapi.util
+org.owasp.esapi.waf
+org.owasp.esapi.waf.actions
+org.owasp.esapi.waf.configuration
+org.owasp.esapi.waf.internal
+org.owasp.esapi.waf.rules
