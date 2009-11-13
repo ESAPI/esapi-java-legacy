@@ -1,32 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-  <name>ESAPI</name>
-  <comment>The Enterprise Security API project is an OWASP project
-		to create simple strong security controls for every web platform.
-		Security controls are not simple to build. You can read about the
-		hundreds of pitfalls for unwary developers on the OWASP website. By
-		providing developers with a set of strong controls, we aim to
-		eliminate some of the complexity of creating secure web applications.
-		This can result in significant cost savings across the SDLC.</comment>
-  <projects/>
-  <buildSpec>
-    <buildCommand>
-      <name>org.eclipse.wst.common.project.facet.core.builder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.jdt.core.javabuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.eclipse.wst.validation.validationbuilder</name>
-    </buildCommand>
-    <buildCommand>
-      <name>org.maven.ide.eclipse.maven2Builder</name>
-    </buildCommand>
-  </buildSpec>
-  <natures>
-    <nature>org.maven.ide.eclipse.maven2Nature</nature>
-    <nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
-    <nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
-    <nature>org.eclipse.jdt.core.javanature</nature>
-    <nature>org.eclipse.wst.common.project.facet.core.nature</nature>
-  </natures>
+	<name>ESAPI</name>
+	<comment></comment>
+	<projects>
+	</projects>
+	<buildSpec>
+		<buildCommand>
+			<name>org.eclipse.jdt.core.javabuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.wst.common.project.facet.core.builder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>org.eclipse.wst.validation.validationbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+	</buildSpec>
+	<natures>
+		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
+		<nature>org.eclipse.jdt.core.javanature</nature>
+		<nature>org.eclipse.wst.common.modulecore.ModuleCoreNature</nature>
+		<nature>org.eclipse.jem.workbench.JavaEMFNature</nature>
+	</natures>
 </projectDescription>
