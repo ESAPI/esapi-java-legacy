@@ -55,12 +55,14 @@ public class RandomAccessReferenceMap extends AbstractAccessReferenceMap<String>
 
    public RandomAccessReferenceMap(Set<Object> directReferences)
    {
-      super(directReferences, directReferences.size());
+      super(directReferences.size());
+      update(directReferences);
    }
 
    public RandomAccessReferenceMap(Set<Object> directReferences, int initialSize)
    {
-      super(directReferences, initialSize);
+      super(initialSize);
+      update(directReferences);
    }
 
    /**
