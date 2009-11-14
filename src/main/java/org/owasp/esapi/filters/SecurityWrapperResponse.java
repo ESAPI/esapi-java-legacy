@@ -211,7 +211,10 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * 
      * @param url
      * @return original url
+     * @deprecated in servlet spec 2.1. Use
+     * {@link #encodeRedirectUrl(String)} instead.
      */
+    @Deprecated
     public String encodeRedirectUrl(String url) {
         return url;
     }
@@ -239,7 +242,10 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * 
      * @param url
      * @return original url
+     * @deprecated in servlet spec 2.1. Use
+     * {@link #encodeURL(String)} instead.
      */
+    @Deprecated
     public String encodeUrl(String url) {
         return url;
     }
@@ -485,7 +491,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * dangerous characters.
      * @param sc 
      * @param sm
+     * @deprecated In Servlet spec 2.1.
      */
+    @Deprecated
     public void setStatus(int sc, String sm) {
         try {
             // setStatus is deprecated so use sendError instead

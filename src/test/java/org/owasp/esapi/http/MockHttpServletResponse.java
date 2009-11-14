@@ -175,7 +175,9 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * 
 	 * @param url
 	 * @return
+	 * @deprecated
 	 */
+	@Deprecated
 	public String encodeRedirectUrl(String url) {
 		return null;
 	}
@@ -198,7 +200,9 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * 
 	 * @param url
 	 * @return
+	 * @deprecated
 	 */
+	@Deprecated
 	public String encodeUrl(String url) {
 		return encodeURL( url );
 	}
@@ -291,7 +295,9 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * 
 	 * @param sc
 	 * @param sm
+	 * @deprecated
 	 */
+	@Deprecated
 	public void setStatus(int sc, String sm) {
 		status = sc;
 	}
