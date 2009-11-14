@@ -471,7 +471,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Same as HttpServletRequest, no security changes required.
      * @param path A virtual path on a web or application server; e.g., "/index.htm".
      * @return Returns a String containing the real path for a given virtual path.
+     * @deprecated in servlet spec 2.1. Use
+     * {@link ServletContext#getRealPath(String)} instead.
      */
+    @Deprecated
     public String getRealPath(String path) {
         return getHttpServletRequest().getRealPath(path);
     }
@@ -712,7 +715,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Same as HttpServletRequest, no security changes required.
      * @return
+     * @deprecated in servlet spec 2.1. Use
+     * {@link #isRequestSessionIdFromURL()} instead.
      */
+    @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return getHttpServletRequest().isRequestedSessionIdFromUrl();
     }

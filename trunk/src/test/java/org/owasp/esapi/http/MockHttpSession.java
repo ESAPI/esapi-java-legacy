@@ -23,7 +23,6 @@ import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionContext;
 
 /**
  * The Class MockHttpSession.
@@ -147,9 +146,13 @@ public class MockHttpSession implements HttpSession {
     /**
      * {@inheritDoc}
      *
-     * @return
+     * @return null
+     * @deprecated
      */
-	public HttpSessionContext getSessionContext() {
+        @Deprecated
+	// need the full class here as for whatever stupid reason you can't
+	// seem to @SuppressWarnings{'deprecation'} on the import... *sigh*
+	public javax.servlet.http.HttpSessionContext getSessionContext() {
 		return null;
 	}
 
@@ -158,7 +161,9 @@ public class MockHttpSession implements HttpSession {
      *
      * @param string
      * @return
+     * @deprecated
      */
+     	@Deprecated
 	public Object getValue(String string) {
 		return null;
 	}
@@ -167,7 +172,9 @@ public class MockHttpSession implements HttpSession {
      * {@inheritDoc}
      *
      * @return
+     * @deprecated
      */
+     	@Deprecated
 	public String[] getValueNames() {
 		return null;
 	}
@@ -193,7 +200,9 @@ public class MockHttpSession implements HttpSession {
      *
      * @param string
      * @param object
+     * @deprecated
      */
+     	@Deprecated
 	public void putValue(String string, Object object) {
 		setAttribute( string, object );
 	}
@@ -211,7 +220,9 @@ public class MockHttpSession implements HttpSession {
      * {@inheritDoc}
      *
      * @param string
+     * @deprecated
      */
+     	@Deprecated
 	public void removeValue(String string) {
 		removeAttribute( string );
 	}
