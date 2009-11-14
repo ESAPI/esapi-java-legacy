@@ -67,8 +67,12 @@ public class RandomAccessReferenceMap extends AbstractAccessReferenceMap<String>
 
    /**
     * {@inheritDoc}
+    * Note: this is final as redefinition by subclasses can lead to use
+    * before initialization issues as
+    * {@link #RandomAccessReferenceMap(Set)} and
+    * {@link #RandomAccessReferenceMap(Set,int)} both call it internally.
     */
-   protected synchronized String getUniqueReference()
+   protected final synchronized String getUniqueReference()
    {
       String candidate;
       do
