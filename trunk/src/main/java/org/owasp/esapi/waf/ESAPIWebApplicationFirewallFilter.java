@@ -248,6 +248,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			if ( action.isActionNecessary() ) {
 
 				if ( action instanceof BlockAction ) {
+					if ( response != null ) {
+						response.setStatus(appGuardConfig.getDefaultResponseCode());
+					} else {
+						httpResponse.setStatus(appGuardConfig.getDefaultResponseCode());
+					}
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
@@ -258,8 +263,13 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 					switch ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION) {
 						case AppGuardianConfiguration.BLOCK:
+							if ( response != null ) {
+								response.setStatus(appGuardConfig.getDefaultResponseCode());
+							} else {
+								httpResponse.setStatus(appGuardConfig.getDefaultResponseCode());
+							}
 							return;
-
+							
 						case AppGuardianConfiguration.REDIRECT:
 							sendRedirect(response, httpResponse);
 							return;
@@ -299,6 +309,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			if ( action.isActionNecessary() ) {
 
 				if ( action instanceof BlockAction ) {
+					if ( response != null ) {
+						response.setStatus(appGuardConfig.getDefaultResponseCode());
+					} else {
+						httpResponse.setStatus(appGuardConfig.getDefaultResponseCode());
+					}
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
@@ -309,6 +324,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 					switch ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION) {
 						case AppGuardianConfiguration.BLOCK:
+							if ( response != null ) {
+								response.setStatus(appGuardConfig.getDefaultResponseCode());
+							} else {
+								httpResponse.setStatus(appGuardConfig.getDefaultResponseCode());
+							}
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:
@@ -346,6 +366,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			if ( action.isActionNecessary() ) {
 
 				if ( action instanceof BlockAction ) {
+					if ( response != null ) {
+						response.setStatus(appGuardConfig.getDefaultResponseCode());
+					} else {
+						httpResponse.setStatus(appGuardConfig.getDefaultResponseCode());
+					}
 					return;
 
 				} else if ( action instanceof RedirectAction ) {
@@ -356,6 +381,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 					switch ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION) {
 						case AppGuardianConfiguration.BLOCK:
+							if ( response != null ) {
+								response.setStatus(appGuardConfig.getDefaultResponseCode());
+							} else {
+								httpResponse.setStatus(appGuardConfig.getDefaultResponseCode());
+							}
 							return;
 
 						case AppGuardianConfiguration.REDIRECT:

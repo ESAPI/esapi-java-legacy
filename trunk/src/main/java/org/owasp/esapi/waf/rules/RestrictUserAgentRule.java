@@ -64,13 +64,16 @@ public class RestrictUserAgentRule extends Rule {
 		log(request, "Disallowed user agent pattern '" + deny.pattern() + "' found in user agent '" + request.getHeader(USER_AGENT_HEADER) + "'");
 	
 		/*
-		 * If we don't force this to "block", the user will infinitely blocking our bandwidth.
+		 * If we don't force this to "block", the user will be in an infinite loop, possibly
+		 * eating our bandwidth, and in the case of a dread false positive, really piss them
+		 * off.
+		 * 
 		 * Better to just reject.
 		 */
 		if ( AppGuardianConfiguration.DEFAULT_FAIL_ACTION == AppGuardianConfiguration.REDIRECT ) {
 			return new BlockAction();
 		}
-		
+
 		return new DefaultAction();
 	}
 
