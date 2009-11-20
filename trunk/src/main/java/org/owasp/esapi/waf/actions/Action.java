@@ -24,7 +24,7 @@ package org.owasp.esapi.waf.actions;
 public abstract class Action {
 
 	protected boolean failed = true;
-	protected boolean actionNecessary = false;
+	protected boolean actionNecessary = true;
 
 	public void setFailed(boolean didFail) {
 		failed = didFail;
