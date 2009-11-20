@@ -55,11 +55,11 @@
 
 
 	<bean-shell-rules>	
-			<bean-shell-script 
-				id="example1" 
-				file="waf-policies/bean-shell-rule.bsh" 
-				stage="before-request-body"/>
-	
+		<!--  	<bean-shell-script 
+			id="example1" 
+			file="waf-policies/bean-shell-rule.bsh" 
+			stage="before-request-body"/>
+		-->
 	</bean-shell-rules>
 	
 	<!--
