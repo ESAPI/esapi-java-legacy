@@ -54,7 +54,7 @@ public class EncryptorTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
     }
 
     /**
@@ -132,11 +132,23 @@ public class EncryptorTest extends TestCase {
     public void testNewEncryptDecrypt() {
     	System.out.println("testNewEncryptDecrypt()");
     	try {
-			runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
+
+    	    // Let's try it with a 2-key version of 3DES. This should work for all
+    	    // installations, whereas the 3-key Triple DES will only work for those
+    	    // who have the Unlimited Strength Jurisdiction Policy files installed.
 			runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
 			runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
-			runNewEncryptDecryptTestCase("AES/ECB/NoPadding", 256, "test1234test1234".getBytes("UTF-8"));
+			
 			runNewEncryptDecryptTestCase("DES/ECB/NoPadding", 56, "test1234".getBytes("UTF-8"));
+			
+	        runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
+	        
+	        // These tests are only valid (and run) if one has the JCE Unlimited
+	        // Strength Jurisdiction Policy files installed for this Java VM.
+	            // 256-bit AES
+            runNewEncryptDecryptTestCase("AES/ECB/NoPadding", 256, "test1234test1234".getBytes("UTF-8"));
+                // 168-bit (aka, 3-key) Triple DES
+            runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 168, "Groucho's secret word".getBytes("UTF-8"));
 		} catch (UnsupportedEncodingException e) {
 			fail("OK, who stole UTF-8 encoding from the Java rt.jar ???");
 		}
@@ -148,23 +160,32 @@ public class EncryptorTest extends TestCase {
      * @param cipherXform	Cipher transformation
      * @param keySize	Size of key, in bits.
      * @param plaintextBytes Byte array of plaintext.
-     * @return The base64-encoded IV+ciphertext (or just ciphertext if no IV).
+     * @return The base64-encoded IV+ciphertext (or just ciphertext if no IV) or
+     *         null if {@code keysize} is greater than 128 bits and unlimited
+     *         strength crypto is not available for this Java VM.
      */
     private String runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
     	System.out.println("New encrypt / decrypt: " + cipherXform);
-    	// Let's try it with a 2 key version of 3DES. If we were to use the 3 key version
-    	// if would force all the ESAPI developers to download the unlimited export JCE
-    	// jurisdiction policy files just to run our JUnit test cases.
+    	
+    	if ( keySize > 128 && !CryptoPolicy.isUnlimitedStrengthCryptoAvailable() ) {
+    	    System.out.println("Skipping test for cipher transformation " +
+    	                       cipherXform + " with key size of " + keySize +
+    	                       " bits because this requires JCE Unlimited Strength" +
+    	                       " Jurisdiction Policy files to be installed and they" +
+    	                       " are not.");
+    	    return null;
+    	}
+
     	try {
     		// Generate an appropriate random secret key
 			SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);	
 			assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
 			String cipherAlg = cipherXform.split("/")[0];
 			
-			// Adjust key size for DES and DESede special oddities.
+			// Adjust key size for DES and DESede specific oddities.
 			// NOTE: Key size that encrypt() method is using is 192 bits!!!
     		//        which is 3 times 64 bits, but DES key size is only 56 bits.
-    		// See 'DISCUSS' note, JavaEncryptor, near line 288. It's a "feature"!!!
+    		// See 'DISCUSS' note, in JavaEncryptor, near line 294. It's a "feature"!!!
 			if ( cipherAlg.equals( "DESede" ) ) {
 				keySize = 192;
 			} else if ( cipherAlg.equals( "DES" ) ) {
