@@ -32,6 +32,7 @@ import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.VBScriptCodec;
+import org.owasp.esapi.codecs.XMLEntityCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
@@ -52,6 +53,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	// Codecs
 	private List codecs = new ArrayList();
 	private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+	private XMLEntityCodec xmlCodec = new XMLEntityCodec();
 	private PercentCodec percentCodec = new PercentCodec();
 	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
 	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
@@ -356,7 +358,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;	
 	    }
-	    return htmlCodec.encode( IMMUNE_XML, input);
+	    return xmlCodec.encode( IMMUNE_XML, input);
 	}
 
 	/**
@@ -366,7 +368,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    if( input == null ) {
 	    	return null;	
 	    }
-	    return htmlCodec.encode( IMMUNE_XMLATTR, input);
+	    return xmlCodec.encode( IMMUNE_XMLATTR, input);
 	}
 
 	/**
