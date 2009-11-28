@@ -464,33 +464,66 @@ public class EncoderTest extends TestCase {
         assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
     }
     
-
-    /**
-	 * Test of encodeForXML method, of class org.owasp.esapi.Encoder.
-	 */
-    public void testEncodeForXML() {
-        System.out.println("encodeForXML");
+    public void testEncodeForXMLNull() {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForXML(null));
+    }
+
+    public void testEncodeForXMLSpace() {
+        Encoder instance = ESAPI.encoder();
         assertEquals(" ", instance.encodeForXML(" "));
-        assertEquals("&lt;script&gt;", instance.encodeForXML("<script>"));
+    }
+
+    public void testEncodeForXMLScript() {
+        Encoder instance = ESAPI.encoder();
+        assertEquals("&#x3c;script&#x3e;", instance.encodeForXML("<script>"));
+    }
+
+    public void testEncodeForXMLImmune() {
+        System.out.println("encodeForXML");
+        Encoder instance = ESAPI.encoder();
         assertEquals(",.-_", instance.encodeForXML(",.-_"));
-        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForXML("!@$%()=+{}[]"));
     }
     
+    public void testEncodeForXMLSymbol() {
+        Encoder instance = ESAPI.encoder();
+        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForXML("!@$%()=+{}[]"));
+    }
+
+    public void testEncodeForXMLPound() {
+        System.out.println("encodeForXML");
+        Encoder instance = ESAPI.encoder();
+        assertEquals("&#xa3;", instance.encodeForXML("\u00A3"));
+    }
     
-    
-    /**
-	 * Test of encodeForXMLAttribute method, of class org.owasp.esapi.Encoder.
-	 */
-    public void testEncodeForXMLAttribute() {
-        System.out.println("encodeForXMLAttribute");
+    public void testEncodeForXMLAttributeNull() {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForXMLAttribute(null));
-        assertEquals("&#x20;", instance.encodeForXMLAttribute(" "));
-        assertEquals("&lt;script&gt;", instance.encodeForXMLAttribute("<script>"));
+    }
+    
+    public void testEncodeForXMLAttributeSpace() {
+        Encoder instance = ESAPI.encoder();
+        assertEquals(" ", instance.encodeForXMLAttribute(" "));
+    }
+    
+    public void testEncodeForXMLAttributeScript() {
+        Encoder instance = ESAPI.encoder();
+        assertEquals("&#x3c;script&#x3e;", instance.encodeForXMLAttribute("<script>"));
+    }
+    
+    public void testEncodeForXMLAttributeImmune() {
+        Encoder instance = ESAPI.encoder();
         assertEquals(",.-_", instance.encodeForXMLAttribute(",.-_"));
-        assertEquals("&#x20;&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForXMLAttribute(" !@$%()=+{}[]"));
+    }
+    
+    public void testEncodeForXMLAttributeSymbol() {
+        Encoder instance = ESAPI.encoder();
+        assertEquals(" &#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForXMLAttribute(" !@$%()=+{}[]"));
+    }
+    
+    public void testEncodeForXMLAttributePound() {
+        Encoder instance = ESAPI.encoder();
+        assertEquals("&#xa3;", instance.encodeForXMLAttribute("\u00A3"));
     }
     
     /**
