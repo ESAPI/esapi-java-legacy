@@ -27,8 +27,6 @@ import org.owasp.esapi.SafeFile;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
- * The Class ExecutorTest.
- * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class SafeFileTest extends TestCase
@@ -36,117 +34,89 @@ public class SafeFileTest extends TestCase
 	private static final Class<SafeFileTest> CLASS = SafeFileTest.class;
 	private static final String CLASS_NAME = CLASS.getName();
 
-	/**
-	 * Instantiates a new executor test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public SafeFileTest(String testName) {
-		super(testName);
-	}
+	private File testFile = null;
+	private File testParent = null;
 
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void setUp() throws Exception {
+	String pathWithNullByte = "/temp/file.txt" + (char)0;
+
+	protected void setUp() throws Exception
+	{
 		// create a file to test with
-		new File(System.getProperty("user.home"), "test.file" ).createNewFile();
+		testFile = File.createTempFile(CLASS_NAME, null);
+		testFile = testFile.getCanonicalFile();
+		testParent = testFile.getParentFile();
 	}
 
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void tearDown() throws Exception {
-		// none
+	protected void tearDown() throws Exception
+	{
+		if(testFile != null && testFile.exists() && !testFile.delete())
+		{
+			System.err.println("Unable to delete temporary file " + testFile + ". Deletion of file at JVM exit will be attempted.");
+			testFile.deleteOnExit();
+		}
 	}
 
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SafeFileTest.class);
 		return suite;
 	}
 
-	String pathWithNullByte = "/temp/file.txt" + (char)0;
+	public void testEscapeCharactersInFilename() {
+		
+		System.out.println("testEscapeCharactersInFilenameInjection");
+		File tf = new File( System.getProperty("user.home","test.file" ));
+		if ( tf.exists() ) {
+			System.out.println( "File is there: " + tf );
+		}
 
-    /**
-     *
-     */
-    public void testEscapeCharactersInFilename() {
-        System.out.println("testEscapeCharactersInFilenameInjection");
-        File tf = new File( System.getProperty("user.home","test.file" ));
-        if ( tf.exists() ) {
-            System.out.println( "File is there: " + tf );
-        }
-        
-        File sf = new File( System.getProperty("user.home","test^.file" ));
-        if ( sf.exists() ) {
-            System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
-        } else {
-            System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
-        }
-    }
+		File sf = new File( System.getProperty("user.home","test^.file" ));
+		if ( sf.exists() ) {
+			System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
+		} else {
+			System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
+		}
+	}
 
-    /**
-     *
-     */
-    public void testEscapeCharacterInDirectoryInjection() {
-        System.out.println("testEscapeCharacterInDirectoryInjection");
-        File sf = new File( System.getProperty("user.home","test\\^.^.\\file" ));
-        if ( sf.exists() ) {
-            System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
-        } else {
-            System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
-        }
-    }
-	
-    /**
-     *
-     */
-    public void testJavaFileInjection() {
+	public void testEscapeCharacterInDirectoryInjection() {
+		System.out.println("testEscapeCharacterInDirectoryInjection");
+		File sf = new File( System.getProperty("user.home","test\\^.^.\\file" ));
+		if ( sf.exists() ) {
+			System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
+		} else {
+			System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
+		}
+	}
+
+	public void testJavaFileInjection() {
 		System.out.println("testJavaFileInjection");
 		for ( int i = 0; i < 512; i++ ) {
-	        File sf = new File( System.getProperty("user.home","test.file"+(char)i ));
+			File sf = new File( System.getProperty("user.home","test.file"+(char)i ));
 			if ( sf.exists() ) {
 				System.out.println( "  Fail filename.txt" + (char)i + " ("+ i +")" );
 			}
-	        File sf2 = new File( System.getProperty("user.home","test.file"+ (char)i + "test" ));
+			File sf2 = new File( System.getProperty("user.home","test.file"+ (char)i + "test" ));
 			if ( sf2.exists() ) {
 				System.out.println( "  Fail c:\\filename.txt" + (char)i + "test.xml ("+ i +")" );
 			}
 		}		
 	}
-	
-    
-    /**
-     *
-     */
-    public void testMultipleJavaFileInjection() {
-        System.out.println("testMultipleJavaFileInjection");
-        for ( int i = 0; i < 512; i++ ) {
-        	File sf = new File( System.getProperty("user.home","test.file" + (char)i + (char)i + (char)i ) );
-            if ( sf.exists() ) {
-                System.out.println( "  Fail filename.txt"  + (char)i  + (char)i + (char)i + " ("+ i +") 3x" );
-            }
-            File sf2 = new File( System.getProperty("user.home","test.file" + (char)i + (char)i + (char)i + "test") );
-            if ( sf2.exists() ) {
-                System.out.println( "  Fail c:\\filename.txt"  + (char)i + (char)i + (char)i + "test.xml ("+ i +") 3x" );
-            }
-        }       
-    }
-    
-    /**
-     *
-     */
-    public void testAlternateDataStream() {
+
+
+	public void testMultipleJavaFileInjection() {
+		System.out.println("testMultipleJavaFileInjection");
+		for ( int i = 0; i < 512; i++ ) {
+			File sf = new File( System.getProperty("user.home","test.file" + (char)i + (char)i + (char)i ) );
+			if ( sf.exists() ) {
+				System.out.println( "  Fail filename.txt"  + (char)i  + (char)i + (char)i + " ("+ i +") 3x" );
+			}
+			File sf2 = new File( System.getProperty("user.home","test.file" + (char)i + (char)i + (char)i + "test") );
+			if ( sf2.exists() ) {
+				System.out.println( "  Fail c:\\filename.txt"  + (char)i + (char)i + (char)i + "test.xml ("+ i +") 3x" );
+			}
+		}       
+	}
+
+	public void testAlternateDataStream() {
 		System.out.println("testAlternateDataStream");
 		File sf = new File( System.getProperty("user.home","test.file:secret.txt" ) );
 		if ( sf.exists() ) {
@@ -154,11 +124,8 @@ public class SafeFileTest extends TestCase
 			System.out.println( "  Fail:" + sf );
 		}
 	}
-	
-    /**
-     *
-     */
-    public void testJavaDirInjection() {
+
+	public void testJavaDirInjection() {
 		System.out.println("testJavaDirInjection");
 		for ( int i = 0; i < 512; i++ ) {
 			String goodFile = System.getProperty("user.home") + (char)i;
@@ -172,23 +139,14 @@ public class SafeFileTest extends TestCase
 			}
 		}		
 	}
-	
-    /**
-     * TODO Javadoc
-     * @param b
-     * @return
-     */
-    static public String toHex(final byte b) {
-        final char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        final char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
-        return new String(array);
-     }	
-	
-    /**
-     *
-     * @throws java.lang.Exception
-     */
-    public void testNormalPercentEncodedFileInjection() throws Exception {
+
+	static public String toHex(final byte b) {
+		final char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+		final char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
+		return new String(array);
+	}	
+
+	public void testNormalPercentEncodedFileInjection() throws Exception {
 		System.out.println("testNormalPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc1 = System.getProperty("user.home") + "%" + toHex( (byte)i );
@@ -200,11 +158,7 @@ public class SafeFileTest extends TestCase
 		}
 	}		
 
-    /**
-     *
-     * @throws java.lang.Exception
-     */
-    public void testWeirdPercentEncodedFileInjection() throws Exception {
+	public void testWeirdPercentEncodedFileInjection() throws Exception {
 		System.out.println("testWeirdPercentEncodedFileInjection");
 		for ( int i = 0; i < 256; i++ ) {
 			String enc2 = System.getProperty("user.home") + "%u00" + toHex( (byte)i );
@@ -219,96 +173,102 @@ public class SafeFileTest extends TestCase
 			}
 		}		
 	}
-	
-	
-	/**
-	 * Test of executeOSCommand method, of class org.owasp.esapi.Executor
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	public void testCreateSafeFile() throws Exception {
-		System.out.println("SafeFile");
-		
-		// verify file exists and test safe constructors
-		try{
-			String goodFile = System.getProperty("user.home") + "/test.file";
-			File sf = new File(goodFile);
-			assertTrue( sf.exists() );
-			
-			// test string constructor
-			SafeFile sf1 = new SafeFile(goodFile);
-			assertTrue( sf1.exists() );
-			
-			// test string, string constructor
-			SafeFile sf2 = new SafeFile(System.getProperty("user.home"), "test.file");
-			assertTrue( sf2.exists() );
-			
-			// test File, string constructor
-			SafeFile sf3 = new SafeFile(System.getProperty("user.home"), "test.file");
-			assertTrue( sf3.exists() );
-			
-			// test URI constructor
-			String uri = "file:///" + System.getProperty("user.home").replaceAll("\\\\", "/") + "/test.file";
-			System.out.println( uri );
-			SafeFile sf4 = new SafeFile(new URI( uri ) );
-			assertTrue( sf4.exists() );			
-			
-		} catch( Exception e ) {
-			fail();
-		}
 
-		// test percent encoded null byte
-		try {
-			String pathWithPercentEncodedNullByte = "/temp/file%00.txt";
-			new SafeFile( pathWithPercentEncodedNullByte );
-			fail();
-		} catch (Exception e) {
-			// expected
-		}
+	public void testCreatePath() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.getPath());
+		assertTrue(sf.exists());
+	}
 
-		// test illegal characters
-		try {
-			String pathWithPercentEncodedNullByte = "/temp/file?.txt";
-			new SafeFile( pathWithPercentEncodedNullByte );
-			fail();
-		} catch (Exception e) {
-			// expected
-		}
+	public void testCreateParentPathName() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.getParent(), testFile.getName());
+		assertTrue(sf.exists());
+	}
 
-		// test safe file exists
-		try {
-			String goodFile = System.getProperty("user.home") + "/test.file";
-			File sf = new SafeFile(goodFile);
-			assertTrue( sf.exists() );
-		} catch( ValidationException e ) {
-			// expected
-		}
-		
-		// test null byte
-		try {
-			new SafeFile( pathWithNullByte );
-			fail();
-		} catch (ValidationException e) {
-			// expected
-		}
+	public void testCreateParentFileName() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.getParentFile(), testFile.getName());
+		assertTrue(sf.exists());
+	}
 
-		// test high byte
-		try {
-			String pathWithHighByte = "/temp/file.txt" + (char)160;
-			new SafeFile( pathWithHighByte );
-			fail();
-		} catch (ValidationException e) {
+	public void testCreateURI() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.toURI());
+		assertTrue(sf.exists());
+	}
+
+	public void testCreateFileNamePercentNull()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file%00.txt");
+			fail("no exception thrown for file name with percent encoded null");
+		}
+		catch(ValidationException e)
+		{
 			// expected
 		}
 	}
-	
+
+	public void testCreateFileNameQuestion()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file?.txt");
+			fail("no exception thrown for file name with question mark in it");
+		}
+		catch(ValidationException e)
+		{
+			// expected
+		}
+	}
+
+	public void testCreateFileNameNull()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file" + ((char)0) + ".txt");
+			fail("no exception thrown for file name with null in it");
+		}
+		catch(ValidationException e)
+		{
+			// expected
+		}
+	}
+
+	public void testCreateFileHighByte()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file" + ((char)160) + ".txt");
+			fail("no exception thrown for file name with high byte in it");
+		}
+		catch(ValidationException e)
+		{
+			// expected
+		}
+	}
+
+	public void testCreateParentPercentNull()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file%00.txt");
+			fail("no exception thrown for file name with percent encoded null");
+		}
+		catch(ValidationException e)
+		{
+			// expected
+		}
+	}
+
 	// test parent constructor
-    /**
-     *
-     * @throws java.lang.Exception
-     */
-    public void testCreateSafeFileParentConstructor() throws Exception {
+	/**
+	 *
+	 * @throws java.lang.Exception
+	 */
+	public void testCreateSafeFileParentConstructor() throws Exception {
 		System.out.println("SafeFile parent constructor");
 		try {
 			new SafeFile( new File( "/" ), pathWithNullByte );
@@ -316,59 +276,50 @@ public class SafeFileTest extends TestCase
 		} catch (ValidationException e) {
 			// expected
 		}
-		
+
 		try {
 			new SafeFile( new File("/%00"), "test.txt" );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
-		
+
 		try {
 			new SafeFile( new File("/\0"), "test.txt" );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
-		
+
 		try {
 			new SafeFile( new File("/|test"), "test.txt" );
 			fail();
 		} catch (ValidationException e) {
 			// expected
 		}
-		
+
 	}
-	
-	
+
+
 	// test good file with uri constructor
-    /**
-     *
-     * @throws java.lang.Exception
-     */
-    public void testCreateSafeFileURIConstructor() throws Exception {
+	/**
+	 *
+	 * @throws java.lang.Exception
+	 */
+	public void testCreateSafeFileURIConstructor() throws Exception {
 		System.out.println("SafeFile URI constructor");
 		// create a file to test with
 
 		File testFile = null;
 
 		try {
-			testFile = File.createTempFile(CLASS_NAME, null);
 			String uri = testFile.toURI().toASCIIString();
 			File sf = new SafeFile(new URI(uri));
 			assertTrue(sf.exists());
 		} catch (Exception e) {
 			// pass
 		}
-		finally
-		{
-			if(testFile != null && testFile.exists() && !testFile.delete())
-			{
-				System.err.println("Unable to delete temporary file " + testFile + ". Deletion of file at JVM exit will be attempted.");
-				testFile.deleteOnExit();
-			}
-		}
-	
+
 		// test uri constructor with null byte
 		try {
 			new SafeFile(new URI("file:///test" + (char)0 + ".xml"));
@@ -376,7 +327,7 @@ public class SafeFileTest extends TestCase
 		} catch (Exception e) {
 			// pass
 		}
-				
+
 		// test http uri
 		try {
 			new SafeFile(new URI("http://localserver/test" + (char)0 + ".xml"));
