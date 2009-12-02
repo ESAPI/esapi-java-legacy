@@ -158,6 +158,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	            String header = createCookieHeader(cookieName, cookieValue, maxAge, domain, path, secure);
 	            addHeader(response, "Set-Cookie", header);
         	} else {
+                // Issue 23 - If the ESAPI Configuration is set to force secure cookies, force the secure flag on the cookie before setting it
+                cookie.setSecure( secure || ESAPI.securityConfiguration().getForceSecureCookies() );
         		response.addCookie(cookie);
         	}
             return;
