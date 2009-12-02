@@ -535,6 +535,9 @@ public class AuthenticatorTest extends TestCase {
 		instance.verifyPasswordStrength("password", "super calif ragil istic");
 		instance.verifyPasswordStrength("password", "TONYTONYTONYTONY");
 		instance.verifyPasswordStrength("password", instance.generateStrongPassword());
+
+        // chrisisbeef - Issue 65 - http://code.google.com/p/owasp-esapi-java/issues/detail?id=65
+        instance.verifyPasswordStrength("password", "b!gbr0ther");
 	}
 
 	/**

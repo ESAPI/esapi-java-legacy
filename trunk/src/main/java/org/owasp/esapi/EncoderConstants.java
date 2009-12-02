@@ -12,9 +12,9 @@ import org.owasp.esapi.util.CollectionsUtil;
  */
 public class EncoderConstants {
 	/**
-	 * _.!@$*+-?
+	 * !$*-.=?@_
 	 */
-	public final static char[] CHAR_PASSWORD_SPECIALS = { '_', '.', '!', '@', '$', '*', '=', '-', '?' };
+	public final static char[] CHAR_PASSWORD_SPECIALS = { '!', '$', '*', '-', '.', '=', '?', '@', '_' };
 	public final static Set<Character> PASSWORD_SPECIALS;
 	static {
 		PASSWORD_SPECIALS = CollectionsUtil.arrayToSet(CHAR_PASSWORD_SPECIALS);
@@ -47,9 +47,9 @@ public class EncoderConstants {
 	}
 	
 	/**
-	 * .-_!@$^*=~!+?
+	 * !$*+-.=?@^_|~
 	 */
-	public final static char[] CHAR_SPECIALS = { '.', '-', '_', '!', '@', '$', '^', '*', '=', '~', '|', '+', '?' };
+	public final static char[] CHAR_SPECIALS = { '!', '$', '*', '+', '-', '.', '=', '?', '@', '^', '_', '|', '~' };
 	public final static Set<Character> SPECIALS;
 	static {
 		SPECIALS = CollectionsUtil.arrayToSet(CHAR_SPECIALS);
