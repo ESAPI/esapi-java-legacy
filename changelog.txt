@@ -1,1 +1,3 @@
-Changelog for ESAPI 1.4.x
+Changelog for ESAPI 1.4.1
+
+1) Fix to OracleCodec and MySQL codec. Defaults to basic encoding so ' encodes to '' and '' decodes to '
