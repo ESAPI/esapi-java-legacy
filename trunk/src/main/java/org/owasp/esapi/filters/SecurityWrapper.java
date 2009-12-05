@@ -27,6 +27,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.StringUtilities;
+import org.owasp.esapi.util.StringUtils;
 
 
 /**
@@ -37,8 +40,44 @@ import org.owasp.esapi.ESAPI;
  * vectors include request splitting, response splitting, and file download
  * injection. Attackers use techniques like CRLF injection and null byte injection
  * to confuse the parsing of requests and responses.
+ * <p/>
+ * <b>Example Configuration #1 (Default Configuration allows /WEB-INF):</b>
+ * <pre>
+ * &lt;filter&gt;
+ *    &lt;filter-name&gt;SecurityWrapperDefault&lt;/filter-name&gt;
+ *    &lt;filter-class&gt;org.owasp.filters.SecurityWrapper&lt;/filter-class&gt;
+ * &lt;/filter&gt;
+ * </pre>
+ * <p/>
+ * <b>Example Configuration #2 (Allows /servlet)</b>
+ * <pre>
+ * &lt;filter&gt;
+ *    &lt;filter-name&gt;SecurityWrapperForServlet&lt;/filter-name&gt;
+ *    &lt;filter-class&gt;org.owasp.filters.SecurityWrapper&lt;/filter-class&gt;
+ *    &lt;init-param&gt;
+ *       &lt;param-name&gt;allowableResourceRoot&lt;/param-name&gt;
+ *       &lt;param-value&gt;/servlet&lt;/param-value&gt;
+ *    &lt;/init-param&gt;
+ * &lt;/filter&gt;
+ * </pre>
+ *
+ * @author  Chris Schmidt (chrisisbeef@gmail.com)
  */
 public class SecurityWrapper implements Filter {
+
+    private final Logger logger = ESAPI.getLogger("SecurityWrapper");
+
+    /**
+     * This is the root path of what resources this filter will allow a RequestDispatcher to be dispatched to. This
+     * defaults to WEB-INF as best practice dictates that dispatched requests should be done to resources that are
+     * not browsable and everything behind WEB-INF is protected by the container. However, it is possible and sometimes
+     * required to dispatch requests to places outside of the WEB-INF path (such as to another servlet).
+     *
+     * See <a href="http://code.google.com/p/owasp-esapi-java/issues/detail?id=70">http://code.google.com/p/owasp-esapi-java/issues/detail?id=70</a>
+     * and <a href="https://lists.owasp.org/pipermail/owasp-esapi/2009-December/001672.html">https://lists.owasp.org/pipermail/owasp-esapi/2009-December/001672.html</a>
+     * for details.
+     */
+    private String allowableResourcesRoot = "WEB-INF";
 
     /**
      *
@@ -53,10 +92,30 @@ public class SecurityWrapper implements Filter {
             chain.doFilter(request, response);
             return;
         }
-        HttpServletRequest hrequest = (HttpServletRequest)request;
-        HttpServletResponse hresponse = (HttpServletResponse)response;
-        ESAPI.httpUtilities().setCurrentHTTP(hrequest, hresponse);
-        chain.doFilter(ESAPI.currentRequest(), ESAPI.currentResponse());
+
+        try {
+            HttpServletRequest hrequest = (HttpServletRequest)request;
+            HttpServletResponse hresponse = (HttpServletResponse)response;
+
+            SecurityWrapperRequest secureRequest = new SecurityWrapperRequest(hrequest);
+            SecurityWrapperResponse secureResponse = new SecurityWrapperResponse(hresponse);
+
+            // Set the configuration on the wrapped request
+            secureRequest.setAllowableContentRoot(allowableResourcesRoot);
+
+            ESAPI.httpUtilities().setCurrentHTTP(secureRequest, secureResponse);
+
+            chain.doFilter(ESAPI.currentRequest(), ESAPI.currentResponse());
+        } catch (Exception e) {
+            logger.error( Logger.SECURITY_FAILURE, "Error in SecurityWrapper: " + e.getMessage(), e );
+            request.setAttribute("message", e.getMessage() );
+        } finally {
+            // VERY IMPORTANT
+            // clear out the ThreadLocal variables in the authenticator
+            // some containers could possibly reuse this thread without clearing the User
+            // Issue 70 - http://code.google.com/p/owasp-esapi-java/issues/detail?id=70
+            ESAPI.httpUtilities().clearCurrent();
+        }
     }
 
     /**
@@ -72,7 +131,7 @@ public class SecurityWrapper implements Filter {
      * @throws javax.servlet.ServletException
      */
     public void init(FilterConfig filterConfig) throws ServletException {
-		// no special action
+		this.allowableResourcesRoot = StringUtilities.replaceNull( filterConfig.getInitParameter( "allowableResourcesRoot" ), allowableResourcesRoot );
 	}
 	
 }

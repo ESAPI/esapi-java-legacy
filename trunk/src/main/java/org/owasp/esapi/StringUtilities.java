@@ -89,4 +89,14 @@ public class StringUtilities {
         return false;
     }
 
+    /**
+     * Returns the replace value if the value of test is null, "null", or ""
+     *
+     * @param test The value to test
+     * @param replace The replacement value
+     * @return The correct value
+     */
+    public static String replaceNull( String test, String replace ) {
+        return ( test == null || "null".equalsIgnoreCase( test.trim() ) || "".equals( test.trim() ) ) ? replace : test;
+    }
 }

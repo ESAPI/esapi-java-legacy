@@ -20,7 +20,6 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -48,6 +47,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     private final Logger logger = ESAPI.getLogger("SecurityWrapperRequest");
 
+    private String allowableContentRoot = "WEB-INF";
+
     /**
      * Construct a safe request that overrides the default request methods with
      * safer versions.
@@ -64,7 +65,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @param name
+     * @param name The attribute name
      * @return The attribute value
      */
     public Object getAttribute(String name) {
@@ -136,10 +137,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         Cookie[] cookies = getHttpServletRequest().getCookies();
         if (cookies == null) return new Cookie[0];
         
-        List newCookies = new ArrayList();
-        for (int i = 0; i < cookies.length; i++) {
-            Cookie c = cookies[i];
-
+        List<Cookie> newCookies = new ArrayList<Cookie>();
+        for (Cookie c : cookies) {
             // build a new clean cookie
             try {
                 // get data from original cookie
@@ -163,7 +162,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
                 logger.warning(Logger.SECURITY_FAILURE, "Skipping bad cookie: " + c.getName() + "=" + c.getValue(), e );
             }
         }
-        return (Cookie[]) newCookies.toArray(new Cookie[newCookies.size()]);
+        return newCookies.toArray(new Cookie[newCookies.size()]);
     }
 
     /**
@@ -201,7 +200,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return An {@code Enumeration} of header names associated with this request.
      */
     public Enumeration getHeaderNames() {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         Enumeration en = getHttpServletRequest().getHeaderNames();
         while (en.hasMoreElements()) {
             try {
@@ -223,7 +222,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      *         canonicalizing and filtering has been performed.
      */
     public Enumeration getHeaders(String name) {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         Enumeration en = getHttpServletRequest().getHeaders(name);
         while (en.hasMoreElements()) {
             try {
@@ -334,12 +333,12 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return A {@code Map} containing scrubbed parameter names / value pairs.
      */
     public Map getParameterMap() {
-        Map map = getHttpServletRequest().getParameterMap();
-        HashMap cleanMap = new HashMap();
-        Iterator i = map.entrySet().iterator();
-        while (i.hasNext()) {
+        @SuppressWarnings({"unchecked"})
+        Map<String,String[]> map = getHttpServletRequest().getParameterMap();
+        Map<String,String[]> cleanMap = new HashMap<String,String[]>();
+        for (Object o : map.entrySet()) {
             try {
-                Map.Entry e = (Map.Entry) i.next();
+                Map.Entry e = (Map.Entry) o;
                 String name = (String) e.getKey();
                 String cleanName = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 100, false);
 
@@ -363,7 +362,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return An {@code Enumeration} of properly "scrubbed" parameter names.
      */
     public Enumeration getParameterNames() {
-        Vector v = new Vector();
+        Vector<String> v = new Vector<String>();
         Enumeration en = getHttpServletRequest().getParameterNames();
         while (en.hasMoreElements()) {
             try {
@@ -386,19 +385,18 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public String[] getParameterValues(String name) {
         String[] values = getHttpServletRequest().getParameterValues(name);
-        List newValues = new ArrayList();
+        List<String> newValues = new ArrayList<String>();
         if ( values != null ) {
-            for (int i = 0; i < values.length; i++) {
+            for (String value : values) {
                 try {
-                    String value = values[i];
                     String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, false);
                     newValues.add(cleanValue);
                 } catch (ValidationException e) {
-                    logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter" );
+                    logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter");
                 }
             }
         }
-        return (String[]) newValues.toArray(new String[0]);
+        return newValues.toArray(new String[ newValues.size() ]);
     }
 
     /**
@@ -471,9 +469,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Same as HttpServletRequest, no security changes required.
      * @param path A virtual path on a web or application server; e.g., "/index.htm".
      * @return Returns a String containing the real path for a given virtual path.
-     * @deprecated in servlet spec 2.1. Use
-     * {@link ServletContext#getRealPath(String)} instead.
+     * @deprecated in servlet spec 2.1. Use {@link javax.servlet.ServletContext#getRealPath(String)} instead.
      */
+    @SuppressWarnings({"deprecation"})
     @Deprecated
     public String getRealPath(String path) {
         return getHttpServletRequest().getRealPath(path);
@@ -489,7 +487,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return 
+     * @return The remote host
      */
     public String getRemoteHost() {
         return getHttpServletRequest().getRemoteHost();
@@ -497,7 +495,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return The remote port
      */
     public int getRemotePort() {
         return getHttpServletRequest().getRemotePort();
@@ -515,11 +513,13 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Checks to make sure the path to forward to is within the WEB-INF
      * directory and then returns the dispatcher. Otherwise returns null.
-     * @param path
-     * @return 
+     * @param path The path to create a request dispatcher for
+     * @return A {@code RequestDispatcher} object that acts as a wrapper for the
+     *         resource at the specified path, or null if the servlet container
+     *         cannot return a {@code RequestDispatcher}.
      */
     public RequestDispatcher getRequestDispatcher(String path) {
-        if (path.startsWith("WEB-INF")) {
+        if (path.startsWith(allowableContentRoot)) {
             return getHttpServletRequest().getRequestDispatcher(path);
         }
         return null;
@@ -529,9 +529,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Returns the URI from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters. Code must be very careful not to
      * depend on the value of a requested session id reported by the user.
-     * @return A {@code RequestDispatcher} object that acts as a wrapper for the
-     *         resource at the specified path, or null if the servlet container
-     *         cannot return a {@code RequestDispatcher}.
+     * @return The requested Session ID
      */
     public String getRequestedSessionId() {
         String id = getHttpServletRequest().getRequestedSessionId();
@@ -547,7 +545,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the URI from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
-     * @return
+     * @return The current request URI
      */
     public String getRequestURI() {
         String uri = getHttpServletRequest().getRequestURI();
@@ -563,7 +561,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the URL from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
-     * @return
+     * @return The currect request URL
      */
     public StringBuffer getRequestURL() {
         String url = getHttpServletRequest().getRequestURL().toString();
@@ -579,7 +577,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the scheme from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
-     * @return
+     * @return The scheme of the current request
      */
     public String getScheme() {
         String scheme = getHttpServletRequest().getScheme();
@@ -595,7 +593,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the server name (host header) from the HttpServletRequest after
      * canonicalizing and filtering out any dangerous characters.
-     * @return
+     * @return The local server name
      */
     public String getServerName() {
         String name = getHttpServletRequest().getServerName();
@@ -611,7 +609,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the server port (after the : in the host header) from the
      * HttpServletRequest after parsing and checking the range 0-65536.
-     * @return
+     * @return The local server port
      */
 	public int getServerPort() {
 		int port = getHttpServletRequest().getServerPort();
@@ -626,7 +624,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the server path from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
-     * @return
+     * @return The servlet path
      */
     public String getServletPath() {
         String path = getHttpServletRequest().getServletPath();
@@ -642,7 +640,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
      * on the JSESSIONID cookie.
-     * @return
+     * @return The current session
      */
     public HttpSession getSession() {
 		HttpSession session = getHttpServletRequest().getSession();
@@ -669,8 +667,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
      * on the JSESSIONID cookie.
-     * @param create 
-     * @return
+     * @param create Create a new session if one doesn't exist
+     * @return The current session
      */
     public HttpSession getSession(boolean create) {
         HttpSession session = getHttpServletRequest().getSession(create);
@@ -698,7 +696,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Returns the ESAPI User associated with this getHttpServletRequest().
-     * @return
+     * @return The ESAPI User
      */
     public Principal getUserPrincipal() {
         return ESAPI.authenticator().getCurrentUser();
@@ -706,7 +704,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return if requested session id is from a cookie
      */
     public boolean isRequestedSessionIdFromCookie() {
         return getHttpServletRequest().isRequestedSessionIdFromCookie();
@@ -714,10 +712,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
-     * @deprecated in servlet spec 2.1. Use
-     * {@link #isRequestSessionIdFromURL()} instead.
+     * @return Whether the requested session id is from the URL
+     * @deprecated in servlet spec 2.1. Use {@link #isRequestedSessionIdFromURL()} instead.
      */
+    @SuppressWarnings({"deprecation"})
     @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return getHttpServletRequest().isRequestedSessionIdFromUrl();
@@ -725,7 +723,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Whether the requested session id is from the URL
      */
     public boolean isRequestedSessionIdFromURL() {
         return getHttpServletRequest().isRequestedSessionIdFromURL();
@@ -733,7 +731,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Whether the requested session id is valid
      */
     public boolean isRequestedSessionIdValid() {
         return getHttpServletRequest().isRequestedSessionIdValid();
@@ -741,7 +739,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @return
+     * @return Whether the current request is secure
      */
     public boolean isSecure() {
         // TODO Check request method to see if this is vulnerable
@@ -751,8 +749,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns true if the ESAPI User associated with this request has the
      * specified role.
-     * @param role
-     * @return
+     * @param role The role to check
+     * @return Whether the current user is in the passed role
      */
     public boolean isUserInRole(String role) {
         return ESAPI.authenticator().getCurrentUser().isInRole(role);
@@ -760,7 +758,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @param name
+     * @param name The attribute name
      */
     public void removeAttribute(String name) {
         getHttpServletRequest().removeAttribute(name);
@@ -768,8 +766,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Same as HttpServletRequest, no security changes required.
-     * @param name
-     * @param o
+     * @param name The attribute name
+     * @param o The attribute value
      */
     public void setAttribute(String name, Object o) {
         getHttpServletRequest().setAttribute(name, o);
@@ -777,11 +775,18 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Sets the character encoding scheme to the ESAPI configured encoding scheme.
-     * @param enc
+     * @param enc The encoding scheme
      * @throws UnsupportedEncodingException
      */
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException {
         getHttpServletRequest().setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
     }
 
+    public String getAllowableContentRoot() {
+        return allowableContentRoot;
+    }
+
+    public void setAllowableContentRoot(String allowableContentRoot) {
+        this.allowableContentRoot = allowableContentRoot.startsWith( "/" ) ? "" : "/" + allowableContentRoot;
+    }
 }
