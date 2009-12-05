@@ -20,7 +20,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -30,7 +29,7 @@ import org.owasp.esapi.filters.SafeRequestTest;
 import org.owasp.esapi.util.CipherSpecTest;
 import org.owasp.esapi.util.CryptoHelperTest;
 import org.owasp.esapi.util.ObjFactoryTest;
-import org.owasp.esapi.util.StringUtilsTest;
+import org.owasp.esapi.StringUtilitiesTest;
 import org.owasp.esapi.waf.WAFFilterTest;
 
 /**
@@ -148,7 +147,7 @@ public class AllTests extends TestCase {
         suite.addTest(CipherSpecTest.suite());		// A JUnit 4 test
         suite.addTest(CryptoHelperTest.suite());	// A JUnit 4 test
         suite.addTest(ObjFactoryTest.suite());
-        suite.addTest(StringUtilsTest.suite());
+        suite.addTest(StringUtilitiesTest.suite());
         
         return suite;
     }

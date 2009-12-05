@@ -16,9 +16,9 @@
 package org.owasp.esapi.reference.validation;
 
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.util.StringUtils;
 
 
 /**
@@ -74,7 +74,7 @@ public class NumberValidationRule extends BaseValidationRule {
 	private Double safelyParse(String context, String input)
 			throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
-	    if ( StringUtils.isEmpty(input) ) {
+	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
 				return null;
 			}
