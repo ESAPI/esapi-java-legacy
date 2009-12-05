@@ -29,6 +29,7 @@ import org.owasp.esapi.reference.FileBasedAccessController;
 import org.owasp.esapi.reference.FileBasedAuthenticator;
 import org.owasp.esapi.reference.JavaEncryptor;
 import org.owasp.esapi.reference.JavaLogFactory;
+import org.owasp.esapi.reference.Log4JLogFactory;
 
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
@@ -215,8 +216,13 @@ public class ESAPI {
 	 * @return The current LogFactory being used by ESAPI.
 	 */
 	private static LogFactory logFactory() {
-		if (logFactory == null)
-			logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
+		if (logFactory == null) {
+			if (securityConfiguration().getLogDefaultLog4J()) {
+				logFactory = new Log4JLogFactory(securityConfiguration().getApplicationName());
+			} else {
+				logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
+			}
+		}
 		return logFactory;
 	}
 	
