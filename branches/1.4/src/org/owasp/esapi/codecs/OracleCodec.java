@@ -15,28 +15,29 @@
  */
 package org.owasp.esapi.codecs;
 
-
-
 /**
- * Implementation of the Codec interface for Oracle strings. See http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm
- * for more information.
+ * Implementation of the Codec interface for Oracle strings. This function will only protect you from SQLi in the case of user data
+ * bring placed within an Oracle quoted string such as:
  * 
- * @see <a href="http://download-uk.oracle.com/docs/cd/B10501_01/text.920/a96518/cqspcl.htm">Special Characters in Oracle Queries</a>
+ * select * from table where user_name='  USERDATA    ';
+ * 
+ * This should not be used for LIKE clauses!
+ * 
+ * @see <a href="http://oraqa.com/2006/03/20/how-to-escape-single-quotes-in-strings/">how-to-escape-single-quotes-in-strings</a>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
+ *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico(jim.manico .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
 public class OracleCodec implements Codec {
 
-	public OracleCodec() {
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Encodes a String for safe use with an Oracle Database.
+	 * Returns quote-encoded string
 	 */
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -46,18 +47,26 @@ public class OracleCodec implements Codec {
 		}
 		return sb.toString();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Encodes ' to ''
+     *
+	 * Encodes ' to ''
+     *
+     * @param immune
+     */
+	public String encodeCharacter( Character c ) {
+		if ( c.charValue() == '\'' )
+        	return "\'\'";
+        return ""+c;
+	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Encode a single character with a quote mark
-	 */
-	public String encodeCharacter( Character c ) {
-		return "\\" + c;
-	}
-	
-	/**
-	 * {@inheritDoc}
+	 * Decodes quote-encoded string
 	 */
 	public String decode( String input ) {
 		StringBuffer sb = new StringBuffer();
@@ -72,15 +81,15 @@ public class OracleCodec implements Codec {
 		}
 		return sb.toString();
 	}
-
+	
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
-	 * 
+	 *
 	 * Formats all are legal
-	 *   \c decodes to c
+	 *   '' decodes to '
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		input.mark();
@@ -89,7 +98,7 @@ public class OracleCodec implements Codec {
 			input.reset();
 			return null;
 		}
-		
+
 		// if this is not an encoded character, return null
 		if ( first.charValue() != '\'' ) {
 			input.reset();
@@ -109,5 +118,4 @@ public class OracleCodec implements Codec {
 		}
 		return( new Character( '\'' ) );
 	}
-
 }
