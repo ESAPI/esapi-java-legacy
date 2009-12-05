@@ -22,9 +22,9 @@ import java.util.regex.PatternSyntaxException;
 
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.util.StringUtils;
 import org.owasp.esapi.util.NullSafe;
 
 
@@ -242,7 +242,7 @@ public class StringValidationRule extends BaseValidationRule {
 	 */
 	private String checkEmpty(String context, String input, String orig) throws ValidationException
 	{
-		if(!StringUtils.isEmpty(input))
+		if(!StringUtilities.isEmpty(input))
 			return input;
 		if(allowNull)
 			return null;

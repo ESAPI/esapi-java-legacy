@@ -17,7 +17,6 @@ package org.owasp.esapi.reference;
 
 import org.owasp.esapi.*;
 import org.owasp.esapi.errors.*;
-import org.owasp.esapi.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -314,7 +313,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
         String passDigits = r.getRandomString(digits, EncoderConstants.CHAR_PASSWORD_DIGITS);
         String passSpecial = r.getRandomString(1, EncoderConstants.CHAR_PASSWORD_SPECIALS);
         String newPassword = passLetters + passSpecial + passDigits;
-        if (StringUtils.getLevenshteinDistance(oldPassword, newPassword) > 5) {
+        if (StringUtilities.getLevenshteinDistance(oldPassword, newPassword) > 5) {
             return newPassword;
         }
         return generateStrongPassword(oldPassword);

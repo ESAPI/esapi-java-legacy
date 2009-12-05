@@ -23,13 +23,13 @@ import org.apache.commons.configuration.ConfigurationRuntimeException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
 import org.owasp.validator.html.PolicyException;
 import org.owasp.validator.html.ScanException;
-import org.owasp.esapi.util.StringUtils;
 
 
 /**
@@ -99,7 +99,7 @@ public class HTMLValidationRule extends StringValidationRule {
 
 	private String invokeAntiSamy( String context, String input ) throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
-	    if ( StringUtils.isEmpty(input) ) {
+	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
 				return null;
 			}

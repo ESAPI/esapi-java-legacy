@@ -14,7 +14,7 @@ package org.owasp.esapi.util;
 import java.io.Serializable;
 import javax.crypto.Cipher;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.util.StringUtils;
+import org.owasp.esapi.StringUtilities;
 
 /**
  * Specifies all the relevant configuration data needed in constructing and
@@ -137,7 +137,7 @@ public class CipherSpec implements Serializable {
 	 * @return	This current {@code CipherSpec} object.
 	 */
 	private CipherSpec setCipherTransformation(String cipherXform, boolean fromCipher) {
-		assert StringUtils.notNullOrEmpty(cipherXform, true) : "cipherXform may not be null or empty";
+		assert StringUtilities.notNullOrEmpty(cipherXform, true) : "cipherXform may not be null or empty";
 		int parts = cipherXform.split("/").length;
 		assert ( !fromCipher ? (parts == 3) : true ) :
 			"Malformed cipherXform (" + cipherXform + "); must have form: \"alg/mode/paddingscheme\"";

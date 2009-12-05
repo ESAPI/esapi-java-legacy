@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.util.StringUtils;
 
 /**
  * A validator performs syntax and possibly semantic validation of Credit Card
@@ -70,7 +70,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
      */
 	public String getValid( String context, String input ) throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
-	    if ( StringUtils.isEmpty(input) ) {
+	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
 				return null;
 			}

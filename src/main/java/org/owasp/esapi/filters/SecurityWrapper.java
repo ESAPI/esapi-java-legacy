@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.util.StringUtils;
 
 
 /**
