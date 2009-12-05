@@ -107,7 +107,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
     
-    private static final String LOG_DEFAULT_LOG4J = "LogDefultLog4J";
+    private static final String LOG_DEFAULT_LOG4J = "LogDefaultLog4J";
     
     protected final int MAX_REDIRECT_LOCATION = 1000;
     
