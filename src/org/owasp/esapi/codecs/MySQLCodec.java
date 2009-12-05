@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.codecs;
 
+
+
 /**
  * Implementation of the Codec interface for MySQL strings. See http://mirror.yandex.ru/mirrors/ftp.mysql.com/doc/refman/5.0/en/string-syntax.html
  * for more information.
@@ -29,7 +31,7 @@ public class MySQLCodec implements Codec {
 	public static final int MYSQL_MODE = 0;
 	public static final int ANSI_MODE = 1;
 	
-	private int mode = 0;
+	private int mode = 1;
 	
 	/**
 	 * Instantiate the MySQL codec
