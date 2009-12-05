@@ -4,7 +4,7 @@
 	<groupId>OWASP</groupId>
 	<artifactId>ESAPI</artifactId>
 	<packaging>jar</packaging>
-	<version>1.4</version>
+	<version>1.4.1rc1</version>
 	<name>ESAPI</name>
 	<description>The Enterprise Security API (ESAPI) project is an OWASP project
 		to create simple strong security controls for every web platform.
@@ -15,7 +15,7 @@
 		This can result in significant cost savings across the SDLC.</description>
 	<scm>
         <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/branches/1.4</connection>
-		<developerConnection>scm:svn:https://owasp-esapi-java.googlecode.com/svn/branches/1.4</developerConnection>
+		<developerConnection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/branches/1.4</developerConnection>
         <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
 	</scm>
     <issueManagement>
@@ -55,6 +55,16 @@
 	</repositories>
 	<dependencies>
 		<dependency>
+			<groupId>commons-configuration</groupId>
+			<artifactId>commons-configuration</artifactId>
+			<version>1.5</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.4</version>
@@ -84,6 +94,41 @@
 			<version>1.3</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- unused according to dependancy:analyze
+		<dependency>
+			<groupId>nekohtml</groupId>
+			<artifactId>nekohtml</artifactId>
+			<version>0.9.5</version>
+			<scope>compile</scope>
+		</dependency>
+		-->
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>3.2</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.12</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>xom</groupId>
+			<artifactId>xom</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.beanshell</groupId>
+			<artifactId>bsh-core</artifactId>
+			<version>2.0b4</version>
+		</dependency>
 		<dependency>
 			<groupId>org.owasp</groupId>
 			<artifactId>antisamy</artifactId>
@@ -95,13 +140,32 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.4</source>
+					<target>1.4</target>
 					<debug>true</debug>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
 				</configuration>
 			</plugin>
+
+		    <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Sealed>false</Sealed>
+                        </manifestEntries>
+                    </archive>
+                    <alias>owasp-esapi</alias>
+                    <verify>true</verify>
+                </configuration>
+            </plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -109,33 +173,28 @@
 					<downloadSources>true</downloadSources>
 				</configuration>
 			</plugin>
-
-			<!--
-				This doesn't seem to work reliably <plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId> <version>1.3</version>
-				<executions> <execution> <id>compile</id> <phase>compile</phase>
-				<configuration> <tasks> <taskdef name="Convert2UTF8"
-				classname="org.owasp.esapi.Convert2UTF8"
-				classpath="target/classes"/> <mkdir
-				dir="./target/classes/properties/utf8"/> <Convert2UTF8
-				srcDir="target/classes/properties"
-				destDir="./target/classes/properties/utf8" /> <delete> <fileset
-				dir="./target/classes/properties" includes="*.*"/> </delete>
-				<native2ascii encoding="UTF8" dest="target/classes/properties"
-				src="./target/classes/properties/utf8" includes="*.utf8"
-				ext=".properties" /> <delete
-				dir="./target/classes/properties/utf8"/> </tasks> </configuration>
-				<goals> <goal>run</goal> </goals> </execution> </executions>
-				<dependencies> <dependency> <groupId>ant</groupId>
-				<artifactId>ant-nodeps</artifactId> <version>1.6.5</version>
-				</dependency> </dependencies> </plugin>
-			-->
-
 		</plugins>
 	</build>
 	<reporting>
 		<plugins>
+		    <plugin>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                        </manifest>
+                        <manifestEntries>
+                            <Sealed>false</Sealed>
+                        </manifestEntries>
+                    </archive>
+                    <alias>owasp-esapi</alias>
+                    <verify>true</verify>
+                </configuration>
+            </plugin>
+		
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
@@ -152,17 +211,17 @@
 			<plugin>
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
-					<targetJdk>1.5</targetJdk>
+					<targetJdk>1.4</targetJdk>
 			        <sourceEncoding>utf-8</sourceEncoding>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-                                <configuration>
-                                        <detectJavaApiLink>true</detectJavaApiLink>
-                                        <detectLinks>true</detectLinks>
-                                </configuration>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                        <detectJavaApiLink>true</detectJavaApiLink>
+                        <detectLinks>true</detectLinks>
+                </configuration>
 			</plugin>
 			<plugin>
 				<groupId>net.sourceforge.maven-taglib</groupId>
