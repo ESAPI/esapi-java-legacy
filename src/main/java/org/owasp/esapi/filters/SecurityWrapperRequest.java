@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.errors.AccessControlException;
 
 /**
  * This request wrapper simply overrides unsafe methods in the
@@ -317,10 +318,46 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return The "scrubbed" parameter value.
      */
     public String getParameter(String name) {
+        return getParameter(name, false);
+    }
+
+    /**
+     * Returns the named parameter from the HttpServletRequest after
+     * canonicalizing and filtering out any dangerous characters.
+     * @param name The parameter name for the request
+     * @param allowNull Whether null values are allowed
+     * @return The "scrubbed" parameter value.
+     */
+    public String getParameter(String name, boolean allowNull) {
+        return getParameter(name, allowNull, 2000, "HTTPParameterValue");
+    }
+
+    /**
+     * Returns the named parameter from the HttpServletRequest after
+     * canonicalizing and filtering out any dangerous characters.
+     * @param name The parameter name for the request
+     * @param allowNull Whether null values are allowed
+     * @param maxLength The maximum length allowed
+     * @return The "scrubbed" parameter value.
+     */
+    public String getParameter(String name, boolean allowNull, int maxLength) {
+        return getParameter(name,allowNull,maxLength,"HTTPParameterValue");
+    }
+
+    /**
+     * Returns the named parameter from the HttpServletRequest after
+     * canonicalizing and filtering out any dangerous characters.
+     * @param name The parameter name for the request
+     * @param allowNull Whether null values are allowed
+     * @param maxLength The maximum length allowed
+     * @param regexName The name of the regex mapped from ESAPI.properties
+     * @return The "scrubbed" parameter value.
+     */
+    public String getParameter(String name, boolean allowNull, int maxLength, String regexName) {
         String orig = getHttpServletRequest().getParameter(name);
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, "HTTPParameterValue", 2000, false);
+            clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, regexName, maxLength, allowNull);
         } catch (ValidationException e) {
             // already logged
         }
@@ -644,10 +681,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public HttpSession getSession() {
 		HttpSession session = getHttpServletRequest().getSession();
-		
-		// User user = ESAPI.authenticator().getCurrentUser();
-		// user.addSession( session );
-		
+
 		// send a new cookie header with HttpOnly on first and second responses
 	    if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
@@ -675,8 +709,6 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         if (session == null) {
             return null;
         }
-        // User user = ESAPI.authenticator().getCurrentUser();
-        // user.addSession( session );
 
         // send a new cookie header with HttpOnly on first and second responses
         if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
@@ -742,8 +774,12 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return Whether the current request is secure
      */
     public boolean isSecure() {
-        // TODO Check request method to see if this is vulnerable
-        return getHttpServletRequest().isSecure();
+        try {
+            ESAPI.httpUtilities().assertSecureChannel();
+        } catch (AccessControlException e) {
+            return false;
+        }
+        return true;
     }
 
     /**
