@@ -1,3 +1,4 @@
 Changelog for ESAPI 1.4.1
 
 1) Fix to OracleCodec and MySQL codec. Defaults to basic encoding so ' encodes to '' and '' decodes to '
+2) Added support for Log4J Log Factory by setting LogDefaultLog4J=true in ESAPI.properties
