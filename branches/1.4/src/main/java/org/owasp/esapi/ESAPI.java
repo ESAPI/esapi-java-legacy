@@ -309,5 +309,4 @@ public class ESAPI {
 	public static void setValidator(Validator validator) {
 		ESAPI.validator = validator;
 	}
-
 }
