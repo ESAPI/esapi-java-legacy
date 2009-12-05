@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>OWASP</groupId>
 	<artifactId>ESAPI</artifactId>
-	<packaging>ear</packaging>
+	<packaging>jar</packaging>
 	<version>1.4.1rc1</version>
 	<name>ESAPI</name>
 	<description>The Enterprise Security API (ESAPI) project is an OWASP project
