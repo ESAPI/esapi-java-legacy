@@ -224,6 +224,15 @@ public interface SecurityConfiguration {
 	 */
 	public boolean getLogEncodingRequired();
 
+	/**
+	 * As a backwards compatibility measure, the allows the default logging class to be log4j. 
+	 * This will eventually migrate to the ESAPI 2.0 configuration mechanism where any 
+	 * class with the right interface can be configured in ESAPI.properties.
+	 * 
+	 * @return True if log4j should be used.
+	 */
+	public boolean getLogDefaultLog4J();
+	
     /**
      * Get the log level specified in the ESAPI configuration properties file. Return a default 
      * value if it is not specified in the properties file.

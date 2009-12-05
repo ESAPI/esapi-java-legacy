@@ -107,6 +107,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     
     private static final String LOG_ENCODING_REQUIRED = "LogEncodingRequired";
     
+    private static final String LOG_DEFAULT_LOG4J = "LogDefultLog4J";
     
     protected final int MAX_REDIRECT_LOCATION = 1000;
     
@@ -459,7 +460,15 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     	}
     }
 
-
+    /**
+	 * {@inheritDoc}
+	 */
+    public boolean getLogDefaultLog4J() {
+    	String value = properties.getProperty( LOG_DEFAULT_LOG4J );
+    	if ( value != null && value.equalsIgnoreCase("true")) return true;
+    	return false;	// Default result
+	}
+    
     /**
 	 * {@inheritDoc}
 	 */
