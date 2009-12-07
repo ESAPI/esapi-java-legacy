@@ -1,0 +1,10 @@
+#summary ESAPI for PHP Roadmap
+#sidebar TableOfContents
+
+==esapi4php-core-1.0==
+
+Right now, we’re working on porting ESAPI for Java EE version 1.4 to PHP version 5.2. Basically, we’re going interface by interface, class by class, line by line through the ESAPI for Java EE code and translating Java language constructs into PHP version 5.2 statements. The only differences between the code should be language-specific differences. In certain instances however, a solution that is unique to PHP may be required. For example, the ESAPI for PHP configuration file is an XML file, compared to the Java version’s properties file. 
+
+The ESAPI for PHP project is always on the lookout for volunteers who are interested in contributing developer cycles. Please ask [mailto:mike.boberski@owasp.org Mike] to be allocated work. You can learn more about contributing [http://owasp-esapi-php.googlecode.com/files/esapi4php-contributing.pdf here]
+
+Thank you for visiting!

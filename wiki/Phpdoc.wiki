@@ -1,0 +1,5 @@
+#sidebar TableOfContents
+
+You can find phpdoc for the current release of esapi4php-core [http://owasp-esapi-php.googlecode.com/svn/trunk/documentation/esapi4php-core-1.0a-html/index.html here].
+
+You can find phpdoc for the current release of esapi4php-adapter [http://owasp-esapi-php.googlecode.com/svn/trunk/documentation/esapi4php-adapter-1.0a-html/index.html here].

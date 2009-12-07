@@ -1,0 +1,76 @@
+#sidebar TableOfContents
+
+Taking ESAPI for PHP to the ESAPI for J2EE Reference 2.0 will commence once 1.6 has completed. 
+
+==== Allocated ====
+
+  * SecurityConfiguration - Allocated to AJV - 10% complete (NEW 2.0)
+
+==== Unallocated ====
+
+  * Convert2UTF8 - Unallocated - 0% complete (2.0)
+  * PreparedString - Unallocated - 0% complete (2.0) 
+
+====Access Control ====
+
+  * reference/accesscontrol/policyloader/ACRParameterLoader - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/policyloader/ ACRParameterLoaderHelper - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/policyloader/ ACRPolicyFileLoader - Unallocated - 0% complete (NEW 2.0)
+  * _ reference/accesscontrol/policyloader/ DynabeanACRParameterLoader - Unallocated - 0% complete (NEW 2.0) _
+  * reference/accesscontrol/policyloader/ PolicyDTO - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/policyloader/ PolicyParameters - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/policyloader/ PolicyParameters - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/AlwaysFalseACR - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/AlwaysTryeACR - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/BaseACR - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/DelegatingACR - Unallocated - 0% complete (NEW 2.0)
+ * _ reference/accesscontrol/DynaBeanACRParameter - Unallocated - 0% complete (NEW 2.0)  _
+  * reference/accesscontrol/ExperimentalAccessController - Unallocated - 0% complete (NEW 2.0)
+  * reference/accesscontrol/FileBasedACRs - Unallocated - 0% complete (moved 1.6->2.0)
+
+The Dynabean stuff is a J2EE-ism. Feel free to have a discussion about not doing this bit.
+
+==== Validator ====
+
+  ** reference/validation/BaseValidationRule - Unallocated - 0% complete (NEW 2.0)
+  ** reference/validation/CreditCardValidationRule - Unallocated - 0% complete (NEW 2.0)
+  ** reference/validation/DateValidationRule - Unallocated - 0% complete (NEW 2.0)
+  ** reference/validation/HTMLValidationRule - Unallocated - 0% complete (NEW 2.0)
+  ** reference/validation/NumberValidationRule - Unallocated - 0% complete (NEW 2.0)
+  ** reference/validation/StringValidationRule - Unallocated - 0% complete (NEW 2.0)
+  ** ValidationErrorList - Unallocated - 0% complete (NEW - 2.0)
+  ** ValidationRule - Unallocated - 0% complete (NEW 2.0)
+
+====Filters ====
+
+  * Filters - ClickJack Filter - Unallocated - 0% complete
+  * Filters - SecurityWrapper - Unallocated - 0% complete
+  * Filters - SecurityWrapperRequest - Unallocated - 0% complete
+  * Filters - SecurityWrapperResponse - Unallocated - 0% complete
+  * Filters - RequestRateThrottleFilter - Unallocated - 0% complete
+  * Filters - ESAPIFitler - Unallocated - 0% complete
+
+==== OWASP Validators / AntiSamy ====
+
+  * Validators - AntiSamy - Unallocated - 0% complete
+  * Validators - CleanResults - Unallocated - 0% complete
+  * Validators - Policy - Unallocated - 0% complete
+  * Validators - PolicyException - Unallocated - 0% complete
+  * Validators - ScanException - Unallocated - 0% complete;
+
+==== Tags ====
+
+We need to discuss these as PHP is not a tag lib based language. I think the use of _h(), etc might be appropriate, but let's talk when it's time. AJV
+
+  * Tags - EncodeForHtmlAttributeTag - Unallocated - 0% complete;
+  * Tags - EncodeForHtmlTag - Unallocated - 0% complete;
+  * Tags - EncodeForHtmlJavaScript - Unallocated - 0% complete;
+  * Tags - EncodeForVMScriptTag - Unallocated - 0% complete;
+
+==== WAF ====
+
+  * Actions - Unallocated - 0% complete
+  * Configuration - Unallocated - 0% complete
+  * Internal - Unallocated - 0% complete
+  * Rules - Unallocated - 0% complete
+  * WAF core (ConfigEx, EWAFF, HttpState, UploadTooLargeException) - Unallocated - 0% complete

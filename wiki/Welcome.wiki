@@ -1,0 +1,15 @@
+#sidebar TableOfContents
+OWASP ESAPI toolkits help software developers guard against security‐related design and implementation flaws. Just as web applications and web services can be Public Key Infrastructure (PKI) enabled (PK‐enabled) to perform for example certificate‐based authentication, applications and services can be OWASP ESAPI‐enabled (ES‐enabled) to enable applications and services to protect themselves from attackers.
+
+Here's how ESAPI for PHP works, out of the box:
+
+http://www.owasp.org/images/1/18/How-esapi-works-out-of-the-box.JPG
+
+The ESAPI for PHP Wiki is organized into two main sections:
+
+ * [http://code.google.com/p/owasp-esapi-php/wiki/Users Users of ESAPI for PHP (i.e. application developers and architects)]
+ * [http://code.google.com/p/owasp-esapi-php/wiki/RoadMap Contributors to ESAPI for PHP (i.e. developers working on ESAPI for PHP itself)]
+
+Further development of ESAPI occurs through mailing list discussions and occasional workshops, and suggestions for improvement are welcome. For more information, please contact us: Project Lead: [mailto:vanderaj@owasp.org Andrew van der Stock] and Project Manager [mailto:mike.boberski@owasp.org Mike Boberski]. 
+
+Email Mike if you would like to contribute to the project!
