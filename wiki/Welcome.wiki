@@ -1,11 +1,11 @@
 #sidebar TableOfContents
 OWASP ESAPI toolkits help software developers guard against security‐related design and implementation flaws. Just as web applications and web services can be Public Key Infrastructure (PKI) enabled (PK‐enabled) to perform for example certificate‐based authentication, applications and services can be OWASP ESAPI‐enabled (ES‐enabled) to enable applications and services to protect themselves from attackers.
 
-Here's how ESAPI for PHP works, out of the box:
+Here's how ESAPI for Java works, out of the box:
 
 http://www.owasp.org/images/1/18/How-esapi-works-out-of-the-box.JPG
 
-The ESAPI for PHP Wiki is organized into two main sections:
+The ESAPI for Java Wiki is organized into two main sections:
 
  * [http://code.google.com/p/owasp-esapi-java/wiki/Users Users of ESAPI for Java (i.e. application developers and architects)]
  * [http://code.google.com/p/owasp-esapi-java/wiki/RoadMap Contributors to ESAPI for Java (i.e. developers working on ESAPI for Java itself)]
