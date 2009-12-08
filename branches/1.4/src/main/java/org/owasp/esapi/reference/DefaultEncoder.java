@@ -34,6 +34,7 @@ import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.PushbackString;
 import org.owasp.esapi.codecs.VBScriptCodec;
+import org.owasp.esapi.codecs.XMLEntityCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
@@ -74,6 +75,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	// Codecs
 	List codecs = new ArrayList();
 	private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+	private XMLEntityCodec xmlCodec = new XMLEntityCodec();
 	private PercentCodec percentCodec = new PercentCodec();
 	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
 	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
@@ -464,26 +466,20 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForXML(String input) {
-	    if( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XML ) );
-		}
-		return sb.toString();
+	    if( input == null ) {
+	    	return null;	
+	    }
+	    return xmlCodec.encode( IMMUNE_XML, input);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encodeForXMLAttribute(String input) {
-	    if( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_XMLATTR ) );
-		}
-		return sb.toString();
+	    if( input == null ) {
+	    	return null;	
+	    }
+	    return xmlCodec.encode( IMMUNE_XMLATTR, input);
 	}
 
 	/**
