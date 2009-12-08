@@ -5,5 +5,5 @@
     * [FAQ Frequently asked questions]
     * [Javadoc Appendix -- Online Javadoc]
   * [RoadMap ESAPI for Java Contributors]
-    * [esapi4java-1_4 ESAPI for Java EE 1.4]
-    * [esapi4java-2_0 ESAPI for Java EE 2.0]
+    * [esapi4java_1_4 ESAPI for Java EE 1.4]
+    * [esapi4java_2_0 ESAPI for Java EE 2.0]
