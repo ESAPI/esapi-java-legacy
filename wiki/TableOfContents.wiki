@@ -3,7 +3,7 @@
     * [GettingStarted Getting started]
     * [Howto How to build YOUR Enterprise Security API using OWASP ESAPI]
     * [FAQ Frequently asked questions]
-    * [Phpdoc Appendix -- Online Javadoc]
+    * [Javadoc Appendix -- Online Javadoc]
   * [RoadMap ESAPI for Java Contributors]
     * [Completed Completed controls]
     * [Allocated Allocated controls]
