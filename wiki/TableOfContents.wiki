@@ -2,6 +2,7 @@
   * [Users ESAPI for Java Users]
     * [GettingStarted Getting started]
     * [Howto How to build YOUR Enterprise Security API using OWASP ESAPI]
+    * [WAF How to add a capability to do virtual patching]
     * [FAQ Frequently asked questions]
     * [Javadoc Appendix A -- Online ESAPI for Java EE 2.0 Javadoc]
   * [RoadMap ESAPI for Java Contributors]
