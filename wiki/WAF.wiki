@@ -2,7 +2,7 @@
 
 The business case for virtual patching is pretty compelling.
 
-The term "virtual patching" has been around for a while, but when Ivan Ristic (author of ModSecurity) included it in a list of use cases for WAFs over a year ago it got me thinking about it.  Essentially, it just means writing a specific WAF rule that targets a known vulnerability. This allows you to quickly block an attack in progress or a critical flaw you've discovered until you have time to fix the code correctly.  This is a capability that every web application should have.
+The term "virtual patching" has been around for a while, but when Ivan Ristic (author of ModSecurity) included it in a list of use cases for WAFs over a year ago it got Jeff thinking about it.  Essentially, it just means writing a specific WAF rule that targets a known vulnerability. This allows you to quickly block an attack in progress or a critical flaw you've discovered until you have time to fix the code correctly.  This is a capability that every web application should have.
 
 A full writeup of doing virtual patching on WebGoat can be found here.
 http://www.blackhat.com/presentations/bh-dc-09/Barnett/BlackHat-DC-09-Barnett-WAF-Patching-Challenge-Whitepaper.pdf
