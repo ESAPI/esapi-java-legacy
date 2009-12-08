@@ -1,8 +1,6 @@
 #summary ESAPI for Java EE Roadmap
 #sidebar TableOfContents
 
-==esapi4java-core-x.x==
-
 This page is under construction.
 
 Thank you for visiting!
