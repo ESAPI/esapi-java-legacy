@@ -2,9 +2,11 @@
 
 *ESAPI 2.0.x supports users of Java 1.5*
 
+The current ETA for the release of ESAPI 2.0 is TBD.
+
 == ESAPI 2.0 Release issues ==
 
-||*Task*||*Assigned*||
+|| *Task* || *Assignee* ||
 ||Make sure, at least, that the Swingset docs state that the code is out of date until we get caught up to the 2.0 release.||[mailto:Jim.manico@owasp.org Jim]||
 ||Augment the Encoder: (1)new naming convention, (2)new fine grained url encoding functions, (3)DOM XSS encoding functions||[mailto:Jim.manico@owasp.org Jim]||
 ||Ensure all units tests run successfully for Windows+Linux via Java 1.5.0_22||[mailto:Jim.manico@owasp.org Jim]||
