@@ -116,7 +116,6 @@ public class ESAPIFilter implements Filter {
 			ESAPI.httpUtilities().setNoCacheHeaders( response );
             
 		} catch (Exception e) {
-			e.printStackTrace();
 			logger.error( Logger.SECURITY_FAILURE, "Error in ESAPI security filter: " + e.getMessage(), e );
 			request.setAttribute("message", e.getMessage() );
 			

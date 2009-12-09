@@ -478,7 +478,6 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			 // likely to cause unexpected and undesired effects far downstream.
 		 } catch (IOException e) {
 			 logger.error(Logger.SECURITY_FAILURE, "Base64 decoding of IV+ciphertext failed. Decryption failed.", e);
-			 e.printStackTrace(System.err);
 			 return null;
 		 }
 	 }

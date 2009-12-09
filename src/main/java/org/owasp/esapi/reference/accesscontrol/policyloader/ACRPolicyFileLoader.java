@@ -56,7 +56,6 @@ final public class ACRPolicyFileLoader {
 			}
 			logger.info(Logger.EVENT_SUCCESS, "policyDTO loaded: " + policyDTO);
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new AccessControlException("Unable to load AccessControlRule parameter. " + 
 					" Rule number: " + currentRule + 
 					" Probably: Rule.name: " + ruleName +

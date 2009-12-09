@@ -68,10 +68,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 	private static final int DEFAULT_POLLING_TIME = 30000;
 	
 	private String configurationFilename = null;
-	
-	private String logSettingsFilename = null;
 
-	private long pollingTime;
+    private long pollingTime;
 	
 	private long lastConfigReadTime;
 	
@@ -84,8 +82,9 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	/**
 	 * This function is used in testing to dynamically alter the configuration.
-	 * @param is The InputStream from which to read the XML configuration file.
+	 * @param policyFilePath The path to the policy file
 	 * @param webRootDir The root directory of the web application.
+     * @throws FileNotFoundException if the policy file cannot be located
 	 */
 	public void setConfiguration( String policyFilePath, String webRootDir ) throws FileNotFoundException {
 		try {
@@ -93,6 +92,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			lastConfigReadTime = System.currentTimeMillis();
 			configurationFilename = policyFilePath;
 		} catch (ConfigurationException e ) {
+            // TODO: It would be ideal if this method through the ConfigurationException rather than catching it and
+            // writing the error to the console.
 			e.printStackTrace();
 		}
 	}
@@ -122,7 +123,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * Pull logging file.
 		 */
 
-		logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
+        // Demoted scope to a local since this is the only place it is referenced
+        String logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
 
 		String realLogSettingsFilename = fc.getServletContext().getRealPath(logSettingsFilename);
 		
@@ -187,6 +189,8 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * Check to see if polling time has elapsed. If it has, that means
 		 * we should check to see if the config file has been changed. If
 		 * it has, then re-read it.
+		 *
+		 * // TODO: Any reason this logic shouldn't be moved into a polling thread class?
 		 */
 		
 		if ( (System.currentTimeMillis() - lastConfigReadTime) > pollingTime ) {
@@ -285,7 +289,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		try {
 			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
 		} catch (FileUploadException fue) {
-			fue.printStackTrace();
+			logger.error( "Error Wrapping Request", fue );
 		}
 
 		/*
@@ -426,9 +430,11 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	/**
 	 * Remove a browser cookie in an app-server-neutral way.
-	 * @param sessionCookieName The name of the cookie to kill on the client side.
+	 * @param cookieName The name of the cookie to kill on the client side.
 	 * @param request The request to get the context path from.
 	 * @param response The response to clear the cookie on.
+     *
+     * // TODO: This method is never used - Any reason it shouldn't be removed?
 	 */
 	private void killCookie(String cookieName,
 			HttpServletRequest request,
@@ -450,8 +456,10 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	
 	private void sendRedirect(InterceptingHTTPServletResponse response, HttpServletResponse httpResponse) throws IOException {
+        /* [chrisisbeef] - commented out as this is not currently used. Minor performance tweak.
 		String finalJavaScript = AppGuardianConfiguration.JAVASCRIPT_REDIRECT;
 		finalJavaScript = finalJavaScript.replaceAll(AppGuardianConfiguration.JAVASCRIPT_TARGET_TOKEN, appGuardConfig.getDefaultErrorPage());
+        */
 
 		if ( response != null ) {
 			response.reset();

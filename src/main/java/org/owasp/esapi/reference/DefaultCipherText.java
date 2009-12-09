@@ -385,11 +385,9 @@ public final class DefaultCipherText implements CipherText {
 			byte[] result = mac.doFinal( getRawCipherText() );
 			return result;
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace(System.err);
 			logger.error(Logger.SECURITY_FAILURE, "Cannot compute MAC w/out HmacSHA1.", e);
 			return null;
 		} catch (InvalidKeyException e) {
-			e.printStackTrace(System.err);
 			logger.error(Logger.SECURITY_FAILURE, "Cannot comput MAC; invalid 'key' for HmacSHA1.", e);
 			return null;
 		}
