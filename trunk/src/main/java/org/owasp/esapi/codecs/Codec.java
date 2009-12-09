@@ -42,46 +42,40 @@ public abstract class Codec {
 			if ( c >= 0x30 && c <= 0x39 || c >= 0x41 && c <= 0x5A || c >= 0x61 && c <= 0x7A ) {
 				hex[c] = null;
 			} else {
-				hex[c] = toHex(c);
+				hex[c] = toHex(c).intern();
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Default constructor
 	 */
 	public Codec() {
 	}
-	
+
 	/**
 	 * Encode a String so that it can be safely used in a specific context.
 	 * 
-     * @param immune
-     * @param input
+	 * @param immune
+	 * @param input
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
-    public String encode(char[] immune, String input) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < input.length(); i++) {
-            char c = input.charAt(i);
-            sb.append(encodeCharacter(immune, c));
-        }
-        return sb.toString();
-    }
-    
-//    public abstract String encodeString( String input ) ;
-	
-//    public abstract String encodeDate( String input ) ;
-	
-//    public abstract String encodeNumber( String input ) ;
-	
+	public String encode(char[] immune, String input) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			sb.append(encodeCharacter(immune, c));
+		}
+		return sb.toString();
+	}
+
 	/**
 	 * Default implementation that should be overridden in specific codecs.
 	 * 
-     * @param immune
-     * @param c
+	 * @param immune
+	 * @param c
 	 * 		the Character to encode
 	 * @return
 	 * 		the encoded Character
@@ -89,7 +83,7 @@ public abstract class Codec {
 	public String encodeCharacter( char[] immune, Character c ) {
 		return ""+c;
 	}
-	
+
 	/**
 	 * Decode a String that was encoded using the encode method in this Class
 	 * 
@@ -98,20 +92,19 @@ public abstract class Codec {
 	 * @return
 	 *		the decoded String
 	 */
-    public String decode(String input) {
-        StringBuilder sb = new StringBuilder();
-        PushbackString pbs = new PushbackString(input);
-        while (pbs.hasNext()) {
-            Character c = decodeCharacter(pbs);
-            if (c != null) {
-                sb.append(c);
-            } else {
-                sb.append(pbs.next());
-            }
-        }
-        return sb.toString();
-    }
-	
+	public String decode(String input) {
+		StringBuilder sb = new StringBuilder();
+		PushbackString pbs = new PushbackString(input);
+		while (pbs.hasNext()) {
+			Character c = decodeCharacter(pbs);
+			if (c != null) {
+				sb.append(c);
+			} else {
+				sb.append(pbs.next());
+			}
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * Returns the decoded version of the next character from the input string and advances the
@@ -125,26 +118,28 @@ public abstract class Codec {
 	public Character decodeCharacter( PushbackString input ) {
 		return input.next();
 	}
-	
+
 	/**
-	 * Lookup the hex value of any character that is not alphanumeric, return null if alphanumeric.
-     *
-     * @param c
-     * @return
-     */
-	public static String getHexForNonAlphanumeric( char c ) {
-		if ( c > 0xFF ) return null;
-		return hex[c];
+	 * Lookup the hex value of any character that is not alphanumeric.
+	 * @param c The character to lookup.
+	 * @return, return null if alphanumeric or the character code
+	 * 	in hex.
+	 */
+	public static String getHexForNonAlphanumeric(char c)
+	{
+		if(c<0xFF)
+			return hex[c];
+		return toHex(c);
 	}
 
-	public static String toOctal( char c ) {
-		if ( c > 0xFF ) return null;
-		return Integer.toOctalString( c );
+	public static String toOctal(char c)
+	{
+		return Integer.toOctalString(c);
 	}
 
-	public static String toHex( char c ) {
-		if ( c > 0xFF ) return null;
-		return Integer.toHexString( c );
+	public static String toHex(char c)
+	{
+		return Integer.toHexString(c);
 	}
 
 	/**
@@ -155,10 +150,10 @@ public abstract class Codec {
 	 * @return
 	 */
 	public static boolean containsCharacter( char c, char[] array ) {
-        for (char ch : array) {
-            if (c == ch) return true;
+		for (char ch : array) {
+			if (c == ch) return true;
 		}
 		return false;
 	}
-	
+
 }

@@ -269,7 +269,7 @@ public class CodecTest extends TestCase {
 	{
 		char in = 0x100;
 		String inStr = Character.toString(in);
-		String expected = "\\u100";
+		String expected = "\\100 ";
 		String result;
 
         	result = cssCodec.encodeCharacter(EMPTY_CHAR_ARRAY, in);
@@ -282,7 +282,7 @@ public class CodecTest extends TestCase {
 	{
 		char in = 0x100;
 		String inStr = Character.toString(in);
-		String expected = "\\u100";
+		String expected = "\\100 ";
 		String result;
 
         	result = cssCodec.encode(EMPTY_CHAR_ARRAY, inStr);
