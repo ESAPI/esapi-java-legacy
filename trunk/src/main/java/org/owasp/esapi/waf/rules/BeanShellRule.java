@@ -93,8 +93,6 @@ public class BeanShellRule extends Rule {
 			
 		} catch (EvalError e) {
 			log(request,"Error running custom beanshell rule (" + id + ") - " + e.getMessage());
-			e.printStackTrace();
-			System.out.println(e.getScriptStackTrace());
 		}
 	
 		return new DoNothingAction();

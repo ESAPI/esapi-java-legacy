@@ -83,9 +83,7 @@ public class ObjFactory<T> {
 			}
 			
 			Class<?> theClass = Class.forName(className);
-// System.out.println("DEBUG: class=" + className + ", typeName=" + typeName + ": Passed Class.forName()");
 			obj = theClass.newInstance();
-// System.out.println("DEBUG: class=" + className + ", typeName=" + typeName + ": Passed Class.newInstance()");
 
 			return (T)obj;		// Eclipse warning here if @SupressWarnings omitted.
 			
@@ -104,25 +102,23 @@ public class ObjFactory<T> {
 			//
 			// Good reference:
 			//			http://java.sun.com/docs/books/tutorial/reflect/member/ctorTrouble.html
+            //
+            // Issue 66 - Removed System.out calls as we are throwing an exception in each of these cases
+            // anyhow.
 		} catch( IllegalArgumentException ex ) {
 			errMsg = ex.toString() + " " + typeName + " type name cannot be null or empty.";
-			System.out.println(errMsg);
 			throw new ConfigurationException(errMsg, ex);
 		}catch ( ClassNotFoundException ex ) {
 			errMsg = ex.toString() + " " + typeName + " class (" + className + ") must be in class path.";
-			System.out.println(errMsg);
 			throw new ConfigurationException(errMsg, ex);
 		} catch( InstantiationException ex ) {
 			errMsg = ex.toString() + " " + typeName + " class (" + className + ") must be concrete.";
-			System.out.println(errMsg);
 			throw new ConfigurationException(errMsg, ex);
 		} catch( IllegalAccessException ex ) {
 			errMsg = ex.toString() + " " + typeName + " class (" + className + ") must have a public, no-arg constructor.";
-			System.out.println(errMsg);
 			throw new ConfigurationException(errMsg, ex);
 		} catch( ClassCastException ex ) {
 			errMsg = ex.toString() + " " + typeName + " class (" + className + ") must be a subtype of T in ObjFactory<T>";
-			System.out.println(errMsg);
 			throw new ConfigurationException(errMsg, ex);
 		} catch( Exception ex ) {
 			// Because we are using reflection, we want to catch any checked or unchecked Exceptions and
@@ -135,7 +131,6 @@ public class ObjFactory<T> {
 			//		    unaltered???
 			//
 			errMsg = ex.toString() + " " + typeName + " class (" + className + ") CTOR threw exception.";
-			System.out.println(errMsg);
 			throw new ConfigurationException(errMsg, ex);
 		}
 	}

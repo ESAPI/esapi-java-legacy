@@ -183,7 +183,6 @@ public class HashTrie<T> implements Map<CharSequence,T>
 		 * @param key The key being added.
 		 * @param pos The position in key that is being handled
 		 *	at this level.
-		 * @param value The value for this key.
 		 */
 		T put(CharSequence key, int pos, T addValue)
 		{
@@ -191,7 +190,6 @@ public class HashTrie<T> implements Map<CharSequence,T>
 			Character ch;
 			T old;
 
-			// System.out.println("add(key=" + key + ", pos=" + pos + ", value=" + value + ") key[pos]=" + (pos < key.length() ? key.charAt(pos) : '?'));
 			if(key.length() == pos)
 			{	// at terminating node
 				old = value;
