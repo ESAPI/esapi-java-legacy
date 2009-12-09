@@ -40,8 +40,9 @@ public class PreparedStringTest extends TestCase {
             ps3.set( 1, "[]<>;\"\'PreparedString" );
             ps3.set( 2, "cool" );
             ps3.set( 3, "cool" );
+            fail("Was able to set parameters past the end of the parameter stack.");
         } catch( Exception e ) {
-            fail(e.getMessage());
+            // Success
         }
 
         try {
