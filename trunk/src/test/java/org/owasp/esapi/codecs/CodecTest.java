@@ -85,7 +85,7 @@ public class CodecTest extends TestCase {
 
 	public void testPercentEncode()
 	{
-        	assertEquals( "%3c", percentCodec.encode(EMPTY_CHAR_ARRAY, "<") );
+        	assertEquals( "%3C", percentCodec.encode(EMPTY_CHAR_ARRAY, "<") );
 	}
 
 
@@ -165,7 +165,7 @@ public class CodecTest extends TestCase {
 
 	public void testPercentEncodeChar()
 	{
-        	assertEquals( "%3c", percentCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+        	assertEquals( "%3C", percentCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
 	}
 
 	public void testPercentEncodeChar0x100()
