@@ -343,7 +343,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			}			
 			return canonical;
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new ValidationException( context + ": Invalid directory name", "Failure to validate directory path: context=" + context + ", input=" + input, e, context );
 		}
 	}
