@@ -663,7 +663,7 @@ public class FileBasedAuthenticator implements org.owasp.esapi.Authenticator {
             throw new AuthenticationAccountsException("Remove user failed", "Can't remove invalid accountName " + accountName);
         }
         userMap.remove(user.getAccountId());
-        System.out.println("Removing user " + user.getAccountName());
+        logger.info(Logger.SECURITY_SUCCESS, "Removing user " + user.getAccountName());
         passwordMap.remove(user);
         saveUsers();
     }

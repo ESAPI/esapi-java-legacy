@@ -369,9 +369,8 @@ public final class ESAPI {
 		if ( securityConfiguration != null ) {
 		ESAPI.securityConfiguration = securityConfiguration;
 		} else {
-			// CHECKME: Alternately we could throw NullPointerException with meaningful message here.
-			System.out.println("ESAPI.setSecurityConfiguration(): null passed in. Security configuration unchanged.");
-	}
+			throw new NullPointerException("ESAPI.setSecurityConfiguration(): null passed in. Security configuration unchanged.");
+	    }
 	}
 
 	/**
