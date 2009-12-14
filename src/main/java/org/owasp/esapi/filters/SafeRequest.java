@@ -32,6 +32,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequestWrapper;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -44,7 +45,8 @@ import org.owasp.esapi.errors.ValidationException;
  * where possible. The wrapper returns a safe value when a validation error is
  * detected, including stripped or empty strings.
  */
-public class SafeRequest implements HttpServletRequest {
+public class SafeRequest extends HttpServletRequestWrapper
+{
 
     private HttpServletRequest request;
     private final Logger logger = ESAPI.getLogger("SafeRequest");
@@ -56,6 +58,7 @@ public class SafeRequest implements HttpServletRequest {
      * @param request
      */
     public SafeRequest(HttpServletRequest request) {
+    	super(request);
         this.request = request;
     }
 
