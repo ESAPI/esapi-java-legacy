@@ -22,6 +22,7 @@ import java.util.Locale;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -32,7 +33,7 @@ import org.owasp.esapi.errors.ValidationException;
  * This response wrapper simply overrides unsafe methods in the
  * HttpServletResponse API with safe versions.
  */
-public class SafeResponse implements HttpServletResponse {
+public class SafeResponse extends HttpServletResponseWrapper {
 
 	private HttpServletResponse response;
 	private final Logger logger = ESAPI.getLogger("SafeResponse");
@@ -44,6 +45,7 @@ public class SafeResponse implements HttpServletResponse {
 	 * @param response
 	 */
 	public SafeResponse(HttpServletResponse response) {
+		super(response);
 		this.response = response;
 	}
 
