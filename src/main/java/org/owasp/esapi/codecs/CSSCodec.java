@@ -72,6 +72,9 @@ public class CSSCodec implements Codec
 		if(ch == 0)
 			throw new IllegalArgumentException("Chracter value zero is not valid in CSS");
 
+		if(ch < 0x7f && !Character.isISOControl(ch))
+			return "\\" + ch;
+
 		// otherwise encode with \\HHHHHH
 		String temp = Integer.toHexString((int) ch);
 		return "\\" + temp.toUpperCase() + " ";
