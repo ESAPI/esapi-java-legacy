@@ -172,15 +172,15 @@ public class HashTrieTest extends TestCase
 
 	public void testValues()
 	{
-		HashTrie/*<Boolean>*/ trie = new HashTrie/*<Boolean>*/();
-		ArrayList/*<Boolean>*/ actual;
-		ArrayList/*<Boolean>*/ expected = new ArrayList/*<Boolean>*/(2);
+		HashTrie/*<Integer>*/ trie = new HashTrie/*<Integer>*/();
+		ArrayList/*<Integer>*/ actual;
+		ArrayList/*<Integer>*/ expected = new ArrayList/*<Integer>*/(2);
 
-		expected.add(Boolean.TRUE);
-		expected.add(Boolean.FALSE);
-		trie.put("true", Boolean.TRUE);
-		trie.put("false", Boolean.FALSE);
-		actual = new ArrayList/*<Boolean>*/(trie.values());
+		expected.add(PrimWrap.wrapInt(1));
+		expected.add(PrimWrap.wrapInt(2));
+		trie.put("one", PrimWrap.wrapInt(1));
+		trie.put("two", PrimWrap.wrapInt(2));
+		actual = new ArrayList/*<Integer>*/(trie.values());
 		Collections.sort(actual);
 		Collections.sort(expected);
 		assertEquals(expected,actual);
