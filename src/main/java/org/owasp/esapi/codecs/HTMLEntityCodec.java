@@ -16,6 +16,11 @@
 package org.owasp.esapi.codecs;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
+import org.owasp.esapi.util.CollectionsUtil;
+import org.owasp.esapi.util.PrimWrap;
 
 /**
  * Implementation of the Codec interface for HTML entity encoding.
@@ -25,11 +30,15 @@ import java.util.HashMap;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class HTMLEntityCodec implements Codec {
+public class HTMLEntityCodec implements Codec
+{
+	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR + " \t";
+	private static final Set/*<Character>*/ UNENCODED_SET = CollectionsUtil.strToUnmodifiableSet(UNENCODED_STR);
 	
 	private static HashMap characterToEntityMap;
 
-	private static HashMap entityToCharacterMap;
+	private static HashTrie/*<Character>*/ entityToCharacterMap;
 
 	public HTMLEntityCodec() {
 		initializeMaps();
@@ -44,7 +53,7 @@ public class HTMLEntityCodec implements Codec {
 	public String encode( String input ) {
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
-			sb.append( encodeCharacter( new Character( input.charAt(i) ) ) );
+			sb.append( encodeCharacter( PrimWrap.wrapChar( input.charAt(i) ) ) );
 		}
 		return sb.toString();
 	}
@@ -55,11 +64,17 @@ public class HTMLEntityCodec implements Codec {
      * Encodes a Character for safe use in an HTML entity field.
      */
 	public String encodeCharacter( Character c ) {
+		char ch = c.charValue();
 		String entityName = (String) characterToEntityMap.get(c);
 		if (entityName != null) {
 			return "&" + entityName + ";";
 		}
-		return "&#" + (int)c.charValue() + ";";
+
+		// check for unencoded characters
+		if(UNENCODED_SET.contains(c))
+			return c.toString();
+
+		return "&#x" + Integer.toHexString(c.charValue()) + ";";
 	}
 	
 	/**
@@ -246,23 +261,32 @@ public class HTMLEntityCodec implements Codec {
 	 * 		Returns the decoded version of the character starting at index, or null if no decoding is possible.
 	 */
 	private Character getNamedEntity( PushbackString input ) {
-		// search through the rest of the string up to 6 characters
-		// System.out.println( "REM: " + input.remainder() );
 		StringBuffer possible = new StringBuffer();
-		int len = Math.min( input.remainder().length(), 7 );
-		for ( int i=0; i<len; i++ ) {
-			possible.append( Character.toLowerCase(input.next().charValue()) );
-			// System.out.println( "             >> " + possible );
-			Character entity = (Character) entityToCharacterMap.get(possible.toString());
-			if ( entity != null ) {
-				// eat any trailing semicolons
-				if ( input.peek( ';') ) {
-					input.next();
-				}
-				return entity;
-			}
-		}
-		return null;
+		Map.Entry/*<CharSequence,Character>*/ entry;
+		int len;
+		
+		// kludge around PushbackString....
+		len = Math.min(input.remainder().length(), entityToCharacterMap.getMaxKeyLength());
+		for(int i=0;i<len;i++)
+			possible.append(Character.toLowerCase(input.next().charValue()));
+
+		// look up the longest match
+		entry = entityToCharacterMap.getLongestMatch(possible);
+		if(entry == null)
+			return null;	// no match, caller will reset input
+
+		// fixup input
+		input.reset();
+		input.next();	// read &
+		len = ((CharSequence)entry.getKey()).length();	// what matched's length
+		for(int i=0;i<len;i++)
+			input.next();
+
+		// check for a trailing semicolen
+		if(input.peek(';'))
+			input.next();
+
+		return (Character)entry.getValue();
 	}
 
 	/**
@@ -777,10 +801,10 @@ public class HTMLEntityCodec implements Codec {
 		/* &hearts; : black heart suit */, 9830
 		/* &diams; : black diamond suit */, };
 		characterToEntityMap = new HashMap(entityNames.length);
-		entityToCharacterMap = new HashMap(entityValues.length);
+		entityToCharacterMap = new HashTrie/*<Character>*/();
 		for (int i = 0; i < entityNames.length; i++) {
 			String e = entityNames[i];
-			Character c = new Character(entityValues[i]);
+			Character c = PrimWrap.wrapChar(entityValues[i]);
 			entityToCharacterMap.put(e, c);
 			characterToEntityMap.put(c, e);
 		}

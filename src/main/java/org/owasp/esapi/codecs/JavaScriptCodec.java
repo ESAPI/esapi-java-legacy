@@ -51,27 +51,40 @@ public class JavaScriptCodec implements Codec {
 	 */
 	public String encodeCharacter( Character c ) {
 		char ch = c.charValue();
-		if ( ch == 0x00 ) return "\\0";
-		if ( ch == 0x08 ) return "\\b";
-		if ( ch == 0x09 ) return "\\t";
-		if ( ch == 0x0a ) return "\\n";
-		if ( ch == 0x0b ) return "\\v";
-		if ( ch == 0x0c ) return "\\f";
-		if ( ch == 0x0d ) return "\\r";
-		if ( ch == 0x22 ) return "\\\"";
-		if ( ch == 0x27 ) return "\\'";
-		if ( ch == 0x5c ) return "\\\\";
+		switch(ch)
+		{
+			case 0x00:
+				return "\\0";
+			case 0x08:
+				return "\\b";
+			case 0x09:
+				return "\\t";
+			case 0x0a:
+				return "\\n";
+			case 0x0b:
+				return "\\v";
+			case 0x0c:
+				return "\\f";
+			case 0x0d:
+				return "\\r";
+			case 0x22:
+				return "\\\"";
+			case 0x27:
+				return "\\'";
+			case 0x5c:
+				return "\\\\";
+		}
 
-		// encode up to 256 with \\xHH
-        String temp = Integer.toHexString((int)ch);
-		if ( ch <= 256 ) {
-	        String pad = "00".substring(temp.length() );
-	        return "\\x" + pad + temp.toUpperCase();
+		// encode up to 255 with \\xHH
+		String temp = Integer.toHexString((int)ch);
+		if ( ch <= 255 ) {
+			String pad = "00".substring(temp.length() );
+			return "\\x" + pad + temp.toUpperCase();
 		}
 
 		// otherwise encode with \\uHHHH
-        String pad = "0000".substring(temp.length() );
-        return "\\u" + pad + temp.toUpperCase();
+		String pad = "0000".substring(temp.length() );
+		return "\\u" + pad + temp.toUpperCase();
 	}
 
 	/**
@@ -92,8 +105,8 @@ public class JavaScriptCodec implements Codec {
 		}
 		return sb.toString();
 	}
-	
-	
+
+
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -112,7 +125,7 @@ public class JavaScriptCodec implements Codec {
 			input.reset();
 			return null;
 		}
-		
+
 		// if this is not an encoded character, return null
 		if ( first.charValue() != '\\' ) {
 			input.reset();
@@ -124,7 +137,7 @@ public class JavaScriptCodec implements Codec {
 			input.reset();
 			return null;
 		}
-		
+
 		if ( second.charValue() == '0' ) {
 			return new Character( (char)0x00 );
 		} else if ( second.charValue() == 'b' ) {
@@ -145,8 +158,8 @@ public class JavaScriptCodec implements Codec {
 			return new Character( (char)0x27 );
 		} else if ( second.charValue() == '\\' ) {
 			return new Character( (char)0x5c );
-			
-		// look for \\xXX format
+
+			// look for \\xXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
 			// Search for exactly 2 hex digits following
 			StringBuffer sb = new StringBuffer();
@@ -167,8 +180,8 @@ public class JavaScriptCodec implements Codec {
 					return null;
 				}
 			}
-			
-		// look for \\uXXXX format
+
+			// look for \\uXXXX format
 		} else if ( Character.toLowerCase( second.charValue() ) == 'u') {
 			// Search for exactly 4 hex digits following
 			StringBuffer sb = new StringBuffer();
@@ -190,7 +203,7 @@ public class JavaScriptCodec implements Codec {
 				}
 			}
 		}
-		
+
 		// ignore the backslash and return the character
 		return second;
 	}
