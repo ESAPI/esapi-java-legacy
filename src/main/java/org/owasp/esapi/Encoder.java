@@ -255,6 +255,13 @@ public interface Encoder {
 	String encodeForHTML(String input);
 
 	/**
+     * Decodes HTML entities.
+     * @param input the <code>String</code> to decode
+     * @return the newly decoded <code>String</code>
+     */
+	String decodeForHTML(String input);
+		
+	/**
 	 * Encode data for use in HTML attributes.
 	 * 
 	 * @param input 
