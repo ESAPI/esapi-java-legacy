@@ -195,41 +195,15 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	    return htmlCodec.encode( IMMUNE_HTML, input);	    
 	 }
 	
-	//
-	// From http://www.koders.com/java/fid7B9C5B891D4D3C0A01A85E7BB67FB98E37C62A27.aspx?s=file%3Asemap*.java
-    // this is just a placeholder for now
-	//
-	// Consider http://commons.apache.org/lang/api-release/org/apache/commons/lang/StringEscapeUtils.html#unescapeHtml%28java.lang.String%29 as well
-	//
-	public String decodeForHTML(String s) {
+	/**
+	 * {@inheritDoc}
+	 */
+	public String decodeForHTML(String input) {
 		
-		int i = 0, j = 0, pos = 0;
-		StringBuffer sb = new StringBuffer();
-		while ((i = s.indexOf("&#", pos)) != -1 && (j = s.indexOf(';', i)) != -1) {
-		    int n = -1;
-		    for (i += 2; i < j; ++i) {
-			char c = s.charAt(i);
-			if ('0' <= c && c <= '9')
-			    n = (n == -1 ? 0 : n * 10) + c - '0';
-			else
-			    break;
-		    }
-		    if (i != j)	n = -1;	    // malformed entity - abort
-		    if (n != -1) {
-			sb.append((char)n);
-			i = j + 1;	    // skip ';'
-		    }
-		    else {
-			for (int k = pos; k < i; ++k)
-			    sb.append(s.charAt(k));
-		    }
-		    pos = i;
-		}
-		if (sb.length() == 0)
-		    return s;
-		else
-		    sb.append(s.substring(pos, s.length()));
-		return sb.toString();
+		if( input == null ) {
+	    	return null;
+	    }
+	    return htmlCodec.decode( input);	 
     }
 	 
 	/**
