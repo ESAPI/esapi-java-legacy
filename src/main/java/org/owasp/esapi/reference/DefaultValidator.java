@@ -182,7 +182,13 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			errors.addError(context, e);
 		}
 		// error has been added to list, so return original input 
-		return input;
+		// TODO - optimize so that invalid input is not canonicalized twice
+		try {
+			return encoder.canonicalize(input);
+		} catch (EncodingException e) {
+			// TODO = consider logging canonicalization error?
+			return input;
+		}
 	}
 
 	/**
@@ -287,7 +293,13 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			errors.addError(context, e);
 		}
 		// error has been added to list, so return original input 
-		return input;
+		// TODO - optimize so that invalid input is not canonicalized twice
+		try {
+			return encoder.canonicalize(input);
+		} catch (EncodingException e) {
+			// TODO = consider logging canonicalization error?
+			return input;
+		}
 	}
 
 	/**
@@ -431,8 +443,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+		// error has been added to list, so return original input  
+		// TODO - optimize so that invalid input is not canonicalized twice
+		try {
+			return new File(input).getCanonicalFile().getName();
+		} catch (IOException e) {
+			// TODO = consider logging canonicalization error?
+			return input;
+		}
 	}
 	
 	/**
