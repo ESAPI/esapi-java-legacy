@@ -287,13 +287,7 @@ public class StringValidationRule extends BaseValidationRule {
 		}
 
 		// canonicalize
-		try {
-			canonical = encoder.canonicalize( input );
-		} catch (EncodingException e) {
-			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Encoding problem detected.", "Error canonicalizing user input", e, context);
-		}
-
-		// checks on canonical version
+		canonical = encoder.canonicalize( input );
 
 		// check for empty/null
 		if(checkEmpty(context, canonical, input) == null)

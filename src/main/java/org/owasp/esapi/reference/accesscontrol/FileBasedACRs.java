@@ -242,13 +242,8 @@ public class FileBasedACRs {
 	 * 
 	 */
 	private Rule searchForRule(Map map, Set roles, String path) {
-		String canonical = null;
-		try {
-		    canonical = ESAPI.encoder().canonicalize(path);
-		} catch (EncodingException e) {
-		    logger.warning( Logger.SECURITY_FAILURE, "Failed to canonicalize input: " + path );
-		}
-		
+		String canonical = ESAPI.encoder().canonicalize(path);
+
 		String part = canonical;
         if ( part == null ) {
             part = "";
@@ -385,12 +380,8 @@ public class FileBasedACRs {
 	private List validateRoles(List roles){
 		List ret = new ArrayList();	
 		for(int x = 0; x < roles.size(); x++){
-			String canonical = "";
-			try {
-				canonical = ESAPI.encoder().canonicalize(((String)roles.get(x)).trim());
-			} catch (EncodingException e) {
-				logger.warning( Logger.SECURITY_FAILURE, "Failed to canonicalize role " + ((String)roles.get(x)).trim(), e );
-			}
+			String canonical = ESAPI.encoder().canonicalize(((String)roles.get(x)).trim());
+
 			if(!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController", canonical, "RoleName", 20, false)) {
 				logger.warning( Logger.SECURITY_FAILURE, "Role: " + ((String)roles.get(x)).trim() + " is invalid, so was not added to the list of roles for this Rule.");
 			} else { 

@@ -38,7 +38,6 @@ import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
 import org.owasp.esapi.errors.ValidationException;
@@ -183,12 +182,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		// error has been added to list, so return original input 
 		// TODO - optimize so that invalid input is not canonicalized twice
-		try {
-			return encoder.canonicalize(input);
-		} catch (EncodingException e) {
-			// TODO = consider logging canonicalization error?
-			return input;
-		}
+		return encoder.canonicalize(input);
 	}
 
 	/**
@@ -294,12 +288,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		// error has been added to list, so return original input 
 		// TODO - optimize so that invalid input is not canonicalized twice
-		try {
-			return encoder.canonicalize(input);
-		} catch (EncodingException e) {
-			// TODO = consider logging canonicalization error?
-			return input;
-		}
+		return encoder.canonicalize(input);
 	}
 
 	/**
@@ -803,7 +792,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		try {
     		String canonical = encoder.canonicalize(input);
     		return new String( getValidPrintable( context, canonical.toCharArray(), maxLength, allowNull) );
-	    } catch (EncodingException e) {
+	    //TODO - changed this to base Exception since we no longer need EncodingException 
+    	//TODO - this is a bit lame: we need to re-think this function.
+		} catch (Exception e) {
 	        throw new ValidationException( context + ": Invalid printable input", "Invalid encoding of printable input, context=" + context + ", input=" + input, e, context);
 	    }
 	}
