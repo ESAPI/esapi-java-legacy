@@ -135,9 +135,8 @@ public interface Encoder {
 	 * 
 	 * @param input the text to canonicalize
 	 * @return a String containing the canonicalized text
-	 * @throws EncodingException if canonicalization fails
 	 */
-	String canonicalize(String input) throws EncodingException;
+	String canonicalize(String input);
 	
 	/**
 	 * Canonicalization is simply the operation of reducing a possibly encoded
@@ -206,11 +205,8 @@ public interface Encoder {
 	 * 		true if checking for double encoding is desired, false otherwise
 	 * 
 	 * @return a String containing the canonicalized text
-	 * 
-	 * @throws EncodingException 
-	 * 		if canonicalization fails
 	 */
-	String canonicalize(String input, boolean strict) throws EncodingException;
+	String canonicalize(String input, boolean strict);
 
 	/**
 	 * Reduce all non-ascii characters to their ASCII form so that simpler

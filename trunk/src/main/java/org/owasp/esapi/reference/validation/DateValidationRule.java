@@ -20,9 +20,7 @@ import java.util.Date;
 
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
-
 
 /**
  * A validator performs syntax and possibly semantic validation of a single
@@ -91,14 +89,7 @@ public class DateValidationRule extends BaseValidationRule {
 							+ input, context);
 		}
 
-	    String canonical = null;
-	    try {
-			canonical = encoder.canonicalize(input);
-	    } catch (EncodingException e) {
-			throw new ValidationException(context
-					+ ": Invalid date input. Encoding problem detected.",
-					"Error canonicalizing user input", e, context);
-	    }
+	    String canonical = encoder.canonicalize(input);
 
 		try {
 			return format.parse(canonical);
