@@ -321,7 +321,7 @@ public class ValidatorTest extends TestCase
       assertFalse(instance.isValidDate("datetest3", "", format, false));
    }
 
-   public void testIsValidDirectoryPath()
+   public void testIsValidDirectoryPath() throws IOException
    {
       System.out.println("isValidDirectoryPath");
 
@@ -336,6 +336,7 @@ public class ValidatorTest extends TestCase
 
       if (isWindows)
       {
+         String sysRoot = new File(System.getenv("SystemRoot")).getCanonicalPath();
          // Windows paths that don't exist and thus should fail
          assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
          assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", parent, false));
@@ -343,8 +344,8 @@ public class ValidatorTest extends TestCase
 
          // Windows paths
          assertTrue(instance.isValidDirectoryPath("test", "C:\\", parent, false));                        // Windows root directory
-         assertTrue(instance.isValidDirectoryPath("test", "C:\\Windows", parent, false));                  // Windows always exist directory
-         assertFalse(instance.isValidDirectoryPath("test", "C:\\Windows\\System32\\cmd.exe", parent, false));      // Windows command shell
+         assertTrue(instance.isValidDirectoryPath("test", sysRoot, parent, false));                  // Windows always exist directory
+         assertFalse(instance.isValidDirectoryPath("test", sysRoot + "\\System32\\cmd.exe", parent, false));      // Windows command shell
 
          // Unix specific paths should not pass
          assertFalse(instance.isValidDirectoryPath("test", "/tmp", parent, false));      // Unix Temporary directory
@@ -412,12 +413,12 @@ public class ValidatorTest extends TestCase
       assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false));
    }
 
-   public void testIsValidFileUpload()
+   public void testIsValidFileUpload() throws IOException
    {
       System.out.println("isValidFileUpload");
-      String filepath = System.getProperty("user.dir");
+      String filepath = new File(System.getProperty("user.dir")).getCanonicalPath();
       String filename = "aspect.jar";
-      File parent = new File("/");
+      File parent = new File("/").getCanonicalFile();
       byte[] content = null;
       try
       {
