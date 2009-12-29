@@ -119,16 +119,26 @@ public class ExecutorTest extends TestCase {
 			System.out.println("testExecuteWindowsSystemCommand - on non-Windows platform, exiting");
 			return;	// Not windows, not going to execute this path
 		}
+		File tmpDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();
+		File sysRoot = new File(System.getenv("SystemRoot")).getCanonicalFile();
+		File sys32 = new File(sysRoot,"system32").getCanonicalFile();
+		File cmd = new File(sys32,"cmd.exe").getCanonicalFile();
+		ESAPI.setSecurityConfiguration(
+			new Conf(
+				ESAPI.securityConfiguration(),
+				Collections.singletonList(cmd.getPath()),
+				tmpDir
+			)
+		);
 
 		Codec codec = new WindowsCodec();
 		System.out.println("executeSystemCommand");
 		Executor instance = ESAPI.executor();
-		File executable = new File( "C:\\Windows\\System32\\cmd.exe" );
 		List params = new ArrayList();
 		try {
 			params.add("/C");
 			params.add("dir");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
+			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			assertTrue(result.length() > 0);
 		} catch (Exception e) {
@@ -136,7 +146,7 @@ public class ExecutorTest extends TestCase {
 			fail();
 		}
 		try {
-			File exec2 = new File( executable.getPath() + ";inject.exe" );
+			File exec2 = new File( cmd.getPath() + ";inject.exe" );
 			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
@@ -144,7 +154,7 @@ public class ExecutorTest extends TestCase {
 			// expected
 		}
 		try {
-			File exec2 = new File( executable.getPath() + "\\..\\cmd.exe" );
+			File exec2 = new File( cmd.getPath() + "\\..\\cmd.exe" );
 			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
@@ -153,7 +163,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File workdir = new File( "c:\\ridiculous" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), workdir, codec, false );
+			String result = instance.executeSystemCommand(cmd, new ArrayList(params), workdir, codec, false );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -161,7 +171,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			params.add("&dir");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
+			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -169,7 +179,7 @@ public class ExecutorTest extends TestCase {
 
 		try {
 			params.set( params.size()-1, "c:\\autoexec.bat" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
+			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -177,7 +187,7 @@ public class ExecutorTest extends TestCase {
 
 		try {
 			params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
+			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -207,7 +217,7 @@ public class ExecutorTest extends TestCase {
 		ESAPI.setSecurityConfiguration(
 			new Conf(
 				ESAPI.securityConfiguration(),
-				Collections.singletonList(binSh.getCanonicalPath()),
+				Collections.singletonList(binSh.getPath()),
 				new File("/tmp")
 			)
 		);
