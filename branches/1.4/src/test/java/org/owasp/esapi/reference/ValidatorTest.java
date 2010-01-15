@@ -321,9 +321,9 @@ public class ValidatorTest extends TestCase {
 			// Unix specific paths should pass
 			assertTrue(instance.isValidDirectoryPath("test", "/", false));			// Root directory
 			assertTrue(instance.isValidDirectoryPath("test", "/bin", false));		// Always exist directory
-			assertTrue(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Standard shell	
 			
 			// Unix specific paths that should not exist or work
+			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Standard shell, not dir
 			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
 			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
 		}
