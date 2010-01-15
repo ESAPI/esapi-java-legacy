@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import junit.framework.Test;
@@ -25,6 +26,8 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Executor;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.codecs.UnixCodec;
@@ -35,7 +38,51 @@ import org.owasp.esapi.codecs.UnixCodec;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ExecutorTest extends TestCase {
+public class ExecutorTest extends TestCase
+{
+	private SecurityConfiguration origConfig;
+
+	/**
+	 * Config wrapper to temporarly set the allowedExecutables and
+	 * workingDirectory.
+	 */
+	private static class Conf extends SecurityConfigurationWrapper
+	{
+		private List allowedExes;
+		private File workingDir;
+
+		/**
+		 * Create wrapper with the specified allowed execs and
+		 * workingDir.
+		 * @param orig The configuration to wrap.
+		 * @param allowedExec The executables to be allowed
+		 * @param workingDir The working directory for execution
+		 */
+		Conf(SecurityConfiguration orig, List allowedExes, File workingDir)
+		{
+			super(orig);
+			this.allowedExes = allowedExes;
+			this.workingDir = workingDir;
+		}
+
+		/**
+		 * Override real one with our temporary one.
+		 * @return Temporary allowed executables.
+		 */
+		public List getAllowedExecutables()
+		{
+			return allowedExes;
+		}
+
+		/**
+		 * Override real one with our temporary one.
+		 * @return Temporary working directory.
+		 */
+		public File getWorkingDirectory()
+		{
+			return workingDir;
+		}
+	}
 
 	/**
 	 * Instantiates a new executor test.
@@ -48,17 +95,19 @@ public class ExecutorTest extends TestCase {
 	}
 
 	/**
-     * {@inheritDoc}
+	 * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
-		// none
+		// save configuration as tests may change it
+		origConfig = ESAPI.securityConfiguration();
 	}
 
 	/**
-     * {@inheritDoc}
+	 * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
-		// none
+		// restore configuration as test may change it
+		ESAPI.setSecurityConfiguration(origConfig);
 	}
 
 	/**
@@ -79,12 +128,12 @@ public class ExecutorTest extends TestCase {
 	 */
 	public void testExecuteWindowsSystemCommand() throws Exception {
 		System.out.println("executeWindowsSystemCommand");
-		
+
 		if ( System.getProperty("os.name").indexOf("Windows") == -1 ) {
 			System.out.println("testExecuteWindowsSystemCommand - on non-Windows platform, exiting");
 			return;	// Not windows, not going to execute this path
 		}
-		
+
 		Codec codec = new WindowsCodec();
 		System.out.println("executeSystemCommand");
 		Executor instance = ESAPI.executor();
@@ -140,13 +189,13 @@ public class ExecutorTest extends TestCase {
 			fail();
 		}
 
-        try {
-            params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-            String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
-            System.out.println( "RESULT: " + result );
-        } catch (Exception e) {
-            fail();
-        }
+		try {
+			params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			System.out.println( "RESULT: " + result );
+		} catch (Exception e) {
+			fail();
+		}
 	}
 
 	/**
@@ -157,23 +206,35 @@ public class ExecutorTest extends TestCase {
 	 */
 	public void testExecuteUnixSystemCommand() throws Exception {
 		System.out.println("executeUnixSystemCommand");
-		
+		File workingDir = new File("/tmp");
+
 		if ( System.getProperty("os.name").indexOf("Windows") != -1 ) {
 			System.out.println("executeUnixSystemCommand - on Windows platform, exiting");
 			return;
 		}
-		
+
+		// FIXME: need more test cases to use this codec
 		Codec codec = new UnixCodec();
-		
+
+		// make sure we have what /bin/sh is pointing at in the allowed exes for the test
+		// and a usable working dir
+		File binSh = new File("/bin/sh").getCanonicalFile();
+		ESAPI.setSecurityConfiguration(
+				new Conf(
+					ESAPI.securityConfiguration(),
+					Collections.singletonList(binSh.getPath()),
+					workingDir
+					)
+				);
+
 		Executor instance = ESAPI.executor();
-		File executable = new File( "/bin/sh" );
-		File working = new File("/");
+		File executable = binSh;
 		List params = new ArrayList();
 		try {
 			params.add("-c");
 			params.add("ls");
 			params.add("/");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), workingDir, codec);
 			System.out.println( "RESULT: " + result );
 			assertTrue(result.length() > 0);
 		} catch (Exception e) {
@@ -181,7 +242,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( executable.getPath() + ";./inject" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params), workingDir, codec);
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -189,15 +250,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( executable.getPath() + "/../bin/sh" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params), working, codec);
-			System.out.println( "RESULT: " + result );
-			fail();
-		} catch (Exception e) {
-			// expected
-		}
-		try {
-			File workdir = new File( "ridiculous" );
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), workdir, codec);
+			String result = instance.executeSystemCommand(exec2, new ArrayList(params), workingDir, codec);
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -205,27 +258,11 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			params.add(";ls");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
+			String result = instance.executeSystemCommand(executable, new ArrayList(params), workingDir, codec);
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
 		}
-
-//		try {
-//			params.set( params.size()-1, "c:\\autoexec.bat" );
-//			String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
-//			System.out.println( "RESULT: " + result );
-//		} catch (Exception e) {
-//			fail();
-//		}
-//
-//        try {
-//            params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-//            String result = instance.executeSystemCommand(executable, new ArrayList(params), working, codec);
-//            System.out.println( "RESULT: " + result );
-//        } catch (Exception e) {
-//            fail();
-//        }
 	}
 
 }
