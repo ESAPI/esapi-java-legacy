@@ -18,315 +18,261 @@ package org.owasp.esapi.reference;
 import java.io.File;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.util.Iterator;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.SafeFile;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.util.FileTestUtils;
+import org.owasp.esapi.util.CollectionsUtil;
 
 /**
- * The Class ExecutorTest.
- * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class SafeFileTest extends TestCase {
+public class SafeFileTest extends TestCase
+{
+	private static final Class CLASS = SafeFileTest.class;
+	private static final String CLASS_NAME = CLASS.getName();
+	/** Name of the file in the temporary directory */
+	private static final String TEST_FILE_NAME = "test.file";
+	private static final Set GOOD_FILE_CHARS = CollectionsUtil.strToUnmodifiableSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-");
+	private static final Set BAD_FILE_CHARS = CollectionsUtil.strToUnmodifiableSet("\u0000" + (File.separatorChar == '/' ? '\\' : '/') + "*|<>?:" /*+ "~!@#$%^&(){}[],`;"*/);
+
+	private File testDir = null;
+	private File testFile = null;
+
+	String pathWithNullByte = "/temp/file.txt" + (char)0;
 
 	/**
-	 * Instantiates a new executor test.
-	 * 
-	 * @param testName
-	 *            the test name
+	 * {@inheritDoc}
 	 */
-	public SafeFileTest(String testName) {
-		super(testName);
+	protected void setUp() throws Exception
+	{
+		// create a file to test with
+		testDir = FileTestUtils.createTmpDirectory(CLASS_NAME).getCanonicalFile();
+		testFile = new File(testDir, TEST_FILE_NAME);
+		testFile.createNewFile();
+		testFile = testFile.getCanonicalFile();
 	}
 
 	/**
-     * {@inheritDoc}
+	 * {@inheritDoc}
 	 */
-	protected void setUp() throws Exception {
-		// none
+	protected void tearDown() throws Exception
+	{
+		FileTestUtils.deleteRecursively(testDir);
 	}
 
-	/**
-     * {@inheritDoc}
-	 */
-	protected void tearDown() throws Exception {
-		// none
-	}
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(SafeFileTest.class);
 		return suite;
 	}
 
-	String pathWithNullByte = "/temp/file.txt" + (char)0;
+	public void testEscapeCharactersInFilename() {
+		System.out.println("testEscapeCharactersInFilenameInjection");
+		File tf = testFile;
+		if ( tf.exists() ) {
+			System.out.println( "File is there: " + tf );
+		}
 
-    public void testEscapeCharactersInFilename() {
-        System.out.println("testEscapeCharactersInFilenameInjection");
-        File tf = new File( ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" );
-        if ( tf.exists() ) {
-            System.out.println( "File is there: " + tf );
-        }
-        
-        File sf = new File( ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI^.properties" );
-        if ( sf.exists() ) {
-            System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
-        } else {
-            System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
-        }
-    }
-
-    public void testEscapeCharacterInDirectoryInjection() {
-        System.out.println("testEscapeCharacterInDirectoryInjection");
-        File sf = new File( ESAPI.securityConfiguration().getResourceDirectory() + "test\\^.^.\\ESAPI.properties" );
-        if ( sf.exists() ) {
-            System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
-        } else {
-            System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
-        }
-    }
-	
-	public void testJavaFileInjection() {
-		System.out.println("testJavaFileInjection");
-		for ( int i = 0; i < 512; i++ ) {
-			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + (char)i;
-			File sf = new File(goodFile);
-			if ( sf.exists() ) {
-				System.out.println( "  Fail filename.txt" + (char)i + " ("+ i +")" );
-			}
-			File sf2 = new File(goodFile + "test");
-			if ( sf2.exists() ) {
-				System.out.println( "  Fail c:\\filename.txt" + (char)i + "test.xml ("+ i +")" );
-			}
-		}		
-	}
-	
-    
-    public void testMultipleJavaFileInjection() {
-        System.out.println("testMultipleJavaFileInjection");
-        for ( int i = 0; i < 512; i++ ) {
-            String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + (char)i + (char)i + (char)i;
-            File sf = new File(goodFile);
-            if ( sf.exists() ) {
-                System.out.println( "  Fail filename.txt"  + (char)i  + (char)i + (char)i + " ("+ i +") 3x" );
-            }
-            File sf2 = new File(goodFile + "test");
-            if ( sf2.exists() ) {
-                System.out.println( "  Fail c:\\filename.txt"  + (char)i + (char)i + (char)i + "test.xml ("+ i +") 3x" );
-            }
-        }       
-    }
-    
-	public void testAlternateDataStream() {
-		System.out.println("testAlternateDataStream");
-		String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties:secret.txt";
-		File sf = new File(goodFile);
+		File sf = new File(testDir, "test^.file" );
 		if ( sf.exists() ) {
-			System.out.println( "  Fail:" + goodFile );
-			fail();
+			System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
+		} else {
+			System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
 		}
 	}
-	
-	public void testJavaDirInjection() {
-		System.out.println("testJavaDirInjection");
-		for ( int i = 0; i < 512; i++ ) {
-			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + (char)i;
-			File sf = new File(goodFile);
-			if ( sf.exists() ) {
-				System.out.println( "  Fail c:\\dirpath" + (char)i + " ("+ i +")" );
+
+	public void testEscapeCharacterInDirectoryInjection() {
+		System.out.println("testEscapeCharacterInDirectoryInjection");
+		File sf = new File(testDir, "test\\^.^.\\file");
+		if ( sf.exists() ) {
+			System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
+		} else {
+			System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
+		}
+	}
+
+	public void testJavaFileInjectionGood() throws ValidationException
+	{
+		for(Iterator i=GOOD_FILE_CHARS.iterator();i.hasNext();)
+		{
+			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
+			File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
+			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+			sf = new SafeFile(testDir, TEST_FILE_NAME + ch + "test");
+			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+		}		
+	}
+
+	public void testJavaFileInjectionBad()
+	{
+		for(Iterator i=BAD_FILE_CHARS.iterator();i.hasNext();)
+		{
+			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
+			try
+			{
+				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
+				fail("Able to create SafeFile " + sf.getPath());
 			}
-			File sf2 = new File(goodFile + "test");
-			if ( sf2.exists() ) {
-				System.out.println( "  Fail c:\\dirpath" + (char)i + "test.xml ("+ i +")" );
+			catch(ValidationException expected)
+			{
+			}
+			try
+			{
+				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
+				fail("Able to create SafeFile " + sf.getPath());
+			}
+			catch(ValidationException expected)
+			{
 			}
 		}		
 	}
-	
-    static public String toHex(final byte b) {
-        final char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-        final char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
-        return new String(array);
-     }	
-	
-	public void testNormalPercentEncodedFileInjection() throws Exception {
-		System.out.println("testNormalPercentEncodedFileInjection");
-		for ( int i = 0; i < 256; i++ ) {
-			String enc1 = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + "%" + toHex( (byte)i );
-			String dec1 = URLDecoder.decode(enc1, "UTF-8");
-			File sf = new File(dec1);
-			if ( sf.exists() ) {
-				System.out.println( "  Fail: " + enc1 );
-			}
-		}
-	}		
 
-	public void testWeirdPercentEncodedFileInjection() throws Exception {
-		System.out.println("testWeirdPercentEncodedFileInjection");
-		for ( int i = 0; i < 256; i++ ) {
-			String enc2 = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties" + "%u00" + toHex( (byte)i );
-			try {
-				String dec2 = URLDecoder.decode(enc2, "UTF-8");
-				File sf2 = new File(dec2);
-				if ( sf2.exists() ) {
-					System.out.println( "  Fail: " + enc2 );
-				}
-			} catch (Exception e ) {
-				// expected
+	public void testMultipleJavaFileInjectionGood() throws ValidationException
+	{
+		for(Iterator i=GOOD_FILE_CHARS.iterator();i.hasNext();)
+		{
+			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
+			ch = ch + ch + ch;
+			File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
+			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+			sf = new SafeFile(testDir, TEST_FILE_NAME + ch + "test");
+			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+		}		
+	}
+
+	public void testMultipleJavaFileInjectionBad()
+	{
+		for(Iterator i=BAD_FILE_CHARS.iterator();i.hasNext();)
+		{
+			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
+			ch = ch + ch + ch;
+			try
+			{
+				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
+				fail("Able to create SafeFile " + sf.getPath());
+			}
+			catch(ValidationException expected)
+			{
+			}
+			try
+			{
+				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
+				fail("Able to create SafeFile " + sf.getPath());
+			}
+			catch(ValidationException expected)
+			{
 			}
 		}		
 	}
-	
-	
-	/**
-	 * Test of executeOSCommand method, of class org.owasp.esapi.Executor
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	public void testCreateSafeFile() throws Exception {
-		System.out.println("SafeFile");
 
-		// verify file exists and test safe constructors
-		try{
-			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties";
-			File sf = new File(goodFile);
-			assertTrue( sf.exists() );
-			
-			// test string constructor
-			SafeFile sf1 = new SafeFile(goodFile);
-			assertTrue( sf1.exists() );
-			
-			// test string, string constructor
-			SafeFile sf2 = new SafeFile(ESAPI.securityConfiguration().getResourceDirectory(), "ESAPI.properties");
-			assertTrue( sf2.exists() );
-			
-			// test File, string constructor
-			SafeFile sf3 = new SafeFile(new File( ESAPI.securityConfiguration().getResourceDirectory() ), "ESAPI.properties");
-			assertTrue( sf3.exists() );
-			
-			// test URI constructor
-			String uri = "file:///" + ESAPI.securityConfiguration().getResourceDirectory().replaceAll("\\\\", "/") + "ESAPI.properties";
-			System.out.println( uri );
-			SafeFile sf4 = new SafeFile(new URI( uri ) );
-			assertTrue( sf4.exists() );			
-			
-		} catch( Exception e ) {
-			fail();
+	public void testAlternateDataStream() {
+		try
+		{
+			File sf = new SafeFile(testDir, TEST_FILE_NAME + ":secret.txt");
+			fail("Able to construct SafeFile for alternate data stream: " + sf.getPath());
 		}
+		catch(ValidationException expected)
+		{
+		}
+	}
 
-		// test percent encoded null byte
-		try {
-			String pathWithPercentEncodedNullByte = "/temp/file%00.txt";
-			new SafeFile( pathWithPercentEncodedNullByte );
-			fail();
-		} catch (Exception e) {
-			// expected
-		}
+	static public String toHex(final byte b) {
+		final char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
+		final char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
+		return new String(array);
+	}	
 
-		// test illegal characters
-		try {
-			String pathWithPercentEncodedNullByte = "/temp/file?.txt";
-			new SafeFile( pathWithPercentEncodedNullByte );
-			fail();
-		} catch (Exception e) {
-			// expected
-		}
+	public void testCreatePath() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.getPath());
+		assertTrue(sf.exists());
+	}
 
-		// test safe file exists
-		try {
-			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties";
-			File sf = new SafeFile(goodFile);
-			assertTrue( sf.exists() );
-		} catch( ValidationException e ) {
-			// expected
-		}
-		
-		// test null byte
-		try {
-			new SafeFile( pathWithNullByte );
-			fail();
-		} catch (ValidationException e) {
-			// expected
-		}
+	public void testCreateParentPathName() throws Exception
+	{
+		SafeFile sf = new SafeFile(testDir, testFile.getName());
+		assertTrue(sf.exists());
+	}
 
-		// test high byte
-		try {
-			String pathWithHighByte = "/temp/file.txt" + (char)160;
-			new SafeFile( pathWithHighByte );
-			fail();
-		} catch (ValidationException e) {
+	public void testCreateParentFileName() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.getParentFile(), testFile.getName());
+		assertTrue(sf.exists());
+	}
+
+	public void testCreateURI() throws Exception
+	{
+		SafeFile sf = new SafeFile(testFile.toURI());
+		assertTrue(sf.exists());
+	}
+
+	public void testCreateFileNamePercentNull()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testDir + File.separator + "file%00.txt");
+			fail("no exception thrown for file name with percent encoded null");
+		}
+		catch(ValidationException expected)
+		{
+		}
+	}
+
+	public void testCreateFileNameQuestion()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file?.txt");
+			fail("no exception thrown for file name with question mark in it");
+		}
+		catch(ValidationException e)
+		{
 			// expected
 		}
 	}
-	
-	// test parent constructor
-	public void testCreateSafeFileParentConstructor() throws Exception {
-		System.out.println("SafeFile parent constructor");
-		try {
-			new SafeFile( new File( "/" ), pathWithNullByte );
-			fail();
-		} catch (ValidationException e) {
+
+	public void testCreateFileNameNull()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file" + ((char)0) + ".txt");
+			fail("no exception thrown for file name with null in it");
+		}
+		catch(ValidationException e)
+		{
 			// expected
 		}
-		
-		try {
-			new SafeFile( new File("/%00"), "test.txt" );
-			fail();
-		} catch (ValidationException e) {
-			// expected
-		}
-		
-		try {
-			new SafeFile( new File("/\0"), "test.txt" );
-			fail();
-		} catch (ValidationException e) {
-			// expected
-		}
-		
-		try {
-			new SafeFile( new File("/|test"), "test.txt" );
-			fail();
-		} catch (ValidationException e) {
-			// expected
-		}
-		
 	}
-	
-	
-	// test good file with uri constructor
-	public void testCreateSafeFileURIConstructor() throws Exception {
-		System.out.println("SafeFile URI constructor");
-		try {
-			String goodFile = ESAPI.securityConfiguration().getResourceDirectory() + "ESAPI.properties";
-			File sf = new SafeFile(new URI("file:///" + goodFile ));
-			assertTrue( sf.exists() );
-		} catch (Exception e) {
-			// pass
+
+	public void testCreateFileHighByte()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file" + ((char)160) + ".txt");
+			fail("no exception thrown for file name with high byte in it");
 		}
-	
-		// test uri constructor with null byte
-		try {
-			new SafeFile(new URI("file:///test" + (char)0 + ".xml"));
-			fail();
-		} catch (Exception e) {
-			// pass
+		catch(ValidationException e)
+		{
+			// expected
 		}
-				
-		// test http uri
-		try {
-			new SafeFile(new URI("http://localserver/test" + (char)0 + ".xml"));
-			fail();
-		} catch (Exception e) {
-			// pass
+	}
+
+	public void testCreateParentPercentNull()
+	{
+		try
+		{
+			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file%00.txt");
+			fail("no exception thrown for file name with percent encoded null");
+		}
+		catch(ValidationException e)
+		{
+			// expected
 		}
 	}
 
