@@ -132,8 +132,8 @@ public class SafeRequest extends HttpServletRequestWrapper
             // build a new clean cookie
             try {
                 // get data from original cookie
-                String name = ESAPI.validator().getValidInput("Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", 150, false);
-                String value = ESAPI.validator().getValidInput("Cookie value: " + c.getValue(), c.getValue(), "HTTPCookieValue", 1000, false);
+                String name = ESAPI.validator().getValidInput("Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", 150, true);
+                String value = ESAPI.validator().getValidInput("Cookie value: " + c.getValue(), c.getValue(), "HTTPCookieValue", 1000, true);
                 int maxAge = c.getMaxAge();
                 String domain = c.getDomain();
                 String path = c.getPath();
@@ -170,7 +170,7 @@ public class SafeRequest extends HttpServletRequestWrapper
         String value = request.getHeader(name);
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
+            clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -187,7 +187,7 @@ public class SafeRequest extends HttpServletRequestWrapper
         while (en.hasMoreElements()) {
             try {
                 String name = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP header name: " + name, name, "HTTPHeaderName", 150, false);
+                String clean = ESAPI.validator().getValidInput("HTTP header name: " + name, name, "HTTPHeaderName", 150, true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
@@ -206,7 +206,7 @@ public class SafeRequest extends HttpServletRequestWrapper
         while (en.hasMoreElements()) {
             try {
                 String value = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP header value (" + name + "): " + value, value, "HTTPHeaderValue", 150, false);
+                String clean = ESAPI.validator().getValidInput("HTTP header value (" + name + "): " + value, value, "HTTPHeaderValue", 150, true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
@@ -281,7 +281,7 @@ public class SafeRequest extends HttpServletRequestWrapper
         String orig = request.getParameter(name);
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, "HTTPParameterValue", 2000, false);
+            clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, "HTTPParameterValue", 2000, true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -300,12 +300,12 @@ public class SafeRequest extends HttpServletRequestWrapper
             try {
                 Map.Entry e = (Map.Entry) i.next();
                 String name = (String) e.getKey();
-                String cleanName = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 100, false);
+                String cleanName = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 100, true);
 
                 String[] value = (String[]) e.getValue();
                 String[] cleanValues = new String[value.length];
                 for (int j = 0; j < value.length; j++) {
-                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value[j], value[j], "HTTPParameterValue", 2000, false);
+                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value[j], value[j], "HTTPParameterValue", 2000, true);
                     cleanValues[j] = cleanValue;
                 }
                 cleanMap.put(cleanName, cleanValues);
@@ -326,7 +326,7 @@ public class SafeRequest extends HttpServletRequestWrapper
         while (en.hasMoreElements()) {
             try {
                 String name = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 150, false);
+                String clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 150, true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
@@ -347,7 +347,7 @@ public class SafeRequest extends HttpServletRequestWrapper
             for (int i = 0; i < values.length; i++) {
                 try {
                     String value = values[i];
-                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, false);
+                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
                     newValues.add(cleanValue);
                 } catch (ValidationException e) {
                     logger.warning(Logger.SECURITY, false, "Skipping bad parameter" );
