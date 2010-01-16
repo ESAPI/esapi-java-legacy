@@ -525,16 +525,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	SafeResponse safeResponse = null;
     	
     	// wrap if necessary
-    	if ( request instanceof SafeRequest ) {
+    	if ( request instanceof SafeRequest )
     		safeRequest = (SafeRequest)request;
-    	} else {
+	else if(request != null)
     		safeRequest = new SafeRequest( request );
-    	}
-    	if ( response instanceof SafeResponse ) {
+    	if ( response instanceof SafeResponse )
     		safeResponse = (SafeResponse)response;
-    	} else {
+	else if(request != null)
     		safeResponse = new SafeResponse( response );
-    	}
     	
     	currentRequest.set(safeRequest);
         currentResponse.set(safeResponse);
