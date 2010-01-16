@@ -45,7 +45,7 @@ public interface EncryptedProperties {
 	 *      the name of the property to get 
 	 * 
 	 * @return 
-	 * 		the decrypted property value
+	 * 	The decrypted property value. null if the key is not set.
 	 * 
 	 * @throws EncryptionException
 	 *      if the property could not be decrypted
