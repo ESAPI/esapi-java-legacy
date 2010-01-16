@@ -26,10 +26,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The ClickjackFilter is discussed at http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE.
- * 
+ * The {@code ClickjackFilter} is discussed at
+ * {@link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE}.
+ * <pre>
  *     <filter>
- *             <filter-name>ClickjackFilterDeny</filter-name>
+ *            <filter-name>ClickjackFilterDeny</filter-name>
  *            <filter-class>org.owasp.filters.ClickjackFilter</filter-class>
  *            <init-param>
  *                <param-name>mode</param-name>
@@ -57,6 +58,7 @@ import javax.servlet.http.HttpServletResponse;
  *            <filter-name>ClickjackFilterSameOrigin</filter-name>
  *             <url-pattern>/*</url-pattern>
  *         </filter-mapping>
+ * </pre>
  */
 public class ClickjackFilter implements Filter 
 {
@@ -66,6 +68,9 @@ public class ClickjackFilter implements Filter
 	/**
 	 * Initialize "mode" parameter from web.xml. Valid values are "DENY" and "SAMEORIGIN". 
 	 * If you leave this parameter out, the default is to use the DENY mode.
+	 * 
+	 * @param filterConfig A filter configuration object used by a servlet container
+	 *                     to pass information to a filter during initialization. 
 	 */
 	public void init(FilterConfig filterConfig) {
 		String configMode = filterConfig.getInitParameter("mode");
@@ -77,7 +82,15 @@ public class ClickjackFilter implements Filter
 	/**
 	 * Add X-FRAME-OPTIONS response header to tell IE8 (and any other browsers who
 	 * decide to implement) not to display this content in a frame. For details, please
-	 * refer to http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx.
+	 * refer to
+	 * {@link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx}.
+	 * 
+	 * @param request The request object.
+	 * @param response The response object.
+	 * @param chain Refers to the {@code FilterChain} object to pass control to the
+	 *              next {@code Filter}.
+	 * @throws IOException
+	 * @throws ServletException
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
 	{
@@ -86,6 +99,9 @@ public class ClickjackFilter implements Filter
         res.addHeader("X-FRAME-OPTIONS", mode );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void destroy() {
 	}
 	
