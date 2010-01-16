@@ -317,8 +317,8 @@ public class EncoderTest extends TestCase {
 
 	public void testEncodeForCSS() {
 		Encoder instance = ESAPI.encoder();
-		assertEquals("\\<script\\>", instance.encodeForCSS("<script>"));
-		assertEquals(" \\!\\@\\$\\%\\(\\)\\=\\+\\{\\}\\[\\]\\\"", instance.encodeForCSS(" !@$%()=+{}[]\""));
+		assertEquals("\\3C script\\3E ", instance.encodeForCSS("<script>"));
+		assertEquals(" \\21 \\40 \\24 \\25 \\28 \\29 \\3D \\2B \\7B \\7D \\5B \\5D \\22 ", instance.encodeForCSS(" !@$%()=+{}[]\""));
 	}
 
 
