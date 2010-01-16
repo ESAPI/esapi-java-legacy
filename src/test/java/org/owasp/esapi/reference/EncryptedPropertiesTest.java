@@ -15,9 +15,8 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringBufferInputStream;
 import java.util.Iterator;
@@ -46,15 +45,15 @@ public class EncryptedPropertiesTest extends TestCase {
 		super(testName);
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
 		// none
 	}
 
-    /**
-     * {@inheritDoc}s
+	/**
+	 * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
 		// none
@@ -85,12 +84,7 @@ public class EncryptedPropertiesTest extends TestCase {
 		instance.setProperty(name, value);
 		String result = instance.getProperty(name);
 		assertEquals(value, result);
-		try {
-			instance.getProperty("ridiculous");
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
+		assertNull(instance.getProperty("ridiculous"));
 	}
 
 	/**
@@ -114,70 +108,97 @@ public class EncryptedPropertiesTest extends TestCase {
 			// expected
 		}
 	}
-	
-	
+
+	/**
+	 * Test the behavior when the requested key does not exist.
+	 */
+	public void testNonExistantKeyValue() throws Exception
+	{
+		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
+		assertNull(instance.getProperty("not.there"));
+	}
+
 	/**
 	 * Test of keySet method, of class org.owasp.esapi.EncryptedProperties.
 	 */
-	public void testKeySet() throws Exception {
+	public void testKeySet() throws Exception
+	{
+		boolean sawTwo = false;
+		boolean sawOne = false;
+
 		System.out.println("keySet");
 		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
 		instance.setProperty("one", "two");
 		instance.setProperty("two", "three");
 		Iterator i = instance.keySet().iterator();
-		assertEquals( "two", (String)i.next() );
-		assertEquals( "one", (String)i.next() );
-		try {
-			i.next();
-			fail();
-		} catch( Exception e ) {
-			// expected
+		while(i.hasNext())
+		{
+			String key = (String)i.next();
+
+			assertNotNull("key returned from keySet() iterator was null", key);
+			if(key.equals("one"))
+				if(sawOne)
+					fail("Key one seen more than once.");
+				else
+					sawOne = true;
+			else if(key.equals("two"))
+				if(sawTwo)
+					fail("Key two seen more than once.");
+				else
+					sawTwo = true;
+			else
+				fail("Unset key " + key + " returned from keySet().iterator()");
 		}
-	}
-	
-	/**
-	 * Test of load method, of class org.owasp.esapi.EncryptedProperties.
-	 */
-	public void testLoad() throws Exception {
-		System.out.println("load");
-		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
-		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
-		instance.load( new FileInputStream( f ) );
-		assertEquals( "two", instance.getProperty("one" ) );
-		assertEquals( "three",  instance.getProperty("two" ) );
-	}
-	
-	/**
-	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
-	 */
-	public void testStore() throws Exception {
-		System.out.println("store");
-		DefaultEncryptedProperties instance = new DefaultEncryptedProperties();
-		instance.setProperty("one", "two");
-		instance.setProperty("two", "three");
-		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
-		instance.store(new FileOutputStream( f ), "testStore");
+		assertTrue("Key one was never seen", sawOne);
+		assertTrue("Key two was never seen", sawTwo);
 	}
 
 	/**
-	 * Test of store method, of class org.owasp.esapi.EncryptedProperties.
+	 * Test storing and loading of encrypted properties.
 	 */
-	public void testMain() throws Exception {
-		System.out.println("main");
-		File f = new File( (ESAPI.securityConfiguration()).getResourceDirectory(), "test.properties" );
-		String[] args1 = { f.getAbsolutePath() };
-		InputStream orig = System.in;
-		String input = "key\r\nvalue\r\n";
-		System.setIn( new StringBufferInputStream( input ) );
-		DefaultEncryptedProperties.main(args1);
-		System.setIn( orig );
-		String[] args2 = { "ridiculous.properties" };
-		try {
-			DefaultEncryptedProperties.main(args2);
-			fail();
-		} catch( Exception e ) {
-			// expected
+	public void testStoreLoad() throws Exception
+	{
+		DefaultEncryptedProperties toStore = new DefaultEncryptedProperties();
+		DefaultEncryptedProperties toLoad = new DefaultEncryptedProperties();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayInputStream bais;
+		boolean sawOne = false;
+		boolean sawTwo = false;
+
+		toStore = new DefaultEncryptedProperties();
+		toStore.setProperty("one", "two");
+		toStore.setProperty("two", "three");
+		toStore.store(baos, "testStore");
+
+		bais = new ByteArrayInputStream(baos.toByteArray());
+		toLoad.load(bais);
+
+		for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
+		{
+			String key = (String)i.next();
+
+			assertNotNull("key returned from keySet() iterator was null", key);
+			if(key.equals("one"))
+				if(sawOne)
+					fail("Key one seen more than once.");
+				else
+				{
+					sawOne = true;
+					assertEquals("Key one's value was not two", "two", toLoad.getProperty("one"));
+				}
+			else if(key.equals("two"))
+				if(sawTwo)
+					fail("Key two seen more than once.");
+				else
+				{
+					sawTwo = true;
+					assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
+				}
+			else
+				fail("Unset key " + key + " returned from keySet().iterator()");
 		}
+		assertTrue("Key one was never seen", sawOne);
+		assertTrue("Key two was never seen", sawTwo);
 	}
-	
+
 }
