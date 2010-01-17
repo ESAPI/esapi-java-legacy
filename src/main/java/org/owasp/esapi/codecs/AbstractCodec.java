@@ -9,7 +9,7 @@ import org.owasp.esapi.util.PrimWrap;
  * became a abstract class instead of a interface. Most of this code is
  * snipped from there.
  */
-public abstract class AbstractCodec implements Codec
+public class AbstractCodec extends Codec
 {
 	private static final char[] EMPTY_CHAR_ARRAY = new char[0];
 

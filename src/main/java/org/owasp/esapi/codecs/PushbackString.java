@@ -33,22 +33,38 @@ public class PushbackString {
 	private int index = 0;
 	private int mark = 0;
 	
-	public PushbackString( String input ) {
+    /**
+     *
+     * @param input
+     */
+    public PushbackString( String input ) {
 		this.input = input;
 	}
 
-	public void pushback( Character c ) {
+    /**
+     *
+     * @param c
+     */
+    public void pushback( Character c ) {
 		pushback = c;
 	}
 	
 	/*
 	 * Get the current index of the PushbackString. Typically used in error messages.
 	 */
-	public int index() {
+    /**
+     *
+     * @return
+     */
+    public int index() {
 		return index;
 	}
 	
-	public boolean hasNext() {
+    /**
+     *
+     * @return
+     */
+    public boolean hasNext() {
 		if ( pushback != null ) return true;
 		if ( input == null ) return false;
 		if ( input.length() == 0 ) return false;
@@ -56,7 +72,11 @@ public class PushbackString {
 		return true;		
 	}
 	
-	public Character next() {
+    /**
+     *
+     * @return
+     */
+    public Character next() {
 		if ( pushback != null ) {
 			Character save = pushback;
 			pushback = null;
@@ -65,21 +85,58 @@ public class PushbackString {
 		if ( input == null ) return null;
 		if ( input.length() == 0 ) return null;
 		if ( index >= input.length() ) return null;		
-		return new Character( input.charAt(index++) );
+		return new Character ( input.charAt(index++) );
 	}
 	
-	public Character nextHex() {
+    /**
+    *
+    * @return
+    */
+   public Character nextHex() {
 		Character c = next();
 		if ( c == null ) return null;
 		if ( isHexDigit( c ) ) return c;
 		return null;
 	}
 
-	public boolean isHexDigit( Character c ) {
-		return ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 );
+   /**
+   *
+   * @return
+   */
+  public Character nextOctal() {
+		Character c = next();
+		if ( c == null ) return null;
+		if ( isOctalDigit( c ) ) return c;
+		return null;
 	}
-	
-	public Character peek() {
+
+  /**
+ * Returns true if the parameter character is a hexidecimal digit 0 through 9, a through f, or A through F.
+  * @param c
+  * @return
+  */
+ public static boolean isHexDigit( Character c ) {
+		if ( c == null ) return false;
+		char ch = c.charValue();
+		return (ch >= '0' && ch <= '9' ) || (ch >= 'a' && ch <= 'f' ) || (ch >= 'A' && ch <= 'F' );
+	}
+
+ /**
+ * Returns true if the parameter character is an octal digit 0 through 7.
+ * @param c
+ * @return
+ */
+public static boolean isOctalDigit( Character c ) {
+	if ( c == null ) return false;
+	char ch = c.charValue();
+	return ch >= '0' && ch <= '7';
+}
+
+    /**
+     * Return the next character without affecting the current index.
+     * @return
+     */
+    public Character peek() {
 		if ( pushback != null ) return pushback;
 		if ( input == null ) return null;
 		if ( input.length() == 0 ) return null;
@@ -87,7 +144,12 @@ public class PushbackString {
 		return new Character( input.charAt(index) );
 	}
 	
-	public boolean peek( char c ) {
+    /**
+     * Test to see if the next character is a particular value without affecting the current index.
+     * @param c
+     * @return
+     */
+    public boolean peek( char c ) {
 		if ( pushback != null && pushback.charValue() == c ) return true;
 		if ( input == null ) return false;
 		if ( input.length() == 0 ) return false;
@@ -95,21 +157,27 @@ public class PushbackString {
 		return input.charAt(index) == c;
 	}	
 	
-	public boolean isPushback() {
-		return ( pushback != null );
-	}
-	
-	public void mark() {
+    /**
+     *
+     */
+    public void mark() {
 		temp = pushback;
 		mark = index;
 	}
 
-	public void reset() {
+    /**
+     *
+     */
+    public void reset() {
 		pushback = temp;
 		index = mark;
 	}
 	
-	protected String remainder() {
+    /**
+     *
+     * @return
+     */
+    protected String remainder() {
 		String output = input.substring( index );
 		if ( pushback != null ) {
 			output = pushback + output;
