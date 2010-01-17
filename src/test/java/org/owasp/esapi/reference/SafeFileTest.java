@@ -39,8 +39,8 @@ public class SafeFileTest extends TestCase
 	private static final String CLASS_NAME = CLASS.getName();
 	/** Name of the file in the temporary directory */
 	private static final String TEST_FILE_NAME = "test.file";
-	private static final Set GOOD_FILE_CHARS = CollectionsUtil.strToUnmodifiableSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789._-");
-	private static final Set BAD_FILE_CHARS = CollectionsUtil.strToUnmodifiableSet("\u0000" + (File.separatorChar == '/' ? '\\' : '/') + "*|<>?:" /*+ "~!@#$%^&(){}[],`;"*/);
+	private static final Set GOOD_FILE_CHARS = CollectionsUtil.strToUnmodifiableSet("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-" /* + "." */);
+	private static final Set BAD_FILE_CHARS = CollectionsUtil.strToUnmodifiableSet("\u0000" + /*(File.separatorChar == '/' ? '\\' : '/') +*/ "*|<>?:" /*+ "~!@#$%^&(){}[],`;"*/);
 
 	private File testDir = null;
 	private File testFile = null;
@@ -103,9 +103,9 @@ public class SafeFileTest extends TestCase
 		{
 			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
 			File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
-			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+			assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
 			sf = new SafeFile(testDir, TEST_FILE_NAME + ch + "test");
-			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+			assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
 		}		
 	}
 
@@ -117,7 +117,7 @@ public class SafeFileTest extends TestCase
 			try
 			{
 				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
-				fail("Able to create SafeFile " + sf.getPath());
+				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
 			{
@@ -125,7 +125,7 @@ public class SafeFileTest extends TestCase
 			try
 			{
 				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
-				fail("Able to create SafeFile " + sf.getPath());
+				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
 			{
@@ -140,9 +140,9 @@ public class SafeFileTest extends TestCase
 			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
 			ch = ch + ch + ch;
 			File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
-			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+			assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
 			sf = new SafeFile(testDir, TEST_FILE_NAME + ch + "test");
-			assertFalse("File " + sf.getPath() + " should not exist.", sf.exists());
+			assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
 		}		
 	}
 
@@ -155,7 +155,7 @@ public class SafeFileTest extends TestCase
 			try
 			{
 				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
-				fail("Able to create SafeFile " + sf.getPath());
+				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
 			{
@@ -163,7 +163,7 @@ public class SafeFileTest extends TestCase
 			try
 			{
 				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
-				fail("Able to create SafeFile " + sf.getPath());
+				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
 			{
