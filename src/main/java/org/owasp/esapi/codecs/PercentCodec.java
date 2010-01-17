@@ -77,7 +77,7 @@ public class PercentCodec implements Codec
 	 * @param b The byte to hexify
 	 * @returns sb with the hex characters appended.
 	 */
-	// rfc3986 2.1: For consistency, URI producers and normalizers
+	// rfc3986 2.1: For consistency, URI producers 
 	// should use uppercase hexadecimal digits for all percent-
 	// encodings.
 	private static StringBuffer appendTwoUpperHex(StringBuffer sb, int b)
