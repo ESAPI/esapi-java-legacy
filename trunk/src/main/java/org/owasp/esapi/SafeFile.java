@@ -31,63 +31,42 @@ import org.owasp.esapi.errors.ValidationException;
 public class SafeFile extends File {
 
 	private static final long serialVersionUID = 1L;
+	private static final Pattern PERCENTS_PAT = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");	
+	private static final Pattern FILE_BLACKLIST_PAT = Pattern.compile("([\\\\/:*?<>|])");	
+	private static final Pattern DIR_BLACKLIST_PAT = Pattern.compile("([*?<>|])");
 
-    /**
-     *
-     * @param path
-     * @throws org.owasp.esapi.errors.ValidationException
-     */
-    public SafeFile(String path) throws ValidationException {
+	public SafeFile(String path) throws ValidationException {
 		super(path);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-    /**
-     *
-     * @param parent
-     * @param child
-     * @throws org.owasp.esapi.errors.ValidationException
-     */
-    public SafeFile(String parent, String child) throws ValidationException {
+	public SafeFile(String parent, String child) throws ValidationException {
 		super(parent, child);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-    /**
-     *
-     * @param parent
-     * @param child
-     * @throws org.owasp.esapi.errors.ValidationException
-     */
-    public SafeFile(File parent, String child) throws ValidationException {
+	public SafeFile(File parent, String child) throws ValidationException {
 		super(parent, child);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
-    /**
-     *
-     * @param uri
-     * @throws org.owasp.esapi.errors.ValidationException
-     */
-    public SafeFile(URI uri) throws ValidationException {
+	public SafeFile(URI uri) throws ValidationException {
 		super(uri);
 		doDirCheck(this.getParent());
 		doFileCheck(this.getName());
 	}
 
 	
-	Pattern percents = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");	
-	Pattern dirblacklist = Pattern.compile("([*?<>|])");
 	private void doDirCheck(String path) throws ValidationException {
-		Matcher m1 = dirblacklist.matcher( path );
+		Matcher m1 = DIR_BLACKLIST_PAT.matcher( path );
 		if ( m1.find() ) {
 			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
 		}
 
-		Matcher m2 = percents.matcher( path );
+		Matcher m2 = PERCENTS_PAT.matcher( path );
 		if ( m2.find() ) {
 			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains encoded characters: " + m2.group() );
 		}
@@ -98,14 +77,13 @@ public class SafeFile extends File {
 		}
 	}
 	
-	Pattern fileblacklist = Pattern.compile("([\\\\/:*?<>|])");	
 	private void doFileCheck(String path) throws ValidationException {
-		Matcher m1 = fileblacklist.matcher( path );
+		Matcher m1 = FILE_BLACKLIST_PAT.matcher( path );
 		if ( m1.find() ) {
 			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
 		}
 
-		Matcher m2 = percents.matcher( path );
+		Matcher m2 = PERCENTS_PAT.matcher( path );
 		if ( m2.find() ) {
 			throw new ValidationException( "Invalid file", "File path (" + path + ") contains encoded characters: " + m2.group() );
 		}
