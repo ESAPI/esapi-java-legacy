@@ -15,8 +15,6 @@
  */
 package org.owasp.esapi.codecs;
 
-import org.owasp.esapi.reference.DefaultEncoder;
-
 
 /**
  * Implementation of the Codec interface for 'quote' encoding from VBScript.
@@ -26,66 +24,56 @@ import org.owasp.esapi.reference.DefaultEncoder;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class VBScriptCodec extends Codec {
+public class VBScriptCodec implements Codec {
+
+	public VBScriptCodec() {
+	}
 
 	/**
-	 * Encode a String so that it can be safely used in a specific context.
+	 * Encodes a String for safe use in VBScript.
 	 * 
-     * @param immune
-     * @param input
-	 * 		the String to encode
-	 * @return the encoded String
+	 * @param input
+	 * 		The String to encode
+	 * 
+	 * @return 
+	 * 		The encoded String
 	 */
-    public String encode(char[] immune, String input) {
-    	StringBuffer sb = new StringBuffer();
-		boolean encoding = false;
-		boolean inquotes = false;
+	public String encode( String input ) {
+		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
-			
-			// handle normal characters and surround them with quotes
-			if (containsCharacter(c, DefaultEncoder.CHAR_ALPHANUMERICS) || containsCharacter(c, immune)) {
-				if ( encoding && i > 0 ) sb.append( "&" );
-				if ( !inquotes && i > 0 ) sb.append( "\"" );
-				sb.append( c );
-				inquotes = true;
-				encoding = false;
-				
-			// handle characters that need encoding
-			} else {
-				if ( inquotes && i < input.length() ) sb.append( "\"" );
-				if ( i > 0 ) sb.append( "&" );
-				sb.append( encodeCharacter( immune, new Character( c ) ) );
-				inquotes = false;
-				encoding = true;
-			}
+			sb.append( encodeCharacter( new Character( c ) ) );
 		}
 		return sb.toString();
-    }
-
+	}
 
 	/**
 	 * Returns quote-encoded character
-     *
-     * @param immune
-     */
-	public String encodeCharacter( char[] immune, Character c ) {
-		char ch = c.charValue();
-		
-		// check for immune characters
-		if ( containsCharacter( ch, immune ) ) {
-			return ""+ch;
-		}
-		
-		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
-		if ( hex == null ) {
-			return ""+ch;
-		}
-		
-        return "chrw(" + (int)c.charValue() + ")";
+	 */
+	public String encodeCharacter( Character c ) {
+        return "\"" + c;
 	}
-	
+	/**
+	 * Decodes a String that has been encoded with the encode method in this Class.
+	 * 
+	 * @param input
+	 * 		The String to decode
+	 * 
+	 * @return the decoded String
+	 */
+	public String decode( String input ) {
+		StringBuffer sb = new StringBuffer();
+		PushbackString pbs = new PushbackString( input );
+		while ( pbs.hasNext() ) {
+			Character c = decodeCharacter( pbs );
+			if ( c != null ) {
+				sb.append( c );
+			} else {
+				sb.append( pbs.next() );
+			}
+		}
+		return sb.toString();
+	}
 	
 	
 	/**

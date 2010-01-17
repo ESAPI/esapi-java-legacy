@@ -24,30 +24,51 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class UnixCodec extends Codec {
+public class UnixCodec implements Codec {
+
+	public UnixCodec() {
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Encodes a String for safe use with the Unix shell
+	 */
+	public String encode( String input ) {
+		StringBuffer sb = new StringBuffer();
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			sb.append( encodeCharacter( new Character( c ) ) );
+		}
+		return sb.toString();
+	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * Returns backslash-encoded character
-     *
-     * @param immune
-     */
-	public String encodeCharacter( char[] immune, Character c ) {
-		char ch = c.charValue();
-		
-		// check for immune characters
-		if ( containsCharacter( ch, immune ) ) {
-			return ""+ch;
-		}
-		
-		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
-		if ( hex == null ) {
-			return ""+ch;
-		}
-		
+	 */
+	public String encodeCharacter( Character c ) {
         return "\\" + c;
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Decodes a String that has been encoded with \ 
+	 */
+	public String decode( String input ) {
+		StringBuffer sb = new StringBuffer();
+		PushbackString pbs = new PushbackString( input );
+		while ( pbs.hasNext() ) {
+			Character c = decodeCharacter( pbs );
+			if ( c != null ) {
+				sb.append( c );
+			} else {
+				sb.append( pbs.next() );
+			}
+		}
+		return sb.toString();
 	}
 	
 	

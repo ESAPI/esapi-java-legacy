@@ -28,7 +28,7 @@ import org.owasp.esapi.util.CollectionsUtil;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class PercentCodec extends Codec
+public class PercentCodec implements Codec
 {
 	private static final char[] EMPTY_CHAR_ARRAY = new char[0];
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -44,7 +44,8 @@ public class PercentCodec extends Codec
 		(ENCODED_NON_ALPHA_NUMERIC_UNRESERVED ? "" : RFC3986_NON_ALPHANUMERIC_UNRESERVED_STR);
 	private static final Set UNENCODED_SET = CollectionsUtil.strToUnmodifiableSet(UNENCODED_STR);
 
-	private static final Character PERCENT_CHARACTER = new Character('%');
+	public PercentCodec() {
+	}
 
 	/**
 	 * Convinence method to encode a string into UTF-8. This
@@ -54,7 +55,7 @@ public class PercentCodec extends Codec
 	 * by the Java spec and should never throw this exception.
 	 * @param str the string to encode
 	 * @return str encoded in UTF-8 as bytes.
-	 * @throws IllegalStateException wrapped {@link
+	 * @throws IllegalStateException with info from a {@link
 	 *	UnsupportedEncodingException} if
 	 *	{@link String.getBytes(String)} throws it.
 	 */
@@ -66,7 +67,7 @@ public class PercentCodec extends Codec
 		}
 		catch(UnsupportedEncodingException e)
 		{
-			throw new IllegalStateException("The Java spec requires UTF-8 support.");
+			throw new IllegalStateException("The Java spec requires UTF-8 support. UnsupportedEncodingException message: " + e.getMessage());
 		}
 	}
 
@@ -76,7 +77,7 @@ public class PercentCodec extends Codec
 	 * @param b The byte to hexify
 	 * @returns sb with the hex characters appended.
 	 */
-	// rfc3986 2.1: For consistency, URI producers and normalizers
+	// rfc3986 2.1: For consistency, URI producers 
 	// should use uppercase hexadecimal digits for all percent-
 	// encodings.
 	private static StringBuffer appendTwoUpperHex(StringBuffer sb, int b)
@@ -90,27 +91,76 @@ public class PercentCodec extends Codec
 	}
 
 	/**
+	 * Encode a character for URLs and append it.
+	 * @param sb buffer to append to
+	 * @param c character to encode
+	 * @return sb after appending the encoded character.
+	 */
+	protected StringBuffer appendEncodedCharacter(StringBuffer sb, Character c)
+	{
+		char ch = c.charValue();
+		byte[] bytes;
+
+		if(UNENCODED_SET.contains(c))
+			return sb.append(ch);
+
+		bytes = toUtf8Bytes(String.valueOf(ch));
+		for(int i=0;i<bytes.length;i++)
+		{
+			byte b = bytes[i];
+			appendTwoUpperHex(sb.append('%'), b);
+		}
+		return sb;
+	}
+
+	/**
 	 * Encode a character for URLs
-	 * @param immune characters not to encode
 	 * @param c character to encode
 	 * @return the encoded string representing c
 	 */
-	public String encodeCharacter( char[] immune, Character c )
+	public String encodeCharacter(Character c)
 	{
-		String cStr = String.valueOf(c.charValue());
-		byte[] bytes;
-		StringBuffer sb;
-
 		if(UNENCODED_SET.contains(c))
-			return cStr;
-
-		bytes = toUtf8Bytes(cStr);
-		sb = new StringBuffer(bytes.length * 3);
-		  for(int b=0; b<bytes.length; b++)
-			appendTwoUpperHex(sb.append('%'), b);
-		return sb.toString();
+			return String.valueOf(c.charValue());
+			
+		return appendEncodedCharacter(new StringBuffer(10),c).toString();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public String encode(String input)
+	{
+		StringBuffer sb = new StringBuffer();
+		int inLen = input.length();
+
+		for(int i=0;i<inLen;i++)
+			appendEncodedCharacter(sb,new Character(input.charAt(i)));
+		return sb.toString();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Decode string encoded with percent characters
+	 * 
+	 * @param input
+	 * 			encoded string using percent characters (such as URL encoding)
+	 */
+	public String decode( String input ) {
+		StringBuffer sb = new StringBuffer();
+		PushbackString pbs = new PushbackString( input );
+		while ( pbs.hasNext() ) {
+			Character c = decodeCharacter( pbs );
+			if ( c != null ) {
+				sb.append( c );
+			} else {
+				sb.append( pbs.next() );
+			}
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -127,13 +177,13 @@ public class PercentCodec extends Codec
 			input.reset();
 			return null;
 		}
-
+		
 		// if this is not an encoded character, return null
-		if (first != PERCENT_CHARACTER ) {
+		if ( first.charValue() != '%' ) {
 			input.reset();
 			return null;
 		}
-
+				
 		// Search for exactly 2 hex digits following
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<2; i++ ) {
@@ -144,10 +194,13 @@ public class PercentCodec extends Codec
 			try {
 				// parse the hex digit and create a character
 				int i = Integer.parseInt(sb.toString(), 16);
-				if (i >= 0x0000 && i <= 0x10FFFF) {
-                    return new Character((char)i);
-                }
-			} catch( NumberFormatException ignored ) { }
+				// TODO: in Java 1.5 you can test whether this is a valid code point
+				// with Character.isValidCodePoint() et al.
+				return new Character( (char)i );
+			} catch( NumberFormatException e ) {
+				// throw an exception for malformed entity?
+				// just continue which will reset and return null
+			}
 		}
 		input.reset();
 		return null;
