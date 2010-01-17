@@ -277,18 +277,6 @@ public class EncoderTest extends TestCase {
 		}
 	}
 
-
-	/**
-	 * Test of normalize method, of class org.owasp.esapi.Validator.
-	 * 
-	 * @throws ValidationException
-	 *             the validation exception
-	 */
-	public void testNormalize() throws ValidationException {
-		assertEquals(ESAPI.encoder().normalize("é à î _ @ \" < > \u20A0"), "e a i _ @ \" < > ");
-	}
-
-
 	/**
 	 * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
 	 */
@@ -381,9 +369,9 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testEncodeForLDAP() {
 		Encoder instance = ESAPI.encoder();
-		assertEquals("No special characters to escape", "Hi This is a test #çà", instance.encodeForLDAP("Hi This is a test #çà"));
+		assertEquals("No special characters to escape", "Hi This is a test #ï¿½ï¿½", instance.encodeForLDAP("Hi This is a test #ï¿½ï¿½"));
 		assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
-		assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # ç à ô", instance.encodeForLDAP("Hi (This) = is * a \\ test # ç à ô"));
+		assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # ï¿½ ï¿½ ï¿½", instance.encodeForLDAP("Hi (This) = is * a \\ test # ï¿½ ï¿½ ï¿½"));
 	}
 
 	/**
@@ -391,10 +379,10 @@ public class EncoderTest extends TestCase {
 	 */
 	public void testEncodeForDN() {
 		Encoder instance = ESAPI.encoder();
-		assertEquals("No special characters to escape", "Helloé", instance.encodeForDN("Helloé"));
-		assertEquals("leading #", "\\# Helloé", instance.encodeForDN("# Helloé"));
-		assertEquals("leading space", "\\ Helloé", instance.encodeForDN(" Helloé"));
-		assertEquals("trailing space", "Helloé\\ ", instance.encodeForDN("Helloé "));
+		assertEquals("No special characters to escape", "Helloï¿½", instance.encodeForDN("Helloï¿½"));
+		assertEquals("leading #", "\\# Helloï¿½", instance.encodeForDN("# Helloï¿½"));
+		assertEquals("leading space", "\\ Helloï¿½", instance.encodeForDN(" Helloï¿½"));
+		assertEquals("trailing space", "Helloï¿½\\ ", instance.encodeForDN("Helloï¿½ "));
 		assertEquals("less than greater than", "Hello\\<\\>", instance.encodeForDN("Hello<>"));
 		assertEquals("only 3 spaces", "\\  \\ ", instance.encodeForDN("   "));
 		assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
