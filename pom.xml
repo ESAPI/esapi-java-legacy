@@ -6,38 +6,42 @@
 	<packaging>jar</packaging>
 	<version>1.4.1rc1</version>
 	<name>ESAPI</name>
-	<description>The Enterprise Security API (ESAPI) project is an OWASP project
-		to create simple strong security controls for every web platform.
-		Security controls are not simple to build. You can read about the
-		hundreds of pitfalls for unwary developers on the OWASP website. By
-		providing developers with a set of strong controls, we aim to
-		eliminate some of the complexity of creating secure web applications.
-		This can result in significant cost savings across the SDLC.</description>
+	<description>
+		The Enterprise Security API (ESAPI) project is an OWASP
+		project to create simple strong security controls for
+		every web platform.  Security controls are not simple to
+		build. You can read about the hundreds of pitfalls for
+		unwary developers on the OWASP website. By providing
+		developers with a set of strong controls, we aim to
+		eliminate some of the complexity of creating secure
+		web applications.  This can result in significant cost
+		savings across the SDLC.
+	</description>
 	<scm>
-        <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/branches/1.4</connection>
+		<connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/branches/1.4</connection>
 		<developerConnection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/branches/1.4</developerConnection>
-        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
+		<url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
 	</scm>
-    <issueManagement>
-        <system>Google Code Issue Tracking</system>
-        <url>http://code.google.com/p/owasp-esapi-java/issues/list</url>
-    </issueManagement>
-    <mailingLists>
-        <mailingList>
-            <name>OWASP-ESAPI</name>
-            <subscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</subscribe>
-            <unsubscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</unsubscribe>
-            <post>mailto:owasp-esapi@lists.owasp.org</post>
-            <archive>https://lists.owasp.org/pipermail/owasp-esapi/</archive>
-        </mailingList>
-    </mailingLists>
-    
+	<issueManagement>
+		<system>Google Code Issue Tracking</system>
+		<url>http://code.google.com/p/owasp-esapi-java/issues/list</url>
+	</issueManagement>
+	<mailingLists>
+		<mailingList>
+			<name>OWASP-ESAPI</name>
+			<subscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</subscribe>
+			<unsubscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</unsubscribe>
+			<post>mailto:owasp-esapi@lists.owasp.org</post>
+			<archive>https://lists.owasp.org/pipermail/owasp-esapi/</archive>
+		</mailingList>
+	</mailingLists>
+	
 	<organization>
 		<name>The Open Web Application Security Project (OWASP)</name>
 		<url>http://www.owasp.org/index.php</url>
 	</organization>
 	<url>http://www.esapi.org/</url>
-
+	
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -110,6 +114,7 @@
 			<groupId>org.owasp</groupId>
 			<artifactId>antisamy</artifactId>
 			<version>1.3-SNAPSHOT</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -122,21 +127,47 @@
 					<debug>true</debug>
 					<showWarnings>true</showWarnings>
 					<showDeprecation>true</showDeprecation>
+
+					<!--
+						Uncomment to use
+						an external JDK
+						1.4 compiler. See
+						external-1.4-jdk.txt
+						for info.
+					<fork>true</fork>
+					<executable>${jdk-14-home}/bin/javac</executable>
+					<compilerVersion>1.4</compilerVersion>
+					-->
 				</configuration>
 			</plugin>
-
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jar-plugin</artifactId>
-              <configuration>
-                <archive>
-                  <manifest>
-                    <addClasspath>true</addClasspath>
-                  </manifest>
-                </archive>
-              </configuration>
-            </plugin>
-
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!--
+						Uncomment to use an
+						external JRE 1.4
+						to run tests. See
+						external-1.4-jdk.txt
+						for info.
+					<jvm>${jdk-14-home}/bin/java</jvm>
+					-->
+				</configuration>
+			</plugin>
+			
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-eclipse-plugin</artifactId>
@@ -148,18 +179,18 @@
 	</build>
 	<reporting>
 		<plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jar-plugin</artifactId>
-              <configuration>
-                <archive>
-                  <manifest>
-                    <addClasspath>true</addClasspath>
-                  </manifest>
-                </archive>
-              </configuration>
-            </plugin>
-		
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>findbugs-maven-plugin</artifactId>
@@ -177,16 +208,16 @@
 				<artifactId>maven-pmd-plugin</artifactId>
 				<configuration>
 					<targetJdk>1.4</targetJdk>
-			        <sourceEncoding>utf-8</sourceEncoding>
+					<sourceEncoding>utf-8</sourceEncoding>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                        <detectJavaApiLink>true</detectJavaApiLink>
-                        <detectLinks>true</detectLinks>
-                </configuration>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<detectJavaApiLink>true</detectJavaApiLink>
+					<detectLinks>true</detectLinks>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>net.sourceforge.maven-taglib</groupId>

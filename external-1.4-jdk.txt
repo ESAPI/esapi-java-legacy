@@ -1,0 +1,75 @@
+Using a External 1.4 JDK with Maven
+-----------------------------------
+
+As ESAPI4J 1.4 is targeting Java 1.4 it is good to build and run tests
+with a 1.4 JDK. This poses some problems with Maven though as current
+versions of Maven require at least Java 1.5 (5.0 in Sun marketing
+speak). There are two possible solutions: run a older version of Maven
+which will run under 1.4 (untested) or have Maven call a external 1.4
+JDK for compilation and testing. This file explains the latter choice.
+
+pom.xml
+-------
+
+In the pom.xml, there are two commented out sections for calling
+an external 1.4 JDK. The first is the configuration for the
+maven-compiler-plugin. Uncomment the following options:
+
+<fork>true</fork>
+<executable>${jdk-14-home}/bin/javac</executable>
+<compilerVersion>1.4</compilerVersion>
+
+The fork option tells Maven to run the compiler in a separate process. The
+executable option sets the path to the javac binary. Finally, the
+compilerVersion option tells Maven that the compiler is a version 1.4
+compiler.
+
+The example above (and in the commented out section in pom.xml) assumes
+that the system property jdk-14-home has the path to the 1.4 JDK you wish
+to use. See the following section on settings.xml for one way to set this.
+
+The other pom.xml section that needs uncommented is the configuration
+for the maven-surefire-plugin:
+
+<jvm>${jdk-14-home}/bin/java</jvm>
+
+This configures the surefire plugin, which handles the unit tests,
+to call an external JVM to run the unit tests. In this case, the jvm
+option sets the path to the java binary. Again, this assumes that you
+have the jdk-14-home system property set.
+
+jdk-14-home System Property
+---------------------------
+
+There are several ways to set a system property for Maven. The easiest is to just specify one on the command line:
+
+mvn -Djdk-14-home=/path/to/j2sdk1.4 test
+
+A more convinent method is to set the property via a profile in your Maven settings.xml. Here is a example of a settings.xml that does just that:
+
+
+<?xml version="1.0" encoding="US-ASCII"?>
+
+<settings>
+	<profiles>
+		<profile>
+			<id>compiler</id>
+			<properties>
+				<jdk-14-home>/path/to/j2sdk1.4/</jdk-14-home>
+			</properties>
+		</profile>
+	</profiles>
+	<activeProfiles>
+		<activeProfile>compiler</activeProfile>
+	</activeProfiles>
+</settings>
+
+If you're settings.xml does not already exist (the default), you may
+need to create one.
+
+The settings.xml file is located in the .m2 directory of your home
+directory on *nix and in c:\Documents and Settings\USERNAME\.m2 (or the
+like) on windows.
+
+Once these options are set in your settings.xml, you should be able to
+just run Maven as usual and the 1.4 JDK will be used.
