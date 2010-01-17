@@ -454,31 +454,28 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				if (allowNull) return null;
        			throw new ValidationException( context + ": Input directory path required", "Input directory path required: context=" + context + ", input=" + input, context );
 			}
-						
-			// do basic validation
-			String canonical = getValidInput( context, input, "DirectoryName", 255, false);
-			
-			// get the canonical path without the drive letter if present
-			String cpath = new File(canonical).getCanonicalPath().replaceAll( "\\\\", "/");
-			String temp = cpath.toLowerCase();
-			if (temp.length() >= 2 && temp.charAt(0) >= 'a' && temp.charAt(0) <= 'z' && temp.charAt(1) == ':') {
-				cpath = cpath.substring(2);
-			}
 
-			// prepare the input without the drive letter if present
-			String escaped = canonical.replaceAll( "\\\\", "/");
-			temp = escaped.toLowerCase();
-			if (temp.length() >= 2 && temp.charAt(0) >= 'a' && temp.charAt(0) <= 'z' && temp.charAt(1) == ':') {
-				escaped = escaped.substring(2);
+			File dir = new File( input );
+
+			// check dir exists and parent exists and dir is inside parent
+			if ( !dir.exists() ) {
+				throw new ValidationException( context + ": Invalid directory name", "Invalid directory, does not exist: context=" + context + ", input=" + input );
 			}
+			if ( !dir.isDirectory() ) {
+				throw new ValidationException( context + ": Invalid directory name", "Invalid directory, not a directory: context=" + context + ", input=" + input );
+			}			
 			
-			// the path is valid if the input matches the canonical path
-			if (!escaped.equals(cpath.toLowerCase())) {
+			// check canonical form matches input			
+			String canonical = dir.getCanonicalPath();
+			//String canonical = getValidInput( context, canonicalPath, "DirectoryName", 255, false);
+			if ( !canonical.equals( input ) ) {
 				throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not match the canonical path: context=" + context + ", input=" + input + ", canonical=" + canonical, context );
-			}
-			return canonical; 
-		} catch (IOException e) {
-			throw new ValidationException( context + ": Invalid directory name", "Invalid directory name does not exist: context=" + context + ", input=" + input, e, context );
+			}			
+			return canonical;
+		} catch (Exception e) {
+			System.out.println("JIM getValidDirectoryPath");
+			e.printStackTrace();
+			throw new ValidationException( context + ": Invalid directory name", "Failure to validate directory path: context=" + context + ", input=" + input, e, context );
 		}
 	}
 	
@@ -765,9 +762,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * 
 	 */
 	public boolean isValidFileUpload(String context, String directorypath, String filename, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException {
-		return( isValidFileName( context, filename, allowNull ) &&
-				isValidDirectoryPath( context, directorypath, allowNull ) &&
-				isValidFileContent( context, content, maxBytes, allowNull ) );
+		
+		boolean validFile = isValidFileName( context, filename, allowNull );
+		boolean validDir = isValidDirectoryPath( context, directorypath, allowNull );
+		boolean validContent = isValidFileContent( context, content, maxBytes, allowNull );
+		
+		System.out.println("isValidFileUpload: validFile="+validFile+" validDir="+validFile+ " validContent="+validContent);
+		
+		return( validFile && validDir && validContent);
 	}
 
 	/**
