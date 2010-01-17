@@ -473,8 +473,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 			}			
 			return canonical;
 		} catch (Exception e) {
-			System.out.println("JIM getValidDirectoryPath");
-			e.printStackTrace();
 			throw new ValidationException( context + ": Invalid directory name", "Failure to validate directory path: context=" + context + ", input=" + input, e, context );
 		}
 	}
@@ -767,7 +765,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		boolean validDir = isValidDirectoryPath( context, directorypath, allowNull );
 		boolean validContent = isValidFileContent( context, content, maxBytes, allowNull );
 		
-		System.out.println("isValidFileUpload: validFile="+validFile+" validDir="+validFile+ " validContent="+validContent);
+		//System.out.println("isValidFileUpload: validFile="+validFile+" validDir="+validFile+ " validContent="+validContent);
 		
 		return( validFile && validDir && validContent);
 	}
