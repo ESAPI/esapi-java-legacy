@@ -28,62 +28,27 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public abstract class Codec {
+public interface Codec {
 
 	/**
-	 * Initialize an array to mark which characters are to be encoded. Store the hex
-	 * string for that character to save time later. If the character shouldn't be
-	 * encoded, then store null.
-	 */
-	private static final String[] hex = new String[256];
-
-	static {
-		for ( char c = 0; c < 0xFF; c++ ) {
-			if ( c >= 0x30 && c <= 0x39 || c >= 0x41 && c <= 0x5A || c >= 0x61 && c <= 0x7A ) {
-				hex[c] = null;
-			} else {
-				hex[c] = toHex(c).intern();
-			}
-		}
-	}
-
-
-	/**
-	 * Default constructor
-	 */
-	public Codec() {
-	}
-
-	/**
-	 * Encode a String so that it can be safely used in a specific context.
+	 * Encode a String with a Codec
 	 * 
-	 * @param immune
 	 * @param input
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
-	public String encode(char[] immune, String input) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < input.length(); i++) {
-			char c = input.charAt(i);
-			sb.append(encodeCharacter(immune, new Character(c)));
-		}
-		return sb.toString();
-	}
-
+	String encode( String input ); 
+	
 	/**
-	 * Default implementation that should be overridden in specific codecs.
+	 * Encode a Character with a Codec
 	 * 
-	 * @param immune
 	 * @param c
 	 * 		the Character to encode
 	 * @return
 	 * 		the encoded Character
 	 */
-	public String encodeCharacter( char[] immune, Character c ) {
-		return ""+c;
-	}
-
+	String encodeCharacter( Character c );
+	
 	/**
 	 * Decode a String that was encoded using the encode method in this Class
 	 * 
@@ -92,19 +57,8 @@ public abstract class Codec {
 	 * @return
 	 *		the decoded String
 	 */
-	public String decode(String input) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString(input);
-		while (pbs.hasNext()) {
-			Character c = decodeCharacter(pbs);
-			if (c != null) {
-				sb.append(c);
-			} else {
-				sb.append(pbs.next());
-			}
-		}
-		return sb.toString();
-	}
+	String decode( String input );
+	
 
 	/**
 	 * Returns the decoded version of the next character from the input string and advances the
@@ -115,50 +69,6 @@ public abstract class Codec {
 	 * 
 	 * @return the decoded Character
 	 */
-	public Character decodeCharacter( PushbackString input ) {
-		return input.next();
-	}
-
-	/**
-	 * Lookup the hex value of any character that is not alphanumeric.
-	 * @param c The character to lookup.
-	 * @return, return null if alphanumeric or the character code
-	 * 	in hex.
-	 */
-	public static String getHexForNonAlphanumeric(char c)
-	{
-		if(c<0xFF)
-			return hex[c];
-		return toHex(c);
-	}
-
-	public static String toOctal(char c)
-	{
-		return Integer.toOctalString(c);
-	}
-
-	public static String toHex(char c)
-	{
-		return Integer.toHexString(c);
-	}
-
-	/**
-	 * Utility to search a char[] for a specific char.
-	 * 
-	 * @param c
-	 * @param array
-	 * @return
-	 */
-	public static boolean containsCharacter( char c, char[] charArray ) {
-		for(int i=0; i<charArray.length; i++){
-			if (c == charArray[i]) return true;
-		}
-		return false;
-	}
+	public Character decodeCharacter( PushbackString input );
 	
-	public static boolean containsCharacter( Character c, char[] charArray ) {
-		if (c == null) return false;
-		return containsCharacter(c, charArray);
-	}
-
 }

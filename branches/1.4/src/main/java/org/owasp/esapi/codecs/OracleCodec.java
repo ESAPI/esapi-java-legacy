@@ -1,27 +1,27 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- *
+ * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- *
+ * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- *
+ * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
 package org.owasp.esapi.codecs;
-
-
 
 /**
  * Implementation of the Codec interface for Oracle strings. This function will only protect you from SQLi in the case of user data
  * bring placed within an Oracle quoted string such as:
  * 
  * select * from table where user_name='  USERDATA    ';
+ * 
+ * This should not be used for LIKE clauses!
  * 
  * @see <a href="http://oraqa.com/2006/03/20/how-to-escape-single-quotes-in-strings/">how-to-escape-single-quotes-in-strings</a>
  * 
@@ -32,9 +32,22 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class OracleCodec extends Codec {
+public class OracleCodec implements Codec {
 
-
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Returns quote-encoded string
+	 */
+	public String encode( String input ) {
+		StringBuffer sb = new StringBuffer();
+		for ( int i=0; i<input.length(); i++ ) {
+			char c = input.charAt(i);
+			sb.append( encodeCharacter( new Character( c ) ) );
+		}
+		return sb.toString();
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -44,14 +57,31 @@ public class OracleCodec extends Codec {
      *
      * @param immune
      */
-	public String encodeCharacter( char[] immune, Character c ) {
+	public String encodeCharacter( Character c ) {
 		if ( c.charValue() == '\'' )
         	return "\'\'";
         return ""+c;
 	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * Decodes quote-encoded string
+	 */
+	public String decode( String input ) {
+		StringBuffer sb = new StringBuffer();
+		PushbackString pbs = new PushbackString( input );
+		while ( pbs.hasNext() ) {
+			Character c = decodeCharacter( pbs );
+			if ( c != null ) {
+				sb.append( c );
+			} else {
+				sb.append( pbs.next() );
+			}
+		}
+		return sb.toString();
+	}
 	
-
-
 	/**
 	 * {@inheritDoc}
 	 *
@@ -86,7 +116,6 @@ public class OracleCodec extends Codec {
 			input.reset();
 			return null;
 		}
-		return( new Character('\'') );
+		return( new Character( '\'' ) );
 	}
-
 }

@@ -30,7 +30,7 @@ import org.owasp.esapi.util.PrimWrap;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class HTMLEntityCodec extends Codec
+public class HTMLEntityCodec implements Codec
 {
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR + " \t";
