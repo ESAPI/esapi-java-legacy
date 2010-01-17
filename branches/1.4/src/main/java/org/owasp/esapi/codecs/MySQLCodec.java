@@ -26,12 +26,18 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class MySQLCodec implements Codec {
+public class MySQLCodec extends Codec {
 
-	public static final int MYSQL_MODE = 0;
-	public static final int ANSI_MODE = 1;
+    /**
+     *
+     */
+    public static final int MYSQL_MODE = 0;
+    /**
+     *
+     */
+    public static final int ANSI_MODE = 1;
 	
-	private int mode = 1;
+	private int mode = 0;
 	
 	/**
 	 * Instantiate the MySQL codec
@@ -43,26 +49,28 @@ public class MySQLCodec implements Codec {
 		this.mode = mode;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Returns quote-encoded string
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * Returns quote-encoded character
-	 */
-	public String encodeCharacter( Character c ) {
+     *
+     * @param immune
+     */
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHexForNonAlphanumeric( ch );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
 		switch( mode ) {
 			case ANSI_MODE: return encodeCharacterANSI( c );
 			case MYSQL_MODE: return encodeCharacterMySQL( c );
@@ -101,32 +109,13 @@ public class MySQLCodec implements Codec {
 		if ( ch == 0x09 ) return "\\t";
 		if ( ch == 0x0a ) return "\\n";
 		if ( ch == 0x0d ) return "\\r";
-		if ( ch == 0x1a ) return "\\z";
+		if ( ch == 0x1a ) return "\\Z";
 		if ( ch == 0x22 ) return "\\\"";
 		if ( ch == 0x25 ) return "\\%";
 		if ( ch == 0x27 ) return "\\'";
 		if ( ch == 0x5c ) return "\\\\";
 		if ( ch == 0x5f ) return "\\_";
 	    return "\\" + c;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Decodes quote-encoded string
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
-		}
-		return sb.toString();
 	}
 	
 	/**
@@ -218,7 +207,7 @@ public class MySQLCodec implements Codec {
 		} else if ( second.charValue() == 't' ) {
 			return new Character( (char)0x09 );
 		} else if ( second.charValue() == 'n' ) {
-			return new Character( (char)0x0a );
+			return new Character((char)0x0a );
 		} else if ( second.charValue() == 'r' ) {
 			return new Character( (char)0x0d );
 		} else if ( second.charValue() == 'z' ) {
@@ -237,4 +226,5 @@ public class MySQLCodec implements Codec {
 			return second;
 		}
 	}
+
 }

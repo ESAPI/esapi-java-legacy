@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.codecs;
 
+import org.owasp.esapi.reference.DefaultEncoder;
+
 
 /**
  * Implementation of the Codec interface for 'quote' encoding from VBScript.
@@ -24,56 +26,66 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class VBScriptCodec implements Codec {
-
-	public VBScriptCodec() {
-	}
+public class VBScriptCodec extends Codec {
 
 	/**
-	 * Encodes a String for safe use in VBScript.
+	 * Encode a String so that it can be safely used in a specific context.
 	 * 
-	 * @param input
-	 * 		The String to encode
-	 * 
-	 * @return 
-	 * 		The encoded String
+     * @param immune
+     * @param input
+	 * 		the String to encode
+	 * @return the encoded String
 	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
+    public String encode(char[] immune, String input) {
+    	StringBuffer sb = new StringBuffer();
+		boolean encoding = false;
+		boolean inquotes = false;
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * Returns quote-encoded character
-	 */
-	public String encodeCharacter( Character c ) {
-        return "\"" + c;
-	}
-	/**
-	 * Decodes a String that has been encoded with the encode method in this Class.
-	 * 
-	 * @param input
-	 * 		The String to decode
-	 * 
-	 * @return the decoded String
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
+			
+			// handle normal characters and surround them with quotes
+			if (containsCharacter(c, DefaultEncoder.CHAR_ALPHANUMERICS) || containsCharacter(c, immune)) {
+				if ( encoding && i > 0 ) sb.append( "&" );
+				if ( !inquotes && i > 0 ) sb.append( "\"" );
 				sb.append( c );
+				inquotes = true;
+				encoding = false;
+				
+			// handle characters that need encoding
 			} else {
-				sb.append( pbs.next() );
+				if ( inquotes && i < input.length() ) sb.append( "\"" );
+				if ( i > 0 ) sb.append( "&" );
+				sb.append( encodeCharacter( immune, new Character( c ) ) );
+				inquotes = false;
+				encoding = true;
 			}
 		}
 		return sb.toString();
+    }
+
+
+	/**
+	 * Returns quote-encoded character
+     *
+     * @param immune
+     */
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
+		}
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHexForNonAlphanumeric( ch );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
+        return "chrw(" + (int)c.charValue() + ")";
 	}
+	
 	
 	
 	/**

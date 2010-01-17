@@ -24,52 +24,33 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class WindowsCodec implements Codec {
+public class WindowsCodec extends Codec {
 
-	public WindowsCodec() {
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Encodes a String for safe use with the Windows command shell
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Returns Windows shell encoded character (which is ^)
-	 */
-	public String encodeCharacter( Character c ) {
-        return "^" + c;
-	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * Decodes a String that has been encoded with ^ 
-	 */
-	public String decode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			Character c = decodeCharacter( pbs );
-			if ( c != null ) {
-				sb.append( c );
-			} else {
-				sb.append( pbs.next() );
-			}
+	 * Returns Windows shell encoded character (which is ^)
+     *
+     * @param immune
+     */
+	public String encodeCharacter( char[] immune, Character c ) {
+		char ch = c.charValue();
+		
+		// check for immune characters
+		if ( containsCharacter( ch, immune ) ) {
+			return ""+ch;
 		}
-		return sb.toString();
+		
+		// check for alphanumeric characters
+		String hex = Codec.getHexForNonAlphanumeric( ch );
+		if ( hex == null ) {
+			return ""+ch;
+		}
+		
+        return "^" + c;
 	}
+	
 
 	/**
 	 * {@inheritDoc}
