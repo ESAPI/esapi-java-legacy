@@ -369,6 +369,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         String max = properties.getProperty(MAX_OLD_PASSWORD_HASHES, "12");
         return Integer.parseInt(max);
     }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+	public boolean getDisableIntrusionDetection() {
+    	String value = properties.getProperty( DISABLE_INTRUSION_DETECTION );
+    	if ("true".equalsIgnoreCase(value)) return true;
+    	return false;	// Default result
+	}
 
     /**
 	 * {@inheritDoc}
@@ -550,10 +559,4 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
         Pattern pattern = Pattern.compile(value);
         return pattern;
     }
-
-	public boolean getDisableIntrusionDetection() {
-    	String value = properties.getProperty( DISABLE_INTRUSION_DETECTION );
-    	if ("true".equalsIgnoreCase(value)) return true;
-    	return false;	// Default result
-	}
 }
