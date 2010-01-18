@@ -9,8 +9,12 @@ import java.util.regex.Pattern;
 /**
  * Simple wrapper implementation of {@link SecurityConfiguration}. 
  * This allows for easy subclassing and property fixups for unit tests.
+ *
+ * This has been changed to be concrete instead of abstract so problems
+ * caused by changes to the interface will show up here (ie, not abstract
+ * not implementing...) instead of versions inheriting from it.
  */
-public abstract class SecurityConfigurationWrapper implements SecurityConfiguration
+public class SecurityConfigurationWrapper implements SecurityConfiguration
 {
 	private SecurityConfiguration wrapped;
 
@@ -192,5 +196,11 @@ public abstract class SecurityConfigurationWrapper implements SecurityConfigurat
 	public int getMaxLogFileSize()
 	{
 		return wrapped.getMaxLogFileSize();
+	}
+
+	/** {@inheritDoc} */
+	public boolean getDisableIntrusionDetection()
+	{
+		return wrapped.getDisableIntrusionDetection();
 	}
 }
