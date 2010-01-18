@@ -412,14 +412,27 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	// if not found, then try the programatically set resource directory (this defaults to SystemResource directory/.esapi
     	URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + "/" + filename);
     	if(fileUrl != null) {
-    		String fileLocation = fileUrl.getFile();
-        	f = new File( fileLocation );
-        	if ( f.exists() ) {
-            	logSpecial( "  Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath(), null );
-            	return f;
-        	} else {
-            	logSpecial( "  Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath(), null );
-        	}
+     		String resource = fileUrl.getFile(); 		
+     		logSpecial(" getResourceFile 1 resource pre decode: " + resource, null);
+
+     		URI uri = null;
+     		try {
+     			uri = new URI("file://" + resource);
+     		} catch (Exception e) {}
+     		
+     		if (uri != null) {
+     			//logSpecial(" getResourceFile 1 uri: " + uri.getScheme() + " : " +  uri, null);
+     			f = new File( uri );
+	        	
+	        	if ( f.exists() ) {
+	            	logSpecial( "  Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath(), null );
+	            	return f;
+	        	} else {
+	            	logSpecial( "  Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath(), null );
+	        	}
+     		} else {
+     			logSpecial( "  (uri null) Not found in SystemResource Directory/resourceDirectory (this should never happen)", null );
+     		}
     	} else {
     		logSpecial( "  Not found in SystemResource Directory/resourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory + "/" + filename, null );
     	}
@@ -427,14 +440,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	// if not found, then try the default set resource directory
     	fileUrl = ClassLoader.getSystemResource(".esapi/" + filename);
     	if(fileUrl != null) {
-    		String fileLocation = fileUrl.getFile();
-        	f = new File( fileLocation );
-        	if ( f.exists() ) {
-            	logSpecial( "  Found in SystemResource Directory/.esapi: " + f.getAbsolutePath(), null );
-            	return f;
-        	} else {
-            	logSpecial( "  Not found in SystemResource Directory/.esapi(this should never happen): " + f.getAbsolutePath(), null );
-        	}
+     		String resource = fileUrl.getFile(); 		
+     		logSpecial(" getResourceFile 2 resource pre decode: " + resource, null);
+
+     		URI uri = null;
+     		try {
+     			uri = new URI("file://" + resource);
+     		} catch (Exception e) {}
+     		
+     		if (uri != null) {	
+     			//logSpecial(" getResourceFile 2 uri: " + uri.getScheme() + " : " +  uri, null);
+	        	f = new File( uri );
+	        	if ( f.exists() ) {
+	            	logSpecial( "  Found in SystemResource Directory/.esapi: " + f.getAbsolutePath(), null );
+	            	return f;
+	        	} else {
+	            	logSpecial( "  Not found in SystemResource Directory/.esapi(this should never happen): " + f.getAbsolutePath(), null );
+	        	}
+     		} else {
+     			logSpecial( "  (uri null) Not found in SystemResource Directory/.esapi(this should never happen)", null );
+     		}
     	} else {
     		logSpecial( "  Not found in SystemResource Directory/.esapi: " + ".esapi/" + filename, null );
     	}
@@ -442,14 +467,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	// if not found, then try the resource directory without the .esapi
     	fileUrl = ClassLoader.getSystemResource(filename);
     	if(fileUrl != null) {
-    		String fileLocation = fileUrl.getFile();
-        	f = new File( fileLocation );
-        	if ( f.exists() ) {
-            	logSpecial( "  Found in SystemResource Directory: " + f.getAbsolutePath(), null );
-            	return f;
-        	} else {
-            	logSpecial( "  Not found in SystemResource Directory (this should never happen): " + f.getAbsolutePath(), null );
-        	}
+     		String resource = fileUrl.getFile(); 		
+     		logSpecial(" getResourceFile 3 resource pre decode: " + resource, null);
+
+     		URI uri = null;
+     		try {
+     			uri = new URI("file://" + resource);
+     		} catch (Exception e) {}
+     		
+     		if (uri != null) {	
+     			//logSpecial(" getResourceFile 3 uri: " + uri.getScheme() + " : " +  uri, null);
+	        	f = new File( uri );
+	        	if ( f.exists() ) {
+	            	logSpecial( "  Found in SystemResource Directory: " + f.getAbsolutePath(), null );
+	            	return f;
+	        	} else {
+	            	logSpecial( "  Not found in SystemResource Directory (this should never happen): " + f.getAbsolutePath(), null );
+	        	}
+     		} else {
+     			logSpecial( "  (uri null) Not found in SystemResource Directory (this should never happen): ", null );
+     		}
     	} else {
     		logSpecial( "  Not found in SystemResource Directory: " + filename, null );
     	}
@@ -479,7 +516,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public InputStream getResourceStream( String filename ) throws IOException {
     	if (filename == null) {
-    		System.out.println("getResourceStream filename is null");
+    		logSpecial("getResourceStream filename is null", null);
     		return null;
     	}
     	
@@ -498,20 +535,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
  		
  		//new
     	ClassLoader loader = getClass().getClassLoader();
-    	System.out.println("Loader: " + loader);
+    	logSpecial("Loader: " + loader, null);
     	
     	String filePathToLoad = ".esapi/"+filename;
-    	System.out.println("filePathToLoad: " + filePathToLoad);
+    	logSpecial("filePathToLoad: " + filePathToLoad, null);
     	
     	URL resourceURL = loader.getResource( filePathToLoad);
- 		System.out.println("resourceURL: " + resourceURL);
+ 		logSpecial("resourceURL: " + resourceURL, null);
  		
  		String resource = resourceURL.getFile(); 		
- 		System.out.println("resource pre decode: " + resource);
- 		
- 		//resource = resource.replace( "%20", " " );
- 		//System.out.println("resource post decode: " + resource);
- 		
+ 		logSpecial("resource pre decode: " + resource, null);
+
  		FileInputStream in = null;
  		
  		try {
@@ -552,7 +586,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	//FIXME - make this chunk configurable
     	/*
         logSpecial("  ========Master Configuration========", null);
-        //System.out.println( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
+        //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
         Iterator j = new TreeSet( properties.keySet() ).iterator();
         while (j.hasNext()) {
             String key = (String)j.next();
