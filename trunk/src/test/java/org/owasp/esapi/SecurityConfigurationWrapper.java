@@ -559,4 +559,12 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	{
 		return wrapped.getWorkingDirectory();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	// @Override
+	public boolean getDisableIntrusionDetection() {
+		return wrapped.getDisableIntrusionDetection();
+	}
 }

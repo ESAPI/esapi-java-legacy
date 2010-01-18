@@ -27,7 +27,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.TreeSet;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
@@ -91,6 +90,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String ALLOW_MULTIPLE_ENCODING = "Encoder.AllowMultipleEncoding";
     private static final String CANONICALIZATION_CODECS = "Encoder.DefaultCodecList";
 
+    private static final String DISABLE_INTRUSION_DETECTION  = "IntrusionDetector.Disable";
+    
     private static final String MASTER_KEY = "Encryptor.MasterKey";
     private static final String MASTER_SALT = "Encryptor.MasterSalt";
     private static final String KEY_LENGTH = "Encryptor.EncryptionKeyLength";
@@ -737,6 +738,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	String dir = getESAPIProperty( UPLOAD_TEMP_DIRECTORY, "UploadTempDir");
     	return new File( dir );
     }
+    
+    /**
+	 * {@inheritDoc}
+	 */
+	public boolean getDisableIntrusionDetection() {
+    	String value = properties.getProperty( DISABLE_INTRUSION_DETECTION );
+    	if ("true".equalsIgnoreCase(value)) return true;
+    	return false;	// Default result
+	}
 
     /**
 	 * {@inheritDoc}
