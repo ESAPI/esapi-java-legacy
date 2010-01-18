@@ -209,18 +209,6 @@ public interface Encoder {
 	String canonicalize(String input, boolean strict);
 
 	/**
-	 * Reduce all non-ascii characters to their ASCII form so that simpler
-	 * validation rules can be applied. For example, an accented-e character
-	 * will be changed into a regular ASCII e character.
-	 * 
-	 * @param input 
-	 * 		the text to normalize
-	 * 
-	 * @return a normalized String
-	 */
-	String normalize(String input);
-
-	/**
 	 * Encode data for use in Cascading Style Sheets (CSS) content.
 	 * 
 	 * @see <a href="http://www.w3.org/TR/CSS21/syndata.html#escaped-characters">CSS Syntax [w3.org]</a>

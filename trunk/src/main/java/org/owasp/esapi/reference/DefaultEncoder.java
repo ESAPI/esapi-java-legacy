@@ -36,7 +36,6 @@ import org.owasp.esapi.codecs.XMLEntityCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
-// import sun.text.Normalizer;
 
 /**
  * Reference implementation of the Encoder interface. This implementation takes
@@ -167,23 +166,6 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
         }
         return working;
 	}
-	
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public String normalize(String input) {
-		// Split any special characters into two parts, the base character and
-		// the modifier
-		
-        // String separated = Normalizer.normalize(input, Normalizer.DECOMP, 0);  // Java 1.4
-		// String separated = Normalizer.normalize(input, Form.NFD);   // Java 1.6
-
-		// remove any character that is not ASCII
-		// return separated.replaceAll("[^\\p{ASCII}]", "");
-		return input.replaceAll("[^\\p{ASCII}]", "");
-	}
-
 
 	/**
 	 * {@inheritDoc}
@@ -437,5 +419,4 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		}
 		return Base64.decode( input );
 	}
-
 }
