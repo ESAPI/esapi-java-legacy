@@ -553,7 +553,7 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
 
 	public boolean getDisableIntrusionDetection() {
     	String value = properties.getProperty( DISABLE_INTRUSION_DETECTION );
-    	if ( value != null && value.equalsIgnoreCase("true")) return true;
+    	if ("true".equalsIgnoreCase(value)) return true;
     	return false;	// Default result
 	}
 }
