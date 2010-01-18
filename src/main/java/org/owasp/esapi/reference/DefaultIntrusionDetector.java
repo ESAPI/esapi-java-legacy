@@ -59,6 +59,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * @param e
      */
 	public void addException(Exception e) {
+		if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+		
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY_FAILURE, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
@@ -91,6 +93,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * {@inheritDoc}
 	 */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
+    	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+    	
         logger.warning( Logger.SECURITY_FAILURE, "Security event " + eventName + " received : " + logMessage );
 
         // add the event to the current user, which may trigger a detector 
@@ -118,6 +122,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * 		the message to log if the action is "log"
      */
     private void takeSecurityAction( String action, String message ) {
+    	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+    	
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY_FAILURE, "INTRUSION - " + message );
         }
@@ -142,6 +148,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * 			The name of the event that occurred.
 	 */
 	private void addSecurityEvent(User user, String eventName) {
+		if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+		
 		if ( user.isAnonymous() ) return;
 		
 		HashMap eventMap = user.getEventMap();
@@ -162,11 +170,13 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
     private static class Event {
         public String key;
         public Stack times = new Stack();
-        public long count = 0;
+        //public long count = 0;
         public Event( String key ) {
             this.key = key;
         }
         public void increment(int count, long interval) throws IntrusionException {
+        	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+        	
             Date now = new Date();
             times.add( 0, now );
             while ( times.size() > count ) times.remove( times.size()-1 );

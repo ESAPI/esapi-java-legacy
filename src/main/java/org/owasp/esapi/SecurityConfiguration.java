@@ -387,6 +387,13 @@ public interface SecurityConfiguration {
 	public int getMaxOldPasswordHashes();
 
 	/**
+	 * Allows for complete disabling of all intrusion detection mechanisms
+	 * 
+	 * @return true if intrusion detection should be disabled
+	 */
+	public boolean getDisableIntrusionDetection();
+	
+	/**
 	 * Gets the intrusion detection quota for the specified event.
 	 * 
 	 * @param eventName the name of the event whose quota is desired
