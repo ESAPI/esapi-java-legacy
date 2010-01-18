@@ -413,15 +413,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + "/" + filename);
     	if(fileUrl != null) {
      		String resource = fileUrl.getFile(); 		
-     		logSpecial(" getResourceFile 1 resource pre decode: " + resource, null);
-
+     		
      		URI uri = null;
      		try {
      			uri = new URI("file://" + resource);
      		} catch (Exception e) {}
      		
      		if (uri != null) {
-     			//logSpecial(" getResourceFile 1 uri: " + uri.getScheme() + " : " +  uri, null);
      			f = new File( uri );
 	        	
 	        	if ( f.exists() ) {
@@ -441,16 +439,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	fileUrl = ClassLoader.getSystemResource(".esapi/" + filename);
     	if(fileUrl != null) {
      		String resource = fileUrl.getFile(); 		
-     		logSpecial(" getResourceFile 2 resource pre decode: " + resource, null);
-
+     		
      		URI uri = null;
      		try {
      			uri = new URI("file://" + resource);
      		} catch (Exception e) {}
      		
      		if (uri != null) {	
-     			//logSpecial(" getResourceFile 2 uri: " + uri.getScheme() + " : " +  uri, null);
-	        	f = new File( uri );
+     			f = new File( uri );
 	        	if ( f.exists() ) {
 	            	logSpecial( "  Found in SystemResource Directory/.esapi: " + f.getAbsolutePath(), null );
 	            	return f;
@@ -468,8 +464,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	fileUrl = ClassLoader.getSystemResource(filename);
     	if(fileUrl != null) {
      		String resource = fileUrl.getFile(); 		
-     		logSpecial(" getResourceFile 3 resource pre decode: " + resource, null);
-
+     		
      		URI uri = null;
      		try {
      			uri = new URI("file://" + resource);
@@ -516,7 +511,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public InputStream getResourceStream( String filename ) throws IOException {
     	if (filename == null) {
-    		logSpecial("getResourceStream filename is null", null);
     		return null;
     	}
     	
@@ -529,22 +523,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	    	// continue
 	    }
 
-    	//old
-    	//ClassLoader loader = getClass().getClassLoader();
- 		//InputStream in = loader.getResourceAsStream( ".esapi/"+filename );
- 		
- 		//new
     	ClassLoader loader = getClass().getClassLoader();
-    	logSpecial("Loader: " + loader, null);
-    	
+    	//logSpecial("Loader: " + loader, null);	
     	String filePathToLoad = ".esapi/"+filename;
-    	logSpecial("filePathToLoad: " + filePathToLoad, null);
-    	
+    	//logSpecial("filePathToLoad: " + filePathToLoad, null);    	
     	URL resourceURL = loader.getResource( filePathToLoad);
- 		logSpecial("resourceURL: " + resourceURL, null);
- 		
+ 		//logSpecial("resourceURL: " + resourceURL, null); 		
  		String resource = resourceURL.getFile(); 		
- 		logSpecial("resource pre decode: " + resource, null);
+ 		//logSpecial("resource pre decode: " + resource, null);
 
  		FileInputStream in = null;
  		
