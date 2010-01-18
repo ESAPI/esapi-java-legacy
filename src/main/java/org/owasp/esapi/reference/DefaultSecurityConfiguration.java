@@ -99,6 +99,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     private static final String ABSOLUTE_TIMEOUT_DURATION = "AbsoluteTimeoutDuration";
     
+    private static final String DISABLE_INTRUSION_DETECTION  = "DisableIntrusionDetection";
+    
     private static final String LOG_LEVEL = "LogLevel";
     
     private static final String LOG_FILE_NAME = "LogFileName";
@@ -549,4 +551,9 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
         return pattern;
     }
 
+	public boolean getDisableIntrusionDetection() {
+    	String value = properties.getProperty( DISABLE_INTRUSION_DETECTION );
+    	if ( value != null && value.equalsIgnoreCase("true")) return true;
+    	return false;	// Default result
+	}
 }

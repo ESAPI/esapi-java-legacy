@@ -166,7 +166,14 @@ public interface SecurityConfiguration {
 	 * @return the Quota that has been configured for the specified type of event
 	 */
 	public Threshold getQuota(String eventName);
-
+	
+	/**
+	 * Allows for complete disabling of all intrusion detection mechanisms
+	 * 
+	 * @return true if intrusion detection should be disabled
+	 */
+	public boolean getDisableIntrusionDetection();
+	
 	/**
 	 * Gets the name of the ESAPI resource directory as a String.
 	 * 
