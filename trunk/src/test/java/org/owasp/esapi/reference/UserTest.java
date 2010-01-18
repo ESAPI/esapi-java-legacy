@@ -672,10 +672,12 @@ public class UserTest extends TestCase {
      * @throws Exception
      */
 	public void testSetExpirationTime() throws Exception {
-		System.out.println("setAccountName");
+		Date longAgo = new Date(0);
+		Date now = new Date();
+		assertTrue("new Date(0) returned " + longAgo + " which is considered before new Date() " + now + ". Please report this output to the email list or as a issue", longAgo.before(now));
 		String password=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
 		DefaultUser user = createTestUser(password);
-		user.setExpirationTime(new Date(0));
+		user.setExpirationTime(longAgo);
 		assertTrue( user.isExpired() );
 	}
 
