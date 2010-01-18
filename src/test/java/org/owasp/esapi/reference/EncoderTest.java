@@ -34,8 +34,6 @@ import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
-
 /**
  * The Class EncoderTest.
  * 
@@ -304,20 +302,7 @@ public class EncoderTest extends TestCase {
             // expected
         }
     }
-	
-	
-	/**
-	 * Test of normalize method, of class org.owasp.esapi.Validator.
-	 * 
-	 * @throws ValidationException
-	 *             the validation exception
-	 */
-	public void testNormalize() throws ValidationException {
-		System.out.println("normalize");
-		// assertEquals( "e a i _ @ \" < > ", ESAPI.encoder().normalize("� � � _ @ \" < > \u20A0"));
-	}
 
-	
     /**
 	 * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
      *
