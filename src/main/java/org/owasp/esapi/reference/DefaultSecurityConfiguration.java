@@ -477,6 +477,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @throws IOException	If the file cannot be found or opened for reading.
      */
     public InputStream getResourceStream( String filename ) throws IOException {
+    	if (filename == null) {
+    		System.out.println("getResourceStream filename is null");
+    		return null;
+    	}
+    	
     	try {
 	    	File f = getResourceFile( filename );
 	    	if ( f != null && f.exists() ) {
@@ -486,8 +491,27 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	    	// continue
 	    }
 
+    	//old
+    	//ClassLoader loader = getClass().getClassLoader();
+ 		//InputStream in = loader.getResourceAsStream( ".esapi/"+filename );
+ 		
+ 		//new
     	ClassLoader loader = getClass().getClassLoader();
- 		InputStream in = loader.getResourceAsStream( ".esapi/"+filename );
+    	System.out.println("Loader: " + loader);
+    	
+    	String filePathToLoad = ".esapi/"+filename;
+    	System.out.println("filePathToLoad: " + filePathToLoad);
+    	
+    	URL resourceURL = loader.getResource( filePathToLoad);
+ 		System.out.println("resourceURL: " + resourceURL);
+ 		
+ 		String resource = resourceURL.getFile(); 		
+ 		System.out.println("resource: " + resource);
+ 		
+ 		resource.replace( " ", "%20" );
+ 		
+ 		FileInputStream in = new FileInputStream( new File( resource ) );
+ 		
  		if ( in != null ) {
  	    	logSpecial( "  Found on classpath", null );
  	    	return in;
