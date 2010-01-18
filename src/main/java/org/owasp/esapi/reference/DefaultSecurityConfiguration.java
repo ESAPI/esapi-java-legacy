@@ -506,9 +506,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
  		System.out.println("resourceURL: " + resourceURL);
  		
  		String resource = resourceURL.getFile(); 		
- 		System.out.println("resource: " + resource);
+ 		System.out.println("resource pre decode: " + resource);
  		
  		resource = resource.replace( "%20", " " );
+ 		System.out.println("resource post decode: " + resource);
  		
  		FileInputStream in = new FileInputStream( new File( resource ) );
  		
