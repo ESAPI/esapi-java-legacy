@@ -1,3 +1,284 @@
+Changelog for ESAPI 1.4.2
+
+r928 | manico.james | 2010-01-14 12:43:11 HST
+
+validation doc cleanup
+----------------------------------------------------------------------------
+r951 | manico.james | 2010-01-17 13:41:00 HST
+
+undoing the 2.0->1.4 Encoder changes
+----------------------------------------------------------------------------
+r955 | manico.james | 2010-01-17 15:29:03 HST
+
+properly defaulting intrusion detection disabling to false
+----------------------------------------------------------------------------
+r971 | manico.james | 2010-01-18 00:36:40 HST
+
+pom now titled 1.4.2
+----------------------------------------------------------------------------
+r944 | manico.james | 2010-01-16 15:42:47 HST
+
+normalize removed from codebase completely
+----------------------------------------------------------------------------
+r940 | manico.james | 2010-01-16 00:43:55 HST
+
+http://code.google.com/p/owasp-esapi-java/issues/detail?id=90 backported to the 1.4 branch
+----------------------------------------------------------------------------
+r926 | manico.james | 2010-01-13 14:58:20 HST
+
+documentation cleanup for validation
+----------------------------------------------------------------------------
+r953 | manico.james | 2010-01-17 14:41:54 HST
+
+deprecating encrypt/decrypt functions due to weak crypto
+----------------------------------------------------------------------------
+r956 | manico.james | 2010-01-17 15:49:29 HST
+
+cleanup of new intrusion disable code
+----------------------------------------------------------------------------
+r950 | manico.james | 2010-01-17 12:09:15 HST
+
+backported the entire 1.5 encoder mechanism back to 1.4
+----------------------------------------------------------------------------
+r965 | manico.james | 2010-01-17 19:58:51 HST
+
+backported spaces in resource paths per 1.5 changes
+----------------------------------------------------------------------------
+r942 | schallee@darkmist.net | 2010-01-16 09:19:16 HST
+
+Use the "basedir" system property to find the src/test/resources directory
+containing the config files for tests.
+
+----------------------------------------------------------------------------
+r946 | manico.james | 2010-01-16 16:53:23 HST
+
+Removing System.out.printlns
+----------------------------------------------------------------------------
+r930 | schallee@darkmist.net | 2010-01-15 03:39:18 HST
+
+Remove unneeded cast to DefaultSecurityConfiguration which also prevents
+other implementations of SecurityConfiguration from working.
+
+Note that this was previously fixed in the 2.0 branch.
+
+----------------------------------------------------------------------------
+r948 | schallee@darkmist.net | 2010-01-17 12:04:31 HST
+
+Make patterns private static in SafeFile instead of one per instance.
+
+Remove some more characters from the tests so that it passes as is in
+windows. SafeFile needs work but now isn't the time for it.
+
+
+----------------------------------------------------------------------------
+r934 | schallee@darkmist.net | 2010-01-15 11:34:55 HST
+
+Lots of changes to rather broken tests in SafeFileTest. Tests that
+were testing java.io.File were modified to actually test SafeFile or
+removed. Further, printing of test results and not using junit was fixed.
+
+As there haven't been major changes to SafeFile this change to
+SafeFileTest will be commited to the 2.0 branch as well.
+
+----------------------------------------------------------------------------
+r938 | schallee@darkmist.net | 2010-01-15 19:18:16 HST
+
+Fixes for Encryptedproperties, DefaultEncryptedProperties and
+EncryptedPropertiesTest in 1.4. These will be migrated to 2.0 in my
+next commit.
+
+Modify DefaultEncrypedProperties#getProperty(String) to return null when
+the key does not exist. This is more inline with what users will expect
+as it is what java.util.Properties#getProperty(String) does. Previously
+this would throw a NullPointerException in Base64#decode(String) when
+it tried to decode null which was confusing at best.
+
+Modify javadoc for EncryptedProperties#getProperty(String) to define
+the expected behavior in the case of a non-existent key.
+
+Add EncryptedPropertiesTest#testNonExistantKey() to test the behavior
+of non-existent keys in isolation.
+
+Modify EncryptedPropertiesTest#testGetProperty() to not expect an
+Exception to be thrown in the case of a non-existant key.
+
+Modify EncrypedPropertiesTest#testKeySet() to not depend on the order
+of the keys in the key set.
+
+Combine EncrypedPropertiesTest#testStore()
+and EncryptedPropertiesTest#testLoad() into
+EncryptedProperties#testStoreLoad() as testLoad() depended on testStore()
+running first which I'm not sure junit/surefire guarantees. Also modify
+to write to and read from a byte array input and output stream to avoid
+managing a temporary file.
+
+Remove EncryptedProperties#main(String[]) as it wasn't worth porting the
+above to it and mvn -Dtest=EncryptedPropertiesTest test is functionally
+equivalent to what was originally desired.
+
+I think that's all...
+
+
+----------------------------------------------------------------------------
+r931 | schallee@darkmist.net | 2010-01-15 03:42:05 HST
+
+Fix unix test that expects /bin/sh to be a directory.
+
+Note that this was also previously fixed in the 2.0 branch.
+
+----------------------------------------------------------------------------
+r932 | schallee@darkmist.net | 2010-01-15 03:45:08 HST
+
+Fix unix test in a similar fashion to how it was fixed in the
+2.0 branch. This required the reimplemnentation/backport of
+SecurityConfigurationWrapper for 1.4 as well.
+
+----------------------------------------------------------------------------
+r945 | manico.james | 2010-01-16 16:51:34 HST
+
+Fix to filepath validation including relevant unit tests. 
+----------------------------------------------------------------------------
+r933 | schallee@darkmist.net | 2010-01-15 03:48:25 HST
+
+Fix HTTPUtilitiesTest that was trying to use the resources directory
+which was null causing a NPE.
+
+This also adds some file test utilities for creating temporary directories
+and recursively removing them. This may be worth forwarding to 2.0 at
+some point to help cleanup other file based unit tests there as well.
+
+----------------------------------------------------------------------------
+r941 | schallee@darkmist.net | 2010-01-16 08:15:42 HST
+
+Change the CSS encoding in 1.4 to be like the version in 2.0. Update
+the EncoderTest to handle this change.
+
+----------------------------------------------------------------------------
+r936 | schallee@darkmist.net | 2010-01-15 17:47:48 HST
+
+Change setCurrentHTTP to not attempt to wrap a null request or null
+response.
+
+----------------------------------------------------------------------------
+r954 | manico.james | 2010-01-17 15:00:10 HST
+
+Allows for complete disabling of the ESAPI intrusion detector. Reference implementation ESAPI.properties defaults intrusion detection to ON.
+----------------------------------------------------------------------------
+r947 | schallee@darkmist.net | 2010-01-17 06:33:50 HST
+
+Add commented sections of pom.xml and external-1.4-jdk.txt containing
+information on how to have Maven compile and run tests with an external
+1.4 JDK.
+
+
+----------------------------------------------------------------------------
+
+r880 | schallee@darkmist.net | 2009-12-07 12:50:29 HST
+
+Backport current JSP tag libraries from 2.0rcs to 1.4.1rcs
+
+No changes were needed.
+
+
+----------------------------------------------------------------------------
+r881 | schallee@darkmist.net | 2009-12-07 12:53:53 HST
+
+Change version of Junit library to 3.8.1 instead of 4.4. ESAPI 1.4 is
+targeted at Java 1.4 and Junit 4 requires Java 1.5 (aka 5.0). This change
+allows tests to build with a Java 1.4 compiler.
+
+
+----------------------------------------------------------------------------
+r902 | schallee@darkmist.net | 2009-12-08 12:11:30 HST
+
+Remove use of sun proprietary normalize method. This breaks this method's
+functionality which I do not like. However, this is what has been done
+in the 2.0 branch. There is code commented out in the 2.0 branch to use
+the new java.text.Normalize however that is only available in 1.6. To
+make matters worse, the interface to the sun proprietary version has
+changed and, as is, this will not compile with latter jdks (at least
+1.6). I am adding a issue to document and remind us about this.
+
+
+----------------------------------------------------------------------------
+r903 | schallee@darkmist.net | 2009-12-08 12:28:03 HST
+
+Big nasty patch to back port the XMLEntityCodec to 1.4. This includes
+most of the functionality needed for the HTMLCodec fix which is next. This
+includes codec.HashTrieTest, util.NullSafe and util.CollectionsUtil.
+
+Two new classes have been added:
+
+codec.AbstractCodec:
+
+This is a base abstract codec.Codec implementation to
+ease porting. In 1.4 Codec is a interface and in 2.0 it is a abstract
+class. Ports back to 1.4 ca use AbstractCodec as their base instead.
+
+util.PrimWrap:
+
+This is a simple class to wrap primitives in their java.lang classes. This
+is here to help back porting of auto boxing code from the 2.0 branch. By
+using this instead of new Character(), etc we can easily implement our
+own fly weight caching of these objects as 1.5 does in it's auto boxing
+if and when the overhead incurred in creating new objects each time
+becomes a issue.
+
+
+----------------------------------------------------------------------------
+r910 | schallee@darkmist.net | 2009-12-13 16:07:55 HST
+
+CSSCodec:
+	fix issues with backslash self for hex digits (issue 77)
+	split out tests from CodecTest
+	add tests to verify lack of regression for issue 77
+	change to not encode alphanumerics
+HTMLEntityCodec:
+	fix theta/thetasym issues with decoding by backporting 2.0 fix
+		(issue 45)
+JavaScriptCodec:
+	fix corner case which would throw a IndexOutOfBoundsException (issue 78)
+	changed massive if (a) ret, if(b) ret, to switch statement
+PercentCodec:
+	back port percent codec fixes for issue 75
+CodecTest:
+	back ported to 1.4
+	modify some tests to work with 1.4 as 1.4 encodes somethings differently
+
+I think that's all...
+
+
+----------------------------------------------------------------------------
+r911 | schallee@darkmist.net | 2009-12-13 17:10:02 HST
+
+Fix issue 15 by extending HttpServlet{Request,Response}Wrapper instead
+of just implementing HttpServlet{Request,Response}. As this change only
+changes this classes super class (no longer java.lang.Object) and the
+interfaces are the same this shouldn't cause existing code issues.
+
+This does fix the problem where containers expect to be able to unwrap
+their original request in the wrapped one.
+
+----------------------------------------------------------------------------
+r912 | schallee@darkmist.net | 2009-12-13 17:37:11 HST
+
+HashTrieTest#testValues() was throwing a ClassCastException in the
+sort. It turns out Boolean is not Comparable in 1.4 but is in 1.5. This
+has been changed to Integer in the 1.4 branch.
+
+----------------------------------------------------------------------------
+r913 | schallee@darkmist.net | 2009-12-13 18:12:09 HST
+
+CSSCodec:
+	switch back to back slash self for printable ascii 
+EncoderTest:
+	fix tests that got messed up by back ports and such
+	normalize still fails but this is known (issue 74)
+	double encoding fails and needs checking
+
+----------------------------------------------------------------------------
+
+
 Changelog for ESAPI 1.4.1
 
 1) Fix to OracleCodec and MySQL codec. Defaults to basic encoding so ' encodes to '' and '' decodes to '
