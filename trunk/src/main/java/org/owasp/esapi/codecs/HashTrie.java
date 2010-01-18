@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.owasp.esapi.util.NullSafe;
@@ -58,7 +57,7 @@ public class HashTrie<T> implements Map<CharSequence,T>
 				return null;
 			if(key.length() > keyLength)
 				key = key.subSequence(0,keyLength);
-			return new Entry(key,value);
+			return new Entry<T>(key,value);
 		}
 
 		/**
@@ -72,7 +71,7 @@ public class HashTrie<T> implements Map<CharSequence,T>
 		{
 			if(value == null || key == null)
 				return null;
-			return new Entry(key,value);
+			return new Entry<T>(key,value);
 		}
 
                 /*************/
