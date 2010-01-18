@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -508,10 +509,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
  		String resource = resourceURL.getFile(); 		
  		System.out.println("resource pre decode: " + resource);
  		
- 		resource = resource.replace( "%20", " " );
- 		System.out.println("resource post decode: " + resource);
+ 		//resource = resource.replace( "%20", " " );
+ 		//System.out.println("resource post decode: " + resource);
  		
- 		FileInputStream in = new FileInputStream( new File( resource ) );
+ 		FileInputStream in = null;
+ 		
+ 		try {
+	 		URI uri = new URI(resource);
+	 	    in = new FileInputStream(uri.getPath());
+ 		} catch (Exception e) {}
  		
  		if ( in != null ) {
  	    	logSpecial( "  Found on classpath", null );
