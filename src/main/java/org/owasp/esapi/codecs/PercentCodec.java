@@ -30,8 +30,8 @@ import org.owasp.esapi.util.CollectionsUtil;
  */
 public class PercentCodec extends Codec
 {
-	private static final char[] EMPTY_CHAR_ARRAY = new char[0];
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+	@SuppressWarnings("unused")
 	private static final String RFC3986_RESERVED_STR = ":/?#[]@!$&'()*+,;=";
 	private static final String RFC3986_NON_ALPHANUMERIC_UNRESERVED_STR = "-._~";
 		// rfc3986 2.3: For consistency, percent-encoded octets

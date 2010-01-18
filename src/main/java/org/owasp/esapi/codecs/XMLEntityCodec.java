@@ -178,8 +178,6 @@ public class XMLEntityCodec extends Codec
 	{
 		StringBuilder sb = new StringBuilder();
 		Character c;
-		int i;
-
 		while((c=input.next())!=null)
 		{
 			// end of entity?
@@ -215,8 +213,6 @@ public class XMLEntityCodec extends Codec
 	{
 		Character c;
 		StringBuilder sb = new StringBuilder();
-		int i;
-
 		input_loop: while((c=input.next())!=null)
 		{
 			switch(c.charValue())
