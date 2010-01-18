@@ -64,6 +64,24 @@ public interface Encryptor {
 	String hash(String plaintext, String salt) throws EncryptionException;
 
 	/**
+	 * @deprecated Why this method is deprecated? Most cryptographers strongly suggest
+	 * that if you are creating crypto functionality for general-purpose use,
+	 * at a minimum you should ensure that it provides authenticity, integrity,
+	 * and confidentiality. This method only provides confidentiality, but not
+	 * authenticity or integrity. Therefore, you are encouraged to use
+	 * one of the other encryption methods referenced below. Because this
+	 * method provides neither authenticity nor integrity, it may be
+	 * removed in some future ESAPI Java release. Note: there are some cases
+	 * where authenticity / integrity are not that important. For instance, consider
+	 * a case where the encrypted data is never out of your application's control. For
+	 * example, if you receive data that your application is encrypting itself and then
+	 * storing the encrypted data in its own database for later use (and no other
+	 * applications can query or update that column of the database), providing
+	 * confidentiality alone might be sufficient. However, if there are cases
+	 * where your application will be sending or receiving already encrypted data
+	 * over an insecure, unauthenticated channel, in such cases authenticity and
+	 * integrity of the encrypted data likely is important 
+	 * 
 	 * Encrypts the provided plaintext and returns a ciphertext string.
 	 * 
 	 * @param plaintext
@@ -79,6 +97,24 @@ public interface Encryptor {
 	String encrypt(String plaintext) throws EncryptionException;
 
 	/**
+	 * @deprecated Why this method is deprecated? Most cryptographers strongly suggest
+	 * that if you are creating crypto functionality for general-purpose use,
+	 * at a minimum you should ensure that it provides authenticity, integrity,
+	 * and confidentiality. This method only provides confidentiality, but not
+	 * authenticity or integrity. Therefore, you are encouraged to use
+	 * one of the other encryption methods referenced below. Because this
+	 * method provides neither authenticity nor integrity, it may be
+	 * removed in some future ESAPI Java release. Note: there are some cases
+	 * where authenticity / integrity are not that important. For instance, consider
+	 * a case where the encrypted data is never out of your application's control. For
+	 * example, if you receive data that your application is encrypting itself and then
+	 * storing the encrypted data in its own database for later use (and no other
+	 * applications can query or update that column of the database), providing
+	 * confidentiality alone might be sufficient. However, if there are cases
+	 * where your application will be sending or receiving already encrypted data
+	 * over an insecure, unauthenticated channel, in such cases authenticity and
+	 * integrity of the encrypted data likely is important 
+	 * 
 	 * Decrypts the provided ciphertext string (encrypted with the encrypt
 	 * method) and returns a plaintext string.
 	 * 
