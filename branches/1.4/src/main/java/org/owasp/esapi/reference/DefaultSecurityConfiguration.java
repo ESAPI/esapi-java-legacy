@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -671,6 +672,9 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     	String filePathToLoad = ".esapi/"+filename;
     	//logSpecial("filePathToLoad: " + filePathToLoad, null);    	
     	URL resourceURL = loader.getResource( filePathToLoad);
+	if(resourceURL == null)
+		throw new FileNotFoundException("Unable to find " + filePathToLoad + " in class path.");
+
  		//logSpecial("resourceURL: " + resourceURL, null); 		
  		String resource = resourceURL.getFile(); 		
  		//logSpecial("resource pre decode: " + resource, null);
