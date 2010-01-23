@@ -28,19 +28,20 @@ import org.owasp.esapi.util.CipherSpec;
 import org.owasp.esapi.util.CryptoHelper;
 
 public class DefaultCipherTextTest {
-
+	private static final Class<DefaultCipherTextTest> CLASS = DefaultCipherTextTest.class;
+	private static final String CLASS_NAME = CLASS.getName();
 	private CipherSpec cipherSpec = null;
-    private Cipher encryptor = null;
-    private Cipher decryptor = null;
-    private IvParameterSpec ivSpec = null;
-	
+	private Cipher encryptor = null;
+	private Cipher decryptor = null;
+	private IvParameterSpec ivSpec = null;
+
 	@Before
 	public void setUp() throws Exception {
-        encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        decryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] ivBytes = null;
-        ivBytes = ESAPI.randomizer().getRandomBytes(encryptor.getBlockSize());
-        ivSpec = new IvParameterSpec(ivBytes);
+		encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		decryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
+		byte[] ivBytes = null;
+		ivBytes = ESAPI.randomizer().getRandomBytes(encryptor.getBlockSize());
+		ivSpec = new IvParameterSpec(ivBytes);
 	}
 
 	@After
@@ -92,7 +93,7 @@ public class DefaultCipherTextTest {
 		} catch( Exception ex) {
 			// As far as test coverage goes, we really don't want this to be covered.
 			fail("Caught unexpected exception: " + ex.getClass().getName() +
-					    "; exception message was: " + ex.getMessage());
+					"; exception message was: " + ex.getMessage());
 		}
 	}
 
@@ -121,7 +122,7 @@ public class DefaultCipherTextTest {
 			String plaintext = new String( ptraw, "UTF-8");
 			assertTrue( plaintext.equals("Hello") );
 			assertArrayEquals( ct.getRawCipherText(), ctraw );
-			
+
 			byte[] ivAndRaw = ESAPI.encoder().decodeFromBase64( ct.getEncodedIVCipherText() );
 			assertTrue( ivAndRaw.length > ctraw.length );
 			assertTrue( ct.getBlockSize() == ( ivAndRaw.length - ctraw.length ) );
@@ -153,7 +154,7 @@ public class DefaultCipherTextTest {
 			}
 			try {
 				ct.setCiphertext(ctraw);	// Expected to log and throw message about
-											// not being able to store raw ciphertext.
+				// not being able to store raw ciphertext.
 			} catch( Exception ex ) {
 				assertTrue( ex instanceof EncryptionException );
 			}
@@ -171,12 +172,12 @@ public class DefaultCipherTextTest {
 
 	/** Test serialization */
 	@Test public void testSerialization() {
-        try {
-            String filename = "ciphertext.ser";
-            File serializedFile = new File(filename);
-            serializedFile.delete();	// Delete any old serialized file.
-            
-            CipherSpec cipherSpec = new CipherSpec(encryptor, 128);
+		File serializedFile = null;
+
+		try {
+			serializedFile = File.createTempFile(CLASS_NAME,".ser");
+
+			CipherSpec cipherSpec = new CipherSpec(encryptor, 128);
 			cipherSpec.setIV(ivSpec.getIV());
 			SecretKey key =
 				CryptoHelper.generateSecretKey(cipherSpec.getCipherAlgorithm(), 128);
@@ -184,36 +185,36 @@ public class DefaultCipherTextTest {
 			byte[] raw = encryptor.doFinal("Hello".getBytes("UTF8"));
 			CipherText ciphertext = new DefaultCipherText(cipherSpec, raw);
 
-            FileOutputStream fos = new FileOutputStream(filename);
-            ObjectOutputStream out = new ObjectOutputStream(fos);
-            out.writeObject(ciphertext);
-            out.close();
-            fos.close();
+			FileOutputStream fos = new FileOutputStream(serializedFile);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(ciphertext);
+			out.close();
+			fos.close();
 
-            FileInputStream fis = new FileInputStream(filename);
-            ObjectInputStream in = new ObjectInputStream(fis);
-            CipherText restoredCipherText = (CipherText)in.readObject();
-            in.close();
-            fis.close();
+			FileInputStream fis = new FileInputStream(serializedFile);
+			ObjectInputStream in = new ObjectInputStream(fis);
+			CipherText restoredCipherText = (CipherText)in.readObject();
+			in.close();
+			fis.close();
 
-            // check that ciphertext and restoredCipherText are equal. Requires
-            // multiple checks. (Hmmm... maybe overriding equals() and hashCode()
-            // is in order???)
-            assertEquals("1: Serialized restored CipherText differs from saved CipherText",
-            			 ciphertext.toString(), restoredCipherText.toString());
-            assertArrayEquals("2: Serialized restored CipherText differs from saved CipherText",
-            			 ciphertext.getIV(), restoredCipherText.getIV());
-            assertEquals("3: Serialized restored CipherText differs from saved CipherText",
-            			 ciphertext.getBase64EncodedRawCipherText(),
-            			 restoredCipherText.getBase64EncodedRawCipherText());
-            
-        } catch(IOException ex) {
-            ex.printStackTrace(System.err);
-            fail("testSerialization(): Unexpected IOException: " + ex);
-        } catch(ClassNotFoundException ex) {
-            ex.printStackTrace(System.err);
-            fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
-        } catch (EncryptionException ex) {
+			// check that ciphertext and restoredCipherText are equal. Requires
+			// multiple checks. (Hmmm... maybe overriding equals() and hashCode()
+			// is in order???)
+			assertEquals("1: Serialized restored CipherText differs from saved CipherText",
+					ciphertext.toString(), restoredCipherText.toString());
+			assertArrayEquals("2: Serialized restored CipherText differs from saved CipherText",
+					ciphertext.getIV(), restoredCipherText.getIV());
+			assertEquals("3: Serialized restored CipherText differs from saved CipherText",
+					ciphertext.getBase64EncodedRawCipherText(),
+					restoredCipherText.getBase64EncodedRawCipherText());
+
+		} catch(IOException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected IOException: " + ex);
+		} catch(ClassNotFoundException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
+		} catch (EncryptionException ex) {
 			ex.printStackTrace(System.err);
 			fail("testSerialization(): Unexpected EncryptionException: " + ex);
 		} catch (IllegalBlockSizeException ex) {
@@ -229,8 +230,16 @@ public class DefaultCipherTextTest {
 			ex.printStackTrace(System.err);
 			fail("testSerialization(): Unexpected InvalidAlgorithmParameterException: " + ex);
 		}
+		finally
+		{
+			if(serializedFile != null && serializedFile.exists() && !serializedFile.delete())
+			{
+				System.err.println("Unable to delete temporary file " + serializedFile + ". Another attempt will be made at JVM exit.");
+				serializedFile.deleteOnExit();
+			}
+		}
 	}
-	
+
 	/**
 	 * Run all the test cases in this suite.
 	 * This is to allow running from {@code org.owasp.esapi.AllTests} which
