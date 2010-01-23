@@ -20,7 +20,8 @@ import org.owasp.esapi.codecs.Hex;
 
 /** JUnit test to test CipherSpec class. */
 public class CipherSpecTest extends TestCase {
-
+	private static final Class<CipherSpecTest> CLASS = CipherSpecTest.class;
+	private static final String CLASS_NAME = CLASS.getName();
 	private Cipher dfltAESCipher = null;
 	private Cipher dfltECBCipher = null;	// will be "AES/ECB/NoPadding";
 	private Cipher dfltOtherCipher = null;
@@ -28,8 +29,8 @@ public class CipherSpecTest extends TestCase {
 	private static byte[] myIV = null;
 
 	@Before public void setUp() throws Exception {
-			// This will throw ConfigurationException if IV type is not set to
-			// 'fixed', which it's not. (We have it set to 'random'.)
+		// This will throw ConfigurationException if IV type is not set to
+		// 'fixed', which it's not. (We have it set to 'random'.)
 		// myIV = Hex.decode( ESAPI.securityConfiguration().getFixedIV() );
 		myIV = Hex.decode( "0x000102030405060708090a0b0c0d0e0f" );
 
@@ -46,23 +47,23 @@ public class CipherSpecTest extends TestCase {
 	}
 
 	@After public void tearDown() throws Exception {
-    	// none
+		// none
 	}
-	
+
 	/** Test CipherSpec(String cipherXform, int keySize, int blockSize, final byte[] iv) */
 	@Test public void testCipherSpecStringIntIntByteArray() {
-		
+
 		cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
 		assertTrue( cipherSpec != null );
 		cipherSpec = null;
 		try {
-				// Invalid cipher xform -- empty
+			// Invalid cipher xform -- empty
 			cipherSpec = new CipherSpec( "",  128,  8, myIV);
 		} catch( Throwable t ) {
 			assertTrue( cipherSpec == null );
 		}
 		try {
-				// Invalid cipher xform -- missing padding scheme
+			// Invalid cipher xform -- missing padding scheme
 			cipherSpec = new CipherSpec("AES/CBC", 128, 8, myIV);
 		} catch( Throwable t ) {
 			assertTrue( cipherSpec == null );
@@ -72,17 +73,17 @@ public class CipherSpecTest extends TestCase {
 
 	/** CipherSpec(final Cipher cipher, int keySize) */
 	@Test public void testCipherSpecCipherInt() {
-    	cipherSpec = new CipherSpec(dfltOtherCipher, 112);
-    	assertTrue( cipherSpec != null );
-    	assertTrue( cipherSpec.getCipherAlgorithm().equals("Blowfish"));
-    	assertTrue( cipherSpec.getCipherMode().equals("OFB8"));
-    	
-    	cipherSpec = new CipherSpec(dfltAESCipher, 256);
-    	assertTrue( cipherSpec != null );
-    	assertTrue( cipherSpec.getCipherAlgorithm().equals("AES"));
-    	assertTrue( cipherSpec.getCipherMode().equals("ECB") );
-    	assertTrue( cipherSpec.getPaddingScheme().equals("NoPadding") );
-    	// System.out.println("testCipherSpecInt(): " + cipherSpec);
+		cipherSpec = new CipherSpec(dfltOtherCipher, 112);
+		assertTrue( cipherSpec != null );
+		assertTrue( cipherSpec.getCipherAlgorithm().equals("Blowfish"));
+		assertTrue( cipherSpec.getCipherMode().equals("OFB8"));
+
+		cipherSpec = new CipherSpec(dfltAESCipher, 256);
+		assertTrue( cipherSpec != null );
+		assertTrue( cipherSpec.getCipherAlgorithm().equals("AES"));
+		assertTrue( cipherSpec.getCipherMode().equals("ECB") );
+		assertTrue( cipherSpec.getPaddingScheme().equals("NoPadding") );
+		// System.out.println("testCipherSpecInt(): " + cipherSpec);
 	}
 
 	/** Test CipherSpec(final byte[] iv) */
@@ -91,9 +92,9 @@ public class CipherSpecTest extends TestCase {
 		assertTrue( myIV.length > 0 );
 		cipherSpec = new CipherSpec(myIV);
 		assertTrue( cipherSpec.getKeySize() == 
-						ESAPI.securityConfiguration().getEncryptionKeyLength() );
+				ESAPI.securityConfiguration().getEncryptionKeyLength() );
 		assertTrue( cipherSpec.getCipherTransformation().equals(
-						ESAPI.securityConfiguration().getCipherTransformation() ) );
+					ESAPI.securityConfiguration().getCipherTransformation() ) );
 	}
 
 	/** Test CipherSpec() */
@@ -101,7 +102,7 @@ public class CipherSpecTest extends TestCase {
 		cipherSpec = new CipherSpec( dfltECBCipher );
 		assertTrue( cipherSpec.getCipherTransformation().equals("AES/ECB/NoPadding") );
 		assertTrue( cipherSpec.getIV() == null );
-	
+
 		cipherSpec = new CipherSpec(dfltOtherCipher);
 		assertTrue( cipherSpec.getCipherMode().equals("OFB8") );
 	}
@@ -111,10 +112,10 @@ public class CipherSpecTest extends TestCase {
 		cipherSpec = new CipherSpec();
 		cipherSpec.setCipherTransformation("AlgName/Mode/Padding");
 		cipherSpec.getCipherAlgorithm().equals("AlgName/Mode/Padding");
-		
+
 		try {
-				// Don't use null here as compiling JUnit tests disables assertion
-				// checking so we get a NullPointerException here instead.
+			// Don't use null here as compiling JUnit tests disables assertion
+			// checking so we get a NullPointerException here instead.
 			cipherSpec.setCipherTransformation(""); // Throws AssertionError
 		} catch (AssertionError e) {
 			assertTrue(true);	// Doesn't work w/ @Test(expected=AssertionError.class)
@@ -134,7 +135,7 @@ public class CipherSpecTest extends TestCase {
 	/** Test getKeySize() */
 	@Test public void testGetKeySize() {
 		assertTrue( (new CipherSpec()).getKeySize() ==
-			ESAPI.securityConfiguration().getEncryptionKeyLength() );
+				ESAPI.securityConfiguration().getEncryptionKeyLength() );
 	}
 
 	/** Test setBlockSize() */
@@ -200,49 +201,57 @@ public class CipherSpecTest extends TestCase {
 		assertTrue( cipherSpec.requiresIV() == false );
 		assertTrue( new CipherSpec(dfltOtherCipher).requiresIV() );
 	}
-	
+
 	/** Test serialization */
 	@Test public void testSerialization() {
-        try {
-            String filename = "cipherspec.ser";
-            File serializedFile = new File(filename);
-            serializedFile.delete();	// Delete any old serialized file.
-            
-            cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
-            FileOutputStream fos = new FileOutputStream(filename);
-            ObjectOutputStream out = new ObjectOutputStream(fos);
-            out.writeObject(cipherSpec);
-            out.close();
-            fos.close();
+		File serializedFile = null;
 
-            FileInputStream fis = new FileInputStream(filename);
-            ObjectInputStream in = new ObjectInputStream(fis);
-            CipherSpec restoredCipherSpec = (CipherSpec)in.readObject();
-            in.close();
-            fis.close();
+		try {
+			serializedFile = File.createTempFile(CLASS_NAME,".ser");
 
-            // check that cipherSpec and restoredCipherSpec are equal. Just
-            // compare them via their string representations.
-            assertEquals("Serialized restored CipherSpec differs from saved CipherSpec",
-            			 cipherSpec.toString(), restoredCipherSpec.toString() );
-            
-            
-        } catch(IOException ex) {
-            ex.printStackTrace(System.err);
-            fail("testSerialization(): Unexpected IOException: " + ex);
-        } catch(ClassNotFoundException ex) {
-            ex.printStackTrace(System.err);
-            fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
-        }
+			cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
+			FileOutputStream fos = new FileOutputStream(serializedFile);
+			ObjectOutputStream out = new ObjectOutputStream(fos);
+			out.writeObject(cipherSpec);
+			out.close();
+			fos.close();
+
+			FileInputStream fis = new FileInputStream(serializedFile);
+			ObjectInputStream in = new ObjectInputStream(fis);
+			CipherSpec restoredCipherSpec = (CipherSpec)in.readObject();
+			in.close();
+			fis.close();
+
+			// check that cipherSpec and restoredCipherSpec are equal. Just
+			// compare them via their string representations.
+			assertEquals("Serialized restored CipherSpec differs from saved CipherSpec",
+					cipherSpec.toString(), restoredCipherSpec.toString() );
+
+
+		} catch(IOException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected IOException: " + ex);
+		} catch(ClassNotFoundException ex) {
+			ex.printStackTrace(System.err);
+			fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
+		}
+		finally
+		{
+			if(serializedFile != null && serializedFile.exists() && !serializedFile.delete())
+			{
+				System.err.println("Unable to delete temporary file " + serializedFile + ". Another attempt will be made at JVM exit.");
+				serializedFile.deleteOnExit();
+			}
+		}
 	}
-	
-    /**
-     * Run all the test cases in this suite.
-     * This is to allow running from {@code org.owasp.esapi.AllTests}.
-     */
-    public static junit.framework.Test suite() {
-        TestSuite suite = new TestSuite(CipherSpecTest.class);
 
-        return suite;
-    }
+	/**
+	 * Run all the test cases in this suite.
+	 * This is to allow running from {@code org.owasp.esapi.AllTests}.
+	 */
+	public static junit.framework.Test suite() {
+		TestSuite suite = new TestSuite(CipherSpecTest.class);
+
+		return suite;
+	}
 }
