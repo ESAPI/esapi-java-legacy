@@ -23,8 +23,12 @@ import org.owasp.esapi.errors.*;
 
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
-import java.util.*;
-
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Collections;
+import java.util.HashMap;
 /**
  * Reference implementation of the User interface. This implementation is serialized into a flat file in a simple format.
  * 
@@ -45,7 +49,7 @@ public class DefaultUser implements User, Serializable {
 	private static final int ABSOLUTE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionAbsoluteTimeoutLength();
 	
 	/** The logger used by the class. */
-	private final Logger logger = ESAPI.getLogger("DefaultUser");
+	private transient final Logger logger = ESAPI.getLogger("DefaultUser");
     
 	/** This user's account id. */
 	long accountId = 0;
@@ -101,7 +105,7 @@ public class DefaultUser implements User, Serializable {
 	/** This user's Locale. */
 	private Locale locale;
     
-    private final int MAX_ROLE_LENGTH = 250;
+    private static final int MAX_ROLE_LENGTH = 250;
     
 	/**
 	 * Instantiates a new user.
@@ -109,12 +113,12 @@ public class DefaultUser implements User, Serializable {
 	 * @param accountName
 	 * 		The name of this user's account.
 	 */
-	DefaultUser(String accountName) {
-		setAccountName(accountName);
+	public DefaultUser(String accountName) {
+		this.accountName = accountName.toLowerCase();
 		while( true ) {
 			long id = Math.abs( ESAPI.randomizer().getRandomLong() );
 			if ( ESAPI.authenticator().getUser( id ) == null && id != 0 ) {
-				setAccountId(id);
+				this.accountId = id;
 				break;
 			}
 		}
