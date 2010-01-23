@@ -19,8 +19,7 @@ package org.owasp.esapi;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
-import org.owasp.esapi.util.*;
+import org.owasp.esapi.util.ObjFactory;
 
 // DISCUSS: Many of these 'setter' methods seem like they should require proper access control
 //		    checks. By default, permissions could be granted to everyone, but if we have something
@@ -62,6 +61,8 @@ import org.owasp.esapi.util.*;
  */
 public final class ESAPI {
 
+	private static final Object accessorLock = new Object();
+	
 	private static Authenticator authenticator = null;
 
 	private static Encoder encoder = null;
@@ -84,7 +85,10 @@ public final class ESAPI {
 	
 	private static Logger defaultLogger = null;
 
-	private static SecurityConfiguration securityConfiguration = new DefaultSecurityConfiguration();
+	private static SecurityConfiguration securityConfiguration = null;
+	private static final String securityConfigurationImplName = 
+		System.getProperty("org.owasp.esapi.SecurityConfiguration", "org.owasp.esapi.reference.DefaultSecurityConfiguration");
+
 
 	/**
 	 * prevent instantiation of this class
@@ -141,50 +145,70 @@ public final class ESAPI {
 	 * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
 	 */
 	public static AccessController accessController() {
-		if (accessController == null) {
-			String accessControllerName = securityConfiguration().getAccessControlImplementation();
-			accessController =  (new ObjFactory<AccessController>()).make(accessControllerName, "AccessController");
+		synchronized (accessorLock) {
+			if (accessController == null) {
+				String accessControllerName = securityConfiguration().getAccessControlImplementation();
+				accessController =  (new ObjFactory<AccessController>()).make(accessControllerName, "AccessController");
 		    }
+		}
 		return accessController;
 	}
 
 	/**
 	 * Change the current ESAPI AccessController to the AccessController provided. 
 	 * @param controller
-	 *            the AccessController to set to be the current ESAPI AccessController. 
+	 *            the AccessController to set to be the current ESAPI AccessController.
+	 * @return
+	 * 		The previous ESAPI AccessController, may be null 
 	 */
-	public static void setAccessController(AccessController controller) {
-		ESAPI.accessController = controller;
+	public static AccessController setAccessController(AccessController controller) {
+		AccessController previousController;
+		synchronized (accessorLock) {
+			previousController = ESAPI.accessController; 
+			ESAPI.accessController = controller;
+		}
+		return previousController;
 	}
 
 	/**
 	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
 	public static Authenticator authenticator() {
-		if (authenticator == null) {
-			String authenticatorName = securityConfiguration().getAuthenticationImplementation();
-			authenticator =  (new ObjFactory<Authenticator>()).make(authenticatorName, "Authenticator");
-		    }
+		synchronized (accessorLock) {
+			if (authenticator == null) {
+				String authenticatorName = securityConfiguration().getAuthenticationImplementation();
+				authenticator =  (new ObjFactory<Authenticator>()).make(authenticatorName, "Authenticator");
+			}
+		}
 		return authenticator;
 	}
 
 	/**
 	 * Change the current ESAPI Authenticator to the Authenticator provided. 
 	 * @param authenticator
-	 *            the Authenticator to set to be the current ESAPI Authenticator. 
+	 *            the Authenticator to set to be the current ESAPI Authenticator.
+	 * @return
+	 * 		The previous ESAPI Authenticator, may be null 
 	 */
-	public static void setAuthenticator(Authenticator authenticator) {
-		ESAPI.authenticator = authenticator;
+	public static Authenticator setAuthenticator(Authenticator authenticator) {
+		Authenticator previousAuthenticator;
+		synchronized (accessorLock) {
+			previousAuthenticator = ESAPI.authenticator; 
+			ESAPI.authenticator = authenticator;
+		}
+		return previousAuthenticator;
 	}
 
 	/**
 	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
 	public static Encoder encoder() {
-		if (encoder == null) {
-			String encoderName = securityConfiguration().getEncoderImplementation();
-			encoder =  (new ObjFactory<Encoder>()).make(encoderName, "Encoder");
-		} 
+		synchronized (accessorLock) {
+			if (encoder == null) {
+				String encoderName = securityConfiguration().getEncoderImplementation();
+				encoder =  (new ObjFactory<Encoder>()).make(encoderName, "Encoder");
+			}
+		}
 		return encoder;
 	}
 
@@ -192,19 +216,28 @@ public final class ESAPI {
 	 * Change the current ESAPI Encoder to the Encoder provided. 
 	 * @param encoder
 	 *            the Encoder to set to be the current ESAPI Encoder. 
+	 * @return
+	 * 		The previous ESAPI Encoder, may be null
 	 */
-	public static void setEncoder(Encoder encoder) {
-		ESAPI.encoder = encoder;
+	public static Encoder setEncoder(Encoder encoder) {
+		Encoder previousEncoder;
+		synchronized (accessorLock) {
+			previousEncoder = ESAPI.encoder; 
+			ESAPI.encoder = encoder;
+		}
+		return previousEncoder;
 	}
 
 	/**
 	 * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
 	 */
 	public static Encryptor encryptor() {
-		if (encryptor == null) {
-			String encryptorName = securityConfiguration().getEncryptionImplementation();
-			encryptor =  (new ObjFactory<Encryptor>()).make(encryptorName, "Encryptor");
+		synchronized (accessorLock) {
+			if (encryptor == null) {
+				String encryptorName = securityConfiguration().getEncryptionImplementation();
+				encryptor =  (new ObjFactory<Encryptor>()).make(encryptorName, "Encryptor");
 		    }
+		}
 		return encryptor;
 	}
 
@@ -212,19 +245,28 @@ public final class ESAPI {
 	 * Change the current ESAPI Encryptor to the Encryptor provided. 
 	 * @param encryptor
 	 *            the Encryptor to set to be the current ESAPI Encryptor. 
+	 * @return
+	 * 		The previous ESAPI Encryptor, may be null           
 	 */
-	public static void setEncryptor(Encryptor encryptor) {
-		ESAPI.encryptor = encryptor;
+	public static Encryptor setEncryptor(Encryptor encryptor) {
+		Encryptor previousEncryptor;
+		synchronized (accessorLock) {
+			previousEncryptor = ESAPI.encryptor; 
+			ESAPI.encryptor = encryptor;
+		}
+		return previousEncryptor;
 	}
 
 	/**
 	 * @return the current ESAPI Executor object being used to safely execute OS commands for this application. 
 	 */
 	public static Executor executor() {
-		if (executor == null) {
-			String executorName = securityConfiguration().getExecutorImplementation();
-			executor =  (new ObjFactory<Executor>()).make(executorName, "Executor");
-		} 
+		synchronized (accessorLock) {
+			if (executor == null) {
+				String executorName = securityConfiguration().getExecutorImplementation();
+				executor =  (new ObjFactory<Executor>()).make(executorName, "Executor");
+			}
+		}
 		return executor;
 	}
 
@@ -232,9 +274,16 @@ public final class ESAPI {
 	 * Change the current ESAPI Executor to the Executor provided. 
 	 * @param executor
 	 *            the Executor to set to be the current ESAPI Executor. 
+	 * @return
+	 * 		The previous ESAPI Executor, may be null           
 	 */
-	public static void setExecutor(Executor executor) {
-		ESAPI.executor = executor;
+	public static Executor setExecutor(Executor executor) {
+		Executor previousExecutor;
+		synchronized (accessorLock) {
+			previousExecutor = ESAPI.executor; 
+			ESAPI.executor = executor;
+		}
+		return previousExecutor;
 	}
 
 	/**
@@ -242,40 +291,58 @@ public final class ESAPI {
 	 * for this application. 
 	 */
 	public static HTTPUtilities httpUtilities() {
-		if (httpUtilities == null) {
-			String httpUtilitiesName = securityConfiguration().getHTTPUtilitiesImplementation();
-			httpUtilities =  (new ObjFactory<HTTPUtilities>()).make(httpUtilitiesName, "HTTPUtilities");
-		} 
+		synchronized (accessorLock) {
+			if (httpUtilities == null) {
+				String httpUtilitiesName = securityConfiguration().getHTTPUtilitiesImplementation();
+				httpUtilities =  (new ObjFactory<HTTPUtilities>()).make(httpUtilitiesName, "HTTPUtilities");
+			}
+		}
 		return httpUtilities;
 	}
 
 	/**
 	 * Change the current ESAPI HTTPUtilities object to the HTTPUtilities object provided. 
 	 * @param httpUtilities
-	 *            the HTTPUtilities object to set to be the current ESAPI HTTPUtilities object. 
+	 *            the HTTPUtilities object to set to be the current ESAPI HTTPUtilities object.
+	 * @return
+	 * 		The previous ESAPI HTTPUtilities, may be null            
 	 */
-	public static void setHttpUtilities(HTTPUtilities httpUtilities) {
-		ESAPI.httpUtilities = httpUtilities;
+	public static HTTPUtilities setHttpUtilities(HTTPUtilities httpUtilities) {
+		HTTPUtilities previousHTTPUtilities;
+		synchronized (accessorLock) {
+			previousHTTPUtilities = ESAPI.httpUtilities; 
+			ESAPI.httpUtilities = httpUtilities;
+		}
+		return previousHTTPUtilities;
 	}
 
 	/**
 	 * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
 	 */
 	public static IntrusionDetector intrusionDetector() {
-		if (intrusionDetector == null) {
-			String intrusionDetectorName = securityConfiguration().getIntrusionDetectionImplementation();
-			intrusionDetector =  (new ObjFactory<IntrusionDetector>()).make(intrusionDetectorName, "IntrusionDetector");
-		} 
+		synchronized (accessorLock) {
+			if (intrusionDetector == null) {
+				String intrusionDetectorName = securityConfiguration().getIntrusionDetectionImplementation();
+				intrusionDetector =  (new ObjFactory<IntrusionDetector>()).make(intrusionDetectorName, "IntrusionDetector");
+			}
+		}
 		return intrusionDetector;
 	}
 
 	/**
 	 * Change the current ESAPI IntrusionDetector to the IntrusionDetector provided. 
 	 * @param intrusionDetector
-	 *            the IntrusionDetector to set to be the current ESAPI IntrusionDetector. 
+	 *            the IntrusionDetector to set to be the current ESAPI IntrusionDetector.
+	 * @return 
+	 * 		The previous ESAPI IntrusionDetector, may be null            
 	 */
-	public static void setIntrusionDetector(IntrusionDetector intrusionDetector) {
-		ESAPI.intrusionDetector = intrusionDetector;
+	public static IntrusionDetector setIntrusionDetector(IntrusionDetector intrusionDetector) {
+		IntrusionDetector previousIntrusionDetector;
+		synchronized (accessorLock) {
+			previousIntrusionDetector = ESAPI.intrusionDetector;
+			ESAPI.intrusionDetector = intrusionDetector;
+		}
+		return previousIntrusionDetector;
 	}
 
 	/**
@@ -284,10 +351,12 @@ public final class ESAPI {
 	 * @return The current LogFactory being used by ESAPI.
 	 */
 	private static LogFactory logFactory() {
-		if (logFactory == null) {
-			String logFactoryName = securityConfiguration().getLogImplementation();
-			logFactory =  (new ObjFactory<LogFactory>()).make(logFactoryName, "LogFactory");
-		} 
+		synchronized (accessorLock) {
+			if (logFactory == null) {
+				String logFactoryName = securityConfiguration().getLogImplementation();
+				logFactory =  (new ObjFactory<LogFactory>()).make(logFactoryName, "LogFactory");
+			} 
+		}
 		return logFactory;
 	}
 	
@@ -312,8 +381,11 @@ public final class ESAPI {
 	 * @return The default Logger.
 	 */
 	public static Logger log() {
-		if (defaultLogger == null)
-			defaultLogger = logFactory().getLogger("DefaultLogger");
+		synchronized (accessorLock) {
+			if (defaultLogger == null) {
+				defaultLogger = logFactory().getLogger("DefaultLogger");
+			}
+		}
 		return defaultLogger;
 	}
 	
@@ -321,29 +393,46 @@ public final class ESAPI {
 	 * Change the current ESAPI LogFactory to the LogFactory provided. 
 	 * @param factory
 	 *            the LogFactory to set to be the current ESAPI LogFactory. 
+	 * @return 
+	 * 		The previous ESAPI LogFactory, may be null           
 	 */
-	 public static void setLogFactory(LogFactory factory) {
-		 ESAPI.logFactory = factory;
+	 public static LogFactory setLogFactory(LogFactory factory) {
+		 LogFactory previousLogFactory;
+		 synchronized (accessorLock) {
+			 previousLogFactory = ESAPI.logFactory; 
+			 ESAPI.logFactory = factory;
+		 }
+		 return previousLogFactory;
 	 }
 	
 	/**
 	 * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
 	 */
 	public static Randomizer randomizer() {
-		if (randomizer == null) {
-			String randomizerName = securityConfiguration().getRandomizerImplementation();
-			randomizer =  (new ObjFactory<Randomizer>()).make(randomizerName, "Randomizer");
-		} 
+		synchronized (accessorLock) {
+			if (randomizer == null) {
+				String randomizerName = securityConfiguration().getRandomizerImplementation();
+				randomizer =  (new ObjFactory<Randomizer>()).make(randomizerName, "Randomizer");
+			} 
+		}
 		return randomizer;
 	}
 
 	/**
 	 * Change the current ESAPI Randomizer to the Randomizer provided. 
 	 * @param randomizer
-	 *            the Randomizer to set to be the current ESAPI Randomizer. 
+	 *            the Randomizer to set to be the current ESAPI Randomizer.
+	 * 
+     * @return 
+     * 		The previous ESAPI Randomizer, may be null            
 	 */
-	public static void setRandomizer(Randomizer randomizer) {
-		ESAPI.randomizer = randomizer;
+	public static Randomizer setRandomizer(Randomizer randomizer) {
+		Randomizer previousRandomizer;
+		synchronized (accessorLock) {
+			previousRandomizer = ESAPI.randomizer; 
+			ESAPI.randomizer = randomizer;
+		}
+		return previousRandomizer;
 	}
 
 	/**
@@ -351,8 +440,11 @@ public final class ESAPI {
 	 * ESAPI for this application. 
 	 */
 	public static SecurityConfiguration securityConfiguration() {
-		if (ESAPI.securityConfiguration == null)
-			ESAPI.securityConfiguration = new DefaultSecurityConfiguration();
+		synchronized (accessorLock) {
+			if (ESAPI.securityConfiguration == null) {
+				ESAPI.securityConfiguration = (new ObjFactory<SecurityConfiguration>()).make(securityConfigurationImplName, "SecurityConfiguration");
+			}
+		}
 		return ESAPI.securityConfiguration;
 	}
 
@@ -360,27 +452,36 @@ public final class ESAPI {
 	 * Change the current ESAPI SecurityConfiguration to the SecurityConfiguration provided. 
 	 * CHECKME: Why not return the previous value here? Also, doesn't it make sense to check for null in all setters?
 	 * @param securityConfiguration
-	 *            the SecurityConfiguration to set to be the current ESAPI SecurityConfiguration. 
+	 *            the SecurityConfiguration to set to be the current ESAPI SecurityConfiguration.
+	 * @return 
+	 * 		The previous ESAPI SecurityConfiguration, may be null             
 	 */
-	public static void setSecurityConfiguration(
+	public static SecurityConfiguration setSecurityConfiguration(
 			SecurityConfiguration securityConfiguration) {
 		// CHECMKE: Or perhaps use assertions? They can be disabled, but IMO, better than not checking for null at all.
 		//			Whatever approach is taken, it should be used consistently throughout.
-		if ( securityConfiguration != null ) {
-		ESAPI.securityConfiguration = securityConfiguration;
-		} else {
-			throw new NullPointerException("ESAPI.setSecurityConfiguration(): null passed in. Security configuration unchanged.");
-	    }
+		SecurityConfiguration previousSecurityConfiguration;
+		synchronized (accessorLock) {
+			if ( securityConfiguration != null ) {
+				previousSecurityConfiguration = ESAPI.securityConfiguration;
+				ESAPI.securityConfiguration = securityConfiguration;
+			} else {
+				throw new NullPointerException("ESAPI.setSecurityConfiguration(): null passed in. Security configuration unchanged.");
+		    }
+		}
+		return previousSecurityConfiguration;
 	}
 
 	/**
 	 * @return the current ESAPI Validator being used to validate data in this application. 
 	 */
 	public static Validator validator() {
-		if (validator == null) {
-			String validatorName = securityConfiguration().getValidationImplementation();
-			validator =  (new ObjFactory<Validator>()).make(validatorName, "Validator");
-		} 
+		synchronized (accessorLock) {
+			if (validator == null) {
+				String validatorName = securityConfiguration().getValidationImplementation();
+				validator =  (new ObjFactory<Validator>()).make(validatorName, "Validator");
+			}
+		}
 		return validator;
 	}
 
@@ -388,8 +489,15 @@ public final class ESAPI {
 	 * Change the current ESAPI Validator to the Validator provided.
 	 * @param validator
 	 *            the Validator to set to be the current ESAPI Validator. 
+	 * @return
+	 * 		The previous ESAPI Validator, may be null
 	 */
-	public static void setValidator(Validator validator) {
-		ESAPI.validator = validator;
+	public static Validator setValidator(Validator validator) {
+		Validator previousValidator;
+		synchronized (accessorLock) {
+			previousValidator = ESAPI.validator; 
+			ESAPI.validator = validator;
+		}
+		return previousValidator;
 	}
 }
