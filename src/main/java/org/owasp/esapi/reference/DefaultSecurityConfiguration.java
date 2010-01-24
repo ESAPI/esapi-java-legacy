@@ -532,11 +532,12 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     	//  The SystemResource directory is defined by ClassLoader.getSystemResource(
     	//  Relative directories use URLs, so they must be specified using / as
     	//  the pathSeparator, not the file system dependent pathSeparator.
-    	//First, load from the absolute directory specified in customDirectory
-    	//Second, load from the relative directory specified in resourceDirectory
-    	//Third, load from the relative resource-default-directory which is .esapi
-    	//Fourth, load from the relative directory without directory specification.
-    	//Finally, load from the user's home directory.
+        //First, load from the absolute directory specified in customDirectory (command line overrides. -Dorg.owasp.esapi.resources directory)
+        //Second, load from the relative directory specified in resourceDirectory (programatic set resource directory (this defaults to SystemResource directory/.esapi))
+        //Third, load from the relative resource-default-directory which is .esapi
+        //Fourth, load from the relative resource-default-directory which is resources (NEW!)
+        //Fifth, load from the relative directory without directory specification.
+        //Finally, load from the user's home directory.
     	//TODO MHF consider the security implications of non-deterministic
     	//  configuration resource locations.
 
