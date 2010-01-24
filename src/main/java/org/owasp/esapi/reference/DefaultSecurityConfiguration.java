@@ -207,16 +207,34 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	// load security configuration
     	try {
         	loadConfiguration();
-        		// TODO: FUTURE: Replace by CryptoControls ???
-        		// See SecurityConfiguration.setCipherTransformation() for
-        		// explanation of this.
-        	cipherXformFromESAPIProp =
-    			getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
-    							 "AES/CBC/PKCS5Padding");
-        	cipherXformCurrent = cipherXformFromESAPIProp;
+        	this.setCipherXProperties();
         } catch( IOException e ) {
 	        logSpecial("Failed to load security configuration", e );
         }
+    }
+    
+    /**
+     * Instantiates a new configuration with the supplied properties.
+     * 
+     * Warning - if the setResourceDirectory() method is invoked the properties will
+     * be re-loaded, replacing the supplied properties.
+     * 
+     * @param properties
+     */
+    public DefaultSecurityConfiguration(Properties properties) {
+    	super();
+    	this.properties = properties; 
+    	this.setCipherXProperties();
+    }
+    
+    private void setCipherXProperties() {
+		// TODO: FUTURE: Replace by CryptoControls ???
+		// See SecurityConfiguration.setCipherTransformation() for
+		// explanation of this.
+		cipherXformFromESAPIProp =
+			getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
+							 "AES/CBC/PKCS5Padding");
+		cipherXformCurrent = cipherXformFromESAPIProp;
     }
 
     /**
