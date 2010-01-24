@@ -62,9 +62,6 @@ public class ByteConversionUtil {
      */
     public static byte[] fromLong(long input) {
         byte[] output = new byte[8];
-            // Note: I've tried using '>>>' instead of '>>' but that seems to
-            //       make no difference. The testLongConversion() still fails
-            //       in the same manner.
         output[0] = (byte) (input >> 56);
         output[1] = (byte) (input >> 48);
         output[2] = (byte) (input >> 40);
@@ -115,24 +112,17 @@ public class ByteConversionUtil {
      * @param input A network byte-ordered representation of a {@code long}.
      * @return The {@code long} value represented by the input array
      */
-    @SuppressWarnings("cast")
-    public static long toLong(byte[] input) {  // FIXME: Failing in testLongConversion()
+    public static long toLong(byte[] input) {
         assert input.length == 8 : "toLong(): Byte array length must be 8.";
         long output = 0;
-    // Tried both of these ways, each w/ and w/out casts, but
-    // testLongConversion() still failing.
-//        output = (long)((input[0] & 0xff) << 56) | ((input[1] & 0xff) << 48) |
-//                 ((input[2] & 0xff) << 40) | ((input[3] & 0xff) << 32) |
-//                 ((input[4] & 0xff) << 24) | ((input[5] & 0xff) << 16) |
-//                 ((input[6] & 0xff) << 8)  | (input[7] & 0xff);
-        output  = (long)((input[0] & 0xff) << 56);
-        output |= (long)((input[1] & 0xff) << 48);
-        output |= (long)((input[2] & 0xff) << 40);
-        output |= (long)((input[3] & 0xff) << 32);
-        output |= (long)((input[4] & 0xff) << 24);
-        output |= (long)((input[5] & 0xff) << 16);
-        output |= (long)((input[6] & 0xff) << 8);
-        output |= (long)(input[7] & 0xff);
+        output  = ((long)(input[0] & 0xff) << 56);
+        output |= ((long)(input[1] & 0xff) << 48);
+        output |= ((long)(input[2] & 0xff) << 40);
+        output |= ((long)(input[3] & 0xff) << 32);
+        output |= ((long)(input[4] & 0xff) << 24);
+        output |= ((long)(input[5] & 0xff) << 16);
+        output |= ((long)(input[6] & 0xff) << 8);
+        output |= (input[7] & 0xff);
         return output;
     }
 }
