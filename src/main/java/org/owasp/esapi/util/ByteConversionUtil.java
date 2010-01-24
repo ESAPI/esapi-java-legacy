@@ -115,6 +115,7 @@ public class ByteConversionUtil {
      * @param input A network byte-ordered representation of a {@code long}.
      * @return The {@code long} value represented by the input array
      */
+    @SuppressWarnings("cast")
     public static long toLong(byte[] input) {  // FIXME: Failing in testLongConversion()
         assert input.length == 8 : "toLong(): Byte array length must be 8.";
         long output = 0;
