@@ -477,7 +477,32 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	} else {
     		logSpecial( "  Not found in SystemResource Directory/.esapi: " + ".esapi/" + filename, null );
     	}
-
+    	
+    	// if not found, look for a directory named 'resources' on the classpath
+        fileUrl = ClassLoader.getSystemResource("resources/" + filename);
+        if(fileUrl != null) {
+     		String resource = fileUrl.getFile(); 		
+     		
+     		URI uri = null;
+     		try {
+     			uri = new URI("file://" + resource);
+     		} catch (Exception e) {}
+     		
+     		if (uri != null) {	
+     			f = new File( uri );
+	        	if ( f.exists() ) {
+	            	logSpecial( "  Found in SystemResource Directory /resources: " + f.getAbsolutePath(), null );
+	            	return f;
+	        	} else {
+	            	logSpecial( "  Not found in SystemResource Directory /resources (this should never happen): " + f.getAbsolutePath(), null );
+	        	}
+     		} else {
+     			logSpecial( "  (uri null) Not found in SystemResource Directory /resources (this should never happen)", null );
+     		}
+    	} else {
+    		logSpecial( "  Not found in SystemResource Directory /resources: " + "resources/" + filename, null );
+    	}
+        
     	// if not found, then try the resource directory without the .esapi
     	fileUrl = ClassLoader.getSystemResource(filename);
     	if(fileUrl != null) {
