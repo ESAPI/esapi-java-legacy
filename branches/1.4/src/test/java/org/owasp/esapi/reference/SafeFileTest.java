@@ -16,8 +16,6 @@
 package org.owasp.esapi.reference;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -27,8 +25,8 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.SafeFile;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.util.FileTestUtils;
 import org.owasp.esapi.util.CollectionsUtil;
+import org.owasp.esapi.util.FileTestUtils;
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
@@ -116,7 +114,7 @@ public class SafeFileTest extends TestCase
 			String ch = i.next().toString();	// avoids generic issues in 1.4&1.5
 			try
 			{
-				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
+				new SafeFile(testDir, TEST_FILE_NAME + ch);
 				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
@@ -124,7 +122,7 @@ public class SafeFileTest extends TestCase
 			}
 			try
 			{
-				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
+				new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
 				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
@@ -154,7 +152,7 @@ public class SafeFileTest extends TestCase
 			ch = ch + ch + ch;
 			try
 			{
-				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch);
+				new SafeFile(testDir, TEST_FILE_NAME + ch);
 				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
@@ -162,7 +160,7 @@ public class SafeFileTest extends TestCase
 			}
 			try
 			{
-				File sf = new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
+				new SafeFile(testDir, TEST_FILE_NAME + ch  + "test");
 				fail("Able to create SafeFile \"" + TEST_FILE_NAME + ch + "\" ((int)ch=" + (int)ch.charAt(0) + ").");
 			}
 			catch(ValidationException expected)
@@ -216,7 +214,7 @@ public class SafeFileTest extends TestCase
 	{
 		try
 		{
-			SafeFile sf = new SafeFile(testDir + File.separator + "file%00.txt");
+			new SafeFile(testDir + File.separator + "file%00.txt");
 			fail("no exception thrown for file name with percent encoded null");
 		}
 		catch(ValidationException expected)
@@ -228,7 +226,7 @@ public class SafeFileTest extends TestCase
 	{
 		try
 		{
-			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file?.txt");
+			new SafeFile(testFile.getParent() + File.separator + "file?.txt");
 			fail("no exception thrown for file name with question mark in it");
 		}
 		catch(ValidationException e)
@@ -241,7 +239,7 @@ public class SafeFileTest extends TestCase
 	{
 		try
 		{
-			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file" + ((char)0) + ".txt");
+			new SafeFile(testFile.getParent() + File.separator + "file" + ((char)0) + ".txt");
 			fail("no exception thrown for file name with null in it");
 		}
 		catch(ValidationException e)
@@ -254,7 +252,7 @@ public class SafeFileTest extends TestCase
 	{
 		try
 		{
-			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file" + ((char)160) + ".txt");
+			new SafeFile(testFile.getParent() + File.separator + "file" + ((char)160) + ".txt");
 			fail("no exception thrown for file name with high byte in it");
 		}
 		catch(ValidationException e)
@@ -267,7 +265,7 @@ public class SafeFileTest extends TestCase
 	{
 		try
 		{
-			SafeFile sf = new SafeFile(testFile.getParent() + File.separator + "file%00.txt");
+			new SafeFile(testFile.getParent() + File.separator + "file%00.txt");
 			fail("no exception thrown for file name with percent encoded null");
 		}
 		catch(ValidationException e)

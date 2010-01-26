@@ -171,7 +171,6 @@ public class FileTestUtils
 	{
 		File[] children;
 		File child;
-		File childsParent;
 
 		if(file == null || !file.exists())
 			return;	// already deleted?

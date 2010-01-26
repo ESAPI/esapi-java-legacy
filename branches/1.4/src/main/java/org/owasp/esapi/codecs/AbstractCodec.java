@@ -46,7 +46,7 @@ public abstract class AbstractCodec implements Codec
 	 * @param c The character to search for.
 	 * @return true if c was found. false otherwise.
 	 */
-	private static final boolean sortedContains(char[] array, char c)
+	protected static final boolean sortedContains(char[] array, char c)
 	{
 		if(array == null)
 			return false;
@@ -58,7 +58,7 @@ public abstract class AbstractCodec implements Codec
 	 * @param array Array of characters to copy and sort.
 	 * @return A copy of array which has been sorted.
 	 */
-	private static final char[] copyAndSort(char[] array)
+	protected static final char[] copyAndSort(char[] array)
 	{
 		char[] ret;
 

@@ -32,10 +32,8 @@ import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.codecs.PercentCodec;
-import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
 
 /**
  * The Class EncoderTest.

@@ -13,27 +13,17 @@
  */
 package org.owasp.esapi.codecs;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
-
-import org.owasp.esapi.util.CollectionsUtil;
-import org.owasp.esapi.util.PrimWrap;
-
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
+
+import org.owasp.esapi.util.PrimWrap;
 
 public class CSSCodecTest extends TestCase
 {
-	private static final char[] EMPTY_CHAR_ARRAY = new char[0];
 	private static final Character LESS_THAN = PrimWrap.wrapChar('<');
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String HEX_DIGIT_STR = "abcdefABCDEF0123456789";
 	private static final String NO_BS_SELF_STR = HEX_DIGIT_STR + "\n\r\f";
 	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR + " \t";
-	private static final Set/*<Character>*/ UNENCODED_SET = CollectionsUtil.strToUnmodifiableSet(UNENCODED_STR);
 	private CSSCodec codec = null;
 
 	protected void setUp()

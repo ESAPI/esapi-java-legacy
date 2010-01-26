@@ -34,7 +34,6 @@ import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
-import org.owasp.esapi.errors.ValidationException;
 
 /**
  * Reference implementation of the AccessController interface. This reference

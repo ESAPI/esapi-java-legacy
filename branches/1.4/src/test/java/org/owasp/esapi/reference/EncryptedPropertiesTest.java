@@ -17,15 +17,12 @@ package org.owasp.esapi.reference;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
 import java.util.Iterator;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncryptionException;
 
 /**

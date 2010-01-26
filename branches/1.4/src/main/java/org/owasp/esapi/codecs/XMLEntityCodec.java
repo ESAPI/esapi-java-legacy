@@ -185,8 +185,7 @@ public class XMLEntityCodec extends AbstractCodec
 		StringBuffer sb = new StringBuffer();
 		Character c;
 		char ch;
-		int i;
-
+		
 		while((c=input.next())!=null)
 		{
 			ch = c.charValue();
@@ -223,7 +222,6 @@ public class XMLEntityCodec extends AbstractCodec
 	{
 		Character c;
 		StringBuffer sb = new StringBuffer();
-		int i;
 
 		input_loop: while((c=input.next())!=null)
 		{
