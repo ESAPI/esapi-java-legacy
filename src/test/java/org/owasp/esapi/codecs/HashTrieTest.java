@@ -1,11 +1,10 @@
 package org.owasp.esapi.codecs;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

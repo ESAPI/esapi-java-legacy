@@ -412,6 +412,7 @@ public class SafeRequest extends HttpServletRequestWrapper
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @deprecated as {@link HttpServletRequest#getRealPath(String)} is.
      */
     public String getRealPath(String path) {
         return request.getRealPath(path);
@@ -623,6 +624,7 @@ public class SafeRequest extends HttpServletRequestWrapper
 
     /**
      * Same as HttpServletRequest, no security changes required.
+     * @deprecated as {@link HttpServletRequest#isRequestedSessionIdFromUrl()} is.
      */
     public boolean isRequestedSessionIdFromUrl() {
         return request.isRequestedSessionIdFromUrl();

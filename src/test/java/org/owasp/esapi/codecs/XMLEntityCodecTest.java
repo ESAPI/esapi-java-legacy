@@ -13,17 +13,13 @@
  */
 package org.owasp.esapi.codecs;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import junit.framework.TestCase;
+
 import org.owasp.esapi.util.CollectionsUtil;
 import org.owasp.esapi.util.PrimWrap;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 public class XMLEntityCodecTest extends TestCase
 {
@@ -66,7 +62,6 @@ public class XMLEntityCodecTest extends TestCase
 		String expected;
 		String result;
 		int outSbBaseLen = outSb.length();
-		String out;
 
 		for(int c=Character.MIN_VALUE;c<=Character.MAX_VALUE;c++)
 		{

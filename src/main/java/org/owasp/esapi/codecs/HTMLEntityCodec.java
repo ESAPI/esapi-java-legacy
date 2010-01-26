@@ -64,7 +64,6 @@ public class HTMLEntityCodec implements Codec
      * Encodes a Character for safe use in an HTML entity field.
      */
 	public String encodeCharacter( Character c ) {
-		char ch = c.charValue();
 		String entityName = (String) characterToEntityMap.get(c);
 		if (entityName != null) {
 			return "&" + entityName + ";";

@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
+// needed to implement deprecated method getSessionContext()
 import javax.servlet.http.HttpSessionContext;
 
 /**
@@ -131,6 +132,7 @@ public class TestHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
+     * @deprecated as {@link HttpSession#getSessionContext()} is.
 	 */
 	public HttpSessionContext getSessionContext() {
 		return null;

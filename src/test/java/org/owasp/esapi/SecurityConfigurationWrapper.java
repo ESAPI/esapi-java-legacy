@@ -1,10 +1,7 @@
 package org.owasp.esapi;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-import java.util.regex.Pattern;
 
 /**
  * Simple wrapper implementation of {@link SecurityConfiguration}. 

@@ -70,6 +70,7 @@ public class JavaLogFactory implements LogFactory {
      *  A custom logging level defined between Level.SEVERE and Level.WARNING in logger.
      */
     public static class JavaLoggerLevel extends Level {
+    	private static final long serialVersionUID = 1l;
 
     	/**
     	 * Defines a custom error level below SEVERE but above WARNING since this level isn't defined directly
