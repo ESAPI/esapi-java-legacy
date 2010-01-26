@@ -1,3 +1,35 @@
+Changelog for ESAPI 1.4.3
+
+r1000 | manico.james | 2010-01-24 11:07:43 HST
+
+code comment clarification for order of property file loading
+----------------------------------------------------------------------------
+r997 | manico.james | 2010-01-23 21:52:42 HST
+
+if .esapi folder not found or does not contain ESAPI.properties, look for a directory named 'resources' on the classpath
+----------------------------------------------------------------------------
+r978 | schallee@darkmist.net | 2010-01-21 08:31:11 HST
+
+Unit test for previous commit.
+----------------------------------------------------------------------------
+r977 | schallee@darkmist.net | 2010-01-21 08:15:35 HST
+
+Handle null from getResource when a resource is not found. Instead of a NPE being thrown, a FileNotFoundException is which is inline with the javadocs for the method that say a IOException is thrown "If the file cannot be found or opended for reading."
+----------------------------------------------------------------------------
+r976 | schallee@darkmist.net | 2010-01-21 08:13:23 HST
+
+Change version from 1.4.2 to 1.4.3-SNAPSHOT so a stray mvn install
+doesn't mess up local repositories.
+
+----------------------------------------------------------------------------
+r973 | schallee@darkmist.net | 2010-01-18 03:58:31 HST
+
+Add wrapped getDisableIntrusionDetection() and change to concrete instead of abstract so missing methods cause compilation errors with
+this instead of subclasses of it (not that direct instances of this
+class are very useful...).
+
+----------------------------------------------------------------------------
+
 Changelog for ESAPI 1.4.2
 
 r928 | manico.james | 2010-01-14 12:43:11 HST
