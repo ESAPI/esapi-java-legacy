@@ -78,10 +78,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
 	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
 	private CSSCodec cssCodec = new CSSCodec();
-	
+
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("Encoder");
-	
+
 	/** Character sets that define characters immune from encoding in various formats */
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
@@ -95,27 +95,27 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
 
 	static {
-        Arrays.sort( DefaultEncoder.IMMUNE_HTML );
-        Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
-        Arrays.sort( DefaultEncoder.IMMUNE_JAVASCRIPT );
-        Arrays.sort( DefaultEncoder.IMMUNE_VBSCRIPT );
-        Arrays.sort( DefaultEncoder.IMMUNE_XML );
-        Arrays.sort( DefaultEncoder.IMMUNE_XMLATTR );
-        Arrays.sort( DefaultEncoder.IMMUNE_XPATH );
-        Arrays.sort( DefaultEncoder.CHAR_LOWERS );
-        Arrays.sort( DefaultEncoder.CHAR_UPPERS );
-        Arrays.sort( DefaultEncoder.CHAR_DIGITS );
-        Arrays.sort( DefaultEncoder.CHAR_SPECIALS );
-        Arrays.sort( DefaultEncoder.CHAR_LETTERS );
-        Arrays.sort( DefaultEncoder.CHAR_ALPHANUMERICS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LOWERS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_UPPERS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_DIGITS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_SPECIALS );
-        Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
+		Arrays.sort( DefaultEncoder.IMMUNE_HTML );
+		Arrays.sort( DefaultEncoder.IMMUNE_HTMLATTR );
+		Arrays.sort( DefaultEncoder.IMMUNE_JAVASCRIPT );
+		Arrays.sort( DefaultEncoder.IMMUNE_VBSCRIPT );
+		Arrays.sort( DefaultEncoder.IMMUNE_XML );
+		Arrays.sort( DefaultEncoder.IMMUNE_XMLATTR );
+		Arrays.sort( DefaultEncoder.IMMUNE_XPATH );
+		Arrays.sort( DefaultEncoder.CHAR_LOWERS );
+		Arrays.sort( DefaultEncoder.CHAR_UPPERS );
+		Arrays.sort( DefaultEncoder.CHAR_DIGITS );
+		Arrays.sort( DefaultEncoder.CHAR_SPECIALS );
+		Arrays.sort( DefaultEncoder.CHAR_LETTERS );
+		Arrays.sort( DefaultEncoder.CHAR_ALPHANUMERICS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LOWERS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_UPPERS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_DIGITS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_SPECIALS );
+		Arrays.sort( DefaultEncoder.CHAR_PASSWORD_LETTERS );
 	}
-	
-	
+
+
 	/**
 	 * Instantiates a new DefaultEncoder
 	 * 
@@ -140,95 +140,22 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * @throws java.lang.IllegalArgumentException If the encoder is not an instance of the Codec interface
 	 */
 	public DefaultEncoder( List codecs ) {
-	    Iterator i = codecs.iterator();
-	    while ( i.hasNext() ) {
-	       Object o = i.next();
-	       if ( !( o instanceof Codec ) ){
-	           throw new java.lang.IllegalArgumentException( "Codec list must contain only Codec instances" );
-	       }
-	    }
-	    this.codecs = codecs;
+		Iterator i = codecs.iterator();
+		while ( i.hasNext() ) {
+			Object o = i.next();
+			if ( !( o instanceof Codec ) ){
+				throw new java.lang.IllegalArgumentException( "Codec list must contain only Codec instances" );
+			}
+		}
+		this.codecs = codecs;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String canonicalize( String input ) {
 		if ( input == null ) return null;
 		return canonicalize( input, true );
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	public String canonicalize( String input, boolean strict ) {
-		if ( input == null ) return null;
-		String candidate = canonicalizeOnce( input );
-		String canary = canonicalizeOnce( candidate );
-		if ( !candidate.equals( canary ) ) {
-			if ( strict ) {
-				throw new IntrusionException( "Input validation failure", "Double encoding detected in " + input );
-			} else {
-				logger.warning( Logger.SECURITY, false, "Double encoding detected in " + input );
-			}
-		}
-		return candidate;
-	}
-	
-	/**
-	 * Helper method that takes input and canonicalizes it a single time
-	 * 
-	 * This is used by canonicalize() when checking that the input doesn't
-	 * change between passes, as well as actually performing the canoncalization 
-	 * 
-	 * @param input the string to canoncalize
-	 * @return the canocalized string
-	 */
-	private String canonicalizeOnce( String input ) {
-		if ( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		PushbackString pbs = new PushbackString( input );
-		while ( pbs.hasNext() ) {
-			// test for encoded character and pushback if found
-			boolean encoded = decodeNext( pbs );
-
-			// get the next character and do something with it
-			Character ch = pbs.next();
-			
-			// if an encoded character is found, push it back
-			if ( encoded ) {
-				pbs.pushback( ch );
-			} else {
-				sb.append( ch );
-			}
-		}
-		return sb.toString();
-	}
-	
-	/**
-	 * Helper method to iterate through codecs to see if the current character
-	 * is an encoded character in any of them. If the current character is
-	 * encoded, then it is decoded and pushed back onto the string, and this
-	 * method returns true.  If the current character is not encoded, then the
-	 * pushback stream is reset to its original state and this method returns false.
-	 * 
-	 * @param pbs A PushBackString, which is passed to the codecs 
-	 * @return true if pbs is an encoded character in one of the codecs, false otherwise
-	 */
-	private boolean decodeNext( PushbackString pbs ) {
-		Iterator i = codecs.iterator();
-		pbs.mark();
-		while ( i.hasNext() ) {
-			pbs.reset();
-			Codec codec = (Codec)i.next();
-			Character decoded = codec.decodeCharacter(pbs);
-			if ( decoded != null ) {
-				pbs.pushback( decoded );
-				return true;
-			}
-		}
-		pbs.reset();
-		return false;
 	}
 
 	/**
@@ -255,8 +182,68 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/**
 	 * {@inheritDoc}
 	 */
+	public String canonicalize( String input, boolean strict ) {
+		if ( input == null ) {
+			return null;
+		}
+
+		String working = input;
+		Codec codecFound = null;
+		int mixedCount = 1;
+		int foundCount = 0;
+		boolean clean = false;
+		while( !clean ) {
+			clean = true;
+
+			// try each codec and keep track of which ones work
+			Iterator i = codecs.iterator();
+			while ( i.hasNext() ) {
+				Codec codec = (Codec)i.next();
+				String old = working;
+				working = codec.decode( working );
+				if ( !old.equals( working ) ) {
+					if ( codecFound != null && codecFound != codec ) {
+						mixedCount++;
+					}
+					codecFound = codec;
+					if ( clean ) {
+						foundCount++;
+					}
+					clean = false;
+				}
+			}
+		}
+
+		// do strict tests and handle if any mixed, multiple, nested encoding were found
+		if ( foundCount >= 2 && mixedCount > 1 ) {
+			if ( strict ) {
+				throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
+			} else {
+				logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
+			}
+		}
+		else if ( foundCount >= 2 ) {
+			if ( strict ) {
+				throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) encoding detected in " + input );
+			} else {
+				logger.warning( Logger.SECURITY, false, "Multiple ("+ foundCount +"x) encoding detected in " + input );
+			}
+		}
+		else if ( mixedCount > 1 ) {
+			if ( strict ) {
+				throw new IntrusionException( "Input validation failure", "Mixed encoding ("+ mixedCount +"x) detected in " + input );
+			} else {
+				logger.warning( Logger.SECURITY, false, "Mixed encoding ("+ mixedCount +"x) detected in " + input );
+			}
+		}
+		return working;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public String encodeForHTML(String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -270,14 +257,14 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 			}
 		}
 		return sb.toString();
-	 }
-	 
-	 
+	}
+
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encodeForHTMLAttribute(String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -286,12 +273,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encodeForCSS(String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -302,12 +289,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encodeForJavaScript(String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -320,7 +307,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForVBScript(String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -329,12 +316,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return sb.toString();
 	}
 
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encodeForSQL(Codec codec, String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -347,7 +334,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForOS(Codec codec, String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -365,23 +352,23 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
 			switch (c) {
-			case '\\':
-				sb.append("\\5c");
-				break;
-			case '*':
-				sb.append("\\2a");
-				break;
-			case '(':
-				sb.append("\\28");
-				break;
-			case ')':
-				sb.append("\\29");
-				break;
-			case '\0':
-				sb.append("\\00");
-				break;
-			default:
-				sb.append(c);
+				case '\\':
+					sb.append("\\5c");
+					break;
+				case '*':
+					sb.append("\\2a");
+					break;
+				case '(':
+					sb.append("\\28");
+					break;
+				case ')':
+					sb.append("\\29");
+					break;
+				case '\0':
+					sb.append("\\00");
+					break;
+				default:
+					sb.append(c);
 			}
 		}
 		return sb.toString();
@@ -399,29 +386,29 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
 			switch (c) {
-			case '\\':
-				sb.append("\\\\");
-				break;
-			case ',':
-				sb.append("\\,");
-				break;
-			case '+':
-				sb.append("\\+");
-				break;
-			case '"':
-				sb.append("\\\"");
-				break;
-			case '<':
-				sb.append("\\<");
-				break;
-			case '>':
-				sb.append("\\>");
-				break;
-			case ';':
-				sb.append("\\;");
-				break;
-			default:
-				sb.append(c);
+				case '\\':
+					sb.append("\\\\");
+					break;
+				case ',':
+					sb.append("\\,");
+					break;
+				case '+':
+					sb.append("\\+");
+					break;
+				case '"':
+					sb.append("\\\"");
+					break;
+				case '<':
+					sb.append("\\<");
+					break;
+				case '>':
+					sb.append("\\>");
+					break;
+				case ';':
+					sb.append("\\;");
+					break;
+				default:
+					sb.append(c);
 			}
 		}
 		// add the trailing backslash if needed
@@ -436,7 +423,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForXPath(String input) {
-	    if( input == null ) return null;
+		if( input == null ) return null;
 		StringBuffer sb = new StringBuffer();
 		for ( int i=0; i<input.length(); i++ ) {
 			char c = input.charAt(i);
@@ -449,20 +436,20 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForXML(String input) {
-	    if( input == null ) {
-	    	return null;	
-	    }
-	    return xmlCodec.encode( IMMUNE_XML, input);
+		if( input == null ) {
+			return null;	
+		}
+		return xmlCodec.encode( IMMUNE_XML, input);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encodeForXMLAttribute(String input) {
-	    if( input == null ) {
-	    	return null;	
-	    }
-	    return xmlCodec.encode( IMMUNE_XMLATTR, input);
+		if( input == null ) {
+			return null;	
+		}
+		return xmlCodec.encode( IMMUNE_XMLATTR, input);
 	}
 
 	/**
@@ -510,7 +497,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 		return Base64.decode( input );
 	}
 
-	
+
 	/**
 	 * isContained is a helper method which determines if c is 
 	 * contained in the character array haystack.
@@ -528,10 +515,10 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 				return true;
 		}
 		return false;
-		
+
 		// If sorted arrays are guaranteed, this is faster
 		// return( Arrays.binarySearch(array, element) >= 0 );
 	}
 
-    
+
 }
