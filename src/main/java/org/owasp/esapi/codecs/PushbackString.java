@@ -116,4 +116,15 @@ public class PushbackString {
 		}
 		return output;
 	}
+
+	public String toString()
+	{
+		StringBuffer sb = new StringBuffer();
+
+		if(pushback != null)
+			sb.append(pushback);
+		if(input != null && index < input.length())
+			sb.append(input.substring(index));
+		return sb.toString();
+	}
 }

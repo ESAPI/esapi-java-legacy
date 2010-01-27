@@ -77,16 +77,22 @@ public class EncoderTest extends TestCase {
 	}
 
 
-	/**
-	 * Test of canonicalize method, of class org.owasp.esapi.Encoder.
-	 * 
-	 * @throws EncodingException
-	 */
 	public void testCanonicalize() throws EncodingException {
+		System.out.println("canonicalize");
+
 		ArrayList list = new ArrayList();
 		list.add( new HTMLEntityCodec() );
 		list.add( new PercentCodec() );
 		Encoder instance = new DefaultEncoder( list );
+
+		// Test null paths
+		assertEquals( null, instance.canonicalize(null));
+		assertEquals( null, instance.canonicalize(null, true));
+		assertEquals( null, instance.canonicalize(null, false));
+
+		// test exception paths
+		assertEquals( "%", instance.canonicalize("%25", true));
+		assertEquals( "%", instance.canonicalize("%25", false));
 
 		assertEquals( "%", instance.canonicalize("%25"));
 		assertEquals( "%F", instance.canonicalize("%25F"));
@@ -185,12 +191,13 @@ public class EncoderTest extends TestCase {
 		assertEquals( "<", instance.canonicalize("&LT;"));
 
 		assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
-		assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript&#x3E;alert%28%22hello&#34%29%3B%3C%2Fscript%3E") );
+		assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript&#x3E;alert%28%22hello&#34%29%3B%3C%2Fscript%3E", false) );
 
 		// javascript escape syntax
 		ArrayList js = new ArrayList();
 		js.add( new JavaScriptCodec() );
 		instance = new DefaultEncoder( js );
+		System.out.println( "JavaScript Decoding" );
 
 		assertEquals( "\0", instance.canonicalize("\\0"));
 		assertEquals( "\b", instance.canonicalize("\\b"));
@@ -218,6 +225,7 @@ public class EncoderTest extends TestCase {
 		ArrayList css = new ArrayList();
 		css.add( new CSSCodec() );
 		instance = new DefaultEncoder( css );
+		System.out.println( "CSS Decoding" );
 		assertEquals( "<", instance.canonicalize("\\3c"));  // add strings to prevent null byte
 		assertEquals( "<", instance.canonicalize("\\03c"));
 		assertEquals( "<", instance.canonicalize("\\003c"));
@@ -237,31 +245,44 @@ public class EncoderTest extends TestCase {
 	 * @throws EncodingException
 	 */
 	public void testDoubleEncodingCanonicalization() throws EncodingException {
+		System.out.println("doubleEncodingCanonicalization");
 		Encoder instance = ESAPI.encoder();
 
+		// note these examples use the strict=false flag on canonicalize to allow
+		// full decoding without throwing an IntrusionException. Generally, you
+		// should use strict mode as allowing double-encoding is an abomination.
+
 		// double encoding examples
-		assertEquals( "<", instance.canonicalize("&#26;lt&#59" )); //double entity
-		assertEquals( "\\", instance.canonicalize("%255c")); //double percent
-		assertEquals( "%", instance.canonicalize("%2525")); //double percent
+		assertEquals( "<", instance.canonicalize("&#x26;lt&#59", false )); //double entity
+		assertEquals( "\\", instance.canonicalize("%255c", false)); //double percent
+		assertEquals( "%", instance.canonicalize("%2525", false)); //double percent
 
 		// double encoding with multiple schemes example
-		assertEquals( "<", instance.canonicalize("%26lt%3b")); //first entity, then percent
-		assertEquals( "<", instance.canonicalize("&#25;26")); //first percent, then entity
+		assertEquals( "<", instance.canonicalize("%26lt%3b", false)); //first entity, then percent
+		assertEquals( "&", instance.canonicalize("&#x25;26", false)); //first percent, then entity
 
 		// nested encoding examples
-		assertEquals( "<", instance.canonicalize("%253c")); //nested encode % with percent
-		assertEquals( "<", instance.canonicalize("%%33%63")); //nested encode both nibbles with percent
-		assertEquals( "<", instance.canonicalize("%%33c")); // nested encode first nibble with percent
-		assertEquals( "<", instance.canonicalize("%3%63"));  //nested encode second nibble with percent
-		assertEquals( "<", instance.canonicalize("&&108;t;")); //nested encode l with entity
+		assertEquals( "<", instance.canonicalize("%253c", false)); //nested encode % with percent
+		assertEquals( "<", instance.canonicalize("%%33%63", false)); //nested encode both nibbles with percent
+		assertEquals( "<", instance.canonicalize("%%33c", false)); // nested encode first nibble with percent
+		assertEquals( "<", instance.canonicalize("%3%63", false));  //nested encode second nibble with percent
+		assertEquals( "<", instance.canonicalize("&&#108;t;", false)); //nested encode l with entity
+		assertEquals( "<", instance.canonicalize("%2&#x35;3c", false)); //triple percent, percent, 5 with entity
 
 		// nested encoding with multiple schemes examples
-		assertEquals( "<", instance.canonicalize("&%6ct;")); // nested encode l with percent
-		assertEquals( "<", instance.canonicalize("%&x33;c")); //nested encode 3 with entity            
+		assertEquals( "<", instance.canonicalize("&%6ct;", false)); // nested encode l with percent
+		assertEquals( "<", instance.canonicalize("%&#x33;c", false)); //nested encode 3 with entity            
 
-		// multiple encoding tests, note this uses strict=false flag
+		// multiple encoding tests
 		assertEquals( "% & <script> <script>", instance.canonicalize( "%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false ) );
-		assertEquals( "< < < < <; <; <;", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", false ) );
+		assertEquals( "< < < < < < <", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", false ) );
+
+		// test strict mode with both mixed and multiple encoding
+		try {
+			assertEquals( "< < < < < < <", instance.canonicalize( "%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B" ) );
+		} catch( IntrusionException e ) {
+			// expected
+		}
 
 		try {
 			assertEquals( "<script", instance.canonicalize("%253Cscript" ) );
