@@ -253,41 +253,43 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		InputStream in = null;
 
 		ClassLoader[] loaders = new ClassLoader[] {
-				ClassLoader.getSystemClassLoader(),
 				Thread.currentThread().getContextClassLoader(),
+				ClassLoader.getSystemClassLoader(),
 				getClass().getClassLoader() 
 		};
 
 		ClassLoader currentLoader = null;
 		for (int i = 0; i < loaders.length; i++) {
-			currentLoader = loaders[i];
-			try {
-				// try root
-				in = loaders[i].getResourceAsStream(fileName);
-				
-				// try .esapi folder
-				if (in == null) {
-					in = currentLoader.getResourceAsStream(".esapi/" + fileName);
-				} 
-				
-				// try resources folder
-				if (in == null) {
-					in = currentLoader.getResourceAsStream("resources/" + fileName);
-				}
-	
-				// now load the properties
-				if (in != null) {
-					result = new Properties();
-					result.load(in); // Can throw IOException
-					logSpecial("Successfully loaded " + fileName + " via the classpath! BOO-YA!");
-				}
-			} catch (Exception e) {
-				result = null;
-	
-			} finally {
+			if (loaders[i] != null) {
+				currentLoader = loaders[i];
 				try {
-					in.close();
+					// try root
+					in = loaders[i].getResourceAsStream(fileName);
+					
+					// try .esapi folder
+					if (in == null) {
+						in = currentLoader.getResourceAsStream(".esapi/" + fileName);
+					} 
+					
+					// try resources folder
+					if (in == null) {
+						in = currentLoader.getResourceAsStream("resources/" + fileName);
+					}
+		
+					// now load the properties
+					if (in != null) {
+						result = new Properties();
+						result.load(in); // Can throw IOException
+						logSpecial("Successfully loaded " + fileName + " via the classpath! BOO-YA!");
+					}
 				} catch (Exception e) {
+					result = null;
+		
+				} finally {
+					try {
+						in.close();
+					} catch (Exception e) {
+					}
 				}
 			}
 		}
