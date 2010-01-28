@@ -14,7 +14,30 @@ public class FileTestUtils
 	private static final String CLASS_NAME = CLASS.getName();
 	private static final String DEFAULT_PREFIX = CLASS_NAME + '.';
 	private static final String DEFAULT_SUFFIX = ".tmp";
-	private static final Random rand = new SecureRandom();
+	private static final Random rand;
+
+	/*
+		Rational for switching from SecureRandom to Random:
+		
+		This is used for generating filenames for temporary
+		directories. Origionally this was using SecureRandom for
+		this to make /tmp races harder. This is not necessary as
+		mkdir always returns false if if the directory already
+		exists.
+		
+		Additionally, SecureRandom for some reason on linux
+		is appears to be reading from /dev/random instead of
+		/dev/urandom. As such, the many calls for temporary
+		directories in the unit tests quickly depleates the
+		entropy pool causing unit test runs to block until more
+		entropy is collected (this is why moving the mouse speeds
+		up unit tests).
+	*/
+	static
+	{
+		SecureRandom secRand = new SecureRandom();
+		rand = new Random(secRand.nextLong());
+	}
 
 	/** Private constructor as all methods are static. */
 	private FileTestUtils()
@@ -171,7 +194,6 @@ public class FileTestUtils
 	{
 		File[] children;
 		File child;
-		File childsParent;
 
 		if(file == null || !file.exists())
 			return;	// already deleted?
