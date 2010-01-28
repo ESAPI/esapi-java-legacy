@@ -557,101 +557,59 @@ public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
     	// if not found, then try the programatically set resource directory (this defaults to SystemResource directory/.esapi
     	URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + "/" + filename);
     	if(fileUrl != null) {
-     		String resource = fileUrl.getFile(); 		
-     		
-     		URI uri = null;
-     		try {
-     			uri = new URI("file://" + resource);
-     		} catch (Exception e) {}
-     		
-     		if (uri != null) {
-     			f = new File( uri );
-	        	
-	        	if ( f.exists() ) {
-	            	logSpecial( "  Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath(), null );
-	            	return f;
-	        	} else {
-	            	logSpecial( "  Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath(), null );
-	        	}
-     		} else {
-     			logSpecial( "  (uri null) Not found in SystemResource Directory/resourceDirectory (this should never happen)", null );
-     		}
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath(), null );
+        	}
     	} else {
     		logSpecial( "  Not found in SystemResource Directory/resourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory + "/" + filename, null );
     	}
 
-    	// if not found, then try the default set the resource directory as .esapi
+    	// if not found, then try the default set the resource directory as ".esapi"
     	fileUrl = ClassLoader.getSystemResource(".esapi/" + filename);
     	if(fileUrl != null) {
-     		String resource = fileUrl.getFile(); 		
-     		
-     		URI uri = null;
-     		try {
-     			uri = new URI("file://" + resource);
-     		} catch (Exception e) {}
-     		
-     		if (uri != null) {	
-     			f = new File( uri );
-	        	if ( f.exists() ) {
-	            	logSpecial( "  Found in SystemResource Directory/.esapi: " + f.getAbsolutePath(), null );
-	            	return f;
-	        	} else {
-	            	logSpecial( "  Not found in SystemResource Directory/.esapi(this should never happen): " + f.getAbsolutePath(), null );
-	        	}
-     		} else {
-     			logSpecial( "  (uri null) Not found in SystemResource Directory/.esapi(this should never happen)", null );
-     		}
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory/.esapi: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory/.esapi(this should never happen): " + f.getAbsolutePath(), null );
+        	}
     	} else {
     		logSpecial( "  Not found in SystemResource Directory/.esapi: " + ".esapi/" + filename, null );
     	}
     	
-    	// if not found, look for a directory named 'resources' on the classpath
-        fileUrl = ClassLoader.getSystemResource("resources/" + filename);
+    	// if not found, then try the default set the resource directory as "resources"
+    	fileUrl = ClassLoader.getSystemResource("resources/" + filename);
     	if(fileUrl != null) {
-     		String resource = fileUrl.getFile(); 		
-     		
-     		URI uri = null;
-     		try {
-     			uri = new URI("file://" + resource);
-     		} catch (Exception e) {}
-     		
-     		if (uri != null) {	
-     			f = new File( uri );
-	        	if ( f.exists() ) {
-	            	logSpecial( "  Found in SystemResource Directory /resources: " + f.getAbsolutePath(), null );
-	            	return f;
-	        	} else {
-	            	logSpecial( "  Not found in SystemResource Directory /resources (this should never happen): " + f.getAbsolutePath(), null );
-	        	}
-     		} else {
-     			logSpecial( "  (uri null) Not found in SystemResource Directory /resources (this should never happen)", null );
-     		}
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory/resources: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory/.esapi(this should never happen): " + f.getAbsolutePath(), null );
+        	}
     	} else {
-    		logSpecial( "  Not found in SystemResource Directory /resources: " + "resources/" + filename, null );
+    		logSpecial( "  Not found in SystemResource Directory/resources: " + "resources/" + filename, null );
     	}
 
     	// if not found, then try the resource directory without the .esapi
     	fileUrl = ClassLoader.getSystemResource(filename);
     	if(fileUrl != null) {
-     		String resource = fileUrl.getFile(); 		
-     		
-     		URI uri = null;
-     		try {
-     			uri = new URI("file://" + resource);
-     		} catch (Exception e) {}
-     		
-     		if (uri != null) {	
-     			//logSpecial(" getResourceFile 3 uri: " + uri.getScheme() + " : " +  uri, null);
-	        	f = new File( uri );
-	        	if ( f.exists() ) {
-	            	logSpecial( "  Found in SystemResource Directory: " + f.getAbsolutePath(), null );
-	            	return f;
-	        	} else {
-	            	logSpecial( "  Not found in SystemResource Directory (this should never happen): " + f.getAbsolutePath(), null );
-	        	}
-     		} else {
-     			logSpecial( "  (uri null) Not found in SystemResource Directory (this should never happen): ", null );
-     		}
+    		String fileLocation = fileUrl.getFile();
+        	f = new File( fileLocation );
+        	if ( f.exists() ) {
+            	logSpecial( "  Found in SystemResource Directory: " + f.getAbsolutePath(), null );
+            	return f;
+        	} else {
+            	logSpecial( "  Not found in SystemResource Directory (this should never happen): " + f.getAbsolutePath(), null );
+        	}
     	} else {
     		logSpecial( "  Not found in SystemResource Directory: " + filename, null );
     	}
