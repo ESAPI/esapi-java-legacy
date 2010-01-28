@@ -237,8 +237,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	
     private Properties loadConfigurationFromClasspath(String fileName)
     {
-    	ClassLoader loader = getClass().getClassLoader();
-    	if ( loader == null ) throw new IllegalArgumentException( "Failure to load ESAPI configuration from classpath");
+        ClassLoader loader = getClass().getClassLoader();
+        if ( loader == null ) loader = Thread.currentThread().getContextClassLoader();
+        if ( loader == null ) throw new IllegalArgumentException( "Failure to load ESAPI configuration from classpath");
     	
         Properties result = null;
         
@@ -253,6 +254,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         	} else if (in == null) {
         		in = loader.getResourceAsStream("resources/" + fileName);
             }
+        	
+        	ClassLoader.getSystemClassLoader().getResource("resources/ESAPI.properties");
+        	
             
             if (in != null) {
                 result = new Properties ();
