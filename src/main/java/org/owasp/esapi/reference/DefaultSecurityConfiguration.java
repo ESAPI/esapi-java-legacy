@@ -220,19 +220,19 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * Load configuration. Never prints properties.
      * @throws java.io.IOException if the file is inaccessible
      */
-	private void loadConfiguration() throws IOException {
+    private void loadConfiguration() throws IOException {
 
-		logSpecial("Attempting to load ESAPI.properties via the classpath.");
-		properties = loadConfigurationFromClasspath( "ESAPI.properties" );
-		
-		 if (properties == null) {
-			 logSpecial("Attempting to load ESAPI.properties via file io and resource loading.");
-			 try {
-				 properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ), "ESAPI.properties" );
-			 } catch (Exception e) {
-				 logSpecial("ESAPI.properties could not be successfully loaded by any means. fail.");
-			 }
-		}
+        logSpecial("Attempting to load ESAPI.properties via the classpath.");
+        properties = loadConfigurationFromClasspath( "ESAPI.properties" );
+
+        if (properties == null) {
+            logSpecial("Attempting to load ESAPI.properties via file io and resource loading.");
+            try {
+                properties = loadPropertiesFromStream( getResourceStream( "ESAPI.properties" ), "ESAPI.properties" );
+            } catch (Exception e) {
+                logSpecial("ESAPI.properties could not be successfully loaded by any means. fail.");
+            }
+        }
     }
 	
     private Properties loadConfigurationFromClasspath(String fileName)
