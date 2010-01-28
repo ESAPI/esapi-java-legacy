@@ -55,7 +55,7 @@ public class DefaultSecurityConfigurationTest extends TestCase
 			conf.getResourceStream("file.that.should.not.exist");
 			fail("getResourceStream(\"file.that.should.not.exist\" did not throw a FileNotFoundException");
 		}
-		catch(FileNotFoundException expected)
+		catch (FileNotFoundException expected)
 		{
 			// success
 		}
