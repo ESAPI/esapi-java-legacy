@@ -4,7 +4,7 @@
 	<groupId>OWASP</groupId>
 	<artifactId>ESAPI</artifactId>
 	<packaging>jar</packaging>
-	<version>1.4.4-RC-3-SNAPSHOT</version>
+	<version>1.4.4-RC-4-SNAPSHOT</version>
 	<name>ESAPI</name>
 	<description>
 		The Enterprise Security API (ESAPI) project is an OWASP

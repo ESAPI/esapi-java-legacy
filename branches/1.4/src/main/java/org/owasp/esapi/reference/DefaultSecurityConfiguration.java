@@ -59,6 +59,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
 	/** The properties. */
 	private Properties properties = new Properties();
+	
+	/** The name of the ESAPI property file */
+	public static final String RESOURCE_FILE = "ESAPI.properties";
 
 	/** The location of the Resources directory used by ESAPI. */
 	public static final String RESOURCE_DIRECTORY = "org.owasp.esapi.resources";
@@ -176,10 +179,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public String getResourceDirectory() {
-		if (resourceDirectory != null
-				&& !resourceDirectory.endsWith(System
-						.getProperty("file.separator"))) {
-			resourceDirectory += System.getProperty("file.separator");
+		if (resourceDirectory != null && !resourceDirectory.endsWith(File.separator)) {
+			resourceDirectory += File.separator;
 		}
 		return resourceDirectory;
 	}
@@ -232,22 +233,22 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
 	private void loadConfiguration() throws IOException {
 
-		logSpecial("Attempting to load ESAPI.properties via the classpath.");
-		properties = loadConfigurationFromClasspath("ESAPI.properties");
-
-		if (properties == null) {
-			logSpecial("Attempting to load ESAPI.properties via file-io and resource loading.");
+		logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");
+		
+		try {
+			properties = loadConfigurationFromClasspath(RESOURCE_FILE);
+		} catch (IllegalArgumentException iae) {
+		
+			logSpecial("Attempting to load " + RESOURCE_FILE + " via file io.");
 			try {
-				properties = loadPropertiesFromStream(
-						getResourceStream("ESAPI.properties"),
-						"ESAPI.properties");
+				properties = loadPropertiesFromStream(getResourceStream(RESOURCE_FILE), RESOURCE_FILE);
 			} catch (Exception e) {
-				logSpecial("ESAPI.properties could not be successfully loaded by any means. fail.");
-			}
+				logSpecial(RESOURCE_FILE + " could not be successfully loaded by any means. fail.");
+			}			
 		}
 	}
 
-	private Properties loadConfigurationFromClasspath(String fileName) {
+	private Properties loadConfigurationFromClasspath(String fileName) throws IllegalArgumentException {
 		Properties result = null;
 		InputStream in = null;
 
@@ -292,7 +293,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		}
 
 		if (result == null) {
-		    throw new IllegalArgumentException("Failed to load ESAPI.properties as a classloader resource.");
+		    throw new IllegalArgumentException("Failed to load " + RESOURCE_FILE + " as a classloader resource.");
 		}
 
 		return result;
@@ -653,7 +654,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		}
 
 		// if not found, then try the programatically set resource directory
-		// (this defaults to SystemResource directory/ESAPI.properties
+		// (this defaults to SystemResource directory/RESOURCE_FILE
 		URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + File.separator + filename);
 		if (fileUrl != null) {
 			String fileLocation = fileUrl.getFile();
