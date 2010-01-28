@@ -281,6 +281,10 @@
             </configuration>
          </plugin>
          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>jdepend-maven-plugin</artifactId>
+         </plugin>         
+         <plugin>
             <artifactId>maven-pmd-plugin</artifactId>
             <configuration>
                <targetJdk>1.5</targetJdk>
