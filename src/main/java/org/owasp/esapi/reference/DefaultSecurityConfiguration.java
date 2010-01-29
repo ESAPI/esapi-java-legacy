@@ -232,18 +232,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 *             if the file is inaccessible
 	 */
 	private void loadConfiguration() throws IOException {
-
-		logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");
 		
 		try {
-			properties = loadConfigurationFromClasspath(RESOURCE_FILE);
-		} catch (IllegalArgumentException iae) {
-		
+		    //first attempt file IO loading of properties
 			logSpecial("Attempting to load " + RESOURCE_FILE + " via file io.");
+			properties = loadPropertiesFromStream(getResourceStream(RESOURCE_FILE), RESOURCE_FILE);
+			
+		} catch (Exception iae) {
+		    //if file io loading fails, attempt classpath based loading next
+		    logSpecial("Loading " + RESOURCE_FILE + " via file io failed.");
+			logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");		
 			try {
-				properties = loadPropertiesFromStream(getResourceStream(RESOURCE_FILE), RESOURCE_FILE);
-			} catch (Exception e) {
-				logSpecial(RESOURCE_FILE + " could not be successfully loaded by any means. fail.");
+				properties = loadConfigurationFromClasspath(RESOURCE_FILE);
+			} catch (Exception e) {				
+				logSpecial(RESOURCE_FILE + " could not be loaded by any means. fail.", e);
 			}			
 		}
 	}
@@ -588,21 +590,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		return pattern;
 	}
 
-	private Properties loadPropertiesFromStream(InputStream is, String name)
-			throws IOException {
-		Properties config = new Properties();
-		try {
-			config.load(is);
-			logSpecial("Successfully loaded '" + name + "' via an InputStream.");
-		} finally {
-			if (is != null)
-				try {
-					is.close();
-				} catch (Exception e) {
-				}
-		}
-		return config;
-	}
+    private Properties loadPropertiesFromStream(InputStream is, String name) throws IOException {
+        Properties config = new Properties();
+        try {
+            config.load(is);
+            logSpecial("successfully loaded '" + name + "' via an inputStream.");
+        } finally {
+            if (is != null)
+                try {
+                    is.close();
+                } catch (Exception e) {
+            }
+        }
+        return config;
+    }
 
 	/**
 	 * Utility method to get a resource as an InputStream. The search looks for
