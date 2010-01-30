@@ -24,15 +24,15 @@
       <system>Google Code Issue Tracking</system>
       <url>http://code.google.com/p/owasp-esapi-java/issues/list</url>
    </issueManagement>
-   <mailingLists>
-      <mailingList>
-         <name>OWASP-ESAPI</name>
-         <subscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</subscribe>
-         <unsubscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</unsubscribe>
-         <post>mailto:owasp-esapi@lists.owasp.org</post>
-         <archive>https://lists.owasp.org/pipermail/owasp-esapi/</archive>
-      </mailingList>
-   </mailingLists>
+    <mailingLists>
+        <mailingList>
+            <name>OWASP-ESAPI</name>
+            <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</subscribe>
+            <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</unsubscribe>
+            <post>mailto:esapi-dev@lists.owasp.org</post>
+            <archive>https://lists.owasp.org/pipermail/esapi-dev/</archive>
+        </mailingList>
+    </mailingLists>
 
    <organization>
       <name>The Open Web Application Security Project (OWASP)</name>
