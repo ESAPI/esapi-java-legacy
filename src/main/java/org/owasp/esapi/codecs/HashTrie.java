@@ -515,7 +515,7 @@ public class HashTrie/*<T>*/ implements Map/*<CharSequence,T>*/
 			return old;
 
 		// after in case of replacement
-		if((len key.length()) > maxKeyLen)
+		if((len = key.length()) > maxKeyLen)
 			maxKeyLen = len;
 		size++;
 		return null;
