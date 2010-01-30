@@ -128,7 +128,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * <P>
 	 * where 'path' references the appropriate directory in your system.
 	 */
-	private static String resourceDirectory = System
+	private String resourceDirectory = System
 			.getProperty(RESOURCE_DIRECTORY);
 
 	/*
@@ -658,7 +658,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
 		// if not found, then try the programatically set resource directory
 		// (this defaults to SystemResource directory/RESOURCE_FILE
-		URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + File.separator + filename);
+		URL fileUrl = ClassLoader.getSystemResource(resourceDirectory + File.separator + filename);
 		if (fileUrl != null) {
 			String fileLocation = fileUrl.getFile();
 			f = new File(fileLocation);
@@ -669,7 +669,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				logSpecial("Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath());
 			}
 		} else {
-			logSpecial("Not found in SystemResource Directory/resourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory + File.separator + filename);
+			logSpecial("Not found in SystemResource Directory/resourceDirectory: " + resourceDirectory + File.separator + filename);
 		}
 
 		// if not found, then try the user's home directory
