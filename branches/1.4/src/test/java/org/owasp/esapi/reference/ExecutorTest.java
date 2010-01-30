@@ -265,4 +265,58 @@ public class ExecutorTest extends TestCase
 		}
 	}
 
+	/**
+	 * Test of executeOSCommand method attempting to be non-platform
+	 * specific.
+	 */
+	public void testExecuteSystemCommand() throws Exception
+	{
+		System.out.println("executeSystemCommand");
+		File tmpDir;
+		File javaHome;
+		File javaHomeBin;
+		File javaHomeBinJava;
+		Executor instance = ESAPI.executor();
+		List params = new ArrayList();
+		String result;
+		Codec codec;
+		String javaCmd;
+
+		if (System.getProperty("os.name").indexOf("Windows") >= 0)
+		{
+			codec = new WindowsCodec();
+			javaCmd = "java.exe";
+		}
+		else
+		{
+			javaCmd = "java";
+			codec = new UnixCodec();
+		}
+
+		javaHome= new File(System.getProperty("java.home")).getCanonicalFile();
+		assertTrue("system property java.home does not point to a directory", javaHome.isDirectory());
+		javaHomeBin = new File(javaHome, "bin").getCanonicalFile();
+		assertTrue(javaHome.getPath() + File.separator + "bin does not exist", javaHome.isDirectory());
+		javaHomeBinJava = new File(javaHomeBin, javaCmd).getCanonicalFile();
+		assertTrue(javaHomeBinJava.getPath() + File.separator + "java does not exist", javaHomeBinJava.exists());
+
+		tmpDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();
+		assertTrue("system property java.io.tmpdir does not point to a directory", tmpDir.isDirectory());
+
+		ESAPI.setSecurityConfiguration(
+				new Conf(
+					ESAPI.securityConfiguration(),
+					Collections.singletonList(javaHomeBinJava.getPath()),
+					tmpDir
+					)
+				);
+		// -version goes to stderr which executeSystemCommand doesn't read...
+		// -help goes to stdout so we'll use that...
+		params.add("-help");
+
+		result = instance.executeSystemCommand(javaHomeBinJava, params, tmpDir, codec);
+		assertNotNull("result of java -version was null", result);
+		assertTrue("result of java -help did not contain -version", result.indexOf("-version") >= 0);
+	}
+
 }
