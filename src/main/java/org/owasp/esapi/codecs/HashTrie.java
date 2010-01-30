@@ -502,7 +502,7 @@ public class HashTrie/*<T>*/ implements Map/*<CharSequence,T>*/
 	 */
 	public /*T*/Object put(CharSequence key, /*T*/Object value) throws NullPointerException
 	{
-		int len = key.length();
+		int len;
 		/*T*/Object old;
 
 		if(key == null)
@@ -515,7 +515,7 @@ public class HashTrie/*<T>*/ implements Map/*<CharSequence,T>*/
 			return old;
 
 		// after in case of replacement
-		if(len > maxKeyLen)
+		if((len key.length()) > maxKeyLen)
 			maxKeyLen = len;
 		size++;
 		return null;
