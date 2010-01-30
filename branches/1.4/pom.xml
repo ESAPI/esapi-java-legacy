@@ -29,10 +29,10 @@
 	<mailingLists>
 		<mailingList>
 			<name>OWASP-ESAPI</name>
-			<subscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</subscribe>
-			<unsubscribe>https://lists.owasp.org/mailman/listinfo/owasp-esapi</unsubscribe>
-			<post>mailto:owasp-esapi@lists.owasp.org</post>
-			<archive>https://lists.owasp.org/pipermail/owasp-esapi/</archive>
+			<subscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</subscribe>
+			<unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</unsubscribe>
+			<post>mailto:esapi-dev@lists.owasp.org</post>
+			<archive>https://lists.owasp.org/pipermail/esapi-dev/</archive>
 		</mailingList>
 	</mailingLists>
 	
