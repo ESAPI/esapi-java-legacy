@@ -35,7 +35,9 @@ public class EncodeForBase64Tag extends BaseEncodeTag
 		}
 		catch(UnsupportedEncodingException e)
 		{
-			throw new JspTagException("Unsupported encoding " + enc,e);
+			JspTagException wrapped = new JspTagException("Unsupported encoding " + enc);
+			wrapped.initCause(e);
+			throw wrapped;
 		}
 	}
 

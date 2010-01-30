@@ -61,7 +61,9 @@ public abstract class BaseEncodeTag extends BodyTagSupport
 		}
 		catch (IOException e)
 		{
-			throw new JspTagException("Error writing to body's enclosing JspWriter",e);
+			JspTagException wrapped = new JspTagException("Error writing to body's enclosing JspWriter");
+			wrapped.initCause(e);
+			throw wrapped;
 		}
 
 		bodyContent.clearBody();
