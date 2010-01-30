@@ -2,7 +2,6 @@ package org.owasp.esapi.codecs;
 
 import java.io.IOException;
 import java.io.PushbackReader;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -472,7 +471,7 @@ public class HashTrie<T> implements Map<CharSequence,T>
 	 */
 	public T put(CharSequence key, T value) throws NullPointerException
 	{
-		int len = key.length();
+		int len;
 		T old;
 
 		if(key == null)
@@ -485,7 +484,7 @@ public class HashTrie<T> implements Map<CharSequence,T>
 			return old;
 
 		// after in case of replacement
-		if(len > maxKeyLen)
+		if((len = key.length()) > maxKeyLen)
 			maxKeyLen = len;
 		size++;
 		return null;
