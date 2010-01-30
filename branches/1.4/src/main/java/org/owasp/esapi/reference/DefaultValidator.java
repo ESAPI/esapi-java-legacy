@@ -612,7 +612,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * 
 	 */
 	public boolean isValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws IntrusionException {
-		return isValidDouble( context, input, minValue, maxValue, allowNull );
+        try {
+            getValidDouble( context, input, minValue, maxValue, allowNull );
+            return true;
+        } catch( Exception e ) {
+            return false;
+        }
 	}
 	
 	/**
