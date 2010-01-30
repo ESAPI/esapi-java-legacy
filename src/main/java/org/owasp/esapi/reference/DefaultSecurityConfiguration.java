@@ -196,7 +196,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * Specifically, ClassLoader.getResource(resourceDirectory + filename) will
      * be used to load the file.
      */
-    private static String resourceDirectory = ".esapi";
+    private String resourceDirectory = ".esapi";
 
 //    private static long lastModified = -1;
 
@@ -518,7 +518,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
 		// if not found, then try the programatically set resource directory
 		// (this defaults to SystemResource directory/RESOURCE_FILE
-		URL fileUrl = ClassLoader.getSystemResource(DefaultSecurityConfiguration.resourceDirectory + File.separator + filename);
+		URL fileUrl = ClassLoader.getSystemResource(resourceDirectory + File.separator + filename);
 		if (fileUrl != null) {
 			String fileLocation = fileUrl.getFile();
 			f = new File(fileLocation);
@@ -529,7 +529,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				logSpecial("Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath());
 			}
 		} else {
-			logSpecial("Not found in SystemResource Directory/resourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory + File.separator + filename);
+			logSpecial("Not found in SystemResource Directory/resourceDirectory: " + resourceDirectory + File.separator + filename);
 		}
 
 		// if not found, then try the user's home directory
