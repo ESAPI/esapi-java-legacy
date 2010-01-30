@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -29,13 +28,13 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.BlockAction;
 import org.owasp.esapi.waf.actions.DefaultAction;
@@ -78,7 +77,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 	private FilterConfig fc;
 	
-	private static Logger logger = Logger.getLogger(ESAPIWebApplicationFirewallFilter.class);
+	private final Logger logger = ESAPI.getLogger(ESAPIWebApplicationFirewallFilter.class);
 
 	/**
 	 * This function is used in testing to dynamically alter the configuration.
@@ -118,7 +117,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 		this.fc = fc;
 		
-		logger.debug( ">> Initializing WAF" );
+		logger.debug(Logger.EVENT_SUCCESS, ">> Initializing WAF" );
 		/*
 		 * Pull logging file.
 		 */
@@ -201,12 +200,12 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 				 * The file has been altered since it was
 				 * read in the last time. Must re-read it.
 				 */
-				logger.debug(">> Re-reading WAF policy");
+				logger.debug(Logger.EVENT_SUCCESS, ">> Re-reading WAF policy");
 				init(fc);
 			}
 		}
 		
-		logger.debug(">>In WAF doFilter");
+		logger.debug(Logger.EVENT_SUCCESS, ">>In WAF doFilter");
 
 		HttpServletRequest httpRequest = (HttpServletRequest)servletRequest;
 		HttpServletResponse httpResponse = (HttpServletResponse)servletResponse;
@@ -234,14 +233,14 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * Stage 1: Rules that do not need the request body.
 		 */
-		logger.debug(">> Starting stage 1" );
+		logger.debug(Logger.EVENT_SUCCESS, ">> Starting stage 1" );
 
 		List<Rule> rules = this.appGuardConfig.getBeforeBodyRules();
 
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-			logger.debug( "  Applying BEFORE rule:  " + rule.getClass().getName() );
+			logger.debug(Logger.EVENT_SUCCESS,  "  Applying BEFORE rule:  " + rule.getClass().getName() );
 			
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
@@ -289,20 +288,20 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		try {
 			request = new InterceptingHTTPServletRequest((HttpServletRequest)servletRequest);
 		} catch (FileUploadException fue) {
-			logger.error( "Error Wrapping Request", fue );
+			logger.error(Logger.EVENT_SUCCESS,  "Error Wrapping Request", fue );
 		}
 
 		/*
 		 * Stage 2: After the body has been read, but before the the application has gotten it.
 		 */
-		logger.debug(">> Starting Stage 2" );
+		logger.debug(Logger.EVENT_SUCCESS, ">> Starting Stage 2" );
 
 		rules = this.appGuardConfig.getAfterBodyRules();
 
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-			logger.debug( "  Applying BEFORE CHAIN rule:  " + rule.getClass().getName() );
+			logger.debug(Logger.EVENT_SUCCESS,  "  Applying BEFORE CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
 			 * The rules execute in check(). The check() method will take care of logging. 
@@ -346,20 +345,20 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		/*
 		 * In between stages 2 and 3 is the application's processing of the input.
 		 */
-		logger.debug(">> Calling the FilterChain: " + chain );
+		logger.debug(Logger.EVENT_SUCCESS, ">> Calling the FilterChain: " + chain );
 		chain.doFilter(request, response != null ? response : httpResponse);
 
 		/*
 		 * Stage 3: Before the response has been sent back to the user.
 		 */
-		logger.debug(">> Starting Stage 3" );
+		logger.debug(Logger.EVENT_SUCCESS, ">> Starting Stage 3" );
 
 		rules = this.appGuardConfig.getBeforeResponseRules();
 
 		for(int i=0;i<rules.size();i++) {
 
 			Rule rule = rules.get(i);
-			logger.debug( "  Applying AFTER CHAIN rule:  " + rule.getClass().getName() );
+			logger.debug(Logger.EVENT_SUCCESS,  "  Applying AFTER CHAIN rule:  " + rule.getClass().getName() );
 
 			/*
 			 * The rules execute in check(). The check() method will also log. All we have
@@ -406,7 +405,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 		
 		if ( response != null ) {
-			logger.debug(">>> committing reponse" );
+			logger.debug(Logger.EVENT_SUCCESS, ">>> committing reponse" );
 			response.commit();
 		}
 	}
@@ -426,26 +425,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			httpResponse.sendRedirect(redirectURL);
 		}
 		
-	}
-
-	/**
-	 * Remove a browser cookie in an app-server-neutral way.
-	 * @param cookieName The name of the cookie to kill on the client side.
-	 * @param request The request to get the context path from.
-	 * @param response The response to clear the cookie on.
-     *
-     * // TODO: This method is never used - Any reason it shouldn't be removed?
-	 */
-	private void killCookie(String cookieName,
-			HttpServletRequest request,
-			InterceptingHTTPServletResponse response) {
-
-		Cookie cookie = new Cookie(cookieName, "");
-		cookie.setDomain(request.getHeader("Host"));
-        cookie.setPath( request.getContextPath() );
-        cookie.setMaxAge(0);
-        
-        response.addCookie(cookie, false);
 	}
 
 	public void destroy() {
