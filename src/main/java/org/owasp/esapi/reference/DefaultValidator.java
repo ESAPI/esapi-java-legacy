@@ -11,7 +11,7 @@
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
- * @author Jim Manico <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
  * 
  * @created 2007
  */
@@ -55,7 +55,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  * has a heavy emphasis on whitelist validation and canonicalization.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
- * @author Jim Manico (jim.manico .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
  *
  * @since June 1, 2007
  * @see org.owasp.esapi.Validator

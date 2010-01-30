@@ -66,11 +66,9 @@ import org.owasp.esapi.errors.ConfigurationException;
  * <p>
  * WARNING: Do not forget to update ESAPI.properties to change the master key and other security critical settings.
  *
- * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
- * @author Jim Manico (jim.manico@aspectsecurity.com)
- * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
- *         href="http://www.aspectsecurity.com">Aspect Security</a>
- * @author kevin.w.wall@gmail.com
+ * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
+ * @author Kevin Wall (kevin.w.wall .at. gmail.com)
  */
 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
