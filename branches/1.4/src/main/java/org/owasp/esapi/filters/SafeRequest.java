@@ -354,7 +354,7 @@ public class SafeRequest extends HttpServletRequestWrapper
                 }
             }
         }
-        return (String[]) newValues.toArray();
+        return (String[]) newValues.toArray(new String[newValues.size()]);
     }
 
     /**
