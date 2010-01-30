@@ -28,7 +28,9 @@ public class EncodeForURLTag extends BaseEncodeTag
 		}
 		catch(EncodingException e)
 		{
-			throw new JspTagException("Unable to encode to URL encoding", e);
+			JspTagException wrapped = new JspTagException("Unable to encode to URL encoding");
+			wrapped.initCause(e);
+			throw wrapped;
 		}
 	}
 }
