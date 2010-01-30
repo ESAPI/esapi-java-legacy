@@ -76,8 +76,7 @@ import org.owasp.esapi.errors.ValidationException;
  * ValidationException e = errorList.getError("Name");
  * </PRE>
  * 
- * @author Jim Manico (jim.manico .at. aspectsecurity.com) 
- * 		   <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
  * @since August 15, 2008
  */
 public class ValidationErrorList {
