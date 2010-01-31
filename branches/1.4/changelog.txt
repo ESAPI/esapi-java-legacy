@@ -1,3 +1,575 @@
+Changelog for ESAPI 1.4.4
+
+r1064 | schallee@darkmist.net | 2010-01-30 17:55:30 HST
+Changed paths:
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/ExecutorTest.java
+
+Reimplement existing tests using platform independent properties for
+the location of java. This should alleviate the need to SYSROOT and the
+like on windows. I think we're good to remove the windows & unix ones
+but I'm waiting a bit first.
+
+----------------------------------------------------------------------------
+r1063 | manico.james | 2010-01-30 17:55:15 HST
+Changed paths:
+	M /branches/1.4/documentation/site/jdepend-report.html
+
+cleanup
+----------------------------------------------------------------------------
+r1062 | schallee@darkmist.net | 2010-01-30 17:53:41 HST
+Changed paths:
+	M /branches/1.4/src/test/java/org/owasp/esapi/util/FileTestUtils.java
+
+Several changes including making some internal methods private. Add
+nonexistantFile method to get a file that is non-existant.
+
+----------------------------------------------------------------------------
+r1061 | manico.james | 2010-01-30 17:52:25 HST
+Changed paths:
+	M /branches/1.4/documentation/site/css/maven-base.css
+	M /branches/1.4/documentation/site/css/maven-theme.css
+	M /branches/1.4/documentation/site/css/print.css
+
+style fix
+----------------------------------------------------------------------------
+r1060 | manico.james | 2010-01-30 17:48:35 HST
+Changed paths:
+	M /branches/1.4/documentation/site/jdepend-report.html
+
+cleanup
+----------------------------------------------------------------------------
+r1059 | manico.james | 2010-01-30 17:46:57 HST
+Changed paths:
+	D /branches/1.4/documentation/site/site
+
+cleanup
+----------------------------------------------------------------------------
+r1058 | manico.james | 2010-01-30 17:44:58 HST
+Changed paths:
+	D /branches/1.4/documentation/site/site/css
+
+cleanup
+----------------------------------------------------------------------------
+r1057 | manico.james | 2010-01-30 17:44:04 HST
+Changed paths:
+	D /branches/1.4/documentation/site/site/images/logos/maven-feather.png
+	D /branches/1.4/documentation/site/site/jdepend-report.html
+
+cleanup
+----------------------------------------------------------------------------
+r1056 | manico.james | 2010-01-30 17:43:16 HST
+Changed paths:
+	D /branches/1.4/documentation/site/site/images/add.gif
+	D /branches/1.4/documentation/site/site/images/collapsed.gif
+	D /branches/1.4/documentation/site/site/images/expanded.gif
+	D /branches/1.4/documentation/site/site/images/external-classic.png
+	D /branches/1.4/documentation/site/site/images/external.png
+	D /branches/1.4/documentation/site/site/images/file.gif
+	D /branches/1.4/documentation/site/site/images/fix.gif
+	D /branches/1.4/documentation/site/site/images/folder-closed.gif
+	D /branches/1.4/documentation/site/site/images/folder-open.gif
+	D /branches/1.4/documentation/site/site/images/help_logo.gif
+	D /branches/1.4/documentation/site/site/images/icon_alert.gif
+	D /branches/1.4/documentation/site/site/images/icon_alertsml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowfolder1_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowfolder2_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowfolderclosed1_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowfolderopen2_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowmembers1_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowmembers2_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowusergroups1_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowusergroups2_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowwaste1_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_arrowwaste2_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_confirmsml.gif
+	D /branches/1.4/documentation/site/site/images/icon_doc_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_doc_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_error_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_error_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_folder_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_folder_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_help_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_help_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_info_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_info_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_infosml.gif
+	D /branches/1.4/documentation/site/site/images/icon_members_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_members_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_sortdown.gif
+	D /branches/1.4/documentation/site/site/images/icon_sortleft.gif
+	D /branches/1.4/documentation/site/site/images/icon_sortright.gif
+	D /branches/1.4/documentation/site/site/images/icon_sortup.gif
+	D /branches/1.4/documentation/site/site/images/icon_success_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_success_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_usergroups_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_usergroups_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_warning_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_warning_sml.gif
+	D /branches/1.4/documentation/site/site/images/icon_waste_lrg.gif
+	D /branches/1.4/documentation/site/site/images/icon_waste_sml.gif
+	D /branches/1.4/documentation/site/site/images/newwindow-classic.png
+	D /branches/1.4/documentation/site/site/images/newwindow.png
+	D /branches/1.4/documentation/site/site/images/none.png
+	D /branches/1.4/documentation/site/site/images/nw_maj.gif
+	D /branches/1.4/documentation/site/site/images/nw_maj_hi.gif
+	D /branches/1.4/documentation/site/site/images/nw_maj_rond.gif
+	D /branches/1.4/documentation/site/site/images/nw_med.gif
+	D /branches/1.4/documentation/site/site/images/nw_med_hi.gif
+	D /branches/1.4/documentation/site/site/images/nw_med_rond.gif
+	D /branches/1.4/documentation/site/site/images/nw_min.gif
+	D /branches/1.4/documentation/site/site/images/nw_min_036.gif
+	D /branches/1.4/documentation/site/site/images/nw_min_hi.gif
+	D /branches/1.4/documentation/site/site/images/pdf.gif
+	D /branches/1.4/documentation/site/site/images/poweredby_036.gif
+	D /branches/1.4/documentation/site/site/images/product_logo.gif
+	D /branches/1.4/documentation/site/site/images/remove.gif
+	D /branches/1.4/documentation/site/site/images/se_maj_rond.gif
+	D /branches/1.4/documentation/site/site/images/strich.gif
+	D /branches/1.4/documentation/site/site/images/sw_maj_rond.gif
+	D /branches/1.4/documentation/site/site/images/sw_med_rond.gif
+	D /branches/1.4/documentation/site/site/images/sw_min.gif
+	D /branches/1.4/documentation/site/site/images/update.gif
+
+cleanup
+----------------------------------------------------------------------------
+r1055 | manico.james | 2010-01-30 17:41:22 HST
+Changed paths:
+	A /branches/1.4/documentation/site/jdepend-report.html
+
+cleanup
+----------------------------------------------------------------------------
+r1054 | manico.james | 2010-01-30 17:41:08 HST
+Changed paths:
+	A /branches/1.4/documentation/site/css
+	R /branches/1.4/documentation/site/css/maven-base.css
+	R /branches/1.4/documentation/site/css/maven-theme.css
+	R /branches/1.4/documentation/site/css/print.css
+	A /branches/1.4/documentation/site/images
+
+cleanup
+----------------------------------------------------------------------------
+r1053 | manico.james | 2010-01-30 17:39:51 HST
+Changed paths:
+	M /branches/1.4/documentation/site/site/css/maven-base.css
+	M /branches/1.4/documentation/site/site/css/maven-theme.css
+	M /branches/1.4/documentation/site/site/css/print.css
+
+style fix
+----------------------------------------------------------------------------
+r1052 | manico.james | 2010-01-30 17:37:38 HST
+Changed paths:
+	M /branches/1.4/documentation/site/site/jdepend-report.html
+
+style fix
+----------------------------------------------------------------------------
+r1051 | manico.james | 2010-01-30 17:35:15 HST
+Changed paths:
+	M /branches/1.4/documentation/site/site/jdepend-report.html
+
+make sure it renders via direct browsing
+----------------------------------------------------------------------------
+r1050 | manico.james | 2010-01-30 17:34:40 HST
+Changed paths:
+	D /branches/1.4/documentation/jdepend-report.xml
+
+not needed, we have HTML version
+----------------------------------------------------------------------------
+r1049 | manico.james | 2010-01-30 17:34:19 HST
+Changed paths:
+	D /branches/1.4/documentation/site/jdepend-report.xml
+
+not needed, we have HTML version
+----------------------------------------------------------------------------
+r1048 | manico.james | 2010-01-30 17:33:45 HST
+Changed paths:
+	A /branches/1.4/documentation/site
+	A /branches/1.4/documentation/site/jdepend-report.xml
+	A /branches/1.4/documentation/site/site
+	A /branches/1.4/documentation/site/site/css
+	A /branches/1.4/documentation/site/site/css/maven-base.css
+	A /branches/1.4/documentation/site/site/css/maven-theme.css
+	A /branches/1.4/documentation/site/site/css/print.css
+	A /branches/1.4/documentation/site/site/images
+	A /branches/1.4/documentation/site/site/images/add.gif
+	A /branches/1.4/documentation/site/site/images/collapsed.gif
+	A /branches/1.4/documentation/site/site/images/expanded.gif
+	A /branches/1.4/documentation/site/site/images/external-classic.png
+	A /branches/1.4/documentation/site/site/images/external.png
+	A /branches/1.4/documentation/site/site/images/file.gif
+	A /branches/1.4/documentation/site/site/images/fix.gif
+	A /branches/1.4/documentation/site/site/images/folder-closed.gif
+	A /branches/1.4/documentation/site/site/images/folder-open.gif
+	A /branches/1.4/documentation/site/site/images/help_logo.gif
+	A /branches/1.4/documentation/site/site/images/icon_alert.gif
+	A /branches/1.4/documentation/site/site/images/icon_alertsml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowfolder1_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowfolder2_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowfolderclosed1_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowfolderopen2_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowmembers1_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowmembers2_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowusergroups1_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowusergroups2_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowwaste1_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_arrowwaste2_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_confirmsml.gif
+	A /branches/1.4/documentation/site/site/images/icon_doc_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_doc_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_error_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_error_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_folder_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_folder_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_help_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_help_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_info_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_info_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_infosml.gif
+	A /branches/1.4/documentation/site/site/images/icon_members_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_members_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_sortdown.gif
+	A /branches/1.4/documentation/site/site/images/icon_sortleft.gif
+	A /branches/1.4/documentation/site/site/images/icon_sortright.gif
+	A /branches/1.4/documentation/site/site/images/icon_sortup.gif
+	A /branches/1.4/documentation/site/site/images/icon_success_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_success_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_usergroups_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_usergroups_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_warning_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_warning_sml.gif
+	A /branches/1.4/documentation/site/site/images/icon_waste_lrg.gif
+	A /branches/1.4/documentation/site/site/images/icon_waste_sml.gif
+	A /branches/1.4/documentation/site/site/images/logos
+	A /branches/1.4/documentation/site/site/images/logos/maven-feather.png
+	A /branches/1.4/documentation/site/site/images/newwindow-classic.png
+	A /branches/1.4/documentation/site/site/images/newwindow.png
+	A /branches/1.4/documentation/site/site/images/none.png
+	A /branches/1.4/documentation/site/site/images/nw_maj.gif
+	A /branches/1.4/documentation/site/site/images/nw_maj_hi.gif
+	A /branches/1.4/documentation/site/site/images/nw_maj_rond.gif
+	A /branches/1.4/documentation/site/site/images/nw_med.gif
+	A /branches/1.4/documentation/site/site/images/nw_med_hi.gif
+	A /branches/1.4/documentation/site/site/images/nw_med_rond.gif
+	A /branches/1.4/documentation/site/site/images/nw_min.gif
+	A /branches/1.4/documentation/site/site/images/nw_min_036.gif
+	A /branches/1.4/documentation/site/site/images/nw_min_hi.gif
+	A /branches/1.4/documentation/site/site/images/pdf.gif
+	A /branches/1.4/documentation/site/site/images/poweredby_036.gif
+	A /branches/1.4/documentation/site/site/images/product_logo.gif
+	A /branches/1.4/documentation/site/site/images/remove.gif
+	A /branches/1.4/documentation/site/site/images/se_maj_rond.gif
+	A /branches/1.4/documentation/site/site/images/strich.gif
+	A /branches/1.4/documentation/site/site/images/sw_maj_rond.gif
+	A /branches/1.4/documentation/site/site/images/sw_med_rond.gif
+	A /branches/1.4/documentation/site/site/images/sw_min.gif
+	A /branches/1.4/documentation/site/site/images/update.gif
+	A /branches/1.4/documentation/site/site/jdepend-report.html
+
+1.4.4 final!
+----------------------------------------------------------------------------
+r1047 | manico.james | 2010-01-30 13:10:47 HST
+Changed paths:
+	A /branches/1.4/documentation/jdepend-report.xml
+
+dependencies
+----------------------------------------------------------------------------
+r1046 | manico.james | 2010-01-30 13:09:37 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+updating version to 1.4.4 in prep for release
+----------------------------------------------------------------------------
+r1045 | manico.james | 2010-01-30 12:59:37 HST
+Changed paths:
+	M /branches/1.4/.classpath
+	A /branches/1.4/src/test
+	R /branches/1.4/src/test/java
+	R /branches/1.4/src/test/java/org
+	R /branches/1.4/src/test/java/org/owasp
+	R /branches/1.4/src/test/java/org/owasp/esapi
+	R /branches/1.4/src/test/java/org/owasp/esapi/AllTests.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/ESAPITest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/SecurityConfigurationWrapper.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/codecs
+	R /branches/1.4/src/test/java/org/owasp/esapi/codecs/CSSCodecTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/codecs/CodecTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/codecs/HashTrieTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/codecs/XMLEntityCodecTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/errors
+	R /branches/1.4/src/test/java/org/owasp/esapi/errors/EnterpriseSecurityExceptionTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/filters
+	R /branches/1.4/src/test/java/org/owasp/esapi/filters/ESAPIFilterTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/TestFilterChain.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/TestHttpServletRequest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/TestHttpServletResponse.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/TestHttpSession.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/TestRequestDispatcher.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/TestServletInputStream.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/http/package.html
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/AccessControllerTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/AccessReferenceMapTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/AuthenticatorTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/DefaultSecurityConfigurationTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/EncoderTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/EncryptedPropertiesTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/EncryptorTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/ExecutorTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/HTTPUtilitiesTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/IntegerAccessReferenceMapTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/IntrusionDetectorTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/LoggerTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/RandomizerTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/SafeFileTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/UserTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/reference/ValidatorTest.java
+	R /branches/1.4/src/test/java/org/owasp/esapi/util
+	R /branches/1.4/src/test/java/org/owasp/esapi/util/FileTestUtils.java
+	R /branches/1.4/src/test/resources
+	R /branches/1.4/src/test/resources/DataAccessRules.txt
+	R /branches/1.4/src/test/resources/ESAPI.properties
+	R /branches/1.4/src/test/resources/FileAccessRules.txt
+	R /branches/1.4/src/test/resources/FunctionAccessRules.txt
+	R /branches/1.4/src/test/resources/ServiceAccessRules.txt
+	R /branches/1.4/src/test/resources/URLAccessRules.txt
+	R /branches/1.4/src/test/resources/antisamy-esapi.xml
+	R /branches/1.4/src/test/resources/keystore
+	R /branches/1.4/src/test/resources/test.properties
+	R /branches/1.4/src/test/resources/testupload.txt
+	R /branches/1.4/src/test/resources/testupload.txt37082
+	R /branches/1.4/src/test/resources/testupload.txt44847
+	R /branches/1.4/src/test/resources/users.txt
+	D /branches/1.4/src/test-files
+
+undoing unit test move
+----------------------------------------------------------------------------
+r1044 | manico.james | 2010-01-30 12:51:46 HST
+Changed paths:
+	M /branches/1.4/.classpath
+
+classpath fix for test file move
+----------------------------------------------------------------------------
+r1043 | manico.james | 2010-01-30 12:47:00 HST
+Changed paths:
+	D /branches/1.4/src/test
+	A /branches/1.4/src/test-files
+
+moving to test-files directory so javadoc will ignore it
+----------------------------------------------------------------------------
+r1040 | schallee@darkmist.net | 2010-01-30 10:12:19 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/tags/BaseEncodeTag.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/tags/EncodeForBase64Tag.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/tags/EncodeForURLTag.java
+
+Change to use initCause on exceptions so it's compatible with servlet 2.3.
+
+----------------------------------------------------------------------------
+r1039 | manico.james | 2010-01-29 18:43:31 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultValidator.java
+
+fixing isValidDouble
+----------------------------------------------------------------------------
+r1038 | schallee@darkmist.net | 2010-01-29 18:13:42 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/filters/SafeRequest.java
+
+Apparently no one ever called this method. Fix to return a real String[] 
+before casting... Thanks find bugs!
+
+----------------------------------------------------------------------------
+r1037 | schallee@darkmist.net | 2010-01-29 18:10:20 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+Remove necessary static from resourceDirectory and fix two places where
+it was referred to staticly needlessly.
+
+----------------------------------------------------------------------------
+r1036 | schallee@darkmist.net | 2010-01-29 18:02:44 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/HashTrie.java
+
+The "ack! where'd my '=' go?" commit.
+
+----------------------------------------------------------------------------
+r1035 | schallee@darkmist.net | 2010-01-29 17:56:21 HST
+Changed paths:
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/ExecutorTest.java
+
+Add test using java as the executable from java.home in initial work to
+move away from hard coded system paths in windows.
+
+----------------------------------------------------------------------------
+r1034 | schallee@darkmist.net | 2010-01-29 17:55:20 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/HashTrie.java
+
+dereference before null check fix
+----------------------------------------------------------------------------
+r1032 | manico.james | 2010-01-29 17:38:43 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+update to mailing lists
+----------------------------------------------------------------------------
+r1027 | manico.james | 2010-01-29 15:55:37 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/ValidationErrorList.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/OracleCodec.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultValidator.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/Log4JLogFactory.java
+
+email address update
+----------------------------------------------------------------------------
+r1025 | manico.james | 2010-01-28 18:25:57 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+1.4.4 rc6 pom update
+----------------------------------------------------------------------------
+r1024 | manico.james | 2010-01-28 18:22:56 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+make file io loading of properties file happen before classapth loading
+----------------------------------------------------------------------------
+r1023 | manico.james | 2010-01-28 18:22:23 HST
+Changed paths:
+	M /branches/1.4/.settings/org.eclipse.jdt.core.prefs
+	A /branches/1.4/.settings/org.eclipse.jdt.ui.prefs
+
+forcing settings to SPACES not TABS
+----------------------------------------------------------------------------
+r1022 | manico.james | 2010-01-28 16:13:59 HST
+Changed paths:
+	M /branches/1.4/src/main/resources/ESAPI.properties
+	M /branches/1.4/src/test/resources/ESAPI.properties
+
+small clarification
+----------------------------------------------------------------------------
+r1021 | manico.james | 2010-01-28 12:13:53 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+1.4.4 rc5 pom update
+----------------------------------------------------------------------------
+r1020 | manico.james | 2010-01-28 12:12:02 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+1.4.4 rc5
+----------------------------------------------------------------------------
+r1019 | manico.james | 2010-01-27 20:07:01 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+added jdepend
+----------------------------------------------------------------------------
+r1017 | manico.james | 2010-01-27 19:45:09 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+1.4.4 rc4 final
+----------------------------------------------------------------------------
+r1016 | manico.james | 2010-01-27 19:30:49 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+bump pom to 1.4.4 rc3
+----------------------------------------------------------------------------
+r1015 | manico.james | 2010-01-27 19:28:14 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+classloading code new cycles through all all classloading types for each file/directory structure possibility
+----------------------------------------------------------------------------
+r1014 | manico.james | 2010-01-27 18:16:12 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+attempting Thread.currentThread().getContextClassLoader() if getClass().getClassLoader() fails.
+    	
+----------------------------------------------------------------------------
+r1013 | manico.james | 2010-01-27 17:39:32 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+tab to space cleanup
+----------------------------------------------------------------------------
+r1012 | manico.james | 2010-01-27 17:35:09 HST
+Changed paths:
+	M /branches/1.4/.classpath
+	M /branches/1.4/.project
+	M /branches/1.4/.settings/org.eclipse.jdt.core.prefs
+	M /branches/1.4/pom.xml
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/DefaultSecurityConfigurationTest.java
+
+rewrote resource writing code, ESAPI 1.4.4 rc2 final
+----------------------------------------------------------------------------
+r1010 | schallee@darkmist.net | 2010-01-27 16:02:40 HST
+Changed paths:
+	M /branches/1.4/src/test/java/org/owasp/esapi/util/FileTestUtils.java
+
+Switch from SecureRandom to Random seeded by SecureRandom.
+
+----------------------------------------------------------------------------
+r1009 | manico.james | 2010-01-27 14:54:49 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultSecurityConfiguration.java
+
+rolling back the fix to the space issue in filepaths for property file loading.
+----------------------------------------------------------------------------
+r1008 | schallee@darkmist.net | 2010-01-26 17:22:42 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/PushbackString.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/DefaultEncoder.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/EncoderTest.java
+
+Port canonicalization from 2.0 to 1.4. Port tests as well. This, I
+believe, fixes the last failing unit test in 1.4.
+
+Also add PushbackString#toString() for easier debugging.
+
+----------------------------------------------------------------------------
+r1007 | schallee@darkmist.net | 2010-01-26 06:41:05 HST
+Changed paths:
+	M /branches/1.4/pom.xml
+
+Since 1.4.3 is out, fix version to 1.4.4-SNAPSHOT...
+
+----------------------------------------------------------------------------
+r1006 | schallee@darkmist.net | 2010-01-26 06:39:14 HST
+Changed paths:
+	M /branches/1.4/src/main/java/org/owasp/esapi/HTTPUtilities.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/AbstractCodec.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/HTMLEntityCodec.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/HashTrie.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/PercentCodec.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/codecs/XMLEntityCodec.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/filters/SafeRequest.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/FileBasedAccessController.java
+	M /branches/1.4/src/main/java/org/owasp/esapi/reference/JavaLogFactory.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/SecurityConfigurationWrapper.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/codecs/CSSCodecTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/codecs/HashTrieTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/codecs/XMLEntityCodecTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/http/TestHttpSession.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/EncoderTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/EncryptedPropertiesTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/EncryptorTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/reference/SafeFileTest.java
+	M /branches/1.4/src/test/java/org/owasp/esapi/util/FileTestUtils.java
+
+Lots of little fixes for compiler warnings in eclipse in the 1.4
+branch. There are still a lot but now there are less...
+
+----------------------------------------------------------------------------
+
 Changelog for ESAPI 1.4.3
 
 r1000 | manico.james | 2010-01-24 11:07:43 HST
