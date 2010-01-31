@@ -1,0 +1,687 @@
+<?xml version="1.0"?>
+<JDepend>
+    <Packages>
+
+        <Package name="java.io">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.lang">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.net">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.security">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.text">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util.logging">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util.regex">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="java.util.zip">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.crypto">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.crypto.spec">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.servlet">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.servlet.http">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.servlet.jsp">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="javax.servlet.jsp.tagext">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.apache.commons.fileupload">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.apache.commons.fileupload.disk">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.apache.commons.fileupload.servlet">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.apache.log4j">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+
+        <Package name="org.owasp.esapi">
+            <Stats>
+                <TotalClasses>22</TotalClasses>
+                <ConcreteClasses>7</ConcreteClasses>
+                <AbstractClasses>15</AbstractClasses>
+                <Ca>5</Ca>
+                <Ce>13</Ce>
+                <A>0.68</A>
+                <I>0.72</I>
+                <D>0.4</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AccessController.java">
+                    org.owasp.esapi.AccessController
+                </Class>
+                <Class sourceFile="AccessReferenceMap.java">
+                    org.owasp.esapi.AccessReferenceMap
+                </Class>
+                <Class sourceFile="Authenticator.java">
+                    org.owasp.esapi.Authenticator
+                </Class>
+                <Class sourceFile="Encoder.java">
+                    org.owasp.esapi.Encoder
+                </Class>
+                <Class sourceFile="EncryptedProperties.java">
+                    org.owasp.esapi.EncryptedProperties
+                </Class>
+                <Class sourceFile="Encryptor.java">
+                    org.owasp.esapi.Encryptor
+                </Class>
+                <Class sourceFile="Executor.java">
+                    org.owasp.esapi.Executor
+                </Class>
+                <Class sourceFile="HTTPUtilities.java">
+                    org.owasp.esapi.HTTPUtilities
+                </Class>
+                <Class sourceFile="IntrusionDetector.java">
+                    org.owasp.esapi.IntrusionDetector
+                </Class>
+                <Class sourceFile="LogFactory.java">
+                    org.owasp.esapi.LogFactory
+                </Class>
+                <Class sourceFile="Logger.java">
+                    org.owasp.esapi.Logger
+                </Class>
+                <Class sourceFile="Randomizer.java">
+                    org.owasp.esapi.Randomizer
+                </Class>
+                <Class sourceFile="SecurityConfiguration.java">
+                    org.owasp.esapi.SecurityConfiguration
+                </Class>
+                <Class sourceFile="User.java">
+                    org.owasp.esapi.User
+                </Class>
+                <Class sourceFile="Validator.java">
+                    org.owasp.esapi.Validator
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ESAPI.java">
+                    org.owasp.esapi.ESAPI
+                </Class>
+                <Class sourceFile="Logger.java">
+                    org.owasp.esapi.Logger$EventType
+                </Class>
+                <Class sourceFile="SafeFile.java">
+                    org.owasp.esapi.SafeFile
+                </Class>
+                <Class sourceFile="SecurityConfiguration.java">
+                    org.owasp.esapi.SecurityConfiguration$Threshold
+                </Class>
+                <Class sourceFile="StringUtilities.java">
+                    org.owasp.esapi.StringUtilities
+                </Class>
+                <Class sourceFile="User.java">
+                    org.owasp.esapi.User$1
+                </Class>
+                <Class sourceFile="ValidationErrorList.java">
+                    org.owasp.esapi.ValidationErrorList
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.net</Package>
+                <Package>java.security</Package>
+                <Package>java.text</Package>
+                <Package>java.util</Package>
+                <Package>java.util.regex</Package>
+                <Package>javax.servlet</Package>
+                <Package>javax.servlet.http</Package>
+                <Package>org.owasp.esapi.codecs</Package>
+                <Package>org.owasp.esapi.errors</Package>
+                <Package>org.owasp.esapi.filters</Package>
+                <Package>org.owasp.esapi.reference</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>org.owasp.esapi.codecs</Package>
+                <Package>org.owasp.esapi.errors</Package>
+                <Package>org.owasp.esapi.filters</Package>
+                <Package>org.owasp.esapi.reference</Package>
+                <Package>org.owasp.esapi.tags</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.esapi.codecs">
+            <Stats>
+                <TotalClasses>19</TotalClasses>
+                <ConcreteClasses>17</ConcreteClasses>
+                <AbstractClasses>2</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>6</Ce>
+                <A>0.11</A>
+                <I>0.75</I>
+                <D>0.14</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="AbstractCodec.java">
+                    org.owasp.esapi.codecs.AbstractCodec
+                </Class>
+                <Class sourceFile="Codec.java">
+                    org.owasp.esapi.codecs.Codec
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="Base64.java">
+                    org.owasp.esapi.codecs.Base64
+                </Class>
+                <Class sourceFile="Base64.java">
+                    org.owasp.esapi.codecs.Base64$InputStream
+                </Class>
+                <Class sourceFile="Base64.java">
+                    org.owasp.esapi.codecs.Base64$OutputStream
+                </Class>
+                <Class sourceFile="CSSCodec.java">
+                    org.owasp.esapi.codecs.CSSCodec
+                </Class>
+                <Class sourceFile="HTMLEntityCodec.java">
+                    org.owasp.esapi.codecs.HTMLEntityCodec
+                </Class>
+                <Class sourceFile="HashTrie.java">
+                    org.owasp.esapi.codecs.HashTrie
+                </Class>
+                <Class sourceFile="HashTrie.java">
+                    org.owasp.esapi.codecs.HashTrie$Entry
+                </Class>
+                <Class sourceFile="HashTrie.java">
+                    org.owasp.esapi.codecs.HashTrie$Node
+                </Class>
+                <Class sourceFile="JavaScriptCodec.java">
+                    org.owasp.esapi.codecs.JavaScriptCodec
+                </Class>
+                <Class sourceFile="MySQLCodec.java">
+                    org.owasp.esapi.codecs.MySQLCodec
+                </Class>
+                <Class sourceFile="OracleCodec.java">
+                    org.owasp.esapi.codecs.OracleCodec
+                </Class>
+                <Class sourceFile="PercentCodec.java">
+                    org.owasp.esapi.codecs.PercentCodec
+                </Class>
+                <Class sourceFile="PushbackString.java">
+                    org.owasp.esapi.codecs.PushbackString
+                </Class>
+                <Class sourceFile="UnixCodec.java">
+                    org.owasp.esapi.codecs.UnixCodec
+                </Class>
+                <Class sourceFile="VBScriptCodec.java">
+                    org.owasp.esapi.codecs.VBScriptCodec
+                </Class>
+                <Class sourceFile="WindowsCodec.java">
+                    org.owasp.esapi.codecs.WindowsCodec
+                </Class>
+                <Class sourceFile="XMLEntityCodec.java">
+                    org.owasp.esapi.codecs.XMLEntityCodec
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+                <Package>java.util.zip</Package>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.reference</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.esapi.errors">
+            <Stats>
+                <TotalClasses>17</TotalClasses>
+                <ConcreteClasses>17</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>4</Ca>
+                <Ce>2</Ce>
+                <A>0</A>
+                <I>0.33</I>
+                <D>0.67</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="AccessControlException.java">
+                    org.owasp.esapi.errors.AccessControlException
+                </Class>
+                <Class sourceFile="AuthenticationAccountsException.java">
+                    org.owasp.esapi.errors.AuthenticationAccountsException
+                </Class>
+                <Class sourceFile="AuthenticationCredentialsException.java">
+                    org.owasp.esapi.errors.AuthenticationCredentialsException
+                </Class>
+                <Class sourceFile="AuthenticationException.java">
+                    org.owasp.esapi.errors.AuthenticationException
+                </Class>
+                <Class sourceFile="AuthenticationHostException.java">
+                    org.owasp.esapi.errors.AuthenticationHostException
+                </Class>
+                <Class sourceFile="AuthenticationLoginException.java">
+                    org.owasp.esapi.errors.AuthenticationLoginException
+                </Class>
+                <Class sourceFile="AvailabilityException.java">
+                    org.owasp.esapi.errors.AvailabilityException
+                </Class>
+                <Class sourceFile="CertificateException.java">
+                    org.owasp.esapi.errors.CertificateException
+                </Class>
+                <Class sourceFile="EncodingException.java">
+                    org.owasp.esapi.errors.EncodingException
+                </Class>
+                <Class sourceFile="EncryptionException.java">
+                    org.owasp.esapi.errors.EncryptionException
+                </Class>
+                <Class sourceFile="EnterpriseSecurityException.java">
+                    org.owasp.esapi.errors.EnterpriseSecurityException
+                </Class>
+                <Class sourceFile="ExecutorException.java">
+                    org.owasp.esapi.errors.ExecutorException
+                </Class>
+                <Class sourceFile="IntegrityException.java">
+                    org.owasp.esapi.errors.IntegrityException
+                </Class>
+                <Class sourceFile="IntrusionException.java">
+                    org.owasp.esapi.errors.IntrusionException
+                </Class>
+                <Class sourceFile="ValidationAvailabilityException.java">
+                    org.owasp.esapi.errors.ValidationAvailabilityException
+                </Class>
+                <Class sourceFile="ValidationException.java">
+                    org.owasp.esapi.errors.ValidationException
+                </Class>
+                <Class sourceFile="ValidationUploadException.java">
+                    org.owasp.esapi.errors.ValidationUploadException
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>org.owasp.esapi</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.filters</Package>
+                <Package>org.owasp.esapi.reference</Package>
+                <Package>org.owasp.esapi.tags</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.esapi.filters">
+            <Stats>
+                <TotalClasses>5</TotalClasses>
+                <ConcreteClasses>5</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>2</Ca>
+                <Ce>8</Ce>
+                <A>0</A>
+                <I>0.8</I>
+                <D>0.2</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ESAPIFilter.java">
+                    org.owasp.esapi.filters.ESAPIFilter
+                </Class>
+                <Class sourceFile="RequestRateThrottleFilter.java">
+                    org.owasp.esapi.filters.RequestRateThrottleFilter
+                </Class>
+                <Class sourceFile="SafeHTTPFilter.java">
+                    org.owasp.esapi.filters.SafeHTTPFilter
+                </Class>
+                <Class sourceFile="SafeRequest.java">
+                    org.owasp.esapi.filters.SafeRequest
+                </Class>
+                <Class sourceFile="SafeResponse.java">
+                    org.owasp.esapi.filters.SafeResponse
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.security</Package>
+                <Package>java.util</Package>
+                <Package>javax.servlet</Package>
+                <Package>javax.servlet.http</Package>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.errors</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.reference</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.esapi.reference">
+            <Stats>
+                <TotalClasses>25</TotalClasses>
+                <ConcreteClasses>25</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>21</Ce>
+                <A>0</A>
+                <I>0.95</I>
+                <D>0.05</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="DefaultEncoder.java">
+                    org.owasp.esapi.reference.DefaultEncoder
+                </Class>
+                <Class sourceFile="DefaultEncryptedProperties.java">
+                    org.owasp.esapi.reference.DefaultEncryptedProperties
+                </Class>
+                <Class sourceFile="DefaultExecutor.java">
+                    org.owasp.esapi.reference.DefaultExecutor
+                </Class>
+                <Class sourceFile="DefaultHTTPUtilities.java">
+                    org.owasp.esapi.reference.DefaultHTTPUtilities
+                </Class>
+                <Class sourceFile="DefaultHTTPUtilities.java">
+                    org.owasp.esapi.reference.DefaultHTTPUtilities$1
+                </Class>
+                <Class sourceFile="DefaultHTTPUtilities.java">
+                    org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalRequest
+                </Class>
+                <Class sourceFile="DefaultHTTPUtilities.java">
+                    org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalResponse
+                </Class>
+                <Class sourceFile="DefaultIntrusionDetector.java">
+                    org.owasp.esapi.reference.DefaultIntrusionDetector
+                </Class>
+                <Class sourceFile="DefaultIntrusionDetector.java">
+                    org.owasp.esapi.reference.DefaultIntrusionDetector$Event
+                </Class>
+                <Class sourceFile="DefaultRandomizer.java">
+                    org.owasp.esapi.reference.DefaultRandomizer
+                </Class>
+                <Class sourceFile="DefaultSecurityConfiguration.java">
+                    org.owasp.esapi.reference.DefaultSecurityConfiguration
+                </Class>
+                <Class sourceFile="DefaultUser.java">
+                    org.owasp.esapi.reference.DefaultUser
+                </Class>
+                <Class sourceFile="DefaultValidator.java">
+                    org.owasp.esapi.reference.DefaultValidator
+                </Class>
+                <Class sourceFile="FileBasedAccessController.java">
+                    org.owasp.esapi.reference.FileBasedAccessController
+                </Class>
+                <Class sourceFile="FileBasedAccessController.java">
+                    org.owasp.esapi.reference.FileBasedAccessController$Rule
+                </Class>
+                <Class sourceFile="FileBasedAuthenticator.java">
+                    org.owasp.esapi.reference.FileBasedAuthenticator
+                </Class>
+                <Class sourceFile="FileBasedAuthenticator.java">
+                    org.owasp.esapi.reference.FileBasedAuthenticator$ThreadLocalUser
+                </Class>
+                <Class sourceFile="IntegerAccessReferenceMap.java">
+                    org.owasp.esapi.reference.IntegerAccessReferenceMap
+                </Class>
+                <Class sourceFile="JavaEncryptor.java">
+                    org.owasp.esapi.reference.JavaEncryptor
+                </Class>
+                <Class sourceFile="JavaLogFactory.java">
+                    org.owasp.esapi.reference.JavaLogFactory
+                </Class>
+                <Class sourceFile="JavaLogFactory.java">
+                    org.owasp.esapi.reference.JavaLogFactory$JavaLogger
+                </Class>
+                <Class sourceFile="JavaLogFactory.java">
+                    org.owasp.esapi.reference.JavaLogFactory$JavaLoggerLevel
+                </Class>
+                <Class sourceFile="Log4JLogFactory.java">
+                    org.owasp.esapi.reference.Log4JLogFactory
+                </Class>
+                <Class sourceFile="Log4JLogFactory.java">
+                    org.owasp.esapi.reference.Log4JLogFactory$Log4JLogger
+                </Class>
+                <Class sourceFile="RandomAccessReferenceMap.java">
+                    org.owasp.esapi.reference.RandomAccessReferenceMap
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>java.net</Package>
+                <Package>java.security</Package>
+                <Package>java.text</Package>
+                <Package>java.util</Package>
+                <Package>java.util.logging</Package>
+                <Package>java.util.regex</Package>
+                <Package>javax.crypto</Package>
+                <Package>javax.crypto.spec</Package>
+                <Package>javax.servlet</Package>
+                <Package>javax.servlet.http</Package>
+                <Package>org.apache.commons.fileupload</Package>
+                <Package>org.apache.commons.fileupload.disk</Package>
+                <Package>org.apache.commons.fileupload.servlet</Package>
+                <Package>org.apache.log4j</Package>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.codecs</Package>
+                <Package>org.owasp.esapi.errors</Package>
+                <Package>org.owasp.esapi.filters</Package>
+                <Package>org.owasp.validator.html</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>org.owasp.esapi</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.esapi.tags">
+            <Stats>
+                <TotalClasses>12</TotalClasses>
+                <ConcreteClasses>11</ConcreteClasses>
+                <AbstractClasses>1</AbstractClasses>
+                <Ca>0</Ca>
+                <Ce>6</Ce>
+                <A>0.08</A>
+                <I>1</I>
+                <D>0.08</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+                <Class sourceFile="BaseEncodeTag.java">
+                    org.owasp.esapi.tags.BaseEncodeTag
+                </Class>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="ELEncodeFunctions.java">
+                    org.owasp.esapi.tags.ELEncodeFunctions
+                </Class>
+                <Class sourceFile="EncodeForBase64Tag.java">
+                    org.owasp.esapi.tags.EncodeForBase64Tag
+                </Class>
+                <Class sourceFile="EncodeForCSSTag.java">
+                    org.owasp.esapi.tags.EncodeForCSSTag
+                </Class>
+                <Class sourceFile="EncodeForHTMLAttributeTag.java">
+                    org.owasp.esapi.tags.EncodeForHTMLAttributeTag
+                </Class>
+                <Class sourceFile="EncodeForHTMLTag.java">
+                    org.owasp.esapi.tags.EncodeForHTMLTag
+                </Class>
+                <Class sourceFile="EncodeForJavaScriptTag.java">
+                    org.owasp.esapi.tags.EncodeForJavaScriptTag
+                </Class>
+                <Class sourceFile="EncodeForURLTag.java">
+                    org.owasp.esapi.tags.EncodeForURLTag
+                </Class>
+                <Class sourceFile="EncodeForVBScriptTag.java">
+                    org.owasp.esapi.tags.EncodeForVBScriptTag
+                </Class>
+                <Class sourceFile="EncodeForXMLAttributeTag.java">
+                    org.owasp.esapi.tags.EncodeForXMLAttributeTag
+                </Class>
+                <Class sourceFile="EncodeForXMLTag.java">
+                    org.owasp.esapi.tags.EncodeForXMLTag
+                </Class>
+                <Class sourceFile="EncodeForXPathTag.java">
+                    org.owasp.esapi.tags.EncodeForXPathTag
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.io</Package>
+                <Package>java.lang</Package>
+                <Package>javax.servlet.jsp</Package>
+                <Package>javax.servlet.jsp.tagext</Package>
+                <Package>org.owasp.esapi</Package>
+                <Package>org.owasp.esapi.errors</Package>
+            </DependsUpon>
+
+            <UsedBy>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.esapi.util">
+            <Stats>
+                <TotalClasses>3</TotalClasses>
+                <ConcreteClasses>3</ConcreteClasses>
+                <AbstractClasses>0</AbstractClasses>
+                <Ca>1</Ca>
+                <Ce>2</Ce>
+                <A>0</A>
+                <I>0.67</I>
+                <D>0.33</D>
+                <V>1</V>
+            </Stats>
+
+            <AbstractClasses>
+            </AbstractClasses>
+
+            <ConcreteClasses>
+                <Class sourceFile="CollectionsUtil.java">
+                    org.owasp.esapi.util.CollectionsUtil
+                </Class>
+                <Class sourceFile="NullSafe.java">
+                    org.owasp.esapi.util.NullSafe
+                </Class>
+                <Class sourceFile="PrimWrap.java">
+                    org.owasp.esapi.util.PrimWrap
+                </Class>
+            </ConcreteClasses>
+
+            <DependsUpon>
+                <Package>java.lang</Package>
+                <Package>java.util</Package>
+            </DependsUpon>
+
+            <UsedBy>
+                <Package>org.owasp.esapi.codecs</Package>
+            </UsedBy>
+        </Package>
+
+        <Package name="org.owasp.validator.html">
+            <error>No stats available: package referenced, but not analyzed.</error>
+        </Package>
+    </Packages>
+
+    <Cycles>
+        <Package Name="org.owasp.esapi">
+            <Package>org.owasp.esapi.errors</Package>
+            <Package>org.owasp.esapi</Package>
+        </Package>
+
+        <Package Name="org.owasp.esapi.codecs">
+            <Package>org.owasp.esapi</Package>
+            <Package>org.owasp.esapi.errors</Package>
+            <Package>org.owasp.esapi</Package>
+        </Package>
+
+        <Package Name="org.owasp.esapi.errors">
+            <Package>org.owasp.esapi</Package>
+            <Package>org.owasp.esapi.errors</Package>
+        </Package>
+
+        <Package Name="org.owasp.esapi.filters">
+            <Package>org.owasp.esapi</Package>
+            <Package>org.owasp.esapi.errors</Package>
+            <Package>org.owasp.esapi</Package>
+        </Package>
+
+        <Package Name="org.owasp.esapi.reference">
+            <Package>org.owasp.esapi.codecs</Package>
+            <Package>org.owasp.esapi</Package>
+            <Package>org.owasp.esapi.errors</Package>
+            <Package>org.owasp.esapi</Package>
+        </Package>
+
+        <Package Name="org.owasp.esapi.tags">
+            <Package>org.owasp.esapi</Package>
+            <Package>org.owasp.esapi.errors</Package>
+            <Package>org.owasp.esapi</Package>
+        </Package>
+
+    </Cycles>
+</JDepend>
