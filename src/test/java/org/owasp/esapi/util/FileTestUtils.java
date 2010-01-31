@@ -50,7 +50,7 @@ public class FileTestUtils
 	 * @param l The long to convert.
 	 * @return l in hex.
 	 */
-	public static String toHexString(long l)
+	private static String toHexString(long l)
 	{
 		String initial;
 		StringBuffer sb;
@@ -63,6 +63,24 @@ public class FileTestUtils
 		while(sb.length()<16)
 			sb.insert(0,'0');
 		return sb.toString();
+	}
+
+	/**
+	 * Get the next random long from the static random.
+	 * @return random long value.
+	 */
+	private static synchronized long getRandomLong()
+	{
+		return rand.nextLong();
+	}
+
+	/**
+	 * Generate a hex string based on a random long.
+	 * @return hex representation of a random long value.
+	 */
+	private static String randomLongHex()
+	{
+		return toHexString(getRandomLong());
 	}
 
 	/**
@@ -93,7 +111,7 @@ public class FileTestUtils
 			suffix = "." + suffix;
 		if(parent == null)
 			parent = new File(System.getProperty("java.io.tmpdir"));
-		name = prefix + toHexString(rand.nextLong()) + suffix;
+		name = prefix + randomLongHex() + suffix;
 		dir = new File(parent, name);
 		if(!dir.mkdir())
 			throw new IOException("Unable to create temporary directory " + dir);
@@ -212,5 +230,22 @@ public class FileTestUtils
 
 		// finally
 		delete(file);
+	}
+
+	/**
+	 * Find a file that does not currently exist.
+	 * @return File representing a non-existant file.
+	 */
+	public static File nonexistantFile() throws IOException
+	{
+		File file;
+		File tmpdir;
+
+		tmpdir = new File(System.getProperty("java.io.tmpdir"));
+		if(!tmpdir.exists())
+			return tmpdir;
+
+		while((file = new File(tmpdir, randomLongHex())).exists());
+		return file;
 	}
 }
