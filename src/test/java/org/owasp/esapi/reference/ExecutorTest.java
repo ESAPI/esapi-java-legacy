@@ -325,7 +325,6 @@ public class ExecutorTest extends TestCase
 	public void testExecuteJavaSemicolenInject() throws Exception
 	{
 		List params = new ArrayList();
-		String result;
 		File exe;
 
 		exe = new File(javaHomeBinJava.getCanonicalPath() + ';' + javaHomeBinJava.getCanonicalPath());
@@ -333,7 +332,7 @@ public class ExecutorTest extends TestCase
 
 		try
 		{
-			result = instance.executeSystemCommand(exe, params, tmpDir, codec);
+			instance.executeSystemCommand(exe, params, tmpDir, codec);
 			fail("No Exception was thrown when trying to execute " + exe);
 		}
 		catch(Exception expected)
@@ -344,7 +343,6 @@ public class ExecutorTest extends TestCase
 	public void testExecuteJavaDirectoryTraversal() throws Exception
 	{
 		List params = new ArrayList();
-		String result;
 		File exe;
 
 		exe = new File(javaHomeBin.getPath() + File.separator +  ".." + File.separator + "bin" + File.separator + javaCmd);
@@ -352,7 +350,7 @@ public class ExecutorTest extends TestCase
 
 		try
 		{
-			result = instance.executeSystemCommand(exe, params, tmpDir, codec);
+			instance.executeSystemCommand(exe, params, tmpDir, codec);
 			fail("No Exception was thrown when trying to execute " + exe);
 		}
 		catch(Exception expected)
@@ -363,28 +361,22 @@ public class ExecutorTest extends TestCase
 	public void testExecuteJavaParamSemicolen() throws Exception
 	{
 		List params = new ArrayList();
-		String result;
-
 		params.add("-help");
 		params.add(";" + javaHomeBinJava.getPath());
 
-		result = instance.executeSystemCommand(javaHomeBinJava, params, tmpDir, codec);
-		// as adding to -help doesn't fit the normal command
-		// line we can't really assume much here except it
-		// shouldn't throw an exception.
+		instance.executeSystemCommand(javaHomeBinJava, params, tmpDir, codec);
 	}
 
 	public void testExecuteJavaBadWorkingDir() throws Exception
 	{
 		List params = new ArrayList();
-		String result;
 		File working;
 
 		params.add("-help");
 		working = FileTestUtils.nonexistantFile();
 		try
 		{
-			result = instance.executeSystemCommand(javaHomeBinJava, params, working, codec);
+			instance.executeSystemCommand(javaHomeBinJava, params, working, codec);
 			fail("Attempt to execute java with invalid working directory should throw exception but didn't.");
 		}
 		catch(Exception expected)
