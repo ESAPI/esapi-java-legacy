@@ -19,6 +19,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.util.NullSafe;
 
+
 /**
  * Specifies all the relevant configuration data needed in constructing and
  * using a {@link javax.crypto.Cipher} except for the encryption key.
