@@ -19,9 +19,7 @@ public class NullSafe
 	{
 		if(a==b)	// short cut same object
 			return true;
-		if(a == null)
-			return (b == null);
-		if(b == null)
+		if(a == null || b == null)
 			return false;
 		return a.equals(b);
 	}
