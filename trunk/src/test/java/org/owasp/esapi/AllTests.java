@@ -24,16 +24,16 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.owasp.esapi.crypto.CipherSpecTest;
+import org.owasp.esapi.crypto.CryptoHelperTest;
 import org.owasp.esapi.filters.ClickjackFilterTest;
 import org.owasp.esapi.filters.SafeRequestTest;
-import org.owasp.esapi.util.CipherSpecTest;
-import org.owasp.esapi.util.CryptoHelperTest;
 import org.owasp.esapi.util.ObjFactoryTest;
 import org.owasp.esapi.StringUtilitiesTest;
 import org.owasp.esapi.waf.WAFFilterTest;
 
 /**
- * The Class AllTests. Execute all the JUnit 3 tests.
+ * Execute all the JUnit 3 and JUnit 4 ESAPI tests.
  *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
@@ -116,21 +116,21 @@ public class AllTests extends TestCase {
         suite.addTest(org.owasp.esapi.reference.AccessControllerTest.suite());
         suite.addTest(org.owasp.esapi.reference.HTTPUtilitiesTest.suite());
         suite.addTest(org.owasp.esapi.reference.ValidatorTest.suite());
-        suite.addTest(org.owasp.esapi.reference.EncryptorTest.suite());
+        suite.addTest(org.owasp.esapi.reference.crypto.EncryptorTest.suite());
         suite.addTest(org.owasp.esapi.reference.IntrusionDetectorTest.suite());
         suite.addTest(org.owasp.esapi.reference.AccessReferenceMapTest.suite());
         suite.addTest(org.owasp.esapi.reference.IntegerAccessReferenceMapTest.suite());
         suite.addTest(org.owasp.esapi.reference.ExecutorTest.suite());
         suite.addTest(org.owasp.esapi.reference.EncoderTest.suite());
-        suite.addTest(org.owasp.esapi.reference.EncryptedPropertiesTest.suite());
+        suite.addTest(org.owasp.esapi.reference.crypto.EncryptedPropertiesTest.suite());
         suite.addTest(org.owasp.esapi.reference.AuthenticatorTest.suite());
-        suite.addTest(org.owasp.esapi.reference.DefaultCipherTextTest.suite());  // A JUnit 4 test
-        suite.addTest(org.owasp.esapi.reference.LegacyEncryptorTest.suite());	 // A JUnit 4 test
+        suite.addTest(org.owasp.esapi.crypto.CipherTextTest.suite());  // A JUnit 4 test
+        suite.addTest(org.owasp.esapi.reference.crypto.LegacyEncryptorTest.suite());	 // A JUnit 4 test
 
         // main
         suite.addTest(org.owasp.esapi.ValidationErrorListTest.suite() );
         suite.addTest( org.owasp.esapi.UserTest.suite() );
-        suite.addTest( org.owasp.esapi.PlainTextTest.suite() );					 // A JUnit 4 test
+        suite.addTest( org.owasp.esapi.crypto.PlainTextTest.suite() );					 // A JUnit 4 test
         
         // codecs
         suite.addTest(org.owasp.esapi.codecs.CodecTest.suite() );
