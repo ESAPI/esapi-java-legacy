@@ -44,9 +44,7 @@
 		</description>
 		<display-name>Encode For Base64</display-name>
 		<name>encodeForBase64</name>
-		<tag-class>
-			org.owasp.esapi.tags.EncodeForBase64Tag
-		</tag-class>
+		<tag-class>org.owasp.esapi.tags.EncodeForBase64Tag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
 			<description>
@@ -92,9 +90,7 @@
 		</description>
 		<display-name>Encode For HTML Attribute</display-name>
 		<name>encodeForHTMLAttribute</name>
-		<tag-class>
-			org.owasp.esapi.tags.EncodeForHTMLAttributeTag
-		</tag-class>
+		<tag-class>org.owasp.esapi.tags.EncodeForHTMLAttributeTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 	
@@ -104,9 +100,7 @@
 		</description>
 		<display-name>Encode For JavaScript</display-name>
 		<name>encodeForJavaScript</name>
-		<tag-class>
-			org.owasp.esapi.tags.EncodeForJavaScriptTag
-		</tag-class>
+		<tag-class>org.owasp.esapi.tags.EncodeForJavaScriptTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 
@@ -126,9 +120,7 @@
 		</description>
 		<display-name>Encode For VBScript</display-name>
 		<name>encodeForVBScript</name>
-		<tag-class>
-			org.owasp.esapi.tags.EncodeForVBScriptTag
-		</tag-class>
+		<tag-class>org.owasp.esapi.tags.EncodeForVBScriptTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 
@@ -138,9 +130,7 @@
 		</description>
 		<display-name>Encode For XML Attribute</display-name>
 		<name>encodeForXMLAttribute</name>
-		<tag-class>
-			org.owasp.esapi.tags.EncodeForXMLAttributeTag
-		</tag-class>
+		<tag-class>org.owasp.esapi.tags.EncodeForXMLAttributeTag</tag-class>
 		<body-content>JSP</body-content>
 	</tag>
 
