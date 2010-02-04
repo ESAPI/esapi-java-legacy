@@ -89,7 +89,7 @@ are:
 	</P>
 	<LI><P STYLE="margin-bottom: 0in">A mechanism to attempt to preserve
 	backward compatibility with ESAPI Java 1.4 (via
-	<CODE>org.owasp.esapi.reference.LegacyJavaEncryptor</CODE>)
+	<CODE>org.owasp.esapi.reference.crypto.LegacyJavaEncryptor</CODE>)
 	has been added, but because of the security implications of using
 	the ECB cipher mode, you are encouraged to stop using this as soon
 	as possible. (In fact, this backward compatibility mechanism should
@@ -279,7 +279,7 @@ previously encrypted using ESAPI 1.4 or earlier, you will not be able
 to decrypt it using the ESAPI 2.0</P>
 <PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">String decrypt(String ciphertext) throws EncryptionException</PRE><P>
 method. If you require such compatibility, you should set
-<CODE>org.owasp.esapi.reference.LegacyJavaEncryptor</CODE>
+<CODE>org.owasp.esapi.reference.crypto.LegacyJavaEncryptor</CODE>
 for the property <CODE>ESAPI.Encryptor</CODE> in
 your <B>ESAPI.properties</B> file, this class likely will be removed
 in a future ESAPI release. (This class is intended only to provide
@@ -301,9 +301,9 @@ would replace.</P>
     #
     # Default values are shown.
     #
-        # Set this to            org.owasp.esapi.reference.LegacyJavaEncryptor
+        # Set this to            org.owasp.esapi.reference.crypto.LegacyJavaEncryptor
         # for compatibility with ESAPI 1.4. See next section for details.
-    ESAPI.Encryptor=org.owasp.esapi.reference.JavaEncryptor
+    ESAPI.Encryptor=org.owasp.esapi.reference.crypto.JavaEncryptor
 
     Encryptor.MasterKey=<FONT COLOR="#0000ff">pJhlri8JbuFYDgkqtHmm9s0Ziug2PE7ovZDyEPm4j14=</FONT>
     Encryptor.MasterSalt=<FONT COLOR="#0000ff">SbftnvmEWD5ZHHP+pX3fqugNysc=</FONT>
@@ -343,7 +343,7 @@ used.
 <P>
 This code will still work, however if you are using the standard
 (default) reference for <CODE>ESAPI.Encryptor</CODE>,
-which is <CODE>org.owasp.esapi.reference.JavaEncryptor</CODE>,
+which is <CODE>org.owasp.esapi.reference.crypto.JavaEncryptor</CODE>,
 the cipher transformation used with be that specified by the property
 <CODE>Encryptor.CipherTransformation</CODE> with
 a key size (when the algorithm supports a variable key size) of that
@@ -356,7 +356,7 @@ should cause no troubles. However, if you need to use these old
 String-based encrypt / decrypt methods to deal with data encrypted
 using ESAPI 1.4 you will need to configure your ESAPI.properties file
 to use the so-called legacy encryption. This is done by setting:</P>
-<PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">ESAPI.Encryptor=org.owasp.esapi.reference.LegacyJavaEncryptor</PRE><P>
+<PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">ESAPI.Encryptor=org.owasp.esapi.reference.crypto.LegacyJavaEncryptor</PRE><P>
 which will cause these two String-based encrypt / decrypt methods to
 use 256-bit AES with cipher transformation “AES/ECB/None”. Note
 that the new encryption / decryption methods continue to work as they
@@ -467,7 +467,7 @@ could use PGP-mail or S/MIME to securely email them, etc.)
 <PRE>
     // Generate two random, 128-bit AES keys to be distributed out-of-band.
     import javax.crypto.SecretKey;
-    import org.owasp.esapi.util.CryptoHelper;
+    import org.owasp.esapi.crypto.CryptoHelper;
     import org.owasp.esapi.codecs.Hex;
 
     public class MySecretKeys {
