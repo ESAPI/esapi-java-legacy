@@ -561,10 +561,34 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	}
 
 	/**
+     * {@inheritDoc}
+     */
+    // @Override
+    public List<String> getAdditionalAllowedCipherModes() {
+        return wrapped.getAdditionalAllowedCipherModes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    // @Override
+    public List<String> getCombinedCipherModes() {
+        return wrapped.getCombinedCipherModes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getPreferredJCEProvider() {
+        return wrapped.getPreferredJCEProvider();
+    }
+
+	/**
 	 * {@inheritDoc}
 	 */
 	// @Override
 	public boolean getDisableIntrusionDetection() {
 		return wrapped.getDisableIntrusionDetection();
 	}
+
 }
