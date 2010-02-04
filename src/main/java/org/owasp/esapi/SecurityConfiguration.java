@@ -185,7 +185,10 @@ public interface SecurityConfiguration {
 	public String getUsernameParameterName();
 
 	/**
-	 * Gets the encryption algorithm used by ESAPI to protect data.
+	 * Gets the encryption algorithm used by ESAPI to protect data. This is
+	 * mostly used for compatibility with ESAPI 1.4; ESAPI 2.0 prefers to
+	 * use "cipher transformation" since it supports multiple cipher modes
+	 * and padding schemes.
 	 * 
 	 * @return the current encryption algorithm
 	 */
@@ -248,26 +251,45 @@ public interface SecurityConfiguration {
      * 						there is <b>NO</b> sanity checking here (other than
      * 						the empty string, and then, only if Java assertions are
      * 						enabled), so if you set this wrong, you will not get
-     * 						any errors until you letter try to use it to encrypt
+     * 						any errors until you later try to use it to encrypt
      * 						or decrypt data.
      * @return	The previous cipher transformation is returned for convenience,
      * 			with the assumption that you may wish to restore it once you have
      * 			completed the encryption / decryption with the new cipher
      * 			transformation.
+     * @deprecated To be replaced by new class in ESAPI 2.1, but here if you need it
+     *          until then. Details of replacement forthcoming to ESAPI-Dev list.
      */
+    @Deprecated
     public String setCipherTransformation(String cipherXform);
 
+    /**
+     * Retrieve the preferred JCE provider. ESAPI 2.0 now allows setting the
+     * property {@code Encryptor.PreferredJCEProvider} in the
+     * {@code ESAPI.properties} file, which will cause the specified JCE
+     * provider to be automatically and dynamically loaded (assuming that
+     * {@code SecurityManager} permissions allow) as the Ii>preferred</i>
+     * JCE provider. (Note this only happens if the JCE provider is not already
+     * loaded.) This method returns the property {@code Encryptor.PreferredJCEProvider}.
+     * 
+     * @return The property {@code Encryptor.PreferredJCEProvider} is returned.
+     */
+    public String getPreferredJCEProvider();
+    
 // TODO - DISCUSS: Where should this web page (below) go? Maybe with the Javadoc? But where?
 //				   Think it makes more sense as part of the release notes, but OTOH, I
 //				   really don't want to rewrite this as a Wiki page either.
     /**
      * Determines whether the {@code CipherText} should be used with a Message
      * Authentication Code (MAC). Generally this makes for a more robust cryptographic
-     * scheme, but there are some minor performance implications.
+     * scheme, but there are some minor performance implications. Controlled by
+     * the ESAPI property <i>Encryptor.CipherText.useMAC</i>.
+     * </p><p>
      * For further details, see the "Advanced Usage" section of
      * <a href="http://www.owasp.org/ESAPI_2.0_ReleaseNotes_CryptoChanges.html">
      * "Why Is OWASP Changing ESAPI Encryption?"</a>.
-     * @return	{@code true} if a MIC should be used, otherwise {@code false}.
+     * </p>
+     * @return	{@code true} if a you want a MAC to be used, otherwise {@code false}.
      */
     public boolean useMACforCipherText();
 
@@ -294,9 +316,9 @@ public interface SecurityConfiguration {
      * the value of this fixed IV must be specified as the property
      * {@code Encryptor.fixedIV} and be of the appropriate length.
      * 
-     * @see #getFixedIV()
-     * 
      * @return A string specifying the IV type. Should be "random" or "fixed".
+     * 
+     * @see #getFixedIV()
      */
     public String getIVType();
     
@@ -306,6 +328,42 @@ public interface SecurityConfiguration {
      * @return The fixed IV as a hex-encoded string.
      */
     public String getFixedIV();
+    
+    /**
+     * Return a {@code List} of strings of combined cipher modes that support
+     * <b>both</b> confidentiality and authenticity. These would be preferred
+     * cipher modes to use if your JCE provider supports them. If such a
+     * cipher mode is used, no explicit <i>separate</i> MAC is calculated as part of
+     * the {@code CipherText} object upon encryption nor is any attempt made
+     * to verify the same on decryption.
+     * </p><p>
+     * The list is taken from the comma-separated list of cipher modes specified
+     * by the ESAPI property
+     * {@code Encryptor.cipher_modes.combined_modes}.
+     * 
+     * @return The parsed list of comma-separated cipher modes if the property
+     * was specified in {@code ESAPI.properties}; otherwise the empty list is
+     * returned.
+     */
+    public List<String> getCombinedCipherModes();
+
+    /**
+     * Return {@code List} of strings of additional cipher modes that are
+     * permitted (i.e., in <i>addition<i> to those returned by
+     * {@link #getPreferredCipherModes()}) to be used for encryption and
+     * decryption operations.
+     * </p><p>
+     * The list is taken from the comma-separated list of cipher modes specified
+     * by the ESAPI property
+     * {@code Encryptor.cipher_modes.additional_allowed}.
+     * 
+     * @return The parsed list of comma-separated cipher modes if the property
+     * was specified in {@code ESAPI.properties}; otherwise the empty list is
+     * returned.
+     *
+     * @see #getPreferredCipherModes() 
+     */
+    public List<String> getAdditionalAllowedCipherModes();
 
 	/**
 	 * Gets the hashing algorithm used by ESAPI to hash data.
