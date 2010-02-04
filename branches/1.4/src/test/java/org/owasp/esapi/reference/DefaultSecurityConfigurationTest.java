@@ -45,10 +45,10 @@ public class DefaultSecurityConfigurationTest extends TestCase
 	}
 
 	/**
-	 * Verify that a {@link FileNotFoundException is thrown for a
+	 * Verify that a {@link FileNotFoundException} is thrown for a
 	 * missing resource and not a NPE.
 	 */
-	 public void testgetResourceStreamMissing() throws IOException
+	 public void testGetResourceStreamMissing() throws IOException
 	 {
 	 	try
 		{

@@ -52,8 +52,6 @@ public class OracleCodec implements Codec {
 	 * Encodes ' to ''
      *
 	 * Encodes ' to ''
-     *
-     * @param immune
      */
 	public String encodeCharacter( Character c ) {
 		if ( c.charValue() == '\'' )

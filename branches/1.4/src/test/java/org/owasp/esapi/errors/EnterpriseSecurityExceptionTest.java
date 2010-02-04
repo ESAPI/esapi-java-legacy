@@ -81,9 +81,6 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
     
     /**
 	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
 	 */
     public void testExceptions() {
         System.out.println("exceptions");

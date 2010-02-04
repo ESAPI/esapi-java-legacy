@@ -108,7 +108,6 @@ public class HTTPUtilitiesTest extends TestCase {
      * Test of sendRedirect method, of class org.owasp.esapi.HTTPUtilities.
      * 
      * @throws ValidationException the validation exception
-     * @throws IOException Signals that an I/O exception has occurred.
      * @throws AuthenticationException the authentication exception
      */
     public void testChangeSessionIdentifier() throws EnterpriseSecurityException {

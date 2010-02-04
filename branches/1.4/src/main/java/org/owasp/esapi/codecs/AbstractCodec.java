@@ -98,9 +98,9 @@ public abstract class AbstractCodec implements Codec
 
 	/**
 	 * Encode a Character with a Codec. This implementation delegates
-	 * to {@link #encodecharacter(char[],character)}
+	 * to {@link #encodeCharacter(char[],Character)}
 	 * with a empty immune array. either this or
-	 * {@link #encodecharacter(char[],character)} must be overridden
+	 * {@link #encodeCharacter(char[],Character)} must be overridden
 	 * by subclasses.
 	 * @param c the Character to encode
 	 * @return the encoded Character

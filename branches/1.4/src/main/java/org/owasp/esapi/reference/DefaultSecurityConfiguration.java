@@ -633,9 +633,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		throw new FileNotFoundException();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public File getResourceFile(String filename) {
 		logSpecial("Attempting to load " + filename + " via file io.");
 
