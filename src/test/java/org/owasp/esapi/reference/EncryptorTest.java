@@ -88,7 +88,7 @@ public class EncryptorTest extends TestCase {
 	 *             the encryption exception
 	 * @deprecated to silence warnings about calling 
 	 *     {@link Encryptor#encrypt(String)} and
-	 *     {@link Encryptor#decrypt(String).
+	 *     {@link Encryptor#decrypt(String)}.
 	 */
     public void testEncrypt() throws EncryptionException {
         System.out.println("encrypt");
@@ -103,7 +103,7 @@ public class EncryptorTest extends TestCase {
 	 * Test of decrypt method, of class org.owasp.esapi.Encryptor.
 	 * @deprecated to silence warnings about calling 
 	 *     {@link Encryptor#encrypt(String)} and
-	 *     {@link Encryptor#decrypt(String).
+	 *     {@link Encryptor#decrypt(String)}.
 	 */
     public void testDecrypt() {
         System.out.println("decrypt");
@@ -153,9 +153,6 @@ public class EncryptorTest extends TestCase {
  
     /**
 	 * Test of seal method, of class org.owasp.esapi.Encryptor.
-	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
 	 */
     public void testSeal() throws IntegrityException {
         System.out.println("seal");

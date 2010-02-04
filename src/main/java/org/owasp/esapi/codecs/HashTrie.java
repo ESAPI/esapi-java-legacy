@@ -20,7 +20,7 @@ import org.owasp.esapi.util.PrimWrap;
  *
  * <b>NOTE:</b><br>
  * <ul>
- *	<li>{@link Map.remove(Object)} is not supported.</li>
+ *	<li>{@link Map#remove(Object)} is not supported.</li>
  *	<li>
  *		If deletion support is added the max key length will
  *		need work or removal.
@@ -497,7 +497,7 @@ public class HashTrie/*<T>*/ implements Map/*<CharSequence,T>*/
 	/**
 	 * Add mapping.
 	 * @param key The mapping's key.
-	 * @value value The mapping's value
+	 * @param value The mapping's value
 	 * @throws NullPointerException if key or value is null.
 	 */
 	public /*T*/Object put(CharSequence key, /*T*/Object value) throws NullPointerException
@@ -524,7 +524,7 @@ public class HashTrie/*<T>*/ implements Map/*<CharSequence,T>*/
 	/**
 	 * Add mapping.
 	 * @param key The mapping's key.
-	 * @value value The mapping's value
+	 * @param value The mapping's value
 	 * @throws NullPointerException if key or value is null.
 	 */
 	public Object put(Object key, Object value) throws NullPointerException

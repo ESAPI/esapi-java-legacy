@@ -46,7 +46,7 @@ public class FileTestUtils
 
 	/**
 	 * Convert a long to it's hex representation. Unlike
-	 * {@ Long#toHexString(long)} this always returns 16 digits.
+	 * {@link Long#toHexString(long)} this always returns 16 digits.
 	 * @param l The long to convert.
 	 * @return l in hex.
 	 */

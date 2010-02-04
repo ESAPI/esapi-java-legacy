@@ -49,14 +49,14 @@ public class PercentCodec implements Codec
 	/**
 	 * Convinence method to encode a string into UTF-8. This
 	 * wraps the {@link UnsupportedEncodingException} that
-	 * {@link String.getBytes(String)} throws in a
+	 * {@link String#getBytes(String)} throws in a
 	 * {@link IllegalStateException} as UTF-8 support is required
 	 * by the Java spec and should never throw this exception.
 	 * @param str the string to encode
 	 * @return str encoded in UTF-8 as bytes.
 	 * @throws IllegalStateException with info from a {@link
 	 *	UnsupportedEncodingException} if
-	 *	{@link String.getBytes(String)} throws it.
+	 *	{@link String#getBytes(String)} throws it.
 	 */
 	private static byte[] toUtf8Bytes(String str)
 	{
