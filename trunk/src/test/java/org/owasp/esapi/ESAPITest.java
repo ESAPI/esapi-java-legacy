@@ -27,7 +27,7 @@ import org.owasp.esapi.reference.DefaultIntrusionDetector;
 import org.owasp.esapi.reference.DefaultRandomizer;
 import org.owasp.esapi.reference.DefaultValidator;
 import org.owasp.esapi.reference.FileBasedAuthenticator;
-import org.owasp.esapi.reference.JavaEncryptor;
+import org.owasp.esapi.reference.crypto.JavaEncryptor;
 import org.owasp.esapi.reference.JavaLogFactory;
 
 /**
