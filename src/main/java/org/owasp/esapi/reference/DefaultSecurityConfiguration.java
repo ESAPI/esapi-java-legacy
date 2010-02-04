@@ -36,12 +36,6 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
-// DISCUSS: Is there a good way for us to determine if they have changed the master key and salt, and if not,
-//			at _least_ log a warning? Need to distinguish the "as-shipped" versions from the current versions.
-//
-//			Proposed solution: We will leave these 2 properties empty in the ESAPI.properties file and the
-//			installation instructions will show how to set them.
-
 /**
  * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
  * implementation, resources can be put in several locations, which are searched in the following order:
@@ -106,10 +100,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     			// ==================================//
     			//		New in ESAPI Java 2.0		 //
     			// ================================= //
+    private static final String PREFERRED_JCE_PROVIDER = "Encryptor.PreferredJCEProvider";
     private static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
     private static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
     private static final String IV_TYPE = "Encryptor.ChooseIVMethod";
     private static final String FIXED_IV = "Encryptor.fixedIV";
+    private static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
+    private static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
 
     private static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
     private static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
@@ -231,6 +228,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		// TODO: FUTURE: Replace by CryptoControls ???
 		// See SecurityConfiguration.setCipherTransformation() for
 		// explanation of this.
+        // (Propose this in 2.1 via future email to ESAPI-DEV list.)
 		cipherXformFromESAPIProp =
 			getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
 							 "AES/CBC/PKCS5Padding");
@@ -1004,6 +1002,31 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		}
 		return null;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getPreferredJCEProvider() {
+	    return getESAPIProperty(PREFERRED_JCE_PROVIDER, "SunJCE");
+	}  
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<String> getCombinedCipherModes()
+	{
+	    List<String> empty = new ArrayList<String>();     // Default is empty list
+	    return getESAPIProperty(COMBINED_CIPHER_MODES, empty);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<String> getAdditionalAllowedCipherModes()
+	{
+	    List<String> empty = new ArrayList<String>();     // Default is empty list
+	    return getESAPIProperty(ADDITIONAL_ALLOWED_CIPHER_MODES, empty);
+	}
 
 	private String getESAPIProperty( String key, String def ) {
 		String value = properties.getProperty(key);
@@ -1059,19 +1082,21 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	}
 
 	/**
-	 * Returns a List representing the parsed, comma-separated property
-	 * @param key
-	 * @param def
-	 * @return
+     * Returns a {@code List} representing the parsed, comma-separated property.
+     * 
+	 * @param key  The specified property name
+	 * @param def  A default value for the property name to return if the property
+	 *             is not set.
+	 * @return A list of strings.
 	 */
 	private List<String> getESAPIProperty( String key, List<String> def ) {
-		String property = properties.getProperty( key );
-		if ( property == null ) {
-    		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
-    		return def;
-		}
-		String[] parts = property.split(",");
-        return Arrays.asList( parts );
+	    String property = properties.getProperty( key );
+	    if ( property == null ) {
+	        logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
+	        return def;
+	    }
+	    String[] parts = property.split(",");
+	    return Arrays.asList( parts );
 	}
 
 	private boolean shouldPrintProperties() {
