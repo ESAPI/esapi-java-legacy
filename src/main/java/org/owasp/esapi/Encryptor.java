@@ -18,6 +18,8 @@ package org.owasp.esapi;
 
 import javax.crypto.SecretKey;
 
+import org.owasp.esapi.crypto.CipherText;
+import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
 
