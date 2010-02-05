@@ -204,9 +204,10 @@ public class CipherSpecTest extends TestCase {
 	
 	/** Test serialization */
 	@Test public void testSerialization() {
+        String filename = "cipherspec.ser";
+        File serializedFile = new File(filename);
+        boolean success = false;
         try {
-            String filename = "cipherspec.ser";
-            File serializedFile = new File(filename);
             serializedFile.delete();	// Delete any old serialized file.
             
             cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
@@ -227,13 +228,26 @@ public class CipherSpecTest extends TestCase {
             assertEquals("Serialized restored CipherSpec differs from saved CipherSpec",
             			 cipherSpec.toString(), restoredCipherSpec.toString() );
             
-            
+            success = true;
         } catch(IOException ex) {
             ex.printStackTrace(System.err);
             fail("testSerialization(): Unexpected IOException: " + ex);
         } catch(ClassNotFoundException ex) {
             ex.printStackTrace(System.err);
             fail("testSerialization(): Unexpected ClassNotFoundException: " + ex);
+        } finally {
+            // If test succeeds, remove the file. If it fails, leave it behind
+            // for further analysis.
+            if ( success && serializedFile.exists() ) {
+                boolean deleted = serializedFile.delete();
+                if ( !deleted ) {
+                    try {
+                        System.err.println("Unable to delete file: " + serializedFile.getCanonicalPath() );
+                    } catch (IOException e) {
+                        ; // Ignore
+                    }
+                }
+            }
         }
 	}
 	
