@@ -204,7 +204,7 @@
             <configuration>
                <archive>
                   <manifest>
-                     <mainClass>org.owasp.esapi.reference.JavaEncryptor</mainClass>
+                     <mainClass>org.owasp.esapi.reference.crypto.JavaEncryptor</mainClass>
                      <addClasspath>true</addClasspath>
                      <classpathPrefix>lib/</classpathPrefix>
                      <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
