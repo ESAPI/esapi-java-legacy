@@ -84,7 +84,16 @@ public class CipherTextSerializerTest {
 
     @Test
     public final void testAsCipherText() {
-        fail("Not yet implemented"); // TODO
+        try {
+            CipherText ct = ESAPI.encryptor().encrypt( new PlainText("Hello") );
+            CipherTextSerializer cts = new CipherTextSerializer( ct );
+            CipherText result = cts.asCipherText();
+            assertTrue( ct.equals(result) );
+            PlainText pt = ESAPI.encryptor().decrypt(result);
+            assertTrue( "Hello".equals( pt.toString() ) );
+        } catch (EncryptionException e) {
+            fail("Caught EncryptionException; exception msg: " + e);
+        }
     }
 
 }
