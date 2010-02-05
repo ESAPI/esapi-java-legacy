@@ -81,7 +81,14 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 */
 	public synchronized String setProperty(String key, String value) throws EncryptionException {
 		try {
-			// TODO: Change this to use CryptoHelper.encrypt()
+		    if ( key == null ) {
+		        throw new NullPointerException("Property name may not be null.");
+		    }
+		    if ( value == null ) {
+		        throw new NullPointerException("Property value may not be null.");
+		    }
+	        //  TODO: Change this to use Encryptor.encrypt(new PlainText(value)) after
+		    //        discussing w/ list. (Backward compatibility issue.)
 			return (String)properties.setProperty(key, ESAPI.encryptor().encrypt(value));
 		} catch (Exception e) {
 			throw new EncryptionException("Property setting failure", "Couldn't encrypt property", e);
