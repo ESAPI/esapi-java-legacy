@@ -1244,7 +1244,7 @@ public class Base64
         }   // end catch: IOException
         finally
         {
-            try{ bis.close(); } catch( Exception e) {}
+            try{ if (bis != null ) bis.close(); } catch( Exception e) {}
         }   // end finally
         
         return decodedData;
