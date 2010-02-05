@@ -93,35 +93,29 @@ public class PlainTextTest {
 	@Test
 	public final void testOverwrite() {
 		try {
-			byte[] utf8Bytes = unicodeStr.getBytes("UTF-8");
-			PlainText pt = new PlainText(utf8Bytes);
+			byte[] origBytes = unicodeStr.getBytes("UTF-8");
+			PlainText pt = new PlainText(origBytes);
 			assertTrue( pt.toString().equals(unicodeStr) );
-			assertTrue( Arrays.equals(utf8Bytes, pt.asBytes()) );			
+			assertTrue( Arrays.equals(origBytes, pt.asBytes()) );			
 			assertTrue( pt.hashCode() == unicodeStr.hashCode() );
 			
-			int origLen = utf8Bytes.length;
+			int origLen = origBytes.length;
 
 			pt.overwrite();
-			assertTrue( utf8Bytes != null );
-			assertTrue( pt.asBytes() != null );
-			assertTrue( utf8Bytes == pt.asBytes() );
+	        byte[] overwrittenBytes = pt.asBytes();
+			assertTrue( overwrittenBytes != null );
+			assertFalse( Arrays.equals( origBytes, overwrittenBytes ) );
 
-// DISCUSS:
-// See discussion note regarding method PlainText.overwrite(). Uncomment this
-// try / catch block if we set 'rawBytes' in this method to null.
-//
-//			try {
-//				@SuppressWarnings("unused")
-//				int len = pt.length();
-//			} catch( NullPointerException npe ) {
-//				assertTrue( "Caught expected NullPointerException", true );
-//			}
-			int afterLen = utf8Bytes.length;
+			// Ensure that ALL the bytes overwritten with '*'.
+			int afterLen = overwrittenBytes.length;
 			assertTrue( origLen == afterLen );
-			System.out.println("Length after overwritting: " + afterLen);
-			for (int i = 0; i < afterLen; i++ ) {
-				System.out.println("utf8Bytes[" + i + "] = " + utf8Bytes[i]);
+			int sum = 0;
+			for( int i = 0; i < afterLen; i++ ) {
+			    if ( overwrittenBytes[i] == '*' ) {
+			        sum++;
+			    }
 			}
+			assertTrue( afterLen == sum );
 		} catch (UnsupportedEncodingException e) {
 			fail("No UTF-8 byte encoding: " + e);
 			e.printStackTrace(System.err);
