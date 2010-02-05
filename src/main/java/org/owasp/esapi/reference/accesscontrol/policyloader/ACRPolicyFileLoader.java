@@ -23,7 +23,7 @@ final public class ACRPolicyFileLoader {
 		catch(ConfigurationException cex)
 		{
 			if(file == null) {
-				throw new AccessControlException("Unable to load configuration file from the following location: " + file, "", cex);
+				throw new AccessControlException("Unable to load configuration file for the following: " + "ESAPI-AccessControlPolicy.xml", "", cex);
 			}
 		    throw new AccessControlException("Unable to load configuration file from the following location: " + file.getAbsolutePath(), "", cex);
 		} 
