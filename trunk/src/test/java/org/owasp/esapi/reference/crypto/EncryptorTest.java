@@ -233,7 +233,7 @@ System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.g
 	    	System.out.println("\tResult after decryption: " + decryptedPlaintext);
 			assertTrue( "Failed to decrypt properly.", origPlainText.toString().equals( decryptedPlaintext.toString() ) );
 	    	
-	    	// Restore the previous cipher transformation.
+	    	// Restore the previous cipher transformation. For now, this is only way to do this.
 	    	String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
 	    	assertTrue( previousCipherXform.equals( cipherXform ) );
 	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
