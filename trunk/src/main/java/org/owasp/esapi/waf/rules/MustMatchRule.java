@@ -258,7 +258,7 @@ public class MustMatchRule extends Rule {
 
 					if ( target.contains("*") || target.contains("?") ) {
 
-						target = target.replaceAll("*", ".*");
+						target = target.replaceAll("\\*", ".*");
 						Pattern p = Pattern.compile(target);
 
 						Enumeration e = request.getSession(false).getAttributeNames();
