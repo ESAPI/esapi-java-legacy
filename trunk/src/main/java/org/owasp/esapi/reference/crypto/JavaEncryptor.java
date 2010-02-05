@@ -328,7 +328,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
              // monotonically increasing function).
              // DISCUSS: Should we include the permitted cipher modes in the exception msg?
              if ( ! CryptoHelper.isAllowedCipherMode(cipherMode) ) {
-                 throw new EncryptionException("Encryption failure: invalid cipher mode for encryption",
+                 throw new EncryptionException("Encryption failure: invalid cipher mode ( " + cipherMode + ") for encryption",
                              "Encryption failure: Cipher transformation " + xform + " specifies invalid " +
                              "cipher mode " + cipherMode);
              }
