@@ -26,11 +26,22 @@
    </issueManagement>
     <mailingLists>
         <mailingList>
-            <name>OWASP-ESAPI</name>
+            <name>ESAPI-Users</name>
+            <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-users/</subscribe>
+            <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-users/</unsubscribe>
+            <post>mailto:esapi-users@lists.owasp.org</post>
+            <archive>https://lists.owasp.org/pipermail/esapi-users/</archive><!--This is the OWASP ESAPI mailing list for ESAPI users, regardless of programming language. For example, ESAPI users with questions about ESAPI for Java or ESAPI for PHP would both post here.-->
+        </mailingList>
+        <mailingList>
+            <name>ESAPI-Developers</name>
             <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</subscribe>
             <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</unsubscribe>
             <post>mailto:esapi-dev@lists.owasp.org</post>
-            <archive>https://lists.owasp.org/pipermail/esapi-dev/</archive>
+            <archive>https://lists.owasp.org/pipermail/esapi-dev/</archive><!--This is the OWASP ESAPI mailing list for ESAPI for Java developers. While the list is not closed, the topics of discussion are likely to be less relevant to those only using ESAPI. Note that this is the list for ESAPI for Java. Most other language implementations, such ESAPI for PHP, have their own mailing lists.-->
+        </mailingList>
+        <mailingList>
+            <name>OWASP-ESAPI (Inactive! Archive only!)</name>
+            <archive>https://lists.owasp.org/pipermail/owasp-esapi/</archive><!--The name of the obsolete mailing list that previously was a combination of an ESAPI users lists and ESAP development list. While obsolete, it is still sometimes useful for searching through old historical posts. NOTE: NEW POSTS SHOULD NO LONGER BE MADE TO THIS LIST!-->
         </mailingList>
     </mailingLists>
 
