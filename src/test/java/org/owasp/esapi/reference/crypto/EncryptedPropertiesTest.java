@@ -159,14 +159,13 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testStoreLoad() throws Exception
 	{
-		DefaultEncryptedProperties toStore = new DefaultEncryptedProperties();
 		DefaultEncryptedProperties toLoad = new DefaultEncryptedProperties();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ByteArrayInputStream bais;
 		boolean sawOne = false;
 		boolean sawTwo = false;
 
-		toStore = new DefaultEncryptedProperties();
+	    DefaultEncryptedProperties toStore = new DefaultEncryptedProperties();
 		toStore.setProperty("one", "two");
 		toStore.setProperty("two", "three");
 		toStore.store(baos, "testStore");
