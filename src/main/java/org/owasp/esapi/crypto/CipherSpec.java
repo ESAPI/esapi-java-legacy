@@ -122,7 +122,7 @@ public final class CipherSpec implements Serializable {
 	 * transformation of "AES/CBC/PKCS5Padding" and a {@code null} IV.
 	 */
 	public CipherSpec() {
-		;	// All defaults
+		// All defaults
 	}
 
 	/**
@@ -165,7 +165,7 @@ public final class CipherSpec implements Serializable {
 			} else if ( parts == 3 ) {
 				// All threw parts provided. Do nothing. Could happen if not compiled with
 				// assertions enabled.
-				;	// Do nothing
+				;	// Do nothing - shown only for completeness.
 			} else {
 				// Should never happen unless Cipher implementation is totally screwed up.
 				throw new IllegalArgumentException("Cipher transformation '" +

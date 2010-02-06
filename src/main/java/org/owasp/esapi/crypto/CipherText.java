@@ -462,15 +462,14 @@ public final class CipherText implements Serializable {
 	    // If we are supposed to be using a (separate) MAC, also make sure
 	    // that it has been computed/stored.
 	    boolean usesMAC = ESAPI.securityConfiguration().useMACforCipherText();
-	    if (  usesMAC ) {
-	        if ( ! macComputed() ) {
-	            String msg = "Programming error: MAC is required for this cipher mode (" +
-	                         getCipherMode() + "), but MAC has not yet been " +
-	                         "computed and stored. Call the method " +
-	                         "computeAndStoreMAC(SecretKey) first before " +
-	                         "attempting serialization.";
-	            throw new EncryptionException("Can't serialize ciphertext info.", msg);
-	        }
+	    if (  usesMAC && ! macComputed() ) {
+	        String msg = "Programming error: MAC is required for this cipher mode (" +
+	                     getCipherMode() + "), but MAC has not yet been " +
+	                     "computed and stored. Call the method " +
+	                     "computeAndStoreMAC(SecretKey) first before " +
+	                     "attempting serialization.";
+	        throw new EncryptionException("Can't serialize ciphertext info: Data integrity issue.",
+	                                      msg);
 	    }
 	    
 	    // OK, everything ready, so give it a shot.
