@@ -38,6 +38,7 @@ import org.owasp.esapi.reference.crypto.JavaEncryptor;
  * The Class EncryptorTest.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
+ * @author kevin.w.wall@gmail.com
  */
 public class EncryptorTest extends TestCase {
     
@@ -56,6 +57,8 @@ public class EncryptorTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
+        // This is only mechanism to change this for now. Will do this with
+        // a soon to be CryptoControls class in next release.
         ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
     }
 

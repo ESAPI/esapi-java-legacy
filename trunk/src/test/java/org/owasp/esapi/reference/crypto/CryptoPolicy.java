@@ -59,12 +59,12 @@ public class CryptoPolicy {
                 // Try the encryption on dummy string to make sure it works.
                 // Not using padding so # bytes must be multiple of AES cipher
                 // block size which is 16 bytes. Also, OK not to use UTF-8 here.
-            @SuppressWarnings("unused")
             byte[] encrypted = cipher.doFinal("1234567890123456".getBytes());
+            assert encrypted != null : "Encryption of test string failed!";
             ExemptionMechanism em = cipher.getExemptionMechanism();
             if ( em != null ) {
                 System.out.println("Cipher uses exemption mechanism " + em.getName());
-                return false;   // This is actually an indeterminant case, but
+                return false;   // This is actually an indeterminate case, but
                                 // we can't bank on it at least for this
                                 // (default) provider.
             }

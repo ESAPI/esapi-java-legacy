@@ -64,8 +64,8 @@ public class PlainTextTest {
 	    int counter = 0;
 	    try {
             byte[] bytes = null;
-            @SuppressWarnings("unused")
             PlainText pt = new PlainText(bytes);
+            assertTrue( pt != null );   // Should never get to here.
             fail("testNullCase(): Expected NullPointerException or AssertionError");
         } catch (NullPointerException e) {
             // Will get this case if assertions are not enabled for PlainText.

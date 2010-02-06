@@ -26,7 +26,7 @@ public class CipherSpecTest extends TestCase {
 	private Cipher dfltECBCipher = null;	// will be "AES/ECB/NoPadding";
 	private Cipher dfltOtherCipher = null;
 	private CipherSpec cipherSpec = null;
-	private static byte[] myIV = null;
+	private byte[] myIV = null;
 
 	@Before public void setUp() throws Exception {
 			// This will throw ConfigurationException if IV type is not set to
@@ -56,19 +56,22 @@ public class CipherSpecTest extends TestCase {
 		cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
 		assertTrue( cipherSpec != null );
 		cipherSpec = null;
+		boolean caughtException = false;
 		try {
 				// Invalid cipher xform -- empty
 			cipherSpec = new CipherSpec( "",  128,  8, myIV);
 		} catch( Throwable t ) {
-			assertTrue( cipherSpec == null );
+			caughtException = true;
 		}
+		assertTrue( caughtException && (cipherSpec == null) );
+		caughtException = false;
 		try {
 				// Invalid cipher xform -- missing padding scheme
 			cipherSpec = new CipherSpec("AES/CBC", 128, 8, myIV);
 		} catch( Throwable t ) {
-			assertTrue( cipherSpec == null );
+		    caughtException = true;
 		}
-
+        assertTrue( caughtException && (cipherSpec == null) );
 	}
 
 	/** CipherSpec(final Cipher cipher, int keySize) */
@@ -208,7 +211,14 @@ public class CipherSpecTest extends TestCase {
         File serializedFile = new File(filename);
         boolean success = false;
         try {
-            serializedFile.delete();	// Delete any old serialized file.
+            // Delete any old serialized file. If it fails, it's not
+            // a big deal. If we can't overwrite it later, we'll get
+            // an IOException.
+            //
+            // NOTE: FindBugs complains we are not checking return value here.
+            //       Guess what? We don't care!!!
+            serializedFile.delete();
+
             
             cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
             FileOutputStream fos = new FileOutputStream(filename);

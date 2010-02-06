@@ -37,10 +37,13 @@ public class SecurityProviderLoaderTest {
     public static void setUpBeforeClass() {
         try {
             Class<?> providerClass = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
-            @SuppressWarnings("unused")
             Provider cryptoProvider = (Provider)providerClass.newInstance();
+            assertTrue( cryptoProvider != null );
             HAS_BOUNCY_CASTLE = true;
         } catch(Exception ex) {
+            // Note: FindBugs reports a false positive here...
+            //    REC_CATCH_EXCEPTION: Exception is caught when Exception is not thrown
+            // but exceptions really can be thrown.
             HAS_BOUNCY_CASTLE = false;
         }
     }

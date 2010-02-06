@@ -21,12 +21,9 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.EncryptionException;
 
 public class CipherTextSerializerTest {
-
-    private CipherSpec cipherSpec = null;
     private Cipher encryptor = null;
-    private Cipher decryptor = null;
-    private IvParameterSpec ivSpec = null;
-    
+    private IvParameterSpec ivSpec = null;  // Note: FindBugs reports false positive
+                                            // about this being unread field.
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -39,7 +36,6 @@ public class CipherTextSerializerTest {
     @Before
     public void setUp() throws Exception {
         encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        decryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
         byte[] ivBytes = null;
         ivBytes = ESAPI.randomizer().getRandomBytes(encryptor.getBlockSize());
         ivSpec = new IvParameterSpec(ivBytes);
@@ -60,24 +56,15 @@ public class CipherTextSerializerTest {
 
             byte[] raw;
             raw = encryptor.doFinal("Hello".getBytes("UTF8"));
-            CipherText ct = new CipherText(cipherSpec, raw);
-        } catch (InvalidKeyException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace(System.err);
-        } catch (InvalidAlgorithmParameterException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace(System.err);
-        } catch (IllegalBlockSizeException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace(System.err);
-        } catch (BadPaddingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace(System.err);
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace(System.err);
-        } catch (EncryptionException e) {
-            // TODO Auto-generated catch block
+            CipherText ct = ESAPI.encryptor().encrypt(key, new PlainText("Hello") );
+            assertTrue( ct != null );   // Here to eliminate false positive from FindBugs.
+            CipherTextSerializer cts = new CipherTextSerializer( ct );
+            byte[] serializedBytes = cts.asSerializedByteArray();
+            CipherText result = CipherText.fromPortableSerializedBytes(serializedBytes);
+            PlainText pt = ESAPI.encryptor().decrypt(key, result);
+            assertTrue( "Hello".equals( pt.toString() ) );
+        } catch (Exception e) {
+            fail("Test failed: Caught exception: " + e.getClass().getName() + "; msg was: " + e);
             e.printStackTrace(System.err);
         }
     }
