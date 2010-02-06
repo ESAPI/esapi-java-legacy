@@ -29,6 +29,7 @@ import org.owasp.esapi.crypto.CipherSpec;
 import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.CryptoHelper;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.reference.crypto.CryptoPolicy;
 
 public class CipherTextTest {
 
@@ -40,6 +41,7 @@ public class CipherTextTest {
     private IvParameterSpec ivSpec = null;
 	
     @BeforeClass public static void preCleanup() {
+        // These two calls have side-effects that cause FindBugs to complain.
         new File("ciphertext.ser").delete();
         new File("ciphertext-porta.bleser").delete();
     }
@@ -59,6 +61,7 @@ public class CipherTextTest {
 	
 	@AfterClass public static void postCleanup() {
 	    if ( POST_CLEANUP ) {
+	            // These two calls have side-effects that cause FindBugs to complain.
 	        new File("ciphertext.ser").delete();
 	        new File("ciphertext-portal.ser").delete();
 	    }
@@ -143,7 +146,16 @@ public class CipherTextTest {
 			assertTrue( ivAndRaw.length > ctraw.length );
 			assertTrue( ct.getBlockSize() == ( ivAndRaw.length - ctraw.length ) );
 		} catch( Exception ex) {
-			// As far as test coverage goes, we really don't want this to be covered.
+		    // Note: FindBugs reports a false positive here...
+		    //    REC_CATCH_EXCEPTION: Exception is caught when Exception is not thrown
+		    // but exceptions really can be thrown. This probably is because FindBugs
+		    // examines the byte-code rather than the source code. However "fixing" this
+		    // so that it doesn't complain will make the test much more complicated as there
+		    // are about 3 or 4 different exception types.
+		    //
+		    // On a completely different note, as far as test coverage metrics goes,
+			// we really don't care if this is covered or nit as it is not our intent
+		    // to be causing exceptions here.
 			ex.printStackTrace(System.err);
 			fail("Caught unexpected exception: " + ex.getClass().getName() +
 					"; exception message was: " + ex.getMessage());
@@ -193,11 +205,15 @@ public class CipherTextTest {
 	    File serializedFile = new File(filename);
 	    serializedFile.delete();    // Delete any old serialized file.
 
-	    CipherSpec cipherSpec = new CipherSpec(encryptor, 256);
+	    int keySize = 128;
+	    if ( CryptoPolicy.isUnlimitedStrengthCryptoAvailable() ) {
+	        keySize = 256;
+	    }
+	    CipherSpec cipherSpec = new CipherSpec(encryptor, keySize);
 	    cipherSpec.setIV(ivSpec.getIV());
 	    SecretKey key;
 	    try {
-	        key = CryptoHelper.generateSecretKey(cipherSpec.getCipherAlgorithm(), 256);
+	        key = CryptoHelper.generateSecretKey(cipherSpec.getCipherAlgorithm(), keySize);
 
 	        encryptor.init(Cipher.ENCRYPT_MODE, key, ivSpec);
 	        byte[] raw = encryptor.doFinal("This is my secret message!!!".getBytes("UTF8"));
@@ -209,7 +225,12 @@ public class CipherTextTest {
 	        
 	        FileOutputStream fos = new FileOutputStream(serializedFile);
             fos.write(serializedBytes);
+                // Note: FindBugs complains that this test may fail to close
+                // the fos output stream. We don't really care.
             fos.close();
+            
+            // NOTE: FindBugs complains about this (OS_OPEN_STREAM). It apparently
+            //       is too lame to know that 'fis.read()' is a serious side-effect.
             FileInputStream fis = new FileInputStream(serializedFile);
             int avail = fis.available();
             byte[] bytes = new byte[avail];
@@ -235,6 +256,7 @@ public class CipherTextTest {
         } catch (Exception e) {
             Assert.fail("Caught Exception: " + e);
         } finally {
+            // FindBugs complains that we are ignoring this return value. We really don't care.
             serializedFile.delete();
         }
 	}
@@ -299,6 +321,7 @@ public class CipherTextTest {
 			ex.printStackTrace(System.err);
 			fail("testJavaSerialization(): Unexpected InvalidAlgorithmParameterException: " + ex);
 		}  finally {
+		    // FindBugs complains that we are ignoring this return value. We really don't care.
             serializedFile.delete();
         }
 	}
