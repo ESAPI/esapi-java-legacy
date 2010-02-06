@@ -145,9 +145,12 @@ public class CipherTextSerializer {
             writeShort(baos, (short)bytes.length);
             baos.write(bytes, 0, bytes.length);
         } catch (UnsupportedEncodingException e) {
-            ; // Should never happen. UTF8 builtin to rt.jar
+            // Should never happen. UTF8 is built into the rt.jar. We don't use native encoding as
+            // a fall-back because that simply is not guaranteed to be portable across Java
+            // platforms and could cause really bizarre errors way downstream.
+            logger.error(Logger.EVENT_FAILURE, "Ignoring caught UnsupportedEncodingException " +
+                           "converting string to UTF8 encoding. Results suspect. Corrupt rt.jar????");
         }
-        return;
     }
     
     private String readString(ByteArrayInputStream bais, short sz)
@@ -163,7 +166,6 @@ public class CipherTextSerializer {
         byte[] shortAsByteArray = ByteConversionUtil.fromShort(s);
         assert shortAsByteArray.length == 2;
         baos.write(shortAsByteArray, 0, 2);
-        return;
     }
     
     private short readShort(ByteArrayInputStream bais)
@@ -178,7 +180,6 @@ public class CipherTextSerializer {
     private void writeInt(ByteArrayOutputStream baos, int i) {
         byte[] intAsByteArray = ByteConversionUtil.fromInt(i);
         baos.write(intAsByteArray, 0, 4);
-        return;
     }
     
     private int readInt(ByteArrayInputStream bais)
@@ -194,7 +195,6 @@ public class CipherTextSerializer {
         byte[] longAsByteArray = ByteConversionUtil.fromLong(l);
         assert longAsByteArray.length == 8;
         baos.write(longAsByteArray, 0, 8);
-        return;
     }
     
     private long readLong(ByteArrayInputStream bais)
