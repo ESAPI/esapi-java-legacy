@@ -155,8 +155,8 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
     		} while (key != null && key.length() > 0);
     		ep.store(out, "Encrypted Properties File");
 		} finally {
-    		try { in.close(); } catch( Exception e ) {}
-    		try { out.close(); } catch( Exception e ) {}
+    		try { if ( in != null ) in.close(); } catch( Exception e ) {}
+    		try { if ( out != null ) out.close(); } catch( Exception e ) {}
 		}
 		
 		Iterator i = ep.keySet().iterator();
