@@ -155,6 +155,8 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
     		} while (key != null && key.length() > 0);
     		ep.store(out, "Encrypted Properties File");
 		} finally {
+		    // FindBugs and PMD both complain about these next lines, that they may
+		    // ignore thrown exceptions. Really!!! That's the whole point.
     		try { if ( in != null ) in.close(); } catch( Exception e ) {}
     		try { if ( out != null ) out.close(); } catch( Exception e ) {}
 		}
