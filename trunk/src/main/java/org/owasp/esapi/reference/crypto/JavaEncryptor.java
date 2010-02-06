@@ -73,8 +73,10 @@ import org.owasp.esapi.errors.IntegrityException;
  */
 public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
+    private static boolean initialized = false;
+    
     // encryption
-		// Note: These 'protected' so we can also use them in LegacyJavaEncryptor.
+		// Note: These 'protected' so we can also *use* them in LegacyJavaEncryptor.
     protected static SecretKeySpec secretKeySpec = null; // DISCUSS: Why static? Implies one key?!?
     protected static String encryptAlgorithm = "AES";
     protected static String encoding = "UTF-8"; 
@@ -113,6 +115,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         } catch (NoSuchProviderException ex) {
             throw new ExceptionInInitializerError(ex);
         }
+        setupAlgorithms();
 	}
 	
     /**
@@ -194,41 +197,61 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
      * 					Original exception will be attached as the 'cause'.
      */
     public JavaEncryptor() throws EncryptionException {
-		byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
-		byte[] skey = ESAPI.securityConfiguration().getMasterKey();
+        byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
+        byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
-		// setup algorithms
-        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
-		signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
-		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
-		hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
-		hashIterations = ESAPI.securityConfiguration().getHashIterations();
-		encoding = ESAPI.securityConfiguration().getCharacterEncoding();
-		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
-        signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
+        assert salt != null : "Can't obtain master salt, Encryptor.MasterSalt";
+        assert salt.length >= 16 : "Encryptor.MasterSalt must be at least 16 bytes. " +
+                                   "Length is: " + salt.length + " bytes.";
+        assert skey != null : "Can't obtain master key, Encryptor.MasterKey";
+        assert skey.length >= 7 : "Encryptor.MasterKey must be at least 7 bytes. " +
+                                  "Length is: " + skey.length + " bytes.";
         
-		try {
-            // Set up encryption and decryption
-		    // TODO: Note: If we dump ESAPI 1.4 crypto backward compatibility,
-		    //       then we probably will ditch the Encryptor.EncryptionAlgorithm
-		    //       property. If so, encryptAlgorithm should probably use
-		    //       Encryptor.CipherTransformation and just pull off the cipher
-		    //       algorithm name so we can use it here.
-            secretKeySpec = new SecretKeySpec(skey, encryptAlgorithm );
+        // Set up secretKeySpec for use for symmetric encryption and decryption,
+        // and set up the public/private keys for asymmetric encryption /
+        // decryption.
+        // TODO: Note: If we dump ESAPI 1.4 crypto backward compatibility,
+        //       then we probably will ditch the Encryptor.EncryptionAlgorithm
+        //       property. If so, encryptAlgorithm should probably use
+        //       Encryptor.CipherTransformation and just pull off the cipher
+        //       algorithm name so we can use it here.
+        synchronized(JavaEncryptor.class) {
+            if ( ! initialized ) {
+                //
+                // For symmetric encryption
+                //
+                //      NOTE: FindBugs complains about this
+                //            (ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD) but
+                //            it should be OK since it is synchronized and only
+                //            done once. While we could separate this out and
+                //            handle in a static initializer, it just seems to
+                //            fit better here.
+                secretKeySpec = new SecretKeySpec(skey, encryptAlgorithm );
+                
+                //
+                // For asymmetric encryption (i.e., public/private key)
+                //
+                try {
+                    SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
 
-			// Set up signing key pair using the master password and salt
-			KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm);
-			SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-			byte[] seed = hash(new String(skey, encoding),new String(salt, encoding)).getBytes(encoding);
-			random.setSeed(seed);
-			keyGen.initialize(signatureKeyLength, random);
-			KeyPair pair = keyGen.generateKeyPair();
-			privateKey = pair.getPrivate();
-			publicKey = pair.getPublic();
-		} catch (Exception e) {
-			throw new EncryptionException("Encryption failure", "Error creating Encryptor", e);
-		}
-	}
+                    // Because hash() is not static (but it could be were in not
+                    // for the interface method specification in Encryptor), we
+                    // cannot do this initialization in a static method or static
+                    // initializer.
+                    byte[] seed = hash(new String(skey, encoding),new String(salt, encoding)).getBytes(encoding);
+                    random.setSeed(seed);
+                    initKeyPair(random);
+                } catch (Exception e) {
+                    throw new EncryptionException("Encryption failure", "Error creating Encryptor", e);
+                }             
+                
+                // Mark everything as initialized.
+                initialized = true;
+            }
+        }
+    }
+     
+
 
 	/**
      * {@inheritDoc}
@@ -318,13 +341,13 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 		try {
 			 xform = ESAPI.securityConfiguration().getCipherTransformation();
              String[] parts = xform.split("/");
-             assert parts.length == 3 : "Malformed cipher transformation";
+             assert parts.length == 3 : "Malformed cipher transformation: " + xform;
              String cipherMode = parts[1];
              
              // This way we can prevent modes like OFB and CFB where the IV should never
              // be repeated with the same encryption key (at least until we support
              // Encryptor.ChooseIVMethod=specified and allow us to specify some mechanism
-             // to ensure the IV will never be repeated (such as a timestamp or other
+             // to ensure the IV will never be repeated (such as a time stamp or other
              // monotonically increasing function).
              // DISCUSS: Should we include the permitted cipher modes in the exception msg?
              if ( ! CryptoHelper.isAllowedCipherMode(cipherMode) ) {
@@ -694,6 +717,9 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 			signer.update(data.getBytes(encoding));
 			return signer.verify(bytes);
 		} catch (Exception e) {
+		    // NOTE: EncryptionException constructed *only* for side-effect of causing logging.
+		    // FindBugs complains about this and since it examines byte-code, there's no way to
+		    // shut it up.
 			new EncryptionException("Invalid signature", "Problem verifying signature: " + e.getMessage(), e);
 			return false;
 		}
@@ -851,5 +877,28 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         if ( (counter % logEveryNthUse) == 0 ) {
             logger.warning(Logger.SECURITY_FAILURE, where + msg);
         }
+    }
+    
+    // Get all the algorithms we will be using from ESAPI.properties.
+    private static void setupAlgorithms() {
+        // setup algorithms
+        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
+        signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
+        randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
+        hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
+        hashIterations = ESAPI.securityConfiguration().getHashIterations();
+        encoding = ESAPI.securityConfiguration().getCharacterEncoding();
+        encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
+        signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
+    }
+    
+    // Set up signing key pair using the master password and salt. Called (once)
+    // from the JavaEncryptor CTOR.
+    private static void initKeyPair(SecureRandom prng) throws NoSuchAlgorithmException {
+            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm);
+            keyGen.initialize(signatureKeyLength, prng);
+            KeyPair pair = keyGen.generateKeyPair();
+            privateKey = pair.getPrivate();
+            publicKey = pair.getPublic();
     }
 }
