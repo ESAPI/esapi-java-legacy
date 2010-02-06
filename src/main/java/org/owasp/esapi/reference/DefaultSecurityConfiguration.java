@@ -74,61 +74,61 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	/** The name of the ESAPI property file */
 	public static final String RESOURCE_FILE = "ESAPI.properties";
 	
-    private static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
-    private static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
-    private static final String ABSOLUTE_TIMEOUT_DURATION = "Authenticator.AbsoluteTimeoutDuration";
-    private static final String ALLOWED_LOGIN_ATTEMPTS = "Authenticator.AllowedLoginAttempts";
-    private static final String USERNAME_PARAMETER_NAME = "Authenticator.UsernameParameterName";
-    private static final String PASSWORD_PARAMETER_NAME = "Authenticator.PasswordParameterName";
-    private static final String MAX_OLD_PASSWORD_HASHES = "Authenticator.MaxOldPasswordHashes";
+    public static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
+    public static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
+    public static final String ABSOLUTE_TIMEOUT_DURATION = "Authenticator.AbsoluteTimeoutDuration";
+    public static final String ALLOWED_LOGIN_ATTEMPTS = "Authenticator.AllowedLoginAttempts";
+    public static final String USERNAME_PARAMETER_NAME = "Authenticator.UsernameParameterName";
+    public static final String PASSWORD_PARAMETER_NAME = "Authenticator.PasswordParameterName";
+    public static final String MAX_OLD_PASSWORD_HASHES = "Authenticator.MaxOldPasswordHashes";
 
-    private static final String ALLOW_MULTIPLE_ENCODING = "Encoder.AllowMultipleEncoding";
-    private static final String CANONICALIZATION_CODECS = "Encoder.DefaultCodecList";
+    public static final String ALLOW_MULTIPLE_ENCODING = "Encoder.AllowMultipleEncoding";
+    public static final String CANONICALIZATION_CODECS = "Encoder.DefaultCodecList";
 
-    private static final String DISABLE_INTRUSION_DETECTION  = "IntrusionDetector.Disable";
+    public static final String DISABLE_INTRUSION_DETECTION  = "IntrusionDetector.Disable";
     
-    private static final String MASTER_KEY = "Encryptor.MasterKey";
-    private static final String MASTER_SALT = "Encryptor.MasterSalt";
-    private static final String KEY_LENGTH = "Encryptor.EncryptionKeyLength";
-    private static final String ENCRYPTION_ALGORITHM = "Encryptor.EncryptionAlgorithm";
-    private static final String HASH_ALGORITHM = "Encryptor.HashAlgorithm";
-    private static final String HASH_ITERATIONS = "Encryptor.HashIterations";
-    private static final String CHARACTER_ENCODING = "Encryptor.CharacterEncoding";
-    private static final String RANDOM_ALGORITHM = "Encryptor.RandomAlgorithm";
-    private static final String DIGITAL_SIGNATURE_ALGORITHM = "Encryptor.DigitalSignatureAlgorithm";
-    private static final String DIGITAL_SIGNATURE_KEY_LENGTH = "Encryptor.DigitalSignatureKeyLength";
+    public static final String MASTER_KEY = "Encryptor.MasterKey";
+    public static final String MASTER_SALT = "Encryptor.MasterSalt";
+    public static final String KEY_LENGTH = "Encryptor.EncryptionKeyLength";
+    public static final String ENCRYPTION_ALGORITHM = "Encryptor.EncryptionAlgorithm";
+    public static final String HASH_ALGORITHM = "Encryptor.HashAlgorithm";
+    public static final String HASH_ITERATIONS = "Encryptor.HashIterations";
+    public static final String CHARACTER_ENCODING = "Encryptor.CharacterEncoding";
+    public static final String RANDOM_ALGORITHM = "Encryptor.RandomAlgorithm";
+    public static final String DIGITAL_SIGNATURE_ALGORITHM = "Encryptor.DigitalSignatureAlgorithm";
+    public static final String DIGITAL_SIGNATURE_KEY_LENGTH = "Encryptor.DigitalSignatureKeyLength";
     			// ==================================//
     			//		New in ESAPI Java 2.0		 //
     			// ================================= //
-    private static final String PREFERRED_JCE_PROVIDER = "Encryptor.PreferredJCEProvider";
-    private static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
-    private static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
-    private static final String IV_TYPE = "Encryptor.ChooseIVMethod";
-    private static final String FIXED_IV = "Encryptor.fixedIV";
-    private static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
-    private static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
+    public static final String PREFERRED_JCE_PROVIDER = "Encryptor.PreferredJCEProvider";
+    public static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
+    public static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
+    public static final String IV_TYPE = "Encryptor.ChooseIVMethod";
+    public static final String FIXED_IV = "Encryptor.fixedIV";
+    public static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
+    public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
 
-    private static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
-    private static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
+    public static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
+    public static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
 
-    private static final String FORCE_HTTPONLYSESSION = "HttpUtilities.ForceHttpOnlySession";
-    private static final String FORCE_SECURESESSION = "HttpUtilities.SecureSession";
-    private static final String FORCE_HTTPONLYCOOKIES = "HttpUtilities.ForceHttpOnlyCookies";
-    private static final String FORCE_SECURECOOKIES = "HttpUtilities.ForceSecureCookies";
-    private static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";
-    private static final String UPLOAD_TEMP_DIRECTORY = "HttpUtilities.UploadTempDir";
-    private static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
-    private static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
-    private static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
+    public static final String FORCE_HTTPONLYSESSION = "HttpUtilities.ForceHttpOnlySession";
+    public static final String FORCE_SECURESESSION = "HttpUtilities.SecureSession";
+    public static final String FORCE_HTTPONLYCOOKIES = "HttpUtilities.ForceHttpOnlyCookies";
+    public static final String FORCE_SECURECOOKIES = "HttpUtilities.ForceSecureCookies";
+    public static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";
+    public static final String UPLOAD_TEMP_DIRECTORY = "HttpUtilities.UploadTempDir";
+    public static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
+    public static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
+    public static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
 
-    private static final String APPLICATION_NAME = "Logger.ApplicationName";
-    private static final String LOG_LEVEL = "Logger.LogLevel";
-    private static final String LOG_FILE_NAME = "Logger.LogFileName";
-    private static final String MAX_LOG_FILE_SIZE = "Logger.MaxLogFileSize";
-    private static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
-    private static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
-    private static final String LOG_SERVER_IP = "Logger.LogServerIP";
-    private static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
+    public static final String APPLICATION_NAME = "Logger.ApplicationName";
+    public static final String LOG_LEVEL = "Logger.LogLevel";
+    public static final String LOG_FILE_NAME = "Logger.LogFileName";
+    public static final String MAX_LOG_FILE_SIZE = "Logger.MaxLogFileSize";
+    public static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
+    public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
+    public static final String LOG_SERVER_IP = "Logger.LogServerIP";
+    public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
 
 
 
@@ -146,23 +146,23 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /*
      * Implementation Keys
      */
-    private static final String LOG_IMPLEMENTATION = "ESAPI.Logger";
-    private static final String AUTHENTICATION_IMPLEMENTATION = "ESAPI.Authenticator";
-    private static final String ENCODER_IMPLEMENTATION = "ESAPI.Encoder";
-    private static final String ACCESS_CONTROL_IMPLEMENTATION = "ESAPI.AccessControl";
-    private static final String ENCRYPTION_IMPLEMENTATION = "ESAPI.Encryptor";
-    private static final String INTRUSION_DETECTION_IMPLEMENTATION = "ESAPI.IntrusionDetector";
-    private static final String RANDOMIZER_IMPLEMENTATION = "ESAPI.Randomizer";
-	private static final String EXECUTOR_IMPLEMENTATION = "ESAPI.Executor";
-	private static final String VALIDATOR_IMPLEMENTATION = "ESAPI.Validator";
-	private static final String HTTP_UTILITIES_IMPLEMENTATION = "ESAPI.HTTPUtilities";
+    public static final String LOG_IMPLEMENTATION = "ESAPI.Logger";
+    public static final String AUTHENTICATION_IMPLEMENTATION = "ESAPI.Authenticator";
+    public static final String ENCODER_IMPLEMENTATION = "ESAPI.Encoder";
+    public static final String ACCESS_CONTROL_IMPLEMENTATION = "ESAPI.AccessControl";
+    public static final String ENCRYPTION_IMPLEMENTATION = "ESAPI.Encryptor";
+    public static final String INTRUSION_DETECTION_IMPLEMENTATION = "ESAPI.IntrusionDetector";
+    public static final String RANDOMIZER_IMPLEMENTATION = "ESAPI.Randomizer";
+	public static final String EXECUTOR_IMPLEMENTATION = "ESAPI.Executor";
+	public static final String VALIDATOR_IMPLEMENTATION = "ESAPI.Validator";
+	public static final String HTTP_UTILITIES_IMPLEMENTATION = "ESAPI.HTTPUtilities";
 
 				// ==================================//
 				//		New in ESAPI Java 2.0		 //
 				//   Not implementation classes!!!   //
 				// ================================= //
-	private static final String PRINT_PROPERTIES_WHEN_LOADED = "ESAPI.printProperties";
-    private static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
+	public static final String PRINT_PROPERTIES_WHEN_LOADED = "ESAPI.printProperties";
+    public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
 
     /*
      * Default Implementations
