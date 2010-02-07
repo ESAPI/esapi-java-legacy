@@ -14,7 +14,14 @@ public class FileTestUtils
 	private static final String CLASS_NAME = CLASS.getName();
 	private static final String DEFAULT_PREFIX = CLASS_NAME + '.';
 	private static final String DEFAULT_SUFFIX = ".tmp";
+	private static final boolean IS_WINDOWS = (System.getProperty("os.name").indexOf("Windows") >= 0);
 	private static final Random rand;
+	private static File javaHome;
+	private static File javaBin;
+	private static File javaExe;
+	private static File userDir;
+	private static File userHome;
+	private static File javaIoTmpDir;
 
 	/*
 		Rational for switching from SecureRandom to Random:
@@ -110,12 +117,13 @@ public class FileTestUtils
 		else if(!suffix.startsWith("."))
 			suffix = "." + suffix;
 		if(parent == null)
-			parent = new File(System.getProperty("java.io.tmpdir"));
+			parent = getJavaIoTmpDir();
 		name = prefix + randomLongHex() + suffix;
 		dir = new File(parent, name);
 		if(!dir.mkdir())
 			throw new IOException("Unable to create temporary directory " + dir);
-		return dir.getCanonicalFile();
+		dir = dir.getCanonicalFile();
+		return dir;
 	}
 
 	/**
@@ -136,6 +144,21 @@ public class FileTestUtils
 	/**
 	 * Create a temporary directory. This calls
 	 * {@link #createTmpDirectory(File, String, String)} with null
+	 * for parent and suffix.
+	 * @param cls The class who's name is used for the file prefix.
+	 * @return The newly created temporary directory.
+	 * @throws IOException if directory creation fails
+	 * @throws SecurityException if {@link File#mkdir()} throws one.
+	 * @throws NullPointerException if cls is null.
+	 */
+	public static File createTmpDirectory(Class cls) throws IOException
+	{
+		return createTmpDirectory(null, cls.getName(), null);
+	}
+
+	/**
+	 * Create a temporary directory. This calls
+	 * {@link #createTmpDirectory(File, String, String)} with null
 	 * for all arguments.
 	 * @return The newly created temporary directory.
 	 * @throws IOException if directory creation fails
@@ -144,6 +167,78 @@ public class FileTestUtils
 	public static File createTmpDirectory() throws IOException
 	{
 	 	return createTmpDirectory(null,null,null);
+	}
+
+	/**
+	 * Create a temporary file.
+	 * @param parent The directory to create the file in. If this is
+	 *	not null,
+	 * 	{@link File#createTempFile(String,String,File)} is used
+	 * 	to create the file. Otherwise
+	 * 	{@link File#createTempFile(String,String)} is.
+	 * @param prefix The file name's prefix. If this is null, this
+	 *	class name is used. A period is appended to the prefix
+	 * 	if one is not present.
+	 * @param suffix The suffix for the file. If this is null,
+	 *	".tmp" is used. If the first character is not a period,
+	 * 	one is prepended.
+	 * @return The {@link File.getCanonicalFile() canonical} File for the temporary file created.
+	 * @throws IOException if file creation or canonicalization does.
+	 * @throws SecurityException if file creation or canonicalization does.
+	 */
+	public static File createTmpFile(File parent, String prefix, String suffix) throws IOException
+	{
+		String name;
+		File file;
+
+		if(prefix == null)
+			prefix = DEFAULT_PREFIX;
+		else if(!prefix.endsWith("."))
+			prefix += '.';
+		if(suffix == null)
+			suffix = DEFAULT_SUFFIX;
+		else if(!suffix.startsWith("."))
+			suffix = "." + suffix;
+		if(parent == null)
+			file = File.createTempFile(prefix, suffix);
+		else
+			file = File.createTempFile(prefix, suffix, parent);
+		file = file.getCanonicalFile();
+		return file;
+	}
+
+	/**
+	 * Create a tmporary file. This simply delegates
+	 * to {@link #createTmpFile(File,String,String)
+	 * createTmpFile(null,prefix.null)}.
+	 * @param prefix The prefix to pass to createTmpFile(File,
+	 * 	String, String)
+	 */
+	public static File createTmpFile(String prefix) throws IOException
+	{
+		return createTmpFile(null,prefix,null);
+	}
+
+	/**
+	 * Create a tmporary file. This simply delegates
+	 * to {@link #createTmpFile(File,String,String)
+	 * createTmpFile(null,cls.getName().null)}.
+	 * @param cls Class who's name will be used for the prefix.
+	 * @throws NullPointerException if cls is null.
+	 */
+	public static File createTmpFile(Class cls) throws IOException
+	{
+		return createTmpFile(null,cls.getName(),null);
+	}
+
+	/**
+	 * Create a tmporary file. This simply delegates
+	 * to {@link #createTmpFile(File,String,String)
+	 * createTmpFile(null,null.null)}.
+	 */
+	public static File createTmpFile() throws IOException
+	{
+		return createTmpFile(null,null,null);
 	}
 
 	/**
@@ -234,18 +329,211 @@ public class FileTestUtils
 
 	/**
 	 * Find a file that does not currently exist.
+	 * @param dir The directory the file should be in. If
+	 *	this is null, {@link System#getProperty(String)
+	 *	System.getProperty("java.io.tmpdir")} is used.
 	 * @return File representing a non-existant file.
 	 */
-	public static File nonexistantFile() throws IOException
+	public static File getNonexistantFile(File dir) throws IOException
 	{
 		File file;
-		File tmpdir;
 
-		tmpdir = new File(System.getProperty("java.io.tmpdir"));
-		if(!tmpdir.exists())
-			return tmpdir;
-
-		while((file = new File(tmpdir, randomLongHex())).exists());
+		if(dir == null)
+			dir = getJavaIoTmpDir();
+		else if(!dir.isDirectory())
+			throw new IllegalArgumentException("File " + dir + " is not a directory.");
+		while((file = new File(dir, randomLongHex())).exists());
 		return file;
+	}
+
+	/**
+	 * Find a file that does not currently exist.
+	 * @return File representing a non-existant file.
+	 */
+	public static File getNonexistantFile() throws IOException
+	{
+		return getNonexistantFile(null);
+	}
+
+	/**
+	 * Get a valid regular file.
+	 * @return a {@link File.getCanonicalFile() canonicalized}
+	 * 	valid regular file
+	 */
+	public static File getValidFile() throws IOException
+	{
+		return getJavaExe();
+	}
+
+	/**
+	 * Get a valid directory.
+	 * @return a {@link File.getCanonicalFile() canonicalized}
+	 * 	valid directory.
+	 */
+	public static File getValidDirectory() throws IOException
+	{
+		return getJavaHome();
+	}
+
+	/**
+	 * Get a file based on a file name from a system property.
+	 * @param propName the name of the system property.
+	 * @param isDirectory If true, the file will be verified to be
+	 * 	a directory. Otherwise the file will be validated
+	 * 	to exist.
+	 * @return a validated and {@link File.getCanonicalFile()
+	 * 	canonicalized} File for the given property's value.
+	 * @throws IllegalArgumentException if propName is not a current
+	 * 	system property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	private static File getSystemPropertyFile(String propName, boolean isDirectory) throws IOException
+	{
+		File file;
+		String propValue;
+
+		if((propValue = System.getProperty(propName))==null)
+			throw new IllegalArgumentException("System property " + propName + " does not exist.");
+		file = new File(propValue).getCanonicalFile();
+		if(!file.exists())
+			throw new IOException("System property " + propName + " is " + propValue + " which is not a valid file.");
+		if(isDirectory)
+		{
+			if(!file.isDirectory())
+				throw new IOException("System property " + propName + " is " + propValue + " is not a directory.");
+		}
+		else
+		{
+			if(file.isDirectory())
+				throw new IOException("System property " + propName + " is " + propValue + " is a directory.");
+		}
+
+		return file;
+	}
+
+	/**
+	 * Get a file based on a file name from a system property.
+	 * @param propName the name of the system property.
+	 * @return a validated and {@link File.getCanonicalFile()
+	 * 	canonicalized} File for the given property's value.
+	 * @throws IllegalArgumentException if propName is not a current
+	 * 	system property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	private static File getSystemPropertyFile(String propName) throws IOException
+	{
+		return getSystemPropertyFile(propName, false);
+	}
+
+	/**
+	 * Get a directory based on a directory name from a system
+	 * property.
+	 * @param propName the name of the system property.
+	 * @return a validated and {@link File.getCanonicalFile()
+	 * 	canonicalized} File for the given property's value.
+	 * @throws IllegalArgumentException if propName is not a current
+	 * 	system property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	private static File getSystemPropertyDirectory(String propName) throws IOException
+	{
+		return getSystemPropertyFile(propName, true);
+	}
+
+	/**
+	 * Get a {@link File} for the system property "java.home".
+	 * @return a validated and {@link File.getCanonicalFile()
+	 * 	canonicalized} File for the "java.home" system property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	public static synchronized File getJavaHome() throws IOException
+	{
+		if(javaHome == null)
+			javaHome = getSystemPropertyDirectory("java.home");
+		return javaHome;
+	}
+
+	/**
+	 * Get a {@link File} for the system property "user.dir".
+	 * @return a validated and {@link File.getCanonicalFile()
+	 * 	canonicalized} File for the "user.dir" system property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	public static synchronized File getUserDir() throws IOException
+	{
+		if(userDir == null)
+			userDir = getSystemPropertyDirectory("user.dir");
+		return userDir;
+	}
+
+	/**
+	 * Get a {@link File} for the system property "user.home".
+	 * @return a validated and {@link File.getCanonicalFile()
+	 * 	canonicalized} File for the "user.home" system property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	public static synchronized File getUserHome() throws IOException
+	{
+		if(userDir == null)
+			userDir = getSystemPropertyDirectory("user.home");
+		return userDir;
+	}
+
+	/**
+	 * Get a {@link File} for the system property "java.io.tmpdir".
+	 * @return a validated and {@link File.getCanonicalFile()
+	 *	canonicalized} File for the "java.io.tmpdir" system
+	 * 	property.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	public static synchronized File getJavaIoTmpDir() throws IOException
+	{
+		if(javaIoTmpDir == null)
+			javaIoTmpDir = getSystemPropertyDirectory("java.io.tmpdir");
+		return javaIoTmpDir;
+	}
+
+	/**
+	 * Get a {@link File} for the directory containing the java
+	 * executable.
+	 * @return a validated and {@link File.getCanonicalFile()
+	 *	canonicalized} File for the directory containg the
+	 * 	java executable.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	public static synchronized File getJavaBin() throws IOException
+	{
+		File file;
+
+		if(javaBin == null)
+		{
+			file = new File(getJavaHome(),"bin").getCanonicalFile();
+			if(!file.isDirectory())
+				throw new IOException("java.home is " + System.getProperty("java.home") + " but does not contain a subdirectory bin.");
+			javaBin = file;
+		}
+		return javaBin;
+	}
+
+	/**
+	 * Get a {@link File} for the the java executable.
+	 * @return a validated and {@link File.getCanonicalFile()
+	 *	canonicalized} File for the java executable.
+	 * @throws IOException if validation or canonicalization fails.
+	 */
+	public static synchronized File getJavaExe() throws IOException
+	{
+		File file;
+
+		if(javaExe == null)
+		{
+			file = new File(getJavaBin(),"java" + (IS_WINDOWS ? ".exe" : "")).getCanonicalFile();
+			if(!file.exists())
+				throw new IOException("java.home is " + System.getProperty("java.home") + " but does not contain a java executable in the bin subdirectory");
+			if(file.isDirectory())
+				throw new IOException("java.home is " + System.getProperty("java.home") + " but the expected java executable in the bin subdirectory is a directory");
+			javaExe = file;
+		}
+		return javaExe;
 	}
 }

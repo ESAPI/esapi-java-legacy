@@ -16,6 +16,8 @@
 package org.owasp.esapi.reference;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -33,13 +35,37 @@ import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.TestHttpServletRequest;
 import org.owasp.esapi.http.TestHttpServletResponse;
+import org.owasp.esapi.util.FileTestUtils;
 
 /**
  * The Class ValidatorTest.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ValidatorTest extends TestCase {
+public class ValidatorTest extends TestCase
+{
+	private static final Class CLASS = ValidatorTest.class;
+	private static final boolean IS_WINDOWS = (System.getProperty("os.name").indexOf("Windows") >= 0);
+	private static final File[] VALID_DIRS;
+	
+	static
+	{
+		try
+		{
+			VALID_DIRS = new File[]
+			{
+				FileTestUtils.getJavaHome(),
+				FileTestUtils.getJavaBin(),
+				FileTestUtils.getUserDir(),
+				FileTestUtils.getUserHome(),
+				FileTestUtils.getJavaIoTmpDir(),
+			};
+		}
+		catch(IOException e)
+		{
+			throw new IllegalStateException("IOException getting valid directories");
+		}
+	}
 
 	/**
 	 * Instantiates a new validator test.
@@ -71,7 +97,7 @@ public class ValidatorTest extends TestCase {
 	 * @return the test
 	 */
 	public static Test suite() {
-		TestSuite suite = new TestSuite(ValidatorTest.class);
+		TestSuite suite = new TestSuite(CLASS);
 
 		return suite;
 	}
@@ -280,56 +306,85 @@ public class ValidatorTest extends TestCase {
 	}
 
 	/**
-	 * Test of isValidDirectoryPath method, of class org.owasp.esapi.Validator.
+	 * Test
+	 * {@link Validator#isValidDirectoryPath(String,String,boolean)}
+	 * using paths to valid directories.
 	 */
-	public void testIsValidDirectoryPath() {
-		System.out.println("isValidDirectoryPath");
-		
-		boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1 ) ? true : false;
-	
+	public void testIsValidDirectoryPathDir() throws Exception
+	{
 		Validator instance = ESAPI.validator();
-		if ( isWindows ) {
-			// Windows paths that don't exist and thus should fail
-			assertFalse(instance.isValidDirectoryPath("test", "C:\\pathNotExist", false));
-			assertFalse(instance.isValidDirectoryPath("test", "C:\\jeff123", false));
-			assertFalse(instance.isValidDirectoryPath("test", "C:\\temp\\..\\etc", false));
+		File file;
 
-			// Windows paths that should pass
-			assertTrue(instance.isValidDirectoryPath("test", "C:\\WINDOWS", false));		
-			assertTrue(instance.isValidDirectoryPath("test", "C:\\WINDOWS\\system32", false));
-			
-			// Windows file should exist but is not a directory and should fail
-			assertFalse(instance.isValidDirectoryPath("test", "C:\\WINDOWS\\system32\\cmd.exe", false));		// Windows command shell	
-			
-			// Unix specific paths should not pass
-			assertFalse(instance.isValidDirectoryPath("test", "/tmp", false));		// Unix Temporary directory
-			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Unix Standard shell	
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/config", false));
-			assertFalse(instance.isValidDirectoryPath("test", "/", false));			// Unix Root directory
-			
-			// Unix specific paths that should not exist or work
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
-			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
-		} else {
-			// Windows paths should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\pathNotExist", false));
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", false));
-
-			// Standard Windows locations should fail
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\", false));								// Windows root directory
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\temp", false));					// Windows temporary directory
-			assertFalse(instance.isValidDirectoryPath("test", "c:\\Windows\\System32\\cmd.exe", false));	// Windows command shell	
-			
-			// Unix specific paths should pass
-			assertTrue(instance.isValidDirectoryPath("test", "/", false));			// Root directory
-			assertTrue(instance.isValidDirectoryPath("test", "/bin", false));		// Always exist directory
-			
-			// Unix specific paths that should not exist or work
-			assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", false));	// Standard shell, not dir
-			assertFalse(instance.isValidDirectoryPath("test", "/etc/pathDoesNotExist", false));
-			assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", false));
+		// valid directories
+		for(int i=0;i<VALID_DIRS.length;i++)
+		{
+			file = VALID_DIRS[i];
+			assertTrue("validator claims " + file + " is invalid directory path.", instance.isValidDirectoryPath("test", file.getPath(), false));
 		}
 	}
+
+	/**
+	 * Test
+	 * {@link Validator#isValidDirectoryPath(String,String,boolean)}
+	 * using paths to valid directories using "..".
+	 */
+	public void testIsValidDirectoryPathDirTraversal() throws Exception
+	{
+		Validator instance = ESAPI.validator();
+		File file;
+		String fileName;
+
+		for(int i=0;i<VALID_DIRS.length;i++)
+		{
+			file = VALID_DIRS[i];
+			fileName = file.getPath() + File.separator + ".." + File.separator + file.getName();
+			assertTrue("validator claims " + file + " is invalid directory path.", instance.isValidDirectoryPath("test", file.getPath(), false));
+		}
+	}
+
+	/**
+	 * Test
+	 * {@link Validator#isValidDirectoryPath(String,String,boolean)}
+	 * using paths to valid files.
+	 */
+	public void testIsValidDirectoryPathFile() throws Exception
+	{
+		Validator instance = ESAPI.validator();
+		File file;
+
+		file = FileTestUtils.getJavaExe();
+		assertFalse("validator claims " + file + " is valid directory path.", instance.isValidDirectoryPath("test", file.getPath(), false));
+
+		file = null;	// set to null so we don't accidentally delete java...
+		try
+		{
+			file = FileTestUtils.createTmpFile(CLASS);
+			assertFalse("validator claims " + file + " is valid directory path.", instance.isValidDirectoryPath("test", file.getPath(), false));
+		}
+		finally
+		{
+			FileTestUtils.delete(file);
+		}
+	}
+
+	/**
+	 * Test
+	 * {@link Validator#isValidDirectoryPath(String,String,boolean)}
+	 * using non-existant paths.
+	 */
+	public void testIsValidDirectoryPathNonexistant() throws Exception
+	{
+		Validator instance = ESAPI.validator();
+		File file;
+
+		// nonexistant files
+		for(int i=0;i<VALID_DIRS.length;i++)
+		{
+			file = FileTestUtils.getNonexistantFile(VALID_DIRS[i]);
+			assertFalse("validator claims " + file + " is a valid directory path.", instance.isValidDirectoryPath("test", file.getPath(), false));
+		}
+	}
+
 
 	public void testIsValidPrintable() {
 		System.out.println("isValidPrintable");
@@ -357,11 +412,9 @@ public class ValidatorTest extends TestCase {
 	public void testIsValidFileUpload() {
 		System.out.println("isValidFileUpload");
 
-		boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1 ) ? true : false;
-		
 		Validator validator = ESAPI.validator();
 		
-		if ( isWindows ) {
+		if (IS_WINDOWS) {
 			
 			String filepath = "C:\\WINDOWS\\system32";
 			String filename = "cmd.exe";
