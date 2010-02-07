@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,16 +42,32 @@ import org.owasp.esapi.util.FileTestUtils;
  */
 public class ExecutorTest extends TestCase
 {
+	private static final Class CLASS = ExecutorTest.class;
 	private static final boolean IS_WINDOWS = (System.getProperty("os.name").indexOf("Windows") >= 0);
+	private static final String JAVA_CMD_NAME;
+	private static final File JAVA_CMD;
+	private static final File JAVA_HOME;
+	private static final File JAVA_HOME_BIN;
+	private static final File TMP_DIR;
 	private SecurityConfiguration origConfig;
 	private Codec codec;
-	private String javaCmd;
-	private File tmpDir;
-	private File javaHome;
-	private File javaHomeBin;
-	private File javaHomeBinJava;
 	private Executor instance;
 
+	static
+	{
+		try
+		{
+			JAVA_CMD = FileTestUtils.getJavaExe();
+			JAVA_CMD_NAME = JAVA_CMD.getName();
+			JAVA_HOME = FileTestUtils.getJavaHome();
+			JAVA_HOME_BIN = FileTestUtils.getJavaBin();
+			TMP_DIR = FileTestUtils.getJavaIoTmpDir();
+		}
+		catch(IOException e)
+		{
+			throw new IllegalStateException("IOException setting static Files that should exist.", e);
+		}
+	}
 
 	/**
 	 * Config wrapper to temporarly set the allowedExecutables and
@@ -108,46 +125,27 @@ public class ExecutorTest extends TestCase
 	 * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
-		// save configuration as tests may change it
+		// save configuration as tests change it
 		origConfig = ESAPI.securityConfiguration();
-
-		if (IS_WINDOWS)
-		{
-			javaCmd = "java.exe";
-			codec = new WindowsCodec();
-		}
-		else
-		{
-			javaCmd = "java";
-			codec = new UnixCodec();
-		}
-
-		javaHome= new File(System.getProperty("java.home")).getCanonicalFile();
-		assertTrue("system property java.home does not point to a directory", javaHome.isDirectory());
-		javaHomeBin = new File(javaHome, "bin").getCanonicalFile();
-		assertTrue(javaHome.getPath() + File.separator + "bin does not exist", javaHome.isDirectory());
-		javaHomeBinJava = new File(javaHomeBin, javaCmd).getCanonicalFile();
-		assertTrue(javaHomeBinJava.getPath() + File.separator + "java does not exist", javaHomeBinJava.exists());
-
-		tmpDir = new File(System.getProperty("java.io.tmpdir")).getCanonicalFile();
-		assertTrue("system property java.io.tmpdir does not point to a directory", tmpDir.isDirectory());
-
-		instance = ESAPI.executor();
-
 		ESAPI.setSecurityConfiguration(
 				new Conf(
 					ESAPI.securityConfiguration(),
-					Collections.singletonList(javaHomeBinJava.getPath()),
-					tmpDir
+					Collections.singletonList(JAVA_CMD.getPath()),
+					TMP_DIR
 					)
 				);
+		instance = ESAPI.executor();
+		if (IS_WINDOWS)
+			codec = new WindowsCodec();
+		else
+			codec = new UnixCodec();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
-		// restore configuration as test may change it
+		// restore configuration as tests change it
 		ESAPI.setSecurityConfiguration(origConfig);
 	}
 
@@ -317,7 +315,7 @@ public class ExecutorTest extends TestCase
 		// -help goes to stdout so we'll use that...
 		params.add("-help");
 
-		result = instance.executeSystemCommand(javaHomeBinJava, params, tmpDir, codec);
+		result = instance.executeSystemCommand(JAVA_CMD, params, TMP_DIR, codec);
 		assertNotNull("result of java -version was null", result);
 		assertTrue("result of java -help did not contain -version", result.indexOf("-version") >= 0);
 	}
@@ -327,12 +325,12 @@ public class ExecutorTest extends TestCase
 		List params = new ArrayList();
 		File exe;
 
-		exe = new File(javaHomeBinJava.getCanonicalPath() + ';' + javaHomeBinJava.getCanonicalPath());
+		exe = new File(JAVA_CMD.getCanonicalPath() + ';' + JAVA_CMD.getCanonicalPath());
 		params.add("-help");
 
 		try
 		{
-			instance.executeSystemCommand(exe, params, tmpDir, codec);
+			instance.executeSystemCommand(exe, params, TMP_DIR, codec);
 			fail("No Exception was thrown when trying to execute " + exe);
 		}
 		catch(Exception expected)
@@ -345,12 +343,12 @@ public class ExecutorTest extends TestCase
 		List params = new ArrayList();
 		File exe;
 
-		exe = new File(javaHomeBin.getPath() + File.separator +  ".." + File.separator + "bin" + File.separator + javaCmd);
+		exe = new File(JAVA_HOME_BIN.getPath() + File.separator +  ".." + File.separator + "bin" + File.separator + JAVA_CMD_NAME);
 		params.add("-help");
 
 		try
 		{
-			instance.executeSystemCommand(exe, params, tmpDir, codec);
+			instance.executeSystemCommand(exe, params, TMP_DIR, codec);
 			fail("No Exception was thrown when trying to execute " + exe);
 		}
 		catch(Exception expected)
@@ -362,9 +360,9 @@ public class ExecutorTest extends TestCase
 	{
 		List params = new ArrayList();
 		params.add("-help");
-		params.add(";" + javaHomeBinJava.getPath());
+		params.add(";" + JAVA_CMD.getPath());
 
-		instance.executeSystemCommand(javaHomeBinJava, params, tmpDir, codec);
+		instance.executeSystemCommand(JAVA_CMD, params, TMP_DIR, codec);
 	}
 
 	public void testExecuteJavaBadWorkingDir() throws Exception
@@ -373,10 +371,10 @@ public class ExecutorTest extends TestCase
 		File working;
 
 		params.add("-help");
-		working = FileTestUtils.nonexistantFile();
+		working = FileTestUtils.getNonexistantFile();
 		try
 		{
-			instance.executeSystemCommand(javaHomeBinJava, params, working, codec);
+			instance.executeSystemCommand(JAVA_CMD, params, working, codec);
 			fail("Attempt to execute java with invalid working directory should throw exception but didn't.");
 		}
 		catch(Exception expected)
