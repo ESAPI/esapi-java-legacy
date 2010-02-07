@@ -47,10 +47,8 @@ public final class CipherSpec implements Serializable {
 	private byte[]  iv_             = null;
 	
 	// Cipher transformation component. Format is ALG/MODE/PADDING
-	private static final transient int ALG     = 0;
-	private static final transient int MODE    = 1;
-	private static final transient int PADDING = 2;
-	
+    private enum CipherTransformationComponent { ALG, MODE, PADDING }
+
 	/**
 	 * CTOR that explicitly sets everything.
 	 * @param cipherXform	The cipher transformation
@@ -228,7 +226,7 @@ public final class CipherSpec implements Serializable {
 	 * @return	The cipher algorithm.
 	 */
 	public String getCipherAlgorithm() {
-		return getFromCipherXform(ALG);
+		return getFromCipherXform(CipherTransformationComponent.ALG);
 	}
 	
 	/**
@@ -236,7 +234,7 @@ public final class CipherSpec implements Serializable {
 	 * @return	The cipher mode.
 	 */
 	public String getCipherMode() {
-		return getFromCipherXform(MODE);
+		return getFromCipherXform(CipherTransformationComponent.MODE);
 	}
 	
 	/**
@@ -244,7 +242,7 @@ public final class CipherSpec implements Serializable {
 	 * @return	The padding scheme is returned.
 	 */
 	public String getPaddingScheme() {
-		return getFromCipherXform(PADDING);
+		return getFromCipherXform(CipherTransformationComponent.PADDING);
 	}
 	
 	/**
@@ -372,10 +370,11 @@ public final class CipherSpec implements Serializable {
 	
 	/**
 	 * Split the current cipher transformation and return the requested part. 
-	 * @param part The part to return. ALG (0), MODE (1), or PADDING (2).
+	 * @param component The component of the cipher transformation to return.
 	 * @return The cipher algorithm, cipher mode, or padding, as requested.
 	 */
-	private String getFromCipherXform(int part) {
+	private String getFromCipherXform(CipherTransformationComponent component) {
+        int part = component.ordinal();
 		String[] parts = getCipherTransformation().split("/");
 		assert parts.length == 3 : "Invalid cipher transformation: " + getCipherTransformation();	
 		return parts[part];
