@@ -65,7 +65,7 @@ public class ExecutorTest extends TestCase
 		}
 		catch(IOException e)
 		{
-			throw new IllegalStateException("IOException setting static Files that should exist.", e);
+			throw new IllegalStateException("IOException setting static Files that should exist.");//, e);
 		}
 	}
 
