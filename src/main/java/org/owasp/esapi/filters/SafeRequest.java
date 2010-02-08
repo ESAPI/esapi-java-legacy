@@ -62,47 +62,6 @@ public class SafeRequest extends HttpServletRequestWrapper
         this.request = request;
     }
 
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public Object getAttribute(String name) {
-        return request.getAttribute(name);
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public Enumeration getAttributeNames() {
-        return request.getAttributeNames();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getAuthType() {
-        return request.getAuthType();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getCharacterEncoding() {
-        return request.getCharacterEncoding();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public int getContentLength() {
-        return request.getContentLength();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getContentType() {
-        return request.getContentType();
-    }
 
     /**
      * Returns the context path from the HttpServletRequest after canonicalizing
@@ -156,13 +115,6 @@ public class SafeRequest extends HttpServletRequestWrapper
     }
 
     /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public long getDateHeader(String name) {
-        return request.getDateHeader(name);
-    }
-
-    /**
      * Returns the named header from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
      */
@@ -213,64 +165,6 @@ public class SafeRequest extends HttpServletRequestWrapper
             }
         }
         return v.elements();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required. Note that this
-     * input stream may contain attacks and the developer is responsible for
-     * canonicalizing, validating, and encoding any data from this stream.
-     */
-    public ServletInputStream getInputStream() throws IOException {
-        return request.getInputStream();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public int getIntHeader(String name) {
-        return request.getIntHeader(name);
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getLocalAddr() {
-        return request.getLocalAddr();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public Locale getLocale() {
-        return request.getLocale();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public Enumeration getLocales() {
-        return request.getLocales();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getLocalName() {
-        return request.getLocalName();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public int getLocalPort() {
-        return request.getLocalPort();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getMethod() {
-        return request.getMethod();
     }
 
     /**
@@ -373,20 +267,6 @@ public class SafeRequest extends HttpServletRequestWrapper
     }
 
     /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getPathTranslated() {
-        return request.getPathTranslated();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getProtocol() {
-        return request.getProtocol();
-    }
-
-    /**
      * Returns the query string from the HttpServletRequest after canonicalizing
      * and filtering out any dangerous characters.
      */
@@ -399,44 +279,6 @@ public class SafeRequest extends HttpServletRequestWrapper
             // already logged
         }
         return clean;
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required. Note that this
-     * reader may contain attacks and the developer is responsible for
-     * canonicalizing, validating, and encoding any data from this stream.
-     */
-    public BufferedReader getReader() throws IOException {
-        return request.getReader();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     * @deprecated as {@link HttpServletRequest#getRealPath(String)} is.
-     */
-    public String getRealPath(String path) {
-        return request.getRealPath(path);
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getRemoteAddr() {
-        return request.getRemoteAddr();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public String getRemoteHost() {
-        return request.getRemoteHost();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public int getRemotePort() {
-        return request.getRemotePort();
     }
 
     /**
@@ -616,62 +458,11 @@ public class SafeRequest extends HttpServletRequestWrapper
     }
 
     /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public boolean isRequestedSessionIdFromCookie() {
-        return request.isRequestedSessionIdFromCookie();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     * @deprecated as {@link HttpServletRequest#isRequestedSessionIdFromUrl()} is.
-     */
-    public boolean isRequestedSessionIdFromUrl() {
-        return request.isRequestedSessionIdFromUrl();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public boolean isRequestedSessionIdFromURL() {
-        return request.isRequestedSessionIdFromURL();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public boolean isRequestedSessionIdValid() {
-        return request.isRequestedSessionIdValid();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public boolean isSecure() {
-        // TODO Check request method to see if this is vulnerable
-        return request.isSecure();
-    }
-
-    /**
      * Returns true if the ESAPI User associated with this request has the
      * specified role.
      */
     public boolean isUserInRole(String role) {
         return ESAPI.authenticator().getCurrentUser().isInRole(role);
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public void removeAttribute(String name) {
-        request.removeAttribute(name);
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     */
-    public void setAttribute(String name, Object o) {
-        request.setAttribute(name, o);
     }
 
     /**
