@@ -47,7 +47,7 @@ public class ValidatorTest extends TestCase
 	private static final Class CLASS = ValidatorTest.class;
 	private static final boolean IS_WINDOWS = (System.getProperty("os.name").indexOf("Windows") >= 0);
 	private static final File[] VALID_DIRS;
-	
+
 	static
 	{
 		try
@@ -55,10 +55,10 @@ public class ValidatorTest extends TestCase
 			VALID_DIRS = new File[]
 			{
 				FileTestUtils.getJavaHome(),
-				FileTestUtils.getJavaBin(),
-				FileTestUtils.getUserDir(),
-				FileTestUtils.getUserHome(),
-				FileTestUtils.getJavaIoTmpDir(),
+					FileTestUtils.getJavaBin(),
+					FileTestUtils.getUserDir(),
+					FileTestUtils.getUserHome(),
+					FileTestUtils.getJavaIoTmpDir(),
 			};
 		}
 		catch(IOException e)
@@ -78,14 +78,14 @@ public class ValidatorTest extends TestCase
 	}
 
 	/**
-     * {@inheritDoc}
+	 * {@inheritDoc}
 	 */
 	protected void setUp() throws Exception {
 		// none
 	}
 
 	/**
-     * {@inheritDoc}
+	 * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
 		// none
@@ -167,15 +167,15 @@ public class ValidatorTest extends TestCase
 		String test1 = "<b>Jeff</b>";
 		String result1 = instance.getValidSafeHTML("test", test1, 100, false);
 		assertEquals(test1, result1);
-		
+
 		String test2 = "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>";
 		String result2 = instance.getValidSafeHTML("test", test2, 100, false);
 		assertEquals(test2, result2);
-		
+
 		String test3 = "Test. <script>alert(document.cookie)</script>";
 		String result3 = instance.getValidSafeHTML("test", test3, 100, false);
 		assertEquals("Test.", result3);
-		
+
 		// TODO: ENHANCE waiting for a way to validate text headed for an attribute for scripts		
 		// This would be nice to catch, but just looks like text to AntiSamy
 		// assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
@@ -232,7 +232,7 @@ public class ValidatorTest extends TestCase
 		assertTrue(instance.isValidNumber("test", "1e-6", -999999999, 999999999, false));
 		assertTrue(instance.isValidNumber("test", "-1e-6", -999999999, 999999999, false));
 	}
-	
+
 	public void testIsValidInteger() {
 		System.out.println("isValidInteger");
 		Validator instance = ESAPI.validator();
@@ -280,7 +280,7 @@ public class ValidatorTest extends TestCase
 		} catch( ValidationException e ) {
 			// expected
 		}
-		
+
 		// This test case fails due to an apparent bug in SimpleDateFormat
 		try {
 			instance.getValidDate( "test", "June 32, 2008", DateFormat.getDateInstance(), false );
@@ -298,11 +298,11 @@ public class ValidatorTest extends TestCase
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidFileName("test", "aspect.jar", false));
 		assertFalse(instance.isValidFileName("test", "", false));
-        try {
-            instance.isValidFileName("test", "abc/def", false);
-        } catch( IntrusionException e ) {
-            // expected
-        }
+		try {
+			instance.isValidFileName("test", "abc/def", false);
+		} catch( IntrusionException e ) {
+			// expected
+		}
 	}
 
 	/**
@@ -391,10 +391,10 @@ public class ValidatorTest extends TestCase
 		Validator instance = ESAPI.validator();
 		assertTrue(instance.isValidPrintable("name", "abcDEF", 100, false));
 		assertTrue(instance.isValidPrintable("name", "!@#R()*$;><()", 100, false));
-        byte[] bytes = { 0x60, (byte) 0xFF, 0x10, 0x25 };
-        assertFalse( instance.isValidPrintable("name", bytes, 100, false ) );
+		byte[] bytes = { 0x60, (byte) 0xFF, 0x10, 0x25 };
+		assertFalse( instance.isValidPrintable("name", bytes, 100, false ) );
 		assertFalse(instance.isValidPrintable("name", "%08", 100, false));
-    }
+	}
 
 	/**
 	 * Test of isValidFileContent method, of class org.owasp.esapi.Validator.
@@ -409,31 +409,27 @@ public class ValidatorTest extends TestCase
 	/**
 	 * Test of isValidFileUpload method, of class org.owasp.esapi.Validator.
 	 */
-	public void testIsValidFileUpload() {
-		System.out.println("isValidFileUpload");
-
+	public void testIsValidFileUpload() throws IOException
+	{
 		Validator validator = ESAPI.validator();
-		
-		if (IS_WINDOWS) {
-			
-			String filepath = "C:\\WINDOWS\\system32";
-			String filename = "cmd.exe";
-			byte[] content = "This is some file content".getBytes();
-			assertTrue(validator.isValidFileUpload("test", filepath, filename, content, 100, false));
+		File dir = null;
+		String dirPath;
+		File file;
+		String fileName;
+		byte[] content;
 
-		} else {
-			
-			String filepath = "/bin";
-			String filename = "aspect.jar";
-			byte[] content = "Thisi is some file content".getBytes();
-			assertTrue(validator.isValidFileUpload("test", filepath, filename, content, 100, false));
-			
-			// This will fail on MacOS X, as /etc is actually /private/etc
-			// TODO: Fix canonicalization of symlinks on MacOS X
-			filepath = "/etc";
-			filename = "aspect.jar";
-			content = "Thisi is some file content".getBytes();
-			assertTrue(validator.isValidFileUpload("test", filepath, filename, content, 100, false));
+		try
+		{
+			dir = FileTestUtils.createTmpDirectory(CLASS);
+			dirPath = dir.getPath();
+			fileName = "upload.txt";
+			content = "This is some file content".getBytes();
+			System.err.println("[schallee] ValidatorTest#testIsValidFileUpload(): dirPath=" + dirPath + " fileName=" + fileName);
+			assertTrue(validator.isValidFileUpload("test", dirPath, fileName, content, 100, false));
+		}
+		finally
+		{
+			FileTestUtils.deleteRecursively(dir);
 		}
 	}
 
@@ -451,8 +447,8 @@ public class ValidatorTest extends TestCase
 		optionalNames.add("p4");
 		optionalNames.add("p5");
 		optionalNames.add("p6");
-        TestHttpServletRequest request = new TestHttpServletRequest();
-        TestHttpServletResponse response = new TestHttpServletResponse();
+		TestHttpServletRequest request = new TestHttpServletRequest();
+		TestHttpServletResponse response = new TestHttpServletResponse();
 		request.addParameter("p1","value");
 		request.addParameter("p2","value");
 		request.addParameter("p3","value");
@@ -472,7 +468,7 @@ public class ValidatorTest extends TestCase
 	 */
 	public void testSafeReadLine() {
 		System.out.println("safeReadLine");
-		
+
 		ByteArrayInputStream s = new ByteArrayInputStream("testString".getBytes());
 		Validator instance = ESAPI.validator();
 		try {
