@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.filters;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Locale;
@@ -33,10 +35,38 @@ import org.owasp.esapi.errors.ValidationException;
  * This response wrapper simply overrides unsafe methods in the
  * HttpServletResponse API with safe versions.
  */
-public class SafeResponse extends HttpServletResponseWrapper {
+public class SafeResponse extends HttpServletResponseWrapper
+{
+	private static final Class CLASS = SafeResponse.class;
+	private static final Logger logger = ESAPI.getLogger("SafeResponse");
+	private static final Method setCharacterEncodingMeth;
+	private static final boolean IS_SERVLET_23;
 
 	private HttpServletResponse response;
-	private final Logger logger = ESAPI.getLogger("SafeResponse");
+	private boolean getWriterCalled = false;
+
+	// figure out how to handle setCharacterEncoding
+	static
+	{
+		Method meth;
+		boolean isServlet23;
+
+		try
+		{
+			meth = HttpServletResponse.class.getMethod("setCharacterEncoding", new Class[]{String.class});
+			isServlet23 = false;
+		}
+		catch(NoSuchMethodException ignored)
+		{
+			// wouldn't it be nice if there were a version
+			// of getMethod that didn't throw an exception
+			// when the methdo wasn't found?
+			meth = null;
+			isServlet23 = true;
+		}
+		setCharacterEncodingMeth = meth;
+		IS_SERVLET_23 = isServlet23;
+	}
 
 	/**
 	 * Construct a safe response that overrides the default response methods
@@ -47,6 +77,29 @@ public class SafeResponse extends HttpServletResponseWrapper {
 	public SafeResponse(HttpServletResponse response) {
 		super(response);
 		this.response = response;
+	}
+
+	/**
+	 * Is the servlet spec version 2.3.
+	 *
+	 * This exists and is package accesible to ease testing.
+	 *
+	 * @return true if the servlet spec is 2.3. false otherwise.
+	 */
+	static boolean isServlet23()
+	{
+		return IS_SERVLET_23;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * The wrapping just sets a flag that this method has been called
+	 * before calling the underlying response.
+	 */
+	public PrintWriter getWriter() throws IOException
+	{
+		getWriterCalled = true;
+		return response.getWriter();
 	}
 
 	/**
@@ -143,13 +196,6 @@ public class SafeResponse extends HttpServletResponseWrapper {
 	}
 
 	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public boolean containsHeader(String name) {
-		return response.containsHeader(name);
-	}
-
-	/**
 	 * Return the URL without any changes, to prevent disclosure of the
 	 * JSESSIONID. The default implementation of this method can add the
 	 * JSESSIONID to the URL if support for cookies is not detected. This
@@ -206,76 +252,6 @@ public class SafeResponse extends HttpServletResponseWrapper {
 	}
 
 	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public void flushBuffer() throws IOException {
-		response.flushBuffer();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public int getBufferSize() {
-		return response.getBufferSize();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public String getCharacterEncoding() {
-		return response.getCharacterEncoding();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public String getContentType() {
-		return response.getContentType();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public Locale getLocale() {
-		return response.getLocale();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public ServletOutputStream getOutputStream() throws IOException {
-		return response.getOutputStream();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public PrintWriter getWriter() throws IOException {
-		return response.getWriter();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public boolean isCommitted() {
-		return response.isCommitted();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public void reset() {
-		response.reset();
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public void resetBuffer() {
-		response.resetBuffer();
-	}
-
-	/**
 	 * Override the error code with a 200 in order to confound attackers using
 	 * automated scanners.
 	 */
@@ -309,33 +285,80 @@ public class SafeResponse extends HttpServletResponseWrapper {
 	}
 
 	/**
-	 * Same as HttpServletResponse, no security changes required.
+	 * Varient of {@link #setCharacterEncoding(String)} for the
+	 * Servlet 2.3 spec. As this spec does not provide such a method,
+	 * an exception is always thrown. This could be emulated for 2.3
+	 * but that would require capturing and parsing the content-type.
+	 *
+	 * This is package accessible to allow for testing.
+	 *
+	 * @param charset ignored.
+	 * @throws UnsupportedOperationException always.
 	 */
-	public void setBufferSize(int size) {
-		response.setBufferSize(size);
+	void setCharacterEncoding23(String charset)
+	{
+		throw new UnsupportedOperationException("The Servlet 2.3 spec does not provide javax.servlet.ServletResponse#setCharacterEncoding(String)");
 	}
 
 	/**
-	 * Sets the character encoding scheme to the ESAPI configured encoding scheme.
+	 * Varient of {@link #setCharacterEncoding(String)} for the
+	 * Servlet 2.4 and higher spec. This calls the response's version
+	 * with reflection for source and binary compatability with
+	 * version 2.3. If the response has been committed or
+	 * {@link #getWriter()} has been called, the response's method
+	 * is not invoked as it would ignore such a call according to the
+	 * spec.
+	 *
+	 * This is package accessible to allow for testing.
+	 *
+	 * @param charset The charset to use.
 	 */
-	public void setCharacterEncoding(String charset) {
+	void setCharacterEncoding24Plus(String charset)
+	{
+		// Don't bother with reflection if the method isn't
+		// going to do anything. The spec says that if getWriter()
+		// has been called or if the response has been committed,
+		// the call to setCharacterEncoding(String) is ignored.
+		if(getWriterCalled || isCommitted())
+			return;
+		try
+		{
+			// note that this CANNOT be invoked on "this"
+			// or you have infinite recursion
+			setCharacterEncodingMeth.invoke(response,new String[]{charset});
+		}
+		catch(IllegalAccessException e)
+		{	// checked, shouldn't happen, wrap
+			IllegalStateException wrapped = new IllegalStateException("IllegalAccessException calling public HttpServletRequest#setCharacterEncoding(String).");
+			// 1.4 doesn't support cause in IllegalStateException construction
+			wrapped.initCause(e);
+			throw wrapped;
+		}
+		catch(InvocationTargetException e)
+		{	// checked, shouldn't happen, wrap
+			Throwable cause = e.getCause();
+			IllegalStateException wrapped = new IllegalStateException("Checked exception " + cause.getClass().getName() + " thrown calling HttpServletRequest#setCharacterEncoding(String) which does not throw a checked exception.");
+			// 1.4 doesn't support cause in IllegalStateException construction
+			wrapped.initCause(cause);
+			throw wrapped;
+		}
+	}
+
+	/**
+	 * Sets the character encoding scheme to the ESAPI configured
+	 * encoding scheme.
+	 * @param charset ignored
+	 */
+	public void setCharacterEncoding(String charset)
+	{
 		// Note: This overrides the provided character set and replaces it with the safe
 		// encoding scheme set in ESAPI.properties.
-		response.setCharacterEncoding( ESAPI.securityConfiguration().getCharacterEncoding() );
-	}
+		charset = ESAPI.securityConfiguration().getCharacterEncoding();
 
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public void setContentLength(int len) {
-		response.setContentLength(len);
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public void setContentType(String type) {
-		response.setContentType(type);
+		if(IS_SERVLET_23)
+			setCharacterEncoding23(charset);
+		else
+			setCharacterEncoding24Plus(charset);
 	}
 
 	/**
@@ -376,19 +399,11 @@ public class SafeResponse extends HttpServletResponseWrapper {
 	 */
 	public void setIntHeader(String name, int value) {
 		try {
-			String safeName = ESAPI.validator().getValidInput( "safeSetDateHeader", name, "HTTPHeaderName", 20, false);
+			String safeName = ESAPI.validator().getValidInput( "safeSetIntHeader", name, "HTTPHeaderName", 20, false);
 			response.setIntHeader(safeName, value);
 		} catch (ValidationException e) {
 			logger.warning(Logger.SECURITY, false, "Attempt to set invalid int header name denied", e);
 		}
-	}
-
-	/**
-	 * Same as HttpServletResponse, no security changes required.
-	 */
-	public void setLocale(Locale loc) {
-		// TODO investigate the character set issues here
-		response.setLocale(loc);
 	}
 
 	/**

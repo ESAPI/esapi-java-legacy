@@ -34,18 +34,34 @@ public class TestHttpServletResponse implements HttpServletResponse {
 
 	/** The cookies. */
 	List cookies = new ArrayList();
-	
+
 	/** The header names. */
 	List headerNames = new ArrayList();
-	
+
 	/** The header values. */
 	List headerValues = new ArrayList();
-	
+
 	/** The status. */
 	int status = 200;
-	
-    /**
-     * {@inheritDoc}
+
+	/** The character encoding set by setCharacterEncoding */
+	private String characterEncoding = null;
+	private boolean committed = false;
+	private boolean setCharacterEncodingCalled = false;
+	private boolean getWriterCalled = false;
+
+	public boolean wasSetCharacterEncodingCalled()
+	{
+		return setCharacterEncodingCalled;
+	}
+
+	public boolean wasisGetWriterCalled()
+	{
+		return getWriterCalled;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addCookie(Cookie cookie) {
 		cookies.add( cookie );
@@ -59,7 +75,7 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	public List getCookies() {
 		return cookies;
 	}
-	
+
 	public Cookie getCookie( String name ) {
 		Iterator i = cookies.iterator();
 		while ( i.hasNext() ) {
@@ -70,40 +86,40 @@ public class TestHttpServletResponse implements HttpServletResponse {
 		}
 		return null;
 	}
-	
-    /**
-     * {@inheritDoc}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addDateHeader(String name, long date) {
 		headerNames.add( name );
 		headerValues.add( ""+date );
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addHeader(String name, String value) {
 		headerNames.add( name );
 		headerValues.add( value );
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void addIntHeader(String name, int value) {
 		headerNames.add( name );
 		headerValues.add( ""+value );
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public boolean containsHeader(String name) {
 		return headerNames.contains(name);
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	/**
 	 * Gets the header.
@@ -129,90 +145,90 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	public List getHeaderNames() {
 		return headerNames;
 	}
-	
 
-    /**
-     * {@inheritDoc}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public String encodeRedirectURL(String url) {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public String encodeRedirectUrl(String url) {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public String encodeURL(String url) {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public String encodeUrl(String url) {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void sendError(int sc) throws IOException {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void sendError(int sc, String msg) throws IOException {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void sendRedirect(String location) throws IOException {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setDateHeader(String name, long date) {
 		headerNames.add( name );
 		headerValues.add( ""+date );
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setHeader(String name, String value) {
 		headerNames.add( name );
 		headerValues.add( value );
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setIntHeader(String name, int value) {
 		headerNames.add( name );
 		headerValues.add( ""+value );
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setStatus(int sc) {
 		status = sc;
@@ -226,132 +242,151 @@ public class TestHttpServletResponse implements HttpServletResponse {
 	public int getStatus() {
 		return status;
 	}
-	
-    /**
-     * {@inheritDoc}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setStatus(int sc, String sm) {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void flushBuffer() throws IOException {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public int getBufferSize() {
-	
+
 		return 0;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
-	public String getCharacterEncoding() {
-	
-		return null;
+	public String getCharacterEncoding()
+	{
+		return characterEncoding;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public String getContentType() {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public Locale getLocale() {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public ServletOutputStream getOutputStream() throws IOException {
-	
+
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
-	public PrintWriter getWriter() throws IOException {
-	
+	public PrintWriter getWriter() throws IOException
+	{
+		getWriterCalled = true;
 		return null;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * Set what {@link #isCommitted()} returns.
+	 * @param val The value use isCommitted() should return.
 	 */
-	public boolean isCommitted() {
-	
-		return false;
+	public void setCommitted(boolean val)
+	{
+		committed = val;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * Set {@link #isCommitted()} to return true;
+	 */
+	public void setCommitted()
+	{
+		setCommitted(true);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean isCommitted()
+	{
+		return committed;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	public void reset() {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void resetBuffer() {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setBufferSize(int size) {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
-	public void setCharacterEncoding(String charset) {
-	
-
+	public void setCharacterEncoding(String charset)
+	{
+		setCharacterEncodingCalled = true;
+		characterEncoding = charset;
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setContentLength(int len) {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setContentType(String type) {
-	
+
 
 	}
 
-    /**
-     * {@inheritDoc}
+	/**
+	 * {@inheritDoc}
 	 */
 	public void setLocale(Locale loc) {
-	
+
 
 	}
 
