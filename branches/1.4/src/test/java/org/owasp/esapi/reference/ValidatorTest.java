@@ -424,7 +424,6 @@ public class ValidatorTest extends TestCase
 			dirPath = dir.getPath();
 			fileName = "upload.txt";
 			content = "This is some file content".getBytes();
-			System.err.println("[schallee] ValidatorTest#testIsValidFileUpload(): dirPath=" + dirPath + " fileName=" + fileName);
 			assertTrue(validator.isValidFileUpload("test", dirPath, fileName, content, 100, false));
 		}
 		finally
