@@ -16,8 +16,10 @@ log4j.properties			Log4j configuration file
 	lib/				ESAPI dependencies 
 
 
-Where to go from here -- please see the installation guide and the release notes.
+Where to go from here -- please see the installation guide and the release
+notes.
 
-Please address comments and questions concerning the API and this document to the ESAPI mail list, owasp-esapi@lists.owasp.org 
+Please address comments and questions concerning the API and this document to
+the ESAPI Users mailing list, <esapi-user@lists.owasp.org>.
 
 Copyright (C) 2009 The OWASP Foundation.
