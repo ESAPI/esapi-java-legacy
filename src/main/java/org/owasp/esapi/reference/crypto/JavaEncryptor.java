@@ -71,16 +71,15 @@ import org.owasp.esapi.errors.IntegrityException;
  * @since June 1, 2007; some methods since ESAPI Java 2.0
  * @see org.owasp.esapi.Encryptor
  */
-public class JavaEncryptor implements org.owasp.esapi.Encryptor {
+public final class JavaEncryptor implements org.owasp.esapi.Encryptor {
 
     private static boolean initialized = false;
     
     // encryption
-		// Note: These 'protected' so we can also *use* them in LegacyJavaEncryptor.
-    protected static SecretKeySpec secretKeySpec = null; // DISCUSS: Why static? Implies one key?!?
-    protected static String encryptAlgorithm = "AES";
-    protected static String encoding = "UTF-8"; 
-    protected static int encryptionKeyLength = 256;
+    private static SecretKeySpec secretKeySpec = null; // DISCUSS: Why static? Implies one key?!?
+    private static String encryptAlgorithm = "AES";
+    private static String encoding = "UTF-8"; 
+    private static int encryptionKeyLength = 256;
     
     // digital signatures
     private static PrivateKey privateKey = null;
@@ -94,7 +93,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
 	private static int hashIterations = 1024;
 	
 	// Logging - DISCUSS: This "sticks" us with a specific logger to whatever it was when
-	//					  this class is first loaded. Is that a big limitation? Since there
+	//					  this class is first loaded. Is this a big limitation? Since there
 	//                    is no method to reset it, we may has well make it 'final' also.
 	private static Logger logger = ESAPI.getLogger("JavaEncryptor");
 	    // Used to print out warnings about deprecated methods.
@@ -853,7 +852,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
      * Log a security warning every Nth time one of the deprecated encrypt or
      * decrypt methods are called. ('N' is hard-coded to be 25 by default, but
      * may be changed via the system property
-     * {@code ESAPI.Encryptor.legacy.warnEveryNthUse}.) In other words, we nag
+     * {@code ESAPI.Encryptor.warnEveryNthUse}.) In other words, we nag
      * them until the give in and change it. ;-)
      * 
      * @param where The string "encrypt" or "decrypt", corresponding to the
@@ -864,7 +863,7 @@ public class JavaEncryptor implements org.owasp.esapi.Encryptor {
         int counter = 0;
         if ( where.equals("encrypt") ) {
             counter = encryptCounter++;
-            where = "LegacyJavaEncryptor.encrypt(): [count=" + counter +"]";
+            where = "JavaEncryptor.encrypt(): [count=" + counter +"]";
         } else if ( where.equals("decrypt") ) {
             counter = decryptCounter++;
             where = "JavaEncryptor.decrypt(): [count=" + counter +"]";
