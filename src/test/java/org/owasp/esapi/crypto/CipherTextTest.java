@@ -43,7 +43,7 @@ public class CipherTextTest {
     @BeforeClass public static void preCleanup() {
         // These two calls have side-effects that cause FindBugs to complain.
         new File("ciphertext.ser").delete();
-        new File("ciphertext-porta.bleser").delete();
+        new File("ciphertext-portable.ser").delete();
     }
     
 	@Before
@@ -63,7 +63,7 @@ public class CipherTextTest {
 	    if ( POST_CLEANUP ) {
 	            // These two calls have side-effects that cause FindBugs to complain.
 	        new File("ciphertext.ser").delete();
-	        new File("ciphertext-portal.ser").delete();
+	        new File("ciphertext-portable.ser").delete();
 	    }
 	}
 
@@ -201,7 +201,7 @@ public class CipherTextTest {
 	/** Test <i>portable</i> serialization. */
 	@Test public final void testPortableSerialization() {
 	    System.err.println("CipherTextTest.testPortableSerialization()...");
-	    String filename = "ciphertext-portal.ser";
+	    String filename = "ciphertext-portable.ser";
 	    File serializedFile = new File(filename);
 	    serializedFile.delete();    // Delete any old serialized file.
 
