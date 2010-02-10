@@ -156,8 +156,11 @@ public interface Encryptor {
 	 * @see #encrypt(PlainText)
 	 * @see #encrypt(SecretKey, PlainText)
 	 * 
-	 * @deprecated As of 2.0, use {@link #encrypt(PlainText)} instead, which
-	 *			   also ensures message authenticity.
+	 * @deprecated As of 1.4.2; use {@link #encrypt(PlainText)} instead, which
+	 *			   also ensures message authenticity. This method will be
+	 *             completely removed as of the next major release or point
+	 *             release (3.0 or 2.1, whichever comes first) as per OWASP
+	 *             deprecation policy.
 	 */
 	@Deprecated String encrypt(String plaintext) throws EncryptionException;
 
@@ -272,9 +275,12 @@ public interface Encryptor {
 	 * @throws EncryptionException
 	 *      if the specified encryption algorithm could not be found or another problem exists with 
 	 *      the decryption of 'plaintext'
-	 *      
-	 * @deprecated	As of 2.0, use {@link #decrypt(CipherText)} instead as it
-	 * 		also ensures message authenticity. 
+	 *
+	 * @deprecated As of 1.4.2; use {@link #decrypt(CipherText)} instead, which
+     *             also ensures message authenticity. This method will be
+     *             completely removed as of the next major release or point
+     *             release (3.0 or 2.1, whichever comes first) as per OWASP
+     *             deprecation policy.
 	 */
 	 @Deprecated String decrypt(String ciphertext) throws EncryptionException;
 
