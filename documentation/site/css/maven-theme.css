@@ -1,5 +1,12 @@
+body {
+  padding: 0px 0px 10px 0px;
+}
 body, td, select, input, li{
   font-family: Verdana, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+}
+code{
+  font-family: Courier, monospace;
   font-size: 13px;
 }
 a {
@@ -104,7 +111,31 @@ table.bodyTable tr.b {
 }
 dl {
   padding: 4px 4px 4px 6px;
+  border: 1px solid #aaa;
+  background-color: #ffc;
 }
 dt {
   color: #900;
 }
+#organizationLogo img, #projectLogo img, #projectLogo span{
+  margin: 8px;
+}
+#banner {
+  border-bottom: 1px solid #fff;
+}
+.errormark, .warningmark, .donemark, .infomark {
+  background: url(../images/icon_error_sml.gif) no-repeat;
+}
+
+.warningmark {
+  background-image: url(../images/icon_warning_sml.gif);
+}
+
+.donemark {
+  background-image: url(../images/icon_success_sml.gif);
+}
+
+.infomark {
+  background-image: url(../images/icon_info_sml.gif);
+}
+
