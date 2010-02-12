@@ -22,8 +22,6 @@ public class CommonsLogFactory implements LogFactory {
 		this.applicationName = applicationName;
 	}
 
-
-
 	/* (non-Javadoc)
 	 * @see org.owasp.esapi.LogFactory#getLogger(java.lang.Class)
 	 */
