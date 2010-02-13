@@ -37,7 +37,7 @@ import org.owasp.esapi.errors.EncryptionException;
 public class CryptoHelper {
 	
 	private static final Logger logger = ESAPI.getLogger("CryptoHelper");
-	
+
 	// TODO: Also consider supplying implementation of RFC 2898 / PKCS#5 PBKDF2
 	//		 in this file as well??? Maybe save for ESAPI 2.1 or 3.0.
 	/**
@@ -340,5 +340,13 @@ public class CryptoHelper {
             numBytes = n + 1;
         }
         return numBytes;
+    }
+  
+    /**
+     * Prevent public, no-argument CTOR from being auto-generated. Public CTOR
+     * is not needed as all methods are static.
+     */
+    private CryptoHelper() {
+        ; // Empty
     }
 }
