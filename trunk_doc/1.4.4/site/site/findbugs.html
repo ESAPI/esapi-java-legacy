@@ -1,0 +1,1083 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+
+
+
+
+
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>ESAPI - FindBugs Bug Detector Report</title>
+    <style type="text/css" media="all">
+      @import url("./css/maven-base.css");
+      @import url("./css/maven-theme.css");
+      @import url("./css/site.css");
+    </style>
+    <link rel="stylesheet" href="./css/print.css" type="text/css" media="print" />
+          </head>
+  <body class="composite">
+    <div id="banner">
+                    <span id="bannerLeft">
+    
+            ESAPI
+    
+            </span>
+                    <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="breadcrumbs">
+          
+  
+
+  
+    
+  
+  
+    
+            <div class="xleft">
+        Last Published: 2010-02-13
+                      </div>
+            <div class="xright">            <a href="http://www.esapi.org/" class="externalLink">ESAPI</a>
+            
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+    <div id="leftColumn">
+      <div id="navcolumn">
+           
+  
+
+  
+    
+  
+  
+    
+                             <h5>Project Documentation</h5>
+            <ul>
+              
+                
+              
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+        <li class="collapsed">
+                    <a href="project-info.html">Project Information</a>
+                </li>
+              
+                
+              
+      
+            
+            
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+            
+      
+              
+            <li class="expanded">
+                    <a href="project-reports.html">Project Reports</a>
+                  <ul>
+                  
+    <li class="none">
+                    <a href="cpd.html">CPD Report</a>
+          </li>
+                  
+    <li class="none">
+              <strong>FindBugs Report</strong>
+        </li>
+                  
+    <li class="none">
+                    <a href="apidocs/index.html">JavaDocs</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="jdepend-report.html">JDepend</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="pmd.html">PMD Report</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="tlddoc/index.html">Taglibdoc documentation</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="taglibvalidation.html">Tag library validation</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="tagreference.html">Tag reference</a>
+          </li>
+                  
+    <li class="none">
+                    <a href="testapidocs/index.html">Test JavaDocs</a>
+          </li>
+              </ul>
+        </li>
+          </ul>
+                                           <a href="http://maven.apache.org/" title="Built by Maven" class="poweredBy">
+            <img alt="Built by Maven" src="./images/logos/maven-feather.png"></img>
+          </a>
+                       
+  
+
+  
+    
+  
+  
+    
+        </div>
+    </div>
+    <div id="bodyColumn">
+      <div id="contentBox">
+        <div class="section"><h2>FindBugs Bug Detector Report</h2>
+<p>The following document contains the results of <a href="http://findbugs.sourceforge.net" class="externalLink">FindBugs Report</a></p>
+<p>FindBugs Version is <i>1.2.1</i></p>
+<p>Threshold is <i>Low</i></p>
+<p>Effort is <i>Max</i></p>
+</div>
+<div class="section"><h2>Summary</h2>
+<table class="bodyTable"><tr class="a"><th>Classes</th>
+<th>Bugs</th>
+<th>Errors</th>
+<th>Missing Classes</th>
+</tr>
+<tr class="b"><td>403</td>
+<td>107</td>
+<td>0</td>
+<td>0</td>
+</tr>
+</table>
+</div>
+<div class="section"><h2>Files</h2>
+<table class="bodyTable"><tr class="a"><th>Class</th>
+<th>Bugs</th>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.Encoder">org.owasp.esapi.Encoder</a></td>
+<td>11</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.codecs.Base64">org.owasp.esapi.codecs.Base64</a></td>
+<td>8</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.codecs.CSSCodec">org.owasp.esapi.codecs.CSSCodec</a></td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.codecs.HTMLEntityCodec">org.owasp.esapi.codecs.HTMLEntityCodec</a></td>
+<td>2</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.codecs.JavaScriptCodec">org.owasp.esapi.codecs.JavaScriptCodec</a></td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.codecs.PercentCodec">org.owasp.esapi.codecs.PercentCodec</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.errors.EnterpriseSecurityException">org.owasp.esapi.errors.EnterpriseSecurityException</a></td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.errors.IntrusionException">org.owasp.esapi.errors.IntrusionException</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.filters.ESAPIFilter">org.owasp.esapi.filters.ESAPIFilter</a></td>
+<td>3</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.filters.RequestRateThrottleFilter">org.owasp.esapi.filters.RequestRateThrottleFilter</a></td>
+<td>2</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.filters.SafeHTTPFilter">org.owasp.esapi.filters.SafeHTTPFilter</a></td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.filters.SafeResponse">org.owasp.esapi.filters.SafeResponse</a></td>
+<td>5</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.DefaultEncryptedProperties">org.owasp.esapi.reference.DefaultEncryptedProperties</a></td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.DefaultExecutor">org.owasp.esapi.reference.DefaultExecutor</a></td>
+<td>2</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.DefaultHTTPUtilities">org.owasp.esapi.reference.DefaultHTTPUtilities</a></td>
+<td>2</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.DefaultHTTPUtilities$1">org.owasp.esapi.reference.DefaultHTTPUtilities$1</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalRequest">org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalRequest</a></td>
+<td>1</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalResponse">org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalResponse</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.DefaultRandomizer">org.owasp.esapi.reference.DefaultRandomizer</a></td>
+<td>3</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.DefaultSecurityConfiguration">org.owasp.esapi.reference.DefaultSecurityConfiguration</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.DefaultUser">org.owasp.esapi.reference.DefaultUser</a></td>
+<td>10</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.DefaultValidator">org.owasp.esapi.reference.DefaultValidator</a></td>
+<td>25</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.FileBasedAccessController">org.owasp.esapi.reference.FileBasedAccessController</a></td>
+<td>3</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.FileBasedAccessController$Rule">org.owasp.esapi.reference.FileBasedAccessController$Rule</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.FileBasedAuthenticator">org.owasp.esapi.reference.FileBasedAuthenticator</a></td>
+<td>9</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.FileBasedAuthenticator$ThreadLocalUser">org.owasp.esapi.reference.FileBasedAuthenticator$ThreadLocalUser</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.JavaEncryptor">org.owasp.esapi.reference.JavaEncryptor</a></td>
+<td>7</td>
+</tr>
+<tr class="a"><td><a href="#org.owasp.esapi.reference.JavaLogFactory$JavaLogger">org.owasp.esapi.reference.JavaLogFactory$JavaLogger</a></td>
+<td>1</td>
+</tr>
+<tr class="b"><td><a href="#org.owasp.esapi.reference.Log4JLogFactory$Log4JLogger">org.owasp.esapi.reference.Log4JLogFactory$Log4JLogger</a></td>
+<td>1</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.Encoder"></a><div class="section"><h3>org.owasp.esapi.Encoder</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>org.owasp.esapi.Encoder.CHAR_ALPHANUMERICS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>53</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.Encoder.CHAR_DIGITS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>50</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.Encoder.CHAR_LETTERS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>52</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.Encoder.CHAR_LOWERS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>48</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.Encoder.CHAR_PASSWORD_LOWERS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>61</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.Encoder.CHAR_PASSWORD_UPPERS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>62</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.Encoder.CHAR_UPPERS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>49</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.Encoder.CHAR_PASSWORD_DIGITS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>63</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.Encoder.CHAR_PASSWORD_LETTERS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>65</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.Encoder.CHAR_PASSWORD_SPECIALS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>64</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.Encoder.CHAR_SPECIALS should be moved out of an interface and made package protected</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#MS_OOI_PKGPROTECT" class="externalLink">MS_OOI_PKGPROTECT</a></td>
+<td>51</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.codecs.Base64"></a><div class="section"><h3>org.owasp.esapi.codecs.Base64</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>org.owasp.esapi.codecs.Base64.decode(String, int) might ignore java.lang.Exception</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DE_MIGHT_IGNORE" class="externalLink">DE_MIGHT_IGNORE</a></td>
+<td>1031</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.codecs.Base64.decodeFileToFile(String, String) might ignore java.lang.Exception</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DE_MIGHT_IGNORE" class="externalLink">DE_MIGHT_IGNORE</a></td>
+<td>1331</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.codecs.Base64.encodeBytes(byte[], int, int, int) might ignore java.lang.Exception</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DE_MIGHT_IGNORE" class="externalLink">DE_MIGHT_IGNORE</a></td>
+<td>732</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.codecs.Base64.encodeFileToFile(String, String) might ignore java.lang.Exception</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DE_MIGHT_IGNORE" class="externalLink">DE_MIGHT_IGNORE</a></td>
+<td>1294</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.codecs.Base64.encodeObject(Serializable, int) might ignore java.lang.Exception</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DE_MIGHT_IGNORE" class="externalLink">DE_MIGHT_IGNORE</a></td>
+<td>603</td>
+</tr>
+<tr class="a"><td>Null pointer dereference of bis in org.owasp.esapi.codecs.Base64.decodeFromFile(String)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_ALWAYS_NULL" class="externalLink">NP_ALWAYS_NULL</a></td>
+<td>1208</td>
+</tr>
+<tr class="b"><td>Possible null pointer dereference of gzos in org.owasp.esapi.codecs.Base64.encodeObject(Serializable, int)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NP_NULL_ON_SOME_PATH" class="externalLink">NP_NULL_ON_SOME_PATH</a></td>
+<td>604</td>
+</tr>
+<tr class="a"><td>Should org.owasp.esapi.codecs.Base64.decode(byte[], int, int, int) return a zero length array rather than null?</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#PZLA_PREFER_ZERO_LENGTH_ARRAYS" class="externalLink">PZLA_PREFER_ZERO_LENGTH_ARRAYS</a></td>
+<td>945</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.codecs.CSSCodec"></a><div class="section"><h3>org.owasp.esapi.codecs.CSSCodec</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>77</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.codecs.HTMLEntityCodec"></a><div class="section"><h3>org.owasp.esapi.codecs.HTMLEntityCodec</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Write to static field org.owasp.esapi.codecs.HTMLEntityCodec.characterToEntityMap from instance method org.owasp.esapi.codecs.HTMLEntityCodec.initializeMaps()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" class="externalLink">ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</a></td>
+<td>802</td>
+</tr>
+<tr class="b"><td>Write to static field org.owasp.esapi.codecs.HTMLEntityCodec.entityToCharacterMap from instance method org.owasp.esapi.codecs.HTMLEntityCodec.initializeMaps()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" class="externalLink">ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</a></td>
+<td>803</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.codecs.JavaScriptCodec"></a><div class="section"><h3>org.owasp.esapi.codecs.JavaScriptCodec</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>82</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.codecs.PercentCodec"></a><div class="section"><h3>org.owasp.esapi.codecs.PercentCodec</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>89</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.errors.EnterpriseSecurityException"></a><div class="section"><h3>org.owasp.esapi.errors.EnterpriseSecurityException</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Class org.owasp.esapi.errors.EnterpriseSecurityException defines non-transient non-serializable instance field logger</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SE_BAD_FIELD" class="externalLink">SE_BAD_FIELD</a></td>
+<td>Not available</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.errors.IntrusionException"></a><div class="section"><h3>org.owasp.esapi.errors.IntrusionException</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Class org.owasp.esapi.errors.IntrusionException defines non-transient non-serializable instance field logger</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SE_BAD_FIELD" class="externalLink">SE_BAD_FIELD</a></td>
+<td>Not available</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.filters.ESAPIFilter"></a><div class="section"><h3>org.owasp.esapi.filters.ESAPIFilter</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Unchecked/unconfirmed cast from javax.servlet.ServletRequest to javax.servlet.http.HttpServletRequest in org.owasp.esapi.filters.ESAPIFilter.doFilter(ServletRequest, ServletResponse, FilterChain)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#BC_UNCONFIRMED_CAST" class="externalLink">BC_UNCONFIRMED_CAST</a></td>
+<td>74</td>
+</tr>
+<tr class="a"><td>Unchecked/unconfirmed cast from javax.servlet.ServletResponse to javax.servlet.http.HttpServletResponse in org.owasp.esapi.filters.ESAPIFilter.doFilter(ServletRequest, ServletResponse, FilterChain)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#BC_UNCONFIRMED_CAST" class="externalLink">BC_UNCONFIRMED_CAST</a></td>
+<td>75</td>
+</tr>
+<tr class="b"><td>Method org.owasp.esapi.filters.ESAPIFilter.doFilter(ServletRequest, ServletResponse, FilterChain) invokes toString() method on a String</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_STRING_TOSTRING" class="externalLink">DM_STRING_TOSTRING</a></td>
+<td>94</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.filters.RequestRateThrottleFilter"></a><div class="section"><h3>org.owasp.esapi.filters.RequestRateThrottleFilter</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Unchecked/unconfirmed cast from javax.servlet.ServletRequest to javax.servlet.http.HttpServletRequest in org.owasp.esapi.filters.RequestRateThrottleFilter.doFilter(ServletRequest, ServletResponse, FilterChain)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#BC_UNCONFIRMED_CAST" class="externalLink">BC_UNCONFIRMED_CAST</a></td>
+<td>69</td>
+</tr>
+<tr class="a"><td>Result of integer multiplication cast to long in org.owasp.esapi.filters.RequestRateThrottleFilter.doFilter(ServletRequest, ServletResponse, FilterChain)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ICAST_INTEGER_MULTIPLY_CAST_TO_LONG" class="externalLink">ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</a></td>
+<td>88</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.filters.SafeHTTPFilter"></a><div class="section"><h3>org.owasp.esapi.filters.SafeHTTPFilter</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Unchecked/unconfirmed cast from javax.servlet.ServletResponse to javax.servlet.http.HttpServletResponse in org.owasp.esapi.filters.SafeHTTPFilter.doFilter(ServletRequest, ServletResponse, FilterChain)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#BC_UNCONFIRMED_CAST" class="externalLink">BC_UNCONFIRMED_CAST</a></td>
+<td>50</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.filters.SafeResponse"></a><div class="section"><h3>org.owasp.esapi.filters.SafeResponse</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>The parameter charset to org.owasp.esapi.filters.SafeResponse.setCharacterEncoding(String) is dead upon entry but overwritten</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN" class="externalLink">IP_PARAMETER_IS_DEAD_BUT_OVERWRITTEN</a></td>
+<td>356</td>
+</tr>
+<tr class="b"><td>VERY confusing (but perhaps intentional) to have methods org.owasp.esapi.filters.SafeResponse.encodeRedirectURL(String) and javax.servlet.http.HttpServletResponseWrapper.encodeRedirectUrl(String)</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NM_VERY_CONFUSING_INTENTIONAL" class="externalLink">NM_VERY_CONFUSING_INTENTIONAL</a></td>
+<td>223</td>
+</tr>
+<tr class="a"><td>VERY confusing (but perhaps intentional) to have methods org.owasp.esapi.filters.SafeResponse.encodeRedirectUrl(String) and javax.servlet.http.HttpServletResponseWrapper.encodeRedirectURL(String)</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NM_VERY_CONFUSING_INTENTIONAL" class="externalLink">NM_VERY_CONFUSING_INTENTIONAL</a></td>
+<td>209</td>
+</tr>
+<tr class="b"><td>VERY confusing (but perhaps intentional) to have methods org.owasp.esapi.filters.SafeResponse.encodeURL(String) and javax.servlet.http.HttpServletResponseWrapper.encodeUrl(String)</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NM_VERY_CONFUSING_INTENTIONAL" class="externalLink">NM_VERY_CONFUSING_INTENTIONAL</a></td>
+<td>251</td>
+</tr>
+<tr class="a"><td>VERY confusing (but perhaps intentional) to have methods org.owasp.esapi.filters.SafeResponse.encodeUrl(String) and javax.servlet.http.HttpServletResponseWrapper.encodeURL(String)</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#NM_VERY_CONFUSING_INTENTIONAL" class="externalLink">NM_VERY_CONFUSING_INTENTIONAL</a></td>
+<td>237</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultEncryptedProperties"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultEncryptedProperties</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>org.owasp.esapi.reference.DefaultEncryptedProperties.main(String[]) might ignore java.lang.Exception</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DE_MIGHT_IGNORE" class="externalLink">DE_MIGHT_IGNORE</a></td>
+<td>150</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultExecutor"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultExecutor</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Method org.owasp.esapi.reference.DefaultExecutor.executeSystemCommand(File, List, File, Codec) uses Collection.toArray() with zero-length array argument</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ITA_INEFFICIENT_TO_ARRAY" class="externalLink">ITA_INEFFICIENT_TO_ARRAY</a></td>
+<td>91</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultExecutor.executeSystemCommand(File, List, File, Codec)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>110</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultHTTPUtilities"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultHTTPUtilities</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Result of integer multiplication cast to long in org.owasp.esapi.reference.DefaultHTTPUtilities.setRememberToken(HttpServletRequest, HttpServletResponse, String, int, String, String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ICAST_INTEGER_MULTIPLY_CAST_TO_LONG" class="externalLink">ICAST_INTEGER_MULTIPLY_CAST_TO_LONG</a></td>
+<td>158</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultHTTPUtilities.getSafeFileUploads(HttpServletRequest, File, File)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>399</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultHTTPUtilities1"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultHTTPUtilities$1</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>The class org.owasp.esapi.reference.DefaultHTTPUtilities$1 could be refactored into a named _static_ inner class</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SIC_INNER_SHOULD_BE_STATIC_ANON" class="externalLink">SIC_INNER_SHOULD_BE_STATIC_ANON</a></td>
+<td>347-362</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultHTTPUtilitiesThreadLocalRequest"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalRequest</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Should org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalRequest be a _static_ inner class?</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SIC_INNER_SHOULD_BE_STATIC" class="externalLink">SIC_INNER_SHOULD_BE_STATIC</a></td>
+<td>588-600</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultHTTPUtilitiesThreadLocalResponse"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalResponse</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Should org.owasp.esapi.reference.DefaultHTTPUtilities$ThreadLocalResponse be a _static_ inner class?</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SIC_INNER_SHOULD_BE_STATIC" class="externalLink">SIC_INNER_SHOULD_BE_STATIC</a></td>
+<td>606-618</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultRandomizer"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultRandomizer</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>142</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.reference.DefaultRandomizer.DefaultRandomizer() ignores return value of org.owasp.esapi.errors.EncryptionException.EncryptionException(String, String, Throwable)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#RV_RETURN_VALUE_IGNORED" class="externalLink">RV_RETURN_VALUE_IGNORED</a></td>
+<td>54</td>
+</tr>
+<tr class="a"><td>Unread field: org.owasp.esapi.reference.DefaultRandomizer.logger</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#URF_UNREAD_FIELD" class="externalLink">URF_UNREAD_FIELD</a></td>
+<td>42</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultSecurityConfiguration"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultSecurityConfiguration</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultSecurityConfiguration.loadConfigurationFromClasspath(String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>287</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultUser"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultUser</h3>
+<table class="bodyTable"><tr class="b"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>131</td>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>332</td>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>452</td>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>488</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.reference.DefaultUser.setLastFailedLoginTime(Date) may expose internal representation by storing an externally mutable object into DefaultUser.lastFailedLoginTime</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#EI_EXPOSE_REP2" class="externalLink">EI_EXPOSE_REP2</a></td>
+<td>505</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.reference.DefaultUser.setLastLoginTime(Date) may expose internal representation by storing an externally mutable object into DefaultUser.lastLoginTime</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#EI_EXPOSE_REP2" class="externalLink">EI_EXPOSE_REP2</a></td>
+<td>524</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.reference.DefaultUser.setLastPasswordChangeTime(Date) may expose internal representation by storing an externally mutable object into DefaultUser.lastPasswordChangeTime</td>
+<td>MALICIOUS_CODE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#EI_EXPOSE_REP2" class="externalLink">EI_EXPOSE_REP2</a></td>
+<td>532</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.reference.DefaultUser.setLastHostAddress(String) ignores return value of org.owasp.esapi.errors.AuthenticationHostException.AuthenticationHostException(String, String)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#RV_RETURN_VALUE_IGNORED" class="externalLink">RV_RETURN_VALUE_IGNORED</a></td>
+<td>515</td>
+</tr>
+<tr class="a"><td>Class org.owasp.esapi.reference.DefaultUser defines non-transient non-serializable instance field logger</td>
+<td>BAD_PRACTICE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SE_BAD_FIELD" class="externalLink">SE_BAD_FIELD</a></td>
+<td>Not available</td>
+</tr>
+<tr class="b"><td>Unread field: org.owasp.esapi.reference.DefaultUser.MAX_ROLE_LENGTH; should this field be static?</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SS_SHOULD_BE_STATIC" class="externalLink">SS_SHOULD_BE_STATIC</a></td>
+<td>108</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.DefaultValidator"></a><div class="section"><h3>org.owasp.esapi.reference.DefaultValidator</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Invocation of toString on an array in org.owasp.esapi.reference.DefaultValidator.getValidFileContent(String, byte[], int, boolean)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DMI_INVOKING_TOSTRING_ON_ARRAY" class="externalLink">DMI_INVOKING_TOSTRING_ON_ARRAY</a></td>
+<td>737</td>
+</tr>
+<tr class="a"><td>Invocation of toString on an array in org.owasp.esapi.reference.DefaultValidator.getValidPrintable(String, byte[], int, boolean)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DMI_INVOKING_TOSTRING_ON_ARRAY" class="externalLink">DMI_INVOKING_TOSTRING_ON_ARRAY</a></td>
+<td>1016</td>
+</tr>
+<tr class="b"><td>Invocation of toString on an array in org.owasp.esapi.reference.DefaultValidator.getValidPrintable(String, byte[], int, boolean)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DMI_INVOKING_TOSTRING_ON_ARRAY" class="externalLink">DMI_INVOKING_TOSTRING_ON_ARRAY</a></td>
+<td>1021</td>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>530</td>
+</tr>
+<tr class="b"><td>Should org.owasp.esapi.reference.DefaultValidator.getValidFileContent(String, byte[], int, boolean) return a zero length array rather than null?</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#PZLA_PREFER_ZERO_LENGTH_ARRAYS" class="externalLink">PZLA_PREFER_ZERO_LENGTH_ARRAYS</a></td>
+<td>736</td>
+</tr>
+<tr class="a"><td>Should org.owasp.esapi.reference.DefaultValidator.getValidPrintable(String, byte[], int, boolean) return a zero length array rather than null?</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#PZLA_PREFER_ZERO_LENGTH_ARRAYS" class="externalLink">PZLA_PREFER_ZERO_LENGTH_ARRAYS</a></td>
+<td>1011</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidSafeHTML(String, String, int, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>267</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.getValidDate(String, String, DateFormat, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>202</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.getValidDirectoryPath(String, String, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>475</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidCreditCard(String, String, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>363</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidDate(String, String, DateFormat, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>180</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidDirectoryPath(String, String, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>441</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidDouble(String, String, double, double, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>618</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidFileContent(String, byte[], int, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>724</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidFileName(String, String, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>501</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidHTTPRequest()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>813</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidHTTPRequest(HttpServletRequest)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>827</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidHTTPRequestParameterSet(String, Set, Set)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>949</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidInput(String, String, String, int, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>93</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidInteger(String, String, int, int, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>675</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidListItem(String, String, List)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>909</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidNumber(String, String, long, long, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>579</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidPrintable(String, String, int, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>1053</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.DefaultValidator.isValidPrintable(String, byte[], int, boolean)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>1000</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.reference.DefaultValidator.getValidSafeHTML(String, String, int, boolean) ignores return value of org.owasp.esapi.errors.ValidationException.ValidationException(String, String, String)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#RV_RETURN_VALUE_IGNORED" class="externalLink">RV_RETURN_VALUE_IGNORED</a></td>
+<td>326</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.FileBasedAccessController"></a><div class="section"><h3>org.owasp.esapi.reference.FileBasedAccessController</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>580</td>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>525</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.FileBasedAccessController.loadDataRules(String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>596</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.FileBasedAccessControllerRule"></a><div class="section"><h3>org.owasp.esapi.reference.FileBasedAccessController$Rule</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Should org.owasp.esapi.reference.FileBasedAccessController$Rule be a _static_ inner class?</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SIC_INNER_SHOULD_BE_STATIC" class="externalLink">SIC_INNER_SHOULD_BE_STATIC</a></td>
+<td>630-656</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.FileBasedAuthenticator"></a><div class="section"><h3>org.owasp.esapi.reference.FileBasedAuthenticator</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Unchecked/unconfirmed cast from org.owasp.esapi.User to org.owasp.esapi.reference.DefaultUser in org.owasp.esapi.reference.FileBasedAuthenticator.changePassword(User, String, String, String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#BC_UNCONFIRMED_CAST" class="externalLink">BC_UNCONFIRMED_CAST</a></td>
+<td>355</td>
+</tr>
+<tr class="a"><td>Unchecked/unconfirmed cast from org.owasp.esapi.User to org.owasp.esapi.reference.DefaultUser in org.owasp.esapi.reference.FileBasedAuthenticator.verifyPassword(User, String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#BC_UNCONFIRMED_CAST" class="externalLink">BC_UNCONFIRMED_CAST</a></td>
+<td>376</td>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>607</td>
+</tr>
+<tr class="a"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>520</td>
+</tr>
+<tr class="b"><td>Use of non-localized String.toUpperCase() or String.toLowerCase</td>
+<td>I18N</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#DM_CONVERT_CASE" class="externalLink">DM_CONVERT_CASE</a></td>
+<td>124</td>
+</tr>
+<tr class="a"><td>Inconsistent synchronization of org.owasp.esapi.reference.FileBasedAuthenticator.userMap; locked 85% of time</td>
+<td>MT_CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#IS2_INCONSISTENT_SYNC" class="externalLink">IS2_INCONSISTENT_SYNC</a></td>
+<td>135</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.FileBasedAuthenticator.loadUsersImmediately()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>567</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.reference.FileBasedAuthenticator.saveUsers(PrintWriter) ignores return value of org.owasp.esapi.errors.AuthenticationCredentialsException.AuthenticationCredentialsException(String, String)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#RV_RETURN_VALUE_IGNORED" class="externalLink">RV_RETURN_VALUE_IGNORED</a></td>
+<td>732</td>
+</tr>
+<tr class="b"><td>Unread field: org.owasp.esapi.reference.FileBasedAuthenticator.MAX_ACCOUNT_NAME_LENGTH; should this field be static?</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SS_SHOULD_BE_STATIC" class="externalLink">SS_SHOULD_BE_STATIC</a></td>
+<td>97</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.FileBasedAuthenticatorThreadLocalUser"></a><div class="section"><h3>org.owasp.esapi.reference.FileBasedAuthenticator$ThreadLocalUser</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Should org.owasp.esapi.reference.FileBasedAuthenticator$ThreadLocalUser be a _static_ inner class?</td>
+<td>PERFORMANCE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#SIC_INNER_SHOULD_BE_STATIC" class="externalLink">SIC_INNER_SHOULD_BE_STATIC</a></td>
+<td>246-258</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.JavaEncryptor"></a><div class="section"><h3>org.owasp.esapi.reference.JavaEncryptor</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.JavaEncryptor.JavaEncryptor()</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>90</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.JavaEncryptor.decrypt(String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>152</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.JavaEncryptor.encrypt(String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>136</td>
+</tr>
+<tr class="a"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.JavaEncryptor.sign(String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>168</td>
+</tr>
+<tr class="b"><td>Exception is caught when Exception is not thrown in org.owasp.esapi.reference.JavaEncryptor.verifySignature(String, String)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#REC_CATCH_EXCEPTION" class="externalLink">REC_CATCH_EXCEPTION</a></td>
+<td>183</td>
+</tr>
+<tr class="a"><td>org.owasp.esapi.reference.JavaEncryptor.JavaEncryptor() ignores return value of org.owasp.esapi.errors.EncryptionException.EncryptionException(String, String, Throwable)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#RV_RETURN_VALUE_IGNORED" class="externalLink">RV_RETURN_VALUE_IGNORED</a></td>
+<td>92</td>
+</tr>
+<tr class="b"><td>org.owasp.esapi.reference.JavaEncryptor.verifySignature(String, String) ignores return value of org.owasp.esapi.errors.EncryptionException.EncryptionException(String, String, Throwable)</td>
+<td>CORRECTNESS</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#RV_RETURN_VALUE_IGNORED" class="externalLink">RV_RETURN_VALUE_IGNORED</a></td>
+<td>184</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.JavaLogFactoryJavaLogger"></a><div class="section"><h3>org.owasp.esapi.reference.JavaLogFactory$JavaLogger</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Write to static field org.owasp.esapi.reference.JavaLogFactory$JavaLogger.currentLevel from instance method org.owasp.esapi.reference.JavaLogFactory$JavaLogger.setLevel(int)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" class="externalLink">ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</a></td>
+<td>146</td>
+</tr>
+</table>
+</div>
+<a name="org.owasp.esapi.reference.Log4JLogFactoryLog4JLogger"></a><div class="section"><h3>org.owasp.esapi.reference.Log4JLogFactory$Log4JLogger</h3>
+<table class="bodyTable"><tr class="a"><th>Bug</th>
+<th>Category</th>
+<th>Details</th>
+<th>Line</th>
+</tr>
+<tr class="b"><td>Write to static field org.owasp.esapi.reference.Log4JLogFactory$Log4JLogger.currentLevel from instance method org.owasp.esapi.reference.Log4JLogFactory$Log4JLogger.setLevel(int)</td>
+<td>STYLE</td>
+<td><a href="http://findbugs.sourceforge.net/bugDescriptions.html#ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" class="externalLink">ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD</a></td>
+<td>119</td>
+</tr>
+</table>
+</div>
+
+      </div>
+    </div>
+    <div class="clear">
+      <hr/>
+    </div>
+    <div id="footer">
+      <div class="xright">&#169;  
+          2010
+    
+          The Open Web Application Security Project (OWASP)
+          
+  
+
+  
+    
+  
+  
+    
+  </div>
+      <div class="clear">
+        <hr/>
+      </div>
+    </div>
+  </body>
+</html>
