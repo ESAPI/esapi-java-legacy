@@ -362,9 +362,9 @@ service, etc.</SPAN></P>
   <PRE>
     public class PersistedEncryptedData
     {
-        public static void persistEncryptedData(PlainText plaintext,
+        public static int persistEncryptedData(PlainText plaintext,
                                                 String filename)
-            throws EncryptorException, IOException
+            throws EncryptionException, IOException
         {
             File serializedFile = new File(filename);
             serializedFile.delete(); // Delete any old serialized file.
@@ -375,11 +375,11 @@ service, etc.</SPAN></P>
             FileOutputStream fos = new FileOutputStream(serializedFile);
             fos.write(serializedCiphertext);
             fos.close();
-            return;
+            return serializedCiphertext.length;
         }
 
         public static PlainText restorePlaintext(String encryptedDataFilename)
-            throws EncryptorException, IOException
+            throws EncryptionException, IOException
         {
             File serializedFile = new File(encryptedDataFilename);
             FileInputStream fis = new FileInputStream(serializedFile);
