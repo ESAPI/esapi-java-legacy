@@ -9,9 +9,10 @@ import org.owasp.esapi.Logger;
  * @author jmanico
  *
  */
-public class ExampleExtendedLog4JLogFactory extends Log4JLogFactory {
+public class ExampleExtendedLog4JLogFactory extends org.owasp.esapi.reference.Log4JLogFactory {
 
-	protected static class ExampleExtendedLog4JLogger extends Log4JLogger {
+	
+	protected static class ExampleExtendedLog4JLogger extends org.owasp.esapi.reference.Log4JLogFactory.Log4JLogger {
 		protected ExampleExtendedLog4JLogger(String moduleName) {
             super(moduleName);
         }
