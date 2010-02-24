@@ -9,10 +9,10 @@ import org.owasp.esapi.Logger;
  * @author jmanico
  *
  */
-public class ExtendedLog4JLogFactory extends Log4JLogFactory {
+public class ExampleExtendedLog4JLogFactory extends Log4JLogFactory {
 
-	protected static class ExtendedLog4JLogger extends Log4JLogger {
-		protected ExtendedLog4JLogger(String moduleName) {
+	protected static class ExampleExtendedLog4JLogger extends Log4JLogger {
+		protected ExampleExtendedLog4JLogger(String moduleName) {
             super(moduleName);
         }
 		
@@ -34,7 +34,7 @@ public class ExtendedLog4JLogFactory extends Log4JLogFactory {
     	Logger moduleLogger = (Logger) loggersMap.get(moduleName);
     	
     	if (moduleLogger == null) {
-    		moduleLogger = new ExtendedLog4JLogger(moduleName);
+    		moduleLogger = new ExampleExtendedLog4JLogger(moduleName);
     		loggersMap.put(moduleName, moduleLogger);    		
     	}
 		return moduleLogger;

@@ -55,10 +55,10 @@ public class Log4JLoggerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	ESAPI.setLogFactory( new ExtendedLog4JLogFactory() );
+    	ESAPI.setLogFactory( new ExampleExtendedLog4JLogFactory() );
     	//This ensures a clean logger between tests
-    	testLogger = ESAPI.getLogger( "test ExtendedLog4JLogFactory: " + testCount++ );
-    	System.out.println("Test ExtendedLog4JLogFactory logger: " + testLogger);
+    	testLogger = ESAPI.getLogger( "test ExampleExtendedLog4JLogFactory: " + testCount++ );
+    	System.out.println("Test ExampleExtendedLog4JLogFactory logger: " + testLogger);
     }
 
     /**
