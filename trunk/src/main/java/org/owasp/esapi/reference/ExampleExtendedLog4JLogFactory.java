@@ -12,8 +12,9 @@ import org.owasp.esapi.Logger;
  *
  * .. so that is uses your own user implementation. Account name, IP address, and a "safe" version of the session ID should be considered.
  *
- * This implementation uses the Apache Log4J package. At class initialization time, the file log4j.properties or log4j.xml file will be loaded from the classpath. This configuration file is 
- * fundamental to make log4j work for you. Please see http://logging.apache.org/log4j/1.2/manual.html for more information. 
+ * This implementation uses the Apache Log4J package. At class initialization time, the file log4j.properties or log4j.xml file will be
+ * loaded from the classpath. This configuration file is fundamental to make log4j work for you. 
+ * Please see http://logging.apache.org/log4j/1.2/manual.html for more information. 
  * 
  * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">manico.net</a>
  * @see org.owasp.esapi.LogFactory
