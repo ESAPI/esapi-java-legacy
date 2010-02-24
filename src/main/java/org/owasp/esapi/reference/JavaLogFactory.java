@@ -259,9 +259,8 @@ public class JavaLogFactory implements LogFactory {
          * It will only log the message if the current logging level is enabled, otherwise it will 
          * discard the message. 
          * 
-         * @param level the severity level of the security event
-         * @param type the type of the event (SECURITY, FUNCTIONALITY, etc.)
-         * @param success whether this was a failed or successful event
+         * @param level defines the set of recognized logging levels (TRACE, INFO, DEBUG, WARNING, ERROR, FATAL)
+         * @param type the type of the event (SECURITY SUCCESS, SECURITY FAILURE, EVENT SUCCESS, EVENT FAILURE)
          * @param message the message
          * @param throwable the throwable
          */
