@@ -324,32 +324,32 @@ public class Log4JLogFactory implements LogFactory {
     	    return jlogger.isEnabledFor(Level.WARN);
         }
         
-		public String getUserInfo() {
-		    // create a random session number for the user to represent the user's 'session', if it doesn't exist already
-		    String sid = null;
-		    HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
-		    if ( request != null ) {
-		        HttpSession session = request.getSession( false );
-		        if ( session != null ) {
-		            sid = (String)session.getAttribute("ESAPI_SESSION");
-		            // if there is no session ID for the user yet, we create one and store it in the user's session
-		            if ( sid == null ) {
-		            	sid = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
-		            	session.setAttribute("ESAPI_SESSION", sid);
-		            }
-		        }
-		    }
-		    
-			// log user information - username:session@ipaddr
-			User user = ESAPI.authenticator().getCurrentUser();            
-			String userInfo = "";
-			//TODO - make type logging configurable
-			if ( user != null) {
-				userInfo += user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
-			}
-			
-			return userInfo;
-	    }
+public String getUserInfo() {
+    // create a random session number for the user to represent the user's 'session', if it doesn't exist already
+    String sid = null;
+    HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+    if ( request != null ) {
+        HttpSession session = request.getSession( false );
+        if ( session != null ) {
+            sid = (String)session.getAttribute("ESAPI_SESSION");
+            // if there is no session ID for the user yet, we create one and store it in the user's session
+            if ( sid == null ) {
+            	sid = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+            	session.setAttribute("ESAPI_SESSION", sid);
+            }
+        }
+    }
+    
+	// log user information - username:session@ipaddr
+	User user = ESAPI.authenticator().getCurrentUser();            
+	String userInfo = "";
+	//TODO - make type logging configurable
+	if ( user != null) {
+		userInfo += user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
+	}
+	
+	return userInfo;
+}
 	}
 }
 
