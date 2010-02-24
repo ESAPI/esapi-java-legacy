@@ -302,8 +302,15 @@ public class JavaLogFactory implements LogFactory {
 			// log user information - username:session@ipaddr
         	User user = ESAPI.authenticator().getCurrentUser();            
 			String userInfo = "";
-			if ( user != null && type != null) {
-				userInfo = user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
+			//TODO - Make Type Logging configurable
+			if (type != null) {
+				userInfo += type;
+			}
+			if ( user != null) {
+				if (type != null) {
+					userInfo += " ";
+				}
+				userInfo += user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
 			}
 
 			// log server, port, app name, module name -- server:80/app/module
