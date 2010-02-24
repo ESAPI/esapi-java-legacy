@@ -28,7 +28,7 @@ import org.owasp.esapi.User;
  */
 public class Log4JLogFactory implements LogFactory {
 	
-	private HashMap loggersMap = new HashMap();
+	protected HashMap loggersMap = new HashMap();
 	
 	/**
 	* Null argument constructor for this implementation of the LogFactory interface
@@ -77,7 +77,7 @@ public class Log4JLogFactory implements LogFactory {
      * @since June 1, 2007
      * @see org.owasp.esapi.LogFactory
      */
-    private static class Log4JLogger implements org.owasp.esapi.Logger {
+    protected static class Log4JLogger implements org.owasp.esapi.Logger {
 
     	/** The jlogger object used by this class to log everything. */
         private org.apache.log4j.Logger jlogger = null;
@@ -99,7 +99,7 @@ public class Log4JLogFactory implements LogFactory {
          * 
          * @param moduleName the module name
          */
-        private Log4JLogger(String moduleName) {
+        protected Log4JLogger(String moduleName) {
             this.moduleName = moduleName;
             this.jlogger = org.apache.log4j.Logger.getLogger(applicationName + ":" + moduleName);
         }
@@ -344,12 +344,13 @@ public class Log4JLogFactory implements LogFactory {
 			// log user information - username:session@ipaddr
 			User user = ESAPI.authenticator().getCurrentUser();            
 			String userInfo = "";
-			//TODO - Make Type Logging configurable
+			//TODO - make type logging configurable
 			if ( user != null) {
 				userInfo += user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
-				}
-				
-				return userInfo;
-		    }
-		}
+			}
+			
+			return userInfo;
+	    }
+	}
 }
+
