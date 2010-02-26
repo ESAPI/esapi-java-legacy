@@ -5,6 +5,7 @@
 	<TITLE>Symmetric Encryption in ESAPI 2.0</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Linux)">
 	<META NAME="CREATED" CONTENT="20100214;0">
+	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
 	<META NAME="CHANGED" CONTENT="20100214;22400700">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
 </HEAD>
@@ -46,7 +47,7 @@ are ones that you would replace.</P>
 			<PRE><FONT SIZE=2>Encryptor.MasterKey</FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<P><FONT SIZE=2><FONT COLOR="#0000ff">&lt;initially unset&gt;</FONT></FONT></P>
+			<P><FONT COLOR="#0000ff"><FONT SIZE=2>&lt;initially unset&gt;</FONT></FONT></P>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>The base64-encoded SecretKey. The key must be
@@ -60,7 +61,7 @@ are ones that you would replace.</P>
 			<PRE><FONT SIZE=2>Encryptor.MasterSalt</FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<P><FONT SIZE=2><FONT COLOR="#0000ff">&lt;initially unset&gt;</FONT></FONT></P>
+			<P><FONT COLOR="#0000ff"><FONT SIZE=2>&lt;initially unset&gt;</FONT></FONT></P>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>A base64-encoded random “salt”. This should be
@@ -76,7 +77,7 @@ are ones that you would replace.</P>
 			<PRE><STRIKE><FONT SIZE=2>Encryptor.EncryptionAlgorithm</FONT></STRIKE></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<P><FONT SIZE=2><PRE>AES</PRE></FONT></P>
+			<PRE><FONT SIZE=2>AES</FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>A deprecated property, superseded by
@@ -85,27 +86,23 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<P STYLE="margin-bottom: 0in"><FONT SIZE=2><FONT COLOR="#ff0000">
-            <PRE>Encryptor.CipherTransformation</PRE></FONT></FONT></P>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.CipherTransformation</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<P><FONT SIZE=2><FONT
-            COLOR="#ff0000"><PRE>AES/CBC/PKCS5Padding</PRE></FONT></FONT></P>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>AES/CBC/PKCS5Padding</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
-			<P><FONT SIZE=2>Specifies the cipher transformation  to use for
+			<P><FONT SIZE=2>Specifies the cipher transformation to use for
 			symmetric encryption. The format is
 			cipherAlgorithm/cipherMode/paddingScheme.</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<P STYLE="margin-bottom: 0in"><FONT FACE="DejaVu Sans Mono,
-            sans-serif"><FONT SIZE=2><FONT
-            COLOR="#ff0000"><PRE>Encryptor.EncryptionKeyLength</PRE></FONT></FONT></FONT></P>
+			<PRE><FONT COLOR="#ff0000"><FONT FACE="DejaVu Sans Mono, sans-serif"><FONT SIZE=2>Encryptor.EncryptionKeyLength</FONT></FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202 SDVAL="128" SDNUM="1033;">
-			<P><FONT SIZE=2><FONT COLOR="#ff0000"><PRE>128</PRE></FONT></FONT></P>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>128</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>Key size, in bits. Required for cipher algorithms
@@ -114,60 +111,62 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.ChooseIVMethod</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.ChooseIVMethod</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">random</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>random</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>Legal values are “random” or “fixed”.
-			Random is recommended. Set to “fixed” if required for
+			Random is recommended. Set to “fixed” only if required for
 			compatibility with legacy or third party software. If set to
 			“fixed”, then the property Encryptor.fixedIV must also be
-			fixed.</FONT></P>
+			set to hex-encoded specific IV that you need to use.</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.fixedIV</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.fixedIV</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<P><FONT COLOR="#0000ff"><FONT
-            SIZE=2><PRE>0x000102030405060708090a0b0c0d0e0f</PRE></FONT></FONT></P>
+			<PRE><FONT COLOR="#0000ff"><FONT SIZE=2>0x000102030405060708090a0b0c0d0e0f</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>A hex-encoded value to use as a fixed IV. Only
-			used if the property Encryptor.fixedIV is set to “fixed”.</FONT></P>
+			used if the property Encryptor.fixedIV is set to “fixed”. Intended
+            <I>only</I> for compatibility with legacy code.</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.CipherText.useMAC</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.CipherText.useMAC</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">true</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>true</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
-			<P><FONT SIZE=2>Whether or not CipherText should use a message
-			authentication code (MAC) with it.  This prevents an adversary
-			from altering the IV as well as allowing a more fool-proof way of
+			<P><FONT SIZE=2>Whether or not <code>CipherText</code>
+            should use a message authentication code (MAC) with
+            it. This prevents an adversary from altering the IV
+            as well as allowing a more fool-proof way of
 			determining the decryption failed because of an incorrect key
 			being supplied. This refers to the &quot;separate&quot; MAC
-			calculated and stored in CipherText, not part of any MAC that is
-			calculated as a result of a &quot;combined mode&quot; cipher mode.</FONT></P>
+			calculated and stored in <code>CipherText</code>, not
+            part of any MAC that is calculated as a result
+            of a &quot;combined mode&quot; cipher mode.</FONT></P>
 			<P><FONT SIZE=2>Note: If the cipher mode used is one specified in
 			the comma-separated list of cipher modes given in the property
 			Encryptor.cipher_modes.combined_modes, then a separate MAC is not
-			calculated for CipherText regardless of the setting of this
-			property.</FONT></P>
+			calculated for <code>CipherText</code> regardless of
+            the setting of this property.</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.PreferredJCEProvider</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.PreferredJCEProvider</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">SunJCE</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>SunJCE</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>Specifies the preferred JCE provider. The
@@ -181,10 +180,10 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.cipher_modes.additional_allowed</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.cipher_modes.additional_allowed</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<PRE><FONT SIZE=2 COLOR="#ff0000"><PRE>CBC</PRE></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>CBC</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>Additional cipher modes allowed for ESAPI 2.0
@@ -198,23 +197,25 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.cipher_modes.combined_modes</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.cipher_modes.combined_modes</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<PRE><FONT SIZE=2 COLOR="#ff0000"><PRE>GCM,CCM,IAPM,EAX,OCB,CWC</PRE></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>GCM,CCM,IAPM,EAX,OCB,CWC</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>Comma-separated list of cipher modes that provide
-			*BOTH* confidentiality *AND* message authenticity. (NIST refers to
-			such cipher modes as &quot;combined modes&quot; so that's what we
+			<B><I>both</I></B> confidentiality <B><I>and</I></B>
+            message authenticity. (NIST refers to such cipher
+            modes as &quot;combined modes&quot; so that's what we
 			shall call them.) If any of these cipher modes are used then no
-			MAC is calculated and stored in the CipherText upon encryption.
-			Likewise, if one of these cipher modes is used with decryption, no
-			attempt will be made to validate the MAC contained in the
-			CipherText object regardless of whether it contains one or not.
+			MAC is calculated and stored in the <code>CipherText</code>
+            upon encryption.  Likewise, if one of these cipher
+            modes is used with decryption, no attempt will be
+            made to validate the MAC contained in the <code>CipherText</code>
+            object regardless of whether it contains one or not.
 			Since the expectation is that these cipher modes support support
-			message authenticity already, injecting a MAC in the CipherText
-			object would be at best redundant.  </FONT>
+			message authenticity already, injecting a MAC in the
+            <code>CipherText</code> object would be at best redundant.</FONT>
 			</P>
 			<P><FONT SIZE=2>Note that as of JDK 1.5, the SunJCE provider does
 			not support <I>any</I> of these cipher modes. Of these listed,
@@ -223,18 +224,18 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">Encryptor.PlainText.overwrite</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.PlainText.overwrite</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202 SDVAL="1" SDNUM="1033;0;BOOLEAN">
-			<PRE><FONT SIZE=2><FONT COLOR="#ff0000">true</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>TRUE</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
 			<P><FONT SIZE=2>Whether or not the plaintext bytes for the
 			PlainText object may be overwritten with “*” characters and
-			then marked eligible for garbage collection. If not set, this is
-			still treated as 'true'. If this is set to 'true', you will not
-			be able to use any PlainText object after you have used it with
-			one of the Encryptor encrypt() methods.</FONT></P>
+			then marked eligible for garbage collection. If not set, this is
+			still treated as 'true'. If this is set to 'true', you will not be
+			able to use any PlainText object after you have used it with one
+			of the Encryptor encrypt() methods.</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -273,9 +274,9 @@ algorithm supports a variable key size) of that specified by
 by <CODE>Encryptor.ChooseIVMethod</CODE>. What is not provided by
 these methods (and why they are deprecated) is that they provide no
 mechanism to ensure message authenticity unless they are used with a
-so-called “combined” cipher mode such as CCM or GCM.<SPAN STYLE="font-style: normal">
-(Note that as of JDK 1.6, the default JCE provider, “SunJCE”,
-does not support any combined cipher modes.)</SPAN></P>
+so-called “combined” cipher mode such as CCM or GCM. <SPAN STYLE="font-style: normal">(Note
+that as of JDK 1.6, the default JCE provider, “SunJCE”, does not
+support any combined cipher modes.)</SPAN></P>
 <H2>Encrypting / Decrypting with the New Methods -- The Simple Usage</H2>
 <P>Using the new encryption / decryption methods is somewhat more
 complicated, but this is in part because they are more flexible and
@@ -341,8 +342,9 @@ been used. However, when you are using immutable Strings, this is not
 possible using native Java methods. But if you are able to pass in
 byte arrays that are passed directly to <CODE>PlainText</CODE>
 objects (as shown above), the <I>default</I> is to overwrite this
-after they are encrypted. <!-- Need to verify this. It was like this, but think I may have changed it to return copy rather than reference based on FindBugs report. --><SPAN STYLE="background: #ffff00">If
-the default for </SPAN><CODE><SPAN STYLE="background: #ffff00">Encryptor.PlainText.overwrite</SPAN></CODE><SPAN STYLE="background: #ffff00">
+after they are encrypted.<!-- Need to verify this. It was like this, but think I may have changed it to return copy rather than reference based on FindBugs report. -->
+<SPAN STYLE="background: #ffff00">If the default for
+</SPAN><CODE><SPAN STYLE="background: #ffff00">Encryptor.PlainText.overwrite</SPAN></CODE><SPAN STYLE="background: #ffff00">
 of </SPAN><CODE><B><SPAN STYLE="background: #ffff00">true</SPAN></B></CODE><SPAN STYLE="background: #ffff00">
 had been used, then the array </SPAN><CODE><SPAN STYLE="background: #ffff00">plaintextByteArray</SPAN></CODE><SPAN STYLE="background: #ffff00">
 would have been overwritten with ASCII “*” characters.</SPAN></P>
@@ -350,17 +352,15 @@ would have been overwritten with ASCII “*” characters.</SPAN></P>
 with the New Methods – Storing Encrypted Data</SPAN></H2>
 <P><SPAN STYLE="background: transparent">If you use one of the new
 Encryptor encrypt() / decrypt() methods, how do you persist the
-CipherText object returned by the encrypt() methods and how do you
-restore it to pass to the decrypt() method?</SPAN></P>
+<code>CipherText</code> object returned by the encrypt() methods and how do
+you restore it to pass to the decrypt() method?</SPAN></P>
 <P><SPAN STYLE="background: transparent">The following example code
 snippet will illustrate this. In the following example we will simply
-write out the serialized CipherText object to a local file, but
+write out the serialized <code>CipherText</code> object to a local file, but
 obviously you could hex- or base64-encode the serialized byte array
 and store it in a database or sent it in a SOAP XML message to a web
 service, etc.</SPAN></P>
-<P>
-  <PRE>
-    public class PersistedEncryptedData
+<PRE>    public class PersistedEncryptedData
     {
         public static int persistEncryptedData(PlainText plaintext,
                                                 String filename)
@@ -394,11 +394,11 @@ service, etc.</SPAN></P>
             return plaintext;
         }
     }
-  </PRE>
-<H2>Encrypting / Decrypting with the New Methods -- Advanced Usage</H2>
+  </PRE><H2>
+Encrypting / Decrypting with the New Methods -- Advanced Usage</H2>
 <P>ESAPI 1.4 and earlier only allowed you to use the master key
 (<FONT FACE="DejaVu Sans Mono, sans-serif">MasterPassword</FONT> in
-ESAPI 1.4;  <CODE>Encryptor.MasterKey</CODE> in ESAPI 2.0) to encrypt
+ESAPI 1.4; <CODE>Encryptor.MasterKey</CODE> in ESAPI 2.0) to encrypt
 and decrypt with. But encryption with a single key seldom is
 sufficient. For instance, lets say that your application has a need
 to encrypt both bank account numbers and credit card numbers. The
