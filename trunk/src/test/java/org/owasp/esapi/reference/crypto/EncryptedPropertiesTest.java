@@ -102,11 +102,28 @@ public class EncryptedPropertiesTest extends TestCase {
 		instance.setProperty(name, value);
 		String result = instance.getProperty(name);
 		assertEquals(value, result);
+		
+        instance.setProperty(name, "");
+        result = instance.getProperty(name);
+        assertEquals(result, "");
+        
+        try {
+            instance.setProperty(null, value);
+            fail("testSetProperty(): Null property name did not result in expected exception.");
+        } catch( Exception e ) {
+            assertTrue( e instanceof EncryptionException );
+        }
+        try {
+            instance.setProperty(name, null);
+            fail("testSetProperty(): Null property value did not result in expected exception.");
+        } catch( Exception e ) {
+            assertTrue( e instanceof EncryptionException );
+        }
 		try {
-			instance.setProperty(null, null);
-			fail();
+			instance.setProperty(null, null);			
+			fail("testSetProperty(): Null property name and valud did not result in expected exception.");
 		} catch( Exception e ) {
-			// expected
+		    assertTrue( e instanceof EncryptionException );
 		}
 	}
 
