@@ -29,12 +29,16 @@ import java.util.Set;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.crypto.CipherText;
+import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
 
 /**
- * Reference implementation of the EncryptedProperties interface. This
+ * Reference implementation of the {@code EncryptedProperties} interface. This
  * implementation wraps a normal properties file, and creates surrogates for the
- * getProperty and setProperty methods that perform encryption and decryption based on the Encryptor.
+ * {@code getProperty} and {@code setProperty} methods that perform encryption
+ * and decryption based on {@code Encryptor}.
+ * <p>
  * A very simple main program is provided that can be used to create an
  * encrypted properties file. A better approach would be to allow unencrypted
  * properties in the file and to encrypt them the first time the file is
@@ -64,16 +68,20 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 * {@inheritDoc}
 	 */
 	public synchronized String getProperty(String key) throws EncryptionException {
-		try {
-			String encryptedValue = properties.getProperty(key);
+	    try {
+	        String encryptedValue = properties.getProperty(key);
 
-			if(encryptedValue==null)
-				return null;
-			// TODO: Change this to use CryptoHelper.decrypt()
-			return ESAPI.encryptor().decrypt(encryptedValue);
-		} catch (Exception e) {
-			throw new EncryptionException("Property retrieval failure", "Couldn't decrypt property", e);
-		}
+	        if(encryptedValue==null)
+	            return null;
+
+	        byte[] serializedCiphertext   = ESAPI.encoder().decodeFromBase64(encryptedValue);
+	        CipherText restoredCipherText = CipherText.fromPortableSerializedBytes(serializedCiphertext);
+	        PlainText plaintext           = ESAPI.encryptor().decrypt(restoredCipherText);
+	        
+	        return plaintext.toString();
+	    } catch (Exception e) {
+	        throw new EncryptionException("Property retrieval failure", "Couldn't decrypt property", e);
+	    }
 	}
 
 	/**
@@ -87,9 +95,12 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 		    if ( value == null ) {
 		        throw new NullPointerException("Property value may not be null.");
 		    }
-	        //  TODO: Change this to use Encryptor.encrypt(new PlainText(value)) after
-		    //        discussing w/ list. (Backward compatibility issue.)
-			return (String)properties.setProperty(key, ESAPI.encryptor().encrypt(value));
+		    // NOTE: Not backward compatible w/ ESAPI 1.4.
+		    PlainText pt = new PlainText(value);
+		    CipherText ct = ESAPI.encryptor().encrypt(pt);
+		    byte[] serializedCiphertext = ct.asPortableSerializedByteArray();
+		    String b64str = ESAPI.encoder().encodeForBase64(serializedCiphertext, false);
+			return (String)properties.setProperty(key, b64str);
 		} catch (Exception e) {
 			throw new EncryptionException("Property setting failure", "Couldn't encrypt property", e);
 		}
