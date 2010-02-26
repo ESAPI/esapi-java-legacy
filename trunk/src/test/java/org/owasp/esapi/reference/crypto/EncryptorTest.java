@@ -132,6 +132,50 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
+     * Test of encrypt methods for empty String.
+     * 
+     * @throws EncryptionException
+     *             the encryption exception
+     */
+    @SuppressWarnings("deprecation")
+    public void testEncryptEmptyStrings() {
+        System.out.println("testEncryptEmptyStrings()");
+        Encryptor instance = ESAPI.encryptor();
+        String plaintext = "";
+        try {
+            // System.out.println("Deprecated encryption methods");
+            String ciphertext = instance.encrypt(plaintext);
+            String result = instance.decrypt(ciphertext);
+            assertTrue( result.equals("") );
+            
+            // System.out.println("New encryption methods");
+            CipherText ct = instance.encrypt(new PlainText(plaintext));
+            PlainText pt = instance.decrypt(ct);
+            assertTrue( pt.toString().equals("") );
+        } catch(Exception e) {
+            fail("testEncryptEmptyStrings() -- Caught exception: " + e);
+        }
+    }
+    
+    /**
+     * Test encryption / decryption methods for null.
+     */
+    @SuppressWarnings("deprecation")
+    public void testEncryptNull() {
+        System.out.println("testEncryptNull()");
+        Encryptor instance = ESAPI.encryptor();
+        String plaintext = "";
+        try {
+            String nullStr = null;
+            instance.encrypt(nullStr);
+            fail("testEncryptNull(): Did not result in expected exception!");
+        } catch(Throwable t) {
+            // It should be one of these, depending on whether or not assertions are enabled.
+            assertTrue( t instanceof NullPointerException || t instanceof AssertionError);
+        }
+    }
+
+    /**
      * Test of new encrypt / decrypt methods added in ESAPI 2.0.
      */
     public void testNewEncryptDecrypt() {
