@@ -6,7 +6,8 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Linux)">
 	<META NAME="CREATED" CONTENT="0;0">
 	<META NAME="CHANGEDBY" CONTENT="Kevin Wall-OpenSuSE">
-	<META NAME="CHANGED" CONTENT="20100214;23152600">
+	<META NAME="CHANGED" CONTENT="20100225;23204000">
+	<META NAME="CHANGEDBY" CONTENT="Kevin Wall-OpenSuSE">
 	<META NAME="CHANGEDBY" CONTENT="Kevin Wall-OpenSuSE">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
 </HEAD>
@@ -382,8 +383,10 @@ more hardened cynics know it more commonly as <I>TANSTAAFL</I>.)
 (originally planned via <CODE>LegacyJavaEncryptor</CODE>) has been
 removed because of apparent lack of interest. What this means is if
 you are one of the unlucky stuckeys who are using ESAPI 1.4 symmetric
-encryption to encrypt data and you have persisted this data, you will
-first have to <I>decrypt </I><SPAN STYLE="font-style: normal">this
+encryption to encrypt data and you have persisted this data (and this
+would <I>include </I><SPAN STYLE="font-style: normal">the use of the
+</SPAN><FONT FACE="DejaVu Sans Mono, sans-serif"><SPAN STYLE="font-style: normal">org.owasp.esapi.EncryptedProperties</SPAN></FONT><SPAN STYLE="font-style: normal">
+class in ESAPI 1.4)</SPAN>, you will first have to <I>decrypt </I><SPAN STYLE="font-style: normal">this
 encrypted data using ESAPI 1.4 before using encryption with ESAPI
 2.0. As they say, “we are sorry for the inconvenience”, but there
 was an opportunity to make your voice heard so we refuse to take </SPAN><I>all
