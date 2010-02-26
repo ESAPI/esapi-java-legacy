@@ -24,10 +24,13 @@ import org.owasp.esapi.errors.EncryptionException;
 
 
 /**
- * The EncryptedProperties interface represents a properties file where all the data is
- * encrypted before it is added, and decrypted when it retrieved. This interface can be
- * implemented in a number of ways, the simplest being extending Properties and overloading
- * the getProperty and setProperty methods.
+ * The {@code EncryptedProperties} interface represents a properties file
+ * where all the data is encrypted before it is added, and decrypted when it
+ * retrieved. This interface can be implemented in a number of ways, the
+ * simplest being extending {@link java.util.Properties} and overloading
+ * the {@code getProperty} and {@code setProperty} methods. In all cases,
+ * the master encryption key, as given by the {@code Encryptor.MasterKey}
+ * property in <b><code>ESAPI.properties</code></b> file.
  * <P>
  * <img src="doc-files/EncryptedProperties.jpg">
  * <P>
@@ -39,7 +42,8 @@ import org.owasp.esapi.errors.EncryptionException;
 public interface EncryptedProperties {
 
 	/**
-	 * Gets the property value from the encrypted store, decrypts it, and returns the plaintext value to the caller.
+	 * Gets the property value from the encrypted store, decrypts it, and
+	 * returns the plaintext value to the caller.
 	 * 
 	 * @param key
 	 *      the name of the property to get 
@@ -53,7 +57,8 @@ public interface EncryptedProperties {
 	String getProperty(String key) throws EncryptionException;
 
 	/**
-	 * Encrypts the plaintext property value and stores the ciphertext value in the encrypted store.
+	 * Encrypts the plaintext property value and stores the ciphertext value
+	 * in the encrypted store.
 	 * 
 	 * @param key
 	 *      the name of the property to set
@@ -61,7 +66,8 @@ public interface EncryptedProperties {
 	 * 		the value of the property to set
 	 * 
 	 * @return 
-	 * 		the encrypted property value
+	 * 		the previously encrypted property value for the specified key, or
+	 *      {@code null} if it did not have one.
 	 * 
 	 * @throws EncryptionException
 	 *      if the property could not be encrypted
