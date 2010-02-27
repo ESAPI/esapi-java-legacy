@@ -33,7 +33,7 @@ import org.owasp.esapi.util.PrimWrap;
 public class HTMLEntityCodec implements Codec
 {
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR + " \t";
+	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR;
 	private static final Set/*<Character>*/ UNENCODED_SET = CollectionsUtil.strToUnmodifiableSet(UNENCODED_STR);
 	
 	private static HashMap characterToEntityMap;
