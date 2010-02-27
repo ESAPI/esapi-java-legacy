@@ -318,9 +318,18 @@ public class EncoderTest extends TestCase {
 		Encoder instance = ESAPI.encoder();
 		assertEquals("&lt;script&gt;", instance.encodeForHTMLAttribute("<script>"));
 		assertEquals(",.-_", instance.encodeForHTMLAttribute(",.-_"));
-		assertEquals(" &#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
+		assertEquals("&#x20;&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTMLAttribute(" !@$%()=+{}[]"));
 	}
 
+	/**
+	 * Test that encodeForHTMLAttribute encodes white space
+	 */
+	public void testEncodeForHTMLAttributeWhiteSpace()
+	{
+		Encoder instance = ESAPI.encoder();
+		assertEquals("&#x20;&#x9;&#xd;&#xa;", instance.encodeForHTMLAttribute(" \t\r\n"));
+	}
+	
 
 	public void testEncodeForCSS() {
 		Encoder instance = ESAPI.encoder();

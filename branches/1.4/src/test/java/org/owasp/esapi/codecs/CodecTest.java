@@ -156,6 +156,69 @@ public class CodecTest extends TestCase {
         	assertEquals(expected, result);
 	}
 
+	public void testHtmlEncodeSpace()
+	{
+		char in = ' ';
+		String inStr = Character.toString(in);
+		String expected = "&#x20;";
+		String result;
+
+		// char version
+        	result = htmlCodec.encodeCharacter(/*EMPTY_CHAR_ARRAY,*/ PrimWrap.wrapChar(in));
+        	assertEquals(expected, result);
+
+		// string version
+        	result = htmlCodec.encode(/*EMPTY_CHAR_ARRAY,*/ inStr);
+        	assertEquals(expected, result);
+	}
+
+	public void testHtmlEncodeTab()
+	{
+		char in = '\t';
+		String inStr = Character.toString(in);
+		String expected = "&#x9;";
+		String result;
+
+		// char version
+        	result = htmlCodec.encodeCharacter(/*EMPTY_CHAR_ARRAY,*/ PrimWrap.wrapChar(in));
+        	assertEquals(expected, result);
+
+		// string version
+        	result = htmlCodec.encode(/*EMPTY_CHAR_ARRAY,*/ inStr);
+        	assertEquals(expected, result);
+	}
+
+	public void testHtmlEncodeNewLine()
+	{
+		char in = '\n';
+		String inStr = Character.toString(in);
+		String expected = "&#xa;";
+		String result;
+
+		// char version
+        	result = htmlCodec.encodeCharacter(/*EMPTY_CHAR_ARRAY,*/ PrimWrap.wrapChar(in));
+        	assertEquals(expected, result);
+
+		// string version
+        	result = htmlCodec.encode(/*EMPTY_CHAR_ARRAY,*/ inStr);
+        	assertEquals(expected, result);
+	}
+
+	public void testHtmlEncodeCarriageReturn()
+	{
+		char in = '\r';
+		String inStr = Character.toString(in);
+		String expected = "&#xd;";
+		String result;
+
+		// char version
+        	result = htmlCodec.encodeCharacter(/*EMPTY_CHAR_ARRAY,*/ PrimWrap.wrapChar(in));
+        	assertEquals(expected, result);
+
+		// string version
+        	result = htmlCodec.encode(/*EMPTY_CHAR_ARRAY,*/ inStr);
+        	assertEquals(expected, result);
+	}
 
 	public void testPercentEncodeChar()
 	{
