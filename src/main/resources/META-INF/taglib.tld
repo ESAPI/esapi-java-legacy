@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ OWASP Enterprise Security API (ESAPI)
+  ~
+  ~ This file is part of the Open Web Application Security Project (OWASP)
+  ~ Enterprise Security API (ESAPI) project. For details, please see
+  ~ <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+  ~
+  ~ Copyright (c) 2007 - The OWASP Foundation
+  ~
+  ~ The ESAPI is published by OWASP under the BSD license. You should read and accept the
+  ~ LICENSE before you use, modify, and/or redistribute this software.
+  ~
+  ~ @created 2007
+  -->
+
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN" "http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+	<tlibversion>1.3</tlibversion>
+	<jspversion>1.1</jspversion>
+	<shortname>esapi</shortname>
+	<uri>http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API#jsp1.2</uri>
+	<info>
+		OWASP Enterprise Security API (ESAPI) provides
+		a JSP Tag Library that supplies easy access to
+		encoding functionality in the form of JSP Tags and EL
+		functions. These can be used to properly escape user
+		supplied data at display time so that it cannot be used
+		in injection attacks like Cross Site Scripting (XSS).
+
+		NOTE:
+
+		ESAPI-1.4 supports J2EE 1.4 which includes JSP 2.0. Use
+		esapi.tld for JSP 2.0 and above.
+
+		This version is provided for compatability with older
+		JSP versions but is not actively supported or maintained.
+
+		Backwards compatability with JSP 1.2 and earlier is not
+		planned for ESAPI-2.0 and above.
+	</info>
+
+	<tag>
+		<name>encodeForBase64</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForBase64Tag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content using Base64
+		</info>
+		<attribute>
+			<!--
+				The encoding used to convert the tag
+				content from a String to byte[]. The
+				default is UTF-8.
+			-->
+			<name>encoding</name>
+			<required>false</required>
+		</attribute>
+		<attribute>
+			<!--
+				Whether lines should be wrapped at 64
+				characters. The default is false.
+			-->
+			<name>wrap</name>
+			<required>false</required>
+		</attribute>
+	</tag>
+
+	<tag>
+		<name>encodeForCSS</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForCSSTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in CSS
+		</info>
+	</tag>
+
+	<tag>
+		<name>encodeForHTML</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForHTMLTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in HTML
+		</info>
+	</tag>
+
+	<tag>
+		<name>encodeForHTMLAttribute</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForHTMLAttributeTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in HTML Attributes
+		</info>
+	</tag>
+	
+	<tag>
+		<name>encodeForJavaScript</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForJavaScriptTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in JavaScript
+		</info>
+	</tag>
+	
+	<tag>
+		<name>encodeForURL</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForURLTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in URLs
+		</info>
+	</tag>
+	
+	<tag>
+		<name>encodeForVBScript</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForVBScriptTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in VBScript
+		</info>
+	</tag>
+
+	<tag>
+		<name>encodeForXMLAttribute</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForXMLAttributeTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in XML Attributes
+		</info>
+	</tag>
+
+	<tag>
+		<name>encodeForXML</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForXMLTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in XML
+		</info>
+	</tag>
+
+	<tag>
+		<name>encodeForXPath</name>
+		<tagclass>org.owasp.esapi.tags.EncodeForXPathTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<info>
+			Encode tag's content for usage in XPath
+		</info>
+	</tag>
+</taglib>
+
