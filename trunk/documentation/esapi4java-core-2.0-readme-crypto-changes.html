@@ -5,10 +5,7 @@
 	<TITLE>Encryption in OWASP ESAPI Java 2.0</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Linux)">
 	<META NAME="CREATED" CONTENT="0;0">
-	<META NAME="CHANGEDBY" CONTENT="Kevin Wall-OpenSuSE">
-	<META NAME="CHANGED" CONTENT="20100225;23204000">
-	<META NAME="CHANGEDBY" CONTENT="Kevin Wall-OpenSuSE">
-	<META NAME="CHANGEDBY" CONTENT="Kevin Wall-OpenSuSE">
+	<META NAME="CHANGED" CONTENT="20100228;21125900">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
@@ -273,9 +270,8 @@ this:</P>
 		<TD WIDTH=25%>
 			<P ALIGN=LEFT>102</P>
 		</TD>
-		<TD WIDTH=25%>
-			<P><BR>
-			</P>
+		<TD WIDTH=25% SDVAL="137" SDNUM="1033;">
+			<P>137</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -288,9 +284,8 @@ this:</P>
 		<TD WIDTH=25%>
 			<P ALIGN=LEFT>118</P>
 		</TD>
-		<TD WIDTH=25%>
-			<P><BR>
-			</P>
+		<TD WIDTH=25% SDVAL="162" SDNUM="1033;">
+			<P>162</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -303,9 +298,8 @@ this:</P>
 		<TD WIDTH=25%>
 			<P ALIGN=LEFT>134</P>
 		</TD>
-		<TD WIDTH=25%>
-			<P><BR>
-			</P>
+		<TD WIDTH=25% SDVAL="182" SDNUM="1033;">
+			<P>182</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -318,9 +312,8 @@ this:</P>
 		<TD WIDTH=25%>
 			<P ALIGN=LEFT>150</P>
 		</TD>
-		<TD WIDTH=25%>
-			<P><BR>
-			</P>
+		<TD WIDTH=25% SDVAL="202" SDNUM="1033;">
+			<P>202</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -333,14 +326,13 @@ this:</P>
 		<TD WIDTH=25%>
 			<P ALIGN=LEFT>166</P>
 		</TD>
-		<TD WIDTH=25%>
-			<P><BR>
-			</P>
+		<TD WIDTH=25% SDVAL="222" SDNUM="1033;">
+			<P>222</P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=25%>
-			<P ALIGN=LEFT>Etc. Each additional 16 bytes of plaintext...</P>
+			<P ALIGN=LEFT>… etc.  Each additional 16 bytes of plaintext...</P>
 		</TD>
 		<TD WIDTH=25%>
 			<P ALIGN=LEFT>...adds ~20 additional bytes</P>
@@ -349,8 +341,7 @@ this:</P>
 			<P ALIGN=LEFT>...adds 16 additional bytes</P>
 		</TD>
 		<TD WIDTH=25%>
-			<P><BR>
-			</P>
+			<P>...adds 20 additional bytes</P>
 		</TD>
 	</TR>
 </TABLE>
@@ -385,8 +376,9 @@ removed because of apparent lack of interest. What this means is if
 you are one of the unlucky stuckeys who are using ESAPI 1.4 symmetric
 encryption to encrypt data and you have persisted this data (and this
 would <I>include </I><SPAN STYLE="font-style: normal">the use of the
-</SPAN><FONT FACE="DejaVu Sans Mono, sans-serif"><SPAN STYLE="font-style: normal">org.owasp.esapi.EncryptedProperties</SPAN></FONT><SPAN STYLE="font-style: normal">
-class in ESAPI 1.4)</SPAN>, you will first have to <I>decrypt </I><SPAN STYLE="font-style: normal">this
+</SPAN><FONT FACE="DejaVu Sans Mono, sans-serif"><SPAN STYLE="font-style: normal">org.owasp.esapi.EncryptedProperties</SPAN></FONT>
+<SPAN STYLE="font-style: normal">class in ESAPI 1.4)</SPAN>, you will
+first have to <I>decrypt </I><SPAN STYLE="font-style: normal">this
 encrypted data using ESAPI 1.4 before using encryption with ESAPI
 2.0. As they say, “we are sorry for the inconvenience”, but there
 was an opportunity to make your voice heard so we refuse to take </SPAN><I>all
