@@ -1,0 +1,15 @@
+README  - This file you are now reading.
+java    - Some Java examples.
+scripts - Some scripts to run that interact with the Java examples.
+
+
+NOTE:   All scripts are meant to be run under *nix (or using something like
+        Cygwin under Windows) from under the 'scripts' directory.
+
+        E.g., to compile the Java examples, execute:
+
+                $ cd scripts; ./compile.sh
+
+        and NOT
+
+                $ scripts/compile.sh
