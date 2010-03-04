@@ -6,16 +6,15 @@
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Linux)">
 	<META NAME="CREATED" CONTENT="20100214;0">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
-	<META NAME="CHANGED" CONTENT="20100214;22400700">
-	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
-</HEAD>
-<BODY LANG="en-US" DIR="LTR">
+	<META NAME="CHANGED" CONTENT="20100304;00400700">
+    </HEAD>
+    <BODY LANG="en-US" DIR="LTR">
 <H1 ALIGN=CENTER>Symmetric Encryption in ESAPI 2.0</H1>
 <H2>ESAPI.properties Properties Relevant to Symmetric Encryption</H2>
 <P>Those properties that are new since ESAPI 2.0-rc2 are shown in
 <FONT COLOR="#ff0000">red</FONT>. Values shown in <FONT COLOR="#0000ff">blue</FONT>
 are ones that you would replace.</P>
-<TABLE WIDTH=703 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 STYLE="page-break-before: auto; page-break-after: auto; page-break-inside: auto">
+<TABLE BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 STYLE="page-break-before: auto; page-break-after: auto; page-break-inside: auto">
 	<COL WIDTH=249>
 	<COL WIDTH=202>
 	<COL WIDTH=226>
@@ -348,8 +347,7 @@ after they are encrypted.<!-- Need to verify this. It was like this, but think I
 of </SPAN><CODE><B><SPAN STYLE="background: #ffff00">true</SPAN></B></CODE><SPAN STYLE="background: #ffff00">
 had been used, then the array </SPAN><CODE><SPAN STYLE="background: #ffff00">plaintextByteArray</SPAN></CODE><SPAN STYLE="background: #ffff00">
 would have been overwritten with ASCII “*” characters.</SPAN></P>
-<H2><SPAN STYLE="background: transparent">Encrypting / Decrypting
-with the New Methods – Storing Encrypted Data</SPAN></H2>
+<H2>Encrypting / Decrypting with the New Methods – Storing Encrypted Data</H2>
 <P><SPAN STYLE="background: transparent">If you use one of the new
 Encryptor encrypt() / decrypt() methods, how do you persist the
 <code>CipherText</code> object returned by the encrypt() methods and how do
@@ -394,8 +392,8 @@ service, etc.</SPAN></P>
             return plaintext;
         }
     }
-  </PRE><H2>
-Encrypting / Decrypting with the New Methods -- Advanced Usage</H2>
+  </PRE>
+<H2>Encrypting / Decrypting with the New Methods -- Advanced Usage</H2>
 <P>ESAPI 1.4 and earlier only allowed you to use the master key
 (<FONT FACE="DejaVu Sans Mono, sans-serif">MasterPassword</FONT> in
 ESAPI 1.4; <CODE>Encryptor.MasterKey</CODE> in ESAPI 2.0) to encrypt
@@ -476,5 +474,18 @@ values have already been initialized elsewhere.
     } catch(EncryptionException ex) {
         // Log error then return error designation however appropriate.
     }</PRE>
+<H2>Using ESAPI Symmetric Encryption with FIPS 140-2 Cryptographic Modules</H2>
+<i><SPAN STYLE="background: #ffff00">TODO</SPAN></i>
+<H2>Acknowlegments</H2>
+The OWASP ESAPI development team would like to acknowledge the contributions
+of cryptographers David A. Wagner and Ian Grigg. David provided the
+outline of how to securely compute a derived crypto key and Ian convinced
+me to take a packetizing approach to laying out the portable, serialized
+CipherText object.
+<p>
+In addition, Kevin Kenan has agreed to review all the crypto code
+from ESAPI 2.0-rc5 candidate release. Others are invited as well,
+especially those with a background in cryptography.
+</p>
 </BODY>
 </HTML>
