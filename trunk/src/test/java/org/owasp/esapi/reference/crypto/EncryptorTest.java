@@ -234,7 +234,7 @@ public class EncryptorTest extends TestCase {
 			// Adjust key size for DES and DESede specific oddities.
 			// NOTE: Key size that encrypt() method is using is 192 bits!!!
     		//        which is 3 times 64 bits, but DES key size is only 56 bits.
-    		// See 'DISCUSS' note, in JavaEncryptor, near line 294. It's a "feature"!!!
+    		// See 'IMPORTANT NOTE', in JavaEncryptor, near line 376. It's a "feature"!!!
 			if ( cipherAlg.equals( "DESede" ) ) {
 				keySize = 192;
 			} else if ( cipherAlg.equals( "DES" ) ) {
