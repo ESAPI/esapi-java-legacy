@@ -7,8 +7,8 @@
 	<META NAME="CREATED" CONTENT="20100214;0">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
 	<META NAME="CHANGED" CONTENT="20100304;00400700">
-    </HEAD>
-    <BODY LANG="en-US" DIR="LTR">
+</HEAD>
+<BODY LANG="en-US" DIR="LTR">
 <H1 ALIGN=CENTER>Symmetric Encryption in ESAPI 2.0</H1>
 <H2>ESAPI.properties Properties Relevant to Symmetric Encryption</H2>
 <P>Those properties that are new since ESAPI 2.0-rc2 are shown in
@@ -393,7 +393,8 @@ service, etc.</SPAN></P>
         }
     }
   </PRE>
-<H2>Encrypting / Decrypting with the New Methods -- Advanced Usage</H2>
+<H2>Advanced Usage</H2>
+<H3>Encrypting / Decrypting with the New Methods</H3>
 <P>ESAPI 1.4 and earlier only allowed you to use the master key
 (<FONT FACE="DejaVu Sans Mono, sans-serif">MasterPassword</FONT> in
 ESAPI 1.4; <CODE>Encryptor.MasterKey</CODE> in ESAPI 2.0) to encrypt
@@ -474,8 +475,156 @@ values have already been initialized elsewhere.
     } catch(EncryptionException ex) {
         // Log error then return error designation however appropriate.
     }</PRE>
+<H3>Using ESAPI with Multiple Cipher Transformations</H3>
+For the most part, the architecture of ESAPI assumes that you will
+stick to using the defaults in the <b>ESAPI.properties</b> configuration
+file or implment your own classes--possibly by extending the ESAPI
+reference classes--and use these classes instead of the reference
+classes.
+<p>
+For most things, this works well. Most applications likely can
+standardize on a single cipher transformation such as AES/CBC/PKCS5Padding
+with a 128-bit AES key and use that 100% of the time. However, on
+occassion, an application may need to use two separate cipher
+transformations (or even two different cipher algorithms) to
+handle legacy applications or deal with multiple partners.
+</p><p>
+This section discusses how to do this without implementing your own
+classes or extending the ESAPI reference class, <code>JavaEncryptor</code>.
+Note that it is recognized that this approach is somewhat of a kludge.
+A simpler approach is planned for ESAPI 2.1, but the approach shown
+here is workable even though it's not pretty.
+</p><p>
+If you find yourself in need of encrypting with a different cipher
+transformation, the first thing that you should count on is not
+using the same encryption key for each. While in some cases this
+likely would work (e.g., you are only using a different cipher mode
+or you have 256-bit AES key for "Encryptor.MasterKey" but also have
+a need to do encryption with a 128-bit AES key), it is not guaranteed
+to do so. Instead, you should count on generating a separate encryption
+key and using the encrypt / decrypt methods taking an additional
+<code>SecretKey</code> parameter as show in the previous section.
+</p><p>
+Rather than repeating all the details of how to do this in this
+user guide, we encourage you to investigate how this was done in
+the Junit testing for the <code>JavaEncryptor</code> class. Please
+look at the source code for the private method
+<code>runNewEncryptDecryptTestCase(String, int, byte[])</code> in
+the <code>EncryptorTest</code> JUnit test in the source code
+"src/test/java/org/owasp/esapi/reference/crypto/EncryptorTest.java".
+This code calls:
+<pre>
+		ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
+</pre>
+which sets ESAPI to use the specified cipher transoformation,
+<code>cipherXform</code>. As a convenience (for later restoral),
+it returns the previous cipher transformation.
+</p><p>
+There are also a few non-obvious key size adjustments that are also
+going on with DES and DESede (aka, triple DES) keys that are made there
+as well. This has to do with the fact that for DES keys (which
+includes DESede), the "true" key size differs from the "effective"
+key size. (E.g., in DES, the "true" key size--from the DES algorithms's
+perspective is 64-bits, however the <i>effective</i> key size for DES
+is only 56-bits because of the 8-bits of parity "imposed" by the NSA in
+the early 1970s.) This inconsistency manifests itself in the JCE by
+the fact that <code>KeyGenerator.init()</code> wants the <i>effective</i>
+key size to be specified (so 56-bits for DES, 112- or 168-bits for
+DESede), but <code>SecretKey.getEncoding().length</code> stores the
+"true" key size (e.g., 64-bits or 192-bits for DES and DESede respectively).
+Other cipher algorithms do not have this discrepancy between true and
+effective key sizes. Since a <code>SecretKey</code> is returned by the
+<code>KeyGenerator</code>, this is only all too confusing. The
+reference <code>JavaEncryptor</code> and its JUnit test,
+<code>EncryptorTest</code> attempt to deal with this discrepency.
+See the adjustments made to key size in
+<code>EncryptorTest.runNewEncryptDecryptTestCase()</code>
+for further details.
+</p>
 <H2>Using ESAPI Symmetric Encryption with FIPS 140-2 Cryptographic Modules</H2>
-<i><SPAN STYLE="background: #ffff00">TODO</SPAN></i>
+If you wish to use ESAPI with a FIPS 140-2 validated, JCE-compliant
+cryptographic module such as the
+<a
+href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/1401val2005.htm#497"
+target="_new">
+IBM Java JCE FIPS 140-2 Cryptographic Module</a>
+(hereafter referred to as IBMJCEFIPS) or the
+<a
+href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/1401val2008.htm#1048"
+target="_new">
+RSA Security BSafe Crypto-J</a>
+(hereafter referred to as Crypto-J), or other similar products, you
+<i>must</i> follow these instructions. Failure to do so will mean that
+you will fail to meet FISMA compliance. (<b>Note</b>: The mention of these
+two specific vendor products does not constitute an endorsement from
+either OWASP or this author.)
+<p>
+<ol>
+<li>Follow the vendor's regular instructions to configure your application
+to use the vendor product in a FIPS 140-2 compliant manner. Generally this
+will include some special configuration and/or initialization requirements
+that must be followed to restrict the vendor software to use FIPS 140-2
+approved algorithms.
+<br /><br />
+If the vendor's instructions do <b>not</b> already
+include a recommendation to edit the
+<code>$JAVA_HOME/jre/lib/security/java.security</code> file, the OWASP
+team recommends that you do so to prevent you from accidentally using any
+other cryptographic module (such as SunJCE). To do this, you will need
+to change the property "security.provider.1" (which represents the default)
+provider so that it refers to the fully-qualified classname of
+your vendor's JCE Provider class. (By default, this is set to
+"sun.security.provider.Sun".) In fact, you may wish to go as far as to
+either comment out or remove the other providers to reduce the possibility
+that they will accidentally be used by your application.
+</li>
+<li>Edit the <b>ESAPI.properties</b> that your application is going to
+be using and set the property "Encryptor.PreferredJCEProvider" to
+the fully qualified classname of your vendor's FIPS 140-2 compliant
+JCE provider class.
+</li>
+<li>Edit the <b>ESAPI.properties</b> that your application is going to
+be using and set the property Encryptor.CipherTransformation to
+<b><code>false</code></b>. This is critical as it causes
+ESAPI to use <i>derived</i> keys for the actual encryption and MAC
+calculation, which is against FIPS 140-2 compliance. (Note: This
+does not mean that OWASP believes that this key derivation is weak--it
+has been reviewed by some cryptographers--but it would be creating an
+using a related key for encryption in a manner not reviewed by NIST
+and thus it is not acceptable to FIPS 140-2 approval.)
+</li>
+<li>Edit the <b>ESAPI.properties</b> that your application is going to
+be using and set the property "Encryptor.CipherTransformation" to
+a cipher transformation that is FIPS 140-2 certified for you vendor's
+software. OWASP recommends using a NIST "combined" cipher mode, that is
+one that provides for both message confidentiality <i>and</i> message
+authenticity if such a cipher mode is available from your vendor
+and FIPS 140-2 certified. If one is not, then use a cipher transformation
+like "AES/CBC/PKCS5Padding". This is almost always available as
+one of the FIPS 140-2 certified cipher transformations, however it will
+not provide you with message authenticity because to remain FIPS 140-2
+compliant you will have had to disable the MAC calculation (via
+setting "Encryptor.CipherTransformation" to false) so that ESAPI will
+no longer calculate a MAC for you.
+<b><code>false</code></b>.
+</li>
+<li>
+If your vendor softare requires you to explicitly to initialize their
+software for FIPS-mode (e.g., to cause the required FIPS 140-2 "power-on
+self tests" to run) by calling some software method, then this must be
+done <i>by your application code <b>before</b></i> calling any of the ESAPI
+crypto-related code. Specifically, it must be called <i>before</i>
+your application calls <code>ESAPI.encryptor()</code>.
+</li>
+</ol>
+</p>
+We believe that following these steps will still allow for your application
+to be FIPS 140-2 / FISMA compliant, however, as always, you should check
+with your FIPS auditor before using ESAPI in this manner. Should your
+auditors ask, feel free to point them to the ESAPI source code, which
+we believe will convince them that ESAPI is not a cryptographic module.
+(Rather, it only provides a wrapper to call other cryptographic modules
+through the standard JCE APIs.)
 <H2>Acknowlegments</H2>
 The OWASP ESAPI development team would like to acknowledge the contributions
 of cryptographers David A. Wagner and Ian Grigg. David provided the
