@@ -620,8 +620,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
 	public String getParameter( HttpServletRequest request, String name ) throws ValidationException {
-	    String value = request.getHeader(name);
-	    return ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, false);
+	    String value = request.getParameter(name);
+	    return ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
 	}
 
 	/**
