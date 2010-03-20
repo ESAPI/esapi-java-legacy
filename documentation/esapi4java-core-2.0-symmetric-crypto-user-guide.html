@@ -2,14 +2,14 @@
 <HTML>
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>Symmetric Encryption in ESAPI 2.0</TITLE>
+	<TITLE>ESAPI 2.0 Symmetric Encryption User Guide</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Linux)">
 	<META NAME="CREATED" CONTENT="20100214;0">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
 	<META NAME="CHANGED" CONTENT="20100304;00400700">
 </HEAD>
 <BODY LANG="en-US" DIR="LTR">
-<H1 ALIGN=CENTER>Symmetric Encryption in ESAPI 2.0</H1>
+<H1 ALIGN=CENTER>ESAPI 2.0 Symmetric Encryption User Guide</H1>
 <H2>ESAPI.properties Properties Relevant to Symmetric Encryption</H2>
 <P>Those properties that are new since ESAPI 2.0-rc2 are shown in
 <FONT COLOR="#ff0000">red</FONT>. Values shown in <FONT COLOR="#0000ff">blue</FONT>
@@ -165,16 +165,25 @@ are ones that you would replace.</P>
 			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.PreferredJCEProvider</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
-			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>SunJCE</FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2><i>&lt;empty string&gt;</i></FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
-			<P><FONT SIZE=2>Specifies the preferred JCE provider. The
-			Encryptor reference implementation, JavaEncryptor, attempts to
-			load this JCE provider at position 0 (i.e., the first position)
-			when the JavaEncryptor class is first loaded. The value may either
-			be the provider name (e.g., “BC” for Bouncy Castle) or the
-			fully qualified class name implementing java.security.Provider for
-			the desired JCE provider.</FONT></P>
+			<P><FONT SIZE=2>Specifies the <i>preferred</i> JCE provider, that
+            is the JCE provider that is first looked at for JCE algorithms.
+            The <code>Encryptor</code> reference implementation,
+            <code>JavaEncryptor</code>, attempts to
+			load this JCE provider at position the first position when the
+            <code>JavaEncryptor</code> class is first loaded.
+            <br><br>
+            The value may either be a provider name (e.g., “BC” for
+            Bouncy Castle) or the fully qualified class name implementing
+            <code>java.security.Provider</code> for
+			the desired JCE provider. If left set to the empty string (the
+            default) or unset, the effect is to not change the preferred JCE
+            provider so that your application ends up using whatever your Java
+            VM is already using, which is generally determined by the settings
+            in your <code>$JAVA_HOME/jre/lib/security/java.security</code>
+            file.</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
