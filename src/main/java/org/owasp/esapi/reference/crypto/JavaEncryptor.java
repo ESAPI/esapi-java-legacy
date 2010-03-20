@@ -107,7 +107,7 @@ public final class JavaEncryptor implements org.owasp.esapi.Encryptor {
         //          We could be mean and just print a warning *every* time.
 	private static final int logEveryNthUse = 25;
 	
-	// Load the preferred JCE provider.
+	// Load the preferred JCE provider if one has been specified.
 	static {
 	    try {
             SecurityProviderLoader.loadESAPIPreferredJCEProvider();
