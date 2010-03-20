@@ -1007,7 +1007,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public String getPreferredJCEProvider() {
-	    return getESAPIProperty(PREFERRED_JCE_PROVIDER, "SunJCE");
+	    return properties.getProperty(PREFERRED_JCE_PROVIDER); // No default!
 	}  
 
 	/**
