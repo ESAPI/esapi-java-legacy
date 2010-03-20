@@ -264,15 +264,20 @@ public interface SecurityConfiguration {
     public String setCipherTransformation(String cipherXform);
 
     /**
-     * Retrieve the preferred JCE provider. ESAPI 2.0 now allows setting the
-     * property {@code Encryptor.PreferredJCEProvider} in the
+     * Retrieve the <i>preferred</i> JCE provider for ESAPI and your application.
+     * ESAPI 2.0 now allows setting the property
+     * {@code Encryptor.PreferredJCEProvider} in the
      * {@code ESAPI.properties} file, which will cause the specified JCE
      * provider to be automatically and dynamically loaded (assuming that
      * {@code SecurityManager} permissions allow) as the Ii>preferred</i>
      * JCE provider. (Note this only happens if the JCE provider is not already
      * loaded.) This method returns the property {@code Encryptor.PreferredJCEProvider}.
-     * 
+     * </p<p>
+     * By default, this {@code Encryptor.PreferredJCEProvider} property is set
+     * to an empty string, which means that the preferred JCE provider is not
+     * changed.
      * @return The property {@code Encryptor.PreferredJCEProvider} is returned.
+     * @see org.owasp.esapi.crypto.SecurityProvider
      */
     public String getPreferredJCEProvider();
     
