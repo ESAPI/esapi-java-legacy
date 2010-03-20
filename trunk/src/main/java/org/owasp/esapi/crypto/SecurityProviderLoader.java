@@ -40,8 +40,18 @@ public class SecurityProviderLoader  {
         //
         jceProviders = new Hashtable<String,String>();
             // SunJCE is installed by default and should always be available
-            // As of JDK 1.3 and later, it is part of the std JRE install.
+            // with Sun-based JREs. As of JDK 1.3 and later, it is part of the
+            // standard JRE install.
         jceProviders.put("SunJCE", "com.sun.crypto.provider.SunJCE");
+        
+            // IBMJCE is default for WebSphere and is used by IBM JDKs. They
+            // also have IBMJCEFIPS, but not sure if this is *always* provided
+            // with WebSphere or just an add-on, hence not including it.
+        jceProviders.put("IBMJCE", "com.ibm.crypto.provider.IBMJCE");
+        // jceProviders.put("IBMJCEFIPS", "com.ibm.crypto.fips.provider.IBMJCEFIPS");
+        
+            // GnuCrypto is JCE provider for GNU Compiler for Java (GCJ)
+        jceProviders.put("GnuCrypto", "gnu.crypto.jce.GnuCrypto");
 
             // Bouncy Castle -- http://www.bouncycastle.org/ - FOSS, maintained.
         jceProviders.put("BC",
@@ -74,9 +84,11 @@ public class SecurityProviderLoader  {
      * </p><p>
      * The following generic JCE provider names are built-in:
      * <ul>
-     * <li>SunJCE
-     * <li>BC [i.e., Bouncy Castle]
-     * <li>IAIK
+     * <li>SunJCE</li>
+     * <li>IBMJCE [for WebSphere]</li>
+     * <li>GnuCrypto [for use with GNU Compiler for Java, i.e., gcj]</li>
+     * <li>BC [i.e., Bouncy Castle]</li>
+     * <li>IAIK</li>
      * <li>CryptixCrypto (or Cryptix)
      * <li>ABA
      * </ul>
@@ -126,7 +138,7 @@ public class SecurityProviderLoader  {
      *                    (as of the time of this call), set {@code pos} to -1.
      * @return The actual preference position at which the provider was added,
      *         or -1 if the provider was not added because it is already
-     *         installed. 
+     *         installed.
      * @exception NoSuchProviderException - thrown if the provider class
      *         could not be loaded or added to the {@code SecurityManager} or
      *         any other reason for failure.
@@ -217,12 +229,36 @@ public class SecurityProviderLoader  {
         }
     }
     
+    /**
+     * Load the preferred JCE provider for ESAPI based on the <b>ESAPI.properties</b>
+     * property {@code Encryptor.PreferredJCEProvider}. If this property is null
+     * (i.e., unset) or set to an empty string, then no JCE provider is inserted
+     * at the "preferred" position and thus the Java VM continues to use whatever
+     * the default it was using for this (generally specified in the file
+     * {@code $JAVA_HOME/jre/security/java.security}).
+     * @return The actual preference position at which the provider was added,
+     *         (which is expected to be 1) or -1 if the provider was not added
+     *         because it is already installed at some other position. -1 is also
+     *         returned if the {@code Encryptor.PreferredJCEProvider} was not set
+     *         or set to an empty string.
+     * @exception NoSuchProviderException - thrown if the provider class
+     *         could not be loaded or added to the {@code SecurityManager} or
+     *         any other reason for failure.
+     * @see <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-symmetric-crypto-user-guide.htm">
+     *      ESAPI 2.0 Symmetric Encryption User Guide</a>
+     */
     public static int loadESAPIPreferredJCEProvider() throws NoSuchProviderException
     {
         String prefJCEProvider =
             ESAPI.securityConfiguration().getPreferredJCEProvider();
         try {
-            return insertProviderAt(prefJCEProvider, 1);
+            // If unset or set to empty string, then don't try to change it.
+            if ( prefJCEProvider != null && ! prefJCEProvider.trim().equals("") ) {
+                return insertProviderAt(prefJCEProvider, 1);
+            } else {
+                logger.debug(Logger.EVENT_SUCCESS, "No Encryptor.PreferredJCEProvider specified.");
+                return -1;  // Unchanged; it is, whatever it is.
+            }
         } catch (NoSuchProviderException ex) {
             // Will already have logged with exception msg.
             logger.error(Logger.SECURITY_FAILURE, "failed to load *preferred* " +
