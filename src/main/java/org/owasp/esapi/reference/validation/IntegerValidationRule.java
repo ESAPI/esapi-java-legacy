@@ -54,8 +54,7 @@ public class IntegerValidationRule extends BaseValidationRule {
 		return safelyParse(context, input);
 	}
 
-	private Integer safelyParse(String context, String input)
-			throws ValidationException {
+	private Integer safelyParse(String context, String input) throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
 	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
