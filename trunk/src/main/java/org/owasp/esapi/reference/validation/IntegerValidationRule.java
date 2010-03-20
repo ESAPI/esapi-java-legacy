@@ -17,7 +17,6 @@ package org.owasp.esapi.reference.validation;
 
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
 
 
@@ -44,10 +43,9 @@ public class IntegerValidationRule extends BaseValidationRule {
 		this.minValue = minValue;
 		this.maxValue = maxValue;
 		
-		// CHECKME fail fast?
-//		if (minValue > maxValue) {
-//			throw new IllegalArgumentException("minValue cannot be greater than maxValue");
-//		}
+		if (minValue > maxValue) {
+			throw new IllegalArgumentException("The minimum value cannot be greater than maximum value");
+		}
 	}
 
 	public Integer getValid( String context, String input ) throws ValidationException {
@@ -55,7 +53,10 @@ public class IntegerValidationRule extends BaseValidationRule {
 	}
 
 	private Integer safelyParse(String context, String input) throws ValidationException {
-		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+		// do not allow empty Strings such as "   " - so trim to ensure 
+		// isEmpty catches "    "
+		if (input != null) input = input.trim();
+		
 	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
 				return null;
@@ -92,8 +93,7 @@ public class IntegerValidationRule extends BaseValidationRule {
 			toReturn = safelyParse(context, input);
 		} catch (ValidationException e ) {
 			// do nothing
-	}
+		}
 		return toReturn;
 	}
-	
 }
