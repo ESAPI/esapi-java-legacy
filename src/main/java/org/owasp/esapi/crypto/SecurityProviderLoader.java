@@ -253,7 +253,7 @@ public class SecurityProviderLoader  {
             ESAPI.securityConfiguration().getPreferredJCEProvider();
         try {
             // If unset or set to empty string, then don't try to change it.
-            if ( prefJCEProvider != null && ! prefJCEProvider.trim().equals("") ) {
+            if ( prefJCEProvider == null || prefJCEProvider.trim().length() == 0) {
                 return insertProviderAt(prefJCEProvider, 1);
             } else {
                 logger.debug(Logger.EVENT_SUCCESS, "No Encryptor.PreferredJCEProvider specified.");
