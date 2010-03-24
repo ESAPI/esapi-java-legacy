@@ -254,10 +254,10 @@ public class SecurityProviderLoader  {
         try {
             // If unset or set to empty string, then don't try to change it.
             if ( prefJCEProvider == null || prefJCEProvider.trim().length() == 0) {
-                return insertProviderAt(prefJCEProvider, 1);
-            } else {
                 logger.debug(Logger.EVENT_SUCCESS, "No Encryptor.PreferredJCEProvider specified.");
                 return -1;  // Unchanged; it is, whatever it is.
+            } else {
+                return insertProviderAt(prefJCEProvider, 1);
             }
         } catch (NoSuchProviderException ex) {
             // Will already have logged with exception msg.
