@@ -55,7 +55,7 @@ public class DefaultUser implements User, Serializable {
 	private static final int ABSOLUTE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionAbsoluteTimeoutLength();
 	
 	/** The logger used by the class. */
-	private final Logger logger = ESAPI.getLogger("DefaultUser");
+	private static final Logger logger = ESAPI.getLogger("DefaultUser");
     
 	/** This user's account id. */
 	long accountId = 0;

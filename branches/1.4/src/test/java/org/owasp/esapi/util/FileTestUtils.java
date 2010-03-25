@@ -20,7 +20,6 @@ public class FileTestUtils
 	private static File javaBin;
 	private static File javaExe;
 	private static File userDir;
-	private static File userHome;
 	private static File javaIoTmpDir;
 
 	/*
@@ -182,13 +181,12 @@ public class FileTestUtils
 	 * @param suffix The suffix for the file. If this is null,
 	 *	".tmp" is used. If the first character is not a period,
 	 * 	one is prepended.
-	 * @return The {@link File.getCanonicalFile() canonical} File for the temporary file created.
+	 * @return The {@link File#getCanonicalFile() canonical} File for the temporary file created.
 	 * @throws IOException if file creation or canonicalization does.
 	 * @throws SecurityException if file creation or canonicalization does.
 	 */
 	public static File createTmpFile(File parent, String prefix, String suffix) throws IOException
 	{
-		String name;
 		File file;
 
 		if(prefix == null)
@@ -357,7 +355,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a valid regular file.
-	 * @return a {@link File.getCanonicalFile() canonicalized}
+	 * @return a {@link File#getCanonicalFile() canonicalized}
 	 * 	valid regular file
 	 */
 	public static File getValidFile() throws IOException
@@ -367,7 +365,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a valid directory.
-	 * @return a {@link File.getCanonicalFile() canonicalized}
+	 * @return a {@link File#getCanonicalFile() canonicalized}
 	 * 	valid directory.
 	 */
 	public static File getValidDirectory() throws IOException
@@ -381,7 +379,7 @@ public class FileTestUtils
 	 * @param isDirectory If true, the file will be verified to be
 	 * 	a directory. Otherwise the file will be validated
 	 * 	to exist.
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 * 	canonicalized} File for the given property's value.
 	 * @throws IllegalArgumentException if propName is not a current
 	 * 	system property.
@@ -414,7 +412,7 @@ public class FileTestUtils
 	/**
 	 * Get a file based on a file name from a system property.
 	 * @param propName the name of the system property.
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 * 	canonicalized} File for the given property's value.
 	 * @throws IllegalArgumentException if propName is not a current
 	 * 	system property.
@@ -429,7 +427,7 @@ public class FileTestUtils
 	 * Get a directory based on a directory name from a system
 	 * property.
 	 * @param propName the name of the system property.
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 * 	canonicalized} File for the given property's value.
 	 * @throws IllegalArgumentException if propName is not a current
 	 * 	system property.
@@ -442,7 +440,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a {@link File} for the system property "java.home".
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 * 	canonicalized} File for the "java.home" system property.
 	 * @throws IOException if validation or canonicalization fails.
 	 */
@@ -455,7 +453,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a {@link File} for the system property "user.dir".
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 * 	canonicalized} File for the "user.dir" system property.
 	 * @throws IOException if validation or canonicalization fails.
 	 */
@@ -468,7 +466,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a {@link File} for the system property "user.home".
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 * 	canonicalized} File for the "user.home" system property.
 	 * @throws IOException if validation or canonicalization fails.
 	 */
@@ -481,7 +479,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a {@link File} for the system property "java.io.tmpdir".
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 *	canonicalized} File for the "java.io.tmpdir" system
 	 * 	property.
 	 * @throws IOException if validation or canonicalization fails.
@@ -496,7 +494,7 @@ public class FileTestUtils
 	/**
 	 * Get a {@link File} for the directory containing the java
 	 * executable.
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 *	canonicalized} File for the directory containg the
 	 * 	java executable.
 	 * @throws IOException if validation or canonicalization fails.
@@ -517,7 +515,7 @@ public class FileTestUtils
 
 	/**
 	 * Get a {@link File} for the the java executable.
-	 * @return a validated and {@link File.getCanonicalFile()
+	 * @return a validated and {@link File#getCanonicalFile()
 	 *	canonicalized} File for the java executable.
 	 * @throws IOException if validation or canonicalization fails.
 	 */

@@ -15,13 +15,11 @@
  */
 package org.owasp.esapi.filters;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Locale;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;

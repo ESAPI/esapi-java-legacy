@@ -414,7 +414,6 @@ public class ValidatorTest extends TestCase
 		Validator validator = ESAPI.validator();
 		File dir = null;
 		String dirPath;
-		File file;
 		String fileName;
 		byte[] content;
 
