@@ -155,7 +155,7 @@ public class EncryptedPropertiesTest extends TestCase {
 	 */
 	public void testStoreLoad() throws Exception
 	{
-		DefaultEncryptedProperties toStore = new DefaultEncryptedProperties();
+		DefaultEncryptedProperties toStore;
 		DefaultEncryptedProperties toLoad = new DefaultEncryptedProperties();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ByteArrayInputStream bais;

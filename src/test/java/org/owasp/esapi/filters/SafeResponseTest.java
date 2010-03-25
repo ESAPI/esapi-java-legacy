@@ -28,7 +28,7 @@ import org.owasp.esapi.http.TestHttpServletResponse;
  * Tests for {@link SafeResponse}. Note that there are other
  * tests in {@link org.owasp.esapi.reference.HTTPUtilitiesTest} as
  * well. These tests were not added there as propert testing of
- * {@link SafeResponse#setCharacterEncoding()} needs to acces package
+ * {@link SafeResponse#setCharacterEncoding(String)} needs to acces package
  * accessible methods.
  */
 public class SafeResponseTest extends TestCase
