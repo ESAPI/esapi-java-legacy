@@ -42,10 +42,6 @@ public class IntegerValidationRule extends BaseValidationRule {
 		super( typeName, encoder );
 		this.minValue = minValue;
 		this.maxValue = maxValue;
-		
-		if (minValue > maxValue) {
-			throw new IllegalArgumentException("The minimum value cannot be greater than maximum value");
-		}
 	}
 
 	public Integer getValid( String context, String input ) throws ValidationException {

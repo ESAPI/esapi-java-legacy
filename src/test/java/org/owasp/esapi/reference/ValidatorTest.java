@@ -489,7 +489,7 @@ public class ValidatorTest extends TestCase
       assertTrue(instance.isValidInteger("test", "", -10, 10, true));
       assertFalse(instance.isValidInteger("test", "", -10, 10, false));
       //testing improper range
-      assertFalse(instance.isValidInteger("test", "5", 10, -10, false));
+      assertFalse(instance.isValidInteger("test", "50", 10, -10, false));
       //testing non-integers
       assertFalse(instance.isValidInteger("test", "4.3214", -10, 10, true));
       assertFalse(instance.isValidInteger("test", "-1.65", -10, 10, true));
