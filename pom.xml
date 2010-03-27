@@ -5,7 +5,7 @@
    <artifactId>ESAPI</artifactId>
    <packaging>jar</packaging>
    <version>2.0_rc6</version>
-   <name>ESAPI</name>
+   <name>ESAPI 2.0 rc6</name>
    <description>The Enterprise Security API (ESAPI) project is an OWASP project to create simple strong security controls for every web platform. Security controls are not simple to build. You can read about the hundreds of pitfalls for unwary developers on the OWASP website. By providing developers with a set of strong controls, we aim to eliminate some of the complexity of creating secure web applications. This can result in significant cost savings across the SDLC.</description>
    <scm>
       <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/trunk</connection>
