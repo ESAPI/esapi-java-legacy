@@ -3,6 +3,7 @@ org.owasp.esapi.codecs
 org.owasp.esapi.crypto
 org.owasp.esapi.errors
 org.owasp.esapi.filters
+org.owasp.esapi.http
 org.owasp.esapi.reference
 org.owasp.esapi.reference.accesscontrol
 org.owasp.esapi.reference.accesscontrol.policyloader
