@@ -1,15 +1,116 @@
 README  - This file you are now reading.
 java    - Some Java examples.
-scripts - Some scripts to run that interact with the Java examples.
+scripts - Some scripts to run that interact with the Java examples (but see
+          below).
 
 
 NOTE:   All scripts are meant to be run under *nix (or using something like
-        Cygwin under Windows) from under the 'scripts' directory.
+        Cygwin under Windows) from under the 'scripts' directory using either
+        bash or KornShell
 
         E.g., to compile the Java examples, execute:
 
-                $ cd scripts; ./compile.sh
+                $ cd scripts; sh ./compile.sh
 
         and NOT
 
-                $ scripts/compile.sh
+                $ sh scripts/compile.sh
+
+        To run the other scripts, you minimally will need to make findjar.sh
+        executable by yourself; e.g.,
+
+                $ chmod u+x scripts/findjar.sh
+
+
+
+        Note that as delivered, these scripts are configured to run from
+        Eclipse or Maven as pulled directly from the ESAPI Subversion
+        repository.
+
+        If instead, you are using these scripts as part of a generally available
+        (GA) or release candidate (RC) release as extracted from the zip file
+        on Google Code, from
+            http://code.google.com/p/owasp-esapi-java/downloads/list
+        then if you wish to make some minor edits to these scripts.
+        Specifically, you will need to edit the setting of the classpath.
+        [Note: I will try to fix this so this adjusts automagically starting
+        with whatever release follows ESAPI 2.0-rc6, but do not have time to
+        fix it now. -- Kevin Wall <kevin.w.wall@gmail.com>]
+
+                        * * * * * * * * * * * * * * * * * * * * 
+                    Changes only needed if you want to use the examples
+                    and have downloaded the zip file from Google Code.
+                    If you are pulling source from ESAPI SVN repository
+                    and using either Eclipse or Maven to build ESAPI, these
+                    should work w/out any change.
+                        * * * * * * * * * * * * * * * * * * * * 
+
+    =====> In scripts/compile.sh:
+            Change
+                javac -classpath .:../../../target/ESAPI-2.0.jar *.java
+            to
+                javac -classpath .:$(ls ../../../../ESAPI*.jar) *.java
+
+    =====> In scripts/findjar.sh ... no change needed.
+
+    =====> In scripts/persistEncryptedData.sh:
+            Change:
+
+classpath=".:../../../target/ESAPI-2.0.jar:\
+$(./findjar.sh log4j-1.2.12.jar):\
+$(./findjar.sh commons-fileupload-1.2.jar):\
+$(./findjar.sh servlet-api-2.4.jar)"
+
+            to:
+
+startDir=../../../../libs
+
+classpath=".:$(ls ../../../../ESAPI*.jar):\
+$(./findjar.sh -start $startDir log4j-1.2.12.jar):\
+$(./findjar.sh -start $startDir commons-fileupload-1.2.jar):\
+$(./findjar.sh -start $startDir servlet-api-2.4.jar)"
+
+            Change lines 13 & 14 from:
+                java -Dlog4j.configuration=./src/test/resources/log4j.xml \
+                    -Dorg.owasp.esapi.resources="configuration/.esapi" \
+
+            to:
+                java -Dlog4j.configuration=../../../../configuration/log4j.xml \
+                    -Dorg.owasp.esapi.resources="../../../../configuration/.esapi" \
+            
+            
+    =====> In scripts/setMasterKey.sh
+
+            Change line 5 from
+                cd ../../..
+            to:
+                cd ../../../..
+
+            Change line 10 from
+                else    esapi_props="src/main/resources/.esapi/ESAPI.properties"
+            to:
+                else    esapi_props="project/src/main/resources/.esapi/ESAPI.properties"
+
+            Change lines 18-21 from:
+
+classpath=".:target/ESAPI-2.0.jar:\
+$($findjar log4j-1.2.12.jar):\
+$($findjar commons-fileupload-1.2.jar):\
+$($findjar servlet-api-2.4.jar)"
+
+            to:
+
+classpath=".:$(ls ESAPI*.jar):\
+$($findjar -start $PWD/libs log4j-1.2.12.jar):\
+$($findjar -start $PWD/libs commons-fileupload-1.2.jar):\
+$($findjar -start $PWD/libs servlet-api-2.4.jar)"
+
+            Change lines 24 & 25 from:
+                java -Dlog4j.configuration=src/test/resources/log4j.xml \
+                    -Dorg.owasp.esapi.resources=$esapi_props \
+
+            to:
+                java -Dlog4j.configuration=configuration/log4j.xml \
+                    -Dorg.owasp.esapi.resources=$(dirname $esapi_props) \
+
+Apologies for the inconvenience. This will be fixed next GA or RC release.
