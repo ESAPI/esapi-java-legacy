@@ -22,6 +22,6 @@ $($findjar servlet-api-2.4.jar)"
 
 set -x
 java -Dlog4j.configuration=src/test/resources/log4j.xml \
-     -Dorg.owasp.esapi.resources=$esapi_props \
+     -Dorg.owasp.esapi.resources=$(dirname $esapi_props) \
      -classpath $classpath \
      org.owasp.esapi.reference.crypto.JavaEncryptor "$@"
