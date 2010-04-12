@@ -268,6 +268,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					// try root
 					in = loaders[i].getResourceAsStream(fileName);
 					
+					// try resourceDirectory folder
+                    if (in == null) {
+                        in = currentLoader.getResourceAsStream(resourceDirectory + "/" + fileName);
+                    }
+                    
 					// try .esapi folder
 					if (in == null) {
 						in = currentLoader.getResourceAsStream(".esapi/" + fileName);
