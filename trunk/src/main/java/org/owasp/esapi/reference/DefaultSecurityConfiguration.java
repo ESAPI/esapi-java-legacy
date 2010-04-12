@@ -447,26 +447,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		    		properties.put( key, value);
 		    	}
 			}
+			
+	        if ( shouldPrintProperties() ) {
+	    	
+	    	//FIXME - make this chunk configurable
+	    	/*
+	        logSpecial("  ========Master Configuration========", null);
+	        //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
+	        Iterator j = new TreeSet( properties.keySet() ).iterator();
+	        while (j.hasNext()) {
+	            String key = (String)j.next();
+	            // print out properties, but not sensitive ones like MasterKey and MasterSalt
+	            if ( !key.contains( "Master" ) ) {
+	            		logSpecial("  |   " + key + "=" + properties.get(key), null);
+	        	}
+	        }
+	        */
+	        	
+	        }
 		}
-
-        if ( shouldPrintProperties() ) {
-    	
-    	//FIXME - make this chunk configurable
-    	/*
-        logSpecial("  ========Master Configuration========", null);
-        //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
-        Iterator j = new TreeSet( properties.keySet() ).iterator();
-        while (j.hasNext()) {
-            String key = (String)j.next();
-            // print out properties, but not sensitive ones like MasterKey and MasterSalt
-            if ( !key.contains( "Master" ) ) {
-            		logSpecial("  |   " + key + "=" + properties.get(key), null);
-        	}
-        }
-        */
-        	
-        }
-    }
+	}	
 	
 	/**
 	 * @param filename
@@ -566,6 +566,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					// try root
 					in = loaders[i].getResourceAsStream(fileName);
 					
+					// try resourceDirectory folder
+					if (in == null) {
+						in = currentLoader.getResourceAsStream(resourceDirectory + "/" + fileName);
+					}
+
 					// try .esapi folder
 					if (in == null) {
 						in = currentLoader.getResourceAsStream(".esapi/" + fileName);
