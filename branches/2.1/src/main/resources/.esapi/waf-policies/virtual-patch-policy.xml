@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a virtual-patch rule.
+
+	Protection #1: Any request whose URI is /foo.jsp (despite content-type) will have
+	               the 'bar' parameter checked to see if its alphanumeric. If a parameter
+				   fails validation, the message "zomg attax" will be logged.
+
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<virtual-patches>
+		<virtual-patch id="1234" path="/foo.jsp" variable="request.parameters.bar"
+			pattern="[0-9a-zA-Z]" message="zomg attax" />
+	</virtual-patches>
+
+</policy>
