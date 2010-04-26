@@ -1,3 +1,0 @@
-#sidebar TableOfContents
-
-A good first place to start is the ESAPI Design Patterns document, which you can find [http://owasp-esapi-php.googlecode.com/files/esapi-design-patterns.pdf here].

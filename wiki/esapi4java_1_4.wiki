@@ -1,9 +1,0 @@
-#sidebar TableOfContents
-
-*ESAPI 1.4.x supports users of Java 1.4*
-
-Changelog for ESAPI 1.4.1
-
-  # Fix to OracleCodec and MySQL codec. Defaults to basic encoding so ' encodes to '' and '' decodes to '
-  # Added support for Log4J Log Factory by setting LogDefaultLog4J=true in ESAPI.properties
-  # Brought entire 1.4 branch inline with Maven-style building

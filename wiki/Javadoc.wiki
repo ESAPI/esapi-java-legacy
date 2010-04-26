@@ -1,3 +1,0 @@
-#sidebar TableOfContents
-
-You can find javadoc for the current release of esapi4java core (including WAF) [http://owasp-esapi-java.googlecode.com/svn/trunk_doc/latest/index.html here].
