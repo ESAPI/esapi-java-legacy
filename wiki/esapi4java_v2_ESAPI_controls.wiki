@@ -3,3 +3,5 @@
 This page is UNDER CONSTRUCTION!
 
 Assigned to: TBD
+
+... put picture from design patterns here with the highlighted code snippet, but make Java version of it...
