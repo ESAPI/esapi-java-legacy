@@ -1,5 +1,3 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
-
-Assigned to: TBD
+There are three common ways to write your own implementations for each security control: using a “built‐in” singleton pattern, using an “extended” singleton pattern, or using an “extended” factory pattern. The following sections explore these three design patterns, including situations where taking more than one approach may be appropriate.
