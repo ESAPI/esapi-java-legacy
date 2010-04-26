@@ -1,5 +1,3 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
-
-Assigned to: TBD
+The ESAPI security control interfaces include an “ESAPI” class that is commonly referred to as a “locator” class. The ESAPI locator class is called in order to retrieve singleton instances of individual security controls, which are then called in order to perform security checks (such as performing an access control check) or that result in security effects (such as generating an audit record).
