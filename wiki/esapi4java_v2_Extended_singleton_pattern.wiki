@@ -30,5 +30,5 @@ The UML for the above example is in the figure below.
 Figure 3: Extended Singleton Pattern Example <todo: picture> 
 
 Pros of taking this approach are the lessening of the need for developers to understand how to call ESAPI functions with the specific parameters required by your organization and/or application. Pros also include minimizing or eliminating the ability for developers to call ESAPI functions that deviate from your organization’s and/or application’s policies.
-
+
 Cons result from the tight coupling between ESAPI and your own implementations: you will need to maintain both the modified security control reference implementations and the modified security control interfaces (as new versions of ESAPI are released over time).
