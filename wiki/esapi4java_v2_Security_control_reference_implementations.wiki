@@ -1,5 +1,3 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
-
-Assigned to: TBD
+There is a reference implementation for each security control. There is application logic contained in these classes, i.e. contained in these interface implementations. However, the logic is not organization‐specific and the logic is not application‐specific. There is no proprietary information or logic contained in these reference implementation classes. An example: string‐based input validation.
