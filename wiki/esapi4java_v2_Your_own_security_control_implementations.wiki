@@ -1,5 +1,3 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
-
-Assigned to: TBD
+There are optionally your own implementations for each security control. There may be application logic contained in these classes which may be developed by or for your organization. The logic may be organization‐specific and/or application‐specific. There may be proprietary information or logic contained in these classes which may be developed by or for your organization. An example: enterprise authentication.
