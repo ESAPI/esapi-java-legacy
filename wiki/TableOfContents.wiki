@@ -29,7 +29,7 @@
           * [esapi4java_v2_OWASP_xxxx_Not_applicable OWASP-0501 Not applicable]
           * [esapi4java_v2_OWASP_0502_Code_sample OWASP-0502 Code sample]
         * [esapi4java_v2_xx ...]
-    * [esapi4java_v2_Sample_application Sample application]
+    * [esapi4java_v2_Sample_application Sample applications]
       * [esapi4java_v2_Hello_World Hello World]
       * [esapi4java_v2_ESAPI_Swingset ESAPI Swingset]
     * [esapi4java_v2_Appendix_Additional_versions Appendix - Additional versions]
