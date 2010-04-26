@@ -1,3 +1,4 @@
+  * [Assignments THIS DOCUMENT IS UNDER CONSTRUCTION, HERE ARE THE CURRENT ASSIGNMENTS]
   * [Welcome Welcome]
   * [esapi4java_v1_xx ESAPI for Java 1.4]
     * [esapi4java_v1_xx ...]
