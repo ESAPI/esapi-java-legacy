@@ -36,7 +36,6 @@
   * [esapi4java_v2_Sample_application Sample applications]
     * [esapi4java_v2_Hello_World Hello World]
     * [esapi4java_v2_ESAPI_Swingset ESAPI Swingset]
-  * [esapi4java_v2_Appendix_Additional_versions Appendix - Additional versions]
-  * [esapi4java_v2_Appendix_Additional_references Appendix - Additional references]
+  * [esapi4java_v2_Appendix_Additional_references Appendix - References]
 
    
