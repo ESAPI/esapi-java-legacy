@@ -24,6 +24,6 @@ Here is an example of how to determine if a validation failure occurred using ES
 
 {{{ //todo }}}
 
-Here is an example of how to sanitize HTML using ESAPI for Java's Validator. Always remember to validate though!! Sanitization (if it is possible for a given input) is never enough by itself! Sanitize then validate, never just sanitize!
+Here is an example of how to sanitize HTML using ESAPI for Java's Validator.
 
 {{{ //todo }}}
