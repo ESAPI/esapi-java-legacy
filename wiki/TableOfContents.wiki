@@ -31,8 +31,6 @@
         * [esapi4java_v2_OWASP_0300_Session_Management Session Management]
         * [esapi4java_v2_OWASP_0400_Access_Control Access Control]
         * [esapi4java_v2_OWASP_0500_Input_Validation Input Validation]
-          * [esapi4java_v2_OWASP_xxxx_Not_applicable OWASP-0501 Not applicable]
-          * [esapi4java_v2_OWASP_0502_Code_sample OWASP-0502 Code sample]
         * [esapi4java_v2_OWASP_0600_Output_Encoding_Escaping Output Encoding Escaping]
         * [esapi4java_v2_OWASP_0700_Cryptography Cryptography]
         * [esapi4java_v2_OWASP_0800_Error_Handling_and_Logging Error Handling and Logging]
