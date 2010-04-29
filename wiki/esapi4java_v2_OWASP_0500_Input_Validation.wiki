@@ -12,7 +12,7 @@ Here is an example of how to use ESAPI for Java's configuration file to define a
 
 {{{ //todo }}}
 
-Here is an example of how to use ESAPI for Java's Validator to define and then to apply the above positive validation pattern.
+Here is an example of how to use ESAPI for Java's Validator to apply the above positive validation pattern.
 
 {{{ //todo }}}
 
