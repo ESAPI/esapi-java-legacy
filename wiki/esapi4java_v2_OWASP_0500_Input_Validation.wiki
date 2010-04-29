@@ -8,7 +8,7 @@ The ASVS Level 1A requirement OWASP-0501 is not applicable, it is not a requirem
 
 The ASVS requirement OWASP-0502 reads, "Verify that a positive validation pattern is defined and applied to all input."
 
-Here is an example of how to use ESAPI for Java's Validator to define and then to apply a positive validation pattern.
+Here is an example of how to use ESAPI for Java's configuration file and Validator to define and then to apply a positive validation pattern.
 
 {{{ //todo }}}
 
