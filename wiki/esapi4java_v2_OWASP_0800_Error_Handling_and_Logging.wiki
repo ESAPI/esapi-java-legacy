@@ -2,7 +2,7 @@
 
 ==OWASP-0801 Code sample==
 
-The ASVS requirement OWASP-0801 reads, "Verify that that the application does not output error messages or stack traces containing sensitive data that could assist an attacker, including session id and personal information."
+The ASVS Level 1A requirement OWASP-0801 reads, "Verify that that the application does not output error messages or stack traces containing sensitive data that could assist an attacker, including session id and personal information."
 
 Here is an example of how to use ESAPI for Logger to turn ESAPI's logging reference implementation on, which gets logging "right" by not outputting sensitive data.
 
