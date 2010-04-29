@@ -1,6 +1,5 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
+ESAPI for Java is designed to ensure that strong simple security controls are available to every developer in every environment. ESAPI for Java is generally called like this:
 
-
-... put picture from design patterns here with the highlighted code snippet, but make Java version of it...
+{{{//todo}}}
