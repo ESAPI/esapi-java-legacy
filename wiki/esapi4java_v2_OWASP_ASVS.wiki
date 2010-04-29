@@ -1,4 +1,2 @@
 #sidebar TableOfContents
-
-This page is UNDER CONSTRUCTION!
-
+http://owasp-asvs.googlecode.com/svn/trunk/documentation/asvs-wiki-cover-bug.JPG
