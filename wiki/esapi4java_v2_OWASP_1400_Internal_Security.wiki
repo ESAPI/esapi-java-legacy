@@ -1,4 +1,5 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
-
+===There are no internal security requirements at ASVS Level 1A===
+===Internal security requirements start at ASVS Level 2B===
+===(ESAPI easily can be used to build to certain ASVS Level 4 internal security requirements)===
