@@ -1,4 +1,9 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
+... 
 
+Having the WAF and ESAPI together provides developers the tools the need to deal with a variety of situations. The WAF can provide immediate virtual patching, to give the developers the time they need to fix things ‘right’ at a more reasonable pace. ESAPI then gives the tools to fix things right.  In some environments, the developers can’t change the code, so the WAF supports that situation.
+
+We would almost always recommend solving most security issues in the app itself, rather than externalizing the security in a WAF, but the WAF is very useful to deal with security situations that come up after the application has been implemented.
+
+...
