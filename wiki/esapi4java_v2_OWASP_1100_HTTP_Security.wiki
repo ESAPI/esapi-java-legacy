@@ -1,4 +1,47 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
+==OWASP-1101 Code sample==
 
+The ASVS requirement OWASP-1101 reads, "Verify that redirects do not include unvalidated data."
+
+Here is an example of how to use ESAPI for Java's Validator to validate redirect data.
+
+{{{ //todo }}}
+
+==OWASP-1102 Code sample==
+
+The ASVS requirement OWASP-1102 reads, "Verify that the application accepts only a defined set of HTTP request methods, such as GET and POST."
+
+Here is an example of how to use ESAPI for Java's HTTPUtilities to ensure that a request only uses POST.
+
+{{{ //todo }}}
+
+==OWASP-1103 Code sample==
+
+The ASVS requirement OWASP-1102 reads, "Verify that every HTTP response contains a content type header specifying a safe character set (e.g., UTF-8)."
+
+Here is an example of how to use ESAPI for Java's HTTPUtilities to set the character set.
+
+{{{ //todo }}}
+
+
+
+
+
+
+
+==OWASP-0302 Code sample==
+
+The ASVS requirement OWASP-0302 reads, "Verify that sessions are invalidated when the user logs out."
+
+Here is an example of how to use ESAPI for Java's User and Authenticator to log out a user using ESAPI's username/password reference implementation, which gets logout "right" by invalidating the user's session.
+
+{{{ //todo }}}
+
+==OWASP-0303 Code sample==
+
+...
+
+==OWASP-0305 Code sample==
+
+...
