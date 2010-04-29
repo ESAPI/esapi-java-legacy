@@ -1,4 +1,5 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
+ESAPI for Java installation is the same on Windows and Linux platforms.
 
+ESAPI for Java is installed by extracting the ESAPI distribution package to an appropriate location.
