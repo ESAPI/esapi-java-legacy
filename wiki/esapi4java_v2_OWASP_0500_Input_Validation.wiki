@@ -1,4 +1,5 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
+==OWASP-0501 Not applicable==
 
+==OWASP-0502 Code sample==
