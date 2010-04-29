@@ -1,1 +1,9 @@
 #sidebar TableOfContents
+
+After installing ESAPI for Java v2 as described above, perform the following steps to prepare a project to use ESAPI:
+
+  # Add the ESAPI Jar to the classpath. In Project > Properties > Java Build Path > Libraries use “Add JARS…” if the ESAPI jar is part of your project directory structure (e.g., checked into source control with your project) or “Add External JARS” if you maintain a separate directory of jar dependencies.
+  # Locate {{{ESAPI.properties}}} and {{{validation.properties}}} in the configuration/.esapi directory and copy them somewhere that will be available to Run and Debug Configurations. 
+    * Installation Tip: A reasonable default location during development is inside a “.esapi”folder in your user directory.
+  # If you elected to place the {{{ESAPI.properties}}} and {{{validation.properties}}} somewhere other than your user home directory, you will need to provide the directory via a VM argument. 
+    * Installation Tips: In Run > Run Configuration (or Debug Configuration), on the Arguments Tab, add to VM Arguments: {{{-Dorg.owasp.esapi.resources="/path/to/.esapi"}}}, providing the absolute or relative path of the directory containing {{{ESAPI.properties}}} and {{{validation.properties}}}. To include ESAPI in all run configurations: in Preferences > Java > Installed JREs > Edit, add: {{{-Dorg.owasp.esapi.resources="/path/to/.esapi"}}}, providing the absolute or relative path of the directory containing {{{ESAPI.properties}}} and {{{validation.properties}}}.
