@@ -1,4 +1,4 @@
 #sidebar TableOfContents
 
-This page is UNDER CONSTRUCTION!
-
+===There are no cryptography requirements at ASVS Level 1A===
+===Cryptography requirements start at ASVS Level 2A===
