@@ -19,7 +19,7 @@
       * [esapi4java_v2_Built_in_singleton_pattern Built-in singleton pattern]
       * [esapi4java_v2_Extended_singleton_pattern Extended singleton pattern]
       * [esapi4java_v2_Extended_factory_pattern Extended factory pattern]
-    * [esapi4java_v2_ESAPI_waf.wiki ESAPI web application firewall]
+    * [esapi4java_v2_ESAPI_waf ESAPI web application firewall]
   * [esapi4java_v2_Sample_usage Sample usage]
     * [esapi4java_v2_OWASP_ASVS OWASP ASVS] 
       * [esapi4java_v2_OWASP_0200_Authentication Authentication]
