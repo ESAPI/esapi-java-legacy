@@ -2,7 +2,7 @@
 
 ESAPI for Java installation is the same on Windows and Linux platforms.
 
-ESAPI for Java is installed by extracting the ESAPI distribution package to an appropriate location.
+ESAPI for Java is installed by extracting the ESAPI distribution package to an appropriate location, or downloading it from Google Code using SVN.
 
 The following is the distribution structure for the ESAPI for Java v2 distribution:
 
