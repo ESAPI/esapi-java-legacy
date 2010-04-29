@@ -2,4 +2,4 @@
 
 http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-big-duke.JPG
 
-=This section is where you want to start, to figure out how to install ESAPI, that kind of thing.=
+=ESAPI is a quite handy toolkit. Let me tell you a little bit more about it.=
