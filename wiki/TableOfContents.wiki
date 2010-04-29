@@ -21,7 +21,7 @@
       * [esapi4java_v2_Extended_factory_pattern Extended factory pattern]
     * [esapi4java_v2_ESAPI_waf ESAPI web application firewall]
   * [esapi4java_v2_Sample_usage Sample usage]
-    * [esapi4java_v2_OWASP_ASVS Using ESAPI to meet OWASP ASVS requirements] 
+    * [esapi4java_v2_OWASP_ASVS Using ESAPI to meet ASVS requirements] 
       * [esapi4java_v2_OWASP_0200_Authentication Authentication]
       * [esapi4java_v2_OWASP_0300_Session_Management Session Management]
       * [esapi4java_v2_OWASP_0400_Access_Control Access Control]
