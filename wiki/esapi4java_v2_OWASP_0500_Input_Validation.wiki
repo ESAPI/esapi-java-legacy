@@ -20,7 +20,7 @@ Here is an example of how to use ESAPI for Java's Validator to apply the above p
 
 The ASVS requirement OWASP-0503 reads, "Verify that all input validation failures result in input rejection or input sanitization."
 
-Here is an example of how to determine if ESAPI for Java's Validator rejected input (i.e. if a validation failure occurred).
+Here is an example of how to determine if a validation failure occurred using ESAPI for Java's Validator. Rejecting the input is up to you!!
 
 {{{ //todo }}}
 
