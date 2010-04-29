@@ -15,20 +15,6 @@ After installing ESAPI, perform the following steps on Windows to prepare an Ecl
   * At the end of the line that says Target, add -vm "x" where x is the location of a JDK (e.g., "C:\Program Files\Java\jdk1.5.0_22\bin") - This step is necessary for the Maven plugin to work
   *Restart Eclipse using the edited shortcut.
 
-==Importing the ESAPI Source==
-
-If you choose to use the ESAPI SVN code, follow the instructions [http://code.google.com/p/owasp-esapi-java/source/checkout here].  Unless you have been added to the ESAPI project as a contributor, please use the bottom SVN checkout link on the Google Code page (non-SSL).
-
-If you are using subclipse, as recommended, open Eclipse and:
-  * Click ''File'' -> ''New'' -> ''Other....''.
-  * From the ''SVN Folder'' select '"Checkout Projects from SVN'' (this option will only be available if you have a SVN plugin installed) and hit ''Next >''.
-  * Click the ''Create a new repository location'' radio button.
-  * If you are not listed as a project contributor, insert ''http://owasp-esapi-java.googlecode.com/svn/trunk/'' as the URL.  If you are listed as a project contributor, check the Google Code page for the URL to use. (Note: if you are a contributor, when prompted for your SVN password, use your Google generated password, available from the Google Code Source page.) 
-  * Once the directory structure appears in the window, click the URL at the top to download everything.  Then hit ''Next >''
-  * Select your desired project options.  For most people, the default options should be fine. When finished, click ''Next >''.
-  * Select your desired workspace options, then click ''Finish''.  The latest ESAPI source files will then be downloaded to your workspace.  This may take a few minutes.
-  * After the source code is finished downloading, ensure that the character type of all source code is UTF-8. In Eclipse, right click on the project directory root. At the bottom of the right-click list, choose PROPERTIES. From the PROPERTIES window, select the RESOURCES section (which is selected by default). Ensure that the "Text file encoding" section is set to OTHER->UTF 8. If if it is not, change it and click APPLY->OK.
-
 ==Project Setup==
 
 Some configuration may be necessary for ESAPI to compile and build on your system.
