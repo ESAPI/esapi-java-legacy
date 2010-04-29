@@ -23,25 +23,3 @@ The ASVS requirement OWASP-1102 reads, "Verify that every HTTP response contains
 Here is an example of how to use ESAPI for Java's HTTPUtilities to set the character set.
 
 {{{ //todo }}}
-
-
-
-
-
-
-
-==OWASP-0302 Code sample==
-
-The ASVS requirement OWASP-0302 reads, "Verify that sessions are invalidated when the user logs out."
-
-Here is an example of how to use ESAPI for Java's User and Authenticator to log out a user using ESAPI's username/password reference implementation, which gets logout "right" by invalidating the user's session.
-
-{{{ //todo }}}
-
-==OWASP-0303 Code sample==
-
-...
-
-==OWASP-0305 Code sample==
-
-...
