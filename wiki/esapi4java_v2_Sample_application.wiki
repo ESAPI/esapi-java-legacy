@@ -2,4 +2,4 @@
 
 http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-big-duke.JPG
 
-=There are sample applications that call ESAPI that show how all of its various components work together=
+=No toolkit would be complete without a Hello World sample application or two!=
