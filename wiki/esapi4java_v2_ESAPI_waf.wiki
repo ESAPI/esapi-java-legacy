@@ -6,6 +6,29 @@ It also has capabilities not yet imagined by today's WAFs because it is deployed
 
 {{{//todo}}}
 
+The term "virtual patching" has been around for a while, but when Ivan
+Ristic (author of ModSecurity) included it in a list of use cases for WAFs
+over a year ago it got me thinking about it.  Essentially, it just means
+writing a specific WAF rule that targets a known vulnerability. This allows
+you to quickly block an attack in progress or a critical flaw you've
+discovered until you have time to fix the code correctly.  To me, this is a
+capability that every web application should have.
+
+A full writeup of doing virtual patching on WebGoat can be found here.
+http://www.blackhat.com/presentations/bh-dc-09/Barnett/BlackHat-DC-09-Barnet
+t-WAF-Patching-Challenge-Whitepaper.pdf
+
+The ESAPI WAF is particularly well designed for this use case, as it is
+integrated into the application, as opposed to deployed as a standalone box.
+That means that you don't have to reparse the HTTP request, you have access
+to authentication and session information, and you can take actions within
+the application.  Arshan's presentation at OWASP DC was excellent.
+http://www.owasp.org/images/f/fb/The_ESAPI_Web_Application_Firewall-Arshan_D
+abirsiaghi.pdf. 
+
+
+{{{//todo}}}
+
 Having the WAF and ESAPI together provides developers the tools the need to deal with a variety of situations. The WAF can provide immediate virtual patching, to give the developers the time they need to fix things ‘right’ at a more reasonable pace. ESAPI then gives the tools to fix things right.  In some environments, the developers can’t change the code, so the WAF supports that situation.
 
 We would almost always recommend solving most security issues in the app itself, rather than externalizing the security in a WAF, but the WAF is very useful to deal with security situations that come up after the application has been implemented.
