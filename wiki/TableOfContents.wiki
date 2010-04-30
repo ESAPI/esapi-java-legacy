@@ -34,6 +34,8 @@
       * [esapi4java_v2_OWASP_1100_HTTP_Security HTTP Security]
       * [esapi4java_v2_OWASP_1200_Security_Configuration Security Configuration]
       * [esapi4java_v2_OWASP_1400_Internal_Security Internal Security]
+    * [esapi4java_v2_xx Using ESAPI to meet DISA STIG requirements]
+    * [esapi4java_v2_xx Using ESAPI to meet PCI requirements]
     * [esapi4java_v2_Using_ESAPI_waf Using ESAPI's WAF]
       * [esapi4java_v2_WAF_Virtual_patches Virtual patches]
       * [esapi4java_v2_WAF_Enforce_authentication Enforce authentication]
