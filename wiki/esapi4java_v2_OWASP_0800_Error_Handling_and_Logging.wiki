@@ -8,7 +8,7 @@ Here is an example of how to use ESAPI for Logger to turn ESAPI's logging refere
 
 {{{ //todo }}}
 
-==More details about customizing ESAPI's Logger==
+==Helpful hints when it comes to customizing ESAPI's Logger==
 
 ESAPI for Java allows you to over-ride the user specific messages using your own User or java.security.Principal implementation.
 
