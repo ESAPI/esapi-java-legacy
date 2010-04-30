@@ -19,6 +19,6 @@ It also has capabilities not yet imagined by today's WAFs because it is deployed
 
 *More on virtual patching*
 
-The term "virtual patching" has been around for a while, but when Ivan Ristic (author of ModSecurity) included it in a list of use cases for WAFs over a year ago it got me thinking about it.  Essentially, it just means writing a specific WAF rule that targets a known vulnerability. This allows you to quickly block an attack in progress or a critical flaw you've discovered until you have time to fix the code correctly.  To me, this is a capability that every web application should have.
+The term "virtual patching" has been around for a while, but when Ivan Ristic (author of ModSecurity) included it in a list of use cases for WAFs over a year ago it got Jeff thinking about it.  Essentially, it just means writing a specific WAF rule that targets a known vulnerability. This allows you to quickly block an attack in progress or a critical flaw you've discovered until you have time to fix the code correctly.  To me, this is a capability that every web application should have.
 
 The ESAPI WAF is particularly well designed for this use case, as it is integrated into the application, as opposed to deployed as a standalone box. That means that you don't have to reparse the HTTP request, you have access to authentication and session information, and you can take actions within the application.  
