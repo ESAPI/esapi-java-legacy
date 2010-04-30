@@ -1,5 +1,9 @@
 #sidebar TableOfContents
 
+{{{//todo, finish collecting available docs, then integrate them}}}
+
+It also has capabilities not yet imagined by today's WAFs because it is deployed much closer to the application. Because of its proximity, the ESAPI WAF can use custom code and session storage to integrate meaningful, complex and customized security into an application. Don't have the source? Not a problem! ESAPI can sit in front without any code changes. Don't have $200k to buy a commercial WAF? Don't feel comfortable with mod_security? ESAPI WAF is your answer! Assuming some knowledge of WAFs, the talk will cover its capabilities (with demonstrations), testing strategy (to provide assurance) and integration strategies. 
+
 {{{//todo}}}
 
 Having the WAF and ESAPI together provides developers the tools the need to deal with a variety of situations. The WAF can provide immediate virtual patching, to give the developers the time they need to fix things ‘right’ at a more reasonable pace. ESAPI then gives the tools to fix things right.  In some environments, the developers can’t change the code, so the WAF supports that situation.
