@@ -23,8 +23,7 @@ integrated into the application, as opposed to deployed as a standalone box.
 That means that you don't have to reparse the HTTP request, you have access
 to authentication and session information, and you can take actions within
 the application.  Arshan's presentation at OWASP DC was excellent.
-http://www.owasp.org/images/f/fb/The_ESAPI_Web_Application_Firewall-Arshan_D
-abirsiaghi.pdf. 
+http://www.owasp.org/images/f/fb/The_ESAPI_Web_Application_Firewall-Arshan_Dabirsiaghi.pdf. 
 
 
 {{{//todo}}}
