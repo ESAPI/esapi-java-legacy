@@ -104,6 +104,11 @@ public class CodecTest extends TestCase {
         	assertEquals( "\\3c ", cssCodec.encode(EMPTY_CHAR_ARRAY, "<") );
 	}
 
+	public void testCSSInvalidCodepointDecode()
+	{
+		assertEquals("\uFFFDg", cssCodec.decode("\\abcdefg") );
+	}
+
 	public void testMySQLANSCIEncode()
 	{
         	assertEquals( "\'\'", mySQLCodecANSI.encode(EMPTY_CHAR_ARRAY, "\'") );
@@ -514,7 +519,32 @@ public class CodecTest extends TestCase {
 
 	public void testCSSDecode()
 	{
-        	assertEquals( "<", cssCodec.decode("\\<") );
+        	assertEquals("<", cssCodec.decode("\\<") );
+	}
+
+	public void testCSSDecodeHexNoSpace()
+	{
+        	assertEquals("Axyz", cssCodec.decode("\\41xyz") );
+	}
+
+	public void testCSSDecodeZeroHexNoSpace()
+	{
+        	assertEquals("Aabc", cssCodec.decode("\\000041abc") );
+	}
+
+	public void testCSSDecodeHexSpace()
+	{
+        	assertEquals("Aabc", cssCodec.decode("\\41 abc") );
+	}
+
+	public void testCSSDecodeNL()
+	{
+        	assertEquals("abcxyz", cssCodec.decode("abc\\\nxyz") );
+	}
+
+	public void testCSSDecodeCRNL()
+	{
+        	assertEquals("abcxyz", cssCodec.decode("abc\\\r\nxyz") );
 	}
 
 	public void testMySQLANSIDecode()
