@@ -75,7 +75,7 @@ public class PushbackString {
 		return null;
 	}
 
-	public boolean isHexDigit( Character c ) {
+	public static boolean isHexDigit( Character c ) {
 		return ( "0123456789ABCDEFabcdef".indexOf( c.charValue() ) != -1 );
 	}
 	

@@ -140,4 +140,35 @@ public class CSSCodecTest extends TestCase
 	{
 		assertEquals( LESS_THAN, codec.decodeCharacter(new PushbackString("\\3c") ));
 	}
+
+	public void testCSSInvalidCodepointDecode()
+	{
+		assertEquals("\uFFFDg", codec.decode("\\abcdefg") );
+	}
+
+	public void testCSSDecodeHexNoSpace()
+	{
+        	assertEquals("Axyz", codec.decode("\\41xyz") );
+	}
+
+	public void testCSSDecodeZeroHexNoSpace()
+	{
+        	assertEquals("Aabc", codec.decode("\\000041abc") );
+	}
+
+	public void testCSSDecodeHexSpace()
+	{
+        	assertEquals("Aabc", codec.decode("\\41 abc") );
+	}
+
+	public void testCSSDecodeNL()
+	{
+        	assertEquals("abcxyz", codec.decode("abc\\\nxyz") );
+	}
+
+	public void testCSSDecodeCRNL()
+	{
+        	assertEquals("abcxyz", codec.decode("abc\\\r\nxyz") );
+	}
+
 }
