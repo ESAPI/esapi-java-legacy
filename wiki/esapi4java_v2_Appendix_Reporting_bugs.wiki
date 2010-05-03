@@ -6,42 +6,17 @@ UNDER CONSTRUCTION! Perhaps do something similar as: http://httpd.apache.org/bug
 
 ==How to report a vulnerability==
 
-UNDER CONSTRUCTION! Perhaps do something similar as: http://germany.rsa.com/node.aspx?id=2928 Each of the different examples cited below include a public key that can be used to encrypt reports, possibly overkill to do that here.
+Before reporting a vulnerability, please check:
 
+  * if the suspected security flaw has already been reported, 
+  * if the suspected security flaw has already been confirmed to be a security flaw
+  * if the suspected security flaw has already been confirmed to be a security flaw, and its solutions has been implemented.
+  * if the suspected security flaw has already been confirmed to be a security flaw, and its solutions has not yet been implemented.
 
+{{{/*todo, add links for each of the above*/}}}
 
-*Some additional notes*
-From: esapi-user-bounces@lists.owasp.org [mailto:esapi-user-bounces@lists.owasp.org] On Behalf Of Chris Schmidt
-Sent: Monday, May 03, 2010 12:54 PM
-To: Michael Coates
-Cc: ESAPI-Developers; owasp-leaders@lists.owasp.org; ESAPI-Users
-Subject: Re: [Esapi-user] [Owasp-leaders] [Esapi-dev] Crypto attack and OWASP
+If you still suspect that you have discovered a vulnerability, please email email descriptions of suspected vulnerabilities to {{{/*todo*/}}}. Please include the following information:
 
-That was the main point that I was trying to get across as well Michael. While notification lists are important, having the process documented is *very* important.
-
-Examples we can go off of:
-http://germany.rsa.com/node.aspx?id=2928
-http://httpd.apache.org/security_report.html
-http://www.cisco.com/en/US/products/products_security_vulnerability_policy.html
-
-Summary of what I think we need:
-
-1. Any issues tagged with Security in Issue Tracker should be hidden to non-commiters (if possible)
-2. A certificate available for download to allow researchers to encrypt vulnerability details that they e-mail to us
-3. A notification list for security-alerts
-4. Define an expected response time to resolve vulnerabilities
-5. Do we go with CVE labels for vulnerabilities or use our own labeling system
-
-I think that these 5 things should probably be owasp wide, and projects should be required to have a link on their *main pages* pointing people to the OWASP Policy for reporting Security Vulnerabilities.
-
-The policy itself should be pretty standard, 
-
-1. Send as much info as possible, including PoC code if available. 
-2. Ask nicely to not disclose publicly until we have had a chance to respond and/or resolve
-3, Encouraged use of OWASP cert to encrypt details of vuln in e-mail
-
-We should have a central e-mail distribution that goes to project leads for all owasp projects (something along the lines of vulnerable@owasp.org) 
-
-We should only encourage people to submit security vulnerabilities using Issue Trackers if we have the ability to *hide* those issues from anonymous and/or non project commiters.
-
-Thoughts?
+  * whether it is an error in the ESAPI documentation, 
+  * a flaw in the design of ESAPI, a flaw in the implementation of the ESAPI, etc. 
+  * a description of the security flaw's effects, including identifying the portions of the ESAPI that are affected and how those portions are affected. 
