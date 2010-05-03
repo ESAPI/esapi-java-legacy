@@ -1,3 +1,38 @@
 #sidebar TableOfContents
 
 UNDER CONSTRUCTION!
+
+From: esapi-user-bounces@lists.owasp.org [mailto:esapi-user-bounces@lists.owasp.org] On Behalf Of Chris Schmidt
+Sent: Monday, May 03, 2010 12:54 PM
+To: Michael Coates
+Cc: ESAPI-Developers; owasp-leaders@lists.owasp.org; ESAPI-Users
+Subject: Re: [Esapi-user] [Owasp-leaders] [Esapi-dev] Crypto attack and OWASP
+
+That was the main point that I was trying to get across as well Michael. While notification lists are important, having the process documented is *very* important.
+
+Examples we can go off of:
+http://germany.rsa.com/node.aspx?id=2928
+http://httpd.apache.org/security_report.html
+http://www.cisco.com/en/US/products/products_security_vulnerability_policy.html
+
+Summary of what I think we need:
+
+1. Any issues tagged with Security in Issue Tracker should be hidden to non-commiters (if possible)
+2. A certificate available for download to allow researchers to encrypt vulnerability details that they e-mail to us
+3. A notification list for security-alerts
+4. Define an expected response time to resolve vulnerabilities
+5. Do we go with CVE labels for vulnerabilities or use our own labeling system
+
+I think that these 5 things should probably be owasp wide, and projects should be required to have a link on their *main pages* pointing people to the OWASP Policy for reporting Security Vulnerabilities.
+
+The policy itself should be pretty standard, 
+
+1. Send as much info as possible, including PoC code if available. 
+2. Ask nicely to not disclose publicly until we have had a chance to respond and/or resolve
+3, Encouraged use of OWASP cert to encrypt details of vuln in e-mail
+
+We should have a central e-mail distribution that goes to project leads for all owasp projects (something along the lines of vulnerable@owasp.org) 
+
+We should only encourage people to submit security vulnerabilities using Issue Trackers if we have the ability to *hide* those issues from anonymous and/or non project commiters.
+
+Thoughts?
