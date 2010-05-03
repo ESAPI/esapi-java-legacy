@@ -2,13 +2,15 @@
 
 ==How to report a bug==
 
-UNDER CONSTRUCTION!
+UNDER CONSTRUCTION! Perhaps do something similar as: http://httpd.apache.org/bug_report.html
 
-==How to report a security vulnerability==
+==How to report a vulnerability==
 
-UNDER CONSTRUCTION!
+UNDER CONSTRUCTION! Perhaps do something similar as: http://germany.rsa.com/node.aspx?id=2928 Each of the different examples cited below include a public key that can be used to encrypt reports, possibly overkill to do that here.
 
-*Some initial notes*
+
+
+*Some additional notes*
 From: esapi-user-bounces@lists.owasp.org [mailto:esapi-user-bounces@lists.owasp.org] On Behalf Of Chris Schmidt
 Sent: Monday, May 03, 2010 12:54 PM
 To: Michael Coates
