@@ -45,6 +45,7 @@
   * [esapi4java_v2_Sample_application Sample applications]
     * [esapi4java_v2_Hello_World Hello World]
     * [esapi4java_v2_ESAPI_Swingset ESAPI Swingset]
+  * [esapi4java_v2_Appendix_Reporting_bugs Reporting bugs]
   * [esapi4java_v2_Appendix_Additional_references Appendix - References]
 
    
