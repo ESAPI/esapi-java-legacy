@@ -11,6 +11,7 @@ Before reporting a bug, please check:
   * if the suspected bug has already been confirmed to be a bug, and its solutions has been implemented.
   * if the suspected bug has already been confirmed to be a bug, and its solutions has not yet been implemented.
 
+{{{/*todo, add links for each of the above*/}}}
 
 If you still suspect that you have discovered a bug, please email email descriptions of suspected bugs to {{{/*todo*/}}}. Please include the following information:
 
