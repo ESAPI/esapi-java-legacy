@@ -347,6 +347,5 @@ public class CryptoHelper {
      * is not needed as all methods are static.
      */
     private CryptoHelper() {
-        ; // Empty
     }
 }
