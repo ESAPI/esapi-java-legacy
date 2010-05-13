@@ -1,0 +1,11 @@
+#sidebar TableOfContents
+
+==Step 1. Get started==
+
+Start using a passive vulnerability scanner during regular testing
+Start tracking security bugs explicitly as such 
+Turn source control repository access controls on
+Check off AppSec STIG requirements
+  * APP4010 Access rights to the CM repository not reviewed
+  * APP5010 No tester designated to test for security flaws
+  * APP5090 Flaws found during a code review are not tracked
