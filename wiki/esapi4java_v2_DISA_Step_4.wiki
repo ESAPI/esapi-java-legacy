@@ -5,6 +5,7 @@
   # Add new baseline requirements for authentication 
   # Extend your common security control library with authentication functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP6210 No account management process in place
     * APP3390 User accounts not locked after invalid logons
@@ -18,6 +19,7 @@
   # Add new baseline requirements for session management
   # Extend your common security control library with session management functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3090 Session hijacking prevention not supported
     * APP3410 Session limits do not exist for the application
@@ -26,6 +28,7 @@
   # Add new baseline requirements for access control 
   # Extend your common security control library with access control functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3110 Unneeded functionality enabled
     * APP3240 Actions not authorized before execution
@@ -40,6 +43,7 @@
   # Add new baseline requirements for cryptography 
   # Extend your common security control library with cryptography functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3150 Application uses unapproved cryptographic modules
     * APP3170 Encryption for Key Exchange not used
@@ -47,6 +51,7 @@
   # Add new baseline requirements for error handling and logging 
   # Extend your common security control library with error handling and logging functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3140 Application failure results in an insecure state
     * APP3120 Application has error handling vulnerabilities
@@ -58,25 +63,30 @@
   # Add new baseline requirements for data protection 
   # Extend your common security control library with data protection functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3210 Sensitive data not protected at rest
     * APP3220 Sensitive data is not encrypted in memory
   # Add new baseline requirements for HTTP security 
   # Start grepping through code, this is not something you�d use your library for
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3530 Application does not set character set
   # Add new baseline requirements for communication security 
   # Turn HTTPS and TLS on, this is not something you�d use your library for
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3250 Sensitive data not protected in transit
     * APP3330 Passwords not transmitted encrypted
   # Add new baseline requirements for security configuration 
   # Extend your common security control library with security configuration functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3340 Passwords stored in an unapproved encrypted format
   # Add new baseline requirements for internal security 
   # Extend your common security control library with internal security functions
   # Use your common security control library wrapper to make fixes to existing code
+  # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3260 Integrity mechanisms on data files not supported
