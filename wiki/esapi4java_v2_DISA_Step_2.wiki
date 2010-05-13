@@ -2,12 +2,12 @@
 
 ==Step 2. Build a common security control library using ESAPI==
 
-Build a common security control library wrapper tailored for your application
-Extend your common security control library with input validation functions for all inputs
-Extend your common security control library with output encoding functions for all output contexts 
-Test your common security control library input validation function from your framework
-Test your common security control library output encoding function from your framework
-Check off AppSec STIG requirements
-  * APP2060 No coding standards exist
-  * APP2120 Security training not provided
-  * APP3130 Secure design principle not followed
+  # Build a common security control library wrapper tailored for your application
+  # Extend your common security control library with input validation functions for all inputs
+  # Extend your common security control library with output encoding functions for all output contexts 
+  # Test your common security control library input validation function from your framework
+  # Test your common security control library output encoding function from your framework
+  # Check off AppSec STIG requirements
+    * APP2060 No coding standards exist
+    * APP2120 Security training not provided
+    * APP3130 Secure design principle not followed
