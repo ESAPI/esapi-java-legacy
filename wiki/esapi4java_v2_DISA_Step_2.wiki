@@ -2,7 +2,7 @@
 
 ==Step 2. Build a common security control library using ESAPI==
 
-  # Build a common security control library wrapper tailored for your application
+  # Build a common security control library wrapper tailored for your application (such as adding an Adapter control that calls the other existing controls according to the [http://code.google.com/p/owasp-esapi-java/wiki/esapi4java_v2_Extended_factory_pattern Extended factory pattern])
   # Extend your common security control library with input validation functions for all inputs
   # Extend your common security control library with output encoding functions for all output contexts 
   # Test your common security control library input validation function from your framework
