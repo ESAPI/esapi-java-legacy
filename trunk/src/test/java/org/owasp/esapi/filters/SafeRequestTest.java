@@ -156,4 +156,48 @@ public class SafeRequestTest extends TestCase {
 		assertEquals("a=%26b",wrappedReq.getQueryString());
 	}
 	*/
+
+	// Test to ensure null-value contract defined by ServletRequest.getParameterNames(String) is met.
+	public void testGetParameterValuesReturnsNullWhenParameterDoesNotExistInRequest() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.clearParameters();
+ 
+		final String paramName = "nonExistentParameter";
+		assertNull(request.getParameterValues(paramName));
+
+		SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
+		assertNull("Expecting null value to be returned for non-existent parameter.", safeRequest.getParameterValues(paramName));
+	}
+
+	public void testGetParameterValuesReturnsCorrectValueWhenParameterExistsInRequest() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.clearParameters();
+
+		final String paramName = "existentParameter";
+		final String paramValue = "foobar";
+		request.addParameter(paramName, paramValue);
+		assertTrue(request.getParameterValues(paramName)[0].equals(paramValue));
+
+		SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
+		final String actualParamValue = safeRequest.getParameterValues(paramName)[0];
+		assertEquals(paramValue, actualParamValue);
+	}
+
+	public void testGetParameterValuesReturnsCorrectValuesWhenParameterExistsMultipleTimesInRequest() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.clearParameters();
+
+		final String paramName = "existentParameter";
+		final String paramValue_0 = "foobar";
+		final String paramValue_1 = "barfoo";
+		request.addParameter(paramName, paramValue_0);
+		request.addParameter(paramName, paramValue_1);
+		assertTrue(request.getParameterValues(paramName)[0].equals(paramValue_0));
+		assertTrue(request.getParameterValues(paramName)[1].equals(paramValue_1));
+
+		SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
+		final String[] actualParamValues = safeRequest.getParameterValues(paramName);
+		assertEquals(paramValue_0, actualParamValues[0]);
+		assertEquals(paramValue_1, actualParamValues[1]);
+	}
 }

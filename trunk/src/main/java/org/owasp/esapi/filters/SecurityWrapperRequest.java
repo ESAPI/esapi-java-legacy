@@ -418,22 +418,25 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * HttpServletRequest after canonicalizing and filtering out any dangerous
      * characters.
      * @param name The parameter name
-     * @return An array of matching "scrubbed" parameter values.
+     * @return An array of matching "scrubbed" parameter values or
+     * <code>null</code> if the parameter does not exist.
      */
     public String[] getParameterValues(String name) {
         String[] values = getHttpServletRequest().getParameterValues(name);
-        List<String> newValues = new ArrayList<String>();
-        if ( values != null ) {
-            for (String value : values) {
-                try {
-                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
-                    newValues.add(cleanValue);
-                } catch (ValidationException e) {
-                    logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter");
-                }
+        List<String> newValues;
+
+	if(values == null)
+		return null;
+        newValues = new ArrayList<String>();
+        for (String value : values) {
+            try {
+                String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
+                newValues.add(cleanValue);
+            } catch (ValidationException e) {
+                logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter");
             }
         }
-        return newValues.toArray(new String[ newValues.size() ]);
+        return newValues.toArray(new String[newValues.size()]);
     }
 
     /**
