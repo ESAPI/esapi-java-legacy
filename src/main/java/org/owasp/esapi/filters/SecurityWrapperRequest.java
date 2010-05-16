@@ -481,7 +481,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         String query = getHttpServletRequest().getQueryString();
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", 2000, false);
+            clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", 2000, true);
         } catch (ValidationException e) {
             // already logged
         }
