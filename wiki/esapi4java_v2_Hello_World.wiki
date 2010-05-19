@@ -5,10 +5,7 @@ Here is a "Hello World" using JUnit and ESAPI for Java's development test harnes
 {{{
 
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
-import org.owasp.esapi.errors.ValidationException;
 
 public class HelloWorldTest extends TestCase
 {
