@@ -4,8 +4,9 @@
  * JDK 1.5 release 22 (1.5.0_22) [http://java.sun.com/javase/downloads/index_jdk5.jsp download here]
  * Eclipse IDE for Java EE Developers 3.3.x or above [http://www.eclipse.org/downloads/ download here]
  * SVN Subclipse Plugin for Eclipse - Instructions on installing Subclipse plugin can be found [http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA here]
- * To support the latest versions of Maven, first download GEF [http://wiki.eclipse.org/index.php/GEF_Developer_FAQ#Download_and_Install here]
  * Maven M2Eclipse plugin for Eclipse - You can install the latest version from within Eclipse using the following [http://m2eclipse.sonatype.org/update/ update site]
+ * AntiSamy 1.3 [http://owaspantisamy.googlecode.com/files/antisamy-bin.1.3.jar download here]
+ * (Optionally) To support the latest versions of Maven, first download GEF [http://wiki.eclipse.org/index.php/GEF_Developer_FAQ#Download_and_Install here]
 
 ==Configuration==
  * Create an Eclipse shortcut
@@ -44,7 +45,7 @@ ESAPI requires the Java JRE 5.0+
  * Close the properties window.
  * ''Right-click the ESAPI project root folder'' and select ''Refresh''.
  * From the toolbar, select ''Project'' -> ''Clean..'' and select the ESAPI project.  Click ''OK''.
- * If errors remain, select ''Maven'' again, then ''Update Dependencies''.
+ * If errors remain, select ''Maven'' again, then ''Update Dependencies''. HINT: use the suggested commands in the error message to install AntiSamy using Maven.
  * ESAPI should now be compiled.
 
 ==Building==
