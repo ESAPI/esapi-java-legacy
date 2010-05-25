@@ -31,7 +31,6 @@
       * APP2090 Public domain software in use
       * APP3010 Design document is not complete or does not exist
       * APP3020 Threat model not established or updated
-      * 
     * Tests
       * APP5050 Tests plans not executed prior to release or patch
       * APP5070 Application has no code coverage statistics
