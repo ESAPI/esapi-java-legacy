@@ -3,7 +3,7 @@
 ==Step 4. Extend your common security control library each development cycle==
 
   # Add new baseline requirements for authentication 
-  # Extend your common security control library with authentication functions
+  # Extend your common security control library with *authentication* functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
@@ -17,7 +17,7 @@
     * APP6250 Unnecessary built-in userids are not disabled
     * APP6260 Userids have default passwords
   # Add new baseline requirements for session management
-  # Extend your common security control library with session management functions
+  # Extend your common security control library with *session management* functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
@@ -26,7 +26,7 @@
     * APP3415 Sessions do not automatically terminate
     * APP3420 Explicit logout not available
   # Add new baseline requirements for access control 
-  # Extend your common security control library with access control functions
+  # Extend your common security control library with *access control* functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
@@ -41,7 +41,7 @@
     * APP3470 Application functionality not role based
     * APP6230 Access granted by group authenticator
   # Add new baseline requirements for cryptography 
-  # Extend your common security control library with cryptography functions
+  # Extend your common security control library with *cryptography* functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
@@ -49,7 +49,7 @@
     * APP3170 Encryption for Key Exchange not used
     * APP3180 Encryption key permissions are not adequate
   # Add new baseline requirements for error handling and logging 
-  # Extend your common security control library with error handling and logging functions
+  # Extend your common security control library with *error handling and logging* functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
@@ -61,30 +61,30 @@
     * APP3680 The application does not adequately log events
     * APP6090 No system alerts in a low resource condition
   # Add new baseline requirements for data protection 
-  # Extend your common security control library with data protection functions
+  # Extend your common security control library with *data protection* functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3210 Sensitive data not protected at rest
     * APP3220 Sensitive data is not encrypted in memory
-  # Add new baseline requirements for HTTP security 
-  # Start grepping through code, this is not something you�d use your library for
+  # Add new baseline requirements for *HTTP security* 
+  # Start grepping through code, this is not something you'd use your library for
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3530 Application does not set character set
-  # Add new baseline requirements for communication security 
-  # Turn HTTPS and TLS on, this is not something you�d use your library for
+  # Add new baseline requirements for *communication security* 
+  # Turn HTTPS and TLS on, this is not something you'd use your library for
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3250 Sensitive data not protected in transit
     * APP3330 Passwords not transmitted encrypted
-  # Add new baseline requirements for security configuration 
+  # Add new baseline requirements for *security configuration* 
   # Extend your common security control library with security configuration functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
   # Check off AppSec STIG requirements
     * APP3340 Passwords stored in an unapproved encrypted format
-  # Add new baseline requirements for internal security 
+  # Add new baseline requirements for *internal security* 
   # Extend your common security control library with internal security functions
   # Use your common security control library wrapper to make fixes to existing code
   # Use your common security control library wrapper for new development going forward
