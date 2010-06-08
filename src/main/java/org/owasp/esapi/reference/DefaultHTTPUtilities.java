@@ -56,6 +56,18 @@ import java.util.concurrent.ConcurrentHashMap;
  * @see org.owasp.esapi.HTTPUtilities
  */
 public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
+    private static volatile HTTPUtilities instance = null;
+
+    public static HTTPUtilities getInstance() {
+        if ( instance == null ) {
+            synchronized ( DefaultHTTPUtilities.class ) {
+                if ( instance == null ) {
+                    instance = new DefaultHTTPUtilities();
+                }
+            }
+        }
+        return instance;
+    }
 
 	/**
      * Defines the ThreadLocalRequest to store the current request for this thread.
@@ -445,7 +457,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public HttpServletRequest getCurrentRequest() {
-    	return currentRequest.get();
+    	return currentRequest.getRequest();
     }
 
 
@@ -453,7 +465,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public HttpServletResponse getCurrentResponse() {
-        return currentResponse.get();
+        return currentResponse.getResponse();
     }
 
 	/**
@@ -825,8 +837,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
-     	currentRequest.set(request);
-        currentResponse.set(response);
+     	currentRequest.setRequest(request);
+        currentResponse.setResponse(response);
     }
 
     /**

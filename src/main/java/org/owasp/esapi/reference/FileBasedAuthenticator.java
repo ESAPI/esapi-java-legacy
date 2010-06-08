@@ -46,6 +46,20 @@ import java.util.*;
  */
 public class FileBasedAuthenticator extends AbstractAuthenticator {
 
+    private static volatile Authenticator singletonInstance;
+
+    public static Authenticator getInstance()
+    {
+        if ( singletonInstance == null ) {
+            synchronized ( FileBasedAuthenticator.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new FileBasedAuthenticator();
+                }
+            }
+        }
+        return singletonInstance;
+    }
+
     /**
      * The logger.
      */
@@ -209,7 +223,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
     /**
      *
      */
-    public FileBasedAuthenticator() {
+    private FileBasedAuthenticator() {
     	super();
     }
 

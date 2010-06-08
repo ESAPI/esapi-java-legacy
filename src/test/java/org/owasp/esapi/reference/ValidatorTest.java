@@ -575,13 +575,13 @@ public class ValidatorTest extends TestCase
       request.addParameter("p3", "value");
       ESAPI.httpUtilities().setCurrentHTTP(request, response);
       Validator instance = ESAPI.validator();
-      assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", ESAPI.currentRequest(), requiredNames, optionalNames));
+      assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames));
       request.addParameter("p4", "value");
       request.addParameter("p5", "value");
       request.addParameter("p6", "value");
-      assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", ESAPI.currentRequest(), requiredNames, optionalNames));
+      assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames));
       request.removeParameter("p1");
-      assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", ESAPI.currentRequest(), requiredNames, optionalNames));
+      assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames));
    }
 
    public void testIsValidPrintable()

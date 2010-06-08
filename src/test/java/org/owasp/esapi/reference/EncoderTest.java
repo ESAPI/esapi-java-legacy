@@ -759,7 +759,7 @@ public class EncoderTest extends TestCase {
 		}
 		
 	    public String javaScriptEncode(String str) {
-			DefaultEncoder encoder = new DefaultEncoder();
+			Encoder encoder = DefaultEncoder.getInstance();
 			return encoder.encodeForJavaScript(str);
 		}
     }

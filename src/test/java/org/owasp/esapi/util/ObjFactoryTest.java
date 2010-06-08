@@ -59,7 +59,7 @@ public class ObjFactoryTest extends TestCase {
     public void testMakeNullCipher() throws ConfigurationException {
     	String className = "javax.crypto.NullCipher";
     	javax.crypto.Cipher nullCipher =
-    			(new ObjFactory<javax.crypto.NullCipher>()).make(className, "NullCipher");
+    			ObjFactory.make(className, "NullCipher");
     	assertTrue( nullCipher instanceof javax.crypto.NullCipher );
     	System.out.println("W00t! Watch out NSA...we have a NullCipher and we're not afraid to use it!");
     }
@@ -70,7 +70,7 @@ public class ObjFactoryTest extends TestCase {
     public void testInterface() throws ConfigurationException {
     	Key key = null;  	
     	try {
-    		key = (new ObjFactory<Key>()).make("java.security.Key", "Key");
+    		key = ObjFactory.make("java.security.Key", "Key");
     		assertFalse("Should not be reached - interface or abstract class", key != null);
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
@@ -92,7 +92,7 @@ public class ObjFactoryTest extends TestCase {
 			//	  http://java.sun.com/docs/books/tutorial/reflect/member/ctorTrouble.html
     		// this should cause an IllegalAccessException to be thrown because it has no public,
     		// no-arg CTOR. However, it doesn't. It throws a InstantiationException instead.
-    		oft = (new ObjFactory<ObjFactoryTest>()).make(ObjFactoryTest.class.getName(), "ObjectFactoryTest");
+    		oft = ObjFactory.make(ObjFactoryTest.class.getName(), "ObjectFactoryTest");
     		assertFalse("Should not be reached - no public CTOR", oft != null);
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
@@ -108,7 +108,7 @@ public class ObjFactoryTest extends TestCase {
     	Object obj = null;
     	
     	try {
-    		obj = (new ObjFactory<Object>()).make("kevin.wall.HasNoClass", "Object");
+    		obj = ObjFactory.make("kevin.wall.HasNoClass", "Object");
     		assertFalse("Should not be reached - no such class", obj != null);
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
@@ -123,7 +123,7 @@ public class ObjFactoryTest extends TestCase {
     public void testMakeNotASubclass() throws ConfigurationException {
     	Key key = null;
     	try {
-    		key = (new ObjFactory<Key>()).make("java.lang.String", "testMakeNotASubclass");
+    		key = ObjFactory.make("java.lang.String", "testMakeNotASubclass");
     		assertFalse("Should not be reached - not a subclass", key != null);
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
@@ -140,7 +140,7 @@ public class ObjFactoryTest extends TestCase {
     public void testMakeEmptyClassName() throws ConfigurationException {
     	Object obj = null;
     	try {
-    		obj = (new ObjFactory<Object>()).make("", "testMakeEmptyClassName");
+    		obj = ObjFactory.make("", "testMakeEmptyClassName");
     		assertFalse("Should not be reached - not a subclass", obj != null);
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
@@ -156,7 +156,7 @@ public class ObjFactoryTest extends TestCase {
     	@SuppressWarnings("unused")
 		ThePrefectClass ford = null;
     	try {
-    		ford = (new ObjFactory<ThePrefectClass>()).make("org.owasp.esapi.util.ThePrefectClass", "ThePrefectClass");
+    		ford = ObjFactory.make("org.owasp.esapi.util.ThePrefectClass", "ThePrefectClass");
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
 			assertTrue( cause instanceof UnsupportedOperationException);
@@ -167,10 +167,10 @@ public class ObjFactoryTest extends TestCase {
     public void testNullorEmptyTypeName() throws ConfigurationException {
     	String className = "javax.crypto.NullCipher";
     	javax.crypto.Cipher nullCipher =
-    			(new ObjFactory<javax.crypto.NullCipher>()).make(className, null);
+    			ObjFactory.make(className, null);
     	assertTrue( nullCipher instanceof javax.crypto.NullCipher );
     	nullCipher =
-			(new ObjFactory<javax.crypto.NullCipher>()).make(className, "");
+			ObjFactory.make(className, "");
     	assertTrue( nullCipher instanceof javax.crypto.NullCipher );
     }
     
@@ -182,7 +182,7 @@ public class ObjFactoryTest extends TestCase {
     	try {
     		String className = "javax.crypto.spec.SecretKeySpec";
     		javax.crypto.spec.SecretKeySpec skeySpec =
-    			(SecretKeySpec) (new ObjFactory<java.lang.Object>()).make(className, "SecretKeySpec");
+    			(SecretKeySpec) ObjFactory.make(className, "SecretKeySpec");
     		assertTrue( skeySpec != null );
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();

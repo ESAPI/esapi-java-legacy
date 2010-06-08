@@ -55,7 +55,9 @@ public class JavaLoggerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	ESAPI.setLogFactory( new JavaLogFactory() );
+        UnitTestSecurityConfiguration tmpConfig = new UnitTestSecurityConfiguration((DefaultSecurityConfiguration) ESAPI.securityConfiguration());
+        tmpConfig.setLogImplementation( JavaLogFactory.class.getName() );
+        ESAPI.override(tmpConfig);
     	//This ensures a clean logger between tests
     	testLogger = ESAPI.getLogger( "test" + testCount++ );
     	System.out.println("Test logger: " + testLogger);
@@ -68,6 +70,7 @@ public class JavaLoggerTest extends TestCase {
     protected void tearDown() throws Exception {
     	//this helps, with garbage collection
     	testLogger = null;
+        ESAPI.override(null);
     }
 
     /**
