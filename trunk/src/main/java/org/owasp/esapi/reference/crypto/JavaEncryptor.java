@@ -49,6 +49,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Hex;
 import org.owasp.esapi.crypto.CipherSpec;
@@ -68,10 +69,23 @@ import org.owasp.esapi.errors.IntegrityException;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author kevin.w.wall@gmail.com
+ * @author Chris Schmidt (chrisisbeef .at. gmail.com)
  * @since June 1, 2007; some methods since ESAPI Java 2.0
  * @see org.owasp.esapi.Encryptor
  */
-public final class JavaEncryptor implements org.owasp.esapi.Encryptor {
+public final class JavaEncryptor implements Encryptor {
+    private static Encryptor singletonInstance;
+
+    public static Encryptor getInstance() throws EncryptionException {
+        if ( singletonInstance == null ) {
+            synchronized ( JavaEncryptor.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new JavaEncryptor();
+                }
+            }
+        }
+        return singletonInstance;
+    }
 
     private static boolean initialized = false;
     
@@ -195,7 +209,7 @@ public final class JavaEncryptor implements org.owasp.esapi.Encryptor {
      * @throws EncryptionException if can't construct this object for some reason.
      * 					Original exception will be attached as the 'cause'.
      */
-    public JavaEncryptor() throws EncryptionException {
+    private JavaEncryptor() throws EncryptionException {
         byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
         byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 

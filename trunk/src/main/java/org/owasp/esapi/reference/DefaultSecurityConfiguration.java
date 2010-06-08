@@ -66,7 +66,19 @@ import org.owasp.esapi.errors.ConfigurationException;
  */
 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
+    private static volatile SecurityConfiguration instance = null;
 
+    public static SecurityConfiguration getInstance() {
+        if ( instance == null ) {
+            synchronized (DefaultSecurityConfiguration.class) {
+                if ( instance == null ) {
+                    instance = new DefaultSecurityConfiguration();
+                }
+            }
+        }
+        return instance;
+    }
+    
     private Properties properties = null;
     private String cipherXformFromESAPIProp = null;	// New in ESAPI 2.0
     private String cipherXformCurrent = null;		// New in ESAPI 2.0
@@ -1033,7 +1045,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	    return getESAPIProperty(ADDITIONAL_ALLOWED_CIPHER_MODES, empty);
 	}
 
-	private String getESAPIProperty( String key, String def ) {
+	protected String getESAPIProperty( String key, String def ) {
 		String value = properties.getProperty(key);
 		if ( value == null ) {
     		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
@@ -1042,7 +1054,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		return value;
 	}
 
-	private boolean getESAPIProperty( String key, boolean def ) {
+	protected boolean getESAPIProperty( String key, boolean def ) {
 		String property = properties.getProperty(key);
 		if ( property == null ) {
     		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
@@ -1058,7 +1070,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		return def;
 	}
 
-	private byte[] getESAPIPropertyEncoded( String key, byte[] def ) {
+	protected byte[] getESAPIPropertyEncoded( String key, byte[] def ) {
 		String property = properties.getProperty(key);
 		if ( property == null ) {
     		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
@@ -1072,7 +1084,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         }
 	}
 
-	private int getESAPIProperty( String key, int def ) {
+	protected int getESAPIProperty( String key, int def ) {
 		String property = properties.getProperty(key);
 		if ( property == null ) {
     		logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
@@ -1094,7 +1106,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 *             is not set.
 	 * @return A list of strings.
 	 */
-	private List<String> getESAPIProperty( String key, List<String> def ) {
+	protected List<String> getESAPIProperty( String key, List<String> def ) {
 	    String property = properties.getProperty( key );
 	    if ( property == null ) {
 	        logSpecial( "SecurityConfiguration for " + key + " not found in ESAPI.properties. Using default: " + def, null );
@@ -1104,8 +1116,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	    return Arrays.asList( parts );
 	}
 
-	private boolean shouldPrintProperties() {
+	protected boolean shouldPrintProperties() {
         return getESAPIProperty(PRINT_PROPERTIES_WHEN_LOADED, false);
 	}
 
+    protected Properties getESAPIProperties() {
+        return properties;
+    }
 }

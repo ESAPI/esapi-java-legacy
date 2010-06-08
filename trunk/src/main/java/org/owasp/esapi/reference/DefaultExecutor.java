@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Executor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.UnixCodec;
@@ -41,6 +42,18 @@ import org.owasp.esapi.errors.ExecutorException;
  * @see org.owasp.esapi.Executor
  */
 public class DefaultExecutor implements org.owasp.esapi.Executor {
+    private static volatile Executor singletonInstance;
+
+    public static Executor getInstance() {
+        if ( singletonInstance == null ) {
+            synchronized ( DefaultExecutor.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new DefaultExecutor();
+                }
+            }
+        }
+        return singletonInstance;
+    }
 
     /** The logger. */
     private final Logger logger = ESAPI.getLogger("Executor");
@@ -51,7 +64,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     /**
      * Instantiate a new Executor
      */
-    public DefaultExecutor() {
+    private DefaultExecutor() {
 		if ( System.getProperty("os.name").indexOf("Windows") != -1 ) {
 			logger.warning( Logger.SECURITY_SUCCESS, "Using WindowsCodec for Executor. If this is not running on Windows this could allow injection" );
 			codec = new WindowsCodec();

@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.errors.EncryptionException;
 
 /**
@@ -32,6 +33,18 @@ import org.owasp.esapi.errors.EncryptionException;
  * @see org.owasp.esapi.Randomizer
  */
 public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
+    private static volatile Randomizer singletonInstance;
+
+    public static Randomizer getInstance() {
+        if ( singletonInstance == null ) {
+            synchronized ( DefaultRandomizer.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new DefaultRandomizer();
+                }
+            }
+        }
+        return singletonInstance;
+    }
 
     /** The sr. */
     private SecureRandom secureRandom = null;
@@ -39,10 +52,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     /** The logger. */
     private final Logger logger = ESAPI.getLogger("Randomizer");
 
-    /**
-     * Hide the constructor for the Singleton pattern.
-     */
-    public DefaultRandomizer() {
+    private DefaultRandomizer() {
         String algorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
         try {
             secureRandom = SecureRandom.getInstance(algorithm);

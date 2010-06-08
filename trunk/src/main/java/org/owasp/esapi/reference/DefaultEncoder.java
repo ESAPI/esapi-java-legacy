@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Base64;
 import org.owasp.esapi.codecs.CSSCodec;
@@ -47,7 +48,20 @@ import org.owasp.esapi.errors.IntrusionException;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class DefaultEncoder implements org.owasp.esapi.Encoder {
+public class DefaultEncoder implements Encoder {
+
+    private static volatile Encoder singletonInstance;
+
+    public static Encoder getInstance() {
+        if ( singletonInstance == null ) {
+            synchronized ( DefaultEncoder.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new DefaultEncoder();
+                }
+            }
+        }
+        return singletonInstance;
+    }
 
 	// Codecs
 	private List codecs = new ArrayList();
@@ -79,7 +93,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	/**
 	 * Instantiates a new DefaultEncoder
 	 */
-	public DefaultEncoder() {
+	private DefaultEncoder() {
 		codecs.add( htmlCodec );
 		codecs.add( percentCodec );
 		codecs.add( javaScriptCodec );

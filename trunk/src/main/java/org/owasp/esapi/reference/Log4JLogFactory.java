@@ -27,14 +27,22 @@ import org.owasp.esapi.User;
  * @see org.owasp.esapi.reference.Log4JLogFactory.Log4JLogger
  */
 public class Log4JLogFactory implements LogFactory {
-	
+	private static volatile LogFactory singletonInstance;
+
+    public static LogFactory getInstance() {
+        if ( singletonInstance == null ) {
+            synchronized ( Log4JLogFactory.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new Log4JLogFactory();
+                }
+            }
+        }
+        return singletonInstance;
+    }
+
 	protected HashMap loggersMap = new HashMap();
 	
-	/**
-	* Null argument constructor for this implementation of the LogFactory interface
-	* needed for dynamic configuration.
-	*/
-	public Log4JLogFactory() {}
+	protected Log4JLogFactory() {}
 	
 	/**
 	* {@inheritDoc}

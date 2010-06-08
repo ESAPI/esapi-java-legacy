@@ -35,7 +35,6 @@ import org.owasp.esapi.http.MockHttpServletResponse;
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class Log4JLoggerTest extends TestCase {
-
 	private static int testCount = 0;
 	
 	private static Logger testLogger = null;
@@ -55,7 +54,9 @@ public class Log4JLoggerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	ESAPI.setLogFactory( new ExampleExtendedLog4JLogFactory() );
+        UnitTestSecurityConfiguration tmpConfig = new UnitTestSecurityConfiguration((DefaultSecurityConfiguration) ESAPI.securityConfiguration());
+        tmpConfig.setLogImplementation( ExampleExtendedLog4JLogFactory.class.getName() );
+        ESAPI.override(tmpConfig);
     	//This ensures a clean logger between tests
     	testLogger = ESAPI.getLogger( "test ExampleExtendedLog4JLogFactory: " + testCount++ );
     	System.out.println("Test ExampleExtendedLog4JLogFactory logger: " + testLogger);
@@ -68,6 +69,7 @@ public class Log4JLoggerTest extends TestCase {
     protected void tearDown() throws Exception {
     	//this helps, with garbage collection
     	testLogger = null;
+        ESAPI.override(null);
     }
 
     /**

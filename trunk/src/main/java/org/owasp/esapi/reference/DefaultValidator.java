@@ -61,6 +61,18 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  * @see org.owasp.esapi.Validator
  */
 public class DefaultValidator implements org.owasp.esapi.Validator {
+    private static volatile Validator instance = null;
+
+    public static Validator getInstance() {
+        if ( instance == null ) {
+            synchronized ( Validator.class ) {
+                if ( instance == null ) {
+                    instance = new DefaultValidator();
+                }
+            }
+        }
+        return instance;
+    }
 
 	/** A map of validation rules */
 	private Map<String, ValidationRule> rules = new HashMap<String, ValidationRule>();

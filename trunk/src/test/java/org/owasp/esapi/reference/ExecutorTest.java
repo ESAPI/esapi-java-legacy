@@ -76,27 +76,12 @@ public class ExecutorTest extends TestCase {
 		super(testName);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @throws Exception
-	 */
-	protected void setUp() throws Exception {
-		// save configuration as tests may change it
-		origConfig = ESAPI.securityConfiguration();
-	}
+    @Override
+    protected void tearDown() throws Exception {
+        ESAPI.override(null);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @throws Exception
-	 */
-	protected void tearDown() throws Exception {
-		// restore configuration as test may change it
-		ESAPI.setSecurityConfiguration(origConfig);
-	}
-
-	/**
+    /**
 	 * Suite.
 	 * 
 	 * @return the test
@@ -123,7 +108,7 @@ public class ExecutorTest extends TestCase {
 		File sysRoot = new File(System.getenv("SystemRoot")).getCanonicalFile();
 		File sys32 = new File(sysRoot,"system32").getCanonicalFile();
 		File cmd = new File(sys32,"cmd.exe").getCanonicalFile();
-		ESAPI.setSecurityConfiguration(
+		ESAPI.override(
 			new Conf(
 				ESAPI.securityConfiguration(),
 				Collections.singletonList(cmd.getPath()),
@@ -214,7 +199,7 @@ public class ExecutorTest extends TestCase {
 		// make sure we have what /bin/sh is pointing at in the allowed exes for the test
 		// and a usable working dir
 		File binSh = new File("/bin/sh").getCanonicalFile();
-		ESAPI.setSecurityConfiguration(
+		ESAPI.override(
 			new Conf(
 				ESAPI.securityConfiguration(),
 				Collections.singletonList(binSh.getPath()),

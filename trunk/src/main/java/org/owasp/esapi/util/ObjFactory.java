@@ -10,23 +10,17 @@
 package org.owasp.esapi.util;
 
 import org.owasp.esapi.errors.ConfigurationException;
-// CHECKME: I thought this class could be generally useful so placed it in this
-//			package rather than in somewhere under org.owasp.esapi.reference
-//			(maybe a util package there), but if you want to move it to
-//			somewhere that others won't be tempted to use it, I'm OK with that.
-//			(BTW, where I work, we often have 'pvt' subpackages for private
-//			implementation classes that we don't want clients to use _directly_.
-//			They end up in the same jar file, but we simply exclude all the pvt
-//			packages from the generated Javadoc.)
-//
-//			The reason I implemented this in the first place is I didn't like
-//			all the repetitive code to do essentially what this class does.
-//			Using this to refactor the org.owasp.esapi.ESAPI class eliminated
-//			a lot of lines of code. Of course, I'm expecting this will all be
-//			reviewed in some code inspection.		- kevin wall
+
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+
 /**
  * A generic object factory to create an object of class T. T must be a concrete
- * class that has a no-argument public constructor.
+ * class that has a no-argument public constructor or a implementor of the Singleton pattern
+ * that has a no-arg static getInstance method. If the class being created has a getInstance
+ * method, it will be used as a singleton and newInstance() will never be called on the
+ * class no matter how many times it comes through this factory.
+ *
  * <p>
  * Typical use is something like:
  * <pre>
@@ -37,10 +31,8 @@ import org.owasp.esapi.errors.ConfigurationException;
  * 		String barName = "com.example.foo.Bar";
  * 		String beerBrand = "com.example.brewery.Guiness";
  * 		...
- * 		DrinkingEstablishment bar =
- * 				(new ObjFactory<DrinkingEstablishment>()).make(barName, "DrinkingEstablishment");
- * 		Beer beer =
- * 				(new ObjFactory<Beer>()).make(beerBrand, "Beer");
+ * 		DrinkingEstablishment bar = ObjFactory.make(barName, "DrinkingEstablishment");
+ * 		Beer beer = ObjFactory.make(beerBrand, "Beer");
  *		bar.drink(beer);	// Drink a Guiness beer at the foo Bar. :)
  *		...
  * </pre>
@@ -48,13 +40,10 @@ import org.owasp.esapi.errors.ConfigurationException;
  *  Copyright (c) 2009 - The OWASP Foundation
  *  </p>
  * @author kevin.w.wall@gmail.com
- *
- * @param <T>	The type T for which the class name passed to <code>make</code>
- * 				is the same as T or a sub-type of T.
+ * @author Chris Schmidt ( chrisisbeef .at. gmail.com )
  */
-public class ObjFactory<T> {
-	// CHECKME: This is just some of the common code snippets from ESAPI refactored out.
-	
+public class ObjFactory {
+
 	/**
 	 * Create an object based on the <code>className</code> parameter.
 	 * 
@@ -70,7 +59,7 @@ public class ObjFactory<T> {
 	 * 			an <code>Exception</code> of some type.
 	 */
 	@SuppressWarnings({ "unchecked" })	// Added because of Eclipse warnings, but ClassCastException IS caught.
-	public T make(String className, String typeName) throws ConfigurationException {
+	public static <T> T make(String className, String typeName) throws ConfigurationException {
 		Object obj = null;
 		String errMsg = null;
 		try {
@@ -83,26 +72,32 @@ public class ObjFactory<T> {
 			}
 			
 			Class<?> theClass = Class.forName(className);
-			obj = theClass.newInstance();
+
+            try {
+                Method singleton = theClass.getMethod( "getInstance" );
+
+                // If the implementation class contains a getInstance method that is not static, this is an invalid
+                // object configuration and a ConfigurationException will be thrown.
+                if ( !Modifier.isStatic( singleton.getModifiers() ) )
+                {
+                    throw new ConfigurationException( "Class [" + className + "] contains a non-static getInstance method." );
+                }
+                
+                obj = singleton.invoke( null );
+            } catch (NoSuchMethodException e) {
+                // This is a no-error exception, if this is caught we will continue on assuming the implementation was
+                // not meant to be used as a singleton.
+                obj = theClass.newInstance();
+            } catch (SecurityException e) {
+                // The class is meant to be singleton, however, the SecurityManager restricts us from calling the
+                // getInstance method on the class, thus this is a configuration issue and a ConfigurationException
+                // is thrown
+                throw new ConfigurationException( "The SecurityManager has restricted the object factory from getting a reference to the singleton implementation" +
+                        "of the class [" + className + "]", e );
+            }
 
 			return (T)obj;		// Eclipse warning here if @SupressWarnings omitted.
 			
-			// CHECKME: If any of these exceptions occur, I would argue that in an Enterprise production
-			// 			environment you _should_ throw some exception, even if it is an unchecked exception.
-			//			Otherwise, the appl will likely get some other exception (possibly much later) which
-			//			they are going to have to correlate to one of these outputs to STDOUT. Finally, if
-			//			we are going to log WITHOUT a standard known logger, IMHO, it's better to log STDERR,
-			//			which is at least unbuffered rather than sending to STDOUT which is buffered. (I have
-			//			seen cases where the buffered output is lost if the JVM process dies because of an
-			//			uncaught exception.) One catch-22 is if we want to use this in the ESAPI class to
-			//			instantiate the Logger, what do we use for a Logger here since that may not have been
-			//			done yet or may even be the part that fails.
-			//  
-			//			Finally, since this idiom occurs repetitively, I've refactored it to here.
-			//
-			// Good reference:
-			//			http://java.sun.com/docs/books/tutorial/reflect/member/ctorTrouble.html
-            //
             // Issue 66 - Removed System.out calls as we are throwing an exception in each of these cases
             // anyhow.
 		} catch( IllegalArgumentException ex ) {
@@ -136,10 +131,7 @@ public class ObjFactory<T> {
 	}
 	
 	/**
-	 * Public, do nothing CTOR.
+	 * Not instantiable
 	 */
-	public ObjFactory()
-	{
-		; // Empty
-	}
+	private ObjFactory() { }
 }
