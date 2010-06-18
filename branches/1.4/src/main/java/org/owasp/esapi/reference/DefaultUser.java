@@ -352,7 +352,7 @@ public class DefaultUser implements User, Serializable {
 	public boolean isSessionAbsoluteTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
 		if ( session == null ) return true;
-		Date deadline = new Date( session.getCreationTime() + (1000 * 60 * 60 * ABSOLUTE_TIMEOUT_LENGTH));
+		Date deadline = new Date( session.getCreationTime() + ABSOLUTE_TIMEOUT_LENGTH);
 		Date now = new Date();
 		return now.after(deadline);
 	}
@@ -363,7 +363,7 @@ public class DefaultUser implements User, Serializable {
 	public boolean isSessionTimeout() {
 		HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
 		if ( session == null ) return true;
-		Date deadline = new Date(session.getLastAccessedTime() + (1000 * 60 * 60 * IDLE_TIMEOUT_LENGTH));
+		Date deadline = new Date(session.getLastAccessedTime() + IDLE_TIMEOUT_LENGTH);
 		Date now = new Date();
 		return now.after(deadline);
 	}
