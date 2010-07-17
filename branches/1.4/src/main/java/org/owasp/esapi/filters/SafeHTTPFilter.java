@@ -38,6 +38,14 @@ import org.owasp.esapi.ESAPI;
  * injection. Attackers use techniques like CRLF injection and null byte injection
  * to confuse the parsing of requests and responses.
  */
+
+//
+//
+// SafeHTTPFilter.ignoreURLroot
+// SafeHTTPFilter.ignoreURLexact
+// SafeHTTPFilter.ignoreURLregEx
+//
+//
 public class SafeHTTPFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -49,7 +57,19 @@ public class SafeHTTPFilter implements Filter {
         HttpServletRequest hrequest = (HttpServletRequest)request;
         HttpServletResponse hresponse = (HttpServletResponse)response;
         ESAPI.httpUtilities().setCurrentHTTP(hrequest, hresponse);
-        chain.doFilter(new SafeRequest(hrequest), new SafeResponse(hresponse));
+        
+        boolean isExcluded = isExcludedURL(hrequest);
+        
+        if (isExcluded) {
+            chain.doFilter(hrequest, hresponse);
+        } else {
+            chain.doFilter(new SafeRequest(hrequest), new SafeResponse(hresponse));
+        }
+    }
+    
+    //TODO
+    private boolean isExcludedURL(HttpServletRequest hrequest) {
+        return false;
     }
 
 	public void destroy() {
