@@ -49,7 +49,7 @@ import org.owasp.esapi.ESAPI;
 public class SafeHTTPFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-
+    
         if (!(request instanceof HttpServletRequest)) {
             chain.doFilter(request, response);
             return;
@@ -71,13 +71,13 @@ public class SafeHTTPFilter implements Filter {
     private boolean isExcludedURL(HttpServletRequest hrequest) {
         return false;
     }
-
-	public void destroy() {
-		// no special action
-	}
-
-	public void init(FilterConfig filterConfig) throws ServletException {
-		// no special action
-	}
+    
+    public void destroy() {
+    	// no special action
+    }
+    
+    public void init(FilterConfig filterConfig) throws ServletException {
+    	// no special action
+    }
 	
 }
