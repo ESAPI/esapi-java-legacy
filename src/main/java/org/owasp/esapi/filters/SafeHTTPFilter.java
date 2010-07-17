@@ -39,13 +39,7 @@ import org.owasp.esapi.ESAPI;
  * to confuse the parsing of requests and responses.
  */
 
-//
-//
-// SafeHTTPFilter.ignoreURLroot
-// SafeHTTPFilter.ignoreURLexact
-// SafeHTTPFilter.ignoreURLregEx
-//
-//
+
 public class SafeHTTPFilter implements Filter {
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -67,17 +61,23 @@ public class SafeHTTPFilter implements Filter {
         }
     }
     
-    //TODO
+    // TODO - check if current url is on one of these exclude lists...
+    //
+    // SafeHTTPFilter.ignoreURLroot
+    // SafeHTTPFilter.ignoreURLexact
+    // SafeHTTPFilter.ignoreURLregEx
+    //
+    //
     private boolean isExcludedURL(HttpServletRequest hrequest) {
         return false;
     }
-    
+        
     public void destroy() {
-    	// no special action
+        // no special action
     }
     
     public void init(FilterConfig filterConfig) throws ServletException {
-    	// no special action
+        // no special action
     }
 	
 }
