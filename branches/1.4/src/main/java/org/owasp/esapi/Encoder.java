@@ -267,8 +267,15 @@ public interface Encoder {
 	String encodeForSQL(Codec codec, String input);
 
 	/**
-	 * Encode for an operating system command shell according to the selected codec (appropriate codecs include
-	 * the WindowsCodec and UnixCodec).
+	 * Encode for an operating system command shell according to the selected codec (appropriate codecs include the WindowsCodec and UnixCodec). 
+	 *
+     * Please note the following recommendations before choosing to use this method: 
+     * 
+     * 1)      It is strongly recommended that applications avoid making direct OS system calls if possible as such calls are not portable, and they are potentially unsafe. Please use language provided features if at all possible, rather than native OS calls to implement the desired feature.
+     * 2)      If an OS call cannot be avoided, then it is recommended that the program to be invoked be invoked directly (e.g., System.exec("nameofcommand" + "parameterstocommand");) as this avoids the use of the command shell. The "parameterstocommand" should of course be validated before passing them to the OS command.
+     * 3)      If you must use this method, then we recommend validating all user supplied input passed to the command shell as well, in addition to using this method in order to make the command shell invocation safe.
+     *  
+     * An example use of this method would be: System.exec("dir " + ESAPI.encodeForOS(WindowsCodec, "parameter(s)tocommandwithuserinput");
 	 * 
 	 * @param codec 
 	 * 		a Codec that declares which operating system 'input' is being encoded for (ie. Windows, Unix, etc.)
