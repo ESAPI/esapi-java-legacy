@@ -47,16 +47,16 @@ NOTE:   All scripts are meant to be run under *nix (or using something like
 
     =====> In scripts/compile.sh:
             Change
-                javac -classpath .:../../../target/ESAPI-2.0.jar *.java
+                javac -classpath .:../../../target/esapi-2.0.jar *.java
             to
-                javac -classpath .:$(ls ../../../../ESAPI*.jar) *.java
+                javac -classpath .:$(ls ../../../../esapi*.jar) *.java
 
     =====> In scripts/findjar.sh ... no change needed.
 
     =====> In scripts/persistEncryptedData.sh:
             Change:
 
-classpath=".:../../../target/ESAPI-2.0.jar:\
+classpath=".:../../../target/esapi-2.0.jar:\
 $(./findjar.sh log4j-1.2.12.jar):\
 $(./findjar.sh commons-fileupload-1.2.jar):\
 $(./findjar.sh servlet-api-2.4.jar)"
@@ -65,7 +65,7 @@ $(./findjar.sh servlet-api-2.4.jar)"
 
 startDir=../../../../libs
 
-classpath=".:$(ls ../../../../ESAPI*.jar):\
+classpath=".:$(ls ../../../../esapi*.jar):\
 $(./findjar.sh -start $startDir log4j-1.2.12.jar):\
 $(./findjar.sh -start $startDir commons-fileupload-1.2.jar):\
 $(./findjar.sh -start $startDir servlet-api-2.4.jar)"
@@ -93,14 +93,14 @@ $(./findjar.sh -start $startDir servlet-api-2.4.jar)"
 
             Change lines 18-21 from:
 
-classpath=".:target/ESAPI-2.0.jar:\
+classpath=".:target/esapi-2.0.jar:\
 $($findjar log4j-1.2.12.jar):\
 $($findjar commons-fileupload-1.2.jar):\
 $($findjar servlet-api-2.4.jar)"
 
             to:
 
-classpath=".:$(ls ESAPI*.jar):\
+classpath=".:$(ls esapi*.jar):\
 $($findjar -start $PWD/libs log4j-1.2.12.jar):\
 $($findjar -start $PWD/libs commons-fileupload-1.2.jar):\
 $($findjar -start $PWD/libs servlet-api-2.4.jar)"
