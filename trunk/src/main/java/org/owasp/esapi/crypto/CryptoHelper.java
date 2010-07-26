@@ -230,6 +230,69 @@ public class CryptoHelper {
 	    return extraCipherModes.contains( cipherMode );
 	}
 	
+    /**
+     * Check to see if a Message Authentication Code (MAC) is required
+     * for a given {@code CipherText} object and the current ESAPI.property
+     * settings. A MAC is considered "required" if the specified
+     * {@code CipherText} was not encrypted by one of the preferred
+     * "combined" cipher modes (e.g., CCM or GCM) and the setting of the
+     * current ESAPI properties for the property
+     * {@code Encryptor.CipherText.useMAC} is set to {@code true}. (Normally,
+     * the setting for {@code Encryptor.CipherText.useMAC} should be set to
+     * {@code true} unless FIPS 140-2 compliance is required. See
+     * <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-symmetric-crypto-user-guide.html">
+     * User Guide for Symmetric Encryption in ESAPI 2.0</a> and the section
+     * on using ESAPI with FIPS for further details.
+     *
+     * @param ct    The specified {@code CipherText} object to check to see if
+     *              it requires a MAC.
+     * @returns     True if a MAC is required, false if it is not required.
+     */
+    public static boolean isMACRequired(CipherText ct) {
+        boolean preferredCipherMode =
+            CryptoHelper.isCombinedCipherMode( ct.getCipherMode() );
+        boolean wantsMAC = ESAPI.securityConfiguration().useMACforCipherText();
+
+        // The preferred "combined" cipher modes such as CCM, GCM, etc. do
+        // not require a MAC as a MAC would be superfluous and just require
+        // additional computing time.
+        return ( !preferredCipherMode && wantsMAC );
+    }
+	
+    /**
+     * If a Message Authentication Code (MAC) is required for the specified
+     * {@code CipherText} object, then attempt to validate the MAC that
+     * should be embedded within the {@code CipherText} object by using a
+     * derived key based on the specified {@code SecretKey}.
+     *
+     * @param sk    The {@code SecretKey} used to derived a key to check
+     *              the authenticity via the MAC.
+     * @param ct    The {@code CipherText} that we are checking for a
+     *              valid MAC. 
+     *
+     * @return  True is returned if a MAC is required and it is valid as
+     *          verified using a key derived from the specified
+     *          {@code SecretKey} or a MAC is not required. False is returned
+     *          otherwise.
+     */
+    public static boolean isCipherTextMACvalid(SecretKey sk, CipherText ct)
+    {
+        if ( CryptoHelper.isMACRequired( ct ) ) {
+            try {
+                SecretKey authKey = CryptoHelper.computeDerivedKey( sk, ct.getKeySize(), "authenticity");
+                boolean validMAC = ct.validateMAC( authKey );
+                return validMAC;
+            } catch (Exception ex) {
+                // Error on side of security. If this fails and can't verify MAC
+                // assume it is invalid. Note that CipherText.toString() does not
+                // print the actual ciphertext.
+                logger.warning(Logger.SECURITY_FAILURE, "Unable to validate MAC for ciphertext " + ct, ex);
+                return false;
+            }
+        }
+        return true;
+    }
+    
 	/**
 	 * Overwrite a byte array with a specified byte. This is frequently done
 	 * to a plaintext byte array so the sensitive data is not lying around
