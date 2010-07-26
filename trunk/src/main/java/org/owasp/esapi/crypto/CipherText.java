@@ -27,6 +27,14 @@ import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.EncryptionException;
 
+// CHECKME: Some of these assertions probably should be actual runtime checks
+//          with suitable exceptions to account for cases where programmers
+//          accidentally pass in byte arrays that are not really serialized
+//          CipherText objects (note: as per asPortableSerializedByteArra()).
+//          However, not sure what exception time is really suitable here.
+//          It probably should be a sub-class of RuntimeException, but
+//          IllegalArguementException doesn't really make sense here. Suggestions?
+
 /**
  * A {@code Serializable} interface representing the result of encrypting
  * plaintext and some additional information about the encryption algorithm,
