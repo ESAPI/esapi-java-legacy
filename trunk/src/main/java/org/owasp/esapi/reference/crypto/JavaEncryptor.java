@@ -1,6 +1,6 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -74,8 +74,11 @@ import org.owasp.esapi.errors.IntegrityException;
  * @see org.owasp.esapi.Encryptor
  */
 public final class JavaEncryptor implements Encryptor {
-    private static Encryptor singletonInstance;
+    private static volatile Encryptor singletonInstance;
 
+    // Note: This double-check pattern only works because singletonInstance
+    //       is declared to be volatile.  Usually this method is called
+    //       via ESAPI.encryptor() rather than directly.
     public static Encryptor getInstance() throws EncryptionException {
         if ( singletonInstance == null ) {
             synchronized ( JavaEncryptor.class ) {
@@ -93,7 +96,7 @@ public final class JavaEncryptor implements Encryptor {
     private static SecretKeySpec secretKeySpec = null; // DISCUSS: Why static? Implies one key?!?
     private static String encryptAlgorithm = "AES";
     private static String encoding = "UTF-8"; 
-    private static int encryptionKeyLength = 256;
+    private static int encryptionKeyLength = 128;
     
     // digital signatures
     private static PrivateKey privateKey = null;
@@ -121,18 +124,32 @@ public final class JavaEncryptor implements Encryptor {
         //          We could be mean and just print a warning *every* time.
 	private static final int logEveryNthUse = 25;
 	
+    // *Only* use this string for user messages for EncryptionException when
+    // decryption fails. This is to prevent information leakage that may be
+    // valuable in various forms of ciphertext attacks, such as the
+	// Padded Oracle attack described by Rizzo and Duong.
+    private static final String DECRYPTION_FAILED =
+        "Decryption failed; see logs for details.";
+
+    // # of seconds that all failed decryption attempts will take. Used to
+    // help prevent side-channel timing attacks.
+    private static int N_SECS = 2;
+
 	// Load the preferred JCE provider if one has been specified.
 	static {
 	    try {
             SecurityProviderLoader.loadESAPIPreferredJCEProvider();
         } catch (NoSuchProviderException ex) {
+            logger.fatal(Logger.SECURITY_FAILURE,
+                         "JavaEncryptor failed to load JCE provider.", ex);
             throw new ExceptionInInitializerError(ex);
         }
         setupAlgorithms();
 	}
 	
     /**
-     * Generates a new strongly random secret key and salt that can be used in the ESAPI properties file.
+     * Generates a new strongly random secret key and salt that can be
+     * copy and pasted in the <b>ESAPI.properties</b> file.
      * 
      * @param args Set first argument to "-print" to display available algorithms on standard output.
      * @throws java.lang.Exception	To cover a multitude of sins, mostly in configuring ESAPI.properties.
@@ -205,7 +222,7 @@ public final class JavaEncryptor implements Encryptor {
 	
     
     /**
-     * CTOR for {@code JavaEncryptor}.
+     * Private CTOR for {@code JavaEncryptor}, called by {@code getInstance()}.
      * @throws EncryptionException if can't construct this object for some reason.
      * 					Original exception will be attached as the 'cause'.
      */
@@ -245,15 +262,15 @@ public final class JavaEncryptor implements Encryptor {
                 // For asymmetric encryption (i.e., public/private key)
                 //
                 try {
-                    SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
+                    SecureRandom prng = SecureRandom.getInstance(randomAlgorithm);
 
                     // Because hash() is not static (but it could be were in not
                     // for the interface method specification in Encryptor), we
                     // cannot do this initialization in a static method or static
                     // initializer.
                     byte[] seed = hash(new String(skey, encoding),new String(salt, encoding)).getBytes(encoding);
-                    random.setSeed(seed);
-                    initKeyPair(random);
+                    prng.setSeed(seed);
+                    initKeyPair(prng);
                 } catch (Exception e) {
                     throw new EncryptionException("Encryption failure", "Error creating Encryptor", e);
                 }             
@@ -601,107 +618,181 @@ public final class JavaEncryptor implements Encryptor {
 	/**
 	 * {@inheritDoc}
 	 */
-	public PlainText decrypt(SecretKey key, CipherText ciphertext) throws EncryptionException
+	public PlainText decrypt(SecretKey key, CipherText ciphertext)
+	    throws EncryptionException, IllegalArgumentException
 	{
-		SecretKey authKey = null;
-		try {
-			assert key != null : "Encryption key may not be null";
-			assert ciphertext != null : "Ciphertext may not be null";
-			
-			if ( ! CryptoHelper.isAllowedCipherMode(ciphertext.getCipherMode()) ) {
-			    throw new EncryptionException("Decryption failed -- invalid cipher mode",
-			                                  "Cipher mode " + ciphertext.getCipherMode() +
-			                                     " not permitted for decryption or encryption operations.");
-			}
-			logger.debug(Logger.EVENT_SUCCESS, "JavaEncryptor.decrypt(SecretKey,CipherText): " + ciphertext);
-			Cipher decrypter = Cipher.getInstance(ciphertext.getCipherTransformation());
-			int keySize = key.getEncoded().length * 8;	// Convert to # bits
-			
-			// Using cipher mode that supports *both* confidentiality *and* authenticity? If so, then
-			// use the specified SecretKey as-is rather than computing a derived key from it. We also
-			// don't expect a separate MAC in the specified CipherText object so therefore don't try
-			// to validate it.
-			boolean preferredCipherMode = CryptoHelper.isCombinedCipherMode( ciphertext.getCipherMode() );
-			SecretKey encKey = null;
-			if ( preferredCipherMode ) {
-			    encKey = key;
-			} else {   
-			    // TODO: Calculate avg time this takes and consider caching for very short interval (e.g., 2 to 5 sec tops).
-			    //		 Otherwise doing lots of encryptions in a loop could take a lot longer.
-			    encKey = CryptoHelper.computeDerivedKey( key, keySize, "encryption");	// Recommended by David A. Wagner
-			}
-			if ( ciphertext.requiresIV() ) {
-				decrypter.init(Cipher.DECRYPT_MODE, encKey, new IvParameterSpec(ciphertext.getIV()));
-			} else {
-				decrypter.init(Cipher.DECRYPT_MODE, encKey);
-			}
-			byte[] output = decrypter.doFinal(ciphertext.getRawCipherText());
+	    long start = System.nanoTime();  // Current time in nanosecs; used to prevent timing attacks
+	    if ( key == null ) {
+	        throw new IllegalArgumentException("SecretKey arg may not be null");
+	    }
+	    if ( ciphertext == null ) {
+	        throw new IllegalArgumentException("Ciphertext may arg not be null");
+	    }
 
-			// The decryption was "successful", but there are rare instances (approximately
-			// 1 in a 1000 for PKCS5Padding) where the wrong key or IV was used but the ciphertext still
-			// decrypts correctly, but simply results in garbage. (The other 999 times out
-			// of 1000 it will fail with a BadPaddingException [assuming PKCS#5 padding].)
-			//
-			// This only can happen in cases where the cipher mode is not one that supports
-			// authenticity. So at this point we check if the cipher mode is one that was
-			// specified in the ESAPI.properties file as one that supports *both* confidentiality
-			// and authenticity. If it is, there is nothing further to do other than to return
-			// decrypted bytes as a PlainText output. (In fact, in these cases, we do not even
-			// calculate a separate MAC because it is not needed.) Thus at this point, if we are
-			// using a preferred cipher mode, we just return the decrypted output as a PlainText
-			// object, and we if are not using a preferred cipher mode, then we check (optionally--
-			// if it was provided) the MAC contained separately in the CipherText object to validate
-			// it. If the validation of these separate MAC returns false, the assumption is that
-			// the decrypted output is garbarge. Rather than returning the (presumably) garbage plaintext,
-			// we return throw an exception. The MAC check (if enabled) allows us to verify the
-			// authenticity of what was returned as the raw ciphertext.
-			if ( preferredCipherMode ) {
-			    return new PlainText(output);
-			} else {
-			    // Note: If it is desired to use the MAC, but it was not computed or stored (as in
-			    // the case with the String encrypt() / decrypt() methods), we return true when
-			    // we call CipherText.validateMAC() regardless of the outcome, but we also log the discrepancy.
-			    // The reasons we do this are:
-			    //		1) If the String-based encrypt / decrypt methods are used, the CipherText object is
-			    //		   long gone at the time of the decryption and hence the ability to validate the MAC.
-			    //		2) If a sender encrypts a message and sends a serialized CipherText message a
-			    //		   recipient, the sender cannot force the recipient (decryptor) to use a MAC and
-			    //		   vice-versa.
-			    authKey = CryptoHelper.computeDerivedKey( key, keySize, "authenticity");
-			    boolean success = ciphertext.validateMAC( authKey );
-			    if ( !success ) {
-			        // Stop the debugger here and peer inside the 'ciphertext' object if you don't believe us.
-			        throw new EncryptionException("Decryption verification failed.",
-			                "Decryption returned without throwing but MAC verification " +
-			                "failed, meaning returned plaintext was garbarge or ciphertext not authentic.");
-			    }
-			    return new PlainText(output);
-			}
-		} catch (InvalidKeyException ike) {
-			throw new EncryptionException("Decryption failure", "Must install unlimited strength crypto extension from Sun", ike);
-		} catch (NoSuchAlgorithmException e) {
-			throw new EncryptionException("Decryption failed", "Invalid algorithm for available JCE providers - " +
-						ciphertext.getCipherTransformation() + ": " + e.getMessage(), e);
-		} catch (NoSuchPaddingException e) {
-			throw new EncryptionException("Decryption failed", "Invalid padding scheme (" +
-						ciphertext.getPaddingScheme() + ") for cipher transformation " + ciphertext.getCipherTransformation() +
-						": " + e.getMessage(), e);
-		} catch (InvalidAlgorithmParameterException e) {
-			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
-		} catch (IllegalBlockSizeException e) {
-			throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
-		} catch (BadPaddingException e) {
-			boolean success = ciphertext.validateMAC( authKey );
-			if ( success ) {
-				throw new EncryptionException("Decryption failed", "Decryption problem: " + e.getMessage(), e);
-			} else {
-				throw new EncryptionException("Decryption failed",
-						"Decryption problem: WARNING: Adversary may have tampered with " +
-						"CipherText object orCipherText object mangled in transit: " + e.getMessage(), e);
-		}
-	}
+	    if ( ! CryptoHelper.isAllowedCipherMode(ciphertext.getCipherMode()) ) {
+	        // This really should be an illegal argument exception, but it could
+	        // mean that a partner encrypted something using a cipher mode that
+	        // you do not accept, so it's a bit more complex than that. Also
+	        // throwing an IllegalArgumentException doesn't allow us to provide
+	        // the two separate error messages or automatically log it.
+	        throw new EncryptionException(DECRYPTION_FAILED,
+	                "Invalid cipher mode " + ciphertext.getCipherMode() +
+	        " not permitted for decryption or encryption operations.");
+	    }
+	    logger.debug(Logger.EVENT_SUCCESS,
+	            "Args valid for JavaEncryptor.decrypt(SecretKey,CipherText): " +
+	            ciphertext);
+
+	    PlainText plaintext = null;
+	    boolean caughtException = false;
+	    int progressMark = 0;
+	    try {
+	        // First we validate the MAC.
+	        boolean valid = CryptoHelper.isCipherTextMACvalid(key, ciphertext);
+	        if ( !valid ) {
+	            try {
+	                // This is going to fail, but we want the same processing
+	                // to occur as much as possible so as to prevent timing
+	                // attacks. We _could_ just be satisfied by the additional
+	                // sleep in the 'finally' clause, but an attacker on the
+	                // same server who can run something like 'ps' can tell
+	                // CPU time versus when the process is sleeping. Hence we
+	                // try to make this as close as possible. Since we know
+	                // it is going to fail, we ignore the result and ignore
+	                // the (expected) exception.
+	                handleDecryption(key, ciphertext); // Ignore return (should fail).
+	            } catch(Exception ex) {
+	                ;   // Ignore
+	            }
+	            throw new EncryptionException(DECRYPTION_FAILED,
+	                    "Decryption failed because MAC invalid for " +
+	                    ciphertext);
+	        }
+	        progressMark++;
+	        // The decryption only counts if the MAC was valid.
+	        plaintext = handleDecryption(key, ciphertext);
+	        progressMark++;
+	    } catch(EncryptionException ex) {
+	        caughtException = true;
+	        String logMsg = null;
+	        switch( progressMark ) {
+	        case 1:
+	            logMsg = "Decryption failed because MAC invalid. See logged exception for details.";
+	            break;
+	        case 2:
+	            logMsg = "Decryption failed because handleDecryption() failed. See logged exception for details.";
+	            break;
+	        default:
+	            logMsg = "Programming error: unexpected progress mark == " + progressMark;
+	        break;
+	        }
+	        logger.error(Logger.SECURITY_FAILURE, logMsg);
+	        throw ex;           // Re-throw
+	    }
+	    finally {
+	        if ( caughtException ) {
+	            // The rest of this code is to try to account for any minute differences
+	            // in the time it might take for the various reasons that decryption fails
+	            // in order to prevent any other possible timing attacks. Perhaps it is
+	            // going overboard. If nothing else, if N_SECS is large enough, it might
+	            // deter attempted repeated attacks by making them take much longer.
+	            long now = System.nanoTime();
+	            long elapsed = now - start;
+	            final long NANOSECS_IN_SEC = 1000000000L; // nanosec is 10**-9 sec
+	            long nSecs = N_SECS * NANOSECS_IN_SEC;  // N seconds in nano seconds
+	            if ( elapsed < nSecs ) {
+	                // Want to sleep so total time taken is N seconds.
+	                long extraSleep = nSecs - elapsed;
+
+	                // 'extraSleep' is in nanoseconds. Need to convert to a millisec
+	                // part and nanosec part. Nanosec is 10**-9, millsec is
+	                // 10**-3, so divide by (10**-9 / 10**-3), or 10**6 to
+	                // convert to from nanoseconds to milliseconds.
+	                long millis = extraSleep / 1000000L;
+	                long nanos  = (extraSleep - (millis * 1000000L));
+	                assert nanos >= 0 && nanos <= Integer.MAX_VALUE :
+                            "Nanosecs out of bounds; nanos = " + nanos;
+	                try {
+	                    Thread.sleep(millis, (int)nanos);
+	                } catch(InterruptedException ex) {
+	                    ;   // Ignore
+	                }
+	            } // Else ... time already exceeds N_SECS sec, so do not sleep.
+	        }
+	    }
+	    return plaintext;
 	}
 
+    // Handle the actual decryption portion. At this point it is assumed that
+    // any MAC has already been validated. (But see "DISCUSS" issue, below.)
+    private PlainText handleDecryption(SecretKey key, CipherText ciphertext)
+        throws EncryptionException
+    {
+        int keySize = 0;
+        try {
+            Cipher decrypter = Cipher.getInstance(ciphertext.getCipherTransformation());
+            keySize = key.getEncoded().length * 8;  // Convert to # bits
+
+            // Using cipher mode that supports *both* confidentiality *and* authenticity? If so, then
+            // use the specified SecretKey as-is rather than computing a derived key from it. We also
+            // don't expect a separate MAC in the specified CipherText object so therefore don't try
+            // to validate it.
+            boolean preferredCipherMode = CryptoHelper.isCombinedCipherMode( ciphertext.getCipherMode() );
+            SecretKey encKey = null;
+            if ( preferredCipherMode ) {
+                encKey = key;
+            } else {   
+                // TODO: PERFORMANCE: Calculate avg time this takes and consider caching for very short interval
+                //       (e.g., 2 to 5 sec tops). Otherwise doing lots of encryptions in a loop could take a LOT longer.
+                //       But remember Jon Bentley's "Rule #1 on performance: First make it right, then make it fast."
+                encKey = CryptoHelper.computeDerivedKey( key, keySize, "encryption");   // Recommended by David A. Wagner
+            }
+            if ( ciphertext.requiresIV() ) {
+                decrypter.init(Cipher.DECRYPT_MODE, encKey, new IvParameterSpec(ciphertext.getIV()));
+            } else {
+                decrypter.init(Cipher.DECRYPT_MODE, encKey);
+            }
+            byte[] output = decrypter.doFinal(ciphertext.getRawCipherText());
+            return new PlainText(output);
+
+        } catch (InvalidKeyException ike) {
+            throw new EncryptionException(DECRYPTION_FAILED, "Must install JCE Unlimited Strength Jurisdiction Policy Files from Sun", ike);
+        } catch (NoSuchAlgorithmException e) {
+            throw new EncryptionException(DECRYPTION_FAILED, "Invalid algorithm for available JCE providers - " +
+                    ciphertext.getCipherTransformation() + ": " + e.getMessage(), e);
+        } catch (NoSuchPaddingException e) {
+            throw new EncryptionException(DECRYPTION_FAILED, "Invalid padding scheme (" +
+                    ciphertext.getPaddingScheme() + ") for cipher transformation " + ciphertext.getCipherTransformation() +
+                    ": " + e.getMessage(), e);
+        } catch (InvalidAlgorithmParameterException e) {
+            throw new EncryptionException(DECRYPTION_FAILED, "Decryption problem: " + e.getMessage(), e);
+        } catch (IllegalBlockSizeException e) {
+            throw new EncryptionException(DECRYPTION_FAILED, "Decryption problem: " + e.getMessage(), e);
+        } catch (BadPaddingException e) {
+            //DISCUSS: This needs fixed. Already validated MAC in CryptoHelper.isCipherTextMACvalid() above.
+            //So only way we could get a padding exception is if invalid padding were used originally by
+            //the party doing the encryption. (This might happen with a buggy padding scheme for instance.)
+            //It *seems* harmless though, so will leave it for now, and technically, we need to either catch it
+            //or declare it in a throws class. Clearly we don't want to do the later. This should be discussed
+            //during a code inspection.
+            SecretKey authKey;
+            try {
+                authKey = CryptoHelper.computeDerivedKey( key, keySize, "authenticity");
+            } catch (Exception e1) {
+                throw new EncryptionException(DECRYPTION_FAILED,
+                        "Decryption problem -- failed to compute derived key for authenticity: " + e1.getMessage(), e1);
+            }
+            boolean success = ciphertext.validateMAC( authKey );
+            if ( success ) {
+                throw new EncryptionException(DECRYPTION_FAILED, "Decryption problem: " + e.getMessage(), e);
+            } else {
+                throw new EncryptionException(DECRYPTION_FAILED,
+                        "Decryption problem: WARNING: Adversary may have tampered with " +
+                        "CipherText object orCipherText object mangled in transit: " + e.getMessage(), e);
+            }
+        }
+    }
+	
 	/**
 	* {@inheritDoc}
 	*/
@@ -745,14 +836,25 @@ public final class JavaEncryptor implements Encryptor {
      * @throws IntegrityException
      */
 	public String seal(String data, long expiration) throws IntegrityException {
+	    if ( data == null ) {
+	        throw new IllegalArgumentException("Data to be sealed may not be null.");
+	    }
+	    
 		try {
+		    String b64data = null;
+            try {
+                b64data = ESAPI.encoder().encodeForBase64(data.getBytes("UTF-8"), false);
+            } catch (UnsupportedEncodingException e) {
+                ; // Ignore; should never happen since UTF-8 built into rt.jar
+            }
 			// mix in some random data so even identical data and timestamp produces different seals
-			String random = ESAPI.randomizer().getRandomString(10, EncoderConstants.CHAR_ALPHANUMERICS);
-			String plaintext = expiration + ":" + random + ":" + data;
-			// add integrity check
+			String nonce = ESAPI.randomizer().getRandomString(10, EncoderConstants.CHAR_ALPHANUMERICS);
+			String plaintext = expiration + ":" + nonce + ":" + b64data;
+			// add integrity check; signature is already base64 encoded.
 			String sig = this.sign( plaintext );
-			String ciphertext = this.encrypt( plaintext + ":" + sig );
-			return ciphertext;
+			CipherText ciphertext = this.encrypt( new PlainText(plaintext + ":" + sig) );
+			String sealedData = ESAPI.encoder().encodeForBase64(ciphertext.asPortableSerializedByteArray(), false);
+			return sealedData;
 		} catch( EncryptionException e ) {
 			throw new IntegrityException( e.getUserMessage(), e.getLogMessage(), e );
 		}
@@ -762,28 +864,38 @@ public final class JavaEncryptor implements Encryptor {
 	* {@inheritDoc}
 	*/
 	public String unseal(String seal) throws EncryptionException {
-		String plaintext = null;
+		PlainText plaintext = null;
 		try {
-			plaintext = decrypt(seal);
+		    byte[] encryptedBytes = ESAPI.encoder().decodeFromBase64(seal);
+		    CipherText cipherText = null;
+		    try {
+		        cipherText = CipherText.fromPortableSerializedBytes(encryptedBytes);
+		    } catch( AssertionError e) {
+	            // Some of the tests in EncryptorTest.testVerifySeal() are examples of
+		        // this if assertions are enabled.
+		        throw new EncryptionException("Invalid seal",
+	                                          "Seal passed garbarge data resulting in AssertionError: " + e);
+	        }
+			plaintext = this.decrypt(cipherText);
 
-			String[] parts = plaintext.split(":");
+			String[] parts = plaintext.toString().split(":");
 			if (parts.length != 4) {
-				throw new EncryptionException("Invalid seal", "Seal was not formatted properly");
+				throw new EncryptionException("Invalid seal", "Seal was not formatted properly.");
 			}
 	
 			String timestring = parts[0];
 			long now = new Date().getTime();
 			long expiration = Long.parseLong(timestring);
 			if (now > expiration) {
-				throw new EncryptionException("Invalid seal", "Seal expiration date has expired");
+				throw new EncryptionException("Invalid seal", "Seal expiration date of " + new Date(expiration) + " has past.");
 			}
-			String random = parts[1];
-			String data = parts[2];
+			String nonce = parts[1];
+			String b64data = parts[2];
 			String sig = parts[3];
-			if (!this.verifySignature(sig, timestring + ":" + random + ":" + data ) ) {
+			if (!this.verifySignature(sig, timestring + ":" + nonce + ":" + b64data ) ) {
 				throw new EncryptionException("Invalid seal", "Seal integrity check failed");
 			}	
-			return data;
+			return new String(ESAPI.encoder().decodeFromBase64(b64data), "UTF-8");
 		} catch (EncryptionException e) {
 			throw e;
 		} catch (Exception e) {
