@@ -30,7 +30,7 @@ import org.owasp.esapi.Logger;
  * <P>
  * Note that the "logMessage" for ALL EnterpriseSecurityExceptions is logged in the log file. This feature should be
  * used extensively throughout ESAPI implementations and the result is a fairly complete set of security log records.
- * ALL EnterpriseSecurityExceptions are also sent to the IntrusionDetector for use in detecting anomolous patterns of
+ * ALL EnterpriseSecurityExceptions are also sent to the IntrusionDetector for use in detecting anomalous patterns of
  * application usage.
  * <P>
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
@@ -100,8 +100,8 @@ public class EnterpriseSecurityException extends Exception {
     /**
      * Returns message meant for display to users
      *
-     * Note that if you are unsure of what set this message, it would probably be a good idea to encode this message
-     * before displaying it to the end user.
+     * Note that if you are unsure of what set this message, it would probably
+     * be a good idea to encode this message before displaying it to the end user.
      * 
      * @return a String containing a message that is safe to display to users
      */
@@ -110,9 +110,12 @@ public class EnterpriseSecurityException extends Exception {
     }
 
     /**
-     * Returns a message that is safe to display in logs, but probably not to users
+     * Returns a message that is safe to display in logs, but may contain
+     * sensitive information and therefore probably should not be displayed to
+     * users.
      * 
-     * @return a String containing a message that is safe to display in logs, but probably not to users
+     * @return a String containing a message that is safe to display in logs,
+     * but probably not to users as it may contain sensitive information.
      */
     public String getLogMessage() {
         return logMessage;
