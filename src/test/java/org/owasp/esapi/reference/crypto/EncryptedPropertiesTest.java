@@ -181,10 +181,12 @@ public class EncryptedPropertiesTest extends TestCase {
 		ByteArrayInputStream bais;
 		boolean sawOne = false;
 		boolean sawTwo = false;
+		boolean sawSeuss = false;
 
 	    DefaultEncryptedProperties toStore = new DefaultEncryptedProperties();
 		toStore.setProperty("one", "two");
 		toStore.setProperty("two", "three");
+		toStore.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
 		toStore.store(baos, "testStore");
 
 		bais = new ByteArrayInputStream(baos.toByteArray());
@@ -211,11 +213,20 @@ public class EncryptedPropertiesTest extends TestCase {
 					sawTwo = true;
 					assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
 				}
+	         else if(key.equals("seuss.schneier"))
+	                if(sawSeuss)
+	                    fail("Key seuss.schneier seen more than once.");
+	                else
+	                {
+	                    sawSeuss = true;
+	                    assertEquals("Key seuss.schneier's value was not expected value",
+	                                 "one fish, twofish, red fish, blowfish",
+	                                 toStore.getProperty("seuss.schneier"));
+	                }
 			else
 				fail("Unset key " + key + " returned from keySet().iterator()");
 		}
 		assertTrue("Key one was never seen", sawOne);
 		assertTrue("Key two was never seen", sawTwo);
 	}
-
 }
