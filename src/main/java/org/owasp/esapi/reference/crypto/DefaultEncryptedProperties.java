@@ -68,19 +68,31 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 * {@inheritDoc}
 	 */
 	public synchronized String getProperty(String key) throws EncryptionException {
+	    String[] errorMsgs = new String[] {
+	            ": failed decoding from base64",
+	            ": failed to deserialize properly",
+	            ": failed to decrypt properly"
+	        };
+
+	    int progressMark = 0;
 	    try {
 	        String encryptedValue = properties.getProperty(key);
 
 	        if(encryptedValue==null)
 	            return null;
 
+	        progressMark = 0;
 	        byte[] serializedCiphertext   = ESAPI.encoder().decodeFromBase64(encryptedValue);
+	        progressMark++;
 	        CipherText restoredCipherText = CipherText.fromPortableSerializedBytes(serializedCiphertext);
+	        progressMark++;
 	        PlainText plaintext           = ESAPI.encryptor().decrypt(restoredCipherText);
 	        
 	        return plaintext.toString();
 	    } catch (Exception e) {
-	        throw new EncryptionException("Property retrieval failure", "Couldn't decrypt property", e);
+	        throw new EncryptionException("Property retrieval failure",
+	                                      "Couldn't retrieve encrypted property for property " + key +
+	                                      errorMsgs[progressMark], e);
 	    }
 	}
 
@@ -88,22 +100,37 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 * {@inheritDoc}
 	 */
 	public synchronized String setProperty(String key, String value) throws EncryptionException {
-		try {
-		    if ( key == null ) {
-		        throw new NullPointerException("Property name may not be null.");
-		    }
-		    if ( value == null ) {
-		        throw new NullPointerException("Property value may not be null.");
-		    }
-		    // NOTE: Not backward compatible w/ ESAPI 1.4.
-		    PlainText pt = new PlainText(value);
-		    CipherText ct = ESAPI.encryptor().encrypt(pt);
-		    byte[] serializedCiphertext = ct.asPortableSerializedByteArray();
-		    String b64str = ESAPI.encoder().encodeForBase64(serializedCiphertext, false);
-			return (String)properties.setProperty(key, b64str);
-		} catch (Exception e) {
-			throw new EncryptionException("Property setting failure", "Couldn't encrypt property", e);
-		}
+	    String[] errorMsgs = new String[] {
+	            ": failed to encrypt properly",
+	            ": failed to serialize correctly",
+	            ": failed to base64-encode properly",
+	            ": failed to set base64-encoded value as property. Illegal key name?"
+	    };
+
+	    int progressMark = 0;
+	    try {
+	        if ( key == null ) {
+	            throw new NullPointerException("Property name may not be null.");
+	        }
+	        if ( value == null ) {
+	            throw new NullPointerException("Property value may not be null.");
+	        }
+	        // NOTE: Not backward compatible w/ ESAPI 1.4.
+	        PlainText pt = new PlainText(value);
+	        CipherText ct = ESAPI.encryptor().encrypt(pt);
+	        progressMark++;
+	        byte[] serializedCiphertext = ct.asPortableSerializedByteArray();
+	        progressMark++;
+	        String b64str = ESAPI.encoder().encodeForBase64(serializedCiphertext, false);
+	        progressMark++;
+	        String encryptedValue = (String)properties.setProperty(key, b64str);
+	        progressMark++;
+	        return encryptedValue;
+	    } catch (Exception e) {
+	        throw new EncryptionException("Property setting failure",
+	                                      "Couldn't set encrypted property " + key +
+	                                      errorMsgs[progressMark], e);
+	    }
 	}
 
 	/**
