@@ -1,5 +1,7 @@
 #!/bin/bash
-
+# Purpose: Persist some encrypted data by saving it to a file. Shows how
+#          the serialization works. See ../java/PersistedEncryptedData.java
+#          for details.
 
 classpath=".:../../../target/ESAPI-2.0.jar:\
 $(./findjar.sh log4j-1.2.12.jar):\
