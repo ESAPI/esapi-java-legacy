@@ -128,6 +128,7 @@ public class ObjFactory {
 			errMsg = ex.toString() + " " + typeName + " class (" + className + ") CTOR threw exception.";
 			throw new ConfigurationException(errMsg, ex);
 		}
+		// DISCUSS: Should we also catch ExceptionInInitializerError here? See Google Issue #61 comments.
 	}
 	
 	/**
