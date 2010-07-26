@@ -2,13 +2,7 @@ package org.owasp.esapi.crypto;
 
 import static org.junit.Assert.*;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
@@ -54,8 +48,7 @@ public class CipherTextSerializerTest {
             key = CryptoHelper.generateSecretKey(cipherSpec.getCipherAlgorithm(), 128);
             encryptor.init(Cipher.ENCRYPT_MODE, key, ivSpec);
 
-            byte[] raw;
-            raw = encryptor.doFinal("Hello".getBytes("UTF8"));
+            byte[] raw = encryptor.doFinal("Hello".getBytes("UTF8"));
             CipherText ct = ESAPI.encryptor().encrypt(key, new PlainText("Hello") );
             assertTrue( ct != null );   // Here to eliminate false positive from FindBugs.
             CipherTextSerializer cts = new CipherTextSerializer( ct );
