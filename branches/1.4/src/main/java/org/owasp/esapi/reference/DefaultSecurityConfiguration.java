@@ -117,8 +117,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	protected final int MAX_REDIRECT_LOCATION = 1000;
 
 	protected final int MAX_FILE_NAME_LENGTH = 1000;
+	
+	private static final String SAFE_FILTER_IGNORE_URL_ROOT = "SafeHTTPFilter.ignoreURLroot";
 
-	/**
+    private static final String SAFE_FILTER_IGNORE_URL_EXACT = "SafeHTTPFilter.ignoreURLexact";
+
+    private static final String SAFE_FILTER_IGNORE_URL_REGEX = "SafeHTTPFilter.ignoreURLregex";
+
+    /**
 	 * Load properties from properties file. Set this with setResourceDirectory
 	 * from your web application or ESAPI filter. For test and non-web
 	 * applications, this implementation defaults to a System property defined
@@ -686,4 +692,28 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		// return null if not found
 		return null;
 	}
+	
+	/**
+     * {@inheritDoc}
+     */
+    public List getSafeHTTPFilterIgnoreURLroot() {
+        String[] extList = properties.getProperty(SAFE_FILTER_IGNORE_URL_ROOT, "").split(",");
+        return Arrays.asList(extList);
+    }
+	
+	/**
+     * {@inheritDoc}
+     */
+    public List getSafeHTTPFilterIgnoreURLexact() {
+        String[] extList = properties.getProperty(SAFE_FILTER_IGNORE_URL_EXACT, "").split(",");
+        return Arrays.asList(extList);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List getSafeHTTPFilterIgnoreURLregEx() {
+        String[] extList = properties.getProperty(SAFE_FILTER_IGNORE_URL_REGEX, "").split(",");
+        return Arrays.asList(extList);
+    }
 }

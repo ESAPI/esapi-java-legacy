@@ -16,6 +16,10 @@
 package org.owasp.esapi.filters;
 
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -27,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.ESAPI;
-
 
 /**
  * This filter wraps the incoming request and outgoing response and overrides
@@ -60,15 +63,53 @@ public class SafeHTTPFilter implements Filter {
             chain.doFilter(new SafeRequest(hrequest), new SafeResponse(hresponse));
         }
     }
-    
-    // TODO - check if current url is on one of these exclude lists...
-    //
-    // SafeHTTPFilter.ignoreURLroot
-    // SafeHTTPFilter.ignoreURLexact
-    // SafeHTTPFilter.ignoreURLregEx
-    //
-    //
+
+    /**
+     * Ensure that the target URL is not purposefully being ignored by the SafeHTTPFilter.
+     * 
+     * @param hrequest
+     * @return
+     */
     private boolean isExcludedURL(HttpServletRequest hrequest) {
+        String targetURL = hrequest.getRequestURL().toString(); 
+        
+        //first: look for an exact URL match
+        List exactIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreURLexact();
+        if (exactIgnoreURLS.contains(targetURL)) return true;
+        
+        //second: look for a "root" match
+        List rootIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreURLroot();
+        Iterator i = rootIgnoreURLS.iterator();
+        while (i.hasNext()) {
+            String urlRoot = (String) i.next();
+            if (targetURL.startsWith(urlRoot.toLowerCase())) {
+                return true;
+            }
+        }
+
+        //third: look for a regular expression match
+        List regexIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreURLregEx();
+        i = regexIgnoreURLS.iterator();
+        while (i.hasNext()) {
+            String urlRegex = (String) i.next();
+            
+            Pattern p = null;
+            if ( p == null ) {
+                try {
+                    p = Pattern.compile(urlRegex);
+                } catch( PatternSyntaxException e ) {
+                    throw new RuntimeException( "SafeHTTPFilter misconfiguration, invalid regular expression. Bad RegEx=" + urlRegex);
+                }
+            }
+            
+            if (p == null) throw new RuntimeException( "SafeHTTPFilter misconfiguration, RegEx compiles to null. Bad RegEx=" + urlRegex);
+
+            if ( p.matcher(targetURL).matches() ) {
+                return true;
+            }
+        }
+        
+        //last no match, lets make this request SAFE(r)!
         return false;
     }
         
