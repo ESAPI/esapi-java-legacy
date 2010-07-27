@@ -200,4 +200,22 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	{
 		return wrapped.getDisableIntrusionDetection();
 	}
+
+	/** {@inheritDoc} */
+    public List getSafeHTTPFilterIgnoreURLexact()
+    {
+        return wrapped.getSafeHTTPFilterIgnoreURLexact();
+    }
+
+    /** {@inheritDoc} */
+    public List getSafeHTTPFilterIgnoreURLregEx()
+    {
+        return wrapped.getSafeHTTPFilterIgnoreURLregEx();
+    }
+
+    /** {@inheritDoc} */
+    public List getSafeHTTPFilterIgnoreURLroot()
+    {
+        return wrapped.getSafeHTTPFilterIgnoreURLroot();
+    }
 }

@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -264,6 +265,22 @@ public interface SecurityConfiguration {
      * @return the maximum size of a single log file (in bytes).
      */
     public int getMaxLogFileSize();
+    
+    /**
+     * @return List of URL root fragments for the SafeHTTPFilter to ignore.
+     */
+    public List getSafeHTTPFilterIgnoreURLroot();
+    
+    /**
+     * @return List of exact and complete URL's for the SafeHTTPFilter to ignore.
+     */
+    public List getSafeHTTPFilterIgnoreURLexact();
+    
+    /**
+     * @return List of regular expressions for the SafeHTTPFilter to use to see if 
+     *         certain URL's should be ignored. 
+     */
+    public List getSafeHTTPFilterIgnoreURLregEx();
 
 	/**
 	 * Models a simple threshold as a count and an interval, along with a set of actions to take if 
