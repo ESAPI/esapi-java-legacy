@@ -432,7 +432,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				return canonical;
 			}
 		}
-		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+")", "Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+"): context=" + context+", input=" + input, context );
+		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+allowedExtensions+")", "Invalid file name does not have valid extension ( "+allowedExtensions+"): context=" + context+", input=" + input, context );
 	}
 	
 	/**
