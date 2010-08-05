@@ -398,6 +398,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 */
 	public String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException {
+		if ((allowedExtensions == null) || (allowedExtensions.isEmpty())) {
+			throw new ValidationException( "Internal Error", "You called getValidFileName with an empty or null list of allowed Extensions, therefor no files can be uploaded" );
+		}
+		
 		String canonical = "";
 		// detect path manipulation
 		try {
