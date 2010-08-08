@@ -272,7 +272,7 @@ public class HTMLEntityCodec extends Codec {
 	/**
 	 * Initialize the entityNames array with all possible named entities
 	 */
-	private static void initializeMaps() {
+	private static synchronized void initializeMaps() {
 		String[] entityNames = { "quot"
 		/* 34 : quotation mark */, "amp"
 		/* 38 : ampersand */, "lt"
