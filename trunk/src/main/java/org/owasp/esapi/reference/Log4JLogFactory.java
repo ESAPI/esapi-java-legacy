@@ -87,8 +87,8 @@ public class Log4JLogFactory implements LogFactory {
      */
     protected static class Log4JLogger implements org.owasp.esapi.Logger {
 
-    	/** The jlogger object used by this class to log everything. */
-        private org.apache.log4j.Logger jlogger = null;
+    	/** The log4j object used by this class to log everything. */
+        private org.apache.log4j.Logger log4jlogger = null;
 
         /** The module name using this log. */
         private String moduleName = null;
@@ -109,7 +109,7 @@ public class Log4JLogFactory implements LogFactory {
          */
         protected Log4JLogger(String moduleName) {
             this.moduleName = moduleName;
-            this.jlogger = org.apache.log4j.Logger.getLogger(applicationName + ":" + moduleName);
+            this.log4jlogger = org.apache.log4j.Logger.getLogger(applicationName + ":" + moduleName);
         }
 
         /**
@@ -121,7 +121,7 @@ public class Log4JLogFactory implements LogFactory {
         public void setLevel(int level)
         {
         	try {
-        		jlogger.setLevel(convertESAPILeveltoLoggerLevel( level ));
+        		log4jlogger.setLevel(convertESAPILeveltoLoggerLevel( level ));
         	}
         	catch (IllegalArgumentException e) {
        			this.error(Logger.SECURITY_FAILURE, "", e);    		
@@ -252,7 +252,7 @@ public class Log4JLogFactory implements LogFactory {
         private void log(Level level, EventType type, String message, Throwable throwable) {
         	
         	// Check to see if we need to log
-        	if (!jlogger.isEnabledFor( level )) return;
+        	if (!log4jlogger.isEnabledFor( level )) return;
         	
 
             
@@ -287,49 +287,49 @@ public class Log4JLogFactory implements LogFactory {
 			}
 			
 			// log the message
-			jlogger.log(level, "[" + typeInfo + getUserInfo() + " -> " + appInfo + "] " + clean, throwable);
+			log4jlogger.log(level, "[" + typeInfo + getUserInfo() + " -> " + appInfo + "] " + clean, throwable);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isDebugEnabled() {
-    	    return jlogger.isEnabledFor(Level.DEBUG);
+    	    return log4jlogger.isEnabledFor(Level.DEBUG);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isErrorEnabled() {
-    	    return jlogger.isEnabledFor(Level.ERROR);
+    	    return log4jlogger.isEnabledFor(Level.ERROR);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isFatalEnabled() {
-    	    return jlogger.isEnabledFor(Level.FATAL);
+    	    return log4jlogger.isEnabledFor(Level.FATAL);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isInfoEnabled() {
-    	    return jlogger.isEnabledFor(Level.INFO);
+    	    return log4jlogger.isEnabledFor(Level.INFO);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isTraceEnabled() {
-            return jlogger.isEnabledFor(Level.TRACE);
+            return log4jlogger.isEnabledFor(Level.TRACE);
         }
 
         /**
     	* {@inheritDoc}
     	*/
         public boolean isWarningEnabled() {
-    	    return jlogger.isEnabledFor(Level.WARN);
+    	    return log4jlogger.isEnabledFor(Level.WARN);
         }
         
 public String getUserInfo() {
