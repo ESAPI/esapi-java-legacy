@@ -142,7 +142,7 @@ public class StringValidationRule extends BaseValidationRule {
 		// check whitelist patterns
 		for (Pattern p : whitelistPatterns) {
 			if ( !p.matcher(input).matches() ) {
-				throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Please conform to regex " + p.pattern() + ( maxLength == Integer.MAX_VALUE ? "" : " with a maximum length of " + maxLength ), "Invalid input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
+				throw new ValidationException( context + ": Invalid input. Please conform to regex " + p.pattern() + ( maxLength == Integer.MAX_VALUE ? "" : " with a maximum length of " + maxLength ), "Invalid input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
 			}
 		}
 
@@ -176,7 +176,7 @@ public class StringValidationRule extends BaseValidationRule {
 		// check blacklist patterns
 		for (Pattern p : blacklistPatterns) {
 			if ( p.matcher(input).matches() ) {
-				throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Dangerous input matching " + p.pattern() + " detected.", "Dangerous input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
+				throw new ValidationException( context + ": Invalid input. Dangerous input matching " + p.pattern() + " detected.", "Dangerous input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
 			}
 		}
 
@@ -208,11 +208,11 @@ public class StringValidationRule extends BaseValidationRule {
 	private String checkLength(String context, String input, String orig) throws ValidationException
 	{
 		if (input.length() < minLength) {
-			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The minimum length of " + minLength + " characters was not met.", "Input does not meet the minimum length of " + minLength + " by " + (minLength - input.length()) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
+			throw new ValidationException( context + ": Invalid input. The minimum length of " + minLength + " characters was not met.", "Input does not meet the minimum length of " + minLength + " by " + (minLength - input.length()) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
 		}
 
 		if (input.length() > maxLength) {
-			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + ", orig=" + orig +", input=" + input, context );
+			throw new ValidationException( context + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + ", orig=" + orig +", input=" + input, context );
 		}
 
 		return input;
@@ -246,7 +246,7 @@ public class StringValidationRule extends BaseValidationRule {
 			return input;
 		if(allowNull)
 			return null;
-		throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Input required.", "Input required: context=" + context + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
+		throw new ValidationException( context + ": Input required.", "Input required: context=" + context + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
 	}
 
 	/**
