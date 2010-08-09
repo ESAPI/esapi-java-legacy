@@ -514,8 +514,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return null 
-		return null;
+
+		return new Double(Double.NaN);
 	}
 	
 	/**
