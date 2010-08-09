@@ -192,9 +192,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		// TODO - optimize so that invalid input is not canonicalized twice
-		return encoder.canonicalize(input);
+
+		return "";
 	}
 
 	/**
@@ -264,8 +263,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+
+		return "";
 	}
 
 	/**
@@ -298,9 +297,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		// TODO - optimize so that invalid input is not canonicalized twice
-		return encoder.canonicalize(input);
+		
+		return "";
 	}
 
 	/**
@@ -370,8 +368,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+
+		return "";
 	}
 
 
@@ -448,14 +446,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input  
-		// TODO - optimize so that invalid input is not canonicalized twice
-		try {
-			return new File(input).getCanonicalFile().getName();
-		} catch (IOException e) {
-			// TODO = consider logging canonicalization error?
-			return input;
-		}
+		
+		return "";
 	}
 	
 	/**
@@ -488,7 +480,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return null 
+
 		return null;
 	}
 	
@@ -597,8 +589,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+		// return empty byte array on error
+		return new byte[0];
 	}
 	
 	/**
