@@ -2,10 +2,23 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.owasp</groupId>
+    <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-   <version>2.0_rc6</version>
-   <packaging>jar</packaging>
+    <version>2.0_RC6-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <licenses>
+        <license>
+            <name>BSD</name>
+            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <comments>Code License - New BSD License</comments>
+        </license>
+        <license>
+            <name>Creative Commons 3.0 BY-SA</name>
+            <url>http://creativecommons.org/licenses/by-sa/3.0/</url>
+            <comments>Content License - Create Commons 3.0 BY-SA</comments>
+        </license>
+    </licenses>
 
     <name>ESAPI 2.0 rc6</name>
     <url>http://www.esapi.org/</url>
@@ -57,6 +70,62 @@
         <system>Google Code Issue Tracking</system>
         <url>http://code.google.com/p/owasp-esapi-java/issues/list</url>
     </issueManagement>
+
+    <developers>
+        <developer>
+            <name>Jeff Williams</name>
+            <organization>Aspect Security</organization>
+            <roles>
+                <role>Project Owner</role>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Jim Manico</name>
+            <roles>
+                <role>Project Manager</role>
+                <role>BuildMaster</role>
+                <role>Developer</role>
+                <role>Architect</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Chris Schmidt</name>
+            <organization>ServiceMagic, Inc.</organization>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Kevin Wall</name>
+            <roles>
+                <role>Architect</role>
+                <role>Developer</role>
+                <role>Crypto Guru</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Jonathon Rucker</name>
+            <roles>
+                <role>Maven Guru</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Dave Wichers</name>
+            <organization>Aspect Security</organization>
+            <roles>
+                <role>Documentation and Examples</role>
+                <role>Minor Code Contributions</role>
+                <role>Project Guidance</role>
+            </roles>
+        </contributor>
+    </contributors>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
