@@ -355,7 +355,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public String getParameter(String name, boolean allowNull, int maxLength, String regexName) {
         String orig = getHttpServletRequest().getParameter(name);
-        String clean = "";
+        String clean = null;
         try {
             clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, regexName, maxLength, allowNull);
         } catch (ValidationException e) {
