@@ -255,17 +255,19 @@ public interface Encoder {
 	 */
 	String encodeForHTMLAttribute(String input);
 
+
 	/**
 	 * Encode data for insertion inside a data value or function argument in JavaScript. Putting user data 
 	 * directly inside a script is quite dangerous. Great care must be taken to prevent putting user data
 	 * directly into script code itself, as no amount of encoding will prevent attacks there.
 	 * 
-	 * Please note there are some JavaScript functions that can never safely untrusted data as input - EVEN IF JAVASCRIPT ESCAPED!
+	 * Please note there are some JavaScript functions that can never safely untrusted data 
+     * as input – even if JavaScript encoded
 	 * 
 	 * For example:
 	 * 
 	 *  <script>
-	 *  window.setInterval('...EVEN IF YOU ESCAPE UNTRUSTED DATA YOU ARE XSSED HERE...');
+	 *  window.setInterval('<%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %>');
 	 *  </script>
 	 * 
 	 * @param input 
