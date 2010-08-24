@@ -20,6 +20,9 @@ import org.apache.commons.fileupload.ProgressListener;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.owasp.esapi.*;
+import org.owasp.esapi.codecs.Hex;
+import org.owasp.esapi.crypto.CipherText;
+import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.*;
 
 import javax.servlet.RequestDispatcher;
@@ -338,7 +341,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public String decryptHiddenField(String encrypted) {
     	try {
-    		return ESAPI.encryptor().decrypt(encrypted);
+    		return decryptString(encrypted);
     	} catch( EncryptionException e ) {
     		throw new IntrusionException("Invalid request","Tampering detected. Hidden field data did not decrypt properly.", e);
     	}
@@ -348,7 +351,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
 	public Map<String,String> decryptQueryString(String encrypted) throws EncryptionException {
-		String plaintext = ESAPI.encryptor().decrypt(encrypted);
+        String plaintext = decryptString(encrypted);
 		return queryToMap(plaintext);
 	}
 
@@ -368,7 +371,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	try {
     		String encrypted = getCookie( request, ESAPI_STATE );
     		if ( encrypted == null ) return new HashMap<String,String>();
-    		String plaintext = ESAPI.encryptor().decrypt(encrypted);
+    		String plaintext = decryptString(encrypted);
     		return queryToMap( plaintext );
     	} catch( ValidationException e ) {
         	return null;
@@ -379,14 +382,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
 	public String encryptHiddenField(String value) throws EncryptionException {
-    	return ESAPI.encryptor().encrypt(value);
+    	return encryptString(value);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public String encryptQueryString(String query) throws EncryptionException {
-		return ESAPI.encryptor().encrypt( query );
+	    return encryptString(query);
 	}
 
 	/**
@@ -398,6 +401,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     	while ( i.hasNext() ) {
     		try {
 	    		Map.Entry entry = (Map.Entry)i.next();
+	    		
+	    		    // What do these need to be URL encoded? They are encrypted!
 	    		String name = ESAPI.encoder().encodeForURL( entry.getKey().toString() );
 	    		String value = ESAPI.encoder().encodeForURL( entry.getValue().toString() );
              sb.append(name).append("=").append(value);
@@ -407,7 +412,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     		}
     	}
 
-		String encrypted = ESAPI.encryptor().encrypt(sb.toString());
+		String encrypted = encryptString(sb.toString());
 
 		if ( encrypted.length() > (MAX_COOKIE_LEN ) ) {
 			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry");
@@ -986,5 +991,28 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     public <T> T getRequestAttribute(HttpServletRequest request, String key)
     {
         return (T) request.getAttribute( key );
+    }
+    
+    /////////////////////
+    
+    /* Helper method to encrypt using new Encryptor encryption methods and
+     * return the serialized ciphertext as a hex-encoded string.
+     */
+    private String encryptString(String plaintext) throws EncryptionException {
+        PlainText pt = new PlainText(plaintext);
+        CipherText ct = ESAPI.encryptor().encrypt(pt);
+        byte[] serializedCiphertext = ct.asPortableSerializedByteArray();
+        return Hex.encode(serializedCiphertext, false);
+    }
+    
+    /* Helper method to decrypt a hex-encode serialized ciphertext string and
+     * to decrypt it using the new Encryptor decryption methods.
+     */
+    private String decryptString(String ciphertext) throws EncryptionException {
+        byte[] serializedCiphertext = Hex.decode(ciphertext);
+        CipherText restoredCipherText =
+            CipherText.fromPortableSerializedBytes(serializedCiphertext);
+        PlainText plaintext = ESAPI.encryptor().decrypt(restoredCipherText);
+        return plaintext.toString();
     }
 }
