@@ -22,6 +22,9 @@ import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.User;
+import org.owasp.esapi.codecs.Hex;
+import org.owasp.esapi.crypto.CipherText;
+import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
@@ -400,7 +403,10 @@ public class HTTPUtilitiesTest extends TestCase
 			ESAPI.httpUtilities().encryptStateInCookie(response,map);
 			String value = response.getHeader( "Set-Cookie" );
 			String encrypted = value.substring(value.indexOf("=")+1, value.indexOf(";"));
-			ESAPI.encryptor().decrypt( encrypted );
+			byte[] serializedCiphertext = Hex.decode(encrypted);
+	        CipherText restoredCipherText =
+	            CipherText.fromPortableSerializedBytes(serializedCiphertext);
+	        ESAPI.encryptor().decrypt(restoredCipherText);
 		} catch( EncryptionException e ) {
 			fail();
 		}
