@@ -1,27 +1,22 @@
 #!/bin/sh
 
-findjar=$PWD/findjar.sh
-
-cd ../../../
-esapi_props=
-
-if [[ -f configuration/.esapi/ESAPI.properties ]]
-then    esapi_props="configuration/.esapi/ESAPI.properties"
-else    esapi_props="src/main/resources/.esapi/ESAPI.properties"
-fi
-if [[ ! -r $esapi_props ]]
-then    echo "$0: ESAPI.properties file ($esapi_props) not readable." >&2
-        exit 1
+if [[ -z "$esapi_classpath" ]]
+then
+    echo 2>&1 "esapi_classpath not set. Did you dot the appropriate env file?"
+    echo 2>&1 "If you are using ESAPI from downloaded zip file, use:"
+    echo 2>&1 "        . ./setenv-zip.sh"
+    echo 2>&1 "If you are using ESAPI pulled from SVN repository, use:"
+    echo 2>&1 "        . ./setenv-svn.sh"
+    exit 1
 fi
 
-# This classpath is relative to ../../.. directory (from here). See above 'cd'
-classpath=".:target/ESAPI-2.0.jar:\
-$($findjar log4j-1.2.12.jar):\
-$($findjar commons-fileupload-1.2.jar):\
-$($findjar servlet-api-2.4.jar)"
-
-set -x
-java -Dlog4j.configuration=src/test/resources/log4j.xml \
-     -Dorg.owasp.esapi.resources=$(dirname $esapi_props) \
-     -classpath $classpath \
+cd ../java
+echo "Your ESAPI.properties file: $esapi_properties"
+echo
+# set -x
+# This should use the real ESAPI.properties in $esapi_resources that does
+# not yet have Encryptor.MasterKey and Encryptor.MasterSalt yet set.
+java -Dlog4j.configuration="$log4j_properties" \
+     -Dorg.owasp.esapi.resources="$esapi_resources" \
+     -classpath "$esapi_classpath" \
      org.owasp.esapi.reference.crypto.JavaEncryptor "$@"
