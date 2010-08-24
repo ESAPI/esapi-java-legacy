@@ -22,15 +22,17 @@ public class DisplayEncryptedProperties {
          loader.load( new FileInputStream(
                                     new File( encryptedPropertiesFilename) ) );
 
+         System.out.println("\n\nLoaded encrypted properties file...");
+
          try {
              props.setProperty( "database.driver",
                                 loader.getProperty( "database.driver" ) );
              props.setProperty( "jdbc.url",
-                                loader.getProperty( "database.url" ) );
+                                loader.getProperty( "jdbc.url" ) );
              props.setProperty( "jdbc.username",
-                                loader.getProperty( "database.username" ) );
+                                loader.getProperty( "jdbc.username" ) );
              props.setProperty( "jdbc.password",
-                                loader.getProperty( "database.password" ) );
+                                loader.getProperty( "jdbc.password" ) );
          } catch( EncryptionException ee ) {
              ee.printStackTrace();
          }
@@ -38,11 +40,12 @@ public class DisplayEncryptedProperties {
 
     public void showProperties(Properties props) throws Exception
     {
+        System.out.println("");
         String value = null;
         value = props.getProperty( "database.driver");
         System.out.println("database.driver=" + value);
         value = props.getProperty( "jdbc.url");
-        System.out.println("jdbc.database=" + value);
+        System.out.println("jdbc.url=" + value);
         value = props.getProperty( "jdbc.username");
         System.out.println("jdbc.username=" + value);
         value = props.getProperty( "jdbc.password");
@@ -59,6 +62,9 @@ public class DisplayEncryptedProperties {
             String encryptedPropFname = "encrypted.properties";
             if ( args.length == 1 ) {
                 encryptedPropFname = args[0];
+            } else {
+                System.err.println("Usage: java -classpath <cp> DisplayEncryptedProperties encryptedPropFileName");
+                System.exit(2);
             }
 
             dep.loadProperties(encryptedPropFname, props);
