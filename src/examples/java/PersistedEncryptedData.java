@@ -3,6 +3,8 @@ import org.owasp.esapi.*;
 import org.owasp.esapi.crypto.*;
 import org.owasp.esapi.errors.*;
 import org.owasp.esapi.codecs.*;
+import javax.servlet.ServletRequest;
+import org.apache.log4j.Logger;
 
 /** A slightly more complex example showing encoding encrypted data and writing
  *  it out to a file. This is very similar to the example in the ESAPI User
@@ -61,7 +63,7 @@ public class PersistedEncryptedData
         } else if ( useHex(encoding) ) {
             encodedStr = Hex.encode(serializedCiphertext, true);
             serializedBytes = encodedStr.getBytes("UTF-8");
-        } else {
+        } else {    // raw encoding
             serializedBytes = serializedCiphertext;
         }
 
@@ -115,7 +117,7 @@ public class PersistedEncryptedData
     }
 
     /**
-     * Usage: PersistedEncryptedData plaintext filename [{raw|base64|hex}]
+     * Usage: PersistedEncryptedData plaintext_string output_filename {raw|base64|hex}
      */
     public static void main(String[] args) {
 
@@ -124,7 +126,15 @@ public class PersistedEncryptedData
             String filename  = null;
             OutputEncoding encoding = dfltEncoding;
 
-            if ( args.length >= 3 ) {
+            // NOTE: Ordinally, we would write to System.out for informational
+            //       messages, but if something is not working (e.g., your
+            //       classpath is missing a jar, etc.), it makes it a bit
+            //       harder to debug because System.out is buffered and thus
+            //       may not appear when exceptions are thrown.
+
+System.err.println("args.length=" + args.length);
+
+            if ( args.length == 3 ) {
                 plaintext = args[0];
                 filename  = args[1];
                 if ( args[2].equalsIgnoreCase("raw") ) {
@@ -138,15 +148,16 @@ public class PersistedEncryptedData
                     encoding = dfltEncoding;
                 }
             } else {
-                System.err.println("Usage: PersistedEncryptedData plaintext " +
-                                   "filename [{raw|base64|hex}]");
+                System.err.println("Usage: java -classpath <cp> PersistedEncryptedData " +
+                                   "plaintext_string " +
+                                   "output_filename {raw|base64|hex}");
                 System.exit(2);
             }
 
             // Add file suffix, appropriate to encoding
             filename = filename + "." + encoding;
 
-            System.out.println("Encrypting " + plaintext.length() +
+            System.err.println("Encrypting " + plaintext.length() +
                                " bytes of plaintext and storing in file '" +
                                filename + "'.");
 
@@ -154,13 +165,14 @@ public class PersistedEncryptedData
                                                     new PlainText(plaintext),
                                                     filename, encoding);
 
-            System.out.println("Wrote " + n + " bytes to encrypted file " + filename + ".");
+            System.err.println("Wrote " + n + " bytes to encrypted file " + filename + ".");
             File f = new File(filename);
             PlainText pt = PersistedEncryptedData.restorePlaintext(filename, encoding);
 
-            System.out.println("Plaintext recovered from encrypted file was: " + pt);
+            System.err.println("Plaintext recovered from encrypted file was: " + pt);
             if ( pt.toString().equals( plaintext ) ) {
                 System.out.println("Plaintext recovered successfully.");
+                System.out.println("Recovered plaintext: " + pt);
             } else {
                 System.out.println("Recovered plaintext differs from original plaintext.");
             }
