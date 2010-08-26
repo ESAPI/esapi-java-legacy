@@ -318,7 +318,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	private String createCookieHeader(String name, String value, int maxAge, String domain, String path, boolean secure) {
         // create the special cookie header instead of creating a Java cookie
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
-        // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
+        // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly]
         String header = name + "=" + value;
         header += "; Max-Age=" + maxAge;
         if (domain != null) {
@@ -911,6 +911,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String clearToken = user.getAccountName() + "|" + password;
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
+
+            // TODO - URLEncode cryptToken before creating cookie? See Google Issue # 144 - KWW
+
 			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
 			cookie.setMaxAge( maxAge );
 			cookie.setDomain( domain );
