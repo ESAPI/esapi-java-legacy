@@ -114,6 +114,8 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         try {
             String token = ESAPI.httpUtilities().getCookie(ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME);
             if (token == null) return null;
+            
+            // TODO - kww - URLDecode token first, and THEN unseal. See Google Issue 144.
 
             String[] data = ESAPI.encryptor().unseal(token).split("\\|");
             if (data.length != 2) {
