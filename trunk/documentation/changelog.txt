@@ -1,0 +1,227 @@
+ESAPI 2.0 rc6c changelog
+
+r1224 | manico.james | 2010-03-26 05:58:32 EDT
+
+This validation min/max check is not needed here - it's already happening later in the valiation workflow. Also clarified one of the unit tests around range checking.
+----------------------------------------------------------------------------
+r1223 | manico.james | 2010-03-26 05:45:42 EDT
+
+changing version to 2.0_rc6
+----------------------------------------------------------------------------
+r1221 | jonathan.ruckwood | 2010-03-24 09:17:08 EDT
+
+Issue #112: Updated groupId to org.owasp in Maven instructions.
+----------------------------------------------------------------------------
+r1220 | jonathan.ruckwood | 2010-03-24 08:43:58 EDT
+
+Updated groupId to org.owasp so that it matches that of the AntiSamy project.
+----------------------------------------------------------------------------
+r1219 | kevin.w.wall | 2010-03-24 00:12:22 EDT
+
+One of these days, I'll get this right. If at first you don't succeed... Long day. Sigh.
+----------------------------------------------------------------------------
+r1218 | kevin.w.wall | 2010-03-24 00:02:45 EDT
+
+Argh!!! What a dolt! Duh!
+----------------------------------------------------------------------------
+r1217 | manico.james | 2010-03-20 19:34:15 EDT
+
+handled "checkme's" and did some other cleanup
+----------------------------------------------------------------------------
+r1216 | manico.james | 2010-03-20 16:20:00 EDT
+
+using EncoderConstants now so code does not report any warnings.
+----------------------------------------------------------------------------
+r1215 | kevin.w.wall | 2010-03-20 00:05:33 EDT
+
+In Junit test, testLoadESAPIPreferredJCEProvider(), removed assertion that Encryptor.PreferredJCEProvider is not null since that is now possible.
+----------------------------------------------------------------------------
+r1214 | kevin.w.wall | 2010-03-20 00:03:16 EDT
+
+1) Added some more 'built-in' JCE providers (for IBM and Gnu).
+2) Changed code so that SecurityProviderLoader.loadESAPIPreferredJCEProvider() makes no change to JCE provider if Encryptor.PreferredJCEProvider is null (i.e., unset) or set to empty string or just white space.
+3) Updated Javadoc to reflect code changes.
+----------------------------------------------------------------------------
+r1213 | kevin.w.wall | 2010-03-19 23:55:21 EDT
+
+Update comment to reflect change in behavior to SecurityProviderLoader.loadESAPIPreferredJCEProvider().
+----------------------------------------------------------------------------
+r1212 | kevin.w.wall | 2010-03-19 23:53:59 EDT
+
+Update getPreferredJCEProvider() so that in no longer returns 'SunJCE' as default property when Encryptor.PreferredJCEProvider is not set.
+----------------------------------------------------------------------------
+r1211 | kevin.w.wall | 2010-03-19 23:51:46 EDT
+
+Update Javadoc for getPreferredJCEProvider() method to reflect code changes in implementation.
+----------------------------------------------------------------------------
+r1210 | kevin.w.wall | 2010-03-19 23:47:49 EDT
+
+1) Change value of Encryptor.PreferredJCEProvider from 'SunJCE' to empty string; causes ESAPI to use the default JCE provider that the application is already using using rather than changing it to SunJCE. (In lieu of JavaEE containers such as IBM's WebSphere which does not use the Sun JRE, this makes sense.)
+2) Updated internal comments regarding Encryptor.PreferredJCEProvider.
+3) Clarified some other comments.
+----------------------------------------------------------------------------
+r1209 | kevin.w.wall | 2010-03-19 23:47:15 EDT
+
+1) Change value of Encryptor.PreferredJCEProvider from 'SunJCE' to empty string; causes ESAPI to use the default JCE provider that the application is already using using rather than changing it to SunJCE. (In lieu of JavaEE containers such as IBM's WebSphere which does not use the Sun JRE, this makes sense.)
+2) Updated internal comments regarding Encryptor.PreferredJCEProvider.
+3) Clarified some other comments.
+----------------------------------------------------------------------------
+r1208 | kevin.w.wall | 2010-03-19 23:38:34 EDT
+
+1) Change title
+2) Change description of Encryptor.PreferredJCEProvider to reflect code changes the way it acts if let unset or set to empty string.
+3) Minor cosmetic formatting changes.
+----------------------------------------------------------------------------
+r1207 | brent.shikoski | 2010-03-15 23:09:43 EDT
+
+Modified the getParameter(HttpServletRequest, String) method.
+  1) Fixed the problem where request.getHeader(String) was called instead of request.getParameter(String)
+  2) Allow null values, consistent with SecurityWrapperRequest
+----------------------------------------------------------------------------
+r1206 | kevin.w.wall | 2010-03-06 16:19:51 EST
+
+Added new sections on working with multiple cipher transformations and with FIPS 140-2 cryptographic modules.
+----------------------------------------------------------------------------
+r1205 | kevin.w.wall | 2010-03-06 16:18:28 EST
+
+Updated comment to reflect correct line # of referred to note in JavaEncryptor class.
+----------------------------------------------------------------------------
+r1204 | kevin.w.wall | 2010-03-04 00:35:38 EST
+
+Added acknowledgment section as well as marker for future section on dealing with FIPS 140-2 compliance issues.
+----------------------------------------------------------------------------
+r1203 | kevin.w.wall | 2010-02-28 22:53:15 EST
+
+Example showing how to persist encrypted data in a file stored in the file system.
+This is a slightly enhanced version that is shown in the User Guide.
+----------------------------------------------------------------------------
+r1202 | kevin.w.wall | 2010-02-28 22:51:47 EST
+
+Bash script to execute JavaEncryptor to assist with setting of MasterKey and MasterSalt values.
+----------------------------------------------------------------------------
+r1201 | kevin.w.wall | 2010-02-28 22:51:07 EST
+
+Executes the Java example class, PersistEncryptedData.
+----------------------------------------------------------------------------
+r1200 | kevin.w.wall | 2010-02-28 22:50:28 EST
+
+Bash script to compile the java examples. in the '../java' directory.
+----------------------------------------------------------------------------
+r1199 | kevin.w.wall | 2010-02-28 22:49:40 EST
+
+Bash script to look for specified jar files. By default, starts looking in $HOME/.m2/repository, the Maven2 repository.
+----------------------------------------------------------------------------
+r1198 | kevin.w.wall | 2010-02-28 22:48:11 EST
+
+Readme file for examples.
+----------------------------------------------------------------------------
+r1197 | kevin.w.wall | 2010-02-28 22:47:43 EST
+
+New directories for examples. Note: These examples are (presently) not intended to be built via either Maven or Eclipse or
+any other IDE. There is a script, called 'compile.sh' that will compile them.
+----------------------------------------------------------------------------
+r1196 | kevin.w.wall | 2010-02-28 22:45:33 EST
+
+Completed table in document.
+----------------------------------------------------------------------------
+r1193 | kevin.w.wall | 2010-02-25 23:53:10 EST
+
+Added JUnit tests for testing encryption of empty strings and null strings via Encryptor.encrypt(PlainText plaintext) method.
+----------------------------------------------------------------------------
+r1192 | kevin.w.wall | 2010-02-25 23:51:28 EST
+
+Added a few more tests and made a few others more specific in cases where exceptions where expected and caught.
+----------------------------------------------------------------------------
+r1191 | kevin.w.wall | 2010-02-25 23:50:14 EST
+
+Changed so that setting / getting properties now use new base64-encoded version of the new portable serialized CIpherText object rather than that which was returned by the old deprecated encrypt() / decrypt() methods.
+----------------------------------------------------------------------------
+r1190 | kevin.w.wall | 2010-02-25 23:48:03 EST
+
+Javadoc changes / corrections.
+----------------------------------------------------------------------------
+r1189 | kevin.w.wall | 2010-02-25 23:46:50 EST
+
+Updated documentation related to symmetric encryption. Most importantly mentioned that EncryptedProperties was no longer compatible with ESAPI 1.4 version either.
+----------------------------------------------------------------------------
+r1188 | manico.james | 2010-02-23 22:05:23 EST
+
+docs docs docs
+----------------------------------------------------------------------------
+r1187 | manico.james | 2010-02-23 21:36:25 EST
+
+version
+
+----------------------------------------------------------------------------
+r1186 | manico.james | 2010-02-23 21:27:45 EST
+
+docs docs docs
+----------------------------------------------------------------------------
+r1185 | manico.james | 2010-02-23 21:20:30 EST
+
+docs docs docs
+----------------------------------------------------------------------------
+r1184 | manico.james | 2010-02-23 21:19:45 EST
+
+docs
+----------------------------------------------------------------------------
+r1183 | manico.james | 2010-02-23 21:04:26 EST
+
+adding in fully qualified classpaths 
+----------------------------------------------------------------------------
+r1182 | manico.james | 2010-02-23 20:45:55 EST
+
+changing name, and minor cleanup
+----------------------------------------------------------------------------
+r1181 | manico.james | 2010-02-23 20:18:02 EST
+
+provided features where log4j can be extended to remove dependencies on the ESAPI request and user objects.
+----------------------------------------------------------------------------
+r1180 | manico.james | 2010-02-23 19:44:07 EST
+
+working on latest logging modularization
+----------------------------------------------------------------------------
+r1179 | manico.james | 2010-02-23 19:22:40 EST
+
+approaching modularization for logging, put all non-logging classes into a separate function
+----------------------------------------------------------------------------
+r1178 | manico.james | 2010-02-23 19:08:10 EST
+
+removed spaces from pom release name
+----------------------------------------------------------------------------
+r1177 | manico.james | 2010-02-23 19:05:56 EST
+
+added EventType logging back in
+----------------------------------------------------------------------------
+r1176 | manico.james | 2010-02-23 18:13:04 EST
+
+added EventType logging back in
+----------------------------------------------------------------------------
+r1171 | kevin.w.wall | 2010-02-15 23:36:51 EST
+
+Minor documentation changes.
+----------------------------------------------------------------------------
+r1170 | kevin.w.wall | 2010-02-15 00:26:38 EST
+
+Changed MIME-type properties from text/plain to text/html.
+----------------------------------------------------------------------------
+r1169 | kevin.w.wall | 2010-02-15 00:14:48 EST
+
+Updated with brief description of how separate MAC is calculated.
+----------------------------------------------------------------------------
+r1168 | kevin.w.wall | 2010-02-14 23:59:26 EST
+
+User guide for ESAPI 2.0 symmetric encryption.
+----------------------------------------------------------------------------
+r1167 | kevin.w.wall | 2010-02-14 23:52:54 EST
+
+Updated with minor corrections. Split out usage into separate document.
+----------------------------------------------------------------------------
+r1162 | kevin.w.wall | 2010-02-14 00:36:25 EST
+
+Description of portable serialization of CipherText object.
+----------------------------------------------------------------------------
+r1161 | kevin.w.wall | 2010-02-13 12:25:18 EST
+
+Prevent public, no-argument CTOR from being auto-generated. Public CTOR is not needed as all methods are static.
+----------------------------------------------------------------------------
