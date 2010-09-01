@@ -54,6 +54,8 @@ unzipcmd=unzip
 #
 PROG="${0##*/}"
 USAGE="Usage: $PROG esapi_svn_dir"
+tmpdir="/tmp/$PROG.$RANDOM-$$"
+esapi_release_dir="$tmpdir/esapi_release_dir"
 
 # Cause the 'echo' builtin to interpret backslash-escaped characters.
 # If KornShell is installed as /bin/sh, this command won't be available,
@@ -72,9 +74,9 @@ else
     exit 2
 fi
 
-# A few simple directory sanity checks.
+# A few simple directory sanity checks. The 1st check is VERY unlikely to fail.
 [[ $esapi_svn_dir == $esapi_release_dir ]] &&
-    { echo >&2 "$PROG: Directory names must be different.\n$USAGE"; exit 1; }
+    { echo >&2 "$PROG: ESAPI SVN directory same as tmp dir!\n$USAGE"; exit 1; }
 [[ ! -d $esapi_svn_dir ]] &&
     { echo >&2 "$PROG: ESAPI SVN directory, $esapi_svn_dir, does not exist or not a directory."; exit 1; }
 [[ ! -d $esapi_svn_dir/src/main ]] &&
@@ -83,11 +85,9 @@ fi
     { echo 2>&1 "$PROG: missing pom.xml. Looks like $esapi_svn_dir is not the SVN dir.";
       echo 2>&1 "USAGE"; exit 1; }
 
-tmpdir=/tmp/$PROG.$RANDOM-$$
 mkdir $tmpdir || exit 1 # Exit if it already exists.
 trap "rm -fr $tmpdir" EXIT  # We probably want this skipped if the mkdir fails
 umask 022
-esapi_release_dir=$tmpdir/esapi_release_dir
 mkdir $tmpdir/esapi_release_dir || exit 1
 
 # Create an intermediate distribution zip file. The zip file will be
@@ -168,10 +168,13 @@ cp -p "$esapi_svn_dir"/src/main/resources/properties/* configuration/properties/
 echo "$PROG: Skipping creation of changelog.txt in zip file."
 echo "\tManually create changelog.txt and add it to the final zip file."
 
-# 4) Update zip file w/ new, updated ESAPI jar file.
+# 4) Copy the pom.xml there. It doesn't get created by the Maven goal.
+cp -p "$esapi_svn_dir"/pom.xml .
+
+# 5) Update zip file w/ new, updated ESAPI jar file.
 cp -p "$jarfile" .
 
-# 5) Fix up permissions so when zip is extracted, it comes out sane.
+# 6) Fix up permissions so when zip is extracted, it comes out sane.
 chmod -R a+r,go-w .
 
 # Now we take the contents of the ESAPI release directory and re-zip it.
