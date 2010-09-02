@@ -345,18 +345,18 @@ public class EncoderTest extends TestCase {
 	public void testEncodeForJavascript() {
 		Encoder instance = ESAPI.encoder();
 		assertEquals("\\x3Cscript\\x3E", instance.encodeForJavaScript("<script>"));
-		assertEquals(",.-_ ", instance.encodeForJavaScript(",.-_ "));
+		assertEquals(",.\\x2D_\\x20", instance.encodeForJavaScript(",.-_ "));
 		assertEquals("\\x21\\x40\\x24\\x25\\x28\\x29\\x3D\\x2B\\x7B\\x7D\\x5B\\x5D", instance.encodeForJavaScript("!@$%()=+{}[]"));
-		assertEquals( "\\0", instance.encodeForJavaScript("\0"));
-		assertEquals( "\\b", instance.encodeForJavaScript("\b"));
-		assertEquals( "\\t", instance.encodeForJavaScript("\t"));
-		assertEquals( "\\n", instance.encodeForJavaScript("\n"));
-		assertEquals( "\\v", instance.encodeForJavaScript("" + (char)0x0b));
-		assertEquals( "\\f", instance.encodeForJavaScript("\f"));
-		assertEquals( "\\r", instance.encodeForJavaScript("\r"));
-		assertEquals( "\\'", instance.encodeForJavaScript("\'"));
-		assertEquals( "\\\"", instance.encodeForJavaScript("\""));
-		assertEquals( "\\\\", instance.encodeForJavaScript("\\"));
+		assertEquals( "\\x00", instance.encodeForJavaScript("\0"));
+		assertEquals( "\\x08", instance.encodeForJavaScript("\b"));
+		assertEquals( "\\x09", instance.encodeForJavaScript("\t"));
+		assertEquals( "\\x0A", instance.encodeForJavaScript("\n"));
+		assertEquals( "\\x0B", instance.encodeForJavaScript("" + (char)0x0b));
+		assertEquals( "\\x0C", instance.encodeForJavaScript("\f"));
+		assertEquals( "\\x0D", instance.encodeForJavaScript("\r"));
+		assertEquals( "\\x27", instance.encodeForJavaScript("\'"));
+		assertEquals( "\\x22", instance.encodeForJavaScript("\""));
+		assertEquals( "\\x5C", instance.encodeForJavaScript("\\"));
 	}
 
 	public void testEncodeForVBScript() {
