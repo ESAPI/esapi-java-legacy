@@ -561,17 +561,69 @@ public class HTMLEntityCodec implements Codec
 	public HTMLEntityCodec() {
 	}
 
+    /**
+     * {@inheritDoc}
+     * 
+     * Encodes a String for safe use as an HTML entity
+     */
+    public String encode(char[] immune, String input) {
+        StringBuffer b = new StringBuffer();
+        for ( int i=0; i<input.length(); i++ ) {
+            encodeCharacter(immune, input.charAt(i), b);
+        }
+        return b.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Encodes a Character for safe use in an HTML entity field.
+     */
+    public void encodeCharacter(char[] immune, char c, StringBuffer b) {
+
+        // check for immune characters
+        if (CodecUtil.containsCharacter(c, immune)) {
+            b.append(c);
+            return;
+        }
+
+        // check for alphanumeric characters
+        String hex = CodecUtil.getHexForNonAlphanumeric(c);
+        if (hex == null) {
+            b.append(c);
+            return;
+        }
+
+        // check for illegal characters
+        if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) ) {
+            b.append(' ');
+            return;
+        }
+
+        Character ch = PrimWrap.wrapChar(c);
+
+        String entityName = (String) characterToEntityMap.get(ch);
+        if (entityName != null) {
+            b.append('&').append(entityName).append(';');
+            return;
+        }
+
+        // check for unencoded characters
+        if(UNENCODED_SET.contains(ch)) {
+            b.append(c);
+            return;
+        }
+
+        b.append("&#x").append(Integer.toHexString(c)).append(';');
+    }
+
 	/**
 	 * {@inheritDoc}
 	 * 
 	 * Encodes a String for safe use as an HTML entity
 	 */
 	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			sb.append( encodeCharacter( PrimWrap.wrapChar( input.charAt(i) ) ) );
-		}
-		return sb.toString();
+	    return encode(CodecUtil.EMPTY_CHARS, input);
 	}
 
 	/**
@@ -580,16 +632,9 @@ public class HTMLEntityCodec implements Codec
      * Encodes a Character for safe use in an HTML entity field.
      */
 	public String encodeCharacter( Character c ) {
-		String entityName = (String) characterToEntityMap.get(c);
-		if (entityName != null) {
-			return "&" + entityName + ";";
-		}
-
-		// check for unencoded characters
-		if(UNENCODED_SET.contains(c))
-			return c.toString();
-
-		return "&#x" + Integer.toHexString(c.charValue()) + ";";
+	    StringBuffer b = new StringBuffer();
+	    encodeCharacter(CodecUtil.EMPTY_CHARS, c.charValue(), b);
+	    return b.toString();
 	}
 	
 	/**

@@ -29,20 +29,70 @@ public class JavaScriptCodec implements Codec {
 	public JavaScriptCodec() {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * Encodes a String for safe use in a JavaScript context.
-	 */
-	public String encode( String input ) {
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encodeCharacter( new Character( c ) ) );
-		}
-		return sb.toString();
-	}
+    /**
+     * Encode a String so that it can be safely used in a specific context.
+     * 
+     * @param immune
+     * @param input
+     *      the String to encode
+     * @return the encoded String
+     */
+    public String encode(char[] immune, String input) {
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < input.length(); i++) {
+            encodeCharacter(immune, input.charAt(i), sb);
+        }
+        return sb.toString();
+    }
+	
+    /**
+     * {@inheritDoc}
+     * 
+     * Returns backslash encoded character. This implementation does not support
+     * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
+     */
+    public void encodeCharacter(char[] immune, char c, StringBuffer sb) {
+        // check for immune characters
+        if ( CodecUtil.containsCharacter(c, immune ) ) {
+            sb.append(c);
+            return;
+        }
+        
+        // check for alphanumeric characters
+        String hex = CodecUtil.getHexForNonAlphanumeric(c);
+        if ( hex == null ) {
+            sb.append(c);
+            return;
+        }
 
+        String temp = Integer.toHexString(c).toUpperCase();
+        int padTo; 
+        
+        if ( c < 256 ) { // encode up to 256 with \\xHH
+            sb.append("\\x");
+            padTo = 2;
+        }
+        else { // otherwise encode with \\uHHHH
+            sb.append("\\u");
+            padTo = 4;
+        }
+
+        for (int i = temp.length(); i < padTo; i++) {
+            sb.append('0');
+        }
+ 
+        sb.append(temp);
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
+     * Encodes a String for safe use in a JavaScript context.
+     */
+    public String encode( String input ) {
+        return encode(CodecUtil.EMPTY_CHARS, input);
+    }
+    
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -50,41 +100,9 @@ public class JavaScriptCodec implements Codec {
 	 * \\### Latin encoded characters in octal as it is not in ECMAScript v3.
 	 */
 	public String encodeCharacter( Character c ) {
-		char ch = c.charValue();
-		switch(ch)
-		{
-			case 0x00:
-				return "\\0";
-			case 0x08:
-				return "\\b";
-			case 0x09:
-				return "\\t";
-			case 0x0a:
-				return "\\n";
-			case 0x0b:
-				return "\\v";
-			case 0x0c:
-				return "\\f";
-			case 0x0d:
-				return "\\r";
-			case 0x22:
-				return "\\\"";
-			case 0x27:
-				return "\\'";
-			case 0x5c:
-				return "\\\\";
-		}
-
-		// encode up to 255 with \\xHH
-		String temp = Integer.toHexString((int)ch);
-		if ( ch <= 255 ) {
-			String pad = "00".substring(temp.length() );
-			return "\\x" + pad + temp.toUpperCase();
-		}
-
-		// otherwise encode with \\uHHHH
-		String pad = "0000".substring(temp.length() );
-		return "\\u" + pad + temp.toUpperCase();
+        StringBuffer b = new StringBuffer();
+        encodeCharacter(CodecUtil.EMPTY_CHARS, c.charValue(), b);
+        return b.toString();
 	}
 
 	/**

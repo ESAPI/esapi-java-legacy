@@ -71,12 +71,12 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 
 	// Codecs
 	List codecs = new ArrayList();
-	private HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
-	private XMLEntityCodec xmlCodec = new XMLEntityCodec();
-	private PercentCodec percentCodec = new PercentCodec();
-	private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
-	private VBScriptCodec vbScriptCodec = new VBScriptCodec();
-	private CSSCodec cssCodec = new CSSCodec();
+	private final HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+	private final XMLEntityCodec xmlCodec = new XMLEntityCodec();
+	private final PercentCodec percentCodec = new PercentCodec();
+	private final JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
+	private final VBScriptCodec vbScriptCodec = new VBScriptCodec();
+	private final CSSCodec cssCodec = new CSSCodec();
 
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger("Encoder");
@@ -85,7 +85,7 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
 	private final static char[] IMMUNE_CSS = { ' ' };  // TODO: check
-	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '-', '_', ' ' };
+	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '_' };
 	private final static char[] IMMUNE_VBSCRIPT = { ' ' };  // TODO: check
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_SQL = { ' ' };
@@ -243,19 +243,8 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 */
 	public String encodeForHTML(String input) {
 		if( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			if ( c == '\t' || c == '\n' || c == '\r' ) {
-				sb.append( c );
-			} else if ( c <= 0x1f || ( c >= 0x7f && c <= 0x9f ) ) {
-				logger.warning( Logger.SECURITY, false, "Attempt to HTML entity encode illegal character: " + (int)c + " (skipping)" );
-				sb.append( ' ' );
-			} else {
-				sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTML ) );
-			}
-		}
-		return sb.toString();
+
+		return htmlCodec.encode(IMMUNE_HTML, input);
 	}
 
 
@@ -264,12 +253,8 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 */
 	public String encodeForHTMLAttribute(String input) {
 		if( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, htmlCodec, CHAR_ALPHANUMERICS, IMMUNE_HTMLATTR ) );
-		}
-		return sb.toString();
+		
+        return htmlCodec.encode(IMMUNE_HTMLATTR, input);
 	}
 
 
@@ -294,12 +279,8 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 */
 	public String encodeForJavaScript(String input) {
 		if( input == null ) return null;
-		StringBuffer sb = new StringBuffer();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt(i);
-			sb.append( encode( c, javaScriptCodec, CHAR_ALPHANUMERICS, IMMUNE_JAVASCRIPT ) );
-		}
-		return sb.toString();
+		
+		return javaScriptCodec.encode(IMMUNE_JAVASCRIPT, input);
 	}
 
 	/**
@@ -455,6 +436,9 @@ public class DefaultEncoder implements org.owasp.esapi.Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForURL(String input) throws EncodingException {
+	    if ( input == null ) {
+	        return null;
+	    }
 		try {
 			return URLEncoder.encode(input, ESAPI.securityConfiguration().getCharacterEncoding());
 		} catch (UnsupportedEncodingException ex) {
