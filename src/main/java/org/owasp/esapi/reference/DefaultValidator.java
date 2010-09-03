@@ -295,6 +295,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		HTMLValidationRule hvr = new HTMLValidationRule( "safehtml", encoder );
 		hvr.setMaximumLength(maxLength);
 		hvr.setAllowNull(allowNull);
+		hvr.setValidateInputAndCanonical(false);
 		return hvr.getValid(context, input);
 	}
 	

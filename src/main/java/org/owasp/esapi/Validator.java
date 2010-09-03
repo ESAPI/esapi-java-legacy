@@ -164,7 +164,7 @@ public interface Validator {
 	 * @param input 
 	 * 		The actual user input data to validate.
 	 * @param maxLength 
-	 * 		The maximum post-canonicalized String length allowed.
+	 * 		The maximum String length allowed.
 	 * @param allowNull 
 	 * 		If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
 	 * 
