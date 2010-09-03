@@ -128,7 +128,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	
 	/**
 	 * Returns true if data received from browser is valid. Only URL encoding is
-	 * supported. Double encoding is treated as an attack.
+	 * supported. Double encoding is treated as an attack. Input
+	 * is canonicalized by default before validation.
 	 * 
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
@@ -139,12 +140,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @throws IntrusionException
 	 */
 	public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException  {
-		try {
-			getValidInput( context, input, type, maxLength, allowNull);
-			return true;
-		} catch( Exception e ) {
-			return false;
-		}
+		return isValidInput(context, input, type, maxLength, allowNull, true);
 	}
 	
 	public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws IntrusionException  {
