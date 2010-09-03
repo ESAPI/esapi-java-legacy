@@ -23,7 +23,6 @@ import java.util.regex.PatternSyntaxException;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.util.NullSafe;
 
@@ -266,7 +265,7 @@ public class StringValidationRule extends BaseValidationRule {
 	 */
 	public String getValid( String context, String input ) throws ValidationException
 	{
-		String canonical = null;
+		String data = null;
 
 		// checks on input itself
 
@@ -274,8 +273,10 @@ public class StringValidationRule extends BaseValidationRule {
 		if(checkEmpty(context, input) == null)
 			return null;
 
-		if(validateInputAndCanonical)
+		if (validateInputAndCanonical)
 		{
+			//first validate pre-canonicalized data
+			
 			// check length
 			checkLength(context, input);
 
@@ -284,26 +285,31 @@ public class StringValidationRule extends BaseValidationRule {
 
 			// check blacklist patterns
 			checkBlacklist(context, input);
+			
+			// canonicalize
+			data = encoder.canonicalize( input );
+			
+		} else {
+			
+			//skip canonicalization
+			data = input;			
 		}
 
-		// canonicalize
-		canonical = encoder.canonicalize( input );
-
 		// check for empty/null
-		if(checkEmpty(context, canonical, input) == null)
+		if(checkEmpty(context, data, input) == null)
 			return null;
 
 		// check length
-		checkLength(context, canonical, input);
+		checkLength(context, data, input);
 
 		// check whitelist patterns
-		checkWhitelist(context, canonical, input);
+		checkWhitelist(context, data, input);
 
 		// check blacklist patterns
-		checkBlacklist(context, canonical, input);
+		checkBlacklist(context, data, input);
 
 		// validation passed
-		return canonical;
+		return data;
 	}
 
 	/**

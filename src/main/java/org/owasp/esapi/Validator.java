@@ -57,6 +57,11 @@ public interface Validator {
 	 * Calls isValidInput and returns true if no exceptions are thrown. 
 	 */
 	boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;
+	
+	/**
+	 * Calls isValidInput and returns true if no exceptions are thrown. 
+	 */
+	boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws IntrusionException;
 
 	/**
 	 * Returns canonicalized and validated input as a String. Invalid input will generate a descriptive ValidationException, 
@@ -81,9 +86,38 @@ public interface Validator {
 	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
 	
 	/**
+	 * Returns validated input as a String with optional canonicalization. Invalid input will generate a descriptive ValidationException, 
+	 * and input that is clearly an attack will generate a descriptive IntrusionException. 
+	 * 
+	 * @param context 
+	 * 		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+	 * @param input 
+	 * 		The actual user input data to validate.
+	 * @param type 
+	 * 		The regular expression name that maps to the actual regular expression from "ESAPI.properties".
+	 * @param maxLength 
+	 * 		The maximum post-canonicalized String length allowed.
+	 * @param allowNull 
+	 * 		If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 * @param canonicalize 
+	 *      If canonicalize is true then input will be canonicalized before validation
+	 * 
+	 * @return The canonicalized user input.
+	 * 
+	 * @throws ValidationException
+	 * @throws IntrusionException
+	 */
+	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws ValidationException, IntrusionException;
+	
+	/**
 	 * Calls getValidInput with the supplied errorList to capture ValidationExceptions
 	 */
 	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
+	
+	/**
+	 * Calls getValidInput with the supplied errorList to capture ValidationExceptions
+	 */
+	String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errorList) throws IntrusionException;
 	
 	/**
 	 * Calls isValidDate and returns true if no exceptions are thrown. 
