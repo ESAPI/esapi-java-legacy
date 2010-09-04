@@ -127,9 +127,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	
 	/**
-	 * Returns true if data received from browser is valid. Only URL encoding is
-	 * supported. Double encoding is treated as an attack. Input
-	 * is canonicalized by default before validation.
+	 * Returns true if data received from browser is valid. Double encoding is treated as an attack. The 
+	 * default encoder supports html encoding, URL encoding, and javascript escaping. Input is canonicalized 
+	 * by default before validation.
 	 * 
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
@@ -153,9 +153,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 
 	/**
-	 * Validates data received from the browser and returns a safe version. Only
-	 * URL encoding is supported. Double encoding is treated as an attack. Input
-	 * is canonicalized by default before validation.
+	 * Validates data received from the browser and returns a safe version. 
+	 * Double encoding is treated as an attack. The default encoder supports 
+	 * html encoding, URL encoding, and javascript escaping. Input is 
+	 * canonicalized by default before validation.
 	 * 
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
