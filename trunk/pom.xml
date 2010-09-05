@@ -338,15 +338,7 @@
 			</properties>
 
 			<build>
-				<resources>
-					<resource>
-						<directory> src/main/resources </directory>
-						<excludes>
-							<exclude> **/*.* </exclude>
-						</excludes>
-					</resource>
-				</resources>
-                
+              
                 <plugins>
                     <!-- Jar signing. -->
                     <!-- For this to work you need the dist profile in /resources/settings.xml to be included in your maven settings file. -->
