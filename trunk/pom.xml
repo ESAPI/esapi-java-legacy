@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.0_RC8-SNAPSHOT</version>
+    <version>2.0_rc9-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <licenses>
@@ -20,7 +20,7 @@
         </license>
     </licenses>
 
-    <name>ESAPI 2.0 rc8 in progress</name>
+    <name>ESAPI 2.0 rc9</name>
     <url>http://www.esapi.org/</url>
     <description>The Enterprise Security API (ESAPI) project is an OWASP project
         to create simple strong security controls for every web platform.
@@ -258,21 +258,21 @@
 			
         </plugins>
     </build>
-    
-    <distributionManagement>
-  <!-- use the following if you're not using a snapshot version. -->
-  <repository>
-    <id>repo</id>
-    <name>Repository Name</name>
-    <url>scp://host/path/to/repo</url>
-  </repository>
-  <!-- use the following if you ARE using a snapshot version. -->
-  <snapshotRepository>
-    <id>repo</id>
-    <name>Repository Name</name>
-    <url>scp://host/path/to/repo</url>
-  </snapshotRepository>
-</distributionManagement>
+
+	<distributionManagement>
+		<!-- use the following if you're not using a snapshot version. -->
+		<repository>
+			<id>repo</id>
+			<name>Repository Name</name>
+			<url>scp://host/path/to/repo</url>
+		</repository>
+		<!-- use the following if you ARE using a snapshot version. -->
+		<snapshotRepository>
+			<id>repo</id>
+			<name>Repository Name</name>
+			<url>scp://host/path/to/repo</url>
+		</snapshotRepository>
+    </distributionManagement>
 
     <reporting>
         <plugins>
@@ -337,7 +337,16 @@
                 <jarsign.storepass>changeme</jarsign.storepass>
 			</properties>
 
-            <build>
+			<build>
+				<resources>
+					<resource>
+						<directory> src/main/resources </directory>
+						<excludes>
+							<exclude> **/*.* </exclude>
+						</excludes>
+					</resource>
+				</resources>
+                
                 <plugins>
                     <!-- Jar signing. -->
                     <!-- For this to work you need the dist profile in /resources/settings.xml to be included in your maven settings file. -->
