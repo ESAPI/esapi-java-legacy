@@ -61,6 +61,8 @@ public class TestHttpServletRequest implements HttpServletRequest {
     private String contentType = null;
     
     private String method = "POST";
+
+    private String queryString;
     
     public TestHttpServletRequest() {
     }
@@ -222,7 +224,15 @@ public class TestHttpServletRequest implements HttpServletRequest {
      */
     public String getQueryString() {
 
-        return null;
+        return queryString;
+    }
+
+    /**
+     * set the query string.
+     */
+    public void setQueryString(String str)
+    {
+    	this.queryString = str;
     }
 
     /**
