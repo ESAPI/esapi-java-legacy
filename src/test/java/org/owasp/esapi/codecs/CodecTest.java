@@ -220,6 +220,22 @@ public class CodecTest extends TestCase {
         	assertEquals(expected, result);
 	}
 
+	public void testHtmlEncodeNull()
+	{
+		char in = '\000';
+		String inStr = Character.toString(in);
+		String expected = "&#xfffd;";
+		String result;
+
+		// char version
+        	result = htmlCodec.encodeCharacter(/*EMPTY_CHAR_ARRAY,*/ PrimWrap.wrapChar(in));
+        	assertEquals(expected, result);
+
+		// string version
+        	result = htmlCodec.encode(/*EMPTY_CHAR_ARRAY,*/ inStr);
+        	assertEquals(expected, result);
+	}
+
 	public void testPercentEncodeChar()
 	{
 		assertEquals( "%3C", percentCodec.encodeCharacter(/*EMPTY_CHAR_ARRAY,*/ LESS_THAN) );
