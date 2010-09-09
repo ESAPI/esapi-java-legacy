@@ -138,10 +138,10 @@
 						1.4 compiler. See
 						external-1.4-jdk.txt
 						for info.
+					-->
 					<fork>true</fork>
 					<executable>${jdk-14-home}/bin/javac</executable>
 					<compilerVersion>1.4</compilerVersion>
-					-->
 				</configuration>
 			</plugin>
 			<plugin>
@@ -160,6 +160,7 @@
 				<!--	For testing with multiple JVMs. The
 					individual home paramaters will need to
 					be defined like jdk-14-home to use this.
+					-->
 				<executions>
 					<execution>
 						<id>ibm-1.6</id>
@@ -222,7 +223,7 @@
 						</configuration>
 					</execution>
 				</executions>
-				-->
+				<!-- -->
 			</plugin>
 			
 			

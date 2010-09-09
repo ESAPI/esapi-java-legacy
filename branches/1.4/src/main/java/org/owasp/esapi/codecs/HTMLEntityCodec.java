@@ -32,6 +32,9 @@ import org.owasp.esapi.util.PrimWrap;
  */
 public class HTMLEntityCodec implements Codec
 {
+	private static final char REPLACEMENT_CHAR = '\ufffd';
+	private static final String REPLACEMENT_HEX = "fffd";
+	private static final String REPLACEMENT_STR = "" + REPLACEMENT_CHAR;
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR;
 	private static final Set/*<Character>*/ UNENCODED_SET = CollectionsUtil.strToUnmodifiableSet(UNENCODED_STR);
@@ -595,9 +598,10 @@ public class HTMLEntityCodec implements Codec
         }
 
         // check for illegal characters
-        if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) ) {
-            b.append(' ');
-            return;
+        if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) )
+	{
+		hex = REPLACEMENT_HEX;	// Let's entity encode this instead of returning it
+		c = REPLACEMENT_CHAR;
         }
 
         Character ch = PrimWrap.wrapChar(c);
