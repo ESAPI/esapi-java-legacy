@@ -29,6 +29,9 @@ import java.util.Map;
  */
 public class HTMLEntityCodec extends Codec
 {
+	private static final char REPLACEMENT_CHAR = '\ufffd';
+	private static final String REPLACEMENT_HEX = "fffd";
+	private static final String REPLACEMENT_STR = "" + REPLACEMENT_CHAR;
 	private static final Map<Character,String> characterToEntityMap = mkCharacterToEntityMap();
 
 	private static final Trie<Character> entityToCharacterTrie = mkEntityToCharacterTrie();
@@ -59,8 +62,10 @@ public class HTMLEntityCodec extends Codec
 		}
 		
 		// check for illegal characters
-		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) ) {
-			return( " " );
+		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) )
+		{
+			hex = REPLACEMENT_HEX;	// Let's entity encode this instead of returning it
+			c = REPLACEMENT_CHAR;
 		}
 		
 		// check if there's a defined entity

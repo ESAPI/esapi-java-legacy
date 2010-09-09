@@ -313,7 +313,7 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForHTML(null));
         // test invalid characters are replaced with spaces
-        assertEquals("a b c d e f&#x9;g", instance.encodeForHTML("a" + (char)0 + "b" + (char)4 + "c" + (char)128 + "d" + (char)150 + "e" +(char)159 + "f" + (char)9 + "g"));
+        assertEquals("a&#xfffd;b&#xfffd;c&#xfffd;d&#xfffd;e&#xfffd;f&#x9;g", instance.encodeForHTML("a" + (char)0 + "b" + (char)4 + "c" + (char)128 + "d" + (char)150 + "e" +(char)159 + "f" + (char)9 + "g"));
         
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
         assertEquals("&amp;lt&#x3b;script&amp;gt&#x3b;", instance.encodeForHTML("&lt;script&gt;"));
