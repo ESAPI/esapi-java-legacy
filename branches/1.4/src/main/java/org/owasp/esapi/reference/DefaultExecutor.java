@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.util.List;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.ExecuteResult;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.ExecutorException;
@@ -54,6 +55,15 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     /**
      * {@inheritDoc}
      * 
+     * <p>The reference implementation calls <tt>executeProgram( ... ).getOutput()</tt>.</p>
+     */
+    public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
+    	return executeProgram(executable, params, workdir, codec).getOutput();
+    }
+
+    /**
+     * {@inheritDoc}
+     * 
      * <p>The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
      * and then executes the command without using concatenation.</p> 
      * 
@@ -63,7 +73,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * the parameters. You MUST change this behavior if you are passing credit card numbers, TIN/SSN, or 
      * health information through this reference implementation, such as to a credit card or HL7 gateway.</p> 
      */
-    public String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException {
+    public ExecuteResult executeProgram(File executable, List params, File workdir, Codec codec) throws ExecutorException {
         try {
             logger.warning(Logger.SECURITY, true, "Initiating executable: " + executable + " " + params + " in " + workdir);
  
@@ -89,7 +99,6 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             
             params.add(0, executable.getCanonicalPath());
             String[] command = (String[])params.toArray( new String[0] );
-            Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
             
             // Future - this is how to implement this in Java 1.5+
             // ProcessBuilder pb = new ProcessBuilder(params);
@@ -100,16 +109,39 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             // pb.redirectErrorStream(true);
             // Process process = pb.start();
 
-            String output = readStream( process.getInputStream() );
-            String errors = readStream( process.getErrorStream() );
+            final StringBuffer outputBuffer = new StringBuffer();
+            final StringBuffer errorsBuffer = new StringBuffer();
+
+            final Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
+            try {
+                ReadThread errorReader = new ReadThread(process.getErrorStream(), errorsBuffer);
+                errorReader.start();
+                readStream( process.getInputStream(), outputBuffer );
+                errorReader.join();
+                if (errorReader.exception != null) {
+                    throw errorReader.exception;
+                }
+                process.waitFor();
+            } catch (Throwable e) {
+                process.destroy();
+                throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
+            }
+
+            String output = outputBuffer.toString();
+            String errors = errorsBuffer.toString();
+            int exitValue = process.exitValue();
+
             if ( errors != null && errors.length() > 0 ) {
-            	logger.warning( Logger.SECURITY, false, "Error during system command: " + errors );
+                logger.warning( Logger.SECURITY, false, "Error during system command: " + errors );
+            }
+            if ( exitValue != 0 ) {
+                logger.warning( Logger.SECURITY, false, "System command exited with non-zero status: " + exitValue );
             }
             logger.warning(Logger.SECURITY, true, "System command complete: " + params);
-            return output;
-        } catch (Exception e) {
+            return new ExecuteResult(exitValue, output, errors);
+        } catch (IOException e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
-        }        
+        }
     }
 
     /**
@@ -121,15 +153,33 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * 			a string containing as many lines as the input stream contains, with newlines between lines
      * @throws IOException
      */
-    private String readStream( InputStream is ) throws IOException {
+    private static void readStream( InputStream is, StringBuffer sb ) throws IOException {
 	    InputStreamReader isr = new InputStreamReader(is);
 	    BufferedReader br = new BufferedReader(isr);
-	    StringBuffer sb = new StringBuffer();
 	    String line;
 	    while ((line = br.readLine()) != null) {
-	        sb.append(line + "\n");
+	        sb.append(line).append("\n");
 	    }
-	    return sb.toString();
     }
-    
+
+    private static class ReadThread extends Thread {
+        volatile IOException exception;
+        private final InputStream stream;
+        private final StringBuffer buffer;
+
+        ReadThread(InputStream stream, StringBuffer buffer) {
+            this.stream = stream;
+            this.buffer = buffer;
+        }
+
+        public void run() {
+            try {
+                readStream(stream, buffer);
+            } catch (IOException e) {
+                exception = e;
+            }
+        }
+
+    }
+
 }

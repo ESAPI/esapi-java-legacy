@@ -26,12 +26,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.ExecuteResult;
 import org.owasp.esapi.Executor;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.codecs.Codec;
-import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.codecs.UnixCodec;
+import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.util.FileTestUtils;
 
 
@@ -77,8 +78,8 @@ public class ExecutorTest extends TestCase
 	 */
 	private static class Conf extends SecurityConfigurationWrapper
 	{
-		private List allowedExes;
-		private File workingDir;
+		private final List allowedExes;
+		private final File workingDir;
 
 		/**
 		 * Create wrapper with the specified allowed execs and
@@ -164,15 +165,17 @@ public class ExecutorTest extends TestCase
 	public void testExecuteJava() throws Exception
 	{
 		List params = new ArrayList();
-		String result;
+		ExecuteResult result;
 
 		// -version goes to stderr which executeSystemCommand doesn't read...
 		// -help goes to stdout so we'll use that...
 		params.add("-help");
 
-		result = instance.executeSystemCommand(JAVA_CMD, params, TMP_DIR, codec);
+		result = instance.executeProgram(JAVA_CMD, params, TMP_DIR, codec);
 		assertNotNull("result of java -version was null", result);
-		assertTrue("result of java -help did not contain -version", result.indexOf("-version") >= 0);
+		assertTrue("result of java -help did not contain -version",
+                   result.getOutput().indexOf("-version") >= 0 ||
+                   result.getErrors().indexOf("-version") >= 0);
 	}
 
 	public void testExecuteJavaSemicolenInject() throws Exception

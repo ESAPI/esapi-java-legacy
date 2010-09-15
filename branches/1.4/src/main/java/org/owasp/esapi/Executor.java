@@ -51,6 +51,8 @@ public interface Executor {
 	 * Implementations must change to the specified working
 	 * directory before invoking the command.
 	 * 
+	 * @deprecated Replaced by executeProgram
+	 * 
 	 * @param executable
 	 *            the command to execute
 	 * @param params
@@ -66,5 +68,27 @@ public interface Executor {
 	 *             the service exception
 	 */
 	String executeSystemCommand(File executable, List params, File workdir, Codec codec) throws ExecutorException;
+
+	/**
+	 * Executes a system command after checking that the executable exists and
+	 * escaping all the parameters to ensure that injection is impossible.
+	 * Implementations must change to the specified working
+	 * directory before invoking the command.
+	 * 
+	 * @param executable
+	 *            the command to execute
+	 * @param params
+	 *            the parameters of the command being executed
+	 * @param workdir
+	 *            the working directory
+	 * @param codec
+	 *            the codec to use to encode for the particular OS in use
+	 * 
+	 * @return the results of the command being run
+	 * 
+	 * @throws ExecutorException
+	 *             the service exception
+	 */
+	ExecuteResult executeProgram(File executable, List params, File workdir, Codec codec) throws ExecutorException;
 
 }
