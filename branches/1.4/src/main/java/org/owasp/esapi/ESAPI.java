@@ -38,28 +38,40 @@ import org.owasp.esapi.reference.Log4JLogFactory;
 public class ESAPI {
 
 	private static AccessController accessController = null;
+	private static final Object accessControllerLock = new Object();
 
 	private static Authenticator authenticator = null;
+	private static final Object authenticatorLock = new Object();
 
 	private static Encoder encoder = null;
+	private static final Object encoderLock = new Object();
 
 	private static Encryptor encryptor = null;
+	private static final Object encryptorLock = new Object();
 
 	private static Executor executor = null;
+	private static final Object executorLock = new Object();
 
 	private static HTTPUtilities httpUtilities = null;
+	private static final Object httpUtilitiesLock = new Object();
 
 	private static IntrusionDetector intrusionDetector = null;
+	private static final Object intrusionDetectorLock = new Object();
 
 	private static LogFactory logFactory = null;
-	
+	private static final Object logFactoryLock = new Object();
+
 	private static Logger defaultLogger = null;
+	private static final Object defaultLoggerLock = new Object();
 
 	private static Randomizer randomizer = null;
+	private static final Object randomizerLock = new Object();
 
 	private static SecurityConfiguration securityConfiguration = null;
+	private static final Object securityConfigurationLock = new Object();
 
 	private static Validator validator = null;
+	private static final Object validatorLock = new Object();
 
 	/**
 	 * prevent instantiation of this class
@@ -87,9 +99,11 @@ public class ESAPI {
 	 * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
 	 */
 	public static AccessController accessController() {
-		if (ESAPI.accessController == null)
-			ESAPI.accessController = new FileBasedAccessController();
-		return ESAPI.accessController;
+		synchronized (accessControllerLock) {
+			if (ESAPI.accessController == null)
+				ESAPI.accessController = new FileBasedAccessController();
+			return ESAPI.accessController;
+		}
 	}
 
 	/**
@@ -98,16 +112,20 @@ public class ESAPI {
 	 *            the AccessController to set to be the current ESAPI AccessController. 
 	 */
 	public static void setAccessController(AccessController accessController) {
-		ESAPI.accessController = accessController;
+		synchronized (accessControllerLock) {
+			ESAPI.accessController = accessController;
+		}
 	}
 
 	/**
 	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
 	public static Authenticator authenticator() {
-		if (ESAPI.authenticator == null)
-			ESAPI.authenticator = new FileBasedAuthenticator();
-		return ESAPI.authenticator;
+		synchronized (authenticatorLock) {
+			if (ESAPI.authenticator == null)
+				ESAPI.authenticator = new FileBasedAuthenticator();
+			return ESAPI.authenticator;
+		}
 	}
 
 	/**
@@ -116,16 +134,20 @@ public class ESAPI {
 	 *            the Authenticator to set to be the current ESAPI Authenticator. 
 	 */
 	public static void setAuthenticator(Authenticator authenticator) {
-		ESAPI.authenticator = authenticator;
+		synchronized (authenticatorLock) {
+			ESAPI.authenticator = authenticator;
+		}
 	}
 
 	/**
 	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
 	public static Encoder encoder() {
-		if (ESAPI.encoder == null)
-			ESAPI.encoder = new DefaultEncoder();
-		return ESAPI.encoder;
+		synchronized (encoderLock) {
+			if (ESAPI.encoder == null)
+				ESAPI.encoder = new DefaultEncoder();
+			return ESAPI.encoder;
+		}
 	}
 
 	/**
@@ -134,16 +156,20 @@ public class ESAPI {
 	 *            the Encoder to set to be the current ESAPI Encoder. 
 	 */
 	public static void setEncoder(Encoder encoder) {
-		ESAPI.encoder = encoder;
+		synchronized (encoderLock) {
+			ESAPI.encoder = encoder;
+		}
 	}
 
 	/**
 	 * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
 	 */
 	public static Encryptor encryptor() {
-		if (ESAPI.encryptor == null)
-			ESAPI.encryptor = new JavaEncryptor();
-		return ESAPI.encryptor;
+		synchronized (encryptorLock) {
+			if (ESAPI.encryptor == null)
+				ESAPI.encryptor = new JavaEncryptor();
+			return ESAPI.encryptor;
+		}
 	}
 
 	/**
@@ -152,16 +178,20 @@ public class ESAPI {
 	 *            the Encryptor to set to be the current ESAPI Encryptor. 
 	 */
 	public static void setEncryptor(Encryptor encryptor) {
-		ESAPI.encryptor = encryptor;
+		synchronized (encryptorLock) {
+			ESAPI.encryptor = encryptor;
+		}
 	}
 
 	/**
 	 * @return the current ESAPI Executor object being used to safely execute OS commands for this application. 
 	 */
 	public static Executor executor() {
-		if (ESAPI.executor == null)
-			ESAPI.executor = new DefaultExecutor();
-		return ESAPI.executor;
+		synchronized (executorLock) {
+			if (ESAPI.executor == null)
+				ESAPI.executor = new DefaultExecutor();
+			return ESAPI.executor;
+		}
 	}
 
 	/**
@@ -170,7 +200,9 @@ public class ESAPI {
 	 *            the Executor to set to be the current ESAPI Executor. 
 	 */
 	public static void setExecutor(Executor executor) {
-		ESAPI.executor = executor;
+		synchronized (executorLock) {
+			ESAPI.executor = executor;
+		}
 	}
 
 	/**
@@ -178,9 +210,11 @@ public class ESAPI {
 	 * for this application. 
 	 */
 	public static HTTPUtilities httpUtilities() {
-		if (ESAPI.httpUtilities == null)
-			ESAPI.httpUtilities = new DefaultHTTPUtilities();
-		return ESAPI.httpUtilities;
+		synchronized (httpUtilitiesLock) {
+			if (ESAPI.httpUtilities == null)
+				ESAPI.httpUtilities = new DefaultHTTPUtilities();
+			return ESAPI.httpUtilities;
+		}
 	}
 
 	/**
@@ -189,16 +223,20 @@ public class ESAPI {
 	 *            the HTTPUtilities object to set to be the current ESAPI HTTPUtilities object. 
 	 */
 	public static void setHttpUtilities(HTTPUtilities httpUtilities) {
-		ESAPI.httpUtilities = httpUtilities;
+		synchronized (httpUtilitiesLock) {
+			ESAPI.httpUtilities = httpUtilities;
+		}
 	}
 
 	/**
 	 * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
 	 */
 	public static IntrusionDetector intrusionDetector() {
-		if (ESAPI.intrusionDetector == null)
-			ESAPI.intrusionDetector = new DefaultIntrusionDetector();
-		return ESAPI.intrusionDetector;
+		synchronized (intrusionDetectorLock) {
+			if (ESAPI.intrusionDetector == null)
+				ESAPI.intrusionDetector = new DefaultIntrusionDetector();
+			return ESAPI.intrusionDetector;
+		}
 	}
 
 	/**
@@ -207,7 +245,9 @@ public class ESAPI {
 	 *            the IntrusionDetector to set to be the current ESAPI IntrusionDetector. 
 	 */
 	public static void setIntrusionDetector(IntrusionDetector intrusionDetector) {
-		ESAPI.intrusionDetector = intrusionDetector;
+		synchronized (intrusionDetectorLock) {
+			ESAPI.intrusionDetector = intrusionDetector;
+		}
 	}
 
 	/**
@@ -216,14 +256,16 @@ public class ESAPI {
 	 * @return The current LogFactory being used by ESAPI.
 	 */
 	private static LogFactory logFactory() {
-		if (logFactory == null) {
-			if (securityConfiguration().getLogDefaultLog4J()) {
-				logFactory = new Log4JLogFactory(securityConfiguration().getApplicationName());
-			} else {
-				logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
+		synchronized (logFactoryLock) {
+			if (logFactory == null) {
+				if (securityConfiguration().getLogDefaultLog4J()) {
+					logFactory = new Log4JLogFactory(securityConfiguration().getApplicationName());
+				} else {
+					logFactory = new JavaLogFactory(securityConfiguration().getApplicationName());
+				}
 			}
+			return logFactory;
 		}
-		return logFactory;
 	}
 	
 	/**
@@ -246,9 +288,11 @@ public class ESAPI {
 	 * @return The default Logger.
 	 */
 	public static Logger log() {
-		if (defaultLogger == null)
-			defaultLogger = logFactory().getLogger("DefaultLogger");
-		return defaultLogger;
+		synchronized (defaultLoggerLock) {
+			if (defaultLogger == null)
+				defaultLogger = logFactory().getLogger("DefaultLogger");
+			return defaultLogger;
+		}
 	}
 	
 	/**
@@ -256,17 +300,21 @@ public class ESAPI {
 	 * @param factory
 	 *            the LogFactory to set to be the current ESAPI LogFactory. 
 	 */
-	 public static void setLogFactory(LogFactory factory) {
-		 ESAPI.logFactory = factory;
-	 }
-	
+	public static void setLogFactory(LogFactory factory) {
+		synchronized (logFactoryLock) {
+			ESAPI.logFactory = factory;
+		}
+	}
+
 	/**
 	 * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
 	 */
 	public static Randomizer randomizer() {
-		if (ESAPI.randomizer == null)
-			ESAPI.randomizer = new DefaultRandomizer();
-		return ESAPI.randomizer;
+		synchronized (randomizerLock) {
+			if (ESAPI.randomizer == null)
+				ESAPI.randomizer = new DefaultRandomizer();
+			return ESAPI.randomizer;
+		}
 	}
 
 	/**
@@ -275,7 +323,9 @@ public class ESAPI {
 	 *            the Randomizer to set to be the current ESAPI Randomizer. 
 	 */
 	public static void setRandomizer(Randomizer randomizer) {
-		ESAPI.randomizer = randomizer;
+		synchronized (randomizerLock) {
+			ESAPI.randomizer = randomizer;
+		}
 	}
 
 	/**
@@ -283,9 +333,11 @@ public class ESAPI {
 	 * ESAPI for this application. 
 	 */
 	public static SecurityConfiguration securityConfiguration() {
-		if (ESAPI.securityConfiguration == null)
-			ESAPI.securityConfiguration = new DefaultSecurityConfiguration();
-		return ESAPI.securityConfiguration;
+		synchronized (securityConfigurationLock) {
+			if (ESAPI.securityConfiguration == null)
+				ESAPI.securityConfiguration = new DefaultSecurityConfiguration();
+			return ESAPI.securityConfiguration;
+		}
 	}
 
 	/**
@@ -293,18 +345,21 @@ public class ESAPI {
 	 * @param securityConfiguration
 	 *            the SecurityConfiguration to set to be the current ESAPI SecurityConfiguration. 
 	 */
-	public static void setSecurityConfiguration(
-			SecurityConfiguration securityConfiguration) {
-		ESAPI.securityConfiguration = securityConfiguration;
+	public static void setSecurityConfiguration(SecurityConfiguration securityConfiguration) {
+		synchronized (securityConfigurationLock) {
+			ESAPI.securityConfiguration = securityConfiguration;
+		}
 	}
 
 	/**
 	 * @return the current ESAPI Validator being used to validate data in this application. 
 	 */
 	public static Validator validator() {
-		if (ESAPI.validator == null)
-			ESAPI.validator = new DefaultValidator();
-		return ESAPI.validator;
+		synchronized (validatorLock) {
+			if (ESAPI.validator == null)
+				ESAPI.validator = new DefaultValidator();
+			return ESAPI.validator;
+		}
 	}
 
 	/**
@@ -313,6 +368,8 @@ public class ESAPI {
 	 *            the Validator to set to be the current ESAPI Validator. 
 	 */
 	public static void setValidator(Validator validator) {
-		ESAPI.validator = validator;
+		synchronized (validatorLock) {
+			ESAPI.validator = validator;
+		}
 	}
 }
