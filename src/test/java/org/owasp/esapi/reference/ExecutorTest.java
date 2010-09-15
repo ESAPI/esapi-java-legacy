@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -25,12 +26,13 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.ExecuteResult;
 import org.owasp.esapi.Executor;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.codecs.Codec;
-import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.codecs.UnixCodec;
+import org.owasp.esapi.codecs.WindowsCodec;
 
 /**
  * The Class ExecutorTest.
@@ -43,8 +45,8 @@ public class ExecutorTest extends TestCase {
 
 	private static class Conf extends SecurityConfigurationWrapper
 	{
-		private List allowedExes;
-		private File workingDir;
+		private final List allowedExes;
+		private final File workingDir;
 
 		Conf(SecurityConfiguration orig, List allowedExes, File workingDir)
 		{
@@ -123,16 +125,16 @@ public class ExecutorTest extends TestCase {
 		try {
 			params.add("/C");
 			params.add("dir");
-			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
-			assertTrue(result.length() > 0);
+			assertTrue(result.getOutput().length() > 0);
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail();
 		}
 		try {
 			File exec2 = new File( cmd.getPath() + ";inject.exe" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -140,7 +142,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( cmd.getPath() + "\\..\\cmd.exe" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -148,7 +150,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File workdir = new File( "c:\\ridiculous" );
-			String result = instance.executeSystemCommand(cmd, new ArrayList(params), workdir, codec, false );
+			ExecuteResult result = instance.executeSystemCommand(cmd, new ArrayList(params), workdir, codec, false, false );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -156,7 +158,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			params.add("&dir");
-			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -164,7 +166,7 @@ public class ExecutorTest extends TestCase {
 
 		try {
 			params.set( params.size()-1, "c:\\autoexec.bat" );
-			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -172,7 +174,7 @@ public class ExecutorTest extends TestCase {
 
 		try {
 			params.set( params.size()-1, "c:\\autoexec.bat c:\\config.sys" );
-			String result = instance.executeSystemCommand(cmd, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(cmd, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 		} catch (Exception e) {
 			fail();
@@ -214,15 +216,15 @@ public class ExecutorTest extends TestCase {
 			params.add("-c");
 			params.add("ls");
 			params.add("/");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
-			assertTrue(result.length() > 0);
+			assertTrue(result.getOutput().length() > 0);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}
 		try {
 			File exec2 = new File( executable.getPath() + ";./inject" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -230,7 +232,7 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			File exec2 = new File( executable.getPath() + "/../bin/sh" );
-			String result = instance.executeSystemCommand(exec2, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(exec2, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
 			fail();
 		} catch (Exception e) {
@@ -238,8 +240,27 @@ public class ExecutorTest extends TestCase {
 		}
 		try {
 			params.add(";ls");
-			String result = instance.executeSystemCommand(executable, new ArrayList(params) );
+			ExecuteResult result = instance.executeSystemCommand(executable, new ArrayList(params) );
 			System.out.println( "RESULT: " + result );
+		} catch (Exception e) {
+			fail();
+		}
+
+		try {
+			File cwd = new File(".");
+			File script = File.createTempFile("ESAPI-ExecutorTest", "sh", cwd);
+			script.deleteOnExit();
+			FileWriter output = new FileWriter(script);
+			try {
+				output.write("i=0\nwhile [ $i -lt 8192 ]\ndo\necho stdout data\necho stderr data >&2\ni=$((i+1))\ndone\n");
+			} finally {
+				output.close();
+			}
+			List deadlockParams = new ArrayList();
+			deadlockParams.add(script.getName());
+			ExecuteResult result = instance.executeSystemCommand(executable, deadlockParams, cwd, codec, true, false);
+			System.out.println( "RESULT: " + result.getExitValue() );
+			assertEquals(0, result.getExitValue());
 		} catch (Exception e) {
 			fail();
 		}
