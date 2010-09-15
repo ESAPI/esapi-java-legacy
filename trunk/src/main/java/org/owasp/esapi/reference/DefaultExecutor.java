@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.ExecuteResult;
 import org.owasp.esapi.Executor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Codec;
@@ -77,22 +78,23 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     /**
      * {@inheritDoc}
      */
-    public String executeSystemCommand(File executable, List params) throws ExecutorException {
+    public ExecuteResult executeSystemCommand(File executable, List params) throws ExecutorException {
     	File workdir = ESAPI.securityConfiguration().getWorkingDirectory();
     	boolean logParams = false;
-    	return executeSystemCommand( executable, params, workdir, codec, logParams );
+    	boolean redirectErrorStream = false;
+    	return executeSystemCommand( executable, params, workdir, codec, logParams, redirectErrorStream );
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * The reference implementation sets the work directory, escapes the parameters as per the Codec in use,
      * and then executes the command without using concatenation. The exact, absolute, canonical path of each
      * executable must be listed as an approved executable in the ESAPI properties. The executable must also
      * exist on the disk. All failures will be logged, along with parameters if specified. Set the logParams to false if
      * you are going to invoke this interface with confidential information.
      */
-    public String executeSystemCommand(File executable, List params, File workdir, Codec codec, boolean logParams ) throws ExecutorException {
+    public ExecuteResult executeSystemCommand(File executable, List params, File workdir, Codec codec, boolean logParams, boolean redirectErrorStream ) throws ExecutorException {
         try {
             // executable must exist
             if (!executable.exists()) {
@@ -108,7 +110,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             if ( !executable.getPath().equals( executable.getCanonicalPath() ) ) {
             	throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-canonical path: " + executable);
         	}
-                    		
+            
             // exact, absolute, canonical path to executable must be listed in ESAPI configuration 
             List approved = ESAPI.securityConfiguration().getAllowedExecutables();
             if (!approved.contains(executable.getPath())) {
@@ -138,24 +140,58 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             Map env = pb.environment();
             env.clear();  // Security check - clear environment variables!
             pb.directory(workdir);
-            pb.redirectErrorStream(true);
-            Process process = pb.start();
+            pb.redirectErrorStream(redirectErrorStream);
 
             if ( logParams ) {
             	logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
             } else {
             	logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " [sensitive parameters obscured] in " + workdir);
             }
-            String output = readStream( process.getInputStream() );
-            String errors = readStream( process.getErrorStream() );
-            if ( errors != null && errors.length() > 0 ) {
-            	logger.warning( Logger.SECURITY_SUCCESS, "Error during system command: " + errors );
+
+            final StringBuilder outputBuffer = new StringBuilder();
+            final StringBuilder errorsBuffer = new StringBuilder();
+            final Process process = pb.start();
+            try {
+                ReadThread errorReader;
+                if (!redirectErrorStream) {
+                	errorReader = new ReadThread(process.getErrorStream(), errorsBuffer);
+                	errorReader.start();
+                } else {
+                	errorReader = null;
+                }
+            	readStream( process.getInputStream(), outputBuffer );
+            	if (errorReader != null) {
+            		errorReader.join();
+            		if (errorReader.exception != null) {
+            			throw errorReader.exception;
+            		}
+            	}
+            	process.waitFor();
+            } catch (Throwable e) {
+            	process.destroy();
+            	throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
             }
+
+            String output = outputBuffer.toString();
+            String errors = errorsBuffer.toString();
+            int exitValue = process.exitValue();
+            if ( errors != null && errors.length() > 0 ) {
+            	String logErrors = errors;
+            	final int MAX_LEN = 256;
+            	if (logErrors.length() > MAX_LEN) {
+            		logErrors = logErrors.substring(0, MAX_LEN) + "(truncated at "+MAX_LEN+" characters)";
+            	}
+            	logger.warning( Logger.SECURITY_SUCCESS, "Error during system command: " + logErrors );
+            }
+            if ( exitValue != 0 ) {
+            	logger.warning( Logger.EVENT_FAILURE, "System command exited with non-zero status: " + exitValue );
+            }
+
             logger.warning(Logger.SECURITY_SUCCESS, "System command complete");
-            return output;
-        } catch (Exception e) {
+            return new ExecuteResult(exitValue, output, errors);
+        } catch (IOException e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
-        }        
+        }
     }
 
     /**
@@ -167,15 +203,34 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * 			a string containing as many lines as the input stream contains, with newlines between lines
      * @throws IOException
      */
-    private String readStream( InputStream is ) throws IOException {
+    private static void readStream( InputStream is, StringBuilder sb ) throws IOException {
 	    InputStreamReader isr = new InputStreamReader(is);
 	    BufferedReader br = new BufferedReader(isr);
-	    StringBuilder sb = new StringBuilder();
 	    String line;
 	    while ((line = br.readLine()) != null) {
-	        sb.append(line + "\n");
+	        sb.append(line).append('\n');
 	    }
-	    return sb.toString();
     }
     
+    private static class ReadThread extends Thread {
+    	volatile IOException exception;
+    	private final InputStream stream;
+    	private final StringBuilder buffer;
+
+    	ReadThread(InputStream stream, StringBuilder buffer) {
+    		this.stream = stream;
+    		this.buffer = buffer;
+    	}
+
+    	@Override
+		public void run() {
+    		try {
+    			readStream(stream, buffer);
+    		} catch (IOException e) {
+    			exception = e;
+    		}
+    	}
+
+    }
+
 }
