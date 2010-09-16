@@ -597,7 +597,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					if (in != null) {
 						result = new Properties();
 						result.load(in); // Can throw IOException
-						logSpecial("Successfully loaded " + fileName + " via the classpath! BOO-YA!");
+						logSpecial("SUCCESSFULLY LOADED " + fileName + " VIA THE CLASSPATH!");
 					}
 				} catch (Exception e) {
 					result = null;
