@@ -101,7 +101,7 @@ public final class JavaEncryptor implements Encryptor {
     // digital signatures
     private static PrivateKey privateKey = null;
 	private static PublicKey publicKey = null;
-	private static String signatureAlgorithm = "SHAwithDSA";
+	private static String signatureAlgorithm = "SHA1withDSA";
     private static String randomAlgorithm = "SHA1PRNG";
 	private static int signatureKeyLength = 1024;
 	
@@ -448,10 +448,10 @@ public final class JavaEncryptor implements Encryptor {
 				 logger.warning(Logger.SECURITY_FAILURE, "Actual key size of " + keySize + " bits SMALLER THAN specified " +
 						 "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits with cipher algorithm " + cipherAlg);
 			 }
-			 if ( keySize < 80 ) {		// Most cryptographers today consider 80-bits to be the minimally safe key size.
+			 if ( keySize < 112 ) {		// NIST Special Pub 800-57 considers 112-bits to be the minimally safe key size from 2010-2030.
 				 logger.warning(Logger.SECURITY_FAILURE, "Potentially unsecure encryption. Key size of " + keySize + "bits " +
 				                "not sufficiently long for " + cipherAlg + ". Should use appropriate algorithm with key size " +
-				                "of *at least* 80 bits except when required by legacy apps.");
+				                "of *at least* 112 bits except when required by legacy apps. See NIST Special Pub 800-57.");
 			 }
 			 // Check if algorithm mentioned in SecretKey is same as that being used for Cipher object.
 			 // They should be the same. If they are different, things could fail. (E.g., DES and DESede
