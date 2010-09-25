@@ -1020,10 +1020,26 @@ public final class JavaEncryptor implements Encryptor {
     // Set up signing key pair using the master password and salt. Called (once)
     // from the JavaEncryptor CTOR.
     private static void initKeyPair(SecureRandom prng) throws NoSuchAlgorithmException {
-            KeyPairGenerator keyGen = KeyPairGenerator.getInstance(signatureAlgorithm);
-            keyGen.initialize(signatureKeyLength, prng);
-            KeyPair pair = keyGen.generateKeyPair();
-            privateKey = pair.getPrivate();
-            publicKey = pair.getPublic();
+        String sigAlg = signatureAlgorithm;
+        if ( sigAlg.endsWith("DSA") ) {
+            //
+            // Admittedly, this is a kludge. However for Sun JCE, even though
+            // "SHA1withDSA" is a valid signature algorithm name, if one calls
+            //      KeyPairGenerator kpg = KeyPairGenerator.getInstance("SHA1withDSA");
+            // that will throw a NoSuchAlgorithmException with an exception
+            // message of "SHA1withDSA KeyPairGenerator not available". Since
+            // SHA1withDSA and DSA keys should be identical, we use "DSA"
+            // in the case that SHA1withDSA or SHAwithDSA was specified. This is
+            // all just to make these 2 work as expected. Sigh. (Note:
+            // this was tested with JDK 1.6.0_21, but likely fails with earlier
+            // versions of the JDK as well.)
+            //
+            sigAlg = "DSA";
+        }
+        KeyPairGenerator keyGen = KeyPairGenerator.getInstance(sigAlg);
+        keyGen.initialize(signatureKeyLength, prng);
+        KeyPair pair = keyGen.generateKeyPair();
+        privateKey = pair.getPrivate();
+        publicKey = pair.getPublic();
     }
 }
