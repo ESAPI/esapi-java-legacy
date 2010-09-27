@@ -85,7 +85,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         // validate the name and value
         ValidationErrorList errors = new ValidationErrorList();
         String cookieName = ESAPI.validator().getValidInput("cookie name", name, "HTTPCookieName", 50, false, errors);
-        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", 5000, false, errors);
+        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false, errors);
 
         // if there are no errors, then just set a cookie header
         if (errors.size() == 0) {
@@ -171,7 +171,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
             String strippedName = StringUtilities.stripControls(name);
             String strippedValue = StringUtilities.stripControls(value);
             String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", 20, false);
-            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", 500, false);
+            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false);
             getHttpServletResponse().setHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
@@ -445,7 +445,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
             String strippedName = StringUtilities.stripControls(name);
             String strippedValue = StringUtilities.stripControls(value);
             String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 20, false);
-            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", 500, false);
+            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false);
             getHttpServletResponse().setHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);
