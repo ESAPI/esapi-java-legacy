@@ -1020,8 +1020,8 @@ public final class JavaEncryptor implements Encryptor {
     // Set up signing key pair using the master password and salt. Called (once)
     // from the JavaEncryptor CTOR.
     private static void initKeyPair(SecureRandom prng) throws NoSuchAlgorithmException {
-        String sigAlg = signatureAlgorithm;
-        if ( sigAlg.endsWith("DSA") ) {
+        String sigAlg = signatureAlgorithm.toLowerCase();
+        if ( sigAlg.endsWith("withdsa") ) {
             //
             // Admittedly, this is a kludge. However for Sun JCE, even though
             // "SHA1withDSA" is a valid signature algorithm name, if one calls
@@ -1035,6 +1035,9 @@ public final class JavaEncryptor implements Encryptor {
             // versions of the JDK as well.)
             //
             sigAlg = "DSA";
+        } else if ( sigAlg.endsWith("withrsa") ) {
+            // Ditto for RSA.
+            sigAlg = "RSA";
         }
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance(sigAlg);
         keyGen.initialize(signatureKeyLength, prng);
