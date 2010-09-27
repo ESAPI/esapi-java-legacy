@@ -494,6 +494,11 @@ public interface SecurityConfiguration {
     public boolean getForceSecureCookies() ;
 
 	/**
+	 * Returns the maximum allowable HTTP header size.
+	 */
+	public int getMaxHttpHeaderSize() ;
+
+	/**
 	 * Gets an InputStream to a file in the resource directory
      *
      * @param filename A file name in the resource directory.

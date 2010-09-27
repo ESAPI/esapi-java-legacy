@@ -127,6 +127,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String FORCE_SECURESESSION = "HttpUtilities.SecureSession";
     public static final String FORCE_HTTPONLYCOOKIES = "HttpUtilities.ForceHttpOnlyCookies";
     public static final String FORCE_SECURECOOKIES = "HttpUtilities.ForceSecureCookies";
+	public static final String MAX_HTTP_HEADER_SIZE = "HttpUtilities.MaxHeaderSize";
     public static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";
     public static final String UPLOAD_TEMP_DIRECTORY = "HttpUtilities.UploadTempDir";
     public static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
@@ -950,6 +951,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public boolean getForceSecureCookies() {
     	return getESAPIProperty( FORCE_SECURECOOKIES, true );
     }
+
+    /**
+	 * {@inheritDoc}
+	 */
+	public int getMaxHttpHeaderSize() {
+        return getESAPIProperty( MAX_HTTP_HEADER_SIZE, 4096 );
+	}
 
     /**
 	 * {@inheritDoc}
