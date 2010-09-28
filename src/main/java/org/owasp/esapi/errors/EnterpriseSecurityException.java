@@ -40,7 +40,7 @@ public class EnterpriseSecurityException extends Exception {
     protected static final long serialVersionUID = 1L;
 
     /** The logger. */
-    protected final Logger logger = ESAPI.getLogger("EnterpriseSecurityException");
+    protected final transient Logger logger = ESAPI.getLogger("EnterpriseSecurityException");
 
     /**
      *
