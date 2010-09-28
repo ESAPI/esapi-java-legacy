@@ -827,6 +827,6 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     }
 
     public void setAllowableContentRoot(String allowableContentRoot) {
-        this.allowableContentRoot = allowableContentRoot.startsWith( "/" ) ? "" : "/" + allowableContentRoot;
+        this.allowableContentRoot = allowableContentRoot.startsWith( "/" ) ? allowableContentRoot : "/" + allowableContentRoot;
     }
 }
