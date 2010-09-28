@@ -117,7 +117,7 @@ public class DefaultEncoder implements Encoder {
 		if ( input == null ) {
 			return null;
 		}
-		return canonicalize( input, true );
+		return canonicalize( input, !ESAPI.securityConfiguration().getDisableIntrusionDetection() );
 	}
 
 	
