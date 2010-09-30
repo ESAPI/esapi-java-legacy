@@ -131,12 +131,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         if (path != null) {
             header += "; Path=" + path;
         }
-        // if ( secure || ESAPI.securityConfiguration().forceSecureCookies() ) {
-        header += "; Secure";
-        // }
-        // if ( ESAPI.securityConfiguration().forceHttpOnly() ) {
-        header += "; HttpOnly";
-        // }
+        if ( secure || ESAPI.securityConfiguration().getForceSecureCookies() ) {
+			header += "; Secure";
+        }
+        if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+			header += "; HttpOnly";
+        }
         return header;
     }
 
