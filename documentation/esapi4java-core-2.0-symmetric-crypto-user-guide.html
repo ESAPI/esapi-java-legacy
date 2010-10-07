@@ -98,9 +98,9 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
-			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.EncryptionKeyLength</FONT></FONT></FONT></PRE>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.EncryptionKeyLength</FONT></FONT></PRE>
 		</TD>
-		<TD WIDTH=202 SDVAL="128" SDNUM="1033;">
+		<TD WIDTH=202>
 			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>128</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
@@ -257,7 +257,7 @@ are ones that you would replace.</P>
 		<TD WIDTH=249>
 			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.PlainText.overwrite</FONT></FONT></PRE>
 		</TD>
-		<TD WIDTH=202 SDVAL="1" SDNUM="1033;0;BOOLEAN">
+		<TD WIDTH=202>
 			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>TRUE</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
@@ -573,7 +573,8 @@ a need to do encryption with a 128-bit AES key), it is not guaranteed
 to do so. Instead, you should count on generating a separate encryption
 key and using the encrypt / decrypt methods taking an additional
 <code>SecretKey</code> parameter as show in the previous section.
-</p><p>
+</p>
+<p>
 Rather than repeating all the details of how to do this in this
 user guide, we encourage you to investigate how this was done in
 the Junit testing for the <code>JavaEncryptor</code> class. Please
@@ -585,10 +586,11 @@ This code calls:
 <pre>
 		ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
 </pre>
-which sets ESAPI to use the specified cipher transoformation,
+which sets ESAPI to use the specified cipher transformation,
 <code>cipherXform</code>. As a convenience (for later restoral),
 it returns the previous cipher transformation.
-</p><p>
+</p>
+<p>
 There are also a few non-obvious key size adjustments that are also
 going on with DES and DESede (aka, triple DES) keys that are made there
 as well. This has to do with the fact that for DES keys (which
