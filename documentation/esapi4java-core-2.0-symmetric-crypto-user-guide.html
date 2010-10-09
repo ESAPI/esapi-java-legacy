@@ -589,7 +589,6 @@ This code calls:
 which sets ESAPI to use the specified cipher transformation,
 <code>cipherXform</code>. As a convenience (for later restoral),
 it returns the previous cipher transformation.
-</p>
 <p>
 There are also a few non-obvious key size adjustments that are also
 going on with DES and DESede (aka, triple DES) keys that are made there
@@ -617,19 +616,19 @@ If you wish to use ESAPI with a FIPS 140-2 validated, JCE-compliant
 cryptographic module such as the
 <a
 href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/1401val2005.htm#497"
-target="_new">
+target="_blank">
 IBM Java JCE FIPS 140-2 Cryptographic Module</a>
 (hereafter referred to as IBMJCEFIPS) or the
 <a
 href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/1401val2008.htm#1048"
-target="_new">
+target="_blank">
 RSA Security BSafe Crypto-J</a>
 (hereafter referred to as Crypto-J), or other similar products, you
 <i>must</i> follow these instructions. Failure to do so will mean that
 you will fail to meet FISMA compliance. (<b>Note</b>: The mention of these
 two specific vendor products does not constitute an endorsement from
 either OWASP or this author.)
-<p>
+<br />
 <ol>
 <li>Follow the vendor's regular instructions to configure your application
 to use the vendor product in a FIPS 140-2 compliant manner. Generally this
@@ -698,7 +697,7 @@ crypto-related code. Specifically, it must be called <i>before</i>
 your application calls <code>ESAPI.encryptor()</code>.
 </li>
 </ol>
-</p>
+<br />
 We believe that following these steps will still allow for your application
 to be FIPS 140-2 / FISMA compliant, however, as always, you should check
 with your FIPS auditor before using ESAPI in this manner. Should your
