@@ -57,9 +57,17 @@ USAGE="Usage: $PROG esapi_svn_dir"
 tmpdir="/tmp/$PROG.$RANDOM-$$"
 esapi_release_dir="$tmpdir/esapi_release_dir"
 
+    # This is the directory under esapi_svn_dir where the log4j and ESAPI
+    # properties files are located as well as the .esapi/* config files.
+    # Note that formerly used to be under src/main/resources, but it since
+    # has been moved because where it was previously was causing problems with
+    # Sonatype's Nexus. That particular problem may have been resolved, but it
+    # it was, the ESAPI configuration stuff has never been moved back.
+configDir="configuration"
+
 # Cause the 'echo' builtin to interpret backslash-escaped characters.
 # If KornShell is installed as /bin/sh, this command won't be available,
-# but for it, 'echo' already works the way we want it to anyhow.
+# but for ksh, 'echo' already works the way we want it to anyhow.
 shopt -s xpg_echo 2>/dev/null
 
 if [[ $# -eq 1 ]]
@@ -155,9 +163,17 @@ unix2dos -q LICENSE.txt
 # 2) Patch up the 'configuration' directory. Need to copy owasp-esapi-dev.jks
 #    here as well as the .esapi directory. Also need to populate the
 #    properties subdirectory.
+
+# Note: Not sure why this is now needed. Something must have changed in the
+# pom.xml that requires this, but have recently found that even the
+# configuration directory does not exist.
+if [[ ! -d "$configDir" ]]
+then    mkdir -p "$configDir"/properties ||
+    { echo >&2 "$PROG: Missing '$configDir' directory and cannot create it!"; exit 1; }
+fi
 cp -p "$esapi_svn_dir"/resources/owasp-esapi-dev.jks configuration/
-cp -r -p "$esapi_svn_dir"/src/main/resources/.esapi configuration/.esapi/
-cp -p "$esapi_svn_dir"/src/main/resources/properties/* configuration/properties/
+cp -r -p "$esapi_svn_dir"/"$configDir"/.esapi configuration/.esapi/
+cp -p "$esapi_svn_dir"/"$configDir"/properties/* configuration/properties/
 
 # 3) Create the changelog.txt which should be the changes since the
 #    last release.
