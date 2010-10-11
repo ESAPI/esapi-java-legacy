@@ -424,13 +424,10 @@ minimum, the IV must be included as the resulting base64-encoded
 data that was previously encrypted using ESAPI 1.4 or earlier, you
 will not be able to decrypt it using the ESAPI 2.0</P>
 <PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">String decrypt(String ciphertext) throws EncryptionException</PRE><P>
-method. If you require such compatibility, you should set
-<CODE>org.owasp.esapi.reference.crypto.LegacyJavaEncryptor</CODE> for
-the property <CODE>ESAPI.Encryptor</CODE> in your <B>ESAPI.properties</B>
-file, this class likely will be removed in a future ESAPI release.
-(This class is intended only to provide backward compatibility so
-that you may decrypt previously encrypted data and the class itself
-is deprecated to indicate this.)</P>
+method. If you require such compatibility, you may contact the
+author, <a href="mailto:kevin.w.wall@gmail.com">Kevin W. Wall</a>,
+for assistance.
+</P>
 <P>Note that while the new String-based encrypt() / decrypt() methods
 use the stronger CBC cipher mode with a random IV, they still do not
 ensure authenticity and integrity so the more general encrypt() /
