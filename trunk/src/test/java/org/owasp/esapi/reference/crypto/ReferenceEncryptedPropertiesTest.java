@@ -17,10 +17,14 @@ package org.owasp.esapi.reference.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -197,6 +201,70 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 
 		bais = new ByteArrayInputStream(baos.toByteArray());
 		toLoad.load(bais);
+
+		for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
+		{
+			String key = (String)i.next();
+
+			assertNotNull("key returned from keySet() iterator was null", key);
+			if(key.equals("one"))
+				if(sawOne)
+					fail("Key one seen more than once.");
+				else
+				{
+					sawOne = true;
+					assertEquals("Key one's value was not two", "two", toLoad.getProperty("one"));
+				}
+			else if(key.equals("two"))
+				if(sawTwo)
+					fail("Key two seen more than once.");
+				else
+				{
+					sawTwo = true;
+					assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
+				}
+	         else if(key.equals("seuss.schneier"))
+	                if(sawSeuss)
+	                    fail("Key seuss.schneier seen more than once.");
+	                else
+	                {
+	                    sawSeuss = true;
+	                    assertEquals("Key seuss.schneier's value was not expected value",
+	                                 "one fish, twofish, red fish, blowfish",
+	                                 toStore.getProperty("seuss.schneier"));
+	                }
+			else
+				fail("Unset key " + key + " returned from keySet().iterator()");
+		}
+		assertTrue("Key one was never seen", sawOne);
+		assertTrue("Key two was never seen", sawTwo);
+	}
+
+	/**
+	 * Test storing and loading of encrypted properties.
+	 */
+	public void testStoreLoadWithReader() throws Exception
+	{
+		//create an EncryptedProperties to store
+		ReferenceEncryptedProperties toStore = new ReferenceEncryptedProperties();
+		toStore.setProperty("one", "two");
+		toStore.setProperty("two", "three");
+		toStore.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
+
+		//store properties to a Writer
+		CharArrayWriter writer = new CharArrayWriter();
+		toStore.store(writer, "testStore");
+
+		//read it back in from a Reader
+		Reader reader = new CharArrayReader(writer.toCharArray());
+
+		ReferenceEncryptedProperties toLoad = new ReferenceEncryptedProperties();
+		toLoad.load(reader);
+
+		//test the resulting loaded properties
+		boolean sawOne = false;
+		boolean sawTwo = false;
+		boolean sawSeuss = false;
 
 		for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
 		{
