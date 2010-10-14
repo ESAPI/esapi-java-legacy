@@ -27,9 +27,7 @@ import org.owasp.esapi.errors.EncodingException;
  * double-encoding, callers should make sure input does not already contain encoded characters
  * by calling canonicalize. Validator implementations should call canonicalize on user input
  * <b>before</b> validating to prevent encoded attacks.
- * <P>
- * <img src="doc-files/Encoder.jpg">
- * <P>
+ * <p>
  * All of the methods must use a "whitelist" or "positive" security model.
  * For the encoding methods, this means that all characters should be encoded, except for a specific list of
  * "immune" characters that are known to be safe.

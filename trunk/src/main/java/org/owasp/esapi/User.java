@@ -29,8 +29,6 @@ import java.util.*;
  * application must store for each user in order to enforce security properly. There are also many rules that govern
  * authentication and identity management.
  * <P>
- * <img src="doc-files/Authenticator.jpg">
- * <P>
  * A user account can be in one of several states. When first created, a User should be disabled, not expired, and
  * unlocked. To start using the account, an administrator should enable the account. The account can be locked for a
  * number of reasons, most commonly because they have failed login for too many times. Finally, the account can expire

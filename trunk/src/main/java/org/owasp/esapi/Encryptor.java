@@ -32,8 +32,6 @@ import org.owasp.esapi.errors.IntegrityException;
  * implementation with a strong "master key", and that they protect this secret
  * as much as possible.
  * <P>
- * <img src="doc-files/Encryptor.jpg">
- * <P>
  * Possible future enhancements (depending on feedback) might include:
  * <UL>
  * <LI>encryptFile</LI>
