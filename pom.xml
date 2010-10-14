@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.0_rc9-SNAPSHOT</version>
+    <version>2.0_rc10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <licenses>
@@ -20,7 +20,7 @@
         </license>
     </licenses>
 
-    <name>ESAPI 2.0 rc9</name>
+    <name>ESAPI 2.0 rc10</name>
     <url>http://www.esapi.org/</url>
     <description>The Enterprise Security API (ESAPI) project is an OWASP project
         to create simple strong security controls for every web platform.
