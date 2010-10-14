@@ -80,8 +80,9 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	public ReferenceEncryptedProperties(Properties defaults) {
 		super();
 
-		for (String key : defaults.stringPropertyNames()) {
-			String value = defaults.getProperty(key);
+		for (Object oKey : defaults.keySet()) {
+			String key		= (oKey instanceof String) ? (String)oKey : oKey.toString();
+			String value	= defaults.getProperty(key);
 
 			this.setProperty(key, value);
 		}
