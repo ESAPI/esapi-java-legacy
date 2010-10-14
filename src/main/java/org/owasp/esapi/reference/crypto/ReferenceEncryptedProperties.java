@@ -179,6 +179,8 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	@Override
 	public void load(Reader in) throws IOException {
 
+		if (in == null) return;
+
 		//read from the reader into a StringBuffer
 		char[] cbuf				= new char[65536];
 		BufferedReader buff		= new BufferedReader(in);
@@ -187,7 +189,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 		int read_this_time = 0;
 		while (read_this_time != -1) {
 			read_this_time = buff.read(cbuf, 0, 65536);
-			contents.append(cbuf, 0, read_this_time);
+			if (read_this_time > 0) contents.append(cbuf, 0, read_this_time);
 		}
 
 		//create a new InputStream from the StringBuffer
