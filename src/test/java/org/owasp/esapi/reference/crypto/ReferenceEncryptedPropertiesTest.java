@@ -17,13 +17,18 @@ package org.owasp.esapi.reference.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.owasp.esapi.EncryptedProperties;
 
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EncryptionRuntimeException;
@@ -232,10 +237,76 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	}
 
 	/**
+	 * Test overridden put method.
+	 */
+	public void testPut() throws Exception
+	{
+		ReferenceEncryptedProperties props = new ReferenceEncryptedProperties();
+
+		String name = "name";
+		String value = "value";
+
+		props.put(name, value);  //should work and store encrypted
+		String result = props.getProperty(name);
+		assertEquals(value, result);
+
+		Integer five = new Integer(5);
+
+		try {
+			props.put("Integer", five); //should fail and throw IllegalArgumentException
+			fail("testPut(): Non-String property value did not result in expected exception.");
+		} catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+		try {
+			props.put(five, "Integer"); //should fail and throw IllegalArgumentException
+			fail("testPut(): Non-String property key did not result in expected exception.");
+		} catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+		try {
+			props.put(five, five); //should fail and throw IllegalArgumentException
+			fail("testPut(): Non-String property key and value did not result in expected exception.");
+		} catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+		try {
+            props.put(null, five);
+            fail("testSetProperty(): Null property name and non-String value did not result in expected exception.");
+        } catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+        try {
+            props.put(five, null);
+            fail("testSetProperty(): Non-String key and null property value did not result in expected exception.");
+        } catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+		try {
+            props.put(null, value);
+            fail("testSetProperty(): Null property name did not result in expected exception.");
+        } catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+        try {
+            props.put(name, null);
+            fail("testSetProperty(): Null property value did not result in expected exception.");
+        } catch( Exception e ) {
+            assertTrue( e instanceof IllegalArgumentException );
+        }
+		try {
+			props.put(null, null);
+			fail("testSetProperty(): Null property name and valud did not result in expected exception.");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof IllegalArgumentException );
+		}
+	}
+
+	/**
 	 * Test that ReferenceEncryptedProperties can be properly constructed
 	 * with an instance of Properties.
 	 */
-	public void testConstruct() {
+	public void testConstructWithProperties() {
 		Properties props = new Properties();
 		props.setProperty("one", "two");
 		props.setProperty("two", "three");
@@ -289,7 +360,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	 * Test that ReferenceEncryptedProperties can be properly constructed
 	 * with an instance of EncryptedProperties.
 	 */
-	public void testConstructWithEncrptedProperties() throws Exception {
+	public void testConstructWithEncryptedProperties() throws Exception {
 		ReferenceEncryptedProperties props = new ReferenceEncryptedProperties();
 		props.setProperty("one", "two");
 		props.setProperty("two", "three");
@@ -338,4 +409,62 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 		assertTrue("Key one was never seen", sawOne);
 		assertTrue("Key two was never seen", sawTwo);
 	}
+
+
+	/**
+	 * Test overridden methods from Properties and Hashtable.
+	 */
+	public void testOverriddenMethods() throws Exception {
+		Properties props = new ReferenceEncryptedProperties();
+		props.setProperty("one", "two");
+		props.setProperty("two", "three");
+		props.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
+
+		FileOutputStream out = new FileOutputStream("ReferenceEncryptedProperties.test.txt");
+		PrintStream ps = new PrintStream(out);
+		try {
+			props.list(ps);
+			fail("testOverriddenMethods(): list(PrintStream) did not result in expected Exception");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof UnsupportedOperationException );
+		}
+
+		PrintWriter pw = new PrintWriter(new FileWriter("test.out"));
+		try {
+			props.list(pw);
+			fail("testOverriddenMethods(): list(PrintWriter) did not result in expected Exception");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof UnsupportedOperationException );
+		}
+
+		try {
+			props.list(ps);
+			fail("testOverriddenMethods(): list(PrintStream) did not result in expected Exception");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof UnsupportedOperationException );
+		}
+
+		try {
+			Collection c = props.values();
+			fail("testOverriddenMethods(): values() did not result in expected Exception");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof UnsupportedOperationException );
+		}
+
+		try {
+			Collection c = props.entrySet();
+			fail("testOverriddenMethods(): entrySet() did not result in expected Exception");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof UnsupportedOperationException );
+		}
+
+		try {
+			Enumeration e = props.elements();
+			fail("testOverriddenMethods(): elements() did not result in expected Exception");
+		} catch( Exception e ) {
+		    assertTrue( e instanceof UnsupportedOperationException );
+		}
+
+	}
+
 }
