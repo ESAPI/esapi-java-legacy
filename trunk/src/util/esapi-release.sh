@@ -126,13 +126,16 @@ else    echo >&2 "$PROG: Can't find ESAPI jar file created by Maven."
 fi
 # OK, now we need to adjust the jar file. We don't want the properties in
 # the ESAPI jar as too many people have complained about the ESAPI.properties
-# and other stuff there.
+# and other stuff there. Also, we want to delete settings.xml and
+# owasp-esapi-dev.jks. We might add the latter once we start signing the
+# jar.
 jartmpdir=$tmpdir/esapi-jar
 mkdir $jartmpdir
 cd $jartmpdir || exit
 jar xf "$jarfile"
 rm -fr .esapi
 rm -f properties/* log4j.*
+rm -f settings.xml owasp-esapi-dev.jks
 # TODO: This part would need some work if we sign or seal the ESAPI jar as
 #       that creates a special MANIFEST.MF file and other special files and
 #       it's not clear they will be merely copied by the simply jar command
@@ -162,7 +165,9 @@ unix2dos -q LICENSE.txt
 
 # 2) Patch up the 'configuration' directory. Need to copy owasp-esapi-dev.jks
 #    here as well as the .esapi directory. Also need to populate the
-#    properties subdirectory.
+#    properties subdirectory. Not sure where the settings.xml file should
+#    go, or even if we should leave it here; will copy it to 'configuration'
+#    directory.
 
 # Note: Not sure why this is now needed. Something must have changed in the
 # pom.xml that requires this, but have recently found that even the
@@ -172,6 +177,7 @@ then    mkdir -p "$configDir"/properties ||
     { echo >&2 "$PROG: Missing '$configDir' directory and cannot create it!"; exit 1; }
 fi
 cp -p "$esapi_svn_dir"/resources/owasp-esapi-dev.jks configuration/
+cp -p "$esapi_svn_dir"/resources/settings.xml configuration/
 cp -r -p "$esapi_svn_dir"/"$configDir"/.esapi configuration/.esapi/
 cp -p "$esapi_svn_dir"/"$configDir"/properties/* configuration/properties/
 
