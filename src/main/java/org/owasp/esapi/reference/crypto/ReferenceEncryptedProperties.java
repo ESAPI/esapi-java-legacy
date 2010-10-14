@@ -16,6 +16,8 @@
 package org.owasp.esapi.reference.crypto;
 
 import bsh.This;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -170,10 +172,28 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * For JDK 1.5 compatibility, this method has been overridden convert the Reader
+	 * into an InputStream and call the superclass constructor. 
 	 */
 	@Override
 	public void load(Reader in) throws IOException {
-		super.load(in);
+
+		//read from the reader into a StringBuffer
+		char[] cbuf				= new char[65536];
+		BufferedReader buff		= new BufferedReader(in);
+		StringBuilder contents	= new StringBuilder();
+
+		int read_this_time = 0;
+		while (read_this_time != -1) {
+			read_this_time = buff.read(cbuf, 0, 65536);
+			contents.append(cbuf, 0, read_this_time);
+		}
+
+		//create a new InputStream from the StringBuffer
+		InputStream is = new ByteArrayInputStream(contents.toString().getBytes());
+
+		super.load(is);
 		logger.trace(Logger.SECURITY_SUCCESS, "Encrypted properties loaded successfully");
 	}
 
