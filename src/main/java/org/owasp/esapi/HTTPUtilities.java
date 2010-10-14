@@ -31,9 +31,6 @@ import java.util.Map;
 /**
  * The HTTPUtilities interface is a collection of methods that provide additional security related to HTTP requests,
  * responses, sessions, cookies, headers, and logging.
- * <p/>
- * <img src="doc-files/HTTPUtilities.jpg">
- * <p/>
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007

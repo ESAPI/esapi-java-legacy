@@ -30,9 +30,6 @@ import java.util.Set;
  * should not expose their direct object references as it enables attackers to
  * attempt to manipulate them.
  * <P>
- * <img src="doc-files/AccessReferenceMap.jpg">
- * <P>
- * <P>
  * Indirect references are handled as strings, to facilitate their use in HTML.
  * Implementations can generate simple integers or more complicated random
  * character strings as indirect references. Implementations should probably add

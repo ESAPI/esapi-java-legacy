@@ -23,9 +23,6 @@ package org.owasp.esapi;
  * Implementors should use a well established logging library
  * as it is quite difficult to create a high-performance logger.
  * <P>
- * <img src="doc-files/Logger.jpg">
- * <P>
- * 
  * The logging levels defined by this interface (in descending order) are:
  * <ul>
  * <li>fatal (highest value)</li>

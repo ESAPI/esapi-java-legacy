@@ -26,11 +26,7 @@ import org.owasp.esapi.errors.ValidationException;
  * The ValidationErrorList class defines a well-formed collection of 
  * ValidationExceptions so that groups of validation functions can be 
  * called in a non-blocking fashion.
- * 
  * <P>
- * <img src="doc-files/Validator.jpg">
- * <P>
- * 
  * To use the ValidationErrorList to execute groups of validation 
  * attempts, your controller code would look something like:
  * 

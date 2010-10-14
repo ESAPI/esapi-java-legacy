@@ -21,7 +21,6 @@ import java.util.List;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.ExecutorException;
 
-
 /**
  * The Executor interface is used to run an OS command with reduced security risk.
  * 
@@ -33,10 +32,7 @@ import org.owasp.esapi.errors.ExecutorException;
  * <p>The class should perform logging and error handling as
  * well. Finally, implementation should handle errors and generate an
  * ExecutorException with all the necessary information.</p>
- * <br />
- * <img src="doc-files/Executor.jpg">
- * <br />
- * 
+ *
  * <p>The reference implementation does all of the above.</p>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
