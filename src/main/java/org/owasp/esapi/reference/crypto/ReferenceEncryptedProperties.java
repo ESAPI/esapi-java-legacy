@@ -177,7 +177,6 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	 * For JDK 1.5 compatibility, this method has been overridden convert the Reader
 	 * into an InputStream and call the superclass constructor. 
 	 */
-	@Override
 	public void load(Reader in) throws IOException {
 
 		if (in == null) return;
