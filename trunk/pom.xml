@@ -391,6 +391,14 @@
                             </execution>
                         </executions>
                     </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <configuration>
+                            <stagingRepository>http://oss.sonatype.org/service/local/staging/deploy/maven2</stagingRepository>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
