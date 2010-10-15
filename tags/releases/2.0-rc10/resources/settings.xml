@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0
+                      http://maven.apache.org/xsd/settings-1.0.0.xsd">
+	<!-- Copy file or place following profile into your .m2/settings.xml -->
+    <profiles>
+		<profile>
+			<id>dist</id>
+			<properties>
+				<jarsign.keystore>${basedir}/resources/owasp-esapi-dev.jks</jarsign.keystore>
+                <jarsign.alias>owasp-esapi</jarsign.alias>
+                <jarsign.storepass>changeme</jarsign.storepass>
+			</properties>
+		</profile>
+	</profiles>
+</settings>
