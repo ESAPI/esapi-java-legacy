@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a must-match rule.
+
+	Protection #1:
+	Protection applies to: /admin/.*
+	Header name needed to access: x-roles
+	Header value needs to *contain* the string: admin
+
+	Protection #2:
+	Protection applies to: /superadmin/.*
+	Header name needed to access: x-roles
+	Header value needs to *equal* the string: superadmin
+
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<authorization-rules>
+		<must-match path="^/admin/.*" variable="request.header.x-roles"
+			operator="contains" value="admin" />
+		<must-match path="^/superadmin/.*" variable="request.header.x-roles"
+			operator="equals" value="superadmin" />
+	</authorization-rules>
+
+</policy>

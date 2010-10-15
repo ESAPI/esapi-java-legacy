@@ -1,0 +1,19 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+</head>
+
+<body bgcolor="white">
+
+This package contains codecs for application layer encoding/escaping schemes that can be used for
+both canonicalization and output encoding. By using the codecs to decode (canonicalize) input
+before validation, many attacks can be detected and handled.  By using the codecs to encode
+untrusted data before sending it to an interpreter, a wide variety of 'injection' attacks can
+be stopped. However,
+this package does not currently address issues related to converting between byte-streams and 
+internal character representations, such as overlong UTF-8 issues. Those are left to the platform.
+The codecs cover protocol encodings such as HTML entity encoding and percent encoding, but also
+common product escaping schemes, such as Unix, Windows, MySQL, and Oracle.
+
+</body>
+</html>
