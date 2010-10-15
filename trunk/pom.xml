@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.0_rc10-SNAPSHOT</version>
+    <version>2.0_rc10</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -67,9 +66,9 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://owasp-esapi-java.googlecode.com/svn/trunk</developerConnection>
-        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
+        <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/tags/releases/2.0-rc10</connection>
+        <developerConnection>scm:svn:https://owasp-esapi-java.googlecode.com/svn/tags/releases/2.0-rc10</developerConnection>
+        <url>http://code.google.com/p/owasp-esapi-java/source/checkout/tags/releases/2.0-rc10</url>
     </scm>
 
     <issueManagement>
