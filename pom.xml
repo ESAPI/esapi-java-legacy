@@ -7,6 +7,12 @@
     <version>2.0_rc10-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>5</version>
+    </parent>
+
     <licenses>
         <license>
             <name>BSD</name>
@@ -92,8 +98,9 @@
         </developer>
         <developer>
             <name>Chris Schmidt</name>
-            <organization>ServiceMagic, Inc.</organization>
+            <organization>Aspect Security</organization>
             <roles>
+		<role>Project Manager</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>
@@ -102,6 +109,7 @@
             <name>Kevin Wall</name>
             <organization>Qwest</organization>
             <roles>
+		<role>Project Manager</role>
                 <role>Architect</role>
                 <role>Developer</role>
                 <role>Crypto Guy</role>
@@ -131,21 +139,6 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
-
-    <repositories>
-        <repository>
-            <!-- For Antisamy -->
-            <id>googlecode-snapshots.oss.sonatype.com</id>
-            <name>googlecode-snapshots at sonatype.com</name>
-            <url>http://oss.sonatype.org/content/repositories/googlecode-snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -217,7 +210,7 @@
         <dependency>
             <groupId>org.owasp</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.3-SNAPSHOT</version>
+            <version>1.4</version>
         </dependency>
     </dependencies>
 
@@ -230,7 +223,7 @@
                     <target>1.5</target>
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
-                    <showDeprecation>true</showDeprecation>
+                    <showDeprecation>false</showDeprecation>
                 </configuration>
             </plugin>
 
@@ -242,37 +235,8 @@
                 </configuration>
             </plugin>
 
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			
         </plugins>
     </build>
-
-	<distributionManagement>
-		<!-- use the following if you're not using a snapshot version. -->
-		<repository>
-			<id>repo</id>
-			<name>Repository Name</name>
-			<url>scp://host/path/to/repo</url>
-		</repository>
-		<!-- use the following if you ARE using a snapshot version. -->
-		<snapshotRepository>
-			<id>repo</id>
-			<name>Repository Name</name>
-			<url>scp://host/path/to/repo</url>
-		</snapshotRepository>
-    </distributionManagement>
 
     <reporting>
         <plugins>
@@ -329,51 +293,83 @@
         <profile>
             <!-- Activate to sign jars and build distributable download. -->
             <id>dist</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
 
-            <!-- TODO: Add to settings.xml -->
             <properties>
-                <jarsign.keystore>${basedir}/resources/owasp-esapi-dev.jks</jarsign.keystore>
-                <jarsign.alias>owasp-esapi</jarsign.alias>
-                <jarsign.storepass>changeme</jarsign.storepass>
-			</properties>
+                <gpg.keyname>9F460575</gpg.keyname>
+                <release.username>${svn.user}</release.username>
+            </properties>
 
-			<build>
-              
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <name>ESAPI-Snapshots</name>
+                    <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <name>ESAPI-Release</name>
+                    <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+
+            <build>
                 <plugins>
-                    <!-- Jar signing. -->
-                    <!-- For this to work you need the dist profile in /resources/settings.xml to be included in your maven settings file. -->
-                    <!--
                     <plugin>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <version>2.2</version>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
                         <executions>
                             <execution>
+                                <id>sign-artifacts</id>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <archive>
-                                <manifest>
-                                    <mainClass>org.owasp.esapi.reference.crypto.JavaEncryptor</mainClass>
-                                    <addClasspath>true</addClasspath>
-                                    <classpathPrefix>lib/</classpathPrefix>
-                                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                    <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                                </manifest>
-                                <manifestEntries>
-                                    <Sealed>true</Sealed>
-                                </manifestEntries>
-                            </archive>
-
-                            <keystore>${jarsign.keystore}</keystore>
-                            <alias>${jarsign.alias}</alias>
-                            <storepass>${jarsign.storepass}</storepass>
-                            <verify>true</verify>
-                        </configuration>
                     </plugin>
-                    -->
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-jdk-version</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+                                <configuration>
+                                    <rules>
+                                        <requireJavaVersion>
+                                            <version>1.5</version>
+                                            <message>
+                                                ESAPI 2.0 uses the JDK1.5 for it's baseline. Please make sure that your
+                                                JAVA_HOME environment variable is pointed to a JDK1.5 distribution.
+                                            </message>
+                                        </requireJavaVersion>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
 
                     <!-- For building the distribution zip file. -->
                     <plugin>
