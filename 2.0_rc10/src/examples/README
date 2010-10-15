@@ -1,0 +1,36 @@
+README  - This file you are now reading.
+java    - Some Java examples.
+scripts - Some scripts to run that interact with the Java examples (but see
+          below).
+
+
+
+NOTE:   All scripts are meant to be run under *nix (or using something like
+        Cygwin under Windows) from under the 'scripts' directory using either
+        bash or KornShell
+
+        E.g., to compile the Java examples, execute:
+
+                $ cd scripts
+                $ chmod u+x *.sh    # Required as some call each other.
+                $ # "Dot" the appropriate environment file. Either
+                $ #     . ./setenv-zip.sh
+                $ # if ESAPI downloaded via zip file or
+                $ #     . ./setenv-svn.sh
+                $ # if ESAPI downloaded from SVN repository. For the
+                $ # example of this README file, we will assume it was
+                $ # downloaded via the zip file.
+                $ . ./setenv-zip.sh
+                $ sh ./compile.sh
+
+        You MUST be in the 'scripts' directory and execute the scripts as
+        "sh ./scriptname" and NOT as "sh scripts/scriptname".
+
+
+        Note that as delivered, these scripts are configured to run from
+        Eclipse or Maven as pulled directly from the ESAPI Subversion
+        repository or from pulled down from the zip file on Google Code at:
+            http://code.google.com/p/owasp-esapi-java/downloads/list
+
+        If you get it from any other place, then all bets are off.
+                            -- Kevin Wall <kevin.w.wall@gmail.com>

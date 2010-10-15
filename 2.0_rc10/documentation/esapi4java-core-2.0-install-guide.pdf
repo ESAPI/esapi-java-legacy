@@ -1,0 +1,289 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en" dir="ltr">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta http-equiv="Content-Style-Type" content="text/css" />
+		<meta name="generator" content="MediaWiki 1.15.0" />
+		<meta name="keywords" content="File:JavaEE-ESAPI 2.0a install.pdf,File:JavaEE-ESAPI 2.0a install.pdf" />
+		<link rel="stylesheet" type="text/css" media="screen, projection" href="http://yui.yahooapis.com/2.5.1/build/fonts/fonts-min.css" />
+		<link rel="stylesheet" type="text/css" media="screen, projection" href="http://yui.yahooapis.com/2.5.1/build/tabview/assets/skins/sam/tabview.css" />
+		<link rel="stylesheet" type="text/css" media="screen, projection" href="/extensions/HeaderTabs/skins/headertabs.css" />
+		<link rel="shortcut icon" href="/favicon.ico" />
+		<link rel="search" type="application/opensearchdescription+xml" href="/opensearch_desc.php" title="OWASP (en)" />
+		<link rel="copyright" href="http://creativecommons.org/licenses/by-sa/3.0/" />
+		<link rel="alternate" type="application/rss+xml" title="OWASP RSS Feed" href="/index.php?title=Special:RecentChanges&amp;feed=rss" />
+		<link rel="alternate" type="application/atom+xml" title="OWASP Atom Feed" href="/index.php?title=Special:RecentChanges&amp;feed=atom" />
+		<title>File:JavaEE-ESAPI 2.0a install.pdf - OWASP</title>
+		<style type="text/css" media="screen,projection">/*<![CDATA[*/ @import "/skins/monobook/main.css?207"; /*]]>*/</style>
+		<link rel="stylesheet" type="text/css" media="print" href="/skins/common/commonPrint.css?207" />
+		<link rel="stylesheet" type="text/css" media="handheld" href="/skins/monobook/handheld.css?207" />
+		<!--[if lt IE 5.5000]><style type="text/css">@import "/skins/monobook/IE50Fixes.css?207";</style><![endif]-->
+		<!--[if IE 5.5000]><style type="text/css">@import "/skins/monobook/IE55Fixes.css?207";</style><![endif]-->
+		<!--[if IE 6]><style type="text/css">@import "/skins/monobook/IE60Fixes.css?207";</style><![endif]-->
+		<!--[if IE 7]><style type="text/css">@import "/skins/monobook/IE70Fixes.css?207";</style><![endif]-->
+		<!--[if lt IE 7]><script type="text/javascript" src="/skins/common/IEFixes.js?207"></script>
+		<meta http-equiv="imagetoolbar" content="no" /><![endif]-->
+		
+		<script type= "text/javascript">/*<![CDATA[*/
+		var skin = "monobook";
+		var stylepath = "/skins";
+		var wgArticlePath = "/index.php/$1";
+		var wgScriptPath = "";
+		var wgScript = "/index.php";
+		var wgVariantArticlePath = false;
+		var wgActionPaths = {};
+		var wgServer = "http://www.owasp.org";
+		var wgCanonicalNamespace = "File";
+		var wgCanonicalSpecialPageName = false;
+		var wgNamespaceNumber = 6;
+		var wgPageName = "File:JavaEE-ESAPI_2.0a_install.pdf";
+		var wgTitle = "JavaEE-ESAPI 2.0a install.pdf";
+		var wgAction = "view";
+		var wgArticleId = "10807";
+		var wgIsArticle = true;
+		var wgUserName = null;
+		var wgUserGroups = null;
+		var wgUserLanguage = "en";
+		var wgContentLanguage = "en";
+		var wgBreakFrames = false;
+		var wgCurRevisionId = 72902;
+		var wgVersion = "1.15.0";
+		var wgEnableAPI = true;
+		var wgEnableWriteAPI = true;
+		var wgSeparatorTransformTable = ["", ""];
+		var wgDigitTransformTable = ["", ""];
+		var wgRestrictionEdit = [];
+		var wgRestrictionMove = [];
+		/*]]>*/</script>
+                
+		<script type="text/javascript" src="/skins/common/wikibits.js?207"><!-- wikibits js --></script>
+		<script type="text/javascript" src="/index.php?title=-&amp;action=raw&amp;gen=js&amp;useskin=monobook"><!-- site js --></script>
+		<!-- Head Scripts -->
+				<script type="text/javascript">
+function buildContent (blog) {
+    var MONTH_NAMES = [ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+    if (!blog || !blog.items) return;  var container=document.getElementById("container");
+    var code="";  for (var i = 0; i < blog.items.length; i++) {   var item = blog.items[i];
+    var date = new Date();    date.setTime( 4 + item.published * 1000 );
+    var datestring = MONTH_NAMES[date.getMonth()]+" "+(date.getDate());
+    code=code+"<div style='font-weight:bold'>"+datestring+" - ";    
+    code=code+"<a href='"+item.alternate.href+"'>"+item.title+"</a> (by ";
+    code=code+"<a href='"+item.origin.streamId.substring(5)+"'>"+item.author+"</a>)</div>";
+    var text=""+item.content;
+    if (text == "undefined" ) {
+	  text=item.summary;
+    }
+    code=code+"<div>"+text+"</div><br>";
+    }
+    container.innerHTML=code;
+}
+</script> 		<script type="text/javascript">
+function build_bloglist(data) {
+  var container = document.getElementById('blogroll');
+  var list = document.createElement('div');
+  // Loop through all data items returned
+  for (var i=0; i < data.items.length; i++) {
+    var item = data.items[i];
+		var link = document.createElement('a');
+		link.appendChild(document.createTextNode(item.title));
+	link.href = item.id;
+    list.appendChild(link);
+    list.appendChild(document.createElement('br'));
+  }
+  container.appendChild(list);
+}
+</script>		<script type="text/javascript">
+		addOnloadHook(function() { 
+			var i = 1;
+			while ( true ) {
+				var btn = document.getElementById("languageselector-commit-"+i);
+				var sel = document.getElementById("languageselector-select-"+i);
+				var idx = i;
+
+				if (!btn) break;
+
+				btn.style.display = "none";
+				sel.onchange = function() { this.parentNode.submit(); };
+
+				i++;
+			}
+		});
+	</script>		<script type="text/javascript">
+			var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+			document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+			</script>
+			<script type="text/javascript">
+			var pageTracker = _gat._getTracker("UA-725452-2");
+			pageTracker._initData();
+			pageTracker._trackPageview();
+			</script>
+		<script type="text/javascript" src="/skins/common/ajax.js?207"></script>
+		<script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/utilities/utilities.js"></script>		<script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/tabview/tabview-min.js"></script>		<script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/event/event-min.js"></script>		<script type="text/javascript" src="http://yui.yahooapis.com/2.5.1/build/history/history-min.js"></script>		<script type="text/javascript" src="/extensions/HeaderTabs/skins/headertabs.js"></script><link rel="alternate" type="application/rss+xml" title="OWASP Moderated AppSec News Feed"
+			href="http://www.google.com/reader/public/atom/user/16712724397688793161/state/com.google/broadcast"/>
+	</head>
+<body  class="mediawiki  ltr ns-6 ns-subject page-File_JavaEE-ESAPI_2_0a_install_pdf">
+	<div id="globalWrapper">
+		<div id="column-content">
+	<div id="content">
+		<a name="top" id="top"></a>
+				<h1 class="firstHeading">File:JavaEE-ESAPI 2.0a install.pdf</h1>
+		<div id="bodyContent">
+			<h3 id="siteSub">From OWASP</h3>
+			<div id="contentSub"></div>
+									<div id="jump-to-nav">Jump to: <a href="#column-one">navigation</a>, <a href="#searchInput">search</a></div>			<!-- start content -->
+			<ul id="filetoc">
+			<li><a href="#file">File</a></li>
+			<li><a href="#filehistory">File history</a></li>
+			<li><a href="#filelinks">File links</a></li>
+		</ul><div class="fullImageLink" id="file"><a href="/index.php/File:JavaEE-ESAPI_2.0a_install.pdf" class="image" title="JavaEE-ESAPI 2.0a install.pdf"><img alt="" src="/skins/common/images/icons/fileicon-pdf.png" width="120" height="120" border="0" /></a></div><div class="fullMedia">
+<p><a href="/images/4/48/JavaEE-ESAPI_2.0a_install.pdf" class="internal" title="JavaEE-ESAPI 2.0a install.pdf">JavaEE-ESAPI_2.0a_install.pdf</a>‎ <span class="fileInfo"> (file size: 481 KB, MIME type: application/pdf)</span>
+</p>
+</div>
+
+<!-- 
+NewPP limit report
+Preprocessor node count: 0/1000000
+Post-expand include size: 0/2097152 bytes
+Template argument size: 0/2097152 bytes
+Expensive parser function count: 0/100
+-->
+
+<!-- Saved in parser cache with key wiki15:pcache:idhash:10807-0!1!0!!en!2!edit=0 and timestamp 20091111073138 -->
+<h2 id="filehistory">File history</h2><p>Click on a date/time to view the file as it appeared at that time.
+</p>(Latest&#32;|&#32;Earliest) View (newer 50) (older 50) (<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=20#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">20</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=50#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">50</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=100#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">100</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=250#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">250</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=500#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">500</a>)<table class="filehistory">
+<tr><td></td><th>Date/Time</th><th>Thumbnail</th><th>Dimensions</th><th>User</th><th>Comment</th></tr>
+<tr><td>current</td><td class='filehistory-selected' style='white-space: nowrap;'><a href="/images/4/48/JavaEE-ESAPI_2.0a_install.pdf">07:51, 10 November 2009</a></td><td>No thumbnail</td><td> <span style='white-space: nowrap;'>(481 KB)</span></td><td><a href="/index.php?title=User:Patrick_Thomas&amp;action=edit&amp;redlink=1" class="new mw-userlink" title="User:Patrick Thomas (page does not exist)">Patrick Thomas</a> <span style='white-space: nowrap;'> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Patrick_Thomas&amp;action=edit&amp;redlink=1" class="new" title="User talk:Patrick Thomas (page does not exist)">Talk</a>&#32;|&#32;<a href="/index.php/Special:Contributions/Patrick_Thomas" title="Special:Contributions/Patrick Thomas">contribs</a>)</span></span></td><td> <span class="comment">(Grammar, incorporate some suggestions from Kevin, and update to reflect contents of rc3 zip)</span></td></tr>
+<tr><td></td><td  style='white-space: nowrap;'><a href="/images/archive/4/48/20091110075109%21JavaEE-ESAPI_2.0a_install.pdf">13:33, 9 November 2009</a></td><td>No thumbnail</td><td> <span style='white-space: nowrap;'>(578 KB)</span></td><td><a href="/index.php/User:Mike.boberski" title="User:Mike.boberski" class="mw-userlink">Mike.boberski</a> <span style='white-space: nowrap;'> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Mike.boberski&amp;action=edit&amp;redlink=1" class="new" title="User talk:Mike.boberski (page does not exist)">Talk</a>&#32;|&#32;<a href="/index.php/Special:Contributions/Mike.boberski" title="Special:Contributions/Mike.boberski">contribs</a>)</span></span></td><td></td></tr>
+<tr><td></td><td  style='white-space: nowrap;'><a href="/images/archive/4/48/20091109133350%21JavaEE-ESAPI_2.0a_install.pdf">16:06, 2 November 2009</a></td><td>No thumbnail</td><td> <span style='white-space: nowrap;'>(579 KB)</span></td><td><a href="/index.php/User:Mike.boberski" title="User:Mike.boberski" class="mw-userlink">Mike.boberski</a> <span style='white-space: nowrap;'> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Mike.boberski&amp;action=edit&amp;redlink=1" class="new" title="User talk:Mike.boberski (page does not exist)">Talk</a>&#32;|&#32;<a href="/index.php/Special:Contributions/Mike.boberski" title="Special:Contributions/Mike.boberski">contribs</a>)</span></span></td><td></td></tr>
+<tr><td></td><td  style='white-space: nowrap;'><a href="/images/archive/4/48/20091102160659%21JavaEE-ESAPI_2.0a_install.pdf">15:44, 2 November 2009</a></td><td>No thumbnail</td><td> <span style='white-space: nowrap;'>(578 KB)</span></td><td><a href="/index.php/User:Mike.boberski" title="User:Mike.boberski" class="mw-userlink">Mike.boberski</a> <span style='white-space: nowrap;'> <span class="mw-usertoollinks">(<a href="/index.php?title=User_talk:Mike.boberski&amp;action=edit&amp;redlink=1" class="new" title="User talk:Mike.boberski (page does not exist)">Talk</a>&#32;|&#32;<a href="/index.php/Special:Contributions/Mike.boberski" title="Special:Contributions/Mike.boberski">contribs</a>)</span></span></td><td></td></tr>
+</table>
+(Latest&#32;|&#32;Earliest) View (newer 50) (older 50) (<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=20#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">20</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=50#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">50</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=100#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">100</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=250#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">250</a>&#32;|&#32;<a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;limit=500#filehistory" title="File:JavaEE-ESAPI 2.0a install.pdf" class="mw-numlink">500</a>)
+<br /><ul><li><a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;action=edit&amp;externaledit=true&amp;mode=file" title="File:JavaEE-ESAPI 2.0a install.pdf">Edit this file using an external application</a> <small>(See the <a href="http://www.mediawiki.org/wiki/Manual:External_editors" class="external text" title="http://www.mediawiki.org/wiki/Manual:External_editors" rel="nofollow">setup instructions</a> for more information)</small></li></ul><h2 id="filelinks">File links</h2>
+<div id='mw-imagepage-nolinkstoimage'>
+<p>There are no pages that link to this file.
+</p></div>
+<div class="printfooter">
+Retrieved from "<a href="http://www.owasp.org/index.php/File:JavaEE-ESAPI_2.0a_install.pdf">http://www.owasp.org/index.php/File:JavaEE-ESAPI_2.0a_install.pdf</a>"</div>
+						<!-- end content -->
+			<div class="visualClear"></div>
+		</div>
+	</div>
+		</div>
+		<div id="column-one">
+	<div id="p-cactions" class="portlet">
+		<h5>Views</h5>
+		<div class="pBody">
+			<ul>
+						 <li id="ca-nstab-image" class="selected"><a href="/index.php/File:JavaEE-ESAPI_2.0a_install.pdf">File</a></li>
+						 <li id="ca-talk" class="new"><a href="/index.php?title=File_talk:JavaEE-ESAPI_2.0a_install.pdf&amp;action=edit&amp;redlink=1">Discussion</a></li>
+						 <li id="ca-viewsource"><a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;action=edit">View source</a></li>
+						 <li id="ca-history"><a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;action=history">History</a></li>
+				</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-personal">
+		<h5>Personal tools</h5>
+		<div class="pBody">
+			<ul>
+				<li id="pt-login"><a href="/index.php?title=Special:UserLogin&amp;returnto=File:JavaEE-ESAPI_2.0a_install.pdf">Log in</a></li>
+			</ul>
+		</div>
+	</div>
+	<div class="portlet" id="p-logo">
+		<a style="background-image: url(/skins/monobook/ologo.gif);" href="/index.php/Main_Page" title="Main Page"></a>
+	</div>
+	<script type="text/javascript"> if (window.isMSIE55) fixalpha(); </script>
+        <div id="p-search" class="portlet">
+                <h5><label for="searchInput">search</label></h5>
+                <div id="searchBody" class="pBody">
+                        <form id="searchbox_009205368367870198977:6sxqlkety5e" action="http://www.owasp.org/google/results.html">
+                        <input type="hidden" name="cx" value="009205368367870198977:6sxqlkety5e" />
+                        <input name="q" type="text" size="15" />
+                        <input type="submit" name="sa" value="Search" />
+                        <input type="hidden" name="cof" value="FORID:9" />
+                        </form>
+                        <script type="text/javascript" src="/google/google_coop.js?form=searchbox_009205368367870198977%3A6sxqlkety5e"></script>
+                </div>
+        </div>
+		<div class='portlet' id='p-Navigation'>
+		<h5>Navigation</h5>
+		<div class='pBody'>
+			<ul>
+				<li id="n-Home"><a href="/index.php/Main_Page">Home</a></li>
+				<li id="n-News"><a href="/index.php/Application_Security_News">News</a></li>
+				<li id="n-OWASP-Projects"><a href="/index.php/Category:OWASP_Project">OWASP Projects</a></li>
+				<li id="n-Downloads"><a href="/index.php/Category:OWASP_Download">Downloads</a></li>
+				<li id="n-Local-Chapters"><a href="/index.php/Category:OWASP_Chapter">Local Chapters</a></li>
+				<li id="n-Global-Committees"><a href="https://www.owasp.org/index.php/Global_Committee_Pages">Global Committees</a></li>
+				<li id="n-AppSec-Job-Board"><a href="http://www.owasp.org/index.php/OWASP_Jobs">AppSec Job Board</a></li>
+				<li id="n-AppSec-Conferences"><a href="/index.php/Category:OWASP_AppSec_Conference">AppSec Conferences</a></li>
+				<li id="n-Presentations"><a href="/index.php/Category:OWASP_Presentations">Presentations</a></li>
+				<li id="n-Video"><a href="/index.php/Category:OWASP_Video">Video</a></li>
+				<li id="n-Get-OWASP-Books"><a href="http://stores.lulu.com/owasp">Get OWASP Books</a></li>
+				<li id="n-Get-OWASP-Gear"><a href="http://www.cafepress.com/owasp">Get OWASP Gear</a></li>
+				<li id="n-Mailing-Lists"><a href="http://lists.owasp.org/mailman/listinfo">Mailing Lists</a></li>
+				<li id="n-About-OWASP"><a href="/index.php/About_OWASP">About OWASP</a></li>
+				<li id="n-Membership"><a href="/index.php/Membership">Membership</a></li>
+			</ul>
+		</div>
+	</div>
+		<div class='portlet' id='p-Reference'>
+		<h5>Reference</h5>
+		<div class='pBody'>
+			<ul>
+				<li id="n-How-To..."><a href="/index.php/Category:How_To">How To...</a></li>
+				<li id="n-Principles"><a href="/index.php/Category:Principle">Principles</a></li>
+				<li id="n-Threat-Agents"><a href="/index.php/Category:Threat_Agent">Threat Agents</a></li>
+				<li id="n-Attacks"><a href="/index.php/Category:Attack">Attacks</a></li>
+				<li id="n-Vulnerabilities"><a href="/index.php/Category:Vulnerability">Vulnerabilities</a></li>
+				<li id="n-Controls"><a href="/index.php/Category:Control">Controls</a></li>
+				<li id="n-Activities"><a href="/index.php/Category:Activity">Activities</a></li>
+				<li id="n-Technologies"><a href="/index.php/Category:Technology">Technologies</a></li>
+				<li id="n-Glossary"><a href="/index.php/Category:Glossary">Glossary</a></li>
+				<li id="n-Code-Snippets"><a href="/index.php/Category:Code_Snippet">Code Snippets</a></li>
+				<li id="n-.NET-Project"><a href="/index.php/Category:OWASP_.NET_Project">.NET Project</a></li>
+				<li id="n-Java-Project"><a href="/index.php/Category:OWASP_Java_Project">Java Project</a></li>
+			</ul>
+		</div>
+	</div>
+		<div class='portlet' id='p-languageselector'>
+		<h5>Language</h5>
+		<div class='pBody'>
+			<ul>
+				<li id="n-languageselector" class="active" ><a href="http://www.owasp.org/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;setlang=en">English</a></li>
+				<li id="n-languageselector"><a href="http://www.owasp.org/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;setlang=es">Español</a></li>
+			</ul>
+		</div>
+	</div>
+		<div class="portlet" id="p-tb">
+		<h5>Toolbox</h5>
+		<div class="pBody">
+		<script src="http://www.gmodules.com/ig/ifr?url=http://www.google.com/ig/modules/translatemypage.xml&up_source_language=en&w=160&h=60&title=&border=&output=js"></script>
+			<ul>
+				<li id="t-whatlinkshere"><a href="/index.php/Special:WhatLinksHere/File:JavaEE-ESAPI_2.0a_install.pdf">What links here</a></li>
+				<li id="t-recentchangeslinked"><a href="/index.php/Special:RecentChangesLinked/File:JavaEE-ESAPI_2.0a_install.pdf">Related changes</a></li>
+<li id="t-specialpages"><a href="/index.php/Special:SpecialPages">Special pages</a></li>
+				<li id="t-print"><a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;printable=yes">Printable version</a></li>				<li id="t-permalink"><a href="/index.php?title=File:JavaEE-ESAPI_2.0a_install.pdf&amp;oldid=72902">Permanent link</a></li>			</ul>
+		</div>
+	</div>
+
+		</div><!-- end of the left (by default at least) column -->
+			<div class="visualClear"></div>
+			<div id="footer">
+				<div id="f-poweredbyico"><a href="http://www.mediawiki.org/"><img src="/skins/common/images/poweredby_mediawiki_88x31.png" alt="Powered by MediaWiki" /></a></div>
+				<div id="f-copyrightico"><a href="http://creativecommons.org/licenses/by-sa/3.0/"><img src="https://www.owasp.org/images/f/fa/Somerights20.png" alt='a Creative Commons 3.0 License' /></a></div>
+			<ul id="f-list">
+				<li id="lastmod"> This page was last modified on 10 November 2009, at 07:51.</li>
+				<li id="viewcount">This page has been accessed 148 times.</li>
+				<li id="copyright">Content is available under <a href="http://creativecommons.org/licenses/by-sa/3.0/" class="external " title="http://creativecommons.org/licenses/by-sa/3.0/">a Creative Commons 3.0 License</a>.</li>
+				<li id="privacy"><a href="/index.php/OWASP:Privacy_policy" title="OWASP:Privacy policy">Privacy policy</a></li>
+				<li id="about"><a href="/index.php/OWASP:About" title="OWASP:About">About OWASP</a></li>
+				<li id="disclaimer"><a href="/index.php/OWASP:General_disclaimer" title="OWASP:General disclaimer">Disclaimers</a></li>
+			</ul>
+		</div>
+		
+	
+		<script type="text/javascript">if (window.runOnloadHook) runOnloadHook();</script>
+</div>
+<!-- Served in 0.284 secs. --></body></html>
