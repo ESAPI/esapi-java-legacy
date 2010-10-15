@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.reference.crypto;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -74,7 +75,10 @@ public class EncryptedPropertiesUtilsTest extends TestCase {
 	 * {@inheritDoc}
 	 */
 	protected void tearDown() throws Exception {
-		// none
+		File[] delFiles = new File[] { new File(PLAINTEXT_FILENAME), new File(ENCRYPTED_FILENAME_1), new File(ENCRYPTED_FILENAME_2) };
+        for ( File f : delFiles ) {
+            f.deleteOnExit();
+        }
 	}
 
 	/**

@@ -15,16 +15,7 @@
  */
 package org.owasp.esapi.reference.crypto;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.CharArrayReader;
-import java.io.CharArrayWriter;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.Reader;
-import java.io.Writer;
+import java.io.*;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -535,6 +526,10 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 		    assertTrue( e instanceof UnsupportedOperationException );
 		}
 
+        File f1 = new File("test.out");
+        f1.delete();
+        File f = new File("ReferenceEncryptedProperties.test.txt");
+        f.delete();
 	}
 
 }
