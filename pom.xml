@@ -100,7 +100,8 @@
             <name>Chris Schmidt</name>
             <organization>Aspect Security</organization>
             <roles>
-		<role>Project Manager</role>
+		        <role>Project Manager</role>
+                <role>Continuous Integration Admin</role>
                 <role>Architect</role>
                 <role>Developer</role>
             </roles>
@@ -109,17 +110,10 @@
             <name>Kevin Wall</name>
             <organization>Qwest</organization>
             <roles>
-		<role>Project Manager</role>
+		        <role>Project Manager</role>
                 <role>Architect</role>
                 <role>Developer</role>
                 <role>Crypto Guy</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Jonathon Rucker</name>
-            <roles>
-                <role>Maven Guru</role>
-                <role>Developer</role>
             </roles>
         </developer>
     </developers>
@@ -293,17 +287,17 @@
         <profile>
             <!-- Activate to sign jars and build distributable download. -->
             <id>dist</id>
+
+            <!-- This profile is activated when mvn release:perform is called from the command line
+                 to actually do a release. If you need this profile active for some reason outside
+                 of performing a release, use mvn <command> -Pdist
+            -->
             <activation>
                 <property>
                     <name>performRelease</name>
                     <value>true</value>
                 </property>
             </activation>
-
-            <properties>
-                <gpg.keyname>9F460575</gpg.keyname>
-                <release.username>${svn.user}</release.username>
-            </properties>
 
             <distributionManagement>
                 <snapshotRepository>
@@ -318,6 +312,8 @@
 
             <build>
                 <plugins>
+
+                    <!-- Signs all artifacts prior to deploying to maven central -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
@@ -328,10 +324,15 @@
                                 <goals>
                                     <goal>sign</goal>
                                 </goals>
+                                <configuration>
+                                    <keyname>9F460575</keyname>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
 
+                    <!-- Baseline for ESAPI 2.0 is JDK1.5 - Enforces that a JDK1.5 compiler is being
+                         used to build this release -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
@@ -356,6 +357,7 @@
                         </executions>
                     </plugin>
 
+                    <!-- Attached JavaDocs are required by Sonatype Nexus Repository -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
@@ -373,7 +375,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2-beta-5</version>
+                        <version>2.1</version>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/dist.xml</descriptor>
@@ -382,14 +384,16 @@
                         <executions>
                             <execution>
                                 <id>make-dist</id>
-                                <phase>deploy</phase>
+                                <phase>package</phase>
                                 <goals>
-                                    <goal>assembly</goal>
+                                    <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>
                     </plugin>
 
+                    <!-- Performs a full release. See release documentation for information on how to
+                         perform an ESAPI release using Maven -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
@@ -398,6 +402,7 @@
                             <tagBase>https://owasp-esapi-java.googlecode.com/svn/tags/releases/</tagBase>
                         </configuration>
                     </plugin>
+                    
                 </plugins>
             </build>
         </profile>
