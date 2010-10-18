@@ -4,6 +4,8 @@ ESAPI is available from both Maven Central, or the ESAPI Sonatype Snapshot Repos
 
 *Important: If you use Maven, this will not include the ESAPI Configuration Files - this only gets the required jars to run ESAPI in your application.*
 
+You can also download a zip of all the example configurations and documentation [http://code.google.com/p/owasp-esapi-java/downloads/detail?name=esapi-2.0_rc10-config.zip&can=2&q= here]
+
 To use ESAPI with Maven - you can add the following to your pom.xml
 
 *If you want to use Releases from Maven Central*
