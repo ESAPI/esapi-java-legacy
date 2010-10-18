@@ -17,7 +17,7 @@ To use ESAPI with Maven - you can add the following to your pom.xml
    </dependencies>
 }}}
 
-*If you want to use Snapshot Releases*
+*If you want to use Snapshot Releases* (Do not use Snapshots in Production Applications! No guarantees are made to the reliability of these builds, these are nightly or on-demand snapshot builds of the trunk - They should be used for development and evaluation purposes only)
 {{{
     <repositories>
         <repository>
