@@ -280,6 +280,20 @@
                 <groupId>net.sourceforge.maven-taglib</groupId>
                 <artifactId>maven-taglib-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-changelog-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <issueIDRegexPattern>[Ii]ssue[\: ]*(\d)+</issueIDRegexPattern>
+                    <issueLinkUrl>http://code.google.com/p/owasp-esapi-java/issues/detail?id=%ISSUE%</issueLinkUrl>
+                    <type>date</type>
+                    <dates>
+                        <date>2010-08-29 00:00:00</date>
+                    </dates>
+                </configuration>
+            </plugin>
+            
         </plugins>
     </reporting>
 
@@ -302,11 +316,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>sonatype-nexus-snapshots</id>
-                    <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
                 </snapshotRepository>
                 <repository>
                     <id>sonatype-nexus-staging</id>
-                    <url>http://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
                 </repository>
             </distributionManagement>
 
