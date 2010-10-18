@@ -1,0 +1,44 @@
+#sidebar TableOfContents
+
+ESAPI is available from both Maven Central, or the ESAPI Sonatype Snapshot Repository. 
+
+*Important: If you use Maven, this will not include the ESAPI Configuration Files - this only gets the required jars to run ESAPI in your application.*
+
+To use ESAPI with Maven - you can add the following to your pom.xml
+
+*If you want to use Releases from Maven Central*
+{{{
+   <dependencies>
+      <dependency>
+         <groupId>org.owasp.esapi</groupId>
+         <artifactId>esapi</artifactId>
+         <version>2.0_rc10</version>
+      </dependency>
+   </dependencies>
+}}}
+
+*If you want to use Snapshot Releases*
+{{{
+    <repositories>
+        <repository>
+            <!-- For ESAPI Snapshots -->
+            <id>snapshots.oss.sonatype.com</id>
+            <name>googlecode-snapshots at sonatype.com</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+   <dependencies>
+      <dependency>
+         <groupId>org.owasp.esapi</groupId>
+         <artifactId>esapi</artifactId>
+         <version>2.0_rc11-SNAPSHOT</version>
+      </dependency>
+   </dependencies>
+}}}
