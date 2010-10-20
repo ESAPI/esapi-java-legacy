@@ -33,13 +33,16 @@ import org.owasp.esapi.http.MockHttpServletResponse;
  * The Class LoggerTest.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
+ * @author August Detlefsen (augustd at codemagi dot com) <a href="http://www.codemagi.com">CodeMagi, Inc.</a>
  */
 public class Log4JLoggerTest extends TestCase {
 	private static int testCount = 0;
 	
 	private static Logger testLogger = null;
 
-	
+	//a logger for explicit tests of log4j logging methods
+	private static Log4JLogger log4JLogger = null;
+
     /**
 	 * Instantiates a new logger test.
 	 * 
@@ -54,12 +57,19 @@ public class Log4JLoggerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
+		//override default log configuration in ESAPI.properties to use Log4JLogFactory
         UnitTestSecurityConfiguration tmpConfig = new UnitTestSecurityConfiguration((DefaultSecurityConfiguration) ESAPI.securityConfiguration());
-        tmpConfig.setLogImplementation( ExampleExtendedLog4JLogFactory.class.getName() );
+        tmpConfig.setLogImplementation( Log4JLogFactory.class.getName() );
         ESAPI.override(tmpConfig);
+
     	//This ensures a clean logger between tests
     	testLogger = ESAPI.getLogger( "test ExampleExtendedLog4JLogFactory: " + testCount++ );
     	System.out.println("Test ExampleExtendedLog4JLogFactory logger: " + testLogger);
+
+		//declare this one as Log4JLogger to be able to use Log4J logging methods
+		log4JLogger = (Log4JLogger)ESAPI.getLogger( "test Log4JLogFactory: " + testCount);
+		System.out.println("Test Log4JLogFactory logger: " + log4JLogger);
+
     }
 
     /**
@@ -69,8 +79,10 @@ public class Log4JLoggerTest extends TestCase {
     protected void tearDown() throws Exception {
     	//this helps, with garbage collection
     	testLogger = null;
-        ESAPI.override(null);
-    }
+		log4JLogger = null;
+
+		ESAPI.override(null);
+	}
 
     /**
 	 * Suite.
@@ -105,7 +117,7 @@ public class Log4JLoggerTest extends TestCase {
         request.addParameter("two","two2");
         request.addParameter("password","jwilliams");
         ESAPI.httpUtilities().logHTTPRequest( request, logger, Arrays.asList(ignore) );
-    }    
+    } 
     
     
     /**
@@ -204,7 +216,149 @@ public class Log4JLoggerTest extends TestCase {
        	assertFalse(newLogger.isTraceEnabled());
     }
 
-    
+	/**
+	 * test of loggers without setting explicit log levels
+	 * (log levels set from log4j.xml configuration)
+	 */
+	public void testLogLevels() {
+
+		Logger traceLogger			= ESAPI.getLogger("org.owasp.esapi.reference.TestTrace");
+		Logger debugLogger			= ESAPI.getLogger("org.owasp.esapi.reference.TestDebug");
+		Logger infoLogger			= ESAPI.getLogger("org.owasp.esapi.reference.TestInfo");
+		Logger errorLogger			= ESAPI.getLogger("org.owasp.esapi.reference.TestError");
+		Logger warningLogger		= ESAPI.getLogger("org.owasp.esapi.reference.TestWarning");
+		Logger fatalLogger			= ESAPI.getLogger("org.owasp.esapi.reference.TestFatal");
+		Logger unspecifiedLogger	= ESAPI.getLogger("org.owasp.esapi.reference");  //should use package-wide log level configuration (info)
+
+
+		//traceLogger - all log levels should be enabled
+		assertTrue(traceLogger.isTraceEnabled());
+		assertTrue(traceLogger.isDebugEnabled());
+		assertTrue(traceLogger.isInfoEnabled());
+		assertTrue(traceLogger.isWarningEnabled());
+		assertTrue(traceLogger.isErrorEnabled());
+		assertTrue(traceLogger.isFatalEnabled());
+
+		//debugLogger - all log levels should be enabled EXCEPT trace
+		assertFalse(debugLogger.isTraceEnabled());
+		assertTrue(debugLogger.isDebugEnabled());
+		assertTrue(debugLogger.isInfoEnabled());
+		assertTrue(debugLogger.isWarningEnabled());
+		assertTrue(debugLogger.isErrorEnabled());
+		assertTrue(debugLogger.isFatalEnabled());
+
+		//infoLogger - all log levels should be enabled EXCEPT trace and debug
+		assertFalse(infoLogger.isTraceEnabled());
+		assertFalse(infoLogger.isDebugEnabled());
+		assertTrue(infoLogger.isInfoEnabled());
+		assertTrue(infoLogger.isWarningEnabled());
+		assertTrue(infoLogger.isErrorEnabled());
+		assertTrue(infoLogger.isFatalEnabled());
+
+		//warningLogger - all log levels should be enabled EXCEPT etc.
+		assertFalse(warningLogger.isTraceEnabled());
+		assertFalse(warningLogger.isDebugEnabled());
+		assertFalse(warningLogger.isInfoEnabled());
+		assertTrue(warningLogger.isWarningEnabled());
+		assertTrue(warningLogger.isErrorEnabled());
+		assertTrue(warningLogger.isFatalEnabled());
+
+		//errorLogger - all log levels should be enabled EXCEPT etc.
+		assertFalse(errorLogger.isTraceEnabled());
+		assertFalse(errorLogger.isDebugEnabled());
+		assertFalse(errorLogger.isInfoEnabled());
+		assertFalse(errorLogger.isWarningEnabled());
+		assertTrue(errorLogger.isErrorEnabled());
+		assertTrue(errorLogger.isFatalEnabled());
+
+		//fatalLogger - all log levels should be enabled EXCEPT etc.
+		assertFalse(fatalLogger.isTraceEnabled());
+		assertFalse(fatalLogger.isDebugEnabled());
+		assertFalse(fatalLogger.isInfoEnabled());
+		assertFalse(fatalLogger.isWarningEnabled());
+		assertFalse(fatalLogger.isErrorEnabled());
+		assertTrue(fatalLogger.isFatalEnabled());
+
+		//unspecifiedLogger - all log levels should be enabled EXCEPT trace and debug
+		assertFalse(unspecifiedLogger.isTraceEnabled());
+		assertFalse(unspecifiedLogger.isDebugEnabled());
+		assertTrue(unspecifiedLogger.isInfoEnabled());
+		assertTrue(unspecifiedLogger.isWarningEnabled());
+		assertTrue(unspecifiedLogger.isErrorEnabled());
+		assertTrue(unspecifiedLogger.isFatalEnabled());
+	}
+
+	/**
+	 * test of loggers without setting explicit log levels
+	 * (log levels set from log4j.xml configuration)
+	 */
+	public void testLogLevelsWithClass() {
+
+		Logger traceLogger			= ESAPI.getLogger(TestTrace.class);
+		Logger debugLogger			= ESAPI.getLogger(TestDebug.class);
+		Logger infoLogger			= ESAPI.getLogger(TestInfo.class);
+		Logger errorLogger			= ESAPI.getLogger(TestError.class);
+		Logger warningLogger		= ESAPI.getLogger(TestWarning.class);
+		Logger fatalLogger			= ESAPI.getLogger(TestFatal.class);
+		Logger unspecifiedLogger	= ESAPI.getLogger(TestUnspecified.class);  //should use package-wide log level configuration (info)
+
+		//traceLogger - all log levels should be enabled
+		assertTrue(traceLogger.isTraceEnabled());
+		assertTrue(traceLogger.isDebugEnabled());
+		assertTrue(traceLogger.isInfoEnabled());
+		assertTrue(traceLogger.isWarningEnabled());
+		assertTrue(traceLogger.isErrorEnabled());
+		assertTrue(traceLogger.isFatalEnabled());
+
+		//debugLogger - all log levels should be enabled EXCEPT trace
+		assertFalse(debugLogger.isTraceEnabled());
+		assertTrue(debugLogger.isDebugEnabled());
+		assertTrue(debugLogger.isInfoEnabled());
+		assertTrue(debugLogger.isWarningEnabled());
+		assertTrue(debugLogger.isErrorEnabled());
+		assertTrue(debugLogger.isFatalEnabled());
+
+		//infoLogger - all log levels should be enabled EXCEPT trace and debug
+		assertFalse(infoLogger.isTraceEnabled());
+		assertFalse(infoLogger.isDebugEnabled());
+		assertTrue(infoLogger.isInfoEnabled());
+		assertTrue(infoLogger.isWarningEnabled());
+		assertTrue(infoLogger.isErrorEnabled());
+		assertTrue(infoLogger.isFatalEnabled());
+
+		//warningLogger - all log levels should be enabled EXCEPT etc.
+		assertFalse(warningLogger.isTraceEnabled());
+		assertFalse(warningLogger.isDebugEnabled());
+		assertFalse(warningLogger.isInfoEnabled());
+		assertTrue(warningLogger.isWarningEnabled());
+		assertTrue(warningLogger.isErrorEnabled());
+		assertTrue(warningLogger.isFatalEnabled());
+
+		//errorLogger - all log levels should be enabled EXCEPT etc.
+		assertFalse(errorLogger.isTraceEnabled());
+		assertFalse(errorLogger.isDebugEnabled());
+		assertFalse(errorLogger.isInfoEnabled());
+		assertFalse(errorLogger.isWarningEnabled());
+		assertTrue(errorLogger.isErrorEnabled());
+		assertTrue(errorLogger.isFatalEnabled());
+
+		//fatalLogger - all log levels should be enabled EXCEPT etc.
+		assertFalse(fatalLogger.isTraceEnabled());
+		assertFalse(fatalLogger.isDebugEnabled());
+		assertFalse(fatalLogger.isInfoEnabled());
+		assertFalse(fatalLogger.isWarningEnabled());
+		assertFalse(fatalLogger.isErrorEnabled());
+		assertTrue(fatalLogger.isFatalEnabled());
+
+		//unspecifiedLogger - all log levels should be enabled EXCEPT trace and debug
+		assertFalse(unspecifiedLogger.isTraceEnabled());
+		assertFalse(unspecifiedLogger.isDebugEnabled());
+		assertTrue(unspecifiedLogger.isInfoEnabled());
+		assertTrue(unspecifiedLogger.isWarningEnabled());
+		assertTrue(unspecifiedLogger.isErrorEnabled());
+		assertTrue(unspecifiedLogger.isFatalEnabled());
+	}
+
     /**
 	 * Test of info method, of class org.owasp.esapi.Logger.
 	 */
@@ -214,7 +368,17 @@ public class Log4JLoggerTest extends TestCase {
         testLogger.info(Logger.SECURITY_SUCCESS, "test message", null );
         testLogger.info(Logger.SECURITY_SUCCESS, "%3escript%3f test message", null );
         testLogger.info(Logger.SECURITY_SUCCESS, "<script> test message", null );
-    }
+
+        log4JLogger.info("test message" );
+        log4JLogger.info("test message", null );
+        log4JLogger.info("%3escript%3f test message", null );
+        log4JLogger.info("<script> test message", null );
+
+        log4JLogger.info(Logger.SECURITY_SUCCESS, "test message" );
+        log4JLogger.info(Logger.SECURITY_SUCCESS, "test message", null );
+        log4JLogger.info(Logger.SECURITY_SUCCESS, "%3escript%3f test message", null );
+        log4JLogger.info(Logger.SECURITY_SUCCESS, "<script> test message", null );
+	}
 
     /**
 	 * Test of trace method, of class org.owasp.esapi.Logger.
@@ -223,7 +387,10 @@ public class Log4JLoggerTest extends TestCase {
         System.out.println("trace");
         testLogger.trace(Logger.SECURITY_SUCCESS, "test message trace" );
         testLogger.trace(Logger.SECURITY_SUCCESS, "test message trace", null );
-    }
+
+        log4JLogger.trace("test message trace" );
+        log4JLogger.trace("test message trace", null );
+	}
 
     /**
 	 * Test of debug method, of class org.owasp.esapi.Logger.
@@ -232,7 +399,10 @@ public class Log4JLoggerTest extends TestCase {
         System.out.println("debug");
         testLogger.debug(Logger.SECURITY_SUCCESS, "test message debug" );
         testLogger.debug(Logger.SECURITY_SUCCESS, "test message debug", null );
-    }
+
+	    log4JLogger.debug("test message debug" );
+		log4JLogger.debug("test message debug", null );
+	}
 
     /**
 	 * Test of error method, of class org.owasp.esapi.Logger.
@@ -241,7 +411,10 @@ public class Log4JLoggerTest extends TestCase {
         System.out.println("error");
         testLogger.error(Logger.SECURITY_SUCCESS, "test message error" );
         testLogger.error(Logger.SECURITY_SUCCESS, "test message error", null );
-    }
+
+	    log4JLogger.error("test message error" );
+		log4JLogger.error("test message error", null );
+	}
 
     /**
 	 * Test of warning method, of class org.owasp.esapi.Logger.
@@ -250,6 +423,9 @@ public class Log4JLoggerTest extends TestCase {
         System.out.println("warning");
         testLogger.warning(Logger.SECURITY_SUCCESS, "test message warning" );
         testLogger.warning(Logger.SECURITY_SUCCESS, "test message warning", null );
+
+	    log4JLogger.warn("test message warning" );
+		log4JLogger.warn("test message warning", null );
     }
 
     /**
@@ -259,5 +435,9 @@ public class Log4JLoggerTest extends TestCase {
         System.out.println("fatal");
         testLogger.fatal(Logger.SECURITY_SUCCESS, "test message fatal" );
         testLogger.fatal(Logger.SECURITY_SUCCESS, "test message fatal", null );
-    }
+
+	    log4JLogger.fatal("test message fatal" );
+		log4JLogger.fatal("test message fatal", null );    
+	}
+
 }
