@@ -9,9 +9,39 @@
     </layout> 
   </appender> 
 
+  <logger name="org.owasp.esapi.reference.TestTrace">
+    <level value="trace"/>
+  </logger>
+
+  <logger name="org.owasp.esapi.reference.TestDebug">
+    <level value="debug"/>
+  </logger>
+
+  <logger name="org.owasp.esapi.reference.TestInfo">
+    <level value="info"/>
+ </logger>
+
+  <logger name="org.owasp.esapi.reference.TestWarning">
+    <level value="warn"/>
+  </logger>
+
+  <logger name="org.owasp.esapi.reference.TestError">
+    <level value="error"/>
+  </logger>
+
+  <logger name="org.owasp.esapi.reference.TestFatal">
+    <level value="fatal"/>
+  </logger>
+
+  <logger name="org.owasp.esapi.reference">
+    <level value="info"/>
+  </logger>
+
   <root> 
     <priority value ="debug" /> 
     <appender-ref ref="console" /> 
   </root>
+
+  <loggerFactory class="org.owasp.esapi.reference.Log4JLoggerFactory"/>
   
 </log4j:configuration>

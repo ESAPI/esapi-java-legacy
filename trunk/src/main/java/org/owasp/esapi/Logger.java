@@ -83,45 +83,51 @@ package org.owasp.esapi;
 public interface Logger {
 
 	/**
-     * A security type of log event that has succeeded. This is one of 4 predefined
+     * A security type of log event that has succeeded. This is one of 5 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType SECURITY_SUCCESS = new EventType( "SECURITY SUCCESS", true);
 
 	/**
-     * A security type of log event that has failed. This is one of 4 predefined
+     * A security type of log event that has failed. This is one of 5 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType SECURITY_FAILURE = new EventType( "SECURITY FAILURE", false);
 
 	/**
-     * A non-security type of log event that has succeeded. This is one of 4 predefined
+     * A non-security type of log event that has succeeded. This is one of 5 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType EVENT_SUCCESS = new EventType( "EVENT SUCCESS", true);
 	
 	/**
-     * A non-security type of log event that has failed. This is one of 4 predefined
+     * A non-security type of log event that has failed. This is one of 5 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType EVENT_FAILURE = new EventType( "EVENT FAILURE", false);
 
 	/**
-	 * Defines the type of log event that is being generated. The Logger interface defines 4 types of Log events: 
-	 * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE. 
+     * A non-security type of log event that is unspecified. This is one of 5 predefined
+     * ESAPI logging events. New events can be added.
+     */
+	public static final EventType EVENT_UNSPECIFED = new EventType( "EVENT UNSPECIFIED", null);
+
+	/**
+	 * Defines the type of log event that is being generated. The Logger interface defines 5 types of Log events:
+	 * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE, EVENT_UNSPECIFIED.
      * Your implementation can extend or change this list if desired. 
 	 */
 	public class EventType {
 		
 		private String type;
-		private boolean success;
+		private Boolean success = null;
 		
-		EventType (String name, boolean newSuccess) {
+		EventType (String name, Boolean newSuccess) {
 			this.type = name;
 			this.success = newSuccess;
 		}
 		
-		public boolean isSuccess() {
+		public Boolean isSuccess() {
 			return success;
 		}
 		
@@ -129,6 +135,7 @@ public interface Logger {
          *
          * @return
          */
+		@Override
         public String toString() {
 			return this.type;
 		}
