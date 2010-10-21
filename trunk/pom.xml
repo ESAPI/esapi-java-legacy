@@ -187,8 +187,9 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
-            <version>1.2.12</version>
+            <version>1.2.16</version>
             <scope>compile</scope>
+            <type>jar</type>
         </dependency>
         <dependency>
             <groupId>xom</groupId>
@@ -343,7 +344,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                     <!-- Baseline for ESAPI 2.0 is JDK1.5 - Enforces that a JDK1.5 compiler is being
                          used to build this release -->
                     <plugin>
@@ -388,7 +388,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.1</version>
+                        <version>2.2</version>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/dist.xml</descriptor>
