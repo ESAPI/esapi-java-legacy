@@ -1,0 +1,59 @@
+
+                            Welcome to ESAPI for Java!
+
+(This file best viewed full screen.)
+
+Here are the most significant directories and files included the zip file for this release:
+
+File / Directory                                                        Description
+=========================================================================================
+<root>/	
+|
++---configuration/                                                      Directory of ESAPI configuration files
+|     |
+|     |---.esapi/
+|     |     |---waf-policies/                                           Directory containing Web Application Firewall policies
+|     |     |---ESAPI.properties                                        The main ESAPI configuration file
+|     |     `---validation.properties                                   Regular expressions used by the ESAPI validator
+|     |
+|     `---properties/                                                   Examples of how to internationalize error messages???
+|           |---ESAPI_en_US.properties                                      in US/English
+|           |---ESAPI_fr_FR.properties                                      in French
+|           `---ESAPI_zhs_CN.properties                                     in Chinese
+|
+|---documentation/                                                      ESAPI documentation
+|     |
+|     |---esapi4java-2.0-readme.txt                                     The file you are now reading
+|     |---esapi4java-core-2.0-release-notes.pdf                         ESAPI 2.0 release notes (draft)
+|     |---esapi4java-core-2.0-install-guide.doc                         ESAPI 2.0 installation guide (draft)
+|     |---esapi4java-2.0rc6-override-log4jloggingfactory.txt            How to use log4j to override User logging
+|     |---esapi4java-core-2.0-ciphertext-serialization.pdf              Describes serialization layout of ESAPI 2.0 ciphertext representation
+|     |---esapi4java-core-2.0-crypto-design-goals.doc (draft)           Describes ESAPI 2.0 crypto design goals & design decisions
+|     |---esapi4java-core-2.0-readme-crypto-changes.html                Describes why crypto was changed from what was in ESAPI 1.4
+|     |---esapi4java-core-2.0-symmetric-crypto-user-guide.html          User guide for using symmetric encryption in ESAPI 2.0
+|     `---esapi4java-waf-2.0-policy-file-spec.pdf                       Describes how to configure ESAPI 2.0's Web Application Firewall
+|
+|---libs/                                                               ESAPI dependencies
+|
+|---site/
+|     |---apidocs                                                       ESAPI Javadoc
+|     |---cobertura
+|     `---testapidocs                                                   ESAPI Javadoc for its JUnit test cases
+|
+|---src/                                                                ESAPI source code
+|
+|---esapi-<vers>.jar                                                    The ESAPI jar for version <vers> (e.g., <vers> == 2.0_rc10)
+|
+|---LICENSE.txt                                                         ESAPI license for source code and documentation
+|
+`---pom.xml                                                             Maven's pom.xml for building ESAPI from source via mvn.
+
+===========================================================
+
+Where to go from here -- please see the installation guide and the release
+notes.
+
+Please address comments and questions concerning the API and this document to
+the ESAPI Users mailing list, <esapi-user@lists.owasp.org>.
+
+Copyright (C) 2009-2010 The OWASP Foundation.
