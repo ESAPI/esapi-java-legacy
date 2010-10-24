@@ -19,7 +19,7 @@ import org.owasp.esapi.Logger;
  * {@code ESAPI.PreferredJCEProvider} defined to either a recognized
  * JCE provider (see below for list) or a fully qualified path name of
  * that JCE provider's {@code Provider} class, then the reference implementation
- * of ESAPI cryptography ({@code org.owasp.esapi.reference.JavaEncryptor})
+ * of ESAPI cryptography ({@code org.owasp.esapi.reference.crypto.JavaEncryptor})
  * tries to load this specified JCE provider via
  * {@link SecurityProviderLoader#insertProviderAt(String,int)}.
  * </p>
