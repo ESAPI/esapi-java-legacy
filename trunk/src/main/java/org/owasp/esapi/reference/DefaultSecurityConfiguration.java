@@ -436,6 +436,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 			
 			String validationPropFileName = getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties");
 			Properties validationProperties = null;
+
+			//clear any cached validation patterns so they can be reloaded from validation.properties
+			patternCache.clear();
 			
 			try {
 			    //first attempt file IO loading of properties
