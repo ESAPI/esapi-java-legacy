@@ -127,8 +127,15 @@ public interface Encoder {
 
 
 	/**
-	 * This method is equivalent to calling <pre>Encoder.canonicalize(input, true);</pre>
-	 * 
+	 * This method is equivalent to calling <pre>Encoder.canonicalize(input, restrictMultiple, restrictMixed);</pre>
+	 *
+	 * The default values for restrictMultiple and restrictMixed come from ESAPI.properties
+	 * <pre>
+	 * Encoder.AllowMultipleEncoding=false
+	 * Encoder.AllowMixedEncoding=false
+	 * </pre>
+	 *
+	 * @see Encoder#canonicalize(String, boolean, boolean) canonicalize
 	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
 	 * 
 	 * @param input the text to canonicalize
@@ -136,6 +143,21 @@ public interface Encoder {
 	 */
 	String canonicalize(String input);
 	
+	/**
+	 * This method is the equivalent to calling <pre>Encoder.canonicalize(input, strict, strict);</pre>
+	 *
+	 * @see Encoder#canonicalize(String, boolean, boolean) canonicalize
+	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
+	 *  
+	 * @param input 
+	 * 		the text to canonicalize
+	 * @param strict 
+	 * 		true if checking for multiple and mixed encoding is desired, false otherwise
+	 * 
+	 * @return a String containing the canonicalized text
+	 */
+	String canonicalize(String input, boolean strict);
+
 	/**
 	 * Canonicalization is simply the operation of reducing a possibly encoded
 	 * string down to its simplest form. This is important, because attackers
@@ -156,14 +178,14 @@ public interface Encoder {
      * <li>All combinations of multiple, mixed, and nested encoding/escaping (%2&#x35;3c or &#x2526gt;)</li></ul>
      * <p>
      * Using canonicalize is simple. The default is just...
-     * <pre> 
+     * <pre>
      *     String clean = ESAPI.encoder().canonicalize( request.getParameter("input"));
-     * </pre> 
+     * </pre>
      * You need to decode untrusted data so that it's safe for ANY downstream interpreter or decoder. For
      * example, if your data goes into a Windows command shell, then into a database, and then to a browser,
      * you're going to need to decode for all of those systems. You can build a custom encoder to canonicalize
      * for your application like this...
-     * <pre> 
+     * <pre>
      *     ArrayList list = new ArrayList();
      *     list.add( new WindowsCodec() );
      *     list.add( new MySQLCodec() );
@@ -176,10 +198,10 @@ public interface Encoder {
      * <pre>
      *     String input = request.getParameter( "name" );
      *     String name = ESAPI.validator().isValidInput( "test", input, "FirstName", 20, false);
-     * </pre> 
+     * </pre>
      * However, the default canonicalize() method only decodes HTMLEntity, percent (URL) encoding, and JavaScript
      * encoding. If you'd like to use a custom canonicalizer with your validator, that's pretty easy too.
-     * <pre> 
+     * <pre>
      *     ... setup custom encoder as above
      *     Validator validator = new DefaultValidator( encoder );
      *     String input = request.getParameter( "name" );
@@ -187,24 +209,32 @@ public interface Encoder {
      * </pre>
      * Although ESAPI is able to canonicalize multiple, mixed, or nested encoding, it's safer to not accept
      * this stuff in the first place. In ESAPI, the default is "strict" mode that throws an IntrusionException
-     * if it receives anything not single-encoded with a single scheme.  Currently this is not configurable 
-     * in ESAPI.properties, but it probably should be.  Even if you disable "strict" mode, you'll still get
+     * if it receives anything not single-encoded with a single scheme. This is configurable
+     * in ESAPI.properties using the properties:
+	 * <pre>
+	 * Encoder.AllowMultipleEncoding=false
+	 * Encoder.AllowMixedEncoding=false
+	 * </pre>
+	 * This method allows you to override the default behavior by directly specifying whether to restrict
+	 * multiple or mixed encoding. Even if you disable restrictions, you'll still get
      * warning messages in the log about each multiple encoding and mixed encoding received.
      * <pre>
      *     // disabling strict mode to allow mixed encoding
-     *     String url = ESAPI.encoder().canonicalize( request.getParameter("url"), false);
+     *     String url = ESAPI.encoder().canonicalize( request.getParameter("url"), false, false);
      * </pre>
-	 * 
+	 *
 	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
-	 *  
-	 * @param input 
+	 *
+	 * @param input
 	 * 		the text to canonicalize
-	 * @param strict 
-	 * 		true if checking for double encoding is desired, false otherwise
-	 * 
+	 * @param restrictMultiple
+	 * 		true if checking for multiple encoding is desired, false otherwise
+	 * @param restrictMixed
+	 * 		true if checking for mixed encoding is desired, false otherwise
+	 *
 	 * @return a String containing the canonicalized text
 	 */
-	String canonicalize(String input, boolean strict);
+	String canonicalize(String input, boolean restrictMultiple, boolean restrictMixed);
 
 	/**
 	 * Encode data for use in Cascading Style Sheets (CSS) content.

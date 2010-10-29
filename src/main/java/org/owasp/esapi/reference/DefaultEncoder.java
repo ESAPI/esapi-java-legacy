@@ -117,14 +117,24 @@ public class DefaultEncoder implements Encoder {
 		if ( input == null ) {
 			return null;
 		}
-		return canonicalize( input, !ESAPI.securityConfiguration().getDisableIntrusionDetection() );
+		return canonicalize(input, 
+							ESAPI.securityConfiguration().getAllowMultipleEncoding(),
+							ESAPI.securityConfiguration().getAllowMixedEncoding() );
 	}
 
 	
 	/**
 	 * {@inheritDoc}
 	 */
-	public String canonicalize( String input, boolean strict ) {
+	public String canonicalize( String input, boolean strict) {
+		return canonicalize(input, strict, strict);
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public String canonicalize( String input, boolean restrictMultiple, boolean restrictMixed ) {
 		if ( input == null ) {
 			return null;
 		}
@@ -158,21 +168,21 @@ public class DefaultEncoder implements Encoder {
         
         // do strict tests and handle if any mixed, multiple, nested encoding were found
         if ( foundCount >= 2 && mixedCount > 1 ) {
-            if ( strict ) {
+            if ( restrictMultiple || restrictMixed ) {
                 throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
             } else {
                 logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) and mixed encoding ("+ mixedCount +"x) detected in " + input );
             }
         }
         else if ( foundCount >= 2 ) {
-            if ( strict ) {
+            if ( restrictMultiple ) {
                 throw new IntrusionException( "Input validation failure", "Multiple ("+ foundCount +"x) encoding detected in " + input );
             } else {
                 logger.warning( Logger.SECURITY_FAILURE, "Multiple ("+ foundCount +"x) encoding detected in " + input );
             }
         }
         else if ( mixedCount > 1 ) {
-            if ( strict ) {
+            if ( restrictMixed ) {
                 throw new IntrusionException( "Input validation failure", "Mixed encoding ("+ mixedCount +"x) detected in " + input );
             } else {
                 logger.warning( Logger.SECURITY_FAILURE, "Mixed encoding ("+ mixedCount +"x) detected in " + input );
