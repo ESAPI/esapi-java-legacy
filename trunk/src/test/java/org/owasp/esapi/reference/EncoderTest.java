@@ -34,6 +34,7 @@ import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+
 /**
  * The Class EncoderTest.
  * 
@@ -96,11 +97,15 @@ public class EncoderTest extends TestCase {
 		assertEquals( null, instance.canonicalize(null));
 		assertEquals( null, instance.canonicalize(null, true));
 		assertEquals( null, instance.canonicalize(null, false));
+		assertEquals( null, instance.canonicalize(null, true, true));
+		assertEquals( null, instance.canonicalize(null, true, false));
+		assertEquals( null, instance.canonicalize(null, false, true));
+		assertEquals( null, instance.canonicalize(null, false, false));
 		
 		// test exception paths
 		assertEquals( "%", instance.canonicalize("%25", true));
 		assertEquals( "%", instance.canonicalize("%25", false));
-		
+
         assertEquals( "%", instance.canonicalize("%25"));
         assertEquals( "%F", instance.canonicalize("%25F"));
         assertEquals( "<", instance.canonicalize("%3c"));
@@ -267,7 +272,29 @@ public class EncoderTest extends TestCase {
         // double encoding with multiple schemes example
         assertEquals( "<", instance.canonicalize("%26lt%3b", false)); //first entity, then percent
         assertEquals( "&", instance.canonicalize("&#x25;26", false)); //first percent, then entity
-          
+
+		//enforce multiple and mixed encoding detection
+		try {
+			instance.canonicalize("%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", true, true);
+			fail("Multiple and mixed encoding not detected");
+		} catch (IntrusionException ie) {}
+
+		//enforce multiple but not mixed encoding detection
+		try {
+			instance.canonicalize("%252525253C", true, false); 
+			fail("Multiple encoding not detected");
+		} catch (IntrusionException ie) {}
+
+		//enforce mixed but not multiple encoding detection
+		try {
+			instance.canonicalize("%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false, true); 
+			fail("Mixed encoding not detected");
+		} catch (IntrusionException ie) {}
+
+		//enforce niether mixed nor multiple encoding detection -should canonicalize but not throw an error
+		assertEquals( "< < < < < < <", instance.canonicalize("%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", 
+															 false, false)); 
+
         // nested encoding examples
         assertEquals( "<", instance.canonicalize("%253c", false)); //nested encode % with percent
         assertEquals( "<", instance.canonicalize("%%33%63", false)); //nested encode both nibbles with percent

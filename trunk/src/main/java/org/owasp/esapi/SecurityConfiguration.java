@@ -399,10 +399,17 @@ public interface SecurityConfiguration {
 
 	/**
 	 * Return true if multiple encoding is allowed
-	 * 
+	 *
 	 * @return whether multiple encoding is allowed when canonicalizing data
 	 */
 	public boolean getAllowMultipleEncoding();
+
+	/**
+	 * Return true if mixed encoding is allowed
+	 *
+	 * @return whether mixed encoding is allowed when canonicalizing data
+	 */
+	public boolean getAllowMixedEncoding();
 
 	/**
 	 * Returns the List of Codecs to use when canonicalizing data
