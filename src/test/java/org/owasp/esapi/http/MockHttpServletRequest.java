@@ -76,7 +76,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	private String url = "https://www.example.com" + uri;
 
-	private String querystring = "pid=1&qid=test";
+	private String queryString = "pid=1&qid=test";
 
 	private String method = "POST";
 
@@ -316,7 +316,16 @@ public class MockHttpServletRequest implements HttpServletRequest
 	 * @return
 	 */
 	public String getQueryString() {
-		return querystring;
+		return queryString;
+	}
+
+	/**
+	 * Set the query string to return.
+	 * @param str The query string to return.
+	 */
+	public void setQueryString(String str)
+	{
+		this.queryString = str;
 	}
 
 	/**
@@ -733,12 +742,15 @@ public class MockHttpServletRequest implements HttpServletRequest
 		int p = url.indexOf( ":" );
 		this.scheme = url.substring( 0, p );
 
-		// get the querystring
+		// get the queryString
 		int q = url.indexOf( "?" );
-		if ( q != -1 ) {
-			querystring = url.substring( q+1 );
+		if ( q != -1 )
+		{
+			queryString = url.substring( q+1 );
 			url = url.substring( 0, q );
 		}
+		else
+			queryString = null;
 		this.url = url;
 	}
 

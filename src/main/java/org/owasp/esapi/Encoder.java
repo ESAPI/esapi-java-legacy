@@ -27,9 +27,7 @@ import org.owasp.esapi.errors.EncodingException;
  * double-encoding, callers should make sure input does not already contain encoded characters
  * by calling canonicalize. Validator implementations should call canonicalize on user input
  * <b>before</b> validating to prevent encoded attacks.
- * <P>
- * <img src="doc-files/Encoder.jpg">
- * <P>
+ * <p>
  * All of the methods must use a "whitelist" or "positive" security model.
  * For the encoding methods, this means that all characters should be encoded, except for a specific list of
  * "immune" characters that are known to be safe.
@@ -255,16 +253,26 @@ public interface Encoder {
 	 */
 	String encodeForHTMLAttribute(String input);
 
-	/**
-	 * Encode data for insertion inside a data value in JavaScript. Putting user data directly
-	 * inside a script is quite dangerous. Great care must be taken to prevent putting user data
-	 * directly into script code itself, as no amount of encoding will prevent attacks there.
-	 * 
-	 * @param input 
-	 * 		the text to encode for JavaScript
-	 * 
-	 * @return input encoded for use in JavaScript
-	 */
+
+    /**
+     * Encode data for insertion inside a data value or function argument in JavaScript. Including user data 
+     * directly inside a script is quite dangerous. Great care must be taken to prevent including user data
+     * directly into script code itself, as no amount of encoding will prevent attacks there.
+     * 
+     * Please note there are some JavaScript functions that can never safely receive untrusted data 
+     * as input – even if the user input is encoded.
+     * 
+     * For example:
+     * 
+     *  <script>
+     *  window.setInterval('<%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %>');
+     *  </script>
+     * 
+     * @param input 
+     *          the text to encode for JavaScript
+     * 
+     * @return input encoded for use in JavaScript
+     */
 	String encodeForJavaScript(String input);
 
 	/**
@@ -309,17 +317,24 @@ public interface Encoder {
 	 */
 	String encodeForSQL(Codec codec, String input);
 
-	/**
-	 * Encode for an operating system command shell according to the selected codec (appropriate codecs include
-	 * the WindowsCodec and UnixCodec).
-	 * 
-	 * @param codec 
-	 * 		a Codec that declares which operating system 'input' is being encoded for (ie. Windows, Unix, etc.)
-	 * @param input 
-	 * 		the text to encode for the command shell
-	 * 
-	 * @return input encoded for use in command shell
-	 */
+    /**
+     * Encode for an operating system command shell according to the selected codec (appropriate codecs include the WindowsCodec and UnixCodec). 
+     *
+     * Please note the following recommendations before choosing to use this method: 
+     * 
+     * 1)      It is strongly recommended that applications avoid making direct OS system calls if possible as such calls are not portable, and they are potentially unsafe. Please use language provided features if at all possible, rather than native OS calls to implement the desired feature.
+     * 2)      If an OS call cannot be avoided, then it is recommended that the program to be invoked be invoked directly (e.g., System.exec("nameofcommand" + "parameterstocommand");) as this avoids the use of the command shell. The "parameterstocommand" should of course be validated before passing them to the OS command.
+     * 3)      If you must use this method, then we recommend validating all user supplied input passed to the command shell as well, in addition to using this method in order to make the command shell invocation safe.
+     *  
+     * An example use of this method would be: System.exec("dir " + ESAPI.encodeForOS(WindowsCodec, "parameter(s)tocommandwithuserinput");
+     * 
+     * @param codec 
+     *      a Codec that declares which operating system 'input' is being encoded for (ie. Windows, Unix, etc.)
+     * @param input 
+     *      the text to encode for the command shell
+     * 
+     * @return input encoded for use in command shell
+     */
 	String encodeForOS(Codec codec, String input);
 
 	/**

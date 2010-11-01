@@ -28,7 +28,7 @@ import org.owasp.esapi.util.NullSafe;
  *
  * @author Ed Schaller
  */
-public class HashTrie<T> implements Map<CharSequence,T>
+public class HashTrie<T> implements Trie<T>
 {
 	private static class Entry<T> implements Map.Entry<CharSequence,T>
 	{

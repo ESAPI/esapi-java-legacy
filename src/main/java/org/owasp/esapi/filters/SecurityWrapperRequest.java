@@ -355,7 +355,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public String getParameter(String name, boolean allowNull, int maxLength, String regexName) {
         String orig = getHttpServletRequest().getParameter(name);
-        String clean = "";
+        String clean = null;
         try {
             clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, orig, regexName, maxLength, allowNull);
         } catch (ValidationException e) {
@@ -418,22 +418,25 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * HttpServletRequest after canonicalizing and filtering out any dangerous
      * characters.
      * @param name The parameter name
-     * @return An array of matching "scrubbed" parameter values.
+     * @return An array of matching "scrubbed" parameter values or
+     * <code>null</code> if the parameter does not exist.
      */
     public String[] getParameterValues(String name) {
         String[] values = getHttpServletRequest().getParameterValues(name);
-        List<String> newValues = new ArrayList<String>();
-        if ( values != null ) {
-            for (String value : values) {
-                try {
-                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
-                    newValues.add(cleanValue);
-                } catch (ValidationException e) {
-                    logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter");
-                }
+        List<String> newValues;
+
+	if(values == null)
+		return null;
+        newValues = new ArrayList<String>();
+        for (String value : values) {
+            try {
+                String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
+                newValues.add(cleanValue);
+            } catch (ValidationException e) {
+                logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter");
             }
         }
-        return newValues.toArray(new String[ newValues.size() ]);
+        return newValues.toArray(new String[newValues.size()]);
     }
 
     /**
@@ -444,9 +447,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public String getPathInfo() {
         String path = getHttpServletRequest().getPathInfo();
+		if (path == null) return null;
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP path: " + path, path, "HTTPPath", 150, false);
+            clean = ESAPI.validator().getValidInput("HTTP path: " + path, path, "HTTPPath", 150, true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -481,7 +485,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         String query = getHttpServletRequest().getQueryString();
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", 2000, false);
+            clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", 2000, true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -823,6 +827,6 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     }
 
     public void setAllowableContentRoot(String allowableContentRoot) {
-        this.allowableContentRoot = allowableContentRoot.startsWith( "/" ) ? "" : "/" + allowableContentRoot;
+        this.allowableContentRoot = allowableContentRoot.startsWith( "/" ) ? allowableContentRoot : "/" + allowableContentRoot;
     }
 }

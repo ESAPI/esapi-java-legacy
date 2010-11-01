@@ -31,10 +31,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * the {@code getProperty} and {@code setProperty} methods. In all cases,
  * the master encryption key, as given by the {@code Encryptor.MasterKey}
  * property in <b><code>ESAPI.properties</code></b> file.
- * <P>
- * <img src="doc-files/EncryptedProperties.jpg">
- * <P>
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007

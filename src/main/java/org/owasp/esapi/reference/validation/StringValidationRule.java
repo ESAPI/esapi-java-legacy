@@ -23,7 +23,6 @@ import java.util.regex.PatternSyntaxException;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.util.NullSafe;
 
@@ -142,7 +141,7 @@ public class StringValidationRule extends BaseValidationRule {
 		// check whitelist patterns
 		for (Pattern p : whitelistPatterns) {
 			if ( !p.matcher(input).matches() ) {
-				throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Please conform to regex " + p.pattern() + ( maxLength == Integer.MAX_VALUE ? "" : " with a maximum length of " + maxLength ), "Invalid input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
+				throw new ValidationException( context + ": Invalid input. Please conform to regex " + p.pattern() + ( maxLength == Integer.MAX_VALUE ? "" : " with a maximum length of " + maxLength ), "Invalid input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
 			}
 		}
 
@@ -176,7 +175,7 @@ public class StringValidationRule extends BaseValidationRule {
 		// check blacklist patterns
 		for (Pattern p : blacklistPatterns) {
 			if ( p.matcher(input).matches() ) {
-				throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. Dangerous input matching " + p.pattern() + " detected.", "Dangerous input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
+				throw new ValidationException( context + ": Invalid input. Dangerous input matching " + p.pattern() + " detected.", "Dangerous input: context=" + context + ", type(" + getTypeName() + ")=" + p.pattern() + ", input=" + input + (NullSafe.equals(orig,input) ? "" : ", orig=" + orig), context );
 			}
 		}
 
@@ -208,11 +207,11 @@ public class StringValidationRule extends BaseValidationRule {
 	private String checkLength(String context, String input, String orig) throws ValidationException
 	{
 		if (input.length() < minLength) {
-			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The minimum length of " + minLength + " characters was not met.", "Input does not meet the minimum length of " + minLength + " by " + (minLength - input.length()) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
+			throw new ValidationException( context + ": Invalid input. The minimum length of " + minLength + " characters was not met.", "Input does not meet the minimum length of " + minLength + " by " + (minLength - input.length()) + " characters: context=" + context + ", type=" + getTypeName() + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
 		}
 
 		if (input.length() > maxLength) {
-			throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + ", orig=" + orig +", input=" + input, context );
+			throw new ValidationException( context + ": Invalid input. The maximum length of " + maxLength + " characters was exceeded.", "Input exceeds maximum allowed length of " + maxLength + " by " + (input.length()-maxLength) + " characters: context=" + context + ", type=" + getTypeName() + ", orig=" + orig +", input=" + input, context );
 		}
 
 		return input;
@@ -246,7 +245,7 @@ public class StringValidationRule extends BaseValidationRule {
 			return input;
 		if(allowNull)
 			return null;
-		throw new ValidationException( this.encoder.encodeForJavaScript(context) + ": Input required.", "Input required: context=" + context + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
+		throw new ValidationException( context + ": Input required.", "Input required: context=" + context + "), input=" + input + (NullSafe.equals(input,orig) ? "" : ", orig=" + orig), context );
 	}
 
 	/**
@@ -266,7 +265,7 @@ public class StringValidationRule extends BaseValidationRule {
 	 */
 	public String getValid( String context, String input ) throws ValidationException
 	{
-		String canonical = null;
+		String data = null;
 
 		// checks on input itself
 
@@ -274,8 +273,10 @@ public class StringValidationRule extends BaseValidationRule {
 		if(checkEmpty(context, input) == null)
 			return null;
 
-		if(validateInputAndCanonical)
+		if (validateInputAndCanonical)
 		{
+			//first validate pre-canonicalized data
+			
 			// check length
 			checkLength(context, input);
 
@@ -284,26 +285,31 @@ public class StringValidationRule extends BaseValidationRule {
 
 			// check blacklist patterns
 			checkBlacklist(context, input);
+			
+			// canonicalize
+			data = encoder.canonicalize( input );
+			
+		} else {
+			
+			//skip canonicalization
+			data = input;			
 		}
 
-		// canonicalize
-		canonical = encoder.canonicalize( input );
-
 		// check for empty/null
-		if(checkEmpty(context, canonical, input) == null)
+		if(checkEmpty(context, data, input) == null)
 			return null;
 
 		// check length
-		checkLength(context, canonical, input);
+		checkLength(context, data, input);
 
 		// check whitelist patterns
-		checkWhitelist(context, canonical, input);
+		checkWhitelist(context, data, input);
 
 		// check blacklist patterns
-		checkBlacklist(context, canonical, input);
+		checkBlacklist(context, data, input);
 
 		// validation passed
-		return canonical;
+		return data;
 	}
 
 	/**

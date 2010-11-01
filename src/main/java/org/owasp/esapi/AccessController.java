@@ -25,8 +25,6 @@ import org.owasp.esapi.errors.AccessControlException;
  * the various application layers. This class provides access control for URLs, business functions, data, services, and
  * files.
  * <P>
- * <img src="doc-files/AccessController.jpg">
- * <P>
  * The implementation of this interface will need to access the current User object (from Authenticator.getCurrentUser())
  * to determine roles or permissions. In addition, the implementation
  * will also need information about the resources that are being accessed. Using the user information and the resource

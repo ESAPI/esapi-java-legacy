@@ -61,6 +61,18 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  * @see org.owasp.esapi.Validator
  */
 public class DefaultValidator implements org.owasp.esapi.Validator {
+    private static volatile Validator instance = null;
+
+    public static Validator getInstance() {
+        if ( instance == null ) {
+            synchronized ( Validator.class ) {
+                if ( instance == null ) {
+                    instance = new DefaultValidator();
+                }
+            }
+        }
+        return instance;
+    }
 
 	/** A map of validation rules */
 	private Map<String, ValidationRule> rules = new HashMap<String, ValidationRule>();
@@ -115,8 +127,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 	
 	/**
-	 * Returns true if data received from browser is valid. Only URL encoding is
-	 * supported. Double encoding is treated as an attack.
+	 * Returns true if data received from browser is valid. Double encoding is treated as an attack. The 
+	 * default encoder supports html encoding, URL encoding, and javascript escaping. Input is canonicalized 
+	 * by default before validation.
 	 * 
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
@@ -127,8 +140,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @throws IntrusionException
 	 */
 	public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException  {
+		return isValidInput(context, input, type, maxLength, allowNull, true);
+	}
+	
+	public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws IntrusionException  {
 		try {
-			getValidInput( context, input, type, maxLength, allowNull);
+			getValidInput( context, input, type, maxLength, allowNull, canonicalize);
 			return true;
 		} catch( Exception e ) {
 			return false;
@@ -136,8 +153,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 
 	/**
-	 * Validates data received from the browser and returns a safe version. Only
-	 * URL encoding is supported. Double encoding is treated as an attack.
+	 * Validates data received from the browser and returns a safe version. 
+	 * Double encoding is treated as an attack. The default encoder supports 
+	 * html encoding, URL encoding, and javascript escaping. Input is 
+	 * canonicalized by default before validation.
 	 * 
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
@@ -149,6 +168,24 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @throws IntrusionException
 	 */
 	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException {
+		return getValidInput(context, input, type, maxLength, allowNull, true);
+	}
+	
+	/**
+	 * Validates data received from the browser and returns a safe version. Only
+	 * URL encoding is supported. Double encoding is treated as an attack.
+	 * 
+	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
+	 * @param input The actual user input data to validate.
+	 * @param type The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+	 * @param maxLength The maximum String length allowed. If input is canonicalized per the canonicalize argument, then maxLength must be verified after canonicalization
+     * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 * @param canonicalize If canonicalize is true then input will be canonicalized before validation
+	 * @return The user input, may be canonicalized if canonicalize argument is true
+	 * @throws ValidationException
+	 * @throws IntrusionException
+	 */
+	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws ValidationException {
 		StringValidationRule rvr = new StringValidationRule( type, encoder );
 		Pattern p = ESAPI.securityConfiguration().getValidationPattern( type );
 		if ( p != null ) {
@@ -158,7 +195,26 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
+		rvr.setValidateInputAndCanonical(canonicalize);
 		return rvr.getValid(context, input);
+	}
+	
+	/**
+	 * Validates data received from the browser and returns a safe version. Only
+	 * URL encoding is supported. Double encoding is treated as an attack. Input
+	 * is canonicalized by default before validation.
+	 * 
+	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
+	 * @param input The actual user input data to validate.
+	 * @param type The regular expression name while maps to the actual regular expression from "ESAPI.properties".
+	 * @param maxLength The maximum String length allowed. If input is canonicalized per the canonicalize argument, then maxLength must be verified after canonicalization
+	 * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 * @param errors If ValidationException is thrown, then add to error list instead of throwing out to caller
+	 * @return The canonicalized user input.
+	 * @throws IntrusionException
+	 */
+	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
+		return getValidInput(context, input, type, maxLength, allowNull, true, errors);
 	}
 	
 	/**
@@ -168,21 +224,21 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
 	 * @param type The regular expression name while maps to the actual regular expression from "ESAPI.properties".
-	 * @param maxLength The maximum post-canonicalized String length allowed.
+	 * @param maxLength The maximum post-canonicalized String length allowed
 	 * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 * @param canonicalize If canonicalize is true then input will be canonicalized before validation
 	 * @param errors If ValidationException is thrown, then add to error list instead of throwing out to caller
-	 * @return The canonicalized user input.
+	 * @return The user input, may be canonicalized if canonicalize argument is true
 	 * @throws IntrusionException
 	 */
-	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
+	public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errors) throws IntrusionException {
 		try {
-			return getValidInput(context,  input,  type,  maxLength,  allowNull);
+			return getValidInput(context,  input,  type,  maxLength,  allowNull, canonicalize);
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		// TODO - optimize so that invalid input is not canonicalized twice
-		return encoder.canonicalize(input);
+
+		return "";
 	}
 
 	/**
@@ -240,6 +296,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		HTMLValidationRule hvr = new HTMLValidationRule( "safehtml", encoder );
 		hvr.setMaximumLength(maxLength);
 		hvr.setAllowNull(allowNull);
+		hvr.setValidateInputAndCanonical(false);
 		return hvr.getValid(context, input);
 	}
 	
@@ -252,8 +309,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+
+		return "";
 	}
 
 	/**
@@ -286,9 +343,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		// TODO - optimize so that invalid input is not canonicalized twice
-		return encoder.canonicalize(input);
+		
+		return "";
 	}
 
 	/**
@@ -358,8 +414,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+
+		return "";
 	}
 
 
@@ -386,6 +442,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 */
 	public String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException {
+		if ((allowedExtensions == null) || (allowedExtensions.isEmpty())) {
+			throw new ValidationException( "Internal Error", "getValidFileName called with an empty or null list of allowed Extensions, therefore no files can be uploaded" );
+		}
+
 		String canonical = "";
 		// detect path manipulation
 		try {
@@ -420,7 +480,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				return canonical;
 			}
 		}
-		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+")", "Invalid file name does not have valid extension ( "+ESAPI.securityConfiguration().getAllowedFileExtensions()+"): context=" + context+", input=" + input, context );
+		throw new ValidationException( context + ": Invalid file name does not have valid extension ( "+allowedExtensions+")", "Invalid file name does not have valid extension ( "+allowedExtensions+"): context=" + context+", input=" + input, context );
 	}
 	
 	/**
@@ -432,14 +492,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input  
-		// TODO - optimize so that invalid input is not canonicalized twice
-		try {
-			return new File(input).getCanonicalFile().getName();
-		} catch (IOException e) {
-			// TODO = consider logging canonicalization error?
-			return input;
-		}
+		
+		return "";
 	}
 	
 	/**
@@ -472,7 +526,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return null 
+
 		return null;
 	}
 	
@@ -506,8 +560,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return null 
-		return null;
+
+		return new Double(Double.NaN);
 	}
 	
 	/**
@@ -581,8 +635,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		} catch (ValidationException e) {
 			errors.addError(context, e);
 		}
-		// error has been added to list, so return original input 
-		return input;
+		// return empty byte array on error
+		return new byte[0];
 	}
 	
 	/**

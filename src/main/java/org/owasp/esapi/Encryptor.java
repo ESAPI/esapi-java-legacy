@@ -32,8 +32,6 @@ import org.owasp.esapi.errors.IntegrityException;
  * implementation with a strong "master key", and that they protect this secret
  * as much as possible.
  * <P>
- * <img src="doc-files/Encryptor.jpg">
- * <P>
  * Possible future enhancements (depending on feedback) might include:
  * <UL>
  * <LI>encryptFile</LI>
@@ -337,6 +335,16 @@ public interface Encryptor {
 	/**
 	 * Create a digital signature for the provided data and return it in a
 	 * string.
+	 * <p>
+	 * <b>Limitations:</b> A new public/private key pair used for ESAPI 2.0 digital
+	 * signatures with this method and {@link #verifySignature(String, String)}
+	 * are dynamically created when the default reference implementation class,
+	 * {@link org.owasp.esapi.reference.crypto.JavaEncryptor} is first created.
+	 * Because this key pair is not persisted nor is the public key shared,
+	 * this method and the corresponding {@link #verifySignature(String, String)}
+	 * can not be used with expected results across JVM instances. This limitation
+	 * will be addressed in ESAPI 2.1.
+	 * </p>
 	 * 
 	 * @param data
 	 *      the data to sign
@@ -352,7 +360,16 @@ public interface Encryptor {
 	/**
 	 * Verifies a digital signature (created with the sign method) and returns
 	 * the boolean result.
-	 * 
+     * <p>
+     * <b>Limitations:</b> A new public/private key pair used for ESAPI 2.0 digital
+     * signatures with this method and {@link #sign(String)}
+     * are dynamically created when the default reference implementation class,
+     * {@link org.owasp.esapi.reference.crypto.JavaEncryptor} is first created.
+     * Because this key pair is not persisted nor is the public key shared,
+     * this method and the corresponding {@link #sign(String)}
+     * can not be used with expected results across JVM instances. This limitation
+     * will be addressed in ESAPI 2.1.
+     * </p>
 	 * @param signature
 	 *      the signature to verify against 'data'
 	 * @param data

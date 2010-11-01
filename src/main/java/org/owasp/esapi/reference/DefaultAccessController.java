@@ -13,18 +13,30 @@ import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyDTO;
 public class DefaultAccessController implements AccessController {
 	private Map ruleMap;
 
+    private static volatile AccessController singletonInstance = null;
+
+    public static AccessController getInstance() throws AccessControlException {
+        if ( singletonInstance == null ) {
+            synchronized ( DefaultAccessController.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new DefaultAccessController();
+                }
+            }
+        }
+        return singletonInstance;
+    }
+
 	protected final Logger logger = ESAPI.getLogger("DefaultAccessController");
-	
-	public DefaultAccessController(Map ruleMap) {
-		this.ruleMap = ruleMap;	
-	}
-	
-	public DefaultAccessController() throws AccessControlException {
+
+	private DefaultAccessController() throws AccessControlException {
 		ACRPolicyFileLoader policyDescriptor = new ACRPolicyFileLoader();
 		PolicyDTO policyDTO = policyDescriptor.load();		
 		ruleMap = policyDTO.getAccessControlRules();
 	}
-	
+
+    /**
+     * {@inheritDoc}
+     */
 	public boolean isAuthorized(Object key, Object runtimeParameter) {
 		try {
 			AccessControlRule rule = (AccessControlRule)ruleMap.get(key);
@@ -49,9 +61,9 @@ public class DefaultAccessController implements AccessController {
 		}
 	}
 
-	public void assertAuthorized(Object key, Object runtimeParameter)
-		throws AccessControlException {
-		boolean isAuthorized = false;
+    /** {@inheritDoc} */
+	public void assertAuthorized(Object key, Object runtimeParameter) throws AccessControlException {
+		boolean isAuthorized;
 		try {
 			AccessControlRule rule = (AccessControlRule)ruleMap.get(key);
 			if(rule == null) {
@@ -74,21 +86,14 @@ public class DefaultAccessController implements AccessController {
 		}
 	}
 	
-	/**
-	 * @param action
-	 * @param data
-	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForData(java.lang.String, java.lang.Object)
-	 */
+    /** {@inheritDoc} */
 	public void assertAuthorizedForData(String action, Object data)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 Data", new Object[] {action, data});
 	}
 
 	/**
-	 * @param filepath
-	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForFile(java.lang.String)
+     * {@inheritDoc}
 	 * @deprecated
 	 */
 	public void assertAuthorizedForFile(String filepath)
@@ -96,78 +101,45 @@ public class DefaultAccessController implements AccessController {
 		this.assertAuthorized("AC 1.0 File", new Object[] {filepath});
 	}
 
-	/**
-	 * @param functionName
-	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForFunction(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public void assertAuthorizedForFunction(String functionName)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 Function", new Object[] {functionName});
 	}
 
-	/**
-	 * @param serviceName
-	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForService(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public void assertAuthorizedForService(String serviceName)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 Service", new Object[] {serviceName});
 	}
 
-	/**
-	 * @param url
-	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#assertAuthorizedForURL(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public void assertAuthorizedForURL(String url)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 URL", new Object[] {url});
 	}
 
-	/**
-	 * @param action
-	 * @param data
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForData(java.lang.String, java.lang.Object)
-	 */
+    /** {@inheritDoc} */
 	public boolean isAuthorizedForData(String action, Object data) {
 		return this.isAuthorized("AC 1.0 Data", new Object[] {action, data});
 	}
 
-	/**
-	 * @param filepath
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForFile(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public boolean isAuthorizedForFile(String filepath) {
 		return this.isAuthorized("AC 1.0 File", new Object[] {filepath});
 	}
 
-	/**
-	 * @param functionName
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForFunction(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public boolean isAuthorizedForFunction(String functionName) {
 		return this.isAuthorized("AC 1.0 Function", new Object[] {functionName});
 	}
 
-	/**
-	 * @param serviceName
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForService(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public boolean isAuthorizedForService(String serviceName) {
 		return this.isAuthorized("AC 1.0 Service", new Object[] {serviceName});
 	}
 
-	/**
-	 * @param url
-	 * @return
-	 * @see org.owasp.esapi.reference.FileBasedAccessController#isAuthorizedForURL(java.lang.String)
-	 */
+    /** {@inheritDoc} */
 	public boolean isAuthorizedForURL(String url) {
 		return this.isAuthorized("AC 1.0 URL", new Object[] {url});
 	}

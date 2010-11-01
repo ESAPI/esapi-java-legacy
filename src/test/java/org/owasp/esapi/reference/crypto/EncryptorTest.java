@@ -241,7 +241,7 @@ public class EncryptorTest extends TestCase {
 				keySize = 64;
 			} // Else... use specified keySize.
 			assertTrue( (keySize / 8) == skey.getEncoded().length );
-System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.getEncoded().length);
+//			System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.getEncoded().length);
 
 			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
 			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
@@ -378,6 +378,43 @@ System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.g
         String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
         instance.verifySeal( seal );
+        
+        int progressMark = 1;
+        boolean caughtExpectedEx = false;
+        try {
+            seal = instance.seal("", instance.getTimeStamp() + 1000*60);
+            progressMark++;
+            instance.verifySeal(seal);
+            progressMark++;
+        } catch(Exception e) {
+            fail("Failed empty string test: " + e + "; progress mark = " + progressMark);
+        }
+        try {
+            seal = instance.seal(null, instance.getTimeStamp() + 1000*60);
+            fail("Did not throw expected IllegalArgumentException");
+        } catch(IllegalArgumentException e) {
+            caughtExpectedEx = true;
+        } catch(Exception e) {
+            fail("Failed null string test; did not get expected IllegalArgumentException: " + e);
+        }
+        assertTrue(caughtExpectedEx);
+        
+        try {
+            seal = instance.seal("test", 0);
+            progressMark++;
+            // instance.verifySeal(seal);
+            progressMark++;
+        } catch(Exception e) {
+            fail("Fail test with 0 timestamp: " + e + "; progress mark = " + progressMark);
+        }
+        try {
+            seal = instance.seal("test", -1);
+            progressMark++;
+            // instance.verifySeal(seal);
+            progressMark++;
+        } catch(Exception e) {
+            fail("Fail test with -1 timestamp: " + e + "; progress mark = " + progressMark);
+        }
     }
 
     /**
@@ -386,52 +423,62 @@ System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.g
      * @throws EnterpriseSecurityException
 	 */
     public void testVerifySeal() throws EnterpriseSecurityException {
+        final int NSEC = 5;
         System.out.println("testVerifySeal()");
         Encryptor instance = ESAPI.encryptor(); 
-        String plaintext = "ridiculous";
-        String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000*60 ) );
+        String plaintext = "ridiculous:with:delimiters";    // Should now work w/ : (issue #28)
+        String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000 * NSEC ) );
         try {
         	assertTrue( instance.verifySeal( seal ) );
         } catch ( Exception e ) {
         	fail();
         }
+        int progressMark = 1;
         try {
+            // NOTE: I regrouped these all into a single try / catch since they
+            //       all test the same thing. Hence if one fails, they all should.
+            //       Also changed these tests so they no longer depend on the
+            //       deprecated encrypt() methods. IMO, *all these multiple
+            //       similar tests are not really required*, as they all are more
+            //       or less testing the same thing.
+            //                                              -kevin wall
+            // ================================================================
+            // Try to validate some invalid seals.
+            //
+            // All these should return false and log a warning with an Exception stack
+            // trace caused by an EncryptionException indicating "Invalid seal".
         	assertFalse( instance.verifySeal( plaintext ) );
+        	progressMark++;      	
+            assertFalse( instance.verifySeal( instance.encrypt( new PlainText(plaintext) ).getBase64EncodedRawCipherText() ) );
+            progressMark++;            
+            assertFalse( instance.verifySeal( instance.encrypt( new PlainText(100 + ":" + plaintext) ).getBase64EncodedRawCipherText() ) );
+            progressMark++;
+            assertFalse( instance.verifySeal( instance.encrypt( new PlainText(Long.MAX_VALUE + ":" + plaintext) ).getBase64EncodedRawCipherText() ) );
+            progressMark++;
+            assertFalse( instance.verifySeal( instance.encrypt( new PlainText(Long.MAX_VALUE + ":random:" + plaintext) ).getBase64EncodedRawCipherText() ) );
+            progressMark++;
+            assertFalse( instance.verifySeal( instance.encrypt( new PlainText(Long.MAX_VALUE + ":random:" + plaintext+ ":badsig")  ).getBase64EncodedRawCipherText() ) );
+            progressMark++;
+            assertFalse( instance.verifySeal( instance.encrypt( new PlainText(Long.MAX_VALUE + ":random:" + plaintext + ":"+ instance.sign( Long.MAX_VALUE + ":random:" + plaintext) ) ).getBase64EncodedRawCipherText() ) );
+            progressMark++;
         } catch ( Exception e ) {
-        	fail();
+        	// fail("Failed invalid seal test # " + progressMark + " to verify seal.");
+            System.err.println("Failed seal verification at step # " + progressMark);
+            System.err.println("Exception was: " + e);
+            e.printStackTrace(System.err);
         }
+        
         try {
-        	assertFalse( instance.verifySeal( instance.encrypt( plaintext ) ) );
+            Thread.sleep(1000 * (NSEC + 1) );
+                // Seal now past expiration date.
+            assertFalse( instance.verifySeal( seal ) );
         } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(100 + ":" + plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":" + plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":random:" + plaintext ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertFalse( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":random:" + plaintext+ ":badsig"  ) ) );
-        } catch ( Exception e ) {
-        	fail();
-        }
-        try {
-        	assertTrue( instance.verifySeal( instance.encrypt(Long.MAX_VALUE + ":random:" + plaintext + ":"+ instance.sign( Long.MAX_VALUE + ":random:" + plaintext ) ) ) );
-        } catch ( Exception e ) {
-        	fail();
+            fail("Failed expired seal test. Seal should be expired.");
         }
     }
+        
 
+    @SuppressWarnings("deprecation")
     public void testEncryptionSerialization() throws EncryptionException {
         String secretMsg = "Secret Message";
         ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
@@ -446,11 +493,12 @@ System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.g
     }
     
     /**
-     * Test of main method, of class org.owasp.esapi.Encryptor.
+     * Test of main method, of class org.owasp.esapi.Encryptor. Must be done by
+     * visual inspection for now. (Needs improvement.)
      * @throws Exception
      */
     public void testMain() throws Exception {
-        System.out.println("testMain(): Encryptor Main");
+        System.out.println("testMain(): Encryptor Main with '-print' argument.");
         String[] args = {};
         JavaEncryptor.main( args );        
         String[] args1 = {"-print"};

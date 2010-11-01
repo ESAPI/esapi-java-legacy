@@ -446,6 +446,14 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 * {@inheritDoc}
 	 */
 	// @Override
+	public int getMaxHttpHeaderSize() {
+        return wrapped.getMaxHttpHeaderSize();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	// @Override
 	public InputStream getResourceStream( String filename ) throws IOException
 	{
 		return wrapped.getResourceStream(filename);

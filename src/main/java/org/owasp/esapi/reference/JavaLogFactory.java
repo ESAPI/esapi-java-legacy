@@ -24,7 +24,19 @@ import org.owasp.esapi.User;
  * @see org.owasp.esapi.reference.JavaLogFactory.JavaLogger
  */
 public class JavaLogFactory implements LogFactory {
-	
+	private static volatile LogFactory singletonInstance;
+
+    public static LogFactory getInstance() {
+        if ( singletonInstance == null ) {
+            synchronized ( JavaLogFactory.class ) {
+                if ( singletonInstance == null ) {
+                    singletonInstance = new JavaLogFactory();
+                }
+            }
+        }
+        return singletonInstance;
+    }
+
 	private HashMap<Serializable, Logger> loggersMap = new HashMap<Serializable, Logger>();
 	
 	/**

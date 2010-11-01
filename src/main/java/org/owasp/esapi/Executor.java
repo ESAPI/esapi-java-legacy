@@ -21,7 +21,6 @@ import java.util.List;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.ExecutorException;
 
-
 /**
  * The Executor interface is used to run an OS command with reduced security risk.
  * 
@@ -33,10 +32,7 @@ import org.owasp.esapi.errors.ExecutorException;
  * <p>The class should perform logging and error handling as
  * well. Finally, implementation should handle errors and generate an
  * ExecutorException with all the necessary information.</p>
- * <br />
- * <img src="doc-files/Executor.jpg">
- * <br />
- * 
+ *
  * <p>The reference implementation does all of the above.</p>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
@@ -53,14 +49,14 @@ public interface Executor {
 	 * @param params
 	 *            the parameters of the command being executed
 	 */
-	String executeSystemCommand(File executable, List params) throws ExecutorException;
-	
+	ExecuteResult executeSystemCommand(File executable, List params) throws ExecutorException;
+
 	/**
 	 * Executes a system command after checking that the executable exists and
 	 * escaping all the parameters to ensure that injection is impossible.
 	 * Implementations must change to the specified working
 	 * directory before invoking the command.
-	 * 
+	 *
 	 * @param executable
 	 *            the command to execute
 	 * @param params
@@ -71,12 +67,12 @@ public interface Executor {
 	 *            the codec to use to encode for the particular OS in use
 	 * @param logParams
 	 *            use false if any parameters contains sensitive or confidential information
-	 * 
+	 *
 	 * @return the output of the command being run
-	 * 
+	 *
 	 * @throws ExecutorException
 	 *             the service exception
 	 */
-	String executeSystemCommand(File executable, List params, File workdir, Codec codec, boolean logParams) throws ExecutorException;
+	ExecuteResult executeSystemCommand(File executable, List params, File workdir, Codec codec, boolean logParams, boolean redirectErrorStream) throws ExecutorException;
 
 }
