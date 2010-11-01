@@ -1,0 +1,71 @@
+This release includes critical changes to the ESAPI Log4JLogger that will now allow you to over-ride the user specific 
+message using your own User or java.security.Principal implementation.
+
+There are a three critical steps that need to be taken to over-ride the ESAPI Log4JLogger:
+
+1)  Please make a copy of http://owasp-esapi-java.googlecode.com/svn/trunk/src/main/java/org/owasp/esapi/reference/ExampleExtendedLog4JLogFactory.java and change the package and the class name (something like com.yourcompany.logging.ExtendedLog4JFactory). This class (not very big at all) gives you the exact “shell” that you will need to over-ride the user message of the ESAPI Log4JLogger.
+
+2)  In your new class, please change the following function to use your user object:
+
+        public String getUserInfo() {
+            return "-EXTENDEDUSERINFO-";
+    }
+
+3)  Change your copy of ESAPI.properties to use your new logging class
+
+The ESAPI.properties entry looks like this now:
+
+ESAPI.Logger=org.owasp.esapi.reference.Log4JLogFactory
+
+Please change it to the following, based on how you renamed your new logging class
+
+ESAPI.Logger=com.yourcompany.logging.ExtendedLog4JFactory
+
+And you should be all set!
+
+PS: The original ESAPI Log4JLogging class used a secure random number as a replacement to logging the session ID. This allowed 
+us to tie log messages from the same session together, without exposing the actual session id in the log file. The code looks 
+like this, and you may wish to use it in your over-ridden version of getUserInfo.
+
+HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+if ( request != null ) {
+    HttpSession session = request.getSession( false );
+    if ( session != null ) {
+        sid = (String)session.getAttribute("ESAPI_SESSION");
+        // if there is no session ID for the user yet, we create one and store it in the user's session
+        if ( sid == null ) {
+            sid = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+            session.setAttribute("ESAPI_SESSION", sid);
+        }
+    }
+}
+
+In fact, here is the entire original getUserInfo() implementation (that was tied to the ESAPI request and user object) – 
+you may wish to emulate some of this.
+
+public String getUserInfo() {
+    // create a random session number for the user to represent the user's 'session', if it doesn't exist already
+    String sid = null;
+    HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+    if ( request != null ) {
+        HttpSession session = request.getSession( false );
+        if ( session != null ) {
+            sid = (String)session.getAttribute("ESAPI_SESSION");
+            // if there is no session ID for the user yet, we create one and store it in the user's session
+            if ( sid == null ) {
+                sid = ""+ ESAPI.randomizer().getRandomInteger(0, 1000000);
+                session.setAttribute("ESAPI_SESSION", sid);
+            }
+        }
+    }
+    
+    // log user information - username:session@ipaddr
+    User user = ESAPI.authenticator().getCurrentUser();            
+    String userInfo = "";
+    //TODO - make type logging configurable
+    if ( user != null) {
+        userInfo += user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
+    }
+    
+    return userInfo;
+}

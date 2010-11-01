@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+		This file defines a set of "web application firewall" rules that
+		defend a web application against certain types of attacks. These rules
+		are loaded and enforced by a filter that sits in front of a web
+		application and has access to both request and response on both the
+		way in and the way out.
+	-->
+
+<policy>
+
+
+	<!--
+		Setup some simple aliases to use elsewhere in the WAF policy. Alias
+		types are: string (default), regex. String is a literal string, regex
+		is a pattern.
+	-->
+	<aliases>
+		<alias name="INPUT_VALIDATION_ERROR">/security/input.jsp</alias>
+		<alias name="ADMIN_PATH" type="regex">^/admin/.*</alias>
+	</aliases>
+
+
+
+	<!--
+		Set the overall WAF mode of operation. The mode can be either "block"
+		or "log". "block" mode will send all errors to the web page defined in
+		the error-handling configuration. "log" mode will not change HTTP
+		requests at all, but will simply log errors.
+	-->
+	<settings>
+		<mode>redirect</mode>
+		<session-cookie-name>JSESSIONID</session-cookie-name>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+
+
+	<!--
+		Set authentication rules by path.
+	-->
+	<authentication-rules path="/.*"  key="ESAPIUserSessionKey" >
+		<path-exception>/</path-exception>
+		<path-exception>/index.html</path-exception>
+		<path-exception>/login.jsp</path-exception>
+		<path-exception>/index.jsp</path-exception>
+		<path-exception type="regex">/images/.*</path-exception>
+		<path-exception type="regex">/css/.*</path-exception>
+		<path-exception type="regex">/help/.*</path-exception>
+	</authentication-rules>
+
+
+	<bean-shell-rules>	
+		<!--  	<bean-shell-script 
+			id="example1" 
+			file="waf-policies/bean-shell-rule.bsh" 
+			stage="before-request-body"/>
+		-->
+	</bean-shell-rules>
+	
+	<!--
+		Set authorization rules by path. Types are: regex Operators for
+		must-match are: contains,equals,inList,exists
+	-->
+	<authorization-rules>
+		<restrict-source-ip type="regex"
+			ip-regex="(192\.168\.1\..*|127.0.0.1)">/admin/.*</restrict-source-ip>
+		<must-match path="^/admin/.*" variable="request.headers.x-roles"
+			operator="contains" value="admin" />
+	</authorization-rules>
+
+
+
+	<!--
+		Set rules for incoming URLs.
+	-->
+	<url-rules>
+		<restrict-extension deny=".jpg" />
+
+		<restrict-method deny="GET" path=".*\.do$" />
+		<restrict-method allow="^(GET|POST|TRACE)$" />
+
+		<enforce-https path="/.*">
+			<path-exception>/index.html</path-exception>
+			<path-exception>/index.jsp</path-exception>
+			<path-exception type="regex">/images/.*</path-exception>
+			<path-exception type="regex">/css/.*</path-exception>
+			<path-exception type="regex">/help/.*</path-exception>
+		</enforce-https>
+	</url-rules>
+
+
+
+	<!--
+		Set rules for incoming headers and parameters.
+	-->
+	<header-rules>
+		<restrict-content-type deny=".*multipart.*" />
+		<restrict-content-type allow="text/plain" />
+		<restrict-content-type allow="x-www-form-urlencoded" />
+		<restrict-user-agent deny=".*GoogleBot.*" />
+		<restrict-user-agent allow=".*" />
+	</header-rules>
+
+
+	<!--
+		Set virtual patches to match specific vulnerability patterns.
+	-->
+	<virtual-patches>
+		<virtual-patch id="1234" path="/foo.jsp" variable="request.parameters.bar"
+			pattern="[0-9a-zA-Z]" message="zomg attax" />
+	</virtual-patches>
+
+
+
+	<!-- Set rules for outbound headers and data -->
+
+	<outbound-rules>
+
+		<add-header name="FOO" value="BAR" path="/.*">
+			<path-exception type="regex">/foobar/.*</path-exception>
+		</add-header>
+
+		<add-http-only-flag>
+			<cookie name=".*" />
+		</add-http-only-flag>
+
+		<add-secure-flag>
+			<cookie name=".*" />
+		</add-secure-flag>
+
+ 		<dynamic-insertion pattern="&lt;/body&gt;">
+			<replacement><![CDATA[this is a test]]></replacement>
+		</dynamic-insertion>
+
+		<dynamic-insertion
+			pattern="(&lt;input.*)type\s+=\s+&quot;+hidden&quot;+(.*/&gt;)">
+			<replacement>\1\2</replacement>
+		</dynamic-insertion>
+
+		<detect-content content-type=".*text/.*" pattern=".*2008.*" />
+
+	</outbound-rules>
+
+</policy>

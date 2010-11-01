@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies an add-http-flag rule.
+
+	Protection #1: Any cookie set by the application will have the HttpOnly flag set. This
+	               should apply to the application session ID as well as any custom cookies.
+
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<outbound-rules>
+		<add-http-only-flag>
+			<cookie name=".*"/>
+		</add-http-only-flag>
+	</outbound-rules>
+	
+</policy>

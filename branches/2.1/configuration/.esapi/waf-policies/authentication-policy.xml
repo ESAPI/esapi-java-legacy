@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies an authentication rule.
+
+	Authentication applies to: /.*
+	Session variable whose existence implies authentication: sessionUserObjKey
+	Static exception:   <path-exception>/index.html</path-exception>
+	Pattern exception:  <path-exception type="regex">/images/.*</path-exception>
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>>
+
+	<!--
+		Set authentication rules by path.
+	-->
+	<authentication-rules path="/.*"  key="sessionUserObjKey" >
+		<path-exception>/index.html</path-exception>
+		<path-exception type="regex">/images/.*</path-exception>
+	</authentication-rules>
+
+</policy>

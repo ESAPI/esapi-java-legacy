@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies different custom bean shell rules.
+	
+	
+
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<!--
+		Import the rules.
+	-->
+	<bean-shell-rules>	
+		<bean-shell-script 
+			name="example1" 
+			file="src/test/resources/.esapi/waf-policies/bean-shell-rule.bsh" 
+			stage="before-request-body"/>
+	</bean-shell-rules>
+
+</policy>

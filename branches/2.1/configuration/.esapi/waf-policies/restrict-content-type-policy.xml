@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a restrict-content-type rule.
+
+	Protection #1: any request with a content-type containing the word 'multipart' will be rejected
+	Exception  #1: requests for /fileupload.jsp are allowed to have 'multipart' in content-type
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<header-rules>
+		<restrict-content-type deny=".*multipart.*">
+			<path-exception type="regex">/fileupload.jsp</path-exception>
+		</restrict-content-type>
+
+	</header-rules>
+
+</policy>

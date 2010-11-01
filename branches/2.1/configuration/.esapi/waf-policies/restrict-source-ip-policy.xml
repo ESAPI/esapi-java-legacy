@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a restrict-source-ip rule.
+
+	The restriction applies to: /admin/.*
+	Pattern exception:  (192\.168\.1\\..*|127.0.0.1)
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<authorization-rules>
+		<restrict-source-ip
+			type="regex"
+			ip-regex="(192\.168\.1\\..*|127.0.0.1)">/admin/.*</restrict-source-ip>
+
+	</authorization-rules>
+
+</policy>
