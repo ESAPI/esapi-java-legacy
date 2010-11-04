@@ -44,8 +44,8 @@
     <mailingLists>
         <mailingList>
             <name>ESAPI-Users</name>
-            <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-users/</subscribe>
-            <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-users/</unsubscribe>
+            <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-user/</subscribe>
+            <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-user/</unsubscribe>
             <post>mailto:esapi-users@lists.owasp.org</post>
             <archive>https://lists.owasp.org/pipermail/esapi-users/</archive>
             <!--This is the OWASP ESAPI mailing list for ESAPI users, regardless of programming language. For example, ESAPI users with questions about ESAPI for Java or ESAPI for PHP would both post here.-->
