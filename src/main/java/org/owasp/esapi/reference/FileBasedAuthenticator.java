@@ -314,6 +314,8 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             }
             setHashedPassword(user, newHash);
             logger.info(Logger.SECURITY_SUCCESS, "Password changed for user: " + accountName);
+            // jtm - 11/2/2010 - added to resolve http://code.google.com/p/owasp-esapi-java/issues/detail?id=13
+            saveUsers();
         } catch (EncryptionException ee) {
             throw new AuthenticationException("Password change failed", "Encryption exception changing password for " + accountName, ee);
         }
