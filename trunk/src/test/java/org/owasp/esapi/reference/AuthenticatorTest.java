@@ -124,6 +124,13 @@ public class AuthenticatorTest extends TestCase {
         } catch (AuthenticationException e) {
             // success
         }
+        try {
+        	String uName = "ea234kEknr";	//sufficiently random password that also works as a username
+            instance.createUser(uName, uName, uName);  // using username as password
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
 	}
 
 	/**

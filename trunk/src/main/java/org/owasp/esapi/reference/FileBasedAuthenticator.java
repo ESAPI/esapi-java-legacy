@@ -245,6 +245,8 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         if (password1 == null) {
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account " + accountName + " with a null password");
         }
+        
+        verifyPasswordIsNotAccountName(accountName,password1);
         verifyPasswordStrength(null, password1);
 
         if (!password1.equals(password2)) {
@@ -306,6 +308,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             if (newPassword == null || newPassword2 == null || !newPassword.equals(newPassword2)) {
                 throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + accountName);
             }
+            verifyPasswordIsNotAccountName(accountName,newPassword);
             verifyPasswordStrength(currentPassword, newPassword);
             user.setLastPasswordChangeTime(new Date());
             String newHash = hashPassword(newPassword, accountName);
@@ -493,6 +496,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         user.accountId = accountId;
 
         String password = parts[2];
+        verifyPasswordIsNotAccountName(accountName,password);
         verifyPasswordStrength(null, password);
         setHashedPassword(user, password);
 
@@ -638,6 +642,29 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         
     }
 
+    /**
+     * This method checks if the given account name matches the given password.  
+     * If so, an exception is thrown because the password cannot match the 
+     * username.  This logic should likely be part of verifying password strength, 
+     * but the API is planned for significant changes near term, so changing 
+     * existing APIs now is not desirable.
+     * 
+     * @param accountName the proposed accountName 
+     * @param password the proposed password
+     */
+    private void verifyPasswordIsNotAccountName(String accountName, String password) throws AuthenticationException {
+    	if (accountName == null) {
+            throw new AuthenticationCredentialsException("Invalid account name", "Attempt to use null account name");
+        }
+    	if (password == null) {
+            throw new AuthenticationCredentialsException("Invalid password", "Attempt to use null password");
+        }
+    	//jtm - 11/3/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
+        if (accountName.equals(password)) {
+        	//password can't be account name
+        	throw new AuthenticationCredentialsException("Invalid password", "Password matches account name");
+        }
+    }
 
     /**
      * {@inheritDoc}
@@ -655,7 +682,6 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             throw new AuthenticationCredentialsException("Invalid account name", "New account name is not valid: " + newAccountName);
         }
     }
-
 
     /**
      * {@inheritDoc}
