@@ -30,7 +30,7 @@ import org.owasp.esapi.codecs.HTMLEntityCodec;
  * out.println( div.toString() );
  * 
  * // escaping for SQL
- * PreparedString query = new PreparedString( "SELECT * FROM users WHERE name=? AND password=?", new OracleCodec() );
+ * PreparedString query = new PreparedString( "SELECT * FROM users WHERE name='?' AND password='?'", new OracleCodec() );
  * query.set( 1, request.getParameter( "name" ) );
  * query.set( 2, request.getParameter( "pass" ) );
  * stmt.execute( query.toString() );
