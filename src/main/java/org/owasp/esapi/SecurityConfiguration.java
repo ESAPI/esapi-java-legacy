@@ -533,6 +533,14 @@ public interface SecurityConfiguration {
 	public String getResponseContentType();
 
 	/**
+	 * This method returns the configured name of the session identifier, 
+	 * likely "JSESSIONID" though this can be overridden.
+	 * 
+	 * @return The name of the session identifier, like "JSESSIONID"
+	 */
+	public String getHttpSessionIdName();
+	
+	/**
 	 * Gets the length of the time to live window for remember me tokens (in milliseconds).
 	 * 
 	 * @return The time to live length for generated remember me tokens.

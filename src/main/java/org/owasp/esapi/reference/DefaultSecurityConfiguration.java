@@ -134,6 +134,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
     public static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
     public static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
+    public static final String HTTP_SESSION_ID_NAME = "HttpUtilities.HttpSessionIdName";
 
     public static final String APPLICATION_NAME = "Logger.ApplicationName";
     public static final String LOG_LEVEL = "Logger.LogLevel";
@@ -977,6 +978,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return getESAPIProperty( RESPONSE_CONTENT_TYPE, "text/html; charset=UTF-8" );
     }
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public String getHttpSessionIdName() {
+        return getESAPIProperty( HTTP_SESSION_ID_NAME, "JSESSIONID" );
+    }
+	
 	/**
 	 * {@inheritDoc}
 	 */

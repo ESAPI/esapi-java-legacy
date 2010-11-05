@@ -50,7 +50,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     private String allowableContentRoot = "WEB-INF";
 
-    /**
+    /** 
      * Construct a safe request that overrides the default request methods with
      * safer versions.
      * 
@@ -680,7 +680,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
-     * on the JSESSIONID cookie.
+     * on the Session ID cookie.
      * @return The current session
      */
     public HttpSession getSession() {
@@ -690,7 +690,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 	    if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 				session.setAttribute("HTTP_ONLY", "set");
-				Cookie cookie = new Cookie("JSESSIONID", session.getId());
+				Cookie cookie = new Cookie(ESAPI.securityConfiguration().getHttpSessionIdName(), session.getId());
 				cookie.setPath( getHttpServletRequest().getContextPath() );
 				cookie.setMaxAge(-1); // session cookie
 	            HttpServletResponse response = ESAPI.currentResponse();
@@ -704,7 +704,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
-     * on the JSESSIONID cookie.
+     * on the Session ID cookie.
      * @param create Create a new session if one doesn't exist
      * @return The current session
      */
@@ -718,7 +718,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 	            session.setAttribute("HTTP_ONLY", "set");
-	            Cookie cookie = new Cookie("JSESSIONID", session.getId());
+	            Cookie cookie = new Cookie(ESAPI.securityConfiguration().getHttpSessionIdName(), session.getId());
 	            cookie.setMaxAge(-1); // session cookie
 	            cookie.setPath( getHttpServletRequest().getContextPath() );
 	            HttpServletResponse response = ESAPI.currentResponse();
