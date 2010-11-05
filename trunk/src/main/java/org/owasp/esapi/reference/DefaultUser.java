@@ -430,7 +430,7 @@ public class DefaultUser implements User, Serializable {
 			throw new AuthenticationLoginException("Login failed", "Incorrect password provided for " + getAccountName() );
 		}
 	}
-
+ 
 
 	/**
 	 * {@inheritDoc}
@@ -443,7 +443,7 @@ public class DefaultUser implements User, Serializable {
             removeSession(session);
 			session.invalidate();
 		}
-		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), "JSESSIONID");
+		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), ESAPI.securityConfiguration().getHttpSessionIdName());
 		loggedIn = false;
 		logger.info(Logger.SECURITY_SUCCESS, "Logout successful" );
 		ESAPI.authenticator().setCurrentUser(User.ANONYMOUS);

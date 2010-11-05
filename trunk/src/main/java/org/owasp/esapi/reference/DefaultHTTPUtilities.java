@@ -125,7 +125,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/*
      * The currentResponse ThreadLocal variable is used to make the currentResponse available to any call in any part of an
      * application. This enables API's for actions that require the response to be much simpler. For example, the logout()
-     * method in the Authenticator class requires the currentResponse to kill the JSESSIONID cookie.
+     * method in the Authenticator class requires the currentResponse to kill the Session ID cookie.
      */
     private ThreadLocalResponse currentResponse = new ThreadLocalResponse();
 
@@ -750,7 +750,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		    if ( cookies != null ) {
              for (Cookie cooky : cookies)
              {
-                if (!cooky.getName().equals("JSESSIONID"))
+                if (!cooky.getName().equals(ESAPI.securityConfiguration().getHttpSessionIdName())) 
                 {
                    params.append("+").append(cooky.getName()).append("=").append(cooky.getValue());
 		                    }

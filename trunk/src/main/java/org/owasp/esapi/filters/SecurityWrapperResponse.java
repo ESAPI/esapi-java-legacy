@@ -43,7 +43,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Construct a safe response that overrides the default response methods
-     * with safer versions.
+     * with safer versions. 
      * 
      * @param response
      */
@@ -204,9 +204,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Return the URL without any changes, to prevent disclosure of the
-     * JSESSIONID. The default implementation of this method can add the
-     * JSESSIONID to the URL if support for cookies is not detected. This
-     * exposes the JSESSIONID credential in bookmarks, referer headers, server
+     * Session ID. The default implementation of this method can add the
+     * Session ID to the URL if support for cookies is not detected. This
+     * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
      * 
      * @param url
@@ -221,9 +221,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Return the URL without any changes, to prevent disclosure of the
-     * JSESSIONID The default implementation of this method can add the
-     * JSESSIONID to the URL if support for cookies is not detected. This
-     * exposes the JSESSIONID credential in bookmarks, referer headers, server
+     * Session ID The default implementation of this method can add the
+     * Session ID to the URL if support for cookies is not detected. This
+     * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
      * 
      * @param url
@@ -235,9 +235,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Return the URL without any changes, to prevent disclosure of the
-     * JSESSIONID The default implementation of this method can add the
-     * JSESSIONID to the URL if support for cookies is not detected. This
-     * exposes the JSESSIONID credential in bookmarks, referer headers, server
+     * Session ID The default implementation of this method can add the
+     * Session ID to the URL if support for cookies is not detected. This
+     * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
      * 
      * @param url
@@ -252,9 +252,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Return the URL without any changes, to prevent disclosure of the
-     * JSESSIONID The default implementation of this method can add the
-     * JSESSIONID to the URL if support for cookies is not detected. This
-     * exposes the JSESSIONID credential in bookmarks, referer headers, server
+     * Session ID The default implementation of this method can add the
+     * Session ID to the URL if support for cookies is not detected. This
+     * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
      * 
      * @param url

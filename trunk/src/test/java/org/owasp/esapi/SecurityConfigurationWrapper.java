@@ -491,6 +491,14 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 * {@inheritDoc}
 	 */
 	// @Override
+	public String getHttpSessionIdName() {
+		return wrapped.getHttpSessionIdName();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	// @Override
 	public long getRememberTokenDuration()
 	{
 		return wrapped.getRememberTokenDuration();
