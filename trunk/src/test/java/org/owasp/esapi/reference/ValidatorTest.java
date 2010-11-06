@@ -425,7 +425,8 @@ public class ValidatorTest extends TestCase {
         assertFalse(instance.isValidInput("test", "test", "SSN", 100, false));
         assertTrue(instance.isValidInput("test", "jeffWILLIAMS123", "HTTPParameterValue", 100, false));
         assertTrue(instance.isValidInput("test", "jeff .-/+=@_ WILLIAMS", "HTTPParameterValue", 100, false));
-        assertFalse(instance.isValidInput("test", "jeff*WILLIAMS", "HTTPParameterValue", 100, false));
+        // Removed per Issue 116 - The '*' character is valid as a parameter character
+//        assertFalse(instance.isValidInput("test", "jeff*WILLIAMS", "HTTPParameterValue", 100, false));
         assertFalse(instance.isValidInput("test", "jeff^WILLIAMS", "HTTPParameterValue", 100, false));
         assertFalse(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));
 
