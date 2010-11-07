@@ -660,9 +660,9 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             throw new AuthenticationCredentialsException("Invalid password", "Attempt to use null password");
         }
     	//jtm - 11/3/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
-        if (accountName.equals(password)) {
+        if (accountName.equalsIgnoreCase(password)) {
         	//password can't be account name
-        	throw new AuthenticationCredentialsException("Invalid password", "Password matches account name");
+        	throw new AuthenticationCredentialsException("Invalid password", "Password matches account name, irrespective of case");
         }
     }
 
