@@ -118,7 +118,7 @@ public class ConfigurationParser {
 			 * Parse the 'settings' section.
 			 */
 			if ( settingsRoot == null ) {
-				throw new ConfigurationException("The <settings> section is required");
+				throw new ConfigurationException("", "The <settings> section is required");
 			} else if ( settingsRoot != null ) {
 				
 				
@@ -152,13 +152,16 @@ public class ConfigurationParser {
 				}
 			}
 			
+			/*
+			 * The WAF separate logging is going to be merged in the 2.0
+			 * release, so this is deprecated.
+			 */
 			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
 			if ( loggingRoot != null ) {
 				config.setLogDirectory(loggingRoot.getFirstChildElement("log-directory").getValue());
 				config.setLogLevel(Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
 			}
 			
-
 			/**
 			 * Parse the 'authentication-rules' section if they have one.
 			 */
@@ -172,7 +175,7 @@ public class ConfigurationParser {
 				} else if ( key != null ) {
 					config.addBeforeBodyRule(new AuthenticatedRule(id,key,null,getExceptionsFromElement(authNRoot)));
 				} else {
-					throw new ConfigurationException("The <authentication-rules> rule requires a 'key' attribute");
+					throw new ConfigurationException("","The <authentication-rules> rule requires a 'key' attribute");
 				}
 			}
 
@@ -249,7 +252,7 @@ public class ConfigurationParser {
 					String id = e.getAttributeValue("id");
 
 					if ( allow != null && deny != null ) {
-						throw new ConfigurationException( "restrict-extension rules can't have both 'allow' and 'deny'" );
+						throw new ConfigurationException("", "restrict-extension rules can't have both 'allow' and 'deny'" );
 					}
 
 					if ( allow != null ) {
@@ -261,7 +264,7 @@ public class ConfigurationParser {
 						config.addBeforeBodyRule( new PathExtensionRule(id, null,Pattern.compile( ".*\\" + deny + "$")) );
 
 					} else {
-						throw new ConfigurationException("restrict extension rule should have either a 'deny' or 'allow' attribute");
+						throw new ConfigurationException("", "restrict extension rule should have either a 'deny' or 'allow' attribute");
 					}
 				}
 
@@ -287,7 +290,7 @@ public class ConfigurationParser {
 					}
 
 					if ( allow != null && deny != null ) {
-						throw new ConfigurationException("restrict-method rule should not have both 'allow' and 'deny' values");
+						throw new ConfigurationException("", "restrict-method rule should not have both 'allow' and 'deny' values");
 					}
 
 					if ( allow != null ) {
@@ -299,7 +302,7 @@ public class ConfigurationParser {
 						config.addBeforeBodyRule( new HTTPMethodRule(id, null, Pattern.compile(deny), Pattern.compile(path)) );
 
 					} else {
-						throw new ConfigurationException("restrict-method rule should have either an 'allow' or 'deny' value");
+						throw new ConfigurationException("", "restrict-method rule should have either an 'allow' or 'deny' value");
 					}
 				}
 
@@ -329,7 +332,7 @@ public class ConfigurationParser {
 					String id = e.getAttributeValue("id");
 
 					if ( allow != null && deny != null ) {
-						throw new ConfigurationException("restrict-content-type rule should not have both 'allow' and 'deny' values");
+						throw new ConfigurationException("", "restrict-content-type rule should not have both 'allow' and 'deny' values");
 					}
 
 					if ( allow != null ) {
@@ -341,7 +344,7 @@ public class ConfigurationParser {
 						config.addBeforeBodyRule( new RestrictContentTypeRule(id, null, Pattern.compile(deny)) );
 
 					} else {
-						throw new ConfigurationException("restrict-content-type rule should have either an 'allow' or 'deny' value");
+						throw new ConfigurationException("", "restrict-content-type rule should have either an 'allow' or 'deny' value");
 					}
 				}
 
@@ -351,7 +354,7 @@ public class ConfigurationParser {
 					String allow = e.getAttributeValue("allow");
 					String deny = e.getAttributeValue("deny");
 					if ( allow != null && deny != null ) {
-						throw new ConfigurationException("restrict-user-agent rule should not have both 'allow' and 'deny' values");
+						throw new ConfigurationException("", "restrict-user-agent rule should not have both 'allow' and 'deny' values");
 					}
 
 					if ( allow != null ) {
@@ -363,7 +366,7 @@ public class ConfigurationParser {
 						config.addBeforeBodyRule( new RestrictUserAgentRule(id, null, Pattern.compile(deny)) );
 
 					} else {
-						throw new ConfigurationException("restrict-user-agent rule should have either an 'allow' or 'deny' value");
+						throw new ConfigurationException("", "restrict-user-agent rule should have either an 'allow' or 'deny' value");
 					}
 				}
 
@@ -515,9 +518,9 @@ public class ConfigurationParser {
 					String path = e.getAttributeValue("path");
 
 					if ( token == null ) {
-						throw new ConfigurationException("<detect-content> rules must contain a 'pattern' attribute");
+						throw new ConfigurationException("", "<detect-content> rules must contain a 'pattern' attribute");
 					} else if ( contentType == null ) {
-						throw new ConfigurationException("<detect-content> rules must contain a 'content-type' attribute");
+						throw new ConfigurationException("", "<detect-content> rules must contain a 'content-type' attribute");
 					}
 
 					DetectOutboundContentRule docr = new DetectOutboundContentRule(
@@ -550,11 +553,11 @@ public class ConfigurationParser {
 					String path = e.getAttributeValue("path");
 					
 					if ( id == null ) {
-						throw new ConfigurationException("bean shell rules all require a unique 'id' attribute");
+						throw new ConfigurationException("", "bean shell rules all require a unique 'id' attribute");
 					}
 					
 					if ( fileName == null ) {
-						throw new ConfigurationException("bean shell rules all require a unique 'file' attribute that has the location of the .bsh script" );
+						throw new ConfigurationException("", "bean shell rules all require a unique 'file' attribute that has the location of the .bsh script" );
 					}
 					
 					try {
@@ -571,25 +574,24 @@ public class ConfigurationParser {
 						} else if ( STAGES[2].equals(stage)) {
 							config.addBeforeResponseRule(bsr);
 						} else {
-							throw new ConfigurationException("bean shell rules all require a 'stage' attribute when the rule should be fired (valid values are " + STAGES[0] + ", " + STAGES[1] + ", or " + STAGES[2] + ")" );
+							throw new ConfigurationException("", "bean shell rules all require a 'stage' attribute when the rule should be fired (valid values are " + STAGES[0] + ", " + STAGES[1] + ", or " + STAGES[2] + ")" );
 						}
 												
 					} catch (FileNotFoundException fnfe) {
-						throw new ConfigurationException ("bean shell rule '" + id + "' had a source file that could not be found (" + fileName + "), web directory = " + webRootDir );
+						throw new ConfigurationException ("", "bean shell rule '" + id + "' had a source file that could not be found (" + fileName + "), web directory = " + webRootDir );
 					} catch (EvalError ee) {
-						throw new ConfigurationException ("bean shell rule '" + id + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
+						throw new ConfigurationException ("", "bean shell rule '" + id + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
 					}
 					
 				}
 			}
 
-
 		} catch (ValidityException e) {
-			throw new ConfigurationException(e);
+			throw new ConfigurationException("", "Problem validating WAF XML file", e);
 		} catch (ParsingException e) {
-			throw new ConfigurationException(e);
+			throw new ConfigurationException("", "Problem parsing WAF XML file", e);
 		} catch (IOException e) {
-			throw new ConfigurationException(e);
+			throw new ConfigurationException("", "I/O problem reading WAF XML file", e);
 		}
 
 		return config;

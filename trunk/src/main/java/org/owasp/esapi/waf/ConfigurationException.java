@@ -15,6 +15,10 @@
  */
 package org.owasp.esapi.waf;
 
+import nu.xom.ValidityException;
+
+import org.owasp.esapi.errors.EnterpriseSecurityException;
+
 /**
  * The Exception to be thrown when there is an error parsing a policy file.
  * 
@@ -22,16 +26,15 @@ package org.owasp.esapi.waf;
  * @see org.owasp.esapi.configuration.ConfigurationParser
  *
  */
-public class ConfigurationException extends Exception {
+public class ConfigurationException extends EnterpriseSecurityException {
 
-	protected static final long serialVersionUID = 1L;
-
-	public ConfigurationException(Exception e) {
-		super(e);
+	public ConfigurationException(String userMsg, String logMsg) {
+		super(userMsg,logMsg);
 	}
 
-	public ConfigurationException(String s) {
-		super(s);
+	public ConfigurationException(String userMsg, String logMsg,
+			Throwable t) {
+		super(userMsg,logMsg,t);
 	}
 
 }
