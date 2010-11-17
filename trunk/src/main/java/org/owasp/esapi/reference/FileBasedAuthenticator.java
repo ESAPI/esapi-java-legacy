@@ -246,14 +246,14 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account " + accountName + " with a null password");
         }
         
-        verifyPasswordIsNotAccountName(accountName,password1);
-        verifyPasswordStrength(null, password1);
+        DefaultUser user = new DefaultUser(accountName);
+        
+        verifyPasswordStrength(null, password1, user);
 
         if (!password1.equals(password2)) {
             throw new AuthenticationCredentialsException("Passwords do not match", "Passwords for " + accountName + " do not match");
         }
 
-        DefaultUser user = new DefaultUser(accountName);
         try {
             setHashedPassword(user, hashPassword(password1, accountName));
         } catch (EncryptionException ee) {
@@ -308,8 +308,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             if (newPassword == null || newPassword2 == null || !newPassword.equals(newPassword2)) {
                 throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + accountName);
             }
-            verifyPasswordIsNotAccountName(accountName,newPassword);
-            verifyPasswordStrength(currentPassword, newPassword);
+            verifyPasswordStrength(currentPassword, newPassword, user);
             user.setLastPasswordChangeTime(new Date());
             String newHash = hashPassword(newPassword, accountName);
             if (getOldPasswordHashes(user).contains(newHash)) {
@@ -496,8 +495,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         user.accountId = accountId;
 
         String password = parts[2];
-        verifyPasswordIsNotAccountName(accountName,password);
-        verifyPasswordStrength(null, password);
+        verifyPasswordStrength(null, password, user);
         setHashedPassword(user, password);
 
         String[] roles = parts[3].toLowerCase().split(" *, *");
@@ -643,30 +641,6 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
     }
 
     /**
-     * This method checks if the given account name matches the given password.  
-     * If so, an exception is thrown because the password cannot match the 
-     * username.  This logic should likely be part of verifying password strength, 
-     * but the API is planned for significant changes near term, so changing 
-     * existing APIs now is not desirable.
-     * 
-     * @param accountName the proposed accountName 
-     * @param password the proposed password
-     */
-    private void verifyPasswordIsNotAccountName(String accountName, String password) throws AuthenticationException {
-    	if (accountName == null) {
-            throw new AuthenticationCredentialsException("Invalid account name", "Attempt to use null account name");
-        }
-    	if (password == null) {
-            throw new AuthenticationCredentialsException("Invalid password", "Attempt to use null password");
-        }
-    	//jtm - 11/3/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
-        if (accountName.equalsIgnoreCase(password)) {
-        	//password can't be account name
-        	throw new AuthenticationCredentialsException("Invalid password", "Password matches account name, irrespective of case");
-        }
-    }
-
-    /**
      * {@inheritDoc}
      * <p/>
      * This implementation simply verifies that account names are at least 5 characters long. This helps to defeat a
@@ -688,8 +662,9 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
      * <p/>
      * This implementation checks: - for any 3 character substrings of the old password - for use of a length *
      * character sets > 16 (where character sets are upper, lower, digit, and special
+     * jtm - 11/16/2010 - added check to verify pw != username (fix for http://code.google.com/p/owasp-esapi-java/issues/detail?id=108)
      */
-    public void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException {
+    public void verifyPasswordStrength(String oldPassword, String newPassword, User user) throws AuthenticationException {
         if (newPassword == null) {
             throw new AuthenticationCredentialsException("Invalid password", "New password cannot be null");
         }
@@ -736,6 +711,14 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         int strength = newPassword.length() * charsets;
         if (strength < 16) {
             throw new AuthenticationCredentialsException("Invalid password", "New password is not long and complex enough");
+        }
+        
+        String accountName = user.getAccountName();
+        
+        //jtm - 11/3/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
+        if (accountName.equalsIgnoreCase(newPassword)) {
+        	//password can't be account name
+        	throw new AuthenticationCredentialsException("Invalid password", "Password matches account name, irrespective of case");
         }
     }
 
