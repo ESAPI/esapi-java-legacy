@@ -145,17 +145,19 @@ public class AuthenticatorTest extends TestCase {
 		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = "iiiiiiiiii";  // i is not allowed in passwords - this prevents failures from containing pieces of old password
 		String newPassword = null;
+		String username = "FictionalEsapiUser";
+		User user = new DefaultUser(username);
 		for (int i = 0; i < 100; i++) {
             try {
                 newPassword = instance.generateStrongPassword();
-                instance.verifyPasswordStrength(oldPassword, newPassword);
+                instance.verifyPasswordStrength(oldPassword, newPassword, user);
             } catch( AuthenticationException e ) {
             	System.out.println( "  FAILED >> " + newPassword + " : " + e.getLogMessage());
                 fail();
             }
 		}
 		try {
-			instance.verifyPasswordStrength("test56^$test", "abcdx56^$sl" );
+			instance.verifyPasswordStrength("test56^$test", "abcdx56^$sl", user );
 		} catch( AuthenticationException e ) {
 			// expected
 		}
@@ -486,65 +488,81 @@ public class AuthenticatorTest extends TestCase {
 	public void testValidatePasswordStrength() throws AuthenticationException {
 		System.out.println("validatePasswordStrength");
         Authenticator instance = ESAPI.authenticator();
+        
+        String username = "FictionalEsapiUser";
+		User user = new DefaultUser(username);
 
 		// should fail
 		try {
-			instance.verifyPasswordStrength("password", "jeff");
+			instance.verifyPasswordStrength("password", "jeff", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("diff123bang", "same123string");
+			instance.verifyPasswordStrength("diff123bang", "same123string", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password", "JEFF");
+			instance.verifyPasswordStrength("password", "JEFF", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password", "1234");
+			instance.verifyPasswordStrength("password", "1234", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password", "password");
+			instance.verifyPasswordStrength("password", "password", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password", "-1");
+			instance.verifyPasswordStrength("password", "-1", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password", "password123");
+			instance.verifyPasswordStrength("password", "password123", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 		try {
-			instance.verifyPasswordStrength("password", "test123");
+			instance.verifyPasswordStrength("password", "test123", user);
+			fail();
+		} catch (AuthenticationException e) {
+			// success
+		}
+		//jtm - 11/16/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
+		try {
+			instance.verifyPasswordStrength("password", "FictionalEsapiUser", user);
+			fail();
+		} catch (AuthenticationException e) {
+			// success
+		}
+		try {
+			instance.verifyPasswordStrength("password", "FICTIONALESAPIUSER", user);
 			fail();
 		} catch (AuthenticationException e) {
 			// success
 		}
 
 		// should pass
-		instance.verifyPasswordStrength("password", "jeffJEFF12!");
-		instance.verifyPasswordStrength("password", "super calif ragil istic");
-		instance.verifyPasswordStrength("password", "TONYTONYTONYTONY");
-		instance.verifyPasswordStrength("password", instance.generateStrongPassword());
+		instance.verifyPasswordStrength("password", "jeffJEFF12!", user);
+		instance.verifyPasswordStrength("password", "super calif ragil istic", user);
+		instance.verifyPasswordStrength("password", "TONYTONYTONYTONY", user);
+		instance.verifyPasswordStrength("password", instance.generateStrongPassword(), user);
 
         // chrisisbeef - Issue 65 - http://code.google.com/p/owasp-esapi-java/issues/detail?id=65
-        instance.verifyPasswordStrength("password", "b!gbr0ther");
+        instance.verifyPasswordStrength("password", "b!gbr0ther", user);
 	}
 
 	/**

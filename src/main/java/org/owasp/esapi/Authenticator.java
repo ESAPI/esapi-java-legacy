@@ -297,16 +297,19 @@ public interface Authenticator {
 	 * new password to see if it is too similar to the old password. Note that this has to be
 	 * invoked when the user has entered the old password, as the list of old
 	 * credentials stored by ESAPI is all hashed.
+	 * Additionally, the user object is taken in order to verify the password and account name differ.
 	 * 
 	 * @param oldPassword
 	 *            the old password
 	 * @param newPassword
 	 *            the new password
+	 * @param user
+	 * 			  the user
 	 * 
 	 * @throws AuthenticationException
 	 *				if newPassword is too similar to oldPassword or if newPassword does not meet complexity requirements
 	 */
-	void verifyPasswordStrength(String oldPassword, String newPassword) throws AuthenticationException;
+	void verifyPasswordStrength(String oldPassword, String newPassword, User user) throws AuthenticationException;
 
 	/**
 	 * Determine if the account exists.
