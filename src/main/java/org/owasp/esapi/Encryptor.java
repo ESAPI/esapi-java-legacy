@@ -95,29 +95,16 @@ public interface Encryptor {
 	 * Encrypts the provided plaintext and returns a ciphertext string using the
 	 * master secret key and default cipher transformation.
 	 * </p><p>
-	 * <b>Compatibility with earlier ESAPI versions:</b> Unlike ESAPI 1.4 version
-	 * of this method which used the Electronic Code Book (ECB)
-	 * cipher mode to encrypt, this method uses the default cipher transformation
-	 * and IV type (which by default is AES/CBC/PKCS5Padding and a random IV). ECB mode
-	 * is not secure for general use and usually should be avoided. If you <b>must</b>
-	 * use ECB mode for backward compatibility, you should do so by specifying
-	 * <pre>
-	 * 		ESAPI.Encryptor=org.owasp.esapi.reference.LegacyJavaEncryptor
-	 * </pre>
-	 * in your <b>ESAPI.properties</b> file rather than changing the default
-	 * cipher transformation. That will make this method and the
-	 * {@link #decrypt(String)} method use ECB mode in a manner that is compatible
-	 * with ESAPI 1.4 and earlier but not affect the newer encryption / decryption
-	 * methods. However, this should only be used for backward compatibility. You
-	 * should use it to decrypt data that was previous encrypted using ESAPI 1.4 or
-	 * earlier use a newer method that uses the stronger CBC cipher mode
-	 * to re-encrypt it. Once all the previously encrypted data has been re-encrypted
-	 * using this legacy class, you should stop using this legacy class and start
-	 * using the default reference class, as per:
-	 * <pre>
-	 * 		ESAPI.Encryptor=org.owasp.esapi.reference.LegacyJavaEncryptor
-	 * </pre>
-	 * in your <b>ESAPI.properties</b> file. 
+     * <b>Compatibility with earlier ESAPI versions:</b> The symmetric encryption
+     * in ESAPI 2.0 and later is not compatible with the encryption in ESAPI 1.4
+     * or earlier. Not only are the interfaces slightly different, but they format
+     * of the serialized encrypted data is incompatible. Therefore, if you have
+     * encrypted data with ESAPI 1.4 or earlier, you must first encrypt it and
+     * then re-encrypt it with ESAPI 2.0. Backward compatibility with ESAPI 1.4
+     * was proposed to both the ESAPI Developers and ESAPI Users mailing lists
+     * and voted down. More details are available in the ESAPI document
+     * <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-readme-crypto-changes.html">
+     * Why Is OWASP Changing ESAPI Encryption?</a>
 	 * </p><p>
 	 * <b>Why this method is deprecated:</b> Most cryptographers strongly suggest
 	 * that if you are creating crypto functionality for general-purpose use,
@@ -220,29 +207,16 @@ public interface Encryptor {
 	 * Decrypts the provided ciphertext and returns a plaintext string using the
 	 * master secret key and default cipher transformation.
 	 * </p><p>
-	 * <b>Compatibility with earlier ESAPI versions:</b> Unlike ESAPI 1.4 version
-	 * of this method which used the Electronic Code Book (ECB)
-	 * cipher mode to encrypt, this method uses the default cipher transformation
-	 * and IV type (which by default is AES/CBC/PKCS5Padding and a random IV). ECB mode
-	 * is not secure for general use and usually should be avoided. If you <b>must</b>
-	 * use ECB mode for backward compatibility, you should do so by specifying
-	 * <pre>
-	 * 		ESAPI.Encryptor=org.owasp.esapi.reference.LegacyJavaEncryptor
-	 * </pre>
-	 * in your <b>ESAPI.properties</b> file rather than changing the default
-	 * cipher transformation. That will make this method and the
-	 * {@link #decrypt(String)} method use ECB mode in a manner that is compatible
-	 * with ESAPI 1.4 and earlier but not affect the newer encryption / decryption
-	 * methods. However, this should only be used for backward compatibility. You
-	 * should use it to decrypt data that was previous encrypted using ESAPI 1.4 or
-	 * earlier use a newer method that uses the stronger CBC cipher mode
-	 * to re-encrypt it. Once all the previously encrypted data has been re-encrypted
-	 * using this legacy class, you should stop using this legacy class and start
-	 * using the default reference class, as per:
-	 * <pre>
-	 * 		ESAPI.Encryptor=org.owasp.esapi.reference.LegacyJavaEncryptor
-	 * </pre>
-	 * in your <b>ESAPI.properties</b> file. 
+	 * <b>Compatibility with earlier ESAPI versions:</b> The symmetric encryption
+	 * in ESAPI 2.0 and later is not compatible with the encryption in ESAPI 1.4
+	 * or earlier. Not only are the interfaces slightly different, but they format
+	 * of the serialized encrypted data is incompatible. Therefore, if you have
+	 * encrypted data with ESAPI 1.4 or earlier, you must first encrypt it and
+	 * then re-encrypt it with ESAPI 2.0. Backward compatibility with ESAPI 1.4
+	 * was proposed to both the ESAPI Developers and ESAPI Users mailing lists
+	 * and voted down. More details are available in the ESAPI document
+	 * <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-readme-crypto-changes.html">
+	 * Why Is OWASP Changing ESAPI Encryption?</a>
 	 * </p><p>
 	 * <b>Why this method is deprecated:</b> Most cryptographers strongly suggest
 	 * that if you are creating crypto functionality for general-purpose use,
