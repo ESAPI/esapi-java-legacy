@@ -110,7 +110,7 @@ public interface Logger {
      * A non-security type of log event that is unspecified. This is one of 5 predefined
      * ESAPI logging events. New events can be added.
      */
-	public static final EventType EVENT_UNSPECIFED = new EventType( "EVENT UNSPECIFIED", null);
+	public static final EventType EVENT_UNSPECIFIED = new EventType( "EVENT UNSPECIFIED", null);
 
 	/**
 	 * Defines the type of log event that is being generated. The Logger interface defines 5 types of Log events:
