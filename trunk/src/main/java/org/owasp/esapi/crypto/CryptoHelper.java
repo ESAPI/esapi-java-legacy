@@ -79,7 +79,10 @@ public class CryptoHelper {
 	//          it after ESAPI 2.0 is released or users with encrypted data
 	//		    using the new encryption / decryption may be forever screwed.
 	//			(See CAUTION, below, for details.) Strongly suggest that we
-	//			at least review this one class!!! (See Issue # 81.)
+	//			at least review this one class!!! (See Issue # 81.) This includes
+    //          using HmacSHA1. If some other HMAC (e.g., HMAC-SHA256) needs to be used
+    //          it MUST be done before 2.0 goes GA. (Note: Not sure that HMAC-SHA256
+    //          is available in JDK 1.5 though.)
 	/**
 	 * Compute a derived key from the keyDerivationKey for either encryption / decryption
 	 * or for authentication.
@@ -100,9 +103,11 @@ public class CryptoHelper {
 	 * 						key.
 	 * @param keySize		The cipher's key size (in bits) for the {@code keyDerivationKey}.
 	 * 						Must have a minimum size of 56 bits and be an integral multiple of 8-bits.
-	 * 						The derived key will have the same size as this.
+	 * 						<b>Note:</b> The derived key will have the same size as this.
 	 * @param purpose		The purpose for the derived key. Must be either the
-	 * 						string "encryption" or "authenticity".
+	 * 						string "encryption" or "authenticity". Use "encryption" for
+     *                      creating a derived key to use for confidentiality, and "authenticity"
+     *                      for a derived key to use with a MAC to ensure message authenticity.
 	 * @return				The derived {@code SecretKey} to be used according
 	 * 						to the specified purpose.
 	 * @throws NoSuchAlgorithmException		The {@code keyDerivationKey} has an unsupported
@@ -119,10 +124,12 @@ public class CryptoHelper {
 	public static SecretKey computeDerivedKey(SecretKey keyDerivationKey, int keySize, String purpose)
 			throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
 	{
-		assert keyDerivationKey != null : "Master key cannot be null.";
+        // These really should be turned into actual runtime checks and an
+        // IllegalArgumentException should be thrown if they are violated.
+		assert keyDerivationKey != null : "Key derivation key cannot be null.";
 			// We would choose a larger minimum key size, but we want to be
 			// able to accept DES for legacy encryption needs.
-		assert keySize >= 56 : "Master key has size of " + keySize + ", which is less than minimum of 56-bits.";
+		assert keySize >= 56 : "Key has size of " + keySize + ", which is less than minimum of 56-bits.";
 		assert (keySize % 8) == 0 : "Key size (" + keySize + ") must be a even multiple of 8-bits.";
 		assert purpose != null;
 		assert purpose.equals("encryption") || purpose.equals("authenticity") :
@@ -144,7 +151,11 @@ public class CryptoHelper {
 			// going to be 20 bytes but something different. Experiments show
 			// that doesn't really matter though as the SecretKeySpec CTOR on
 			// the following line still returns the appropriate sized key for
-			// HmacSHA1.
+			// HmacSHA1. So, if keyDerivationKey was originally (say) a 56-bit
+            // DES key, then there is apparently some key-stretching going on here
+            // under the hood to create 'sk' so that it is 20 bytes. I cannot vouch
+            // for how secure this key-stretching is. Worse, it might not be specified
+            // as to *how* it is done and left to each JCE provider.
 		SecretKey sk = new SecretKeySpec(keyDerivationKey.getEncoded(), "HmacSHA1");
 		Mac mac = null;
 
@@ -171,7 +182,8 @@ public class CryptoHelper {
             // in when previously initialized via a call to init(Key) or
             // init(Key, AlgorithmParameterSpec). That is, the object is reset
             // and available to generate another MAC from the same key, if
-            // desired, via new calls to update and doFinal."
+            // desired, via new calls to update and doFinal." Therefore, we do
+            // not do an explicit reset().
 			tmpKey = mac.doFinal(inputBytes);
 			if ( tmpKey.length >= keySize ) {
 				len = keySize;
@@ -184,6 +196,7 @@ public class CryptoHelper {
 			destPos += len;
 		} while( totalCopied < keySize );
 		
+        // Convert it back into a SecretKey of the appropriate type.
 		return new SecretKeySpec(derivedKey, keyDerivationKey.getAlgorithm());
 	}
 
