@@ -221,7 +221,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.trace(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog);
+		this.trace(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog);
 	}
 
 	/**
@@ -232,7 +232,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.trace(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog, throwable);
+		this.trace(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog, throwable);
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.debug(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog);
+		this.debug(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.debug(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog, throwable);
+		this.debug(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog, throwable);
 	}
 
 	/**
@@ -265,7 +265,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.info(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog);
+		this.info(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog);
 	}
 
 	/**
@@ -276,7 +276,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.info(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog, throwable);
+		this.info(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog, throwable);
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.warning(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog);
+		this.warning(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog);
 	}
 
 	/**
@@ -298,7 +298,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.warning(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog, throwable);
+		this.warning(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog, throwable);
 	}
 
 	/**
@@ -309,7 +309,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.error(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog);
+		this.error(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog);
 	}
 
 	/**
@@ -320,7 +320,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.error(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog, throwable);
+		this.error(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog, throwable);
 	}
 
 	/**
@@ -331,7 +331,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.fatal(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog);
+		this.fatal(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog);
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		String toLog = (message instanceof String) ? (String) message : message.toString();
 
-		this.fatal(org.owasp.esapi.Logger.EVENT_UNSPECIFED, toLog, throwable);
+		this.fatal(org.owasp.esapi.Logger.EVENT_UNSPECIFIED, toLog, throwable);
 	}
 
 	/**
