@@ -16,7 +16,7 @@
 package org.owasp.esapi.errors;
 
 /**
- * An ExecutorException should be thrown for any problems that occur when
+ * An EncodingException should be thrown for any problems that occur when
  * encoding or decoding data.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)

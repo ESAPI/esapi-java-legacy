@@ -34,7 +34,7 @@ public class AccessControlException extends EnterpriseSecurityException {
 	}
 
 	/**
-	 * Creates a new instance of EnterpriseSecurityException.
+	 * Creates a new instance of {@code AccessControlException}.
      *
      * @param userMessage
      * @param logMessage
@@ -48,7 +48,7 @@ public class AccessControlException extends EnterpriseSecurityException {
 	 * 
 	 * @param userMessage the message displayed to the user
 	 * @param logMessage the message logged
-	 * @param cause the cause
+	 * @param cause the root cause
 	 */
 	public AccessControlException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
