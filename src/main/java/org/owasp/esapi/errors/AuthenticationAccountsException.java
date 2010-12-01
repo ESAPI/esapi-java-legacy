@@ -35,7 +35,7 @@ public class AuthenticationAccountsException extends AuthenticationException {
 	}
 
 	/**
-	 * Creates a new instance of EnterpriseSecurityException.
+	 * Creates a new instance of {@code AuthenticationAccountsException}.
 	 * 
 	 * @param userMessage the message displayed to the user
 	 * @param logMessage the message logged     
@@ -48,9 +48,9 @@ public class AuthenticationAccountsException extends AuthenticationException {
 	/**
 	 * Instantiates a new authentication exception.
 	 * 
-	 * @param userMessage the message displayd to the user
+	 * @param userMessage the message displayed to the user
 	 * @param logMessage the message logged
-	 * @param cause the cause
+	 * @param cause the root cause
 	 */
 	public AuthenticationAccountsException(String userMessage, String logMessage, Throwable cause) {
 		super(userMessage, logMessage, cause);
