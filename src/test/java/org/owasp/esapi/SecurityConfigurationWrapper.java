@@ -218,4 +218,12 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getSafeHTTPFilterIgnoreURLroot();
     }
+ 
+    /** {@inheritDoc} */
+    public List getSafeHTTPFilterIgnoreContextURLRoot()
+    {
+        return wrapped.getSafeHTTPFilterIgnoreContextURLRoot();
+    }
+    
+    
 }
