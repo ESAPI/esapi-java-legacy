@@ -120,6 +120,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	
 	private static final String SAFE_FILTER_IGNORE_URL_ROOT = "SafeHTTPFilter.ignoreURLroot";
 
+	private static final String SAFE_FILTER_IGNORE_CONTEXT_URL_ROOT = "SafeHTTPFilter.ignoreContextURLroot";
+
     private static final String SAFE_FILTER_IGNORE_URL_EXACT = "SafeHTTPFilter.ignoreURLexact";
 
     private static final String SAFE_FILTER_IGNORE_URL_REGEX = "SafeHTTPFilter.ignoreURLregex";
@@ -698,6 +700,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public List getSafeHTTPFilterIgnoreURLroot() {
         String[] extList = properties.getProperty(SAFE_FILTER_IGNORE_URL_ROOT, "").split(",");
+        return Arrays.asList(extList);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public List getSafeHTTPFilterIgnoreContextURLRoot() {
+        String[] extList = properties.getProperty(SAFE_FILTER_IGNORE_CONTEXT_URL_ROOT, "").split(",");
         return Arrays.asList(extList);
     }
 	

@@ -77,17 +77,29 @@ public class SafeHTTPFilter implements Filter {
         List exactIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreURLexact();
         if (exactIgnoreURLS.contains(targetURL)) return true;
         
-        //second: look for a "root" match
+        //second: look for a "root" match but only if the root is not empty
         List rootIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreURLroot();
         Iterator i = rootIgnoreURLS.iterator();
         while (i.hasNext()) {
             String urlRoot = (String) i.next();
-            if (targetURL.startsWith(urlRoot.toLowerCase())) {
+            if (!isEmpty(urlRoot) && targetURL.startsWith(urlRoot.toLowerCase())) {
                 return true;
             }
         }
 
-        //third: look for a regular expression match
+        //third: look for a context root match
+        List contextRootIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreContextURLRoot();
+        i = contextRootIgnoreURLS.iterator();
+
+        while (i.hasNext()) {
+
+            String contextUrlRoot = (String) i.next();
+            if (!isEmpty(contextUrlRoot) && targetURL.startsWith(contextUrlRoot.toLowerCase())) {
+                return true;
+            }
+        }
+
+        //fourth: look for a regular expression match
         List regexIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreURLregEx();
         i = regexIgnoreURLS.iterator();
         while (i.hasNext()) {
@@ -121,4 +133,10 @@ public class SafeHTTPFilter implements Filter {
         // no special action
     }
 	
+    
+    private boolean isEmpty(String data) {
+        if (data == null) return true;
+        if ("".equals(data.trim())) return true;
+        return false;
+    }
 }

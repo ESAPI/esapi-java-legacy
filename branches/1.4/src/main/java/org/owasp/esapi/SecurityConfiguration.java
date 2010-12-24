@@ -272,6 +272,11 @@ public interface SecurityConfiguration {
     public List getSafeHTTPFilterIgnoreURLroot();
     
     /**
+     * @return List of URL context root fragments for the SafeHTTPFilter to ignore.
+     */
+    public List getSafeHTTPFilterIgnoreContextURLRoot();
+    
+    /**
      * @return List of exact and complete URL's for the SafeHTTPFilter to ignore.
      */
     public List getSafeHTTPFilterIgnoreURLexact();
