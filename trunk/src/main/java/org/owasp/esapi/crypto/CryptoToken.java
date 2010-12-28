@@ -97,14 +97,19 @@ import org.owasp.esapi.errors.ValidationException;
  * @since 2.0
  */
 public class CryptoToken {
+    /** Represents an anonymous user. */
+    public static final String ANONYMOUS_USER = "<anonymous>";
     
     // Default expiration time
     private static final long DEFAULT_EXP_TIME = 5 * 60 * 1000;  // 5 min == 300 milliseconds
     private static final String DELIM = ";";                     // field delimiter
     private static final char DELIM_CHAR = ';';                  // field delim as a char
     private static final char QUOTE_CHAR = '\\';                 // char used to quote delimiters, '=' and itself.
+    
+        // OPEN ISSUE: Should we make these 2 regex's properties in ESAPI.properties???
     private static final String ATTR_NAME_REGEX = "[A-Za-z0-9_.-]+"; // One or more alphanumeric, underscore, periods, or hyphens.
-    public static final String ANONYMOUS_USER = "<anonymous>";
+    private static final String USERNAME_REGEX = "[a-z][a-z0-9_.@-]*";
+    
     private static Logger logger = ESAPI.getLogger("CryptoToken");
 
     private String username = ANONYMOUS_USER;        // Default user name if not set. Always lower case.
@@ -114,6 +119,7 @@ public class CryptoToken {
     private TreeMap<String, String> attributes = new TreeMap<String,String>();
     private transient SecretKey secretKey = null;
     private Pattern attrNameRegex = Pattern.compile(ATTR_NAME_REGEX);
+    private Pattern userNameRegex = Pattern.compile(USERNAME_REGEX);
     
     /**
      * Create a cryptographic token using default secret key from the
@@ -197,21 +203,41 @@ public class CryptoToken {
     /**
      * Retrieve the user account name associated with this {@code CryptoToken}
      * object.
-     * @return  The user account name. "&lt;anonymous&gt;" is returned if
+     * @return  The user account name. The string represented by
+     *          {@link #ANONYMOUS_USER} is returned if
      *          {@link #setUserAccountName(String)} was never called.
      */
     public String getUserAccountName() {
-        return username;
+        return ( (username != null) ? username : ANONYMOUS_USER );
     }
     
     /**
      * Set the user account name associated with this cryptographic token
-     * object.
+     * object. The user account name is converted to lower case.
      * @param userAccountName   The user account name.
+     * @throws ValidationException  Thrown if user account name is not valid, i.e.,
+     *                              if it doesn't conform to the regular expression
+     *                              given by "[a-z][a-z0-9_.@-]*". (Note that the
+     *                              parameter {@code userAccountName} is first converted
+     *                              to lower case before checked against the regular
+     *                              expression.)
      */
-    public void setUserAccountName(String userAccountName) {
+    public void setUserAccountName(String userAccountName) throws ValidationException {
         assert userAccountName != null : "User account name may not be null.";
-        username = userAccountName.toLowerCase();
+        
+        // Converting to lower case first allows a simpler regex.
+        String userAcct = userAccountName.toLowerCase();
+        
+        // Check to make sure that attribute name is valid as per our regex.
+        Matcher userNameChecker = userNameRegex.matcher(userAcct);
+        if ( userNameChecker.matches() ) {
+            username = userAcct;
+        } else {
+            throw new ValidationException("Invalid user account name encountered.",
+                                          "User account name " + userAccountName +
+                                              " does not match regex " +
+                                              USERNAME_REGEX + " after conversion to lowercase.");
+        }
     }
 
     /** Check if token has expired yet.
