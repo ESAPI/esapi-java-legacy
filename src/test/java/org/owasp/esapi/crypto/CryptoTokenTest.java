@@ -79,12 +79,16 @@ public class CryptoTokenTest {
     @Test
     public final void testCryptoTokenSecretKeyString() {
         CryptoToken ctok1 = new CryptoToken(skey1);
-        ctok1.setUserAccountName("kevin.w.wall@gmail.com");
+        try {
+            ctok1.setUserAccountName("kevin.w.wall@gmail.com");
+        } catch (ValidationException e) {
+            fail("Failed to set user account name because of ValidationException: " + e);
+        }
         try {
             ctok1.setAttribute("role-name", "admin");
             ctok1.setAttribute("company", "Qwest");
         } catch (ValidationException e) {
-            fail("Failed to set 'role-name' or 'company' attribute.");
+            fail("Failed to set 'role-name' or 'company' attribute because of ValidationException: " + e);
         }
         String token1 = null;
         String token2 = null;
@@ -158,6 +162,49 @@ public class CryptoTokenTest {
         }
     }
 
+    @Test
+    public final void testSetUserAccountName() {
+        CryptoToken ctok = new CryptoToken();
+        try {
+            ctok.setUserAccountName("kevin.w.wall@gmail.com");
+            ctok.setUserAccountName("kevin");
+            ctok.setUserAccountName("name-with-hyphen");
+            ctok.setUserAccountName("x");
+            ctok.setUserAccountName("X");
+        } catch (ValidationException e) {
+            fail("Failed to set user account name because of ValidationException: " + e);
+        }
+        try {
+            ctok.setUserAccountName("");    // Can't be empty
+            fail("Failed to throw expected ValidationException");
+        } catch (ValidationException e) {
+            ;   // Success
+        }
+        try {
+            ctok.setUserAccountName(null);    // Can't be null
+                // Should get one of these, depending on whether or not assertions are enabled.
+            fail("Failed to throw expected AssertionError or NullPointerException");
+        } catch (ValidationException e) {
+            fail("Wrong type of exception thrown (ValidationException): " + e);
+        } catch (NullPointerException e) {
+            ;   // Success
+        } catch (AssertionError e) {
+            ;   // Success
+        }
+        try {
+            ctok.setUserAccountName("1773g4l");    // Can't start w/ numeric
+            fail("Failed to throw expected ValidationException");
+        } catch (ValidationException e) {
+            ;   // Success
+        }
+        try {
+            ctok.setUserAccountName("invalid/char");    // '/' is not valid.
+            fail("Failed to throw expected ValidationException");
+        } catch (ValidationException e) {
+            ;   // Success
+        }
+        
+    }
 
     @Test
     public final void testSetExpirationDate() {
