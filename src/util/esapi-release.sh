@@ -48,6 +48,8 @@ zipcmd=zip          # Is there something better for Linux?
 unzipcmd=unzip
 # clean=clean         # Comment out if you don't Maven to do 'clean'. Will speed
                     # things up a little bit.
+#esapiConfig=.esapi	# Sub-directory where ESAPI.properties resides
+esapiConfig=esapi	# Sub-directory where ESAPI.properties resides
 
 #
 # Non-tunable parameters
@@ -58,7 +60,7 @@ tmpdir="/tmp/$PROG.$RANDOM-$$"
 esapi_release_dir="$tmpdir/esapi_release_dir"
 
     # This is the directory under esapi_svn_dir where the log4j and ESAPI
-    # properties files are located as well as the .esapi/* config files.
+    # properties files are located as well as the $esapiConfig/* config files.
     # Note that formerly used to be under src/main/resources, but it since
     # has been moved because where it was previously was causing problems with
     # Sonatype's Nexus. That particular problem may have been resolved, but it
@@ -133,7 +135,7 @@ jartmpdir=$tmpdir/esapi-jar
 mkdir $jartmpdir
 cd $jartmpdir || exit
 jar xf "$jarfile"
-rm -fr .esapi
+rm -fr ${esapiConfig:?}
 rm -f properties/* log4j.*
 rm -f settings.xml owasp-esapi-dev.jks
 # TODO: This part would need some work if we sign or seal the ESAPI jar as
@@ -164,7 +166,7 @@ rm LICENSE LICENSE-CONTENT
 unix2dos -q LICENSE.txt
 
 # 2) Patch up the 'configuration' directory. Need to copy owasp-esapi-dev.jks
-#    here as well as the .esapi directory. Also need to populate the
+#    here as well as the $esapiConfig directory. Also need to populate the
 #    properties subdirectory. Not sure where the settings.xml file should
 #    go, or even if we should leave it here; will copy it to 'configuration'
 #    directory.
@@ -178,7 +180,7 @@ then    mkdir -p "$configDir"/properties ||
 fi
 cp -p "$esapi_svn_dir"/resources/owasp-esapi-dev.jks configuration/
 cp -p "$esapi_svn_dir"/resources/settings.xml configuration/
-cp -r -p "$esapi_svn_dir"/"$configDir"/.esapi configuration/.esapi/
+cp -r -p "$esapi_svn_dir"/"$configDir"/$esapiConfig configuration/$esapiConfig/
 cp -p "$esapi_svn_dir"/"$configDir"/properties/* configuration/properties/
 
 # 3) Create the changelog.txt which should be the changes since the
