@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class CryptoDiscoverer {
+	private static String EOL = System.getProperty("line.separator", "\n");
+	
     public static void main(String... args) {
         String provider = ".*";
         String algorithm = ".*";
@@ -66,7 +68,8 @@ public class CryptoDiscoverer {
 
     private static void usage() {
         System.out.println("CryptoDiscoverer - Discover or Query for available Crypto Providers and Algorithms");
-        System.out.println("\n\t--help\t\t\t\t\tShows this message\n\t--provider <regex>\t\tSearch for particular Provider" +
-                "\n\t--algorithm <regex>\t\tSearch for a particular Algorithm\n\n\r");
+        System.out.println(EOL + "\t--help\t\t\t\t\tShows this message" + EOL +
+        		"\t--provider <regex>\t\tSearch for particular Provider" + EOL +
+                "\t--algorithm <regex>\t\tSearch for a particular Algorithm" + EOL + EOL);
     }
 }
