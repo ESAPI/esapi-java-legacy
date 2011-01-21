@@ -61,11 +61,11 @@ public class SecurityProviderLoader  {
         jceProviders.put("IAIK", "iaik.security.provider.IAIK");
 
             // IBM FIPS 140-2 compliant provider -- Commercial
+            // See above comments.
         // jceProviders.put("IBMJCEFIPS", "com.ibm.crypto.fips.provider.IBMJCEFIPS");
 
             // RSA FIPS 142-2 compliant provider -- Commercial
-            // TODO
-        // jceProviders.put("RSA", "com.rsa.????");    // ???
+        // jceProviders.put("RSA", "com.rsa.jsafe.crypto.CryptoJ");
 
             // Cryptix -- http://www.cryptix.org/ - FOSS, not maintained.
             // Cryptix JCE code signing cert expired 2009/08/29 and was not
