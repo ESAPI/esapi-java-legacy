@@ -161,7 +161,7 @@ public final class CipherSpec implements Serializable {
 				// Only algorithm and mode was given.
 				cipherXform += "/NoPadding";
 			} else if ( parts == 3 ) {
-				// All threw parts provided. Do nothing. Could happen if not compiled with
+				// All three parts provided. Do nothing. Could happen if not compiled with
 				// assertions enabled.
 				;	// Do nothing - shown only for completeness.
 			} else {
