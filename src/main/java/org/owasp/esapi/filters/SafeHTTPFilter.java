@@ -88,13 +88,22 @@ public class SafeHTTPFilter implements Filter {
         }
 
         //third: look for a context root match
+        // Construct the full URI, including the query string for comparison  
+        String requestURIPlusQueryString;
+        String queryString = hrequest.getQueryString();
+
+        if (queryString != null) {
+            requestURIPlusQueryString = targetURL + "?" + queryString;
+        } else {
+            requestURIPlusQueryString = targetURL;
+        }
+
         List contextRootIgnoreURLS = ESAPI.securityConfiguration().getSafeHTTPFilterIgnoreContextURLRoot();
         i = contextRootIgnoreURLS.iterator();
 
         while (i.hasNext()) {
-
             String contextUrlRoot = (String) i.next();
-            if (!isEmpty(contextUrlRoot) && targetURL.startsWith(contextUrlRoot.toLowerCase())) {
+            if (!isEmpty(contextUrlRoot) && requestURIPlusQueryString.toLowerCase().startsWith(contextUrlRoot.toLowerCase())) {
                 return true;
             }
         }
