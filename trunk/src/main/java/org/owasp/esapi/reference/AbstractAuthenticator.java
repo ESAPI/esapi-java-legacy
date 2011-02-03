@@ -126,8 +126,6 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
 
             String username = data[0];
             String password = data[1];
-            System.out.println("DATA0: " + username);
-            System.out.println("DATA1:" + password);
             DefaultUser user = (DefaultUser) getUser(username);
             if (user == null) {
                 logger.warning(Logger.SECURITY_FAILURE, "Found valid remember token but no user matching " + username);
