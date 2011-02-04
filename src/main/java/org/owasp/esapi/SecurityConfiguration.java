@@ -385,6 +385,14 @@ public interface SecurityConfiguration {
 	public int getHashIterations();
 
 	/**
+	 * Retrieve the Pseudo Random Function (PRF) used by the ESAPI
+	 * Key Derivation Function (KDF).
+	 * 
+	 * @return	The KDF PRF algorithm name.
+	 */
+	public String getKDFPseudoRandomFunction();
+	
+	/**
 	 * Gets the character encoding scheme supported by this application. This is used to set the
 	 * character encoding scheme on requests and responses when setCharacterEncoding() is called
 	 * on SafeRequests and SafeResponses. This scheme is also used for encoding/decoding URLs 
