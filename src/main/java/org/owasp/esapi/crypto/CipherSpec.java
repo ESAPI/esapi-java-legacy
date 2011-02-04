@@ -39,7 +39,7 @@ import org.owasp.esapi.util.NullSafe;
  */
 public final class CipherSpec implements Serializable {
 
-	private static final long serialVersionUID = 20090822;	// 2009-08-22 version
+	private static final long serialVersionUID = 20090822;	// version, in YYYYMMDD format
 	
 	private String  cipher_xform_   = ESAPI.securityConfiguration().getCipherTransformation();
 	private int     keySize_        = ESAPI.securityConfiguration().getEncryptionKeyLength(); // In bits
@@ -137,7 +137,7 @@ public final class CipherSpec implements Serializable {
 	 * Set the cipher transformation for this {@code CipherSpec}. This is only
 	 * used by the CTOR {@code CipherSpec(Cipher)} and {@code CipherSpec(Cipher, int)}.
 	 * @param cipherXform	The cipher transformation string; e.g.,
-	 * 						"DESede/CBC/PKCS5Padding".
+	 * 						"DESede/CBC/PKCS5Padding". May not be null or empty.
 	 * @param fromCipher If true, the cipher transformation was set via
 	 * 					 {@code Cipher.getAlgorithm()} which may only return the
 	 * 					 actual algorithm. In that case we check and if all 3 parts
@@ -147,7 +147,9 @@ public final class CipherSpec implements Serializable {
 	 * @return	This current {@code CipherSpec} object.
 	 */
 	private CipherSpec setCipherTransformation(String cipherXform, boolean fromCipher) {
-		assert StringUtilities.notNullOrEmpty(cipherXform, true) : "cipherXform may not be null or empty";
+		if ( ! StringUtilities.notNullOrEmpty(cipherXform, true) ) {	// Yes, really want '!' here.
+			throw new IllegalArgumentException("Cipher transformation may not be null or empty string (after trimming whitespace).");
+		}
 		int parts = cipherXform.split("/").length;
 		assert ( !fromCipher ? (parts == 3) : true ) :
 			"Malformed cipherXform (" + cipherXform + "); must have form: \"alg/mode/paddingscheme\"";
@@ -169,6 +171,9 @@ public final class CipherSpec implements Serializable {
 				throw new IllegalArgumentException("Cipher transformation '" +
 								cipherXform + "' must have form \"alg/mode/paddingscheme\"");
 			}
+		} else if ( !fromCipher && parts != 3 ) {
+			throw new IllegalArgumentException("Malformed cipherXform (" + cipherXform +
+											   "); must have form: \"alg/mode/paddingscheme\"");
 		}
 		assert cipherXform.split("/").length == 3 : "Implementation error setCipherTransformation()";
 		this.cipher_xform_ = cipherXform;
