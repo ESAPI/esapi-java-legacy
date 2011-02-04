@@ -58,20 +58,25 @@ public final class CipherText implements Serializable {
     // NOTE: Do NOT change this in future versions, unless you are knowingly
     //       making changes to the class that will render this class incompatible
     //       with previously serialized objects from older versions of this class.
+	//		 If this is done, that you must provide for supporting earlier ESAPI versions.
     //       Be wary making incompatible changes as discussed at:
     //          http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
     //       Any incompatible change in the serialization of CipherText *must* be
     //       reflected in the class CipherTextSerializer.
-    // This should be *same* version as in CipherTextSerializer. If one changes,
-    // the other should as well to accommodate any differences.
-	private static final long serialVersionUID = 20100122; // Format: YYYYMMDD
+    // This should be *same* version as in CipherTextSerializer and KeyDerivationFunction.
+	// If one changes, the other should as well to accommodate any differences.
+	public  static final int cipherTextVersion = 20110203; // Format: YYYYMMDD, max is 99991231.
+		// Required by Serializable classes.
+	private static final long serialVersionUID = cipherTextVersion; // Format: YYYYMMDD
 	
 	private static final Logger logger = ESAPI.getLogger("CipherText");
     
-    private CipherSpec cipherSpec_     = null;
-    private byte[]     raw_ciphertext_ = null;
-    private byte[]     separate_mac_   = null;
+    private CipherSpec cipherSpec_           = null;
+    private byte[]     raw_ciphertext_       = null;
+    private byte[]     separate_mac_         = null;
     private long       encryption_timestamp_ = 0;
+    private int		   kdfVersion_           = KeyDerivationFunction.kdfVersion;
+    private int		   kdfPrfSelection_      = KeyDerivationFunction.getDefaultPRFSelection();
 
     // All the various pieces that can be set, either directly or indirectly
     // via CipherSpec.
@@ -552,7 +557,29 @@ public final class CipherText implements Serializable {
         }
     }
     
-    /** Get stored timestamp representing when data was encrypted. */
+    public int getKDFVersion() {
+    	return kdfVersion_;
+    }
+
+    public void setKDFVersion(int vers) {
+    	assert vers > 0 && vers <= 99991231 : "Version must be positive, in format YYYYMMDD and <= 99991231.";
+    	kdfVersion_ = vers;
+    }
+    
+    public KeyDerivationFunction.PRF_ALGORITHMS getKDF_PRF() {
+    	return KeyDerivationFunction.convertIntToPRF(kdfPrfSelection_);
+    }
+
+    int kdfPRFAsInt() {
+    	return kdfPrfSelection_;
+    }
+    
+    public void setKDF_PRF(int prfSelection) {
+        assert prfSelection >= 0 && prfSelection <= 15 : "kdfPrf == " + prfSelection + " must be between 0 and 15.";
+    	kdfPrfSelection_ = prfSelection;
+    }
+    
+    /** Get stored time stamp representing when data was encrypted. */
     public long getEncryptionTimestamp() {
         return encryption_timestamp_;
     }
@@ -593,7 +620,10 @@ public final class CipherText implements Serializable {
         encryption_timestamp_ = timestamp;
     }
     
-    /** Used in supporting {@code CipherText} serialization. */
+    /** Used in supporting {@code CipherText} serialization.
+     * @deprecated	Use {@code CipherText.cipherTextVersion} instead. Will
+     * 				disappear as of ESAPI 2.1.
+     */
     public static long getSerialVersionUID() {
         return CipherText.serialVersionUID;
     }
@@ -723,6 +753,13 @@ public final class CipherText implements Serializable {
         assert raw_ciphertext_ != null && raw_ciphertext_.length != 0 : "Raw ciphertext may not be null or empty.";
         assert authKey != null && authKey.getEncoded().length != 0 : "Authenticity secret key may not be null or zero length.";
         try {
+        	// IMPORTANT NOTE: The NSA review was (apparently) OK with using HmacSHA1
+        	// to calculate the MAC that ensures authenticity of the IV+ciphertext.
+        	// (Not true of calculation of the use HmacSHA1 for the KDF though.) Therefore,
+        	// we did not make this configurable. Note also that choosing an improved
+        	// MAC algorithm here would cause the overall length of the serialized ciphertext
+        	// to be just that much longer, which is probably unacceptable when encrypting
+        	// short strings.
             SecretKey sk = new SecretKeySpec(authKey.getEncoded(), "HmacSHA1");
             Mac mac = Mac.getInstance("HmacSHA1");
             mac.init(sk);
@@ -789,4 +826,31 @@ public final class CipherText implements Serializable {
             received( it.next() );
         }
     }
+
+    /**
+     * Based on the KDF version and the selected MAC algorithm for the KDF PRF,
+     * calculate the 32-bit quantity representing these.
+     * @return	A 4-byte (octet) quantity representing the KDF version and the
+     * 			MAC algorithm used for the KDF's Pseudo-Random Function.
+     * @see <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-ciphertext-serialization.pdf">Format of portable serialization of org.owasp.esapi.crypto.CipherText object (pg 2)</a>
+     */
+	public int getKDFInfo() {
+		final int unusedBit28 = 0x8000000;  // 1000000000000000000000000000
+		
+		// 		kdf version is bits 1-27, bit 28 (reserved) should be 0, and
+		//		bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
+		int kdfVers = getKDFVersion();
+		assert kdfVers > 0 && kdfVers <= 99991231 : "KDF version (YYYYMMDD, max 99991231) out of range: " + kdfVers;
+		int kdfInfo = kdfVers;
+		int macAlg = kdfPRFAsInt();
+		assert macAlg >= 0 && macAlg <= 15 : "MAC algorithm indicator must be between 0 to 15 inclusion; value is: " + macAlg;
+		
+	    // Make sure bit28 is cleared. (Reserved for future use.)
+	    kdfInfo &= ~unusedBit28;
+
+	    // Set MAC algorithm bits in high (MSB) nibble.
+	    kdfInfo |= (macAlg << 28);
+
+		return kdfInfo;
+	}
 }
