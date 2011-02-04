@@ -32,11 +32,22 @@ package org.owasp.esapi;
  * <li>debug</li>
  * <li>trace (lowest value)</li>
  * </ul>
- * 
- * ESAPI also allows for the definition of the type of log event that is being generated. The Logger interface  
- * predefines 4 types of Log events: SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE. 
+ * There are also several variations of {@code always()} methods that will <i>always</i>
+ * log a message regardless of the log level.
+ * <p>
+ * ESAPI also allows for the definition of the type of log event that is being generated.
+ * The Logger interface predefines 6 types of Log events:
+ * <ul>
+ * <li>SECURITY_SUCCESS</li>
+ * <li>SECURITY_FAILURE</li>
+ * <li>SECURITY_AUDIT</li>
+ * <li>EVENT_SUCCESS</li>
+ * <li>EVENT_FAILURE</li>
+ * <li>EVENT_UNSPECIFIED</li>
+ * </ul>
+ * <p>
  * Your implementation can extend or change this list if desired. 
- * 
+ * <p>
  * This Logger allows callers to determine which logging levels are enabled, and to submit events 
  * at different severity levels.<br>
  * <br>Implementors of this interface should:
@@ -83,37 +94,45 @@ package org.owasp.esapi;
 public interface Logger {
 
 	/**
-     * A security type of log event that has succeeded. This is one of 5 predefined
+     * A security type of log event that has succeeded. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType SECURITY_SUCCESS = new EventType( "SECURITY SUCCESS", true);
 
 	/**
-     * A security type of log event that has failed. This is one of 5 predefined
+     * A security type of log event that has failed. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType SECURITY_FAILURE = new EventType( "SECURITY FAILURE", false);
 
 	/**
-     * A non-security type of log event that has succeeded. This is one of 5 predefined
+	 * A security type of log event that is associated with an audit trail of some type,
+	 * but the log event is not specifically something that has either succeeded or failed
+	 * or that is irrelevant in the case of this logged message.
+	 */
+	// CHECKME: Should the Boolean for this be 'null' or 'true'? See EVENT_UNSPECIFIED.
+	public static final EventType SECURITY_AUDIT = new EventType( "SECURITY AUDIT", null);
+
+	/**
+     * A non-security type of log event that has succeeded. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType EVENT_SUCCESS = new EventType( "EVENT SUCCESS", true);
 	
 	/**
-     * A non-security type of log event that has failed. This is one of 5 predefined
+     * A non-security type of log event that has failed. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType EVENT_FAILURE = new EventType( "EVENT FAILURE", false);
 
 	/**
-     * A non-security type of log event that is unspecified. This is one of 5 predefined
+     * A non-security type of log event that is unspecified. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
 	public static final EventType EVENT_UNSPECIFIED = new EventType( "EVENT UNSPECIFIED", null);
 
 	/**
-	 * Defines the type of log event that is being generated. The Logger interface defines 5 types of Log events:
+	 * Defines the type of log event that is being generated. The Logger interface defines 6 types of Log events:
 	 * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE, EVENT_UNSPECIFIED.
      * Your implementation can extend or change this list if desired. 
 	 */
@@ -132,8 +151,8 @@ public interface Logger {
 		}
 		
         /**
-         *
-         * @return
+         * Convert the {@code EventType} to a string.
+         * @return The event type name.
          */
 		@Override
         public String toString() {
@@ -178,13 +197,20 @@ public interface Logger {
     
 
     /**
-     * Dynamically set the logging severity level. All events of this level and higher will be logged from 
+     * Dynamically set the ESAPI logging severity level. All events of this level and higher will be logged from 
      * this point forward for all logs. All events below this level will be discarded.
      * 
      * @param level The level to set the logging level to. 
      */
     void setLevel(int level);
-
+    
+    /** Retrieve the current ESAPI logging level for this logger. See
+     * {@link org.owasp.esapi.reference.Log4JLogger} for an explanation of
+     * why this method is not simply called {@code getLevel()}.
+     * 
+     * @return The current logging level.
+     */
+    int getESAPILevel();
     
 	/**
      * Log a fatal event if 'fatal' level logging is enabled.
@@ -372,4 +398,26 @@ public interface Logger {
 	 */
 	boolean isTraceEnabled();
 
+	/**
+     * Log an event regardless of what logging level is enabled.
+     * 
+     * @param type 
+     * 		the type of event
+     * @param message 
+     * 		the message to log
+     */
+	void always(EventType type, String message);
+	
+	/**
+     * Log an event regardless of what logging level is enabled
+     * and also record the stack trace associated with the event.
+     * 
+     * @param type 
+     * 		the type of event 
+     * @param message 
+     * 		the message to log
+     * @param throwable 
+     * 		the exception to be logged
+     */
+	void always(EventType type, String message, Throwable throwable);
 }
