@@ -98,6 +98,17 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 			this.error(org.owasp.esapi.Logger.SECURITY_FAILURE, "", e);
 		}
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * Explanation: Since this class extends Log4j's Logger class which has a
+	 * {@code getLevel()} method that returns {@code extended by org.apache.log4j.Level},
+	 * we can't simply have a {@code getLevel()} that simply returns an {@code int}.
+	 * Hence we renamed it to {@code getESAPILevel()}.
+	 */
+	public int getESAPILevel() {
+		return super.getLevel().toInt();
+	}
 
 	/**
 	 * Converts the ESAPI logging level (a number) into the levels used by Java's logger.
@@ -129,6 +140,22 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	public void always(EventType type, String message, Throwable throwable) {
+		log(Level.OFF, type, message, throwable);	// Seems like Level.ALL is what we
+													// would want here, but this is what
+													// works. Level.ALL does not.
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void always(EventType type, String message) {
+		always(type, message, null);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -213,6 +240,28 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 		log(Level.FATAL, type, message, null);
 	}
 
+	/**
+	 * Always log the specified message as a {@code SECURITY_AUDIT} event type.
+	 * 
+	 * @param message	The {@code String} representation of the specified message as
+	 * 					logged by calling the object's {@code toString()} method.
+	 */
+	public void always(Object message) {
+		this.always(message, null);
+	}
+
+	/**
+	 * Always log the specified message as a {@code SECURITY_AUDIT} event type, along
+	 * with its associated exception stack trace (if any).
+	 * 
+	 * @param message	The {@code String} representation of the specified message as
+	 * 					logged by calling the object's {@code toString()} method.
+	 */
+	public void always(Object message, Throwable throwable) {
+		String toLog = (message instanceof String) ? (String) message : message.toString();
+		this.always(org.owasp.esapi.Logger.SECURITY_AUDIT, toLog, throwable);
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */
@@ -356,12 +405,12 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 	 *
 	 * @param level defines the set of recognized logging levels (TRACE, INFO, DEBUG, WARNING, ERROR, FATAL)
 	 * @param type the type of the event (SECURITY SUCCESS, SECURITY FAILURE, EVENT SUCCESS, EVENT FAILURE)
-	 * @param message the message
-	 * @param throwable the throwable
+	 * @param message the message to be logged
+	 * @param throwable the {@code Throwable} from which to generate an exception stack trace.
 	 */
 	private void log(Level level, EventType type, String message, Throwable throwable) {
 
-		// Check to see if we need to log
+		// Check to see if we need to log.
 		if (!isEnabledFor(level)) {
 			return;
 		}
