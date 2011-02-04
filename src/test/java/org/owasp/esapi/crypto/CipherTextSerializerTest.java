@@ -37,10 +37,12 @@ public class CipherTextSerializerTest {
 
     @After
     public void tearDown() throws Exception {
+    	System.out.flush();
     }
 
     @Test
     public final void testAsSerializedByteArray() {
+    	System.out.println("CipherTextSerializerTest.testAsSerializedByteArray() ...");
         CipherSpec cipherSpec = new CipherSpec(encryptor, 128);
         cipherSpec.setIV(ivSpec.getIV());
         SecretKey key;
@@ -65,6 +67,7 @@ public class CipherTextSerializerTest {
     @Test
     public final void testAsCipherText() {
         try {
+        	System.out.println("CipherTextSerializerTest.testAsCipherText() ...");
             CipherText ct = ESAPI.encryptor().encrypt( new PlainText("Hello") );
             CipherTextSerializer cts = new CipherTextSerializer( ct );
             CipherText result = cts.asCipherText();
