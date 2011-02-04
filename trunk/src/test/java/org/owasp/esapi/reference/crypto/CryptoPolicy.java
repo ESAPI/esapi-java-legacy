@@ -16,6 +16,19 @@ import javax.crypto.spec.*;
  * </p><p>
  * We use this for JUnit tests. If unlimited strength crypto is not available,
  * we simply skip certain JUnit tests that would require it.
+ * </p><p>
+ * The reason for not adding this class to ESAPI proper is because its mostly
+ * pointless to find out at runtime that you don't have the unlimited strength
+ * JCE jurisdiction policy files installed. If you don't, you're SOL until you
+ * install them and even if you could do that from a running JVM, chances are
+ * slim to none that one could easily get your JCE provider to work with them.
+ * (Well, one <i>might</i> be able to unload the JCE classes, but you hopefully
+ * are not running your JVM process as 'root' or other privileged account
+ * anyway, so you probably can't install these policy files from your JVM in
+ * the first place.)
+ * </p>
+ * @author kevin.w.wall@gmail.com
+ * @since 2.0
  */
 public class CryptoPolicy {
 
