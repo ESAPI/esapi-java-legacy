@@ -56,7 +56,8 @@ public interface Encoder {
 	 */
 
 	/**  
-	 * @deprecated Use {@link EncoderConstants#CHAR_LOWERS} instead*/
+	 * @deprecated Use {@link EncoderConstants#CHAR_LOWERS} instead
+	 */
 	@Deprecated
 	public final static char[] CHAR_LOWERS = EncoderConstants.CHAR_LOWERS;
     /**
