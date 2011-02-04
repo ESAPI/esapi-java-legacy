@@ -11,6 +11,7 @@ package org.owasp.esapi.crypto;
 
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
+import java.security.InvalidParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
@@ -44,17 +45,20 @@ public class CryptoHelper {
 	 * Generate a random secret key appropriate to the specified cipher algorithm
 	 * and key size.
 	 * @param alg	The cipher algorithm or cipher transformation. (If the latter is
-	 * 				passed, the cipher algorithm is determined from it.)
+	 * 				passed, the cipher algorithm is determined from it.) Cannot be
+	 * 				null or empty.
 	 * @param keySize	The key size, in bits.
 	 * @return	A random {@code SecretKey} is returned.
 	 * @throws EncryptionException Thrown if cannot create secret key conforming to
-	 * 				requested algorithm with requested size.
+	 * 				requested algorithm with requested size. Typically this is caused by
+	 * 				specifying an unavailable algorithm or invalid key size.
 	 */
 	public static SecretKey generateSecretKey(String alg, int keySize)
 		throws EncryptionException
 	{
-		assert( keySize > 0 );	// Usually should be even multiple of 8, but not strictly required by alg.
-		
+		assert alg != null : "Algorithm must not be null.";			// NPE if null and assertions disabled.
+		assert !alg.equals("") : "Algorithm must not be empty";	// NoSuchAlgorithmExeption if empty & assertions disabled.
+		assert keySize > 0 : "Key size must be positive.";	// Usually should be even multiple of 8, but not strictly required by alg.
 		// Don't use CipherSpec here to get algorithm as this may cause assertion
 		// to fail (when enabled) if only algorithm name is passed to us.
 		String[] cipherSpec = alg.split("/");
@@ -71,21 +75,17 @@ public class CryptoHelper {
 			return kgen.generateKey();
 		} catch (NoSuchAlgorithmException e) {
 			throw new EncryptionException("Failed to generate random secret key",
-					"Failed to generate secret key for " + alg + " with size of " + keySize + " bits.", e);
+					"Invalid algorithm. Failed to generate secret key for " + alg + " with size of " + keySize + " bits.", e);
+		} catch (InvalidParameterException e) {
+			throw new EncryptionException("Failed to generate random secret key - invalid key size specified.",
+					"Invalid key size. Failed to generate secret key for " + alg + " with size of " + keySize + " bits.", e);
 		}
 	}
 
-	// CHECKME: This method is critical and we can't afford to make changes to
-	//          it after ESAPI 2.0 is released or users with encrypted data
-	//		    using the new encryption / decryption may be forever screwed.
-	//			(See CAUTION, below, for details.) Strongly suggest that we
-	//			at least review this one class!!! (See Issue # 81.) This includes
-    //          using HmacSHA1. If some other HMAC (e.g., HMAC-SHA256) needs to be used
-    //          it MUST be done before 2.0 goes GA. (Note: Not sure that HMAC-SHA256
-    //          is available in JDK 1.5 though.)
 	/**
-	 * Compute a derived key from the keyDerivationKey for either encryption / decryption
-	 * or for authentication.
+	 * The method is ESAPI's Key Derivation Function (KDF) that computes a
+	 * derived key from the {@code keyDerivationKey} for either
+	 * encryption / decryption or for authentication.
 	 * <p>
 	 * <b>CAUTION:</b> If this algorithm for computing derived keys from the
 	 * key derivation key is <i>ever</i> changed, we risk breaking backward compatibility of being
@@ -93,14 +93,19 @@ public class CryptoHelper {
 	 * of this method. Therefore, do not change this unless you are 100% certain that
 	 * what you are doing will NOT change either of the derived keys for
 	 * ANY "key derivation key" AT ALL!!!
+	 * <p>
+	 * <b>NOTE:</b> This method is generally not intended to be called separately.
+	 * It is used by ESAPI's reference crypto implementation class {@code JavaEncryptor}
+	 * and might be useful for someone implementing their own replacement class, but
+	 * generally it is not something that is useful to application client code.
 	 * 
 	 * @param keyDerivationKey  A key used as an input to a key derivation function
 	 *                          to derive other keys. This is the key that generally
 	 *                          is created using some key generation mechanism such as
-	 *                          {@link #generateSecretKey(String, int)}.
-	 * The "input" key from which the other keys are derived.
-	 * 						The derived key will have the same algorithm type as this
-	 * 						key.
+	 *                          {@link #generateSecretKey(String, int)}. The
+	 *                          "input" key from which the other keys are derived.
+	 * 							The derived key will have the same algorithm type
+	 * 							as this key.
 	 * @param keySize		The cipher's key size (in bits) for the {@code keyDerivationKey}.
 	 * 						Must have a minimum size of 56 bits and be an integral multiple of 8-bits.
 	 * 						<b>Note:</b> The derived key will have the same size as this.
@@ -109,7 +114,8 @@ public class CryptoHelper {
      *                      creating a derived key to use for confidentiality, and "authenticity"
      *                      for a derived key to use with a MAC to ensure message authenticity.
 	 * @return				The derived {@code SecretKey} to be used according
-	 * 						to the specified purpose.
+	 * 						to the specified purpose. Note that this serves the same purpose
+	 * 						as "label" in section 5.1 of NIST SP 800-108.
 	 * @throws NoSuchAlgorithmException		The {@code keyDerivationKey} has an unsupported
 	 * 						encryption algorithm or no current JCE provider supports
 	 * 						"HmacSHA1".
@@ -119,7 +125,9 @@ public class CryptoHelper {
 	 * 						be a common encoding supported by all Java implementations. Support
 	 * 					    for it is usually in rt.jar.)
 	 * @throws InvalidKeyException 	Likely indicates a coding error. Should not happen.
-	 * @throws EncryptionException 
+	 * @throws EncryptionException  Throw for some precondition violations.
+	 * @deprecated Use{@code KeyDerivationFunction} instead. This method will be removed as of
+	 * 			   ESAPI release 2.1 so if you are using this, please change your code.
 	 */
 	public static SecretKey computeDerivedKey(SecretKey keyDerivationKey, int keySize, String purpose)
 			throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
@@ -135,69 +143,12 @@ public class CryptoHelper {
 		assert purpose.equals("encryption") || purpose.equals("authenticity") :
 			"Purpose must be \"encryption\" or \"authenticity\".";
 
-		keySize = calcKeySize( keySize );	// Safely convert to whole # of bytes.
-		byte[] derivedKey = new byte[ keySize ];
-		byte[] tmpKey = null;
-		byte[] inputBytes;
-		try {
-			inputBytes = purpose.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new EncryptionException("Encryption failure (internal encoding error: UTF-8)",
-					 "UTF-8 encoding is NOT supported as a standard byte encoding: " + e.getMessage(), e);
-		}
-		
-			// Note that keyDerivationKey is going to be some SecretKey like an AES or
-			// DESede key, but not an HmacSHA1 key. That means it is not likely
-			// going to be 20 bytes but something different. Experiments show
-			// that doesn't really matter though as the SecretKeySpec CTOR on
-			// the following line still returns the appropriate sized key for
-			// HmacSHA1. So, if keyDerivationKey was originally (say) a 56-bit
-            // DES key, then there is apparently some key-stretching going on here
-            // under the hood to create 'sk' so that it is 20 bytes. I cannot vouch
-            // for how secure this key-stretching is. Worse, it might not be specified
-            // as to *how* it is done and left to each JCE provider.
-		SecretKey sk = new SecretKeySpec(keyDerivationKey.getEncoded(), "HmacSHA1");
-		Mac mac = null;
-
-		try {
-			mac = Mac.getInstance("HmacSHA1");
-			mac.init(sk);
-		} catch( InvalidKeyException ex ) {
-			logger.error(Logger.SECURITY_FAILURE,
-					"Created HmacSHA1 Mac but SecretKey sk has alg " +
-					sk.getAlgorithm(), ex);
-			throw ex;
-		}
-
-		// Repeatedly call of HmacSHA1 hash until we've collected enough bits
-		// for the derived key. The first time through, we calculate the HmacSHA1
-		// on the "purpose" string, but subsequent calculations are performed
-		// on the previous result.
-		int totalCopied = 0;
-		int destPos = 0;
-		int len = 0;
-		do {
-            // According to the Javadoc for Mac.doFinal(byte[]),
-            // "A call to this method resets this Mac object to the state it was
-            // in when previously initialized via a call to init(Key) or
-            // init(Key, AlgorithmParameterSpec). That is, the object is reset
-            // and available to generate another MAC from the same key, if
-            // desired, via new calls to update and doFinal." Therefore, we do
-            // not do an explicit reset().
-			tmpKey = mac.doFinal(inputBytes);
-			if ( tmpKey.length >= keySize ) {
-				len = keySize;
-			} else {
-				len = Math.min(tmpKey.length, keySize - totalCopied);
-			}
-			System.arraycopy(tmpKey, 0, derivedKey, destPos, len);
-			inputBytes = tmpKey;
-			totalCopied += tmpKey.length;
-			destPos += len;
-		} while( totalCopied < keySize );
-		
-        // Convert it back into a SecretKey of the appropriate type.
-		return new SecretKeySpec(derivedKey, keyDerivationKey.getAlgorithm());
+		// DISCUSS: Should we use HmacSHA1 (what we were using) or the HMAC defined by
+		//			Encryptor.KDF.PRF instead? Either way, this is not compatible with
+		//			previous ESAPI versions. JavaEncryptor doesn't use this any longer.
+		KeyDerivationFunction kdf = new KeyDerivationFunction(
+											KeyDerivationFunction.PRF_ALGORITHMS.HmacSHA1);
+		return kdf.computeDerivedKey(keyDerivationKey, keySize, purpose);
 	}
 
 	/**
@@ -393,30 +344,6 @@ public class CryptoHelper {
 	    }
 	    return (result == 0) ? true : false;
 	}
-	
-    /**
-     * Calculate the size of a key. The key size is given in bits, but we
-     * can only allocate them by octets (i.e., bytes), so make sure we
-     * round up to the next whole number of octets to have room for all
-     * the bits. For example, a key size of 9 bits would require 2 octets
-     * to store it.
-     *
-     * @param ks    The key size, in bits.
-     * @return      The key size, in octets, large enough to accomodate
-     *              {@code ks} bits.
-     */
-    private static int calcKeySize(int ks) {
-        assert ks > 0 : "Key size must be > 0 bits.";
-        int numBytes = 0;
-        int n = ks/8;
-        int rem = ks % 8;
-        if ( rem == 0 ) {
-            numBytes = n;
-        } else {
-            numBytes = n + 1;
-        }
-        return numBytes;
-    }
   
     /**
      * Prevent public, no-argument CTOR from being auto-generated. Public CTOR
