@@ -271,6 +271,43 @@ are ones that you would replace.</P>
 	</TR>
 	<TR VALIGN=TOP>
 		<TD WIDTH=249>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.KDF.PDF</FONT></FONT></PRE>
+		</TD>
+		<TD WIDTH=202>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>HmacSHA256</FONT></FONT></PRE>
+		</TD>
+		<TD WIDTH=226>
+			<P><FONT SIZE=2>
+            This is the Pseudo Random Function (PRF) that ESAPI's Key
+            Derivation Function (KDF) normally uses. NSA wanted us to
+            support something stronger than HmacSHA1 (even though that
+            is considered fine for now--unless perhaps you are guarding
+            nuclear launch codes--and if so, your Java license probably
+            prohibits that ;-).
+			<BR /><BR />
+            (Note this is *only* the PRF used for ESAPI's KDF and *not*
+            what is used for ESAPI's MAC. Currently, HMacSHA1 is always
+            used for the MAC.)
+			<BR /><BR />
+            Currently supported choices for JDK 1.5 and 1.6 are:
+            HMacSHA1 (160 bits), HMacSHA256 (256 bits), HMacSHA384
+            (384 bits), and HMacSHA512 (512 bits).
+			<BR /><BR />
+            Note that HMacMD5 is *not* supported for the PRF
+            used by the KDF even though these JDKs support it.
+            ESAPI 2.0 release candidates prior to 2.0_rc11
+            ALWAYS used HMacSHA1. It is somewhat faster than
+            the SHA2 HMAC variations, but not significantly so.
+            <BR /><BR />
+            The only legitimate reason to tweak this would be to change it to
+            one of the new HMACs based on the future SHA-3 winner once it is
+            announced by NIST and supported in ESAPI and most JDKs. Until then,
+            don't meddle.
+			</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=249>
 			<PRE><FONT COLOR="#000000"><FONT SIZE=2>Encryptor.CharacterEncoding</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=202>
@@ -705,7 +742,7 @@ auditors ask, feel free to point them to the ESAPI source code, which
 we believe will convince them that ESAPI is not a cryptographic module.
 (Rather, it only provides a wrapper to call other cryptographic modules
 through the standard JCE APIs.)
-<H2>Acknowlegments</H2>
+<H2>Acknowledgments</H2>
 The OWASP ESAPI development team would like to acknowledge the contributions
 of cryptographers David A. Wagner and Ian Grigg. David provided the
 outline of how to securely compute derived keys for confidentiality
@@ -718,6 +755,25 @@ from ESAPI 2.0-rc5 or 2.0-rc6 candidate release. Others are invited
 to participate as well, especially those with a background in cryptography.
 (See <a href="http://www.owasp.org/index.php/Request_to_review_ESAPI_2.0_crypto">
 "Request to review ESAPI 2.0 crypto"</a> for details.)
+</p><p>
+I would also like to thank Jessica Fitzgerald-McKay and Andy Sampson of
+the Systems and Network Analysis Center of the NSA for their excellent feedback in
+response to the review request made in Google Issue #81. Working with bureaucracy
+is not something that I do particularly well, but Jessica and Andy made it as
+painless as it possibly could be. Their feedback, which at this point,
+unfortunately we are unable to quote, was generally favorable, but in the
+places where they had recommendations, these were very precise and
+helpful.
+</p><p>
+Lastly, I would like to thank Jeffrey Walton of Software Integrity, LLC.
+Jeff provided an extremely thorough analysis of ESAPI 2.0's (as of 2.0_rc10)
+Key Derivation Function (KDF). Jeff's analysis convinced me to bring ESAPI's
+KDF more in line with NIST's recommendations for KDFs as described in
+NIST Special Publication 800-108 (and specifically section 5.1). You can
+read about Jeff's review at
+<a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/Analysis-of-ESAPI-2.0-KDF.pdf">
+Analysis of ESAPI 2.0's Key Derivation Function
+</a>
 </p>
 </BODY>
 </HTML>
