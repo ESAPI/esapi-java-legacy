@@ -36,7 +36,8 @@ import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.ValidationException;
 
 ///// IMPORTANT NOTE: Never print / log attribute *values* as they
-/////                 may be sensitive.
+/////                 may be sensitive. Also, do not log the CryptoToken
+/////				  itself as it generally is used as an authentication token.
 
 // OPEN ISSUE: Assertions vs. IllegalArgumentException must be resolved. I prefer
 //             assertions for preconditions, which is more in line with Design-by-Contract
