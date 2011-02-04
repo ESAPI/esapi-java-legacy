@@ -43,17 +43,17 @@ import org.owasp.esapi.errors.ConfigurationException;
  * 1) Inside a directory set with a call to SecurityConfiguration.setResourceDirectory( "C:\temp\resources" ).
  * <p>
  * 2) Inside the System.getProperty( "org.owasp.esapi.resources" ) directory.
- * You can set this on the java command line
- * as follows (for example):
+ * You can set this on the java command line as follows (for example):
  * <pre>
  * 		java -Dorg.owasp.esapi.resources="C:\temp\resources"
  * </pre>
  * You may have to add this to the start-up script that starts your web server. For example, for Tomcat,
  * in the "catalina" script that starts Tomcat, you can set the JAVA_OPTS variable to the {@code -D} string above.
  * <p>
- * 3) Inside the System.getProperty( "user.home" ) + "/.esapi" directory
+ * 3) Inside the {@code System.getProperty( "user.home" ) + "/.esapi"} directory (supported for backward compatibility) or
+ * inside the {@code System.getProperty( "user.home" ) + "/esapi"} directory.
  * <p>
- * 4) The first ".esapi" directory on the classpath
+ * 4) The first ".esapi" or "esapi" directory on the classpath. (The former for backward compatibility.)
  * <p>
  * Once the Configuration is initialized with a resource directory, you can edit it to set things like master
  * keys and passwords, logging locations, error thresholds, and allowed file extensions.
@@ -114,12 +114,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     			//		New in ESAPI Java 2.0		 //
     			// ================================= //
     public static final String PREFERRED_JCE_PROVIDER = "Encryptor.PreferredJCEProvider";
+    public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
     public static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
     public static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
     public static final String IV_TYPE = "Encryptor.ChooseIVMethod";
     public static final String FIXED_IV = "Encryptor.fixedIV";
     public static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
     public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
+    public static final String KDF_PRF_ALG = "Encryptor.KDF.PRF";
+	public static final String PRINT_PROPERTIES_WHEN_LOADED = "ESAPI.printProperties";
 
     public static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
     public static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
@@ -153,10 +156,18 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
 	 */
 	public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
+	
     protected final int MAX_REDIRECT_LOCATION = 1000;
+    
+    /**
+     * @deprecated	It is not clear whether this is intended to be the max file name length for the basename(1) of
+     *				a file or the max full path name length of a canonical full path name. Since it is not used anywhere
+     *				in the ESAPI code it is being deprecated and scheduled to be removed in release 2.1.
+     */
     protected final int MAX_FILE_NAME_LENGTH = 1000;	// DISCUSS: Is this for given directory or refer to canonicalized full path name?
     													// Too long if the former! (Usually 255 is limit there.) Hard to tell since not used
-    													// here in this class and it's protected, so not sure what it's intent is.
+    													// here in this class and it's protected, so not sure what it's intent is. It's not
+    													// used anywhere in the ESAPI code base. I am going to deprecate it because of this. -kww
 
     /*
      * Implementation Keys
@@ -171,13 +182,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	public static final String EXECUTOR_IMPLEMENTATION = "ESAPI.Executor";
 	public static final String VALIDATOR_IMPLEMENTATION = "ESAPI.Validator";
 	public static final String HTTP_UTILITIES_IMPLEMENTATION = "ESAPI.HTTPUtilities";
-
-				// ==================================//
-				//		New in ESAPI Java 2.0		 //
-				//   Not implementation classes!!!   //
-				// ================================= //
-	public static final String PRINT_PROPERTIES_WHEN_LOADED = "ESAPI.printProperties";
-    public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
 
     /*
      * Default Implementations
@@ -196,19 +200,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
 
     /*
-     * Absolute path to the userDirectory
+     * Absolute path to the user.home. No longer includes the ESAPI portion as it used to.
      */
-    private static String userDirectory = System.getProperty("user.home" ) + "/.esapi";
+    private static final String userHome = System.getProperty("user.home" );
     /*
      * Absolute path to the customDirectory
-     */
+     */	// DISCUSS: Implicit assumption here that there is no SecurityManager installed enforcing the
+        //			prevention of reading system properties. Otherwise this will fail with SecurityException.
     private static String customDirectory = System.getProperty("org.owasp.esapi.resources");
     /*
      * Relative path to the resourceDirectory. Relative to the classpath.
      * Specifically, ClassLoader.getResource(resourceDirectory + filename) will
      * be used to load the file.
      */
-    private String resourceDirectory = ".esapi";
+    private String resourceDirectory = ".esapi";	// For backward compatibility (vs. "esapi")
 
 //    private static long lastModified = -1;
 
@@ -222,6 +227,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         	this.setCipherXProperties();
         } catch( IOException e ) {
 	        logSpecial("Failed to load security configuration", e );
+	        throw new ConfigurationException("Failed to load security configuration", e);
         }
     }
     
@@ -240,7 +246,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
     
     private void setCipherXProperties() {
-		// TODO: FUTURE: Replace by CryptoControls ???
+		// TODO: FUTURE: Replace by future CryptoControls class???
 		// See SecurityConfiguration.setCipherTransformation() for
 		// explanation of this.
         // (Propose this in 2.1 via future email to ESAPI-DEV list.)
@@ -418,17 +424,19 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		
 		try {
 		    //first attempt file IO loading of properties
-			logSpecial("Attempting to load " + RESOURCE_FILE + " via file io.");
+			logSpecial("Attempting to load " + RESOURCE_FILE + " via file I/O.");
 			properties = loadPropertiesFromStream(getResourceStream(RESOURCE_FILE), RESOURCE_FILE);
 			
 		} catch (Exception iae) {
-		    //if file io loading fails, attempt classpath based loading next
-		    logSpecial("Loading " + RESOURCE_FILE + " via file io failed.");
+		    //if file I/O loading fails, attempt classpath based loading next
+		    logSpecial("Loading " + RESOURCE_FILE + " via file I/O failed. Exception was: " + iae);
+iae.printStackTrace();
 			logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");		
 			try {
 				properties = loadConfigurationFromClasspath(RESOURCE_FILE);
 			} catch (Exception e) {				
-				logSpecial(RESOURCE_FILE + " could not be loaded by any means. fail.", e);
+				logSpecial(RESOURCE_FILE + " could not be loaded by any means. Fail.", e);
+				throw new ConfigurationException(RESOURCE_FILE + " could not be loaded by any means. Fail.", e);
 			}			
 		}
 		
@@ -443,12 +451,12 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 			
 			try {
 			    //first attempt file IO loading of properties
-				logSpecial("Attempting to load " + validationPropFileName + " via file io.");
+				logSpecial("Attempting to load " + validationPropFileName + " via file I/O.");
 				validationProperties = loadPropertiesFromStream(getResourceStream(validationPropFileName), validationPropFileName);
 				
 			} catch (Exception iae) {
-			    //if file io loading fails, attempt classpath based loading next
-			    logSpecial("Loading " + validationPropFileName + " via file io failed.");
+			    //if file I/O loading fails, attempt classpath based loading next
+			    logSpecial("Loading " + validationPropFileName + " via file I/O failed.");
 				logSpecial("Attempting to load " + validationPropFileName + " via the classpath.");		
 				try {
 					validationProperties = loadConfigurationFromClasspath(validationPropFileName);
@@ -513,7 +521,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public File getResourceFile(String filename) {
-		logSpecial("Attempting to load " + filename + " via file io.");
+		logSpecial("Attempting to load " + filename + " as resource file via file I/O.");
 
 		if (filename == null) {
 			logSpecial("Failed to load properties via FileIO. Filename is null.");
@@ -532,7 +540,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 			logSpecial("Not found in 'org.owasp.esapi.resources' directory or file not readable: " + f.getAbsolutePath());
 		}
 
-		// if not found, then try the programatically set resource directory
+		// if not found, then try the programmatically set resource directory
 		// (this defaults to SystemResource directory/RESOURCE_FILE
 		URL fileUrl = ClassLoader.getSystemResource(resourceDirectory + "/" + filename);
 		if (fileUrl != null) {
@@ -548,13 +556,29 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 			logSpecial("Not found in SystemResource Directory/resourceDirectory: " + resourceDirectory + File.separator + filename);
 		}
 
-		// if not found, then try the user's home directory
-		f = new File(userDirectory, filename);
-		if (userDirectory != null && f.exists()) {
-			logSpecial("Found in 'user.home' directory: " + f.getAbsolutePath());
+		// If not found, then try immediately under user's home directory first in
+		//		userHome + "/.esapi"		and secondly under
+		//		userHome + "/esapi"
+		// We look in that order because of backward compatibility issues.
+		String homeDir = userHome;
+		if ( homeDir == null ) {
+			homeDir = "";	// Without this,	homeDir + "/.esapi"	would produce
+							// the string		"null/.esapi"		which surely is not intended.
+		}
+		// First look under ".esapi" (for reasons of backward compatibility).
+		f = new File(homeDir + "/.esapi", filename);
+		if ( f.canRead() ) {
+			logSpecial("[Compatibility] Found in 'user.home' directory: " + f.getAbsolutePath());
 			return f;
 		} else {
-			logSpecial("Not found in 'user.home' directory: " + f.getAbsolutePath());
+			// Didn't find it under old directory ".esapi" so now look under the "esapi" directory.
+			f = new File(homeDir + "/esapi", filename);
+			if ( f.canRead() ) {
+				logSpecial("Found in 'user.home' directory: " + f.getAbsolutePath());
+				return f;
+			} else {
+				logSpecial("Not found in 'user.home' (" + homeDir + ") directory: " + f.getAbsolutePath());
+			}
 		}
 
 		// return null if not found
@@ -575,6 +599,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				ClassLoader.getSystemClassLoader(),
 				getClass().getClassLoader() 
 		};
+		String[] classLoaderNames = {
+				"current thread context class loader",
+				"system class loader",
+				"class loader for DefaultSecurityConfiguration class"
+		};
 
 		ClassLoader currentLoader = null;
 		for (int i = 0; i < loaders.length; i++) {
@@ -582,20 +611,30 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				currentLoader = loaders[i];
 				try {
 					// try root
+					String currentClasspathSearchLocation = "/ (root)";
 					in = loaders[i].getResourceAsStream(fileName);
 					
 					// try resourceDirectory folder
 					if (in == null) {
+						currentClasspathSearchLocation = resourceDirectory + "/";
 						in = currentLoader.getResourceAsStream(resourceDirectory + "/" + fileName);
 					}
 
-					// try .esapi folder
+					// try .esapi folder. Look here first for backward compatibility.
 					if (in == null) {
+						currentClasspathSearchLocation = ".esapi/";
 						in = currentLoader.getResourceAsStream(".esapi/" + fileName);
+					} 
+					
+					// try esapi folder (new directory)
+					if (in == null) {
+						currentClasspathSearchLocation = "esapi/";
+						in = currentLoader.getResourceAsStream("esapi/" + fileName);
 					} 
 					
 					// try resources folder
 					if (in == null) {
+						currentClasspathSearchLocation = "resources/";
 						in = currentLoader.getResourceAsStream("resources/" + fileName);
 					}
 		
@@ -603,7 +642,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					if (in != null) {
 						result = new Properties();
 						result.load(in); // Can throw IOException
-						logSpecial("SUCCESSFULLY LOADED " + fileName + " VIA THE CLASSPATH!");
+						logSpecial("SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" +
+								currentClasspathSearchLocation + "' using " + classLoaderNames[i] + "!");
+						break;	// Outta here since we've found and loaded it.
 					}
 				} catch (Exception e) {
 					result = null;
@@ -618,6 +659,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		}
 
 		if (result == null) {
+			// CHECKME: This is odd...why not ConfigurationException?
 		    throw new IllegalArgumentException("Failed to load " + RESOURCE_FILE + " as a classloader resource.");
 		}
 
@@ -626,17 +668,28 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /**
      * Used to log errors to the console during the loading of the properties file itself. Can't use
-     * standard logging in this case, since the Logger is not initialized yet. Output is sent to
+     * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
      * {@code PrintStream} {@code System.out}.
      *
      * @param message The message to send to the console.
-     * @param e The error that occurred (this value is currently ignored).
+     * @param e The error that occurred. (This value printed via {@code e.toString()}.)
      */
     private void logSpecial(String message, Throwable e) {
-		System.out.println(message);
-		//TODO - e.printStackTrace() ?
+    	StringBuffer msg = new StringBuffer(message);
+    	if (e != null) {
+    		msg.append(" Exception was: ").append( e.toString() );
+    	}
+		System.out.println( msg.toString() );
+		// if ( e != null) e.printStackTrace();		// TODO ??? Do we want this?
     }
 
+    /**
+     * Used to log errors to the console during the loading of the properties file itself. Can't use
+     * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
+     * {@code PrintStream} {@code System.out}.
+     *
+     * @param message The message to send to the console.
+     */
     private void logSpecial(String message) {
 		System.out.println(message);
     }
@@ -757,6 +810,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public int getHashIterations() {
     	return getESAPIProperty(HASH_ITERATIONS, 1024);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+	public String getKDFPseudoRandomFunction() {
+		return getESAPIProperty(KDF_PRF_ALG, "HmacSHA256");  // NSA recommended SHA2 or better.
+	}
 
     /**
 	 * {@inheritDoc}
