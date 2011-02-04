@@ -32,14 +32,28 @@ import org.owasp.esapi.errors.IntegrityException;
  * implementation with a strong "master key", and that they protect this secret
  * as much as possible.
  * <P>
- * Possible future enhancements (depending on feedback) might include:
- * <UL>
- * <LI>encryptFile</LI>
- * </UL>
+ * The main property controlling the selection of the implementation class is the
+ * property {@code ESAPI.Encryptor} in {@code ESAPI.properties}. Most of the
+ * the other encryption related properties have property names that start with
+ * the string "Encryptor.". These properties all you to do things such as
+ * select the encryption algorithms, the preferred JCE provider, etc.
+ * </P><P>
+ * In addition, there are two important properties (initially delivered as unset
+ * from the ESAPI download) named {@code Encryptor.MasterKey} and
+ * {@code Encryptor.MasterSalt} that must be set before using ESAPI encryption.
+ * There is a <i>bash</i>(1) shell script provided with the standard ESAPI distribution
+ * called 'setMasterKey.sh' that will assist you in setting these two properties. The
+ * script is in 'src/examples/scripts/setMasterKey.sh'.
+ * </P><P>
+ * Possible future enhancements (depending on feedback) are discussed in
+ * section 4 of
+ * <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-crypto-design-goals.doc">
+ * Design Goals in OWASP ESAPI Cryptography</a>.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
+ * @see <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-symmetric-crypto-user-guide.html">User Guide for Symmetric Encryption in ESAPI 2.0</a>
  */
 public interface Encryptor {
 
@@ -48,7 +62,7 @@ public interface Encryptor {
 	 * salt. The salt helps to protect against a rainbow table attack by mixing
 	 * in some extra data with the plaintext. Some good choices for a salt might
 	 * be an account name or some other string that is known to the application
-	 * but not to an attacker. 
+	 * but not to an attacker.
 	 * See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">
 	 * this article</a> for more information about hashing as it pertains to password schemes.
 	 * 
