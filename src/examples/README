@@ -1,7 +1,8 @@
 README  - This file you are now reading.
 java    - Some Java examples.
 scripts - Some scripts to run that interact with the Java examples (but see
-          below).
+          below). Purpose of script generally described at the beginning of
+          the file as a comment.
 
 
 
