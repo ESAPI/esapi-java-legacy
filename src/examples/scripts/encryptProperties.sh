@@ -49,7 +49,7 @@ cd ../java
 if [[ "$action" == "-display" ]]
 then
     set -x
-    java -Dlog4j.configuration="$log4j_properties" \
+    java -Dlog4j.configuration="file:$log4j_properties" \
          -Dorg.owasp.esapi.resources="$esapi_resources_test" \
          -classpath "$esapi_classpath" \
          DisplayEncryptedProperties "$filename"
@@ -65,7 +65,7 @@ else
     echo
     echo "Hit <Enter> to continue..."; read GO
     set -x
-    java -Dlog4j.configuration="$log4j_properties" \
+    java -Dlog4j.configuration="file:$log4j_properties" \
          -Dorg.owasp.esapi.resources="$esapi_resources_test" \
          -classpath "$esapi_classpath" \
       org.owasp.esapi.reference.crypto.DefaultEncryptedProperties "$filename" &&
