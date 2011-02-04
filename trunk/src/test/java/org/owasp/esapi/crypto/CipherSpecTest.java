@@ -119,9 +119,9 @@ public class CipherSpecTest extends TestCase {
 		try {
 				// Don't use null here as compiling JUnit tests disables assertion
 				// checking so we get a NullPointerException here instead.
-			cipherSpec.setCipherTransformation(""); // Throws AssertionError
-		} catch (AssertionError e) {
-			assertTrue(true);	// Doesn't work w/ @Test(expected=AssertionError.class)
+			cipherSpec.setCipherTransformation(""); // Throws IllegalArgumentException
+		} catch (IllegalArgumentException e) {
+			assertTrue(true);	// Doesn't work w/ @Test(expected=IllegalArgumentException.class)
 		}
 	}
 
