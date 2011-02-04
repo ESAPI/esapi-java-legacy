@@ -16,7 +16,7 @@ echo
 # set -x
 # This should use the real ESAPI.properties in $esapi_resources that does
 # not yet have Encryptor.MasterKey and Encryptor.MasterSalt yet set.
-java -Dlog4j.configuration="$log4j_properties" \
+java -Dlog4j.configuration="file:$log4j_properties" \
      -Dorg.owasp.esapi.resources="$esapi_resources" \
      -classpath "$esapi_classpath" \
      org.owasp.esapi.reference.crypto.JavaEncryptor "$@"
