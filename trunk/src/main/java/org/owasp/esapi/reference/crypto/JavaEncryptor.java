@@ -55,16 +55,21 @@ import org.owasp.esapi.codecs.Hex;
 import org.owasp.esapi.crypto.CipherSpec;
 import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.CryptoHelper;
+import org.owasp.esapi.crypto.KeyDerivationFunction;
 import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.crypto.SecurityProviderLoader;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 /**
  * Reference implementation of the {@code Encryptor} interface. This implementation
  * layers on the JCE provided cryptographic package. Algorithms used are
- * configurable in the {@code ESAPI.properties} file.
+ * configurable in the {@code ESAPI.properties} file. The main property
+ * controlling the selection of this class is {@code ESAPI.Encryptor}. Most of
+ * the other encryption related properties have property names that start with
+ * the string "Encryptor.".
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -140,8 +145,9 @@ public final class JavaEncryptor implements Encryptor {
 	    try {
             SecurityProviderLoader.loadESAPIPreferredJCEProvider();
         } catch (NoSuchProviderException ex) {
+        	// Note that audit logging is done elsewhere in called method.
             logger.fatal(Logger.SECURITY_FAILURE,
-                         "JavaEncryptor failed to load JCE provider.", ex);
+                         "JavaEncryptor failed to load preferred JCE provider.", ex);
             throw new ExceptionInInitializerError(ex);
         }
         setupAlgorithms();
@@ -213,7 +219,7 @@ public final class JavaEncryptor implements Encryptor {
         byte[] salt = new byte[20];	// Or 160-bits; big enough for SHA1, but not SHA-256 or SHA-512.
         random.nextBytes( salt );
         String eol = System.getProperty("line.separator", "\n"); // So it works on Windows too.
-        System.out.println( eol + "Copy and paste these lines into ESAPI.properties" + eol);
+        System.out.println( eol + "Copy and paste these lines into your ESAPI.properties" + eol);
         System.out.println( "#==============================================================");
         System.out.println( "Encryptor.MasterKey=" + ESAPI.encoder().encodeForBase64(raw, false) );
         System.out.println( "Encryptor.MasterSalt=" + ESAPI.encoder().encodeForBase64(salt, false) );
@@ -449,6 +455,7 @@ public final class JavaEncryptor implements Encryptor {
 						 "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits with cipher algorithm " + cipherAlg);
 			 }
 			 if ( keySize < 112 ) {		// NIST Special Pub 800-57 considers 112-bits to be the minimally safe key size from 2010-2030.
+				 						// Note that 112 bits 'just happens' to be size of 2-key Triple DES!
 				 logger.warning(Logger.SECURITY_FAILURE, "Potentially unsecure encryption. Key size of " + keySize + "bits " +
 				                "not sufficiently long for " + cipherAlg + ". Should use appropriate algorithm with key size " +
 				                "of *at least* 112 bits except when required by legacy apps. See NIST Special Pub 800-57.");
@@ -480,7 +487,8 @@ public final class JavaEncryptor implements Encryptor {
 			 if ( preferredCipherMode ) {
 			     encKey = key;
 			 } else {
-			     encKey = CryptoHelper.computeDerivedKey( key, keySize, "encryption");	// Recommended by David A. Wagner
+			     encKey = computeDerivedKey(KeyDerivationFunction.kdfVersion, getDefaultPRF(),
+			    		 				    key, keySize, "encryption");
 			 }
 			 
 			 if ( cipherSpec.requiresIV() ) {
@@ -524,7 +532,8 @@ public final class JavaEncryptor implements Encryptor {
              // do this when we are not using such a cipher mode.
 			 if ( !preferredCipherMode ) {
 			     // Compute derived key, and then use it to compute and store separate MAC in CipherText object.
-			     SecretKey authKey = CryptoHelper.computeDerivedKey( key, keySize, "authenticity");
+			     SecretKey authKey = computeDerivedKey(KeyDerivationFunction.kdfVersion, getDefaultPRF(),
+			    		 							   key, keySize, "authenticity");
 			     ciphertext.computeAndStoreMAC(  authKey );
 			 }
 			 logger.debug(Logger.EVENT_SUCCESS, "JavaEncryptor.encrypt(SecretKey,byte[],boolean,boolean) -- success!");
@@ -741,11 +750,14 @@ public final class JavaEncryptor implements Encryptor {
             SecretKey encKey = null;
             if ( preferredCipherMode ) {
                 encKey = key;
-            } else {   
+            } else {
                 // TODO: PERFORMANCE: Calculate avg time this takes and consider caching for very short interval
                 //       (e.g., 2 to 5 sec tops). Otherwise doing lots of encryptions in a loop could take a LOT longer.
                 //       But remember Jon Bentley's "Rule #1 on performance: First make it right, then make it fast."
-                encKey = CryptoHelper.computeDerivedKey( key, keySize, "encryption");   // Recommended by David A. Wagner
+            	//		 This would be a security trade-off as it would leave keys in memory a bit longer, so it
+            	//		 should probably be off by default and controlled via a property.
+                encKey = computeDerivedKey( ciphertext.getKDFVersion(), ciphertext.getKDF_PRF(),
+                		                    key, keySize, "encryption");
             }
             if ( ciphertext.requiresIV() ) {
                 decrypter.init(Cipher.DECRYPT_MODE, encKey, new IvParameterSpec(ciphertext.getIV()));
@@ -777,7 +789,8 @@ public final class JavaEncryptor implements Encryptor {
             //during a code inspection.
             SecretKey authKey;
             try {
-                authKey = CryptoHelper.computeDerivedKey( key, keySize, "authenticity");
+                authKey = computeDerivedKey( ciphertext.getKDFVersion(), ciphertext.getKDF_PRF(),
+                		                     key, keySize, "authenticity");
             } catch (Exception e1) {
                 throw new EncryptionException(DECRYPTION_FAILED,
                         "Decryption problem -- failed to compute derived key for authenticity: " + e1.getMessage(), e1);
@@ -952,7 +965,7 @@ public final class JavaEncryptor implements Encryptor {
 			//			used for encryption (namely, Encryptor.MasterKey). If anything it
 			//			would be better to use Encryptor.MasterSalt for the HMac key, or
 			//			perhaps a derived key based on the master salt. (One could use
-			//			CryptoHelper.computeDerivedKey().)
+			//			KeyDerivationFunction.computeDerivedKey().)
 			//
 			byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
 			hmac.init( new SecretKeySpec(salt, "HMacSHA1") );	// Was:	hmac.init(secretKeySpec)	
@@ -1004,6 +1017,50 @@ public final class JavaEncryptor implements Encryptor {
         }
     }
     
+    private KeyDerivationFunction.PRF_ALGORITHMS getPRF(String name) {    	
+		String prfName = null;
+		if ( name == null ) {
+			prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
+		} else {
+			prfName = name;
+		}
+		KeyDerivationFunction.PRF_ALGORITHMS prf = KeyDerivationFunction.convertNameToPRF(prfName);
+		return prf;
+    }
+    
+    private KeyDerivationFunction.PRF_ALGORITHMS getDefaultPRF() {
+		String prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
+		return getPRF(prfName);
+    }
+    
+    // Private interface to call ESAPI's KDF to get key for encryption or authenticity.
+    private SecretKey computeDerivedKey(int kdfVersion, KeyDerivationFunction.PRF_ALGORITHMS prf,
+    									SecretKey kdk, int keySize, String purpose)
+    	throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
+    {
+    	// These really should be turned into actual runtime checks and an
+    	// IllegalArgumentException should be thrown if they are violated.
+    	// But this should be OK since this is a private method. Also, this method will
+    	// be called quite often so assertions are a big win as they can be disabled or
+    	// enabled at will.
+    	assert prf != null : "Pseudo Random Function for KDF cannot be null";
+    	assert kdk != null : "Key derivation key cannot be null.";
+    	// We would choose a larger minimum key size, but we want to be
+    	// able to accept DES for legacy encryption needs. NIST says 112-bits is min. If less than that,
+    	// we print warning.
+    	assert keySize >= 56 : "Key has size of " + keySize + ", which is less than minimum of 56-bits.";
+    	assert (keySize % 8) == 0 : "Key size (" + keySize + ") must be a even multiple of 8-bits.";
+    	assert purpose != null : "Purpose cannot be null. Should be 'encryption' or 'authenticity'.";
+    	assert purpose.equals("encryption") || purpose.equals("authenticity") :
+    		"Purpose must be \"encryption\" or \"authenticity\".";
+
+    	KeyDerivationFunction kdf = new KeyDerivationFunction(prf);
+    	if ( kdfVersion != 0 ) {
+    		kdf.setVersion(kdfVersion);
+    	}
+    	return kdf.computeDerivedKey(kdk, keySize, purpose);
+    }
+
     // Get all the algorithms we will be using from ESAPI.properties.
     private static void setupAlgorithms() {
         // setup algorithms
