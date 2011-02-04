@@ -23,7 +23,7 @@ set -x
 # Since this is just an illustration, we will use the test ESAPI.properties in
 # $esapi_resources_test. That way, it won't matter if the user has neglected
 # to run the 'setMasterKey.sh' example before running this one.
-java -Dlog4j.configuration="$log4j_properties" \
+java -Dlog4j.configuration="file:$log4j_properties" \
     -Dorg.owasp.esapi.resources="$esapi_resources_test" \
     -ea -classpath "$esapi_classpath" \
     PersistedEncryptedData "$@"
