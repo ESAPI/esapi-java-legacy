@@ -156,6 +156,14 @@ public class JavaLogFactory implements LogFactory {
          }
         
         /**
+         * {@inheritDoc}
+         * @see org.owasp.esapi.reference.Log4JLogger#getESAPILevel()
+         */
+        public int getESAPILevel() {
+        	return jlogger.getLevel().intValue();
+        }
+        
+        /**
          * Converts the ESAPI logging level (a number) into the levels used by Java's logger.
          * @param level The ESAPI to convert.
          * @return The Java logging Level that is equivalent.
@@ -383,5 +391,19 @@ public class JavaLogFactory implements LogFactory {
 			
 			return userInfo;
         }
+
+    	/**
+    	 * {@inheritDoc}
+    	 */
+		public void always(EventType type, String message) {
+            always(type, message, null);	
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		public void always(EventType type, String message, Throwable throwable) {
+            log(Level.OFF, type, message, throwable);  // Seems backward, but this is what works, not Level.ALL	
+		}
     }
 }
