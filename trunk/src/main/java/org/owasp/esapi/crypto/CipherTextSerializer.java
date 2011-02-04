@@ -16,14 +16,24 @@ import org.owasp.esapi.errors.EncryptionException;
  * Helper class to assist with programming language and platform independent
  * serialization of {@link CipherText} objects. The serialization is done in
  * network-byte order which is the same as big-endian byte order.
+ * <p>
+ * This serialization scheme is documented in
+ * <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-ciphertext-serialization.pdf">
+ * <code>Format of Portable Serialization of org.owasp.esapi.crypto.CipherText Objects</code>.</a>
+ * Other serialization schemes may be desirable and could be supported (notably, RFC 5083 - Cryptographic
+ * Message Syntax (CMS) Authenticated-Enveloped-Data Content Type, or CMS' predecessor,
+ * PKCS#7 (RFC 2315)), but these serialization schemes are by comparison very complicated,
+ * and do not have extensive support for the various implementation languages which ESAPI
+ * supports.
  * 
  * @author kevin.w.wall@gmail.com
  *
  */
 public class CipherTextSerializer {
-    // This should be *same* version as in CipherText. If one changes, the
-    // other should as well to accommodate any differences.
-    private static final long serialVersionUID = 20100122; // Format: YYYYMMDD
+    // This should be *same* version as in CipherText & KeyDerivationFunction.
+	// If one changes, the other should as well to accommodate any differences.
+	public  static final  int cipherTextSerializerVersion = 20110203; // Format: YYYYMMDD, max is 99991231.
+    private static final long serialVersionUID = cipherTextSerializerVersion;
 
     private static final Logger logger = ESAPI.getLogger("CipherTextSerializer");
     
@@ -31,7 +41,7 @@ public class CipherTextSerializer {
     
     public CipherTextSerializer(CipherText cipherTextObj) {
         assert cipherTextObj != null : "CipherText object must not be null.";
-        assert serialVersionUID == CipherText.getSerialVersionUID() :
+        assert cipherTextSerializerVersion == CipherText.cipherTextVersion :
             "Version of CipherText and CipherTextSerializer not compatible.";
         cipherText_ = cipherTextObj;
     }
@@ -47,7 +57,7 @@ public class CipherTextSerializer {
     public CipherTextSerializer(byte[] cipherTextSerializedBytes)
         throws EncryptionException /* DISCUSS: Change exception type?? */
     {
-        assert serialVersionUID == CipherText.getSerialVersionUID() :
+        assert cipherTextSerializerVersion == CipherText.cipherTextVersion :
             "Version of CipherText and CipherTextSerializer not compatible.";
         cipherText_ = convertToCipherText(cipherTextSerializedBytes);
     }
@@ -59,7 +69,8 @@ public class CipherTextSerializer {
      */
     @SuppressWarnings("static-access")
     public byte[] asSerializedByteArray() {
-        long vers = cipherText_.getSerialVersionUID(); // static method
+        int kdfInfo = cipherText_.getKDFInfo();
+        debug("asSerializedByteArray: kdfInfo = " + kdfInfo);
         long timestamp = cipherText_.getEncryptionTimestamp();
         String cipherXform = cipherText_.getCipherTransformation();
         assert cipherText_.getKeySize() < Short.MAX_VALUE :
@@ -80,7 +91,7 @@ public class CipherTextSerializer {
                             "MAC length too large. Max is " + Short.MAX_VALUE;
         short macLen = (short) mac.length;
         
-        byte[] serializedObj = computeSerialization(vers,
+        byte[] serializedObj = computeSerialization(kdfInfo,
                                                     timestamp,
                                                     cipherXform,
                                                     keySize,
@@ -96,11 +107,15 @@ public class CipherTextSerializer {
         return serializedObj;
     }
     
+    /**
+     * Return the actual {@code CipherText} object.
+     * @return The {@code CipherText} object that we are serializing.
+     */
     public CipherText asCipherText() {
         return cipherText_;
     }
       
-    private byte[] computeSerialization(long vers, long timestamp,
+    private byte[] computeSerialization(int kdfInfo, long timestamp,
                                         String cipherXform, short keySize,
                                         short blockSize,
                                         short ivLen, byte[] iv,
@@ -108,7 +123,7 @@ public class CipherTextSerializer {
                                         short macLen, byte[] mac
                                        )
     {
-        debug("computeSerialization: vers = " + vers);
+        debug("computeSerialization: kdfInfo = " + kdfInfo);
         debug("computeSerialization: timestamp = " + new Date(timestamp));
         debug("computeSerialization: cipherXform = " + cipherXform);
         debug("computeSerialization: keySize = " + keySize);
@@ -118,7 +133,7 @@ public class CipherTextSerializer {
         debug("computeSerialization: macLen = " + macLen);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        writeLong(baos, vers);
+        writeInt(baos, kdfInfo);
         writeLong(baos, timestamp);
         String[] parts = cipherXform.split("/");
         assert parts.length == 3 : "Malformed cipher transformation";
@@ -210,16 +225,28 @@ public class CipherTextSerializer {
         throws EncryptionException
     {
         try {
+        	assert cipherTextSerializedBytes != null : "cipherTextSerializedBytes cannot be null.";
+        	assert cipherTextSerializedBytes.length > 0 : "cipherTextSerializedBytes must be > 0 in length.";
             ByteArrayInputStream bais = new ByteArrayInputStream(cipherTextSerializedBytes);
-            long vers = readLong(bais);
-            debug("convertToCipherText: vers = " + vers);
-            if ( vers != CipherText.getSerialVersionUID() ) {
-                // NOTE: In future, support backward compatibility via this mechanism. As of now,
-                //       this is first version so nothing to be backward compatible with. So any
-                //       mismatch at this point is an error.
+            int kdfInfo = readInt(bais);
+            debug("kdfInfo: " + kdfInfo);
+            int kdfPrf = (kdfInfo >>> 28);
+            debug("kdfPrf: " + kdfPrf);
+            assert kdfPrf >= 0 && kdfPrf <= 15 : "kdfPrf == " + kdfPrf + " must be between 0 and 15.";
+            int kdfVers = ( kdfInfo & 0x07ffffff);
+            assert kdfVers > 0 && kdfVers <= 99991231 : "KDF Version (" + kdfVers + ") out of range."; // Really should be >= 20110203 (earliest).
+            debug("convertToCipherText: kdfPrf = " + kdfPrf + ", kdfVers = " + kdfVers);
+            if ( kdfVers != CipherText.cipherTextVersion ) {
+                // NOTE: In future, support backward compatibility via this mechanism. When we do this
+            	//		 we will have to compare as longs and watch out for sign extension of kdfInfo
+            	//		 since it may have the sign bit set.  Then we will do different things depending
+            	//		 on what KDF version we encounter.  However, as for now, since this is
+                //       is first ESAPI 2.0 GA version, there nothing to be backward compatible with.
+            	//		 (We did not promise backward compatibility for earlier release candidates.)
+            	//		 Thus any version mismatch at this point is an error.
                 throw new InvalidClassException("This serialized byte stream not compatible " +
-                            "with loaded CipherText class. Version read = " + vers +
-                            "; version from loaded CipherText class = " + CipherText.getSerialVersionUID());
+                            "with loaded CipherText class. Version read = " + kdfInfo +
+                            "; version from loaded CipherText class = " + CipherText.cipherTextVersion);
             }
             long timestamp = readLong(bais);
             debug("convertToCipherText: timestamp = " + new Date(timestamp));
