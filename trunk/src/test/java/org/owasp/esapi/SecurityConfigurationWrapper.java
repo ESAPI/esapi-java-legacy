@@ -616,4 +616,11 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 		return wrapped.getDisableIntrusionDetection();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	// @Override
+	public String getKDFPseudoRandomFunction() {
+		return wrapped.getKDFPseudoRandomFunction();
+	}
 }
