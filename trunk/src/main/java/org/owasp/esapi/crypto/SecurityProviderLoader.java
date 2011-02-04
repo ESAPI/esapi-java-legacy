@@ -46,7 +46,8 @@ public class SecurityProviderLoader  {
         
             // IBMJCE is default for WebSphere and is used by IBM JDKs. They
             // also have IBMJCEFIPS, but not sure if this is *always* provided
-            // with WebSphere or just an add-on, hence not including it.
+            // with WebSphere or just an add-on, hence not including it. IBMJCEFIPS
+        	// is a FIPS 140-2 compliant JCE provider from IBM.
         jceProviders.put("IBMJCE", "com.ibm.crypto.provider.IBMJCE");
         // jceProviders.put("IBMJCEFIPS", "com.ibm.crypto.fips.provider.IBMJCEFIPS");
         
@@ -195,7 +196,7 @@ public class SecurityProviderLoader  {
                 if (pos == -1) {
                     // The just wanted it available (loaded last) and it is, so
                     // this is not critical.
-                    logger.info(Logger.SECURITY_SUCCESS, msg);
+                    logger.always(Logger.SECURITY_SUCCESS, msg);
                 } else {
                     // In this case, it's a warning because it may have already
                     // been loaded, but *after* the position they requested.
@@ -203,25 +204,36 @@ public class SecurityProviderLoader  {
                     // compliant JCE provider at the first position and it was
                     // already loaded at position 3, then this is not FIPS 140-2
                     // compliant. Therefore, we make it a warning and a failure.
+                	// Also log separately using 'always' in case warnings suppressed
+                	// as per NSA suggestion.
                     logger.warning(Logger.SECURITY_FAILURE, msg);
+                    logger.always(Logger.SECURITY_FAILURE, "(audit) " + msg);
                 }
             } else {
-                logger.debug(Logger.EVENT_SUCCESS,
+            	// As per NSA suggestion.
+                logger.always(Logger.SECURITY_AUDIT,
                         "Successfully loaded preferred JCE provider " +
                         algProvider + " at position " + pos);
             }
             return ret;
         } catch(SecurityException ex) {
             // CHECKME: Log security event here too? This is a RuntimeException.
+        	// It would only be thrown if a SecurityManager is installed that
+        	// prohibits Security.addProvider() or Security.insertProviderAt()
+        	// by the current user of this thread. Will log it here. Can always
+        	// be ignored.
+        	logger.always(Logger.SECURITY_FAILURE, "Failed to load preferred JCE provider " +
+        				  algProvider + " at position " + pos, ex);
             throw ex;
         } catch(Exception ex) {
             // Possibilities include: ClassNotFoundException,
-            //                        InstantiationException, and
-            //                        SecurityException
+            //                        InstantiationException, and others???
             //
             // Log an error & re-throw original message as NoSuchProviderException,
-            // since that what it probably really implied here.
-            logger.error(Logger.SECURITY_FAILURE, "Failed to insert failed crypto " +
+            // since that what it probably really implied here. This probably a configuration
+        	// error (e.g., classpath problem, etc.) so we use EVENT_FAILURE rather than
+        	// SECURITY_FAILURE here.
+            logger.error(Logger.EVENT_FAILURE, "Failed to insert failed crypto " +
                     " provider " + algProvider + " at position " + pos, ex);
             throw new NoSuchProviderException("Failed to insert crypto " +
                                        " provider for " + algProvider +
@@ -240,7 +252,8 @@ public class SecurityProviderLoader  {
      *         (which is expected to be 1) or -1 if the provider was not added
      *         because it is already installed at some other position. -1 is also
      *         returned if the {@code Encryptor.PreferredJCEProvider} was not set
-     *         or set to an empty string.
+     *         or set to an empty string, i.e., if the application <i>has</i> no
+     *         preferred JCE provider.
      * @exception NoSuchProviderException - thrown if the provider class
      *         could not be loaded or added to the {@code SecurityManager} or
      *         any other reason for failure.
@@ -254,15 +267,17 @@ public class SecurityProviderLoader  {
         try {
             // If unset or set to empty string, then don't try to change it.
             if ( prefJCEProvider == null || prefJCEProvider.trim().length() == 0) {
-                logger.debug(Logger.EVENT_SUCCESS, "No Encryptor.PreferredJCEProvider specified.");
+            		// Always log, per NSA suggestion.
+                logger.always(Logger.SECURITY_AUDIT, "No Encryptor.PreferredJCEProvider specified.");
                 return -1;  // Unchanged; it is, whatever it is.
             } else {
                 return insertProviderAt(prefJCEProvider, 1);
             }
         } catch (NoSuchProviderException ex) {
             // Will already have logged with exception msg.
-            logger.error(Logger.SECURITY_FAILURE, "failed to load *preferred* " +
-                    "JCE crypto" + prefJCEProvider);
+        	String msg = "failed to load *preferred* " + "JCE crypto provider, " + prefJCEProvider;
+        	logger.always(Logger.SECURITY_AUDIT, msg);	// Per NSA suggestion.
+            logger.error(Logger.SECURITY_FAILURE, msg);
             throw ex;
         }
     }
