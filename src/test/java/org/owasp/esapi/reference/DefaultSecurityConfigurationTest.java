@@ -134,12 +134,24 @@ public class DefaultSecurityConfigurationTest {
 	
 	@Test
 	public void testGetEncryptionKeyLength() {
+		// test the default
 		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new java.util.Properties());
 		Assert.assertEquals(128, secConf.getEncryptionKeyLength());
 		
 		final int expected = 256;
 		secConf = this.createWithProperty(DefaultSecurityConfiguration.KEY_LENGTH, String.valueOf(expected));
 		Assert.assertEquals(expected, secConf.getEncryptionKeyLength());
+	}
+	
+	@Test
+	public void testGetKDFPseudoRandomFunction() {
+		// test the default
+		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new java.util.Properties());
+		Assert.assertEquals("HmacSHA256", secConf.getKDFPseudoRandomFunction());
+		
+		final String expected = "HmacSHA1";
+		secConf = this.createWithProperty(DefaultSecurityConfiguration.KDF_PRF_ALG, expected);
+		Assert.assertEquals(expected, secConf.getKDFPseudoRandomFunction());
 	}
 	
 	@Test
