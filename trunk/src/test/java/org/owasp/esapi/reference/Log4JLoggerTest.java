@@ -439,5 +439,25 @@ public class Log4JLoggerTest extends TestCase {
 	    log4JLogger.fatal("test message fatal" );
 		log4JLogger.fatal("test message fatal", null );    
 	}
+    
+    /**
+     * Test of always method, of class org.owasp.esapi.Logger.
+     */
+    public void testAlways() {
+        System.out.println("always");
+        testLogger.always(Logger.SECURITY_SUCCESS, "test message always 1 (SECURITY_SUCCESS)" );
+        testLogger.always(Logger.SECURITY_AUDIT, "test message always 2 (SECURITY_AUDIT)", null );
+
+	    log4JLogger.always("test message always 3" );
+		log4JLogger.always("test message always 4", null );
+
+        try {
+        	throw new RuntimeException("What? You call that a 'throw'??? You couldn't hit the " +
+        							   "broad side of a barn (assuming that barns wore bras).");
+        } catch(RuntimeException rtex) {
+            testLogger.always(Logger.SECURITY_AUDIT, "test message always 5", rtex );
+            log4JLogger.always("test message always 6", rtex);
+        }
+	}
 
 }
