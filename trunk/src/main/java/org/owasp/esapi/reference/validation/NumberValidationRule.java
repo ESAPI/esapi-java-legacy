@@ -17,7 +17,6 @@ package org.owasp.esapi.reference.validation;
 
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
-import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.ValidationException;
 
 
@@ -43,11 +42,6 @@ public class NumberValidationRule extends BaseValidationRule {
 		super( typeName, encoder );
 		this.minValue = minValue;
 		this.maxValue = maxValue;
-
-		// CHECKME fail fast?		
-//		if (minValue > maxValue) {
-//			throw new IllegalArgumentException("Invalid number input: context Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ")");
-//		}
 	}
 
     /**
@@ -86,6 +80,12 @@ public class NumberValidationRule extends BaseValidationRule {
 
 		if (minValue > maxValue) {
 			throw new ValidationException( context + ": Invalid number input: context", "Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
+		}
+		
+		//check for DOS error in Java
+		//see http://blogs.adobe.com/asset/2011/02/year-of-the-snail.html for more information
+		if (input.replace(".", "").contains("2225073858507201")) {
+		    throw new ValidationException( "Invalid double input, input value contains 2225073858507201 which is invalid due to weakness in the Java language", context );
 		}
 		
 		Double d;
