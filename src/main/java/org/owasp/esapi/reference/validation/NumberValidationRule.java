@@ -85,7 +85,7 @@ public class NumberValidationRule extends BaseValidationRule {
 		//check for DOS error in Java
 		//see http://blogs.adobe.com/asset/2011/02/year-of-the-snail.html for more information
 		if (input.replace(".", "").contains("2225073858507201")) {
-		    throw new ValidationException( "Invalid double input, input value contains 2225073858507201 which is invalid due to weakness in the Java language", context );
+		    throw new ValidationException( context + ": Invalid number input: context", "Invalid number input, input value contains 2225073858507201 which is invalid due to JVM weakness", context );
 		}
 		
 		Double d;
