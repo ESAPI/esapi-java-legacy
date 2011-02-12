@@ -31,6 +31,7 @@ import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
 import org.apache.log4j.Level;
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.waf.ConfigurationException;
 import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.waf.rules.AddHeaderRule;
@@ -62,7 +63,17 @@ public class ConfigurationParser {
 	private static final String REGEX = "regex";
 	private static final String DEFAULT_PATH_APPLY_ALL = ".*";
 	private static final int DEFAULT_RESPONSE_CODE = 403;
-	private static final String DEFAULT_SESSION_COOKIE = "JSESSIONID";
+	private static final String DEFAULT_SESSION_COOKIE;
+	
+	static {
+		String sessionIdName = null;
+		try {
+			sessionIdName = ESAPI.securityConfiguration().getHttpSessionIdName();
+		} catch (Throwable t) {
+			sessionIdName = "JSESSIONID";	// If all else fails...
+		}
+		DEFAULT_SESSION_COOKIE = sessionIdName;
+	}
 	
 	private static final String[] STAGES = {
 		"before-request-body",
