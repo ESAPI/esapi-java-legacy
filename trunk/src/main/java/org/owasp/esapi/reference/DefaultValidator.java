@@ -177,7 +177,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * 
 	 * @param context A descriptive name for the field to validate. This is used for error facing validation messages and element identification.
 	 * @param input The actual user input data to validate.
-	 * @param type The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+	 * @param type The regular expression name which maps to the actual regular expression in the ESAPI validation configuration file
 	 * @param maxLength The maximum String length allowed. If input is canonicalized per the canonicalize argument, then maxLength must be verified after canonicalization
      * @param allowNull If allowNull is true then a input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
 	 * @param canonicalize If canonicalize is true then input will be canonicalized before validation
@@ -191,7 +191,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		if ( p != null ) {
 			rvr.addWhitelistPattern( p );
 		} else {
-			rvr.addWhitelistPattern( type );
+			throw new IllegalArgumentException("The selected type was not set via the ESAPI validation configuration");
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
