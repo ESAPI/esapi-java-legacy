@@ -103,7 +103,8 @@ public class NumberValidationRule extends BaseValidationRule {
 			throw new ValidationException( context + ": Invalid number input: context", "Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
 		}
 		
-		//convert to BigDecimal so we can safely parse
+		//convert to BigDecimal so we can safely parse dangerous numbers to 
+		//check if the number may DOS the double parser
 		BigDecimal bd;
 		try {
 			bd = new BigDecimal(canonical);
@@ -111,13 +112,15 @@ public class NumberValidationRule extends BaseValidationRule {
 			throw new ValidationException( context + ": Invalid number input", "Invalid number input format: context=" + context + ", input=" + input, e, context);
 		}
 		
+		// Thanks to Brian Chess for this suggestion
+		// Check if string input is in the "dangerous" double parsing range
 		if (bd.compareTo(smallBad) >= 0 && bd.compareTo(bigBad) <= 0) {
-			// Thanks to Brian Chess for this suggestion
 			// if you get here you know you're looking at a bad value. The final
 			// value for any double in this range is supposed to be the following safe #			
 			return new Double("2.2250738585072014E-308");
 		}
 		
+		// the number is safe to parseDouble
 		Double d;
 		// validate min and max
 		try {
