@@ -16,7 +16,6 @@
 package org.owasp.esapi.reference.validation;
 
 import java.math.BigDecimal;
-import java.security.InvalidParameterException;
 
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
