@@ -15,6 +15,9 @@
  */
 package org.owasp.esapi.reference.validation;
 
+import java.math.BigDecimal;
+import java.security.InvalidParameterException;
+
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ValidationException;
@@ -64,6 +67,24 @@ public class NumberValidationRule extends BaseValidationRule {
 		}
 		return toReturn;
 	}
+	//
+	// These statics needed to detect double parsing DOS bug in Java
+	//
+	private static BigDecimal bigBad;
+	private static BigDecimal smallBad;
+
+	static {
+		
+		BigDecimal one = new BigDecimal(1);
+		BigDecimal two = new BigDecimal(2);
+		
+		BigDecimal tiny = one.divide(two.pow(1022));
+		
+		// 2^(-1022) ­ 2^(-1076)
+		bigBad = tiny.subtract(one.divide(two.pow(1076)));
+		//2^(-1022) ­ 2^(-1075)
+		smallBad = tiny.subtract(one.divide(two.pow(1075)));
+	}	
 
 	private Double safelyParse(String context, String input)
 			throws ValidationException {
@@ -82,10 +103,18 @@ public class NumberValidationRule extends BaseValidationRule {
 			throw new ValidationException( context + ": Invalid number input: context", "Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
 		}
 		
-		//check for DOS error in Java
-		//see http://blogs.adobe.com/asset/2011/02/year-of-the-snail.html for more information
-		if (input.replace(".", "").contains("2225073858507201")) {
-		    throw new ValidationException( context + ": Invalid number input: context", "Invalid number input, input value contains 2225073858507201 which is invalid due to JVM weakness", context );
+		BigDecimal bd;
+		try {
+			bd = new BigDecimal(canonical);
+		} catch (NumberFormatException e) {
+			throw new InvalidParameterException("cant parse number");
+		}
+		
+		if (bd.compareTo(smallBad) >= 0 && bd.compareTo(bigBad) <= 0) {
+			// Thanks to Brian Chess for this suggestion
+			// if you get here you know you're looking at a bad value. The final
+			// value for any double in this range is supposed to be the following safe #			
+			return new Double("2.2250738585072014E-308");
 		}
 		
 		Double d;
