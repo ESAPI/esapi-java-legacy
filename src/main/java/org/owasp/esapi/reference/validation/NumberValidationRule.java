@@ -86,8 +86,8 @@ public class NumberValidationRule extends BaseValidationRule {
 		smallBad = tiny.subtract(one.divide(two.pow(1075)));
 	}	
 
-	private Double safelyParse(String context, String input)
-			throws ValidationException {
+	private Double safelyParse(String context, String input) throws ValidationException {
+
 		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
 	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
@@ -99,15 +99,17 @@ public class NumberValidationRule extends BaseValidationRule {
 	    // canonicalize
 	    String canonical = encoder.canonicalize( input );
 
+	    //if MinValue is greater than maxValue then programmer is likely calling this wrong
 		if (minValue > maxValue) {
 			throw new ValidationException( context + ": Invalid number input: context", "Validation parameter error for number: maxValue ( " + maxValue + ") must be greater than minValue ( " + minValue + ") for " + context, context );
 		}
 		
+		//convert to BigDecimal so we can safely parse
 		BigDecimal bd;
 		try {
 			bd = new BigDecimal(canonical);
 		} catch (NumberFormatException e) {
-			throw new InvalidParameterException("cant parse number");
+			throw new ValidationException( context + ": Invalid number input", "Invalid number input format: context=" + context + ", input=" + input, e, context);
 		}
 		
 		if (bd.compareTo(smallBad) >= 0 && bd.compareTo(bigBad) <= 0) {
