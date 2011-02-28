@@ -125,6 +125,15 @@ public class ValidatorTest extends TestCase {
         assertEquals(1, errors.size());
         instance.getValidCreditCard("cctest8", "4417 1234 5678 9112", false, errors);
         assertEquals(2, errors.size());
+
+        assertTrue(instance.isValidCreditCard("cctest1", "1234 9876 0000 0008", false, errors));
+        assertTrue(errors.size()==2);
+        assertTrue(instance.isValidCreditCard("cctest2", "1234987600000008", false, errors));
+        assertTrue(errors.size()==2);
+        assertFalse(instance.isValidCreditCard("cctest3", "12349876000000081", false, errors));
+        assertTrue(errors.size()==3);
+        assertFalse(instance.isValidCreditCard("cctest4", "4417 1234 5678 9112", false, errors));
+        assertTrue(errors.size()==4);
     }
 
     public void testGetValidDate() throws Exception {
@@ -287,6 +296,15 @@ public class ValidatorTest extends TestCase {
         assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true));
         assertFalse(instance.isValidDate("datetest2", null, format, false));
         assertFalse(instance.isValidDate("datetest3", "", format, false));
+
+        ValidationErrorList errors = new ValidationErrorList();
+        assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true, errors));
+        assertTrue(errors.size()==0);
+        assertFalse(instance.isValidDate("datetest2", null, format, false, errors));
+        assertTrue(errors.size()==1);
+        assertFalse(instance.isValidDate("datetest3", "", format, false, errors));
+        assertTrue(errors.size()==2);
+
     }
 
     public void testIsValidDirectoryPath() throws IOException {
@@ -300,6 +318,8 @@ public class ValidatorTest extends TestCase {
 
         boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1) ? true : false;
         File parent = new File("/");
+
+        ValidationErrorList errors = new ValidationErrorList();
 
         if (isWindows) {
             String sysRoot = new File(System.getenv("SystemRoot")).getCanonicalPath();
@@ -321,6 +341,36 @@ public class ValidatorTest extends TestCase {
             // Unix specific paths that should not exist or work
             assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", parent, false));
             assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", parent, false));
+
+            assertFalse(instance.isValidDirectoryPath("test1", "c:\\ridiculous", parent, false, errors));
+            assertTrue(errors.size()==1);
+            assertFalse(instance.isValidDirectoryPath("test2", "c:\\jeff", parent, false, errors));
+            assertTrue(errors.size()==2);
+            assertFalse(instance.isValidDirectoryPath("test3", "c:\\temp\\..\\etc", parent, false, errors));
+            assertTrue(errors.size()==3);
+
+            // Windows paths
+            assertTrue(instance.isValidDirectoryPath("test4", "C:\\", parent, false, errors));                        // Windows root directory
+            assertTrue(errors.size()==3);
+            assertTrue(instance.isValidDirectoryPath("test5", sysRoot, parent, false, errors));                  // Windows always exist directory
+            assertTrue(errors.size()==3);
+            assertFalse(instance.isValidDirectoryPath("test6", sysRoot + "\\System32\\cmd.exe", parent, false, errors));      // Windows command shell
+            assertTrue(errors.size()==4);
+
+            // Unix specific paths should not pass
+            assertFalse(instance.isValidDirectoryPath("test7", "/tmp", parent, false, errors));      // Unix Temporary directory
+            assertTrue(errors.size()==5);
+            assertFalse(instance.isValidDirectoryPath("test8", "/bin/sh", parent, false, errors));   // Unix Standard shell
+            assertTrue(errors.size()==6);
+            assertFalse(instance.isValidDirectoryPath("test9", "/etc/config", parent, false, errors));
+            assertTrue(errors.size()==7);
+
+            // Unix specific paths that should not exist or work
+            assertFalse(instance.isValidDirectoryPath("test10", "/etc/ridiculous", parent, false, errors));
+            assertTrue(errors.size()==8);
+            assertFalse(instance.isValidDirectoryPath("test11", "/tmp/../etc", parent, false, errors));
+            assertTrue(errors.size()==9);
+
         } else {
             // Windows paths should fail
             assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
@@ -339,6 +389,34 @@ public class ValidatorTest extends TestCase {
             assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", parent, false));   // Standard shell, not dir
             assertFalse(instance.isValidDirectoryPath("test", "/etc/ridiculous", parent, false));
             assertFalse(instance.isValidDirectoryPath("test", "/tmp/../etc", parent, false));
+
+            // Windows paths should fail
+            assertFalse(instance.isValidDirectoryPath("test1", "c:\\ridiculous", parent, false, errors));
+            assertTrue(errors.size()==1);
+            assertFalse(instance.isValidDirectoryPath("test2", "c:\\temp\\..\\etc", parent, false, errors));
+            assertTrue(errors.size()==2);
+
+            // Standard Windows locations should fail
+            assertFalse(instance.isValidDirectoryPath("test3", "c:\\", parent, false, errors));                        // Windows root directory
+            assertTrue(errors.size()==3);
+            assertFalse(instance.isValidDirectoryPath("test4", "c:\\Windows\\temp", parent, false, errors));               // Windows temporary directory
+            assertTrue(errors.size()==4);
+            assertFalse(instance.isValidDirectoryPath("test5", "c:\\Windows\\System32\\cmd.exe", parent, false, errors));   // Windows command shell
+            assertTrue(errors.size()==5);
+
+            // Unix specific paths should pass
+            assertTrue(instance.isValidDirectoryPath("test6", "/", parent, false, errors));         // Root directory
+            assertTrue(errors.size()==5);
+            assertTrue(instance.isValidDirectoryPath("test7", "/bin", parent, false, errors));      // Always exist directory
+            assertTrue(errors.size()==5);
+
+            // Unix specific paths that should not exist or work
+            assertFalse(instance.isValidDirectoryPath("test8", "/bin/sh", parent, false, errors));   // Standard shell, not dir
+            assertTrue(errors.size()==6);
+            assertFalse(instance.isValidDirectoryPath("test9", "/etc/ridiculous", parent, false, errors));
+            assertTrue(errors.size()==7);
+            assertFalse(instance.isValidDirectoryPath("test10", "/tmp/../etc", parent, false, errors));
+            assertTrue(errors.size()==8);
         }
     }
 
@@ -348,6 +426,60 @@ public class ValidatorTest extends TestCase {
 
     public void testIsValidDouble() {
         // isValidDouble(String, String, double, double, boolean)
+    	Validator instance = ESAPI.validator();
+    	ValidationErrorList errors = new ValidationErrorList();
+    	//testing negative range
+        assertFalse(instance.isValidDouble("test1", "-4", 1, 10, false, errors));
+        assertTrue(errors.size() == 1);
+        assertTrue(instance.isValidDouble("test2", "-4", -10, 10, false, errors));
+        assertTrue(errors.size() == 1);
+        //testing null value
+        assertTrue(instance.isValidDouble("test3", null, -10, 10, true, errors));
+        assertTrue(errors.size() == 1);
+        assertFalse(instance.isValidDouble("test4", null, -10, 10, false, errors));
+        assertTrue(errors.size() == 2);
+        //testing empty string
+        assertTrue(instance.isValidDouble("test5", "", -10, 10, true, errors));
+        assertTrue(errors.size() == 2);
+        assertFalse(instance.isValidDouble("test6", "", -10, 10, false, errors));
+        assertTrue(errors.size() == 3);
+        //testing improper range
+        assertFalse(instance.isValidDouble("test7", "50.0", 10, -10, false, errors));
+        assertTrue(errors.size() == 4);
+        //testing non-integers
+        assertTrue(instance.isValidDouble("test8", "4.3214", -10, 10, true, errors));
+        assertTrue(errors.size() == 4);
+        assertTrue(instance.isValidDouble("test9", "-1.65", -10, 10, true, errors));
+        assertTrue(errors.size() == 4);
+        //other testing
+        assertTrue(instance.isValidDouble("test10", "4", 1, 10, false, errors));
+        assertTrue(errors.size() == 4);
+        assertTrue(instance.isValidDouble("test11", "400", 1, 10000, false, errors));
+        assertTrue(errors.size() == 4);
+        assertTrue(instance.isValidDouble("test12", "400000000", 1, 400000000, false, errors));
+        assertTrue(errors.size() == 4);
+        assertFalse(instance.isValidDouble("test13", "4000000000000", 1, 10000, false, errors));
+        assertTrue(errors.size() == 5);
+        assertFalse(instance.isValidDouble("test14", "alsdkf", 10, 10000, false, errors));
+        assertTrue(errors.size() == 6);
+        assertFalse(instance.isValidDouble("test15", "--10", 10, 10000, false, errors));
+        assertTrue(errors.size() == 7);
+        assertFalse(instance.isValidDouble("test16", "14.1414234x", 10, 10000, false, errors));
+        assertTrue(errors.size() == 8);
+        assertFalse(instance.isValidDouble("test17", "Infinity", 10, 10000, false, errors));
+        assertTrue(errors.size() == 9);
+        assertFalse(instance.isValidDouble("test18", "-Infinity", 10, 10000, false, errors));
+        assertTrue(errors.size() == 10);
+        assertFalse(instance.isValidDouble("test19", "NaN", 10, 10000, false, errors));
+        assertTrue(errors.size() == 11);
+        assertFalse(instance.isValidDouble("test20", "-NaN", 10, 10000, false, errors));
+        assertTrue(errors.size() == 12);
+        assertFalse(instance.isValidDouble("test21", "+NaN", 10, 10000, false, errors));
+        assertTrue(errors.size() == 13);
+        assertTrue(instance.isValidDouble("test22", "1e-6", -999999999, 999999999, false, errors));
+        assertTrue(errors.size() == 13);
+        assertTrue(instance.isValidDouble("test23", "-1e-6", -999999999, 999999999, false, errors));
+        assertTrue(errors.size() == 13);
     }
 
     public void testIsValidFileContent() {
@@ -369,6 +501,12 @@ public class ValidatorTest extends TestCase {
         assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false));
         assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false));
         assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false));
+
+        ValidationErrorList errors = new ValidationErrorList();
+        assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false, errors));
+        assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false, errors));
+        assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false, errors));
+        assertTrue(errors.size() == 0);
     }
 
     public void testIsValidFileUpload() throws IOException {
@@ -376,6 +514,7 @@ public class ValidatorTest extends TestCase {
         String filepath = new File(System.getProperty("user.dir")).getCanonicalPath();
         String filename = "aspect.jar";
         File parent = new File("/").getCanonicalFile();
+        ValidationErrorList errors = new ValidationErrorList();
         byte[] content = null;
         try {
             content = "This is some file content".getBytes(PREFERRED_ENCODING);
@@ -385,6 +524,8 @@ public class ValidatorTest extends TestCase {
         }
         Validator instance = ESAPI.validator();
         assertTrue(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false));
+        assertTrue(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false, errors));
+        assertTrue(errors.size() == 0);
 
         filepath = "/ridiculous";
         filename = "aspect.jar";
@@ -395,6 +536,8 @@ public class ValidatorTest extends TestCase {
             fail(PREFERRED_ENCODING + " not a supported encoding?!?!!!");
         }
         assertFalse(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false));
+        assertFalse(instance.isValidFileUpload("test", filepath, filename, parent, content, 100, false, errors));
+        assertTrue(errors.size() == 1);
     }
 
     public void testIsValidHTTPRequestParameterSet() {
@@ -432,6 +575,60 @@ public class ValidatorTest extends TestCase {
 
         assertTrue(instance.isValidInput("test", null, "Email", 100, true));
         assertFalse(instance.isValidInput("test", null, "Email", 100, false));
+
+        ValidationErrorList errors = new ValidationErrorList();
+
+        assertTrue(instance.isValidInput("test1", "jeff.williams@aspectsecurity.com", "Email", 100, false, errors));
+        assertTrue(errors.size()==0);
+        assertFalse(instance.isValidInput("test2", "jeff.williams@@aspectsecurity.com", "Email", 100, false, errors));
+        assertTrue(errors.size()==1);
+        assertFalse(instance.isValidInput("test3", "jeff.williams@aspectsecurity", "Email", 100, false, errors));
+        assertTrue(errors.size()==2);
+        assertTrue(instance.isValidInput("test4", "jeff.wil'liams@aspectsecurity.com", "Email", 100, false, errors));
+        assertTrue(errors.size()==2);
+        assertTrue(instance.isValidInput("test5", "jeff.wil''liams@aspectsecurity.com", "Email", 100, false, errors));
+        assertTrue(errors.size()==2);
+        assertTrue(instance.isValidInput("test6", "123.168.100.234", "IPAddress", 100, false, errors));
+        assertTrue(errors.size()==2);
+        assertTrue(instance.isValidInput("test7", "192.168.1.234", "IPAddress", 100, false, errors));
+        assertTrue(errors.size()==2);
+        assertFalse(instance.isValidInput("test8", "..168.1.234", "IPAddress", 100, false, errors));
+        assertTrue(errors.size()==3);
+        assertFalse(instance.isValidInput("test9", "10.x.1.234", "IPAddress", 100, false, errors));
+        assertTrue(errors.size()==4);
+        assertTrue(instance.isValidInput("test10", "http://www.aspectsecurity.com", "URL", 100, false, errors));
+        assertTrue(errors.size()==4);
+        assertFalse(instance.isValidInput("test11", "http:///www.aspectsecurity.com", "URL", 100, false, errors));
+        assertTrue(errors.size()==5);
+        assertFalse(instance.isValidInput("test12", "http://www.aspect security.com", "URL", 100, false, errors));
+        assertTrue(errors.size()==6);
+        assertTrue(instance.isValidInput("test13", "078-05-1120", "SSN", 100, false, errors));
+        assertTrue(errors.size()==6);
+        assertTrue(instance.isValidInput("test14", "078 05 1120", "SSN", 100, false, errors));
+        assertTrue(errors.size()==6);
+        assertTrue(instance.isValidInput("test15", "078051120", "SSN", 100, false, errors));
+        assertTrue(errors.size()==6);
+        assertFalse(instance.isValidInput("test16", "987-65-4320", "SSN", 100, false, errors));
+        assertTrue(errors.size()==7);
+        assertFalse(instance.isValidInput("test17", "000-00-0000", "SSN", 100, false, errors));
+        assertTrue(errors.size()==8);
+        assertFalse(instance.isValidInput("test18", "(555) 555-5555", "SSN", 100, false, errors));
+        assertTrue(errors.size()==9);
+        assertFalse(instance.isValidInput("test19", "test", "SSN", 100, false, errors));
+        assertTrue(errors.size()==10);
+        assertTrue(instance.isValidInput("test20", "jeffWILLIAMS123", "HTTPParameterValue", 100, false, errors));
+        assertTrue(errors.size()==10);
+        assertTrue(instance.isValidInput("test21", "jeff .-/+=@_ WILLIAMS", "HTTPParameterValue", 100, false, errors));
+        assertTrue(errors.size()==10);
+        // Removed per Issue 116 - The '*' character is valid as a parameter character
+//        assertFalse(instance.isValidInput("test", "jeff*WILLIAMS", "HTTPParameterValue", 100, false));
+        assertFalse(instance.isValidInput("test22", "jeff^WILLIAMS", "HTTPParameterValue", 100, false, errors));
+        assertTrue(errors.size()==11);
+        assertFalse(instance.isValidInput("test23", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false, errors));
+        assertTrue(errors.size()==12);
+
+        assertTrue(instance.isValidInput("test", null, "Email", 100, true, errors));
+        assertFalse(instance.isValidInput("test", null, "Email", 100, false, errors));
     }
 
     public void testIsValidInteger() {
@@ -467,6 +664,60 @@ public class ValidatorTest extends TestCase {
         assertFalse(instance.isValidInteger("test", "1e-6", -999999999, 999999999, false));
         assertFalse(instance.isValidInteger("test", "-1e-6", -999999999, 999999999, false));
 
+        ValidationErrorList errors = new ValidationErrorList();
+        //testing negative range
+        assertFalse(instance.isValidInteger("test1", "-4", 1, 10, false, errors));
+        assertTrue(errors.size() == 1);
+        assertTrue(instance.isValidInteger("test2", "-4", -10, 10, false, errors));
+        assertTrue(errors.size() == 1);
+        //testing null value
+        assertTrue(instance.isValidInteger("test3", null, -10, 10, true, errors));
+        assertTrue(errors.size() == 1);
+        assertFalse(instance.isValidInteger("test4", null, -10, 10, false, errors));
+        assertTrue(errors.size() == 2);
+        //testing empty string
+        assertTrue(instance.isValidInteger("test5", "", -10, 10, true, errors));
+        assertTrue(errors.size() == 2);
+        assertFalse(instance.isValidInteger("test6", "", -10, 10, false, errors));
+        assertTrue(errors.size() == 3);
+        //testing improper range
+        assertFalse(instance.isValidInteger("test7", "50", 10, -10, false, errors));
+        assertTrue(errors.size() == 4);
+        //testing non-integers
+        assertFalse(instance.isValidInteger("test8", "4.3214", -10, 10, true, errors));
+        assertTrue(errors.size() == 5);
+        assertFalse(instance.isValidInteger("test9", "-1.65", -10, 10, true, errors));
+        assertTrue(errors.size() == 6);
+        //other testing
+        assertTrue(instance.isValidInteger("test10", "4", 1, 10, false, errors));
+        assertTrue(errors.size() == 6);
+        assertTrue(instance.isValidInteger("test11", "400", 1, 10000, false, errors));
+        assertTrue(errors.size() == 6);
+        assertTrue(instance.isValidInteger("test12", "400000000", 1, 400000000, false, errors));
+        assertTrue(errors.size() == 6);
+        assertFalse(instance.isValidInteger("test13", "4000000000000", 1, 10000, false, errors));
+        assertTrue(errors.size() == 7);
+        assertFalse(instance.isValidInteger("test14", "alsdkf", 10, 10000, false, errors));
+        assertTrue(errors.size() == 8);
+        assertFalse(instance.isValidInteger("test15", "--10", 10, 10000, false, errors));
+        assertTrue(errors.size() == 9);
+        assertFalse(instance.isValidInteger("test16", "14.1414234x", 10, 10000, false, errors));
+        assertTrue(errors.size() == 10);
+        assertFalse(instance.isValidInteger("test17", "Infinity", 10, 10000, false, errors));
+        assertTrue(errors.size() == 11);
+        assertFalse(instance.isValidInteger("test18", "-Infinity", 10, 10000, false, errors));
+        assertTrue(errors.size() == 12);
+        assertFalse(instance.isValidInteger("test19", "NaN", 10, 10000, false, errors));
+        assertTrue(errors.size() == 13);
+        assertFalse(instance.isValidInteger("test20", "-NaN", 10, 10000, false, errors));
+        assertTrue(errors.size() == 14);
+        assertFalse(instance.isValidInteger("test21", "+NaN", 10, 10000, false, errors));
+        assertTrue(errors.size() == 15);
+        assertFalse(instance.isValidInteger("test22", "1e-6", -999999999, 999999999, false, errors));
+        assertTrue(errors.size() == 16);
+        assertFalse(instance.isValidInteger("test23", "-1e-6", -999999999, 999999999, false, errors));
+        assertTrue(errors.size() == 17);
+
     }
 
     public void testIsValidListItem() {
@@ -477,6 +728,12 @@ public class ValidatorTest extends TestCase {
         list.add("two");
         assertTrue(instance.isValidListItem("test", "one", list));
         assertFalse(instance.isValidListItem("test", "three", list));
+
+        ValidationErrorList errors = new ValidationErrorList();
+        assertTrue(instance.isValidListItem("test1", "one", list, errors));
+        assertTrue(errors.size()==0);
+        assertFalse(instance.isValidListItem("test2", "three", list, errors));
+        assertTrue(errors.size()==1);
     }
 
     public void testIsValidNumber() {
@@ -511,6 +768,60 @@ public class ValidatorTest extends TestCase {
         assertFalse(instance.isValidNumber("test", "+NaN", 10, 10000, false));
         assertTrue(instance.isValidNumber("test", "1e-6", -999999999, 999999999, false));
         assertTrue(instance.isValidNumber("test", "-1e-6", -999999999, 999999999, false));
+
+        ValidationErrorList errors = new ValidationErrorList();
+      //testing negative range
+        assertFalse(instance.isValidNumber("test1", "-4", 1, 10, false, errors));
+        assertTrue(errors.size()==1);
+        assertTrue(instance.isValidNumber("test2", "-4", -10, 10, false, errors));
+        assertTrue(errors.size()==1);
+        //testing null value
+        assertTrue(instance.isValidNumber("test3", null, -10, 10, true, errors));
+        assertTrue(errors.size()==1);
+        assertFalse(instance.isValidNumber("test4", null, -10, 10, false, errors));
+        assertTrue(errors.size()==2);
+        //testing empty string
+        assertTrue(instance.isValidNumber("test5", "", -10, 10, true, errors));
+        assertTrue(errors.size()==2);
+        assertFalse(instance.isValidNumber("test6", "", -10, 10, false, errors));
+        assertTrue(errors.size()==3);
+        //testing improper range
+        assertFalse(instance.isValidNumber("test7", "5", 10, -10, false, errors));
+        assertTrue(errors.size()==4);
+        //testing non-integers
+        assertTrue(instance.isValidNumber("test8", "4.3214", -10, 10, true, errors));
+        assertTrue(errors.size()==4);
+        assertTrue(instance.isValidNumber("test9", "-1.65", -10, 10, true, errors));
+        assertTrue(errors.size()==4);
+        //other testing
+        assertTrue(instance.isValidNumber("test10", "4", 1, 10, false, errors));
+        assertTrue(errors.size()==4);
+        assertTrue(instance.isValidNumber("test11", "400", 1, 10000, false, errors));
+        assertTrue(errors.size()==4);
+        assertTrue(instance.isValidNumber("test12", "400000000", 1, 400000000, false, errors));
+        assertTrue(errors.size()==4);
+        assertFalse(instance.isValidNumber("test13", "4000000000000", 1, 10000, false, errors));
+        assertTrue(errors.size()==5);
+        assertFalse(instance.isValidNumber("test14", "alsdkf", 10, 10000, false, errors));
+        assertTrue(errors.size()==6);
+        assertFalse(instance.isValidNumber("test15", "--10", 10, 10000, false, errors));
+        assertTrue(errors.size()==7);
+        assertFalse(instance.isValidNumber("test16", "14.1414234x", 10, 10000, false, errors));
+        assertTrue(errors.size()==8);
+        assertFalse(instance.isValidNumber("test17", "Infinity", 10, 10000, false, errors));
+        assertTrue(errors.size()==9);
+        assertFalse(instance.isValidNumber("test18", "-Infinity", 10, 10000, false, errors));
+        assertTrue(errors.size()==10);
+        assertFalse(instance.isValidNumber("test19", "NaN", 10, 10000, false, errors));
+        assertTrue(errors.size()==11);
+        assertFalse(instance.isValidNumber("test20", "-NaN", 10, 10000, false, errors));
+        assertTrue(errors.size()==12);
+        assertFalse(instance.isValidNumber("test21", "+NaN", 10, 10000, false, errors));
+        assertTrue(errors.size()==13);
+        assertTrue(instance.isValidNumber("test22", "1e-6", -999999999, 999999999, false, errors));
+        assertTrue(errors.size()==13);
+        assertTrue(instance.isValidNumber("test23", "-1e-6", -999999999, 999999999, false, errors));
+        assertTrue(errors.size()==13);
     }
 
     public void testIsValidParameterSet() {
@@ -530,13 +841,20 @@ public class ValidatorTest extends TestCase {
         request.addParameter("p3", "value");
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
         assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames));
+        assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames,errors));
+        assertTrue(errors.size()==0);
         request.addParameter("p4", "value");
         request.addParameter("p5", "value");
         request.addParameter("p6", "value");
         assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames));
+        assertTrue(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames, errors));
+        assertTrue(errors.size()==0);
         request.removeParameter("p1");
         assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames));
+        assertFalse(instance.isValidHTTPRequestParameterSet("HTTPParameters", request, requiredNames, optionalNames, errors));
+        assertTrue(errors.size() ==1);
     }
 
     public void testIsValidPrintable() {
@@ -547,6 +865,17 @@ public class ValidatorTest extends TestCase {
         char[] chars = {0x60, (char) 0xFF, 0x10, 0x25};
         assertFalse(instance.isValidPrintable("name", chars, 100, false));
         assertFalse(instance.isValidPrintable("name", "%08", 100, false));
+
+        ValidationErrorList errors = new ValidationErrorList();
+        assertTrue(instance.isValidPrintable("name1", "abcDEF", 100, false, errors));
+        assertTrue(errors.size()==0);
+        assertTrue(instance.isValidPrintable("name2", "!@#R()*$;><()", 100, false, errors));
+        assertTrue(errors.size()==0);
+        assertFalse(instance.isValidPrintable("name3", chars, 100, false, errors));
+        assertTrue(errors.size()==1);
+        assertFalse(instance.isValidPrintable("name4", "%08", 100, false, errors));
+        assertTrue(errors.size()==2);
+
     }
 
     public void testIsValidRedirectLocation() {
@@ -568,6 +897,16 @@ public class ValidatorTest extends TestCase {
         // TODO: waiting for a way to validate text headed for an attribute for scripts
         // This would be nice to catch, but just looks like text to AntiSamy
         // assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
+        ValidationErrorList errors = new ValidationErrorList();
+        assertTrue(instance.isValidSafeHTML("test1", "<b>Jeff</b>", 100, false, errors));
+        assertTrue(instance.isValidSafeHTML("test2", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false, errors));
+        assertTrue(instance.isValidSafeHTML("test3", "Test. <script>alert(document.cookie)</script>", 100, false, errors));
+        assertTrue(instance.isValidSafeHTML("test4", "Test. <div style={xss:expression(xss)}>", 100, false, errors));
+        assertTrue(instance.isValidSafeHTML("test5", "Test. <s%00cript>alert(document.cookie)</script>", 100, false, errors));
+        assertTrue(instance.isValidSafeHTML("test6", "Test. <s\tcript>alert(document.cookie)</script>", 100, false, errors));
+        assertTrue(instance.isValidSafeHTML("test7", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false, errors));
+        assertTrue(errors.size() == 0);
+
     }
 
     public void testSafeReadLine() {
@@ -687,7 +1026,7 @@ public class ValidatorTest extends TestCase {
         	assertFalse(testResult);
         }
         assertNull(safeRequest.getParameter("e1"));
-        
+
         //This is revealing problems with Jeff's original SafeRequest
         //mishandling of the AllowNull parameter. I'm adding a new Google code
         //bug to track this.
