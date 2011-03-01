@@ -141,7 +141,7 @@ public interface Logger {
 		private String type;
 		private Boolean success = null;
 		
-		EventType (String name, Boolean newSuccess) {
+		public EventType (String name, Boolean newSuccess) {
 			this.type = name;
 			this.success = newSuccess;
 		}
