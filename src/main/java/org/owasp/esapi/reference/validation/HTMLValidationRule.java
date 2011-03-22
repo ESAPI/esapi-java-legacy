@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.apache.commons.configuration.ConfigurationRuntimeException;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
@@ -52,13 +52,13 @@ public class HTMLValidationRule extends StringValidationRule {
 		try {
 			resourceStream = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
 		} catch (IOException e) {
-			throw new ConfigurationRuntimeException("Couldn't find antisamy-esapi.xml", e);
+			throw new ConfigurationException("Couldn't find antisamy-esapi.xml", e);
 	            }
         if (resourceStream != null) {
         	try {
 				antiSamyPolicy = Policy.getInstance(resourceStream);
 			} catch (PolicyException e) {
-				throw new ConfigurationRuntimeException("Couldn't parse antisamy policy", e);
+				throw new ConfigurationException("Couldn't parse antisamy policy", e);
 		        }
 			}
 		}
