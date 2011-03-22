@@ -147,6 +147,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
     public static final String LOG_SERVER_IP = "Logger.LogServerIP";
     public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
+    public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
 
 
 
@@ -1130,6 +1131,13 @@ iae.printStackTrace();
 	{
 	    List<String> empty = new ArrayList<String>();     // Default is empty list
 	    return getESAPIProperty(ADDITIONAL_ALLOWED_CIPHER_MODES, empty);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getLenientDatesAccepted() {
+		return getESAPIProperty( ACCEPT_LENIENT_DATES, false);
 	}
 
 	protected String getESAPIProperty( String key, String def ) {
