@@ -103,6 +103,17 @@ public interface SecurityConfiguration {
 	 * @return the validation pattern
 	 */
     public Pattern getValidationPattern( String typeName );
+    
+    /**
+     * Determines whether ESAPI will accept "lenient" dates when attempt
+     * to parse dates. Controlled by ESAPI property
+     * {@code Validator.AcceptLenientDates}, which defaults to {@code false}
+     * if unset.
+     * 
+     * @return True if lenient dates are accepted; false otherwise.
+     * @see java.text.DateFormat#setLenient(boolean)
+     */
+    public boolean getLenientDatesAccepted();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI OS Execution implementation.
