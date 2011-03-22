@@ -18,6 +18,7 @@ package org.owasp.esapi.reference.validation;
 import java.text.DateFormat;
 import java.util.Date;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ValidationException;
@@ -52,6 +53,7 @@ public class DateValidationRule extends BaseValidationRule {
 		}
 */
         this.format = newFormat;
+        this.format.setLenient( ESAPI.securityConfiguration().getLenientDatesAccepted() );
     }
 
     /**
@@ -79,7 +81,7 @@ public class DateValidationRule extends BaseValidationRule {
 	    
 	private Date safelyParse(String context, String input)
 			throws ValidationException {
-		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
 		if (StringUtilities.isEmpty(input)) {
 			if (allowNull) {
 				return null;
