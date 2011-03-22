@@ -137,16 +137,46 @@ public class ValidatorTest extends TestCase {
     }
 
     public void testGetValidDate() throws Exception {
-        System.out.println("getValidDate");
-        Validator instance = ESAPI.validator();
-        ValidationErrorList errors = new ValidationErrorList();
-        assertTrue(instance.getValidDate("datetest1", "June 23, 1967", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US), false) != null);
-        instance.getValidDate("datetest2", "freakshow", DateFormat.getDateInstance(), false, errors);
-        assertEquals(1, errors.size());
+    	System.out.println("getValidDate");
+    	Validator instance = ESAPI.validator();
+    	ValidationErrorList errors = new ValidationErrorList();
+    	assertTrue(instance.getValidDate("datetest1", "June 23, 1967", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US), false) != null);
+    	instance.getValidDate("datetest2", "freakshow", DateFormat.getDateInstance(), false, errors);
+    	assertEquals(1, errors.size());
 
-        // TODO: This test case fails due to an apparent bug in SimpleDateFormat
-        instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(), false, errors);
-        // assertEquals( 2, errors.size() );
+    	// TODO: This test case fails due to an apparent bug in SimpleDateFormat
+    	// Note: This seems to be fixed in JDK 6. Will leave it commented out since
+    	//		 we only require JDK 5. -kww
+    	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(), false, errors);
+    	// assertEquals( 2, errors.size() );
+    }
+    
+    // FIXME: Should probably use SecurityConfigurationWrapper and force
+    //		  Validator.AcceptLenientDates to be false.
+    public void testLenientDate() {
+    	System.out.println("testLenientDate");
+    	boolean acceptLenientDates = ESAPI.securityConfiguration().getLenientDatesAccepted();
+    	if ( acceptLenientDates ) {
+    		assertTrue("Lenient date test skipped because Validator.AcceptLenientDates set to true", true);
+    		return;
+    	}
+
+    	Date lenientDateTest = null;
+    	try {
+    		// lenientDateTest will be null when Validator.AcceptLenientDates
+    		// is set to false (the default).
+    		Validator instance = ESAPI.validator();
+    		lenientDateTest = instance.getValidDate("datatest3-lenient", "15/2/2009 11:83:00",
+    				                                DateFormat.getDateInstance(DateFormat.SHORT, Locale.US),
+    				                                false);
+    		fail("Failed to throw expected ValidationException when Validator.AcceptLenientDates set to false.");
+    	} catch (ValidationException ve) {
+    		assertNull( lenientDateTest );
+    		Throwable cause = ve.getCause();
+    		assertTrue( cause.getClass().getName().equals("java.text.ParseException") );
+    	} catch (Exception e) {
+    		fail("Caught unexpected exception: " + e.getClass().getName() + "; msg: " + e);
+    	}
     }
 
     public void testGetValidDirectoryPath() throws Exception {
