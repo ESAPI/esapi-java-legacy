@@ -623,4 +623,11 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	public String getKDFPseudoRandomFunction() {
 		return wrapped.getKDFPseudoRandomFunction();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getLenientDatesAccepted() {
+		return wrapped.getLenientDatesAccepted();
+	}
 }
