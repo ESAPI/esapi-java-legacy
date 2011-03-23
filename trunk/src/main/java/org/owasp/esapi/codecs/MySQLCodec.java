@@ -27,27 +27,56 @@ package org.owasp.esapi.codecs;
  * @see org.owasp.esapi.Encoder
  */
 public class MySQLCodec extends Codec {
+    /**
+     * Specifies the SQL Mode the target MySQL Server is running with. For details about MySQL Server Modes
+     * please see the Manual at {@link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi}
+     *
+     * Currently the only supported modes are:
+     * ANSI
+     * STANDARD
+     */
+    public static enum Mode {
+        ANSI(1),STANDARD(0);
 
-    /**
-     *
-     */
+        private int key;
+        private Mode(int key) { this.key = key; }
+
+        static Mode findByKey(int key) {
+            for ( Mode m : values() ) {
+                if ( m.key == key )
+                    return m;
+            }
+            return null;
+        }
+    }
+
+    /** Target MySQL Server is running in Standard MySQL (Default) mode. */
     public static final int MYSQL_MODE = 0;
-    /**
-     *
-     */
+    /** Target MySQL Server is running in {@link http://dev.mysql.com/doc/refman/5.0/en/ansi-mode.html ANSI Mode} */
     public static final int ANSI_MODE = 1;
 	
-	private int mode = 0;
+	//private int mode = 0;
+    private Mode mode;
 	
 	/**
 	 * Instantiate the MySQL codec
 	 * 
 	 * @param mode
-	 * 			Mode has to be one of {MYSQL_MODE|ANSI_MODE} to allow correct encoding   
+	 * 			Mode has to be one of {MYSQL_MODE|ANSI_MODE} to allow correct encoding
+     * @deprecated
+     * @see #MySQLCodec(org.owasp.esapi.codecs.MySQLCodec.Mode)
 	 */
 	public MySQLCodec( int mode ) {
-		this.mode = mode;
+		this.mode = Mode.findByKey(mode);
 	}
+
+    /**
+     * Instantiate the MySQL Codec with the given SQL {@link Mode}.
+     * @param mode The mode the target server is running in
+     */
+    public MySQLCodec( Mode mode ) {
+        this.mode = mode;
+    }
 
 
 	/**
@@ -72,8 +101,8 @@ public class MySQLCodec extends Codec {
 		}
 		
 		switch( mode ) {
-			case ANSI_MODE: return encodeCharacterANSI( c );
-			case MYSQL_MODE: return encodeCharacterMySQL( c );
+			case ANSI: return encodeCharacterANSI( c );
+			case STANDARD: return encodeCharacterMySQL( c );
 		}
 		return null;
 	}
@@ -81,16 +110,21 @@ public class MySQLCodec extends Codec {
 	/**
 	 * encodeCharacterANSI encodes for ANSI SQL. 
 	 * 
-	 * Only the apostrophe is encoded
+	 * Apostrophe is encoded
+     *
+     * Bug ###: In ANSI Mode Strings can also be passed in using the quotation. In ANSI_QUOTES mode a quotation
+     * is considered to be an identifier, thus cannot be used at all in a value and will be dropped completely.
 	 * 
 	 * @param c 
 	 * 			character to encode
 	 * @return
-	 * 			'' if ', otherwise return c directly
+	 * 			String encoded to standards of MySQL running in ANSI mode
 	 */
 	private String encodeCharacterANSI( Character c ) {
-		if ( c.charValue() == '\'' )
+		if ( c == '\'' )
         	return "\'\'";
+        if ( c == '\"' )
+            return "";
         return ""+c;
 	}
 
@@ -130,8 +164,8 @@ public class MySQLCodec extends Codec {
 	 */
 	public Character decodeCharacter( PushbackString input ) {
 		switch( mode ) {
-			case ANSI_MODE: return decodeCharacterANSI( input );
-			case MYSQL_MODE: return decodeCharacterMySQL( input );
+			case ANSI: return decodeCharacterANSI( input );
+			case STANDARD: return decodeCharacterMySQL( input );
 		}
 		return null;
 	}
