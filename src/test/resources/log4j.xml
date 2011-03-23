@@ -11,7 +11,7 @@
   </appender>
 
     <appender name="file" class="org.apache.log4j.FileAppender">
-        <param name="File" value="unit-tests.log"/>
+        <param name="File" value="target/unit-tests.log"/>
         <layout class="org.apache.log4j.PatternLayout">
           <param name="ConversionPattern" value="%-5p %m%n"/>
         </layout>
