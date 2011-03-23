@@ -8,7 +8,14 @@
     <layout class="org.apache.log4j.PatternLayout"> 
       <param name="ConversionPattern" value="%-5p %m%n"/> 
     </layout> 
-  </appender> 
+  </appender>
+
+    <appender name="file" class="org.apache.log4j.FileAppender">
+        <param name="File" value="unit-tests.log"/>
+        <layout class="org.apache.log4j.PatternLayout">
+          <param name="ConversionPattern" value="%-5p %m%n"/>
+        </layout>
+    </appender>
 
   <logger name="org.owasp.esapi.reference.TestTrace">
     <level value="trace"/>
@@ -40,7 +47,7 @@
 
   <root>
     <priority value="debug" />
-    <appender-ref ref="console" />
+    <appender-ref ref="file" />
   </root>
 
   <loggerFactory class="org.owasp.esapi.reference.Log4JLoggerFactory"/>
