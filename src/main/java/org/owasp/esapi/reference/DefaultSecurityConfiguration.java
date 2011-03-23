@@ -421,7 +421,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * @throws java.io.IOException
 	 *             if the file is inaccessible
 	 */
-	private void loadConfiguration() throws IOException {
+	protected void loadConfiguration() throws IOException {
 		
 		try {
 		    //first attempt file IO loading of properties
