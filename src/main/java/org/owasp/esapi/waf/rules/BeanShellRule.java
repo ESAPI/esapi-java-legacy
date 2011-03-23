@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
@@ -45,7 +46,7 @@ public class BeanShellRule extends Rule {
 	public BeanShellRule(String fileLocation, String id, Pattern path) throws IOException, EvalError { 
 		i = new Interpreter();
 		i.set("logger", logger);
-		this.script = getFileContents(new File(fileLocation));
+		this.script = getFileContents( ESAPI.securityConfiguration().getResourceFile(fileLocation));
 		this.id = id;
 		this.path = path;
 	}
