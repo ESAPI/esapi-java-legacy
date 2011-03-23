@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
@@ -99,7 +100,7 @@
             <name>Chris Schmidt</name>
             <organization>Aspect Security</organization>
             <roles>
-		        <role>Project Manager</role>
+                <role>Project Manager</role>
                 <role>Continuous Integration Admin</role>
                 <role>Architect</role>
                 <role>Developer</role>
@@ -109,7 +110,7 @@
             <name>Kevin Wall</name>
             <organization>Qwest</organization>
             <roles>
-		        <role>Project Manager</role>
+                <role>Project Manager</role>
                 <role>Architect</role>
                 <role>Developer</role>
                 <role>Crypto Guy</role>
@@ -196,15 +197,15 @@
             <artifactId>xom</artifactId>
             <version>1.1</version>
         </dependency>
-         <dependency>
+        <dependency>
             <groupId>org.beanshell</groupId>
             <artifactId>bsh-core</artifactId>
             <version>2.0b4</version>
         </dependency>
         <dependency>
-            <groupId>org.owasp</groupId>
+            <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.4</version>
+            <version>1.4.3</version>
         </dependency>
     </dependencies>
 
@@ -241,6 +242,22 @@
                 </configuration>
             </plugin>
 
+            <!-- Check for updates to dependencies and report on them. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>check-for-dependency-updates</id>
+                        <goals>
+                            <goal>display-dependency-updates</goal>
+                            <goal>display-plugin-updates</goal>
+                            <goal>display-property-updates</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -249,7 +266,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>1.2</version>
+                <version>2.3.1</version>
                 <configuration>
                     <findbugsXmlOutput>true</findbugsXmlOutput>
                     <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
@@ -305,7 +322,20 @@
                     </dates>
                 </configuration>
             </plugin>
-            
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>versions-maven-plugin</artifactId>
+                <version>1.2</version>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>dependency-updates-report</report>
+                            <report>plugin-updates-report</report>
+                            <report>property-updates-report</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
         </plugins>
     </reporting>
 
@@ -427,7 +457,7 @@
                             <tagBase>https://owasp-esapi-java.googlecode.com/svn/tags/releases/</tagBase>
                         </configuration>
                     </plugin>
-                    
+
                 </plugins>
             </build>
         </profile>
