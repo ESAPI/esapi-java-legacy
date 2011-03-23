@@ -544,6 +544,10 @@ iae.printStackTrace();
 		// if not found, then try the programmatically set resource directory
 		// (this defaults to SystemResource directory/RESOURCE_FILE
 		URL fileUrl = ClassLoader.getSystemResource(resourceDirectory + "/" + filename);
+        if ( fileUrl == null ) {
+            fileUrl = ClassLoader.getSystemResource("esapi/" + filename);
+        }
+
 		if (fileUrl != null) {
 			String fileLocation = fileUrl.getFile();
 			f = new File(fileLocation);
