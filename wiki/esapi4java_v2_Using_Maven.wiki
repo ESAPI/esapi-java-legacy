@@ -14,7 +14,7 @@ To use ESAPI with Maven - you can add the following to your pom.xml
       <dependency>
          <groupId>org.owasp.esapi</groupId>
          <artifactId>esapi</artifactId>
-         <version>2.0_rc10</version>
+         <version>2.0_rc11</version>
       </dependency>
    </dependencies>
 }}}
@@ -40,7 +40,7 @@ To use ESAPI with Maven - you can add the following to your pom.xml
       <dependency>
          <groupId>org.owasp.esapi</groupId>
          <artifactId>esapi</artifactId>
-         <version>2.0_rc11-SNAPSHOT</version>
+         <version>2.0_rc12-SNAPSHOT</version>
       </dependency>
    </dependencies>
 }}}
