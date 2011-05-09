@@ -393,6 +393,35 @@
                             </execution>
                         </executions>
                     </plugin>
+					
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-jar-plugin</artifactId>
+						<version>2.3.1</version>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<keystore>codesign.keystore</keystore>
+							<alias>owasp foundation, inc.'s godaddy.com, inc. id</alias>
+							<verify>true</verify>
+							<archive>
+								<manifest>
+									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+									<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+								</manifest>
+								<manifestEntries>
+									<Sealed>true</Sealed>
+								</manifestEntries>
+							</archive>
+						</configuration>
+					</plugin>
+					
                     <!-- Baseline for ESAPI 2.0 is JDK1.5 - Enforces that a JDK1.5 compiler is being
                          used to build this release -->
                     <plugin>
