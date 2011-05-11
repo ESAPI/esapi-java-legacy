@@ -1,4 +1,4 @@
-#sidebar Contrib_TableOfContents
+#sidebar Contribs_TableOfContents
 
 = Usage =
 
