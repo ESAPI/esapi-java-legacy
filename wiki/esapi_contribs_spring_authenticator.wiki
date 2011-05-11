@@ -1,3 +1,4 @@
+#sidebar Contribs_TableOfContents
 
 = ESAPI-Spring Authenticator =
 
