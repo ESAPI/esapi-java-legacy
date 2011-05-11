@@ -1,0 +1,93 @@
+#sidebar Contrib_TableOfContents
+
+= Usage =
+
+== Implementing the Interfaces ==
+
+=== SpringSecurityAuthenticatorAdapter ===
+
+This class is responsible for bridging the gap and adapting the ESAPI and Spring methods to work together in harmony. There are a handful of _helper_ methods exposed by the ESAPI Authenticator Interface that must be implemented in your application. In addition, there is one important method that you must implement. This is the method that assembles the AuthenticatedUser.
+
+*Authentication getAuthentication(T,UserDetails,List[GrantedAuthority])*
+
+This method is responsible for assembling an instance of AuthenticatedUser which is an adapter class between the ESAPI User interface and the Spring-Security UserDetails interface. It must return an implementation of the Spring-Security Authentication interface - many are provided by the Spring-Security library itself - or you can build your own.
+
+||*Authentication*||*Description*||
+||AnonymousAuthenticationToken||Represents an unauthenticated user||
+||JaasAuthenticationToken||Represents a user who has been authenticated using a JAAS Service||
+||PreAuthenticatedAuthenticationToken||Represents a user who has been pre-authenticated (SiteMinder, etc)||
+||RememberMeAuthenticationToken||Represents a user who has been authenticated by the RememberMeService||
+||RunAsUserToken||Represents a user who is authenticated on behalf of another||
+||TestingAuthenticationToken||Should only be used for unit testing||
+||UsernamePasswordAuthenticationToken||Represents a user who has been authenticated by the UsernamePasswordAuthenticationFilter||
+
+*void afterPropertiesSet() throws Exception*
+
+This method is important if you are using an authenticator that is intended to be used as a singleton (which by default all Spring beans are unless otherwise scoped) Due to the way the ESAPI Locator works and how Spring works, it is necessary to add a getInstance method to the implementation if it is a singleton.
+
+{{{
+public class MyAuthenticator extends SpringSecurityAuthenticatorAdapter {
+   private static Authenticator INSTANCE;
+
+   public static Authenticator getInstance() {
+      return INSTANCE;
+   }
+
+   // ...
+
+   public void afterPropertiesSet() throws Exception {
+      INSTANCE = this;
+   }
+
+   // ...
+}
+}}}
+
+*String generateStrongPassword()*
+
+*String generateStrongPassword(User,String)*
+
+*User getUser(long)*
+
+*User getUser(String)*
+
+*Set getUserNames()*
+
+*String hashPassword(String,String) throws EncryptionException*
+
+*void verifyAccountNameStrength(String) throws AuthenticationException*
+
+*void verifyPasswordStrength(String,String,User) throws AuthenticationException*
+
+=== AuthenticationStrategy ===
+
+The AuthenticationStrategy is the mechanism that will actually interact with your user repository, be it LDAP, Database, or FileSystem - this is where you will actually perform the task of verifying a users credentials to authenticate them.
+
+*T authenticate(Authentication) throws AuthenticationException*
+
+*User createUser(String, String password)*
+
+*void changePassword(String, String newPassword)*
+
+*void deleteUser(String)*
+
+*boolean userExists(String)*
+
+=== AuthoritiesPopulator ===
+
+*List[GrantedAuthority] getAuthoritiesForUser(Authentication)*
+
+=== UserProfile ===
+
+This class represents the Entity that holds all the information returned by the ESAPI User Interface.
+
+== Configuration ==
+
+=== Configuring ESAPI ===
+
+You will need to update your ESAPI.properties to use the Authenticator implementation (class that extends SpringSecurityAuthenticatorAdaptor)
+
+{{{
+# ESAPI.properties
+ESAPI.Authenticator=com.mycompany.app.MyAuthenticator
+}}}
