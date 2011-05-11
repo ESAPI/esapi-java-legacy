@@ -24,7 +24,7 @@ If your project is using Maven you can simple add this component as a dependency
 
 == Manual Installation ==
 
-Download the latest version of the component from the [http://code.google.com/p/owasp-esapi-java/downloads/list Downloads] page and extract. Copy the `esapi-spring-authenticator-1.0.0.jar` into your `<web-app>/WEB-INF/lib` directory.
+Download the latest version of the component from the [http://code.google.com/p/owasp-esapi-java/downloads/list?q=label:Contribs Downloads] page and copy into your `<web-app>/WEB-INF/lib` directory.
 
 == Build from Source ==
 
