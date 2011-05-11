@@ -73,6 +73,10 @@ The AuthenticationStrategy is the mechanism that will actually interact with you
 
 *boolean userExists(String)*
 
+=== UserDetailsService ===
+
+This interface is provided by Spring-Security and is required for retrieving the UserProfile object from the user datasource.
+
 === AuthoritiesPopulator ===
 
 *List[GrantedAuthority] getAuthoritiesForUser(Authentication)*
@@ -90,4 +94,38 @@ You will need to update your ESAPI.properties to use the Authenticator implement
 {{{
 # ESAPI.properties
 ESAPI.Authenticator=com.mycompany.app.MyAuthenticator
+}}}
+
+=== Configuring Spring ===
+
+You will need to add the following into your applicationContext.xml file
+
+{{{
+    <bean id="esapiSpringAuthenticatorPropertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/SpringAuthenticator.properties"/>
+    </bean>
+
+    <import resource="classpath*:/org/owasp/esapi/contrib/spring/authenticator/esapi-spring-security-context.xml"/>
+
+    <bean id="authenticationProvider" class="com.mycompany.app.MyAuthenticator" scope="singleton">
+        <property name="authenticationStrategy" ref="authenticationStrategy" />
+        <property name="authoritiesPopulator" ref="authoritiesPopulator" />
+        <property name="userDetailsService" ref="userDetailsService" />
+    </bean>
+
+    <bean id="authenticationStrategy" class="com.mycompany.app.MyAuthenticationStrategy"/>
+    <bean id="authoritiesPopulator" class="com.mycompany.app.MyAuthoritiesPopulator"/>
+    <bean id="userDetailsService" class="com.mycompany.app.MyUserDetailsService"/>
+}}}
+
+Next you will need to create a SpringAuthenticator.properties 
+
+{{{
+Authenticator.LoginUrl=/user/login
+Authenticator.AuthenticationUrl=/user/authenticate
+Authenticator.SuccessUrl=/home/dashboard
+Authenticator.FailureUrl=/user/login/?error=true
+Authenticator.UsernameParameterName=username
+Authenticator.PasswordParameterName=password
+Authenticator.AuthenticateOnPostOnly=true
 }}}
