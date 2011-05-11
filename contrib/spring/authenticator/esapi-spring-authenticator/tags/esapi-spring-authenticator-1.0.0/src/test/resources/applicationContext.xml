@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+
+    <bean id="esapiSpringAuthenticatorPropertyPlaceholder"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:/SpringAuthenticator.properties"/>
+    </bean>
+
+    <import resource="classpath*:/org/owasp/esapi/contrib/spring/authenticator/esapi-spring-security-context.xml"/>
+
+    <context:component-scan base-package="org.owasp.esapi.contrib.spring.authenticator"/>
+
+    <bean id="authenticationProvider" class="org.owasp.esapi.contrib.spring.authenticator.MockAuthenticator"
+          scope="singleton">
+        <property name="authenticationStrategy">
+            <bean class="org.owasp.esapi.contrib.spring.authenticator.MockAuthenticationStrategy"/>
+        </property>
+        <property name="authoritiesPopulator">
+            <bean class="org.owasp.esapi.contrib.spring.authenticator.MockAuthoritiesPopulator"/>
+        </property>
+        <property name="userDetailsService">
+            <bean class="org.owasp.esapi.contrib.spring.authenticator.MockUserDetailsService"/>
+        </property>
+    </bean>
+
+</beans>
