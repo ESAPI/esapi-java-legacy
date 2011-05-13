@@ -4,7 +4,7 @@
 
     <groupId>org.owasp.esapi.contrib</groupId>
     <artifactId>esapi-contrib-parent</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -65,12 +65,12 @@
 
     <scm>
         <connection>
-            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/tags/esapi-contrib-parent-1.0.0
+            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/trunk
         </connection>
         <developerConnection>
-            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/tags/esapi-contrib-parent-1.0.0
+            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/trunk
         </developerConnection>
-        <url>http://code.google.com/p/owasp-esapi-java/source/checkout/tags/esapi-contrib-parent-1.0.0</url>
+        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
     </scm>
 
     <issueManagement>
