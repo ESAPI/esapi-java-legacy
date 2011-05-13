@@ -4,7 +4,7 @@
 
     <groupId>org.owasp.esapi.contrib</groupId>
     <artifactId>esapi-spring-encryptedproperties</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
 
     <parent>
         <groupId>org.owasp.esapi.contrib</groupId>
@@ -14,12 +14,12 @@
 	
     <scm>
         <connection>
-            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/esapi-spring-encryptedproperties-1.0.0
+            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/trunk
         </connection>
         <developerConnection>
-            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/esapi-spring-encryptedproperties-1.0.0
+            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/trunk
         </developerConnection>
-        <url>scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/esapi-spring-encryptedproperties-1.0.0</url>
+        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
     </scm>
 
     <dependencies>
