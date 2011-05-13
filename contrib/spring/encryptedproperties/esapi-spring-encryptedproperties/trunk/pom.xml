@@ -54,7 +54,7 @@
 					<version>2.1</version>
 					<configuration>
 						<tagBase>
-							https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/trunk/tags/
+							https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/
 						</tagBase>
 					</configuration>
 				</plugin>
