@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.owasp.esapi.contrib</groupId>
+    <artifactId>esapi-spring-encryptedproperties</artifactId>
+    <version>1.0.0</version>
+
+    <parent>
+        <groupId>org.owasp.esapi.contrib</groupId>
+        <artifactId>esapi-contrib-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+	
+    <scm>
+        <connection>
+            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/esapi-spring-encryptedproperties-1.0.0
+        </connection>
+        <developerConnection>
+            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/esapi-spring-encryptedproperties-1.0.0
+        </developerConnection>
+        <url>scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/esapi-spring-encryptedproperties-1.0.0</url>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.owasp.esapi</groupId>
+            <artifactId>esapi</artifactId>
+            <version>2.0GA</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>3.0.5.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>3.0.5.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+	
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.1</version>
+					<configuration>
+						<tagBase>
+							https://owasp-esapi-java.googlecode.com/svn/contrib/spring/encryptedproperties/esapi-spring-encryptedproperties/tags/
+						</tagBase>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
