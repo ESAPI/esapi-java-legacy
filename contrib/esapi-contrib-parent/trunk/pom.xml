@@ -39,6 +39,16 @@
         <url>http://www.owasp.org/index.php</url>
     </organization>
 
+    <scm>
+        <connection>
+            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/trunk
+        </connection>
+        <developerConnection>
+            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/trunk
+        </developerConnection>
+        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
+    </scm>
+
     <mailingLists>
         <mailingList>
             <name>ESAPI-Users</name>
