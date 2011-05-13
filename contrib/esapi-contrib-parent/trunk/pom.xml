@@ -261,7 +261,7 @@
                         <version>2.1</version>
                         <configuration>
                             <tagBase>
-                                https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/tags
+                                https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/tags/
                             </tagBase>
                         </configuration>
                     </plugin>
