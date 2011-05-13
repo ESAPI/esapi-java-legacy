@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.owasp.esapi.contrib</groupId>
     <artifactId>esapi-contrib-parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <parent>
@@ -67,12 +65,12 @@
 
     <scm>
         <connection>
-            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/trunk
+            scm:svn:http://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/tags/esapi-contrib-parent-1.0.0
         </connection>
         <developerConnection>
-            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/trunk
+            scm:svn:https://owasp-esapi-java.googlecode.com/svn/contrib/esapi-contrib-parent/tags/esapi-contrib-parent-1.0.0
         </developerConnection>
-        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
+        <url>http://code.google.com/p/owasp-esapi-java/source/checkout/tags/esapi-contrib-parent-1.0.0</url>
     </scm>
 
     <issueManagement>
