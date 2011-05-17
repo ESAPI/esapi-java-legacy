@@ -1,6 +1,27 @@
   * [esapi_contribs_home ESAPI Contribs]
-    * [esapi_contribs_spring_authenticator ESAPI-Spring Authenticator]
-      * [esapi_contribs_spring_authenticator_installation Installation]
-      * [esapi_contribs_spring_authenticator_usage Usage]
-      * [esapi_contribs_spring_authenticator_example Example]
+    * [esapi_contribs_dg_home Contribs Developer Guide]
+      * [esapi_contribs_dg_getting_started Getting Started]
+      * [esapi_contribs_dg_maven Maven Configuration]
+      * [esapi_contribs_dg_config Component Configuration]
+      * [esapi_contribs_dg_submit Submitting for Approval]
+      * [esapi_contribs_dg_example Example Component]
+    * [esapi_contribs_ug_home Users Guide]
+      * [esapi_contribs_ug_quickstart Quickstart]
+    * Frameworks
+      * Spring
+        * [esapi_contribs_spring_authenticator ESAPI-Spring Authenticator]
+          * [esapi_contribs_spring_authenticator_installation Installation]
+          * [esapi_contribs_spring_authenticator_usage Usage]
+          * [esapi_contribs_spring_authenticator_example Example]
+        * [esapi_contribs_spring_encprops ESAPI-Spring Encrypted Properties]
+          * [esapi_contribs_spring_encprops_installation Installation]
+          * [esapi_contribs_spring_encprops_usage Usage]
+          * [esapi_contribs_spring_encprops_example Example]
+      * Struts 1.x
+      * Struts 2.x
+    * Maven
+      * [esapi_contribs_maven_encprops Maven EncryptedProperties Plugin]
+        * [esapi_contribs_maven_encprops_installation Installation]
+        * [esapi_contribs_maven_encprops_usage Usage]
+        * [esapi_contribs_maven_encprops_example Example]
    
