@@ -45,19 +45,34 @@ public class MyAuthenticator extends SpringSecurityAuthenticatorAdapter {
 
 *String generateStrongPassword()*
 
+See [http://owasp-esapi-java.googlecode.com/svn/trunk_doc/latest/org/owasp/esapi/Authenticator.html#generateStrongPassword()]
+
 *String generateStrongPassword(User,String)*
+See [http://owasp-esapi-java.googlecode.com/svn/trunk_doc/latest/org/owasp/esapi/Authenticator.html#generateStrongPassword(org.owasp.esapi.User, java.lang.String)]
 
 *User getUser(long)*
 
+In most production systems, this method will not be needed or used and should throw a RuntimeException or a Compile-time Error. In some implementation, this method is used to retrieve a User object identified by the primary key.
+
 *User getUser(String)*
+
+This method can be used to retrieve an implementation of the User interface identified by the passed in username. This is a useful method for loading a user profile for display or for managing users by creating applicable User implementations (ie: UserProfileView, ManagedUserProfile)
 
 *Set getUserNames()*
 
+This method should be called when "creating" a user to ensure that the username is not already present in the realm.
+
 *String hashPassword(String,String) throws EncryptionException*
+
+If you are managing your own password storage, this method should be called prior to saving and verifying the supplied password.
 
 *void verifyAccountNameStrength(String) throws AuthenticationException*
 
+This method is generally used to ensure that an account name meets an established account name policy. Duplicate username checks, format checks, length checks and so on can be verified here. This method should be called as part of the user creation process.
+
 *void verifyPasswordStrength(String,String,User) throws AuthenticationException*
+
+This method should be called during initial account creation and when a password change is initiated.
 
 === AuthenticationStrategy ===
 
