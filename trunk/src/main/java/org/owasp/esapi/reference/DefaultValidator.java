@@ -205,7 +205,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		if ( p != null ) {
 			rvr.addWhitelistPattern( p );
 		} else {
-			throw new IllegalArgumentException("The selected type was not set via the ESAPI validation configuration");
+            // Issue 232 - Specify requested type in exception message - CS
+			throw new IllegalArgumentException("The selected type [" + type + "] was not set via the ESAPI validation configuration");
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
