@@ -431,8 +431,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		} catch (Exception iae) {
 		    //if file I/O loading fails, attempt classpath based loading next
 		    logSpecial("Loading " + RESOURCE_FILE + " via file I/O failed. Exception was: " + iae);
-iae.printStackTrace();
-			logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");		
+			logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");
 			try {
 				properties = loadConfigurationFromClasspath(RESOURCE_FILE);
 			} catch (Exception e) {				
