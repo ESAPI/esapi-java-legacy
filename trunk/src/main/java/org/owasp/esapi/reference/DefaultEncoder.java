@@ -117,9 +117,11 @@ public class DefaultEncoder implements Encoder {
 		if ( input == null ) {
 			return null;
 		}
+
+        // Issue 231 - These are reverse boolean logic in the Encoder interface, so we need to invert these values - CS
 		return canonicalize(input, 
-							ESAPI.securityConfiguration().getAllowMultipleEncoding(),
-							ESAPI.securityConfiguration().getAllowMixedEncoding() );
+							!ESAPI.securityConfiguration().getAllowMultipleEncoding(),
+							!ESAPI.securityConfiguration().getAllowMixedEncoding() );
 	}
 
 	
