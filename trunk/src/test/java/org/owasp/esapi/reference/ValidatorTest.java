@@ -38,6 +38,7 @@ import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The Class ValidatorTest.
@@ -1138,5 +1139,12 @@ public class ValidatorTest extends TestCase {
         return longString.toString();
     }
 
-
+    public void testGetContextPath() {
+        // Root Context Path ("")
+        assertTrue(ESAPI.validator().isValidInput("HTTPContextPath", "", "HTTPContextPath", 512, true));
+        // Deployed Context Path ("/context")
+        assertTrue(ESAPI.validator().isValidInput("HTTPContextPath", "/context", "HTTPContextPath", 512, true));
+        // Fail-case - URL Splitting
+        assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
+    }
 }
