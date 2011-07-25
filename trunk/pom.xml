@@ -321,11 +321,11 @@
                 <artifactId>maven-changelog-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <issueIDRegexPattern>[Ii]ssue[\: ]*(\d)+</issueIDRegexPattern>
+                    <issueIDRegexPattern>[Ii]ssue[# ]*(\d)+</issueIDRegexPattern>
                     <issueLinkUrl>http://code.google.com/p/owasp-esapi-java/issues/detail?id=%ISSUE%</issueLinkUrl>
                     <type>date</type>
                     <dates>
-                        <date>2010-10-20 00:00:00</date>
+                        <date>2011-05-11 00:00:00</date>
                     </dates>
                 </configuration>
             </plugin>
