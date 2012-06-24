@@ -663,7 +663,7 @@ public interface User extends Principal, Serializable {
          * {@inheritDoc}
          */
         public String resetCSRFToken() throws AuthenticationException {
-    		csrfToken = ESAPI.randomizer().getRandomString(8, Encoder.CHAR_ALPHANUMERICS);
+    		csrfToken = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
     		return csrfToken;
         }
 

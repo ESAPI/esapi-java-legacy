@@ -26,6 +26,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
@@ -591,7 +592,7 @@ public class EncoderTest extends TestCase {
             assertEquals(null, instance.encodeForBase64(null, true));
             assertEquals(null, instance.decodeFromBase64(null));
             for ( int i=0; i < 100; i++ ) {
-                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
+                byte[] r = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
                 String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
                 byte[] decoded = instance.decodeFromBase64( encoded );
                 assertTrue( Arrays.equals( r, decoded ) );
@@ -609,7 +610,7 @@ public class EncoderTest extends TestCase {
         Encoder instance = ESAPI.encoder();
         for ( int i=0; i < 100; i++ ) {
             try {
-                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
+                byte[] r = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
                 String encoded = instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
                 byte[] decoded = instance.decodeFromBase64( encoded );
                 assertTrue( Arrays.equals( r, decoded ) );
@@ -619,8 +620,8 @@ public class EncoderTest extends TestCase {
         }
         for ( int i=0; i < 100; i++ ) {
             try {
-                byte[] r = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
-                String encoded = ESAPI.randomizer().getRandomString(1, DefaultEncoder.CHAR_ALPHANUMERICS) + instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
+                byte[] r = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
+                String encoded = ESAPI.randomizer().getRandomString(1, EncoderConstants.CHAR_ALPHANUMERICS) + instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
 	            byte[] decoded = instance.decodeFromBase64( encoded );
 	            assertFalse( Arrays.equals(r, decoded) );
             } catch( UnsupportedEncodingException ex) {
@@ -655,7 +656,7 @@ public class EncoderTest extends TestCase {
         assertEquals(c, decoded);
         
         String orig = "c:\\jeff";
-        String enc = win.encode(DefaultEncoder.CHAR_ALPHANUMERICS, orig);
+        String enc = win.encode(EncoderConstants.CHAR_ALPHANUMERICS, orig);
         assertEquals(orig, win.decode(enc));
         assertEquals(orig, win.decode(orig));
         
@@ -779,7 +780,7 @@ public class EncoderTest extends TestCase {
     	}
 	    public void run() {
 			while( true ) {
-				String nonce = ESAPI.randomizer().getRandomString( 20, DefaultEncoder.CHAR_SPECIALS );
+				String nonce = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS );
 				String result = javaScriptEncode( nonce );
 				// randomize the threads
 				try {

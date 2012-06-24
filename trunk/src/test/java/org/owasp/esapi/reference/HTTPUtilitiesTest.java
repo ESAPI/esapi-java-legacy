@@ -20,6 +20,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.User;
 import org.owasp.esapi.codecs.Hex;
@@ -87,7 +88,7 @@ public class HTTPUtilitiesTest extends TestCase
 
 	public void testCSRFToken() throws Exception {
 		System.out.println( "CSRFToken");
-		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		User user = ESAPI.authenticator().createUser(username, "addCSRFToken", "addCSRFToken");
 		ESAPI.authenticator().setCurrentUser( user );
 		String token = ESAPI.httpUtilities().getCSRFToken();
@@ -109,7 +110,7 @@ public class HTTPUtilitiesTest extends TestCase
 	 */
 	public void testAddCSRFToken() throws AuthenticationException {
 		Authenticator instance = ESAPI.authenticator();
-		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		User user = instance.createUser(username, "addCSRFToken", "addCSRFToken");
 		instance.setCurrentUser( user );
 
@@ -423,7 +424,7 @@ public class HTTPUtilitiesTest extends TestCase
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 
-		String foo = ESAPI.randomizer().getRandomString(4096, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String foo = ESAPI.randomizer().getRandomString(4096, EncoderConstants.CHAR_ALPHANUMERICS);
 
 		HashMap map = new HashMap();
 		map.put("long", foo);
@@ -461,7 +462,7 @@ public class HTTPUtilitiesTest extends TestCase
 	public void testSetRememberToken() throws AuthenticationException {
 		System.out.println("setRememberToken");
 		Authenticator instance = (Authenticator)ESAPI.authenticator();
-		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
 		user.enable();

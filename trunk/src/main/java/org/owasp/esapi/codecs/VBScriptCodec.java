@@ -15,7 +15,7 @@
  */
 package org.owasp.esapi.codecs;
 
-import org.owasp.esapi.reference.DefaultEncoder;
+import org.owasp.esapi.EncoderConstants;
 
 
 /**
@@ -44,7 +44,7 @@ public class VBScriptCodec extends Codec {
 			char c = input.charAt(i);
 			
 			// handle normal characters and surround them with quotes
-			if (containsCharacter(c, DefaultEncoder.CHAR_ALPHANUMERICS) || containsCharacter(c, immune)) {
+			if (containsCharacter(c, EncoderConstants.CHAR_ALPHANUMERICS) || containsCharacter(c, immune)) {
 				if ( encoding && i > 0 ) sb.append( "&" );
 				if ( !inquotes && i > 0 ) sb.append( "\"" );
 				sb.append( c );
