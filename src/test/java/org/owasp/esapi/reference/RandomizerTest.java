@@ -22,6 +22,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.EncryptionException;
@@ -77,9 +78,9 @@ public class RandomizerTest extends TestCase {
         int length = 20;
         Randomizer instance = ESAPI.randomizer();
         for ( int i = 0; i < 100; i++ ) {
-            String result = instance.getRandomString(length, DefaultEncoder.CHAR_ALPHANUMERICS );
+            String result = instance.getRandomString(length, EncoderConstants.CHAR_ALPHANUMERICS );
             for ( int j=0;j<result.length();j++ ) {
-            	if ( !Codec.containsCharacter( result.charAt(j), DefaultEncoder.CHAR_ALPHANUMERICS) ) {
+            	if ( !Codec.containsCharacter( result.charAt(j), EncoderConstants.CHAR_ALPHANUMERICS) ) {
             		fail();
             	}
             }

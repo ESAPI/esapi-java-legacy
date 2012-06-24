@@ -28,6 +28,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
@@ -74,7 +75,7 @@ public class UserTest extends TestCase {
 	 *             the authentication exception
 	 */
 	private DefaultUser createTestUser(String password) throws AuthenticationException {
-		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		Exception e = new Exception();
 		System.out.println("Creating user " + username + " for " + e.getStackTrace()[1].getMethodName());
 		DefaultUser user = (DefaultUser) ESAPI.authenticator().createUser(username, password, password);
@@ -108,9 +109,9 @@ public class UserTest extends TestCase {
 	public void testAddRole() throws Exception {
 		System.out.println("addRole");
 		Authenticator instance = ESAPI.authenticator();
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = ESAPI.authenticator().generateStrongPassword();
-		String role = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_LOWERS);
+		String role = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_LOWERS);
 		User user = instance.createUser(accountName, password, password);
 		user.addRole(role);
 		assertTrue(user.isInRole(role));
@@ -252,7 +253,7 @@ public class UserTest extends TestCase {
 	public void testGetAccountName() throws AuthenticationException {
 		System.out.println("getAccountName");
 		DefaultUser user = createTestUser("getAccountName");
-		String accountName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(7, EncoderConstants.CHAR_ALPHANUMERICS);
 		user.setAccountName(accountName);
 		assertEquals(accountName.toLowerCase(), user.getAccountName());
 		assertFalse("ridiculous".equals(user.getAccountName()));
@@ -329,9 +330,9 @@ public class UserTest extends TestCase {
 	public void testGetRoles() throws Exception {
 		System.out.println("getRoles");
 		Authenticator instance = ESAPI.authenticator();
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = ESAPI.authenticator().generateStrongPassword();
-		String role = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_LOWERS);
+		String role = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_LOWERS);
 		User user = instance.createUser(accountName, password, password);
 		user.addRole(role);
 		Set roles = user.getRoles();
@@ -347,7 +348,7 @@ public class UserTest extends TestCase {
 	public void testGetScreenName() throws AuthenticationException {
 		System.out.println("getScreenName");
 		DefaultUser user = createTestUser("getScreenName");
-		String screenName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String screenName = ESAPI.randomizer().getRandomString(7, EncoderConstants.CHAR_ALPHANUMERICS);
 		user.setScreenName(screenName);
 		assertEquals(screenName, user.getScreenName());
 		assertFalse("ridiculous".equals(user.getScreenName()));
@@ -360,7 +361,7 @@ public class UserTest extends TestCase {
     public void testGetSessions() throws AuthenticationException {
         System.out.println("getSessions");
         Authenticator instance = ESAPI.authenticator();
-        String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         String password = ESAPI.authenticator().generateStrongPassword();
         User user = instance.createUser(accountName, password, password);
         HttpSession session1 = new MockHttpSession();
@@ -630,7 +631,7 @@ public class UserTest extends TestCase {
 	 */
 	public void testRemoveRole() throws AuthenticationException {
 		System.out.println("removeRole");
-		String role = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_LOWERS);
+		String role = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_LOWERS);
 		DefaultUser user = createTestUser("removeRole");
 		user.addRole(role);
 		assertTrue(user.isInRole(role));
@@ -660,7 +661,7 @@ public class UserTest extends TestCase {
 	public void testSetAccountName() throws AuthenticationException {
 		System.out.println("setAccountName");
 		DefaultUser user = createTestUser("setAccountName");
-		String accountName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(7, EncoderConstants.CHAR_ALPHANUMERICS);
 		user.setAccountName(accountName);
 		assertEquals(accountName.toLowerCase(), user.getAccountName());
 		assertFalse("ridiculous".equals(user.getAccountName()));
@@ -675,7 +676,7 @@ public class UserTest extends TestCase {
 		Date longAgo = new Date(0);
 		Date now = new Date();
 		assertTrue("new Date(0) returned " + longAgo + " which is considered before new Date() " + now + ". Please report this output to the email list or as a issue", longAgo.before(now));
-		String password=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String password=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		DefaultUser user = createTestUser(password);
 		user.setExpirationTime(longAgo);
 		assertTrue( user.isExpired() );
@@ -712,7 +713,7 @@ public class UserTest extends TestCase {
 	public void testSetScreenName() throws AuthenticationException {
 		System.out.println("setScreenName");
 		DefaultUser user = createTestUser("setScreenName");
-		String screenName = ESAPI.randomizer().getRandomString(7, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String screenName = ESAPI.randomizer().getRandomString(7, EncoderConstants.CHAR_ALPHANUMERICS);
 		user.setScreenName(screenName);
 		assertEquals(screenName, user.getScreenName());
 		assertFalse("ridiculous".equals(user.getScreenName()));

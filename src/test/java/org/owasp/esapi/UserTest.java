@@ -19,8 +19,6 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
-import org.owasp.esapi.reference.DefaultEncoder;
-
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
@@ -45,9 +43,13 @@ public class UserTest extends TestCase {
 	
 	public void testAllMethods() throws Exception {
 		// create a user to test Anonymous
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
+		
+			// Probably could skip the assignment here, but maybe someone had
+			// future plans to use this. So will just suppress warning for now.
+		@SuppressWarnings("unused")
 		User user = instance.createUser(accountName, password, password);
 		
 		// test the rest of the Anonymous user

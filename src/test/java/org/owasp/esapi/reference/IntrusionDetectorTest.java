@@ -21,6 +21,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.IntegrityException;
@@ -86,7 +87,7 @@ public class IntrusionDetectorTest extends TestCase {
 		ESAPI.intrusionDetector().addException( new RuntimeException("message") );
 		ESAPI.intrusionDetector().addException( new ValidationException("user message", "log message") );
 		ESAPI.intrusionDetector().addException( new IntrusionException("user message", "log message") );
-		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         Authenticator auth = ESAPI.authenticator();
 		User user = auth.createUser(username, "addException", "addException");
 		user.enable();
@@ -112,7 +113,7 @@ public class IntrusionDetectorTest extends TestCase {
      */
     public void testAddEvent() throws AuthenticationException {
         System.out.println("addEvent");
-		String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         Authenticator auth = ESAPI.authenticator();
 		User user = auth.createUser(username, "addEvent", "addEvent");
 		user.enable();

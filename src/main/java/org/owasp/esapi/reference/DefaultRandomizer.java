@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.util.UUID;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.errors.EncryptionException;
@@ -109,7 +110,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
 	 * {@inheritDoc}
 	 */
     public String getRandomFilename(String extension) {
-        String fn = getRandomString(12, DefaultEncoder.CHAR_ALPHANUMERICS) + "." + extension;
+        String fn = getRandomString(12, EncoderConstants.CHAR_ALPHANUMERICS) + "." + extension;
         logger.debug(Logger.SECURITY_SUCCESS, "Generated new random filename: " + fn );
         return fn;
     }

@@ -20,10 +20,10 @@ import java.net.URL;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.User;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
-import org.owasp.esapi.reference.DefaultEncoder;
 
 import junit.framework.TestCase;
 
@@ -40,7 +40,7 @@ public abstract class WAFTestCase extends TestCase {
 	    // setup the user in session
 		
 		if ( user == null ) {
-			String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+			String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 			Authenticator instance = ESAPI.authenticator();
 			String password = instance.generateStrongPassword();
 			instance.setCurrentUser(user);

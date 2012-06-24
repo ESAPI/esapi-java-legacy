@@ -24,6 +24,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.CryptoHelper;
@@ -31,7 +32,6 @@ import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
-import org.owasp.esapi.reference.DefaultEncoder;
 import org.owasp.esapi.reference.crypto.JavaEncryptor;
 
 /**
@@ -345,7 +345,7 @@ public class EncryptorTest extends TestCase {
     public void testSign() throws EncryptionException {
         System.out.println("testSign()");        
         Encryptor instance = ESAPI.encryptor();
-        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
+        String plaintext = ESAPI.randomizer().getRandomString( 32, EncoderConstants.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
         assertFalse( instance.verifySignature( signature, "ridiculous" ) );
@@ -361,7 +361,7 @@ public class EncryptorTest extends TestCase {
     public void testVerifySignature() throws EncryptionException {
         System.out.println("testVerifySignature()");
         Encryptor instance = ESAPI.encryptor();
-        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
+        String plaintext = ESAPI.randomizer().getRandomString( 32, EncoderConstants.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
     }
@@ -375,7 +375,7 @@ public class EncryptorTest extends TestCase {
     public void testSeal() throws IntegrityException {
         System.out.println("testSeal()");
         Encryptor instance = ESAPI.encryptor(); 
-        String plaintext = ESAPI.randomizer().getRandomString( 32, DefaultEncoder.CHAR_ALPHANUMERICS );
+        String plaintext = ESAPI.randomizer().getRandomString( 32, EncoderConstants.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
         instance.verifySeal( seal );
         

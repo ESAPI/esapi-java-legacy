@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
@@ -89,7 +90,7 @@ public class AuthenticatorTest extends TestCase {
 	 */
 	public void testCreateUser() throws AuthenticationException, EncryptionException {
 		System.out.println("createUser");
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
@@ -101,13 +102,13 @@ public class AuthenticatorTest extends TestCase {
             // success
         }
         try {
-            instance.createUser(ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS), "password1", "password2"); // don't match
+            instance.createUser(ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS), "password1", "password2"); // don't match
             fail();
         } catch (AuthenticationException e) {
             // success
         }
         try {
-            instance.createUser(ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS), "weak1", "weak1");  // weak password
+            instance.createUser(ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS), "weak1", "weak1");  // weak password
             fail();
         } catch (AuthenticationException e) {
             // success
@@ -119,7 +120,7 @@ public class AuthenticatorTest extends TestCase {
             // success
         }
         try {
-            instance.createUser(ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS), null, null);  // null password
+            instance.createUser(ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS), null, null);  // null password
             fail();
         } catch (AuthenticationException e) {
             // success
@@ -173,8 +174,8 @@ public class AuthenticatorTest extends TestCase {
 	public void testGetCurrentUser() throws Exception {
 		System.out.println("getCurrentUser");
         Authenticator instance = ESAPI.authenticator();
-		String username1 = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
-		String username2 = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String username1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+		String username2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
 		User user2 = instance.createUser(username2, "getCurrentUser", "getCurrentUser");		
 		user1.enable();
@@ -228,10 +229,10 @@ public class AuthenticatorTest extends TestCase {
 		System.out.println("getUser");
         Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
-		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		instance.createUser(accountName, password, password);
 		assertNotNull(instance.getUser( accountName ));
-		assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS) ));
+		assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS) ));
 	}
 	
     /**
@@ -243,7 +244,7 @@ public class AuthenticatorTest extends TestCase {
         Authenticator instance = ESAPI.authenticator();
         instance.logout();  // in case anyone is logged in
 		String password = instance.generateStrongPassword();
-		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		User user = instance.createUser(accountName, password, password);
 		user.enable();
 		MockHttpServletRequest request = new MockHttpServletRequest();
@@ -281,7 +282,7 @@ public class AuthenticatorTest extends TestCase {
 		System.out.println("getUserFromSession");
         FileBasedAuthenticator instance = (FileBasedAuthenticator)ESAPI.authenticator();
         instance.logout();  // in case anyone is logged in
-		String accountName=ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
 		user.enable();
@@ -307,7 +308,7 @@ public class AuthenticatorTest extends TestCase {
 		String password = instance.generateStrongPassword();
 		String[] testnames = new String[10];
 		for(int i=0;i<testnames.length;i++) {
-			testnames[i] = ESAPI.randomizer().getRandomString(8,DefaultEncoder.CHAR_ALPHANUMERICS);
+			testnames[i] = ESAPI.randomizer().getRandomString(8,EncoderConstants.CHAR_ALPHANUMERICS);
 		}
 		for(int i=0;i<testnames.length;i++) {
 			instance.createUser(testnames[i], password, password);
@@ -342,7 +343,7 @@ public class AuthenticatorTest extends TestCase {
 	public void testLogin() throws AuthenticationException {
 		System.out.println("login");
         Authenticator instance = ESAPI.authenticator();
-        String username = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+        String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(username, password, password);
 		user.enable();
@@ -362,7 +363,7 @@ public class AuthenticatorTest extends TestCase {
 	 */
 	public void testRemoveUser() throws Exception {
 		System.out.println("removeUser");
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		instance.createUser(accountName, password, password);
@@ -379,7 +380,7 @@ public class AuthenticatorTest extends TestCase {
 	 */
 	public void testSaveUsers() throws Exception {
 		System.out.println("saveUsers");
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         FileBasedAuthenticator instance = (FileBasedAuthenticator)ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		instance.createUser(accountName, password, password);
@@ -399,8 +400,8 @@ public class AuthenticatorTest extends TestCase {
 	public void testSetCurrentUser() throws AuthenticationException {
 		System.out.println("setCurrentUser");
         final Authenticator instance = ESAPI.authenticator();
-		String user1 = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_UPPERS);
-		String user2 = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_UPPERS);
+		String user1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
+		String user2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
 		userOne.enable();
 	    MockHttpServletRequest request = new MockHttpServletRequest();
@@ -418,7 +419,7 @@ public class AuthenticatorTest extends TestCase {
 			public void run() {
 				User u=null;
 				try {
-					String password = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+					String password = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 					u = instance.createUser("test" + count++, password, password);
 					instance.setCurrentUser(u);
 					ESAPI.getLogger("test").info( Logger.SECURITY_SUCCESS, "Got current user" );
@@ -445,7 +446,7 @@ public class AuthenticatorTest extends TestCase {
         Authenticator instance = ESAPI.authenticator();
         instance.logout();  // in case anyone is logged in
 		String password = instance.generateStrongPassword();
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
 		user.enable();
 		MockHttpServletRequest request = new MockHttpServletRequest();
@@ -573,7 +574,7 @@ public class AuthenticatorTest extends TestCase {
 	 */
 	public void testExists() throws Exception {
 		System.out.println("exists");
-		String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		instance.createUser(accountName, password, password);
@@ -589,7 +590,7 @@ public class AuthenticatorTest extends TestCase {
     public void testMain() throws Exception {
         System.out.println("Authenticator Main");
         Authenticator instance = ESAPI.authenticator();
-        String accountName = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         String password = instance.generateStrongPassword();
         String role = "test";
         

@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference;
 
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
@@ -472,7 +473,7 @@ public class DefaultUser implements User, Serializable {
 	public String resetCSRFToken() {
 		// user.csrfToken = ESAPI.encryptor().hash( session.getId(),user.name );
 		// user.csrfToken = ESAPI.encryptor().encrypt( address + ":" + ESAPI.encryptor().getTimeStamp();
-		csrfToken = ESAPI.randomizer().getRandomString(8, DefaultEncoder.CHAR_ALPHANUMERICS);
+		csrfToken = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		return csrfToken;
 	}
 
