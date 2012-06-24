@@ -30,7 +30,7 @@
     <description>The Enterprise Security API (ESAPI) project is an OWASP project
         to create simple strong security controls for every web platform.
         Security controls are not simple to build. You can read about the
-        hundreds of pitfalls for unwary developers on the OWASP website. By
+        hundreds of pitfalls for unwary developers on the OWASP web site. By
         providing developers with a set of strong controls, we aim to
         eliminate some of the complexity of creating secure web applications.
         This can result in significant cost savings across the SDLC.
@@ -194,7 +194,7 @@
         <dependency>
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
-            <version>1.1</version>
+            <version>1.2.5</version>
         </dependency>
         <dependency>
             <groupId>org.beanshell</groupId>
@@ -252,6 +252,7 @@
                 <executions>
                     <execution>
                         <id>check-for-dependency-updates</id>
+                        <phase>compile</phase> <!-- Eclipse q4e plugin needs this -->
                         <goals>
                             <goal>display-dependency-updates</goal>
                             <goal>display-plugin-updates</goal>
