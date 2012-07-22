@@ -72,14 +72,16 @@ public interface EncryptedProperties {
 	String setProperty(String key, String value) throws EncryptionException;
 	
 	/**
-	 * Returns a Set view of properties. The Set is backed by a Hashtable, so changes to the 
-	 * Hashtable are reflected in the Set, and vice-versa. The Set supports element 
-	 * removal (which removes the corresponding entry from the Hashtable), but not element addition.
+	 * Returns a {@code Set} view of properties. The {@code Set} is backed by a
+	 * {@code java.util.Hashtable}, so changes to the {@code Hashtable} are
+	 * reflected in the {@code Set}, and vice-versa. The {@code Set} supports element 
+	 * removal (which removes the corresponding entry from the {@code Hashtable),
+	 * but not element addition.
 	 * 
 	 * @return 
 	 * 		a set view of the properties contained in this map.
 	 */
-	public Set keySet();
+	public Set<?> keySet();
 		
 	/**
 	 * Reads a property list (key and element pairs) from the input stream.
