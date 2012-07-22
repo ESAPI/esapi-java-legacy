@@ -46,8 +46,10 @@ import org.owasp.esapi.errors.EncryptionException;
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author kevin.w.wall@gmail.com
  * @since June 1, 2007
  * @see org.owasp.esapi.EncryptedProperties
+ * @see org.owasp.esapi.reference.crypto.ReferenceEncryptedProperties
  */
 public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProperties {
 
@@ -136,7 +138,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	/**
 	 * {@inheritDoc}
 	 */
-	public Set keySet() {
+	public Set<?> keySet() {
 		return properties.keySet();
 	}
 
@@ -201,7 +203,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
     		try { if ( out != null ) out.close(); } catch( Exception e ) {}
 		}
 		
-		Iterator i = ep.keySet().iterator();
+		Iterator<?> i = ep.keySet().iterator();
 		while (i.hasNext()) {
 			String k = (String) i.next();
 			String value = ep.getProperty(k);
