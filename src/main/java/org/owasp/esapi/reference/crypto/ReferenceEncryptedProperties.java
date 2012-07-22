@@ -15,7 +15,6 @@
  */
 package org.owasp.esapi.reference.crypto;
 
-import bsh.This;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,17 +41,24 @@ import org.owasp.esapi.errors.EncryptionRuntimeException;
  * and decryption based on {@code Encryptor}.
  * <p>
  * This implementation differs from {@code DefaultEncryptedProperties} in that
- * it actually extends from java.util.Properties for applications that need an
+ * it actually extends from {@code java.util.Properties} for applications that need an
  * instance of that class. In order to do so, the {@code getProperty} and
  * {@code setProperty} methods were modified to throw {@code EncryptionRuntimeException}
  * instead of {@code EncryptionException}.
  *
  * @author August Detlefsen (augustd at codemagi dot com)
  *         <a href="http://www.codemagi.com">CodeMagi, Inc.</a>
+ * @author kevin.w.wall@gmail.com
  * @since October 8, 2010
  * @see org.owasp.esapi.EncryptedProperties
+ * @see org.owasp.esapi.reference.crypto.DefaultEncryptedProperties
  */
-public class ReferenceEncryptedProperties extends java.util.Properties implements org.owasp.esapi.EncryptedProperties {
+public class ReferenceEncryptedProperties extends java.util.Properties implements EncryptedProperties {
+
+	/**
+	 * serverVersionUID; use format of YYYYMMDD.
+	 */
+	private static final long serialVersionUID = 20120718L;
 
 	/** The logger. */
 	private final Logger logger = ESAPI.getLogger(this.getClass());
@@ -91,7 +97,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws This method will throw an {@code EncryptionRuntimeException} if decryption fails.
+	 * @throws EncryptionRuntimeException Thrown if decryption fails.
 	 */
 	@Override
 	public synchronized String getProperty(String key) throws EncryptionRuntimeException {
@@ -120,7 +126,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws This method will throw an {@code EncryptionRuntimeException} if decryption fails.
+	 * @throws EncryptionRuntimeException Thrown if decryption fails.
 	 */
 	@Override
 	public String getProperty(String key, String defaultValue) throws EncryptionRuntimeException {
@@ -134,7 +140,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @throws This method will throw an {@code EncryptionRuntimeException} if encryption fails.
+	 * @throws EncryptionRuntimeException Thrown if encryption fails.
 	 */
 	@Override
 	public synchronized String setProperty(String key, String value) throws EncryptionRuntimeException {
@@ -164,6 +170,8 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 
 	/**
 	 * {@inheritDoc}
+	 * @throws IOException Thrown if input stream invalid or does not
+	 * 					   correspond to Java properties file format.
 	 */
 	@Override
 	public void load(InputStream in) throws IOException {
@@ -175,7 +183,10 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	 * {@inheritDoc}
 	 *
 	 * For JDK 1.5 compatibility, this method has been overridden convert the Reader
-	 * into an InputStream and call the superclass constructor. 
+	 * into an InputStream and call the superclass constructor.
+	 * 
+	 * @throws IOException Thrown if {@code Reader} input stream invalid or does not
+	 * 					   correspond to Java properties file format.
 	 */
 	public void load(Reader in) throws IOException {
 
@@ -218,6 +229,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	/**
 	 * This method has been overridden to throw an {@code UnsupportedOperationException}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Collection values() {
 		throw new UnsupportedOperationException("This method has been removed for security.");
@@ -226,6 +238,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	/**
 	 * This method has been overridden to throw an {@code UnsupportedOperationException}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Set entrySet() {
 		throw new UnsupportedOperationException("This method has been removed for security.");
@@ -234,6 +247,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	/**
 	 * This method has been overridden to throw an {@code UnsupportedOperationException}
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Enumeration elements() {
 		throw new UnsupportedOperationException("This method has been removed for security.");
