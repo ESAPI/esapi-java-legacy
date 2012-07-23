@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ OWASP Enterprise Security API (ESAPI)
+  ~
+  ~ This file is part of the Open Web Application Security Project (OWASP)
+  ~ Enterprise Security API (ESAPI) project. For details, please see
+  ~ <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+  ~
+  ~ Copyright (c) 2007 - The OWASP Foundation
+  ~
+  ~ The ESAPI is published by OWASP under the BSD license. You should read and accept the
+  ~ LICENSE before you use, modify, and/or redistribute this software.
+  ~
+  ~ @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
+  ~ @created 2007
+  -->
+
+<taglib
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://java.sun.com/xml/ns/j2ee
+		http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+	<description>
+		OWASP Enterprise Security API (ESAPI) provides
+		a JSP Tag Library that supplies easy access to
+		encoding functionality in the form of JSP Tags and EL
+		functions. These can be used to properly escape user
+		supplied data at display time so that it cannot be used
+		in injection attacks like Cross Site Scripting (XSS).
+	</description>
+	<display-name>OWASP ESAPI</display-name>
+	<tlib-version>2.0</tlib-version>
+	<short-name>esapi</short-name>
+	<uri>
+		http://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
+	</uri>
+
+	<tag>
+		<description>
+			Encode tag's content using Base64
+		</description>
+		<display-name>Encode For Base64</display-name>
+		<name>encodeForBase64</name>
+		<tag-class>
+			org.owasp.esapi.tags.EncodeForBase64Tag
+		</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<description>
+				The encoding used to convert the tag
+				content from a String to byte[]. The
+				default is UTF-8.
+			</description>
+			<name>encoding</name>
+		</attribute>
+		<attribute>
+			<description>
+				Whether lines should be wrapped at 64
+				characters. The default is false.
+			</description>
+			<name>wrap</name>
+			<type>boolean</type>
+		</attribute>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in CSS
+		</description>
+		<display-name>Encode For CSS</display-name>
+		<name>encodeForCSS</name>
+		<tag-class>org.owasp.esapi.tags.EncodeForCSSTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in HTML
+		</description>
+		<display-name>Encode For HTML</display-name>
+		<name>encodeForHTML</name>
+		<tag-class>org.owasp.esapi.tags.EncodeForHTMLTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in HTML Attributes
+		</description>
+		<display-name>Encode For HTML Attribute</display-name>
+		<name>encodeForHTMLAttribute</name>
+		<tag-class>
+			org.owasp.esapi.tags.EncodeForHTMLAttributeTag
+		</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+	
+	<tag>
+		<description>
+			Encode tag's content for usage in JavaScript
+		</description>
+		<display-name>Encode For JavaScript</display-name>
+		<name>encodeForJavaScript</name>
+		<tag-class>
+			org.owasp.esapi.tags.EncodeForJavaScriptTag
+		</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in URLs
+		</description>
+		<display-name>Encode For URL</display-name>
+		<name>encodeForURL</name>
+		<tag-class>org.owasp.esapi.tags.EncodeForURLTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+	
+	<tag>
+		<description>
+			Encode tag's content for usage in VBScript
+		</description>
+		<display-name>Encode For VBScript</display-name>
+		<name>encodeForVBScript</name>
+		<tag-class>
+			org.owasp.esapi.tags.EncodeForVBScriptTag
+		</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in XML Attributes
+		</description>
+		<display-name>Encode For XML Attribute</display-name>
+		<name>encodeForXMLAttribute</name>
+		<tag-class>
+			org.owasp.esapi.tags.EncodeForXMLAttributeTag
+		</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in XML
+		</description>
+		<display-name>Encode For XML</display-name>
+		<name>encodeForXML</name>
+		<tag-class>org.owasp.esapi.tags.EncodeForXMLTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<tag>
+		<description>
+			Encode tag's content for usage in XPath
+		</description>
+		<display-name>Encode For XPath</display-name>
+		<name>encodeForXPath</name>
+		<tag-class>org.owasp.esapi.tags.EncodeForXPathTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<function>
+		<description>
+			Encodes argument in Base64. UTF-8 is used to
+			convert the argument from a String to byte[]
+			before encoding. Lines are not wrapped.
+		</description>
+		<display-name>Encode For Base64</display-name>
+		<name>encodeForBase64</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForBase64(java.lang.String)
+		</function-signature>
+	</function>
+	
+	<function>
+		<description>
+			Encodes argument in Base64. UTF-8 is used to
+			convert the argument from a String to byte[]
+			before encoding. Lines are wrapped at 64 characters.
+		</description>
+		<display-name>
+			Encode For Base64 with Line Wrapping
+		</display-name>
+		<name>encodeForBase64Wrap</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForBase64Wrap(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the second argument in Base64. The first
+			argument is used as the character set used to
+			convert the argument from a String to byte[]
+			before encoding. Lines are not wrapped.
+		</description>
+		<display-name>
+			Encode For Base64 Using Charset
+		</display-name>
+		<name>encodeForBase64Charset</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForBase64Charset(
+				java.lang.String,
+				java.lang.String)
+		</function-signature>
+	</function>
+	
+	<function>
+		<description>
+			Encodes the second argument in Base64. The
+			first argument is used as the character set
+			used to convert the argument from a String to
+			byte[] before encoding. Lines are wrapped at
+			64 characters.
+		</description>
+		<display-name>
+			Encode For Base64 Using Charset
+		</display-name>
+		<name>encodeForBase64CharsetWrap</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForBase64CharsetWrap(
+				java.lang.String,
+				java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in CSS.
+		</description>
+		<display-name>Encode For Use in CSS</display-name>
+		<name>encodeForCSS</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForCSS(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in HTML.
+		</description>
+		<display-name>Encode For Use in HTML</display-name>
+		<name>encodeForHTML</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForHTML(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in HTML Attributes.
+		</description>
+		<display-name>Encode For Use in HTML Attributes</display-name>
+		<name>encodeForHTMLAttribute</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForHTMLAttribute(
+				java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in JavaScript.
+		</description>
+		<display-name>Encode For Use in JavaScript</display-name>
+		<name>encodeForJavaScript</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForJavaScript(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in URLs.
+		</description>
+		<display-name>Encode For Use in URLs</display-name>
+		<name>encodeForURL</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForURL(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in VBScript.
+		</description>
+		<display-name>Encode For Use in VBScript</display-name>
+		<name>encodeForVBScript</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForVBScript(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in XML.
+		</description>
+		<display-name>Encode For Use in XML</display-name>
+		<name>encodeForXML</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForXML(java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in XML Attributes.
+		</description>
+		<display-name>Encode For Use in XML Attributes</display-name>
+		<name>encodeForXMLAttribute</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForXMLAttribute(
+				java.lang.String)
+		</function-signature>
+	</function>
+
+	<function>
+		<description>
+			Encodes the argument for use in XPath.
+		</description>
+		<display-name>Encode For Use in XPath</display-name>
+		<name>encodeForXPath</name>
+		<function-class>
+			org.owasp.esapi.tags.ELEncodeFunctions
+		</function-class>
+		<function-signature>
+			java.lang.String encodeForXPath(java.lang.String)
+		</function-signature>
+	</function>
+</taglib>
