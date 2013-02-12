@@ -25,16 +25,18 @@ public class AuthenticatedUser implements User, UserDetails, Serializable {
     private Set<GrantedAuthority> authorities;
     private transient String csrfToken;
 
-    private transient Set<HttpSession> sessions;
+    // Issue 292 - Fix Java 7 incompatibility
+    private transient Collection<HttpSession> sessions;
 
     private transient HashMap eventMap;
 
     public AuthenticatedUser(UserProfile userProfile) {
         this.userProfile = userProfile;
         authorities = new TreeSet<GrantedAuthority>();
-        sessions = new TreeSet<HttpSession>();
+        sessions = new ArrayList<HttpSession>();
         eventMap = new HashMap();
 
+        // Issue 292 Fix Java 7 incompatibility
         sessions.add(ESAPI.currentRequest().getSession());
     }
 
@@ -120,15 +122,18 @@ public class AuthenticatedUser implements User, UserDetails, Serializable {
     }
 
     public void addSession(HttpSession s) {
-        sessions.add(s);
+        if (!sessions.contains(s)) {
+            sessions.add(s);
+        }
     }
 
     public void removeSession(HttpSession s) {
-        sessions.remove(s);
+        // Issue 292 Changed to use removeAll in case of duplicates
+        sessions.removeAll(Arrays.asList(s));
     }
 
     public Set getSessions() {
-        return sessions;
+        return new HashSet(sessions);
     }
 
     public void incrementFailedLoginCount() {
