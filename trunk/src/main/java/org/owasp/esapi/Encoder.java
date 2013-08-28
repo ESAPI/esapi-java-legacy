@@ -294,11 +294,11 @@ public interface Encoder {
      * as input – even if the user input is encoded.
      * 
      * For example:
-     * 
+     * <pre>
      *  <script>
-     *  window.setInterval('<%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %>');
+     *     window.setInterval('<%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %>');
      *  </script>
-     * 
+     * </pre>
      * @param input 
      *          the text to encode for JavaScript
      * 
