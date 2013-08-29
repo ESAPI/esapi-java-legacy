@@ -330,7 +330,7 @@ public class CryptoTokenTest {
     // public void addAttributes(final Map<String, String> attrs) throws ValidationException
     // public Map<String, String> getAttributes()
     @Test
-    public final void tesAddandGetAttributes() {
+    public final void testAddandGetAttributes() {
         CryptoToken ctok = new CryptoToken();       
         Map<String, String> origAttrs = null;
 
