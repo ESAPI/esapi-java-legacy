@@ -167,7 +167,7 @@ public class EncryptorTest extends TestCase {
             fail("New encrypt(PlainText) method did not throw. Result was: " + ct.toString());
         } catch(Throwable t) {
             // It should be one of these, depending on whether or not assertions are enabled.
-            assertTrue( t instanceof NullPointerException || t instanceof AssertionError);
+            assertTrue( t instanceof IllegalArgumentException || t instanceof AssertionError);
         }
     }
 
