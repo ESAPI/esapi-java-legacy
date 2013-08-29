@@ -32,7 +32,9 @@ import org.owasp.esapi.errors.EncryptionException;
 public class CipherTextSerializer {
     // This should be *same* version as in CipherText & KeyDerivationFunction.
 	// If one changes, the other should as well to accommodate any differences.
-	public  static final  int cipherTextSerializerVersion = 20110203; // Format: YYYYMMDD, max is 99991231.
+	//		Previous versions:	20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
+	//						    20130830 - Fix to issue #306 (release 2.1.0)
+	public  static final  int cipherTextSerializerVersion = 20130830; // Format: YYYYMMDD, max is 99991231.
     private static final long serialVersionUID = cipherTextSerializerVersion;
 
     private static final Logger logger = ESAPI.getLogger("CipherTextSerializer");
@@ -234,7 +236,7 @@ public class CipherTextSerializer {
             debug("kdfPrf: " + kdfPrf);
             assert kdfPrf >= 0 && kdfPrf <= 15 : "kdfPrf == " + kdfPrf + " must be between 0 and 15.";
             int kdfVers = ( kdfInfo & 0x07ffffff);
-            assert kdfVers > 0 && kdfVers <= 99991231 : "KDF Version (" + kdfVers + ") out of range."; // Really should be >= 20110203 (earliest).
+            assert kdfVers >= 20110203 && kdfVers <= 99991231 : "KDF Version (" + kdfVers + ") out of range."; // 20110203 (orig version).
             debug("convertToCipherText: kdfPrf = " + kdfPrf + ", kdfVers = " + kdfVers);
             if ( kdfVers != CipherText.cipherTextVersion ) {
                 // NOTE: In future, support backward compatibility via this mechanism. When we do this

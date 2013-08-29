@@ -65,7 +65,9 @@ public final class CipherText implements Serializable {
     //       reflected in the class CipherTextSerializer.
     // This should be *same* version as in CipherTextSerializer and KeyDerivationFunction.
 	// If one changes, the other should as well to accommodate any differences.
-	public  static final int cipherTextVersion = 20110203; // Format: YYYYMMDD, max is 99991231.
+	//		Previous versions:	20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
+	//						    20130830 - Fix to issue #306 (release 2.1.0)
+	public  static final int cipherTextVersion = 20130830; // Format: YYYYMMDD, max is 99991231.
 		// Required by Serializable classes.
 	private static final long serialVersionUID = cipherTextVersion; // Format: YYYYMMDD
 	
@@ -435,21 +437,23 @@ public final class CipherText implements Serializable {
 	 * @return True if the ciphertext has not be tampered with, and false otherwise.
 	 */
 	public boolean validateMAC(SecretKey authKey) {
-	    boolean usesMAC = ESAPI.securityConfiguration().useMACforCipherText();
+	    boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
 
-	    if (  usesMAC && macComputed() ) {  // Uses MAC and it was computed
+	    if (  requiresMAC && macComputed() ) {  // Uses MAC and it was computed
 	        // Calculate MAC from HMAC-SHA1(nonce, IV + plaintext) and
 	        // compare to stored value (separate_mac_). If same, then return true,
 	        // else return false.
 	        byte[] mac = computeMAC(authKey);
 	        assert mac.length == separate_mac_.length : "MACs are of differnt lengths. Should both be the same.";
 	        return CryptoHelper.arrayCompare(mac, separate_mac_); // Safe compare!!!
-	    } else if ( ! usesMAC ) {           // Doesn't use MAC
+	    } else if ( ! requiresMAC ) {           // Doesn't require a MAC
 	        return true;
-	    } else {                            // Uses MAC but it has not been computed / stored.
-	        logger.warning(Logger.SECURITY_FAILURE, "Cannot validate MAC as it was never computed and stored. " +
-	        "Decryption result may be garbage even when decryption succeeds.");
-	        return true;    // Need to return 'true' here because of encrypt() / decrypt() methods don't support this.
+	    } else {
+	    		// This *used* to be the case (for versions 2.0 and 2.0.1) where we tried to
+	    		// accomodate the deprecated decrypt() method from ESAPI 1.4. Unfortunately,
+	    		// that was an EPIC FAIL. (See Google Issue # 306 for details.)
+	        logger.warning(Logger.SECURITY_FAILURE, "MAC may have been tampered with (e.g., length set to 0).");
+	        return false;    // Deprecated decrypt() method removed, so now return false.
 	    }
 	}
 	
@@ -474,8 +478,8 @@ public final class CipherText implements Serializable {
 	    
 	    // If we are supposed to be using a (separate) MAC, also make sure
 	    // that it has been computed/stored.
-	    boolean usesMAC = ESAPI.securityConfiguration().useMACforCipherText();
-	    if (  usesMAC && ! macComputed() ) {
+	    boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
+	    if (  requiresMAC && ! macComputed() ) {
 	        String msg = "Programming error: MAC is required for this cipher mode (" +
 	                     getCipherMode() + "), but MAC has not yet been " +
 	                     "computed and stored. Call the method " +

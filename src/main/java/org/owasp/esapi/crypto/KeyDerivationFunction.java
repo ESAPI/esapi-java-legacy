@@ -49,12 +49,15 @@ public class KeyDerivationFunction {
 	 * {@link CipherTextSerializer#cipherTextSerializerVersion} to make sure
 	 * that these classes are all kept in-sync in order to support backward
 	 * compatibility of previously encrypted data.
-	 * 
+	 * <pre>
+	 * Previous versions:	20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
+	 *					    20130830 - Fix to issue #306 (release 2.1.0)
+	 * </pre>
 	 * @see CipherTextSerializer#asSerializedByteArray()
 	 * @see CipherText#asPortableSerializedByteArray()
 	 * @see CipherText#fromPortableSerializedBytes(byte[])
 	 */
-	public  static final int  kdfVersion       = 20110203;   // Format: YYYYMMDD, max is 99991231.
+	public  static final int  kdfVersion       = 20130830;   // Format: YYYYMMDD, max is 99991231.
 	private static final long serialVersionUID = kdfVersion; // Format: YYYYMMDD
 	
     // Pseudo-random function algorithms suitable for NIST KDF in counter mode.

@@ -329,28 +329,6 @@ public final class JavaEncryptor implements Encryptor {
 			throw new EncryptionException("Internal error", "Can't find encoding for " + encoding, ex);
 		}
 	}
-	
-	/**
-	 * Convenience method that encrypts plaintext strings the new way (default
-	 * is CBC mode and PKCS5 padding). This encryption method uses the master
-	 * encryption key specified by the {@code Encryptor.MasterKey} property
-	 * in {@code ESAPI.properties}.
-	 * 
-	 * @param plaintext	A String to be encrypted
-	 * @return	A base64-encoded combination of IV + raw ciphertext
-	 * @throws EncryptionException	Thrown when something goes wrong with the
-	 * 								encryption.
-	 * 
-	 * @see org.owasp.esapi.Encryptor#encrypt(PlainText)
-	 */
-	@Deprecated public String encrypt(String plaintext) throws EncryptionException
-	{
-        logWarning("encrypt", "Calling deprecated encrypt() method.");
-		CipherText ct = null;
-		ct = encrypt(new PlainText(plaintext) );
-		return ct.getEncodedIVCipherText();
-	}
-
 
 	/**
 	* {@inheritDoc}
@@ -366,10 +344,15 @@ public final class JavaEncryptor implements Encryptor {
 	 public CipherText encrypt(SecretKey key, PlainText plain)
 	 			throws EncryptionException
 	 {
+		 if ( key == null ) {
+			 throw new IllegalArgumentException("(Master) encryption key arg may not be null. Is Encryptor.MasterKey set?");
+		 }
+		 if ( plain == null ) {
+			 throw new IllegalArgumentException("PlainText may arg not be null");
+		 }
 		 byte[] plaintext = plain.asBytes();
 		 boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
-		 assert key != null : "(Master) encryption key may not be null";
-		 
+
 		 boolean success = false;	// Used in 'finally' clause.
 		 String xform = null;
 		 int keySize = key.getEncoded().length * 8;	// Convert to # bits
@@ -567,53 +550,6 @@ public final class JavaEncryptor implements Encryptor {
 				 plain.overwrite();		// Note: Same as overwriting 'plaintext' byte array.
 		}
 	}
-	 }
-
-	/**
-	  * Convenience method that decrypts previously encrypted plaintext strings
-	  * that were encrypted using the new encryption mechanism (with CBC mode and
-	  * PKCS5 padding by default).  This decryption method uses the master
-	  * encryption key specified by the {@code Encryptor.MasterKey} property
-	  * in {@code ESAPI.properties}.
-	  * 
-	  * @param b64IVCiphertext	A base64-encoded representation of the
-	  * 							IV + raw ciphertext string to be decrypted with
-	  * 							the default master key.
-	  * @return	The plaintext string prior to encryption.
-	  * @throws EncryptionException When something fails with the decryption.
-	  * 
-	  * @see org.owasp.esapi.Encryptor#decrypt(CipherText)
-	  */
-	 @Deprecated public String decrypt(String b64IVCiphertext) throws EncryptionException
-	 {
-	     logWarning("decrypt", "Calling deprecated decrypt() method.");
-		 CipherText ct = null;
-		 try {
-			 // We assume that the default cipher transform was used to encrypt this.
-			 ct = new CipherText();
-
-			 // Need to base64 decode the IV+ciphertext and extract the IV to set it in CipherText object.
-			 byte[] ivPlusRawCipherText = ESAPI.encoder().decodeFromBase64(b64IVCiphertext);
-			 int blockSize = ct.getBlockSize();	// Size in bytes.
-			 byte[] iv = new byte[ blockSize ];
-			 CryptoHelper.copyByteArray(ivPlusRawCipherText, iv, blockSize);	// Copy the first blockSize bytes into iv array
-			 int cipherTextSize = ivPlusRawCipherText.length - blockSize;
-			 byte[] rawCipherText = new byte[ cipherTextSize ];
-			 System.arraycopy(ivPlusRawCipherText, blockSize, rawCipherText, 0, cipherTextSize);
-			 ct.setIVandCiphertext(iv, rawCipherText);
-
-			 // Now the CipherText object should be prepared to use it to decrypt.
-			 PlainText plaintext = decrypt(ct);
-			 return plaintext.toString();	// Convert back to a Java String
-		 } catch (UnsupportedEncodingException e) {
-			 // Should never happen; UTF-8 should be in rt.jar.
-			 logger.error(Logger.SECURITY_FAILURE, "UTF-8 encoding not available! Decryption failed.", e);
-			 return null;	// CHECKME: Or re-throw or what? Could also use native encoding, but that's
-			 // likely to cause unexpected and undesired effects far downstream.
-		 } catch (IOException e) {
-			 logger.error(Logger.SECURITY_FAILURE, "Base64 decoding of IV+ciphertext failed. Decryption failed.", e);
-			 return null;
-		 }
 	 }
 
 	/**
