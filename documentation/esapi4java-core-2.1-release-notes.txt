@@ -1,0 +1,53 @@
+ESAPI for Java - 2.1.0 Release Notes
+
+1) Fixed security issue #306, a vulnerability discovered by Phillipe Arteau.
+   This fix necessitated removing the deprecated encrypt() and decrupt() methods
+   that were intended to provide backward compatibility with ESAPI 1.4.
+   As it turns out, there was no way to fix this bug without a major rewrite
+   unless these methods were removed. However, as these two methods have been
+   deprecated more than 2 years ago and they are known to be insecure
+   (they are vulnerable to padding oracle attacks), the ESAPI team has
+   decided to remove them in accordance to their support policy.
+   
+   See comments for issue #306 for further details, as well as additional
+   safety precautions that you may wish to take in the unlikely, but possible
+   event that this vulnerability resulted in an actual security breach.
+
+   Finally, since the removal of these methods constitute an interface change
+   (to the Encryptor interface), this is considered a minor release (2.1)
+   rather than simply a patch release (2.0.2).
+
+   Please note that there are further updates planned to further strengthen
+   the MAC that ESAPI crypt uses. However, because they will require some
+   design changes, they may not be out for another month. Note that these
+   fixes do not correct any *known* vulnerabilities, but will address
+   some potential weaknesses in what is not included in the MAC (such as
+   the crypto version).
+
+2) Other Google Issues fixed: 257, 271, and 292 are all fixed in this release.
+
+3) Fixed Javadoc for Encoder.encryptForJavaScript(). [Revision r1879]
+
+4) DefaultEncryptedProperties - made minor javadoc changes.
+
+5) The ESAPI 2.0 Encryptor.encrypt() methods now all throw an appropriate
+   IllegalArgumentException if any of the arguments are null. Previously,
+   if any of the arguments were null you would either get an AssertionError
+   (if you had assertions enabled) or a default NullPointerException when
+   assertions were disabled.  While IllegalArgumentException is still an
+   unchecked RuntimeException, note that if you were previously catching
+   NullPointerExceptions for these cases, you may need to change your code.
+ 
+6) Other miscellaneous minor code clean-up, mostly to remove compiler warnings.
+
+NOTE: A follow-up patch release is scheduled within the next few months to
+      address some questionable design decisions regarding what data in
+      the serialized ciphertext should be authenticated via the MAC. For
+      instance, presently only the IV+ciphertext is MAC'd (as would be the
+      equivalent case of when you would use an authenticated combined cipher
+      mode such as GCM or CCM). A deeper analysis of the design is required
+      based on findings in Google Issue # 306. I will periodically try
+      to keep the ESAPI mailing lists updated with the progress so watch
+      there for emerging details and anticipated schedule.
+      
+-Kevin W. Wall <kevin.w.wall@gmail.com>, 2013-08-30
