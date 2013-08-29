@@ -38,10 +38,14 @@ public final class PlainText implements Serializable {
 	 * Construct a {@code PlainText} object from a {@code String}.
 	 * @param str	The {@code String} that is converted to a UTF-8 encoded
 	 * 				byte array to create the {@code PlainText} object.
+	 * @throws IllegalArgumentException	If {@code str} argument is null.
 	 */
 	public PlainText(String str) {
 		try {
 		    assert str != null : "String for plaintext cannot be null.";
+		    if ( str == null ) {
+		    	throw new IllegalArgumentException("String for plaintext may not be null!");
+		    }
 			rawBytes = str.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			// Should never happen.
