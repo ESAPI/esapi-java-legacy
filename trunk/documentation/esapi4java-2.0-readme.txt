@@ -31,6 +31,7 @@ File / Directory                                                        Descript
 |     |---esapi4java-core-2.0-crypto-design-goals.doc (draft)           Describes ESAPI 2.0 crypto design goals & design decisions
 |     |---esapi4java-core-2.0-readme-crypto-changes.html                Describes why crypto was changed from what was in ESAPI 1.4
 |     |---esapi4java-core-2.0-symmetric-crypto-user-guide.html          User guide for using symmetric encryption in ESAPI 2.0
+|     |---esapi4java-core-2.1-release-notes.txt                         ESAPI 2.1 release notes
 |     `---esapi4java-waf-2.0-policy-file-spec.pdf                       Describes how to configure ESAPI 2.0's Web Application Firewall
 |
 |---libs/                                                               ESAPI dependencies
