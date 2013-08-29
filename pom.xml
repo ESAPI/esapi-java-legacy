@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.0.2-SNAPSHOT</version>
+    <version>2.1.0</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -106,8 +106,8 @@
             </roles>
         </developer>
         <developer>
-            <name>Kevin Wall</name>
-            <organization>Qwest</organization>
+            <name>Kevin W. Wall</name>
+            <organization>Wells Fargo</organization>
             <roles>
                 <role>Project Manager</role>
                 <role>Architect</role>
