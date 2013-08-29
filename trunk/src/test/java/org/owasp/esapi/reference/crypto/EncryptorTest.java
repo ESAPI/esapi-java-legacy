@@ -56,9 +56,11 @@ public class EncryptorTest extends TestCase {
      * {@inheritDoc}
      * @throws Exception
      */
-    protected void setUp() throws Exception {
+    @SuppressWarnings("deprecation")
+	protected void setUp() throws Exception {
         // This is only mechanism to change this for now. Will do this with
-        // a soon to be CryptoControls class in next release.
+        // a soon to be CryptoControls class or equivalent mechanism in a
+    	// future release.
         ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
     }
 
@@ -99,55 +101,52 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of deprecated encrypt method for Strings.
+	 * Test of new encrypt / decrypt method for Strings whose length is
+	 * not a multiple of the cipher block size (16 bytes for AES).
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
 	 */
-    public void testEncrypt() throws EncryptionException {
-        System.out.println("testEncrypt()");
+    public void testEncryptDecrypt1() throws EncryptionException {
+        System.out.println("testEncryptDecrypt2()");
         Encryptor instance = ESAPI.encryptor();
-        String plaintext = "test123456";	// Not multiple of block cipher size
-        String ciphertext = instance.encrypt(plaintext);
-    	String result = instance.decrypt(ciphertext);
-        assertEquals(plaintext, result);
+        String plaintext = "test1234test1234tes"; // Not a multiple of block size (16 bytes)
+        try {
+            CipherText ct = instance.encrypt(new PlainText(plaintext));
+            PlainText pt = instance.decrypt(ct);
+            assertTrue( pt.toString().equals(plaintext) );
+        }
+        catch( EncryptionException e ) {
+        	fail("testEncryptDecrypt2(): Caught exception: " + e);
+        }
     }
 
     /**
-	 * Test of deprecated decrypt method for Strings.
+	 * Test of new encrypt / decrypt method for Strings whose length is
+	 * same as cipher block size (16 bytes for AES).
 	 */
-    public void testDecrypt() {
-        System.out.println("testDecrypt()");
+    public void testEncryptDecrypt2() {
+        System.out.println("testEncryptDecrypt2()");
         Encryptor instance = ESAPI.encryptor();
+        String plaintext = "test1234test1234";
         try {
-            String plaintext = "test123";
-            String ciphertext = instance.encrypt(plaintext);
-            assertFalse(plaintext.equals(ciphertext));
-        	String result = instance.decrypt(ciphertext);
-        	assertEquals(plaintext, result);
+            CipherText ct = instance.encrypt(new PlainText(plaintext));
+            PlainText pt = instance.decrypt(ct);
+            assertTrue( pt.toString().equals(plaintext) );
         }
         catch( EncryptionException e ) {
-        	fail();
+        	fail("testEncryptDecrypt2(): Caught exception: " + e);
         }
     }
 
     /**
      * Test of encrypt methods for empty String.
-     * 
-     * @throws EncryptionException
-     *             the encryption exception
      */
-    @SuppressWarnings("deprecation")
     public void testEncryptEmptyStrings() {
         System.out.println("testEncryptEmptyStrings()");
         Encryptor instance = ESAPI.encryptor();
         String plaintext = "";
         try {
-            // System.out.println("Deprecated encryption methods");
-            String ciphertext = instance.encrypt(plaintext);
-            String result = instance.decrypt(ciphertext);
-            assertTrue( result.equals("") );
-            
             // System.out.println("New encryption methods");
             CipherText ct = instance.encrypt(new PlainText(plaintext));
             PlainText pt = instance.decrypt(ct);
@@ -158,23 +157,35 @@ public class EncryptorTest extends TestCase {
     }
     
     /**
-     * Test encryption / decryption methods for null.
+     * Test encryption method for null.
      */
-    @SuppressWarnings("deprecation")
     public void testEncryptNull() {
         System.out.println("testEncryptNull()");
         Encryptor instance = ESAPI.encryptor();
-        String plaintext = "";
         try {
-            String nullStr = null;
-            instance.encrypt(nullStr);
-            fail("testEncryptNull(): Did not result in expected exception!");
+			CipherText ct = instance.encrypt( null );  // Should throw NPE or AssertionError
+            fail("New encrypt(PlainText) method did not throw. Result was: " + ct.toString());
         } catch(Throwable t) {
             // It should be one of these, depending on whether or not assertions are enabled.
             assertTrue( t instanceof NullPointerException || t instanceof AssertionError);
         }
     }
 
+    /**
+     * Test decryption method for null.
+     */
+    public void testDecryptNull() {
+        System.out.println("testDecryptNull()");
+        Encryptor instance = ESAPI.encryptor();
+        try {
+			PlainText pt = instance.decrypt( null );  // Should throw IllegalArgumentException or AssertionError
+            fail("New decrypt(PlainText) method did not throw. Result was: " + pt.toString());
+        } catch(Throwable t) {
+            // It should be one of these, depending on whether or not assertions are enabled.
+            assertTrue( t instanceof IllegalArgumentException || t instanceof AssertionError);
+        }
+    }
+    
     /**
      * Test of new encrypt / decrypt methods added in ESAPI 2.0.
      */
@@ -246,7 +257,8 @@ public class EncryptorTest extends TestCase {
 			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
 			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
 			// Change the cipher transform from whatever it currently is to the specified cipherXform.
-	    	String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
+	    	@SuppressWarnings("deprecation")
+			String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
 	    	if ( ! cipherXform.equals(oldCipherXform) ) {
 	    		System.out.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
 	    	}
@@ -281,7 +293,8 @@ public class EncryptorTest extends TestCase {
 			assertTrue( "Failed to decrypt properly.", origPlainText.toString().equals( decryptedPlaintext.toString() ) );
 	    	
 	    	// Restore the previous cipher transformation. For now, this is only way to do this.
-	    	String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
+	    	@SuppressWarnings("deprecation")
+			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
 	    	assertTrue( previousCipherXform.equals( cipherXform ) );
 	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
 	    	assertTrue( defaultCipherXform.equals( oldCipherXform ) );
@@ -331,7 +344,8 @@ public class EncryptorTest extends TestCase {
     // TODO - Need to test rainy day paths of new encrypt / decrypt so can
     //		  verify that exception handling working OK, etc. Maybe also in
     //		  a separate JUnit test, since everything here seems to be sunny
-    //		  day path.
+    //		  day path. (Note: Some of this no in new test case,
+    //		  org.owasp.esapi.crypto.ESAPICryptoMACByPassTest.)
     //
     //				-kevin wall
     
@@ -508,15 +522,5 @@ public class EncryptorTest extends TestCase {
         // and checked against (at least some of) the expected output.
         // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         JavaEncryptor.main( args1 );        
-    }
-    
-	private boolean checkByteArray(byte[] ba, byte b) {
-		for(int i = 0; i < ba.length; i++ ) {
-			if ( ba[i] != b ) {
-				return false;
-			}
-		}
-		return true;
-	}
-    
+    }    
 }
