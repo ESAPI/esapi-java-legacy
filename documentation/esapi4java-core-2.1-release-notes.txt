@@ -28,7 +28,7 @@ ESAPI for Java - 2.1.0 Release Notes
 
 3) Fixed Javadoc for Encoder.encryptForJavaScript(). [Revision r1879]
 
-4) DefaultEncryptedProperties - made minor javadoc changes.
+4) DefaultEncryptedProperties - made minor Javadoc changes.
 
 5) The ESAPI 2.0 Encryptor.encrypt() methods now all throw an appropriate
    IllegalArgumentException if any of the arguments are null. Previously,
@@ -37,8 +37,23 @@ ESAPI for Java - 2.1.0 Release Notes
    assertions were disabled.  While IllegalArgumentException is still an
    unchecked RuntimeException, note that if you were previously catching
    NullPointerExceptions for these cases, you may need to change your code.
- 
-6) Other miscellaneous minor code clean-up, mostly to remove compiler warnings.
+
+6) The public constructor, CiphertextSerializer(CipherText ct), was changed
+   to explicitly check that the parameter is not null. Previously it had
+   checked with assertions which might later result in a NullPointerException
+   being thrown if assertions were disabled. Now if the parameter is null,
+   an appropriate IllegalArgumentException is thrown. This should not really
+   affect existing code (unless you are experimenting implementing your own
+   crypto) since user code should not really be using CiperTextSerializer
+   directly.
+
+7) Some of the setter methods in KeyDerivationFunction were changed to explicitly
+   check for invalid arguments and throw an IllegalArgumentException rather than
+   checking these parameters via assertions. This should not affect general
+   user code as most would not be calling the KeyDerivationFunction class
+   directly.
+
+8) Other miscellaneous minor code clean-up, mostly to remove compiler warnings.
 
 NOTE: A follow-up patch release is scheduled within the next few months to
       address some questionable design decisions regarding what data in
