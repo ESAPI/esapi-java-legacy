@@ -140,6 +140,30 @@ public class CryptoHelperTest {
 //        System.out.println("diff: " + diff + " nanosec");
     }
 
+    @Test
+    public final void testIsValidKDFVersion() {
+    	assertTrue( CryptoHelper.isValidKDFVersion(20110203, false, false));
+    	assertTrue( CryptoHelper.isValidKDFVersion(20130830, false, false));
+    	assertTrue( CryptoHelper.isValidKDFVersion(33330303, false, false));
+    	assertTrue( CryptoHelper.isValidKDFVersion(99991231, false, false));
+
+    	assertFalse( CryptoHelper.isValidKDFVersion(0, false, false));
+    	assertFalse( CryptoHelper.isValidKDFVersion(99991232, false, false));
+    	assertFalse( CryptoHelper.isValidKDFVersion(20110202, false, false));
+
+    	assertTrue( CryptoHelper.isValidKDFVersion(20110203, true, false));
+    	assertTrue( CryptoHelper.isValidKDFVersion(KeyDerivationFunction.kdfVersion, true, false));
+    	assertFalse( CryptoHelper.isValidKDFVersion(KeyDerivationFunction.kdfVersion + 1, true, false));
+
+    	try {
+        	CryptoHelper.isValidKDFVersion(77777777, true, true);
+        	fail("Failed to CryptoHelper.isValidKDFVersion() failed to throw IllegalArgumentException.");
+    	}
+    	catch (Exception e) {
+    		assertTrue( e instanceof IllegalArgumentException);
+    	}
+    }
+    
     private void fillByteArray(byte[] ba, byte b) {
         for (int i = 0; i < ba.length; i++) {
             ba[i] = b;

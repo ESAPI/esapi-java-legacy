@@ -17,7 +17,8 @@ import org.owasp.esapi.errors.EncryptionException;
 public class CipherTextSerializerTest {
     private Cipher encryptor = null;
     private IvParameterSpec ivSpec = null;  // Note: FindBugs reports false positive
-                                            // about this being unread field.
+                                            // about this being unread field. See
+    										// testAsSerializedByteArray().
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {

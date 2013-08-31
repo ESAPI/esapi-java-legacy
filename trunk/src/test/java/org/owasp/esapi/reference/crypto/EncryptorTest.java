@@ -443,7 +443,8 @@ public class EncryptorTest extends TestCase {
         String plaintext = "ridiculous:with:delimiters";    // Should now work w/ : (issue #28)
         String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000 * NSEC ) );
         try {
-        	assertTrue( instance.verifySeal( seal ) );
+        	assertNotNull("Encryptor.seal() returned null", seal );
+        	assertTrue("Failed to verify seal", instance.verifySeal( seal ) );
         } catch ( Exception e ) {
         	fail();
         }
