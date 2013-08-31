@@ -692,6 +692,15 @@ public final class JavaEncryptor implements Encryptor {
                 //       But remember Jon Bentley's "Rule #1 on performance: First make it right, then make it fast."
             	//		 This would be a security trade-off as it would leave keys in memory a bit longer, so it
             	//		 should probably be off by default and controlled via a property.
+            	//
+            	// TODO: Feed in some additional parms here to use as the 'context' for the
+            	//		 KeyDerivationFunction...especially the KDF version. We would have to
+            	//		 store that in the CipherText object. We *possibly* could make it
+            	//		 transient so it would not be serialized with the CipherText object,
+            	//		 otherwise we would have to implement readObject() and writeObject()
+            	//		 methods there to support backward compatibility. Anyhow the intent
+            	//		 is to prevent down grade attacks when we finally re-design and
+            	//		 re-implement the MAC. Think about this in version 2.1.1.
                 encKey = computeDerivedKey( ciphertext.getKDFVersion(), ciphertext.getKDF_PRF(),
                 		                    key, keySize, "encryption");
             }

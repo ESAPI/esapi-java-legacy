@@ -100,13 +100,13 @@ public class SecurityProviderLoader  {
      * certificate has expired as of August 28, 2009. (This likely is true
      * for ABA, but I can't even find a copy to download!). Lastly, the IAIK
      * provider is no longer offered as free, open source. It is not a
-     * commercial product. See {@link http://jce.iaik.tugraz.at/} for
+     * commercial product. See {@link "http://jce.iaik.tugraz.at/"} for
      * details. While some older versions were offered free, it is not clear
      * whether the accompanying license still allows you to use it, and if
      * it does, whether or not the code signing certificate used to sign
      * their JCE jar(s) has expired are not.  Therefore, if you are looking
      * for a FOSS alternative to SunJCE, Bouncy Castle
-     * ({@link http://www.bouncycastle.org/} is probably your best bet. The
+     * ({@link "http://www.bouncycastle.org/"} is probably your best bet. The
      * BC provider does support many the "combined cipher modes" that provide
      * both confidentiality and authenticity. (See the {@code ESAPI.properties}
      * property {@code Encryptor.cipher_modes.combined_modes} for details.)
@@ -116,9 +116,9 @@ public class SecurityProviderLoader  {
      * by NIST's Cryptographic Module Validation Program and are therefore
      * <b>not</b> considered FIPS 140-2 compliant. There are a few approved
      * JCE compatible Java libraries that are on NIST's CMVP list, but this
-     * list changes constantly so they are not listed here. For futher details
+     * list changes constantly so they are not listed here. For further details
      * on NIST's CMVP, see
-     * {@link http://csrc.nist.gov/groups/STM/cmvp/index.html}.
+     * {@link "http://csrc.nist.gov/groups/STM/cmvp/index.html"}.
      * </p><p>
      * Finally, if you wish to use some other JCE provider not recognized above,
      * you must specify the provider's fully-qualified class name (which in
