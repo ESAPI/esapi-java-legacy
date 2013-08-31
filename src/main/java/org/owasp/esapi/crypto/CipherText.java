@@ -102,6 +102,17 @@ public final class CipherText implements Serializable {
 
     // How much we've collected so far. We start out with having collected nothing.
     private EnumSet<CipherTextFlags> progress = EnumSet.noneOf(CipherTextFlags.class);
+    
+    // Check if versions of KeyDerivationFunction, CipherText, and
+    // CipherTextSerializer are all the same.
+    {
+    	// Ignore error about comparing identical versions and dead code.
+    	// We expect them to be, but the point is to catch us if they aren't.
+    	assert CipherTextSerializer.cipherTextSerializerVersion == CipherText.cipherTextVersion :
+            "Versions of CipherTextSerializer and CipherText are not compatible.";
+    	assert CipherTextSerializer.cipherTextSerializerVersion == KeyDerivationFunction.kdfVersion :
+    		"Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.";
+    }
 
     ///////////////////////////  C O N S T R U C T O R S  /////////////////////////
     
@@ -307,7 +318,9 @@ public final class CipherText implements Serializable {
 	 * <p>
 	 * If there is a need to store an encrypted value, say in a database, this
 	 * is <i>not</i> the method you should use unless you are using a <i>fixed</i>
-	 * IV. If you are <i>not</i> using a fixed IV, you should normally use
+	 * IV or are planning on retrieving the IV and storing it somewhere separately
+	 * (e.g., a different database column). If you are <i>not</i> using a fixed IV
+	 * (which is <strong>highly</strong> discouraged), you should normally use
 	 * {@link #getEncodedIVCipherText()} instead.
 	 * </p>
 	 * @see #getEncodedIVCipherText()
@@ -566,7 +579,7 @@ public final class CipherText implements Serializable {
     }
 
     public void setKDFVersion(int vers) {
-    	assert vers > 0 && vers <= 99991231 : "Version must be positive, in format YYYYMMDD and <= 99991231.";
+    	CryptoHelper.isValidKDFVersion(vers, false, true);
     	kdfVersion_ = vers;
     }
     
@@ -843,8 +856,8 @@ public final class CipherText implements Serializable {
 		
 		// 		kdf version is bits 1-27, bit 28 (reserved) should be 0, and
 		//		bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
-		int kdfVers = getKDFVersion();
-		assert kdfVers > 0 && kdfVers <= 99991231 : "KDF version (YYYYMMDD, max 99991231) out of range: " + kdfVers;
+		int kdfVers = this.getKDFVersion();
+		assert CryptoHelper.isValidKDFVersion(kdfVers, true, false);
 		int kdfInfo = kdfVers;
 		int macAlg = kdfPRFAsInt();
 		assert macAlg >= 0 && macAlg <= 15 : "MAC algorithm indicator must be between 0 to 15 inclusion; value is: " + macAlg;

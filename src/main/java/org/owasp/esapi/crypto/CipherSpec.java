@@ -365,7 +365,8 @@ public final class CipherSpec implements Serializable {
      * will just allow it to work in the future should we decide to allow
      * sub-classing of this class.)
      * </p><p>
-     * See {@link http://www.artima.com/lejava/articles/equality.html}
+     * See <a href="http://www.artima.com/lejava/articles/equality.html">
+     * How to write an Equality Method in Java</a>
      * for full explanation.
      * </p>
      */
