@@ -250,8 +250,8 @@ public class CryptoToken {
     
     /**
      * Set expiration time to expire in 'interval' seconds (NOT milliseconds).
-     * @param interval  Number of seconds in the future from current date/time
-     *                  to set expiration. Must be positive.
+     * @param intervalSecs  Number of seconds in the future from current date/time
+     *                  	to set expiration. Must be positive.
      */
     public void setExpiration(int intervalSecs) throws IllegalArgumentException
     {

@@ -210,7 +210,7 @@ public class CryptoHelper {
      *
      * @param ct    The specified {@code CipherText} object to check to see if
      *              it requires a MAC.
-     * @returns     True if a MAC is required, false if it is not required.
+     * @return      True if a MAC is required, false if it is not required.
      */
     public static boolean isMACRequired(CipherText ct) {
         boolean preferredCipherMode =
@@ -345,10 +345,51 @@ public class CryptoHelper {
 	    return (result == 0) ? true : false;
 	}
   
+	/**
+	 * Is this particular KDF version number one that is sane? For that, we
+	 * just make sure it is inbounds of the valid range which is:
+	 * <pre>
+	 *     [20110203, 99991231]
+	 * </pre>
+	 * @param kdfVers	KDF version # that we are checking. Generally this is
+	 * 				extracted from the serialized {@code CipherText}.
+	 * @param restrictToCurrent	If this is set, we do an additional check
+	 *				to see if the KDF version is a later version than the
+	 *				one that this current ESAPI version supports.
+	 * @param throwIfError	Instead of returning {@code false} in the case of
+	 * 				an error, throw an {@code IllegalArgumentException}
+	 * @return	True if in range, false otherwise (except if {@code throwIfError}
+	 * 			is true.}
+	 */
+	public static boolean isValidKDFVersion(int kdfVers, boolean restrictToCurrent,
+											boolean throwIfError)
+				throws IllegalArgumentException
+	{
+		boolean ret = true;
+		
+		if ( kdfVers < KeyDerivationFunction.originalVersion || kdfVers > 99991231 ) {
+			ret = false;
+		} else if ( restrictToCurrent ) {
+			ret = ( kdfVers <= KeyDerivationFunction.kdfVersion );
+		}
+		if ( ret ) {
+			return ret;				// True
+		} else {					// False, so throw or not.
+			logger.warning(Logger.SECURITY_FAILURE, "Possible data tampering. Encountered invalid KDF version #. " +
+						   ( throwIfError ? "Throwing IllegalArgumentException" : "" ));
+			if ( throwIfError ) {	
+				throw new IllegalArgumentException("Version (" + kdfVers + ") invalid. " +
+					"Must be date in format of YYYYMMDD between " + KeyDerivationFunction.originalVersion + "and 99991231.");
+			}
+		}
+		return false;
+	}
+	
     /**
      * Prevent public, no-argument CTOR from being auto-generated. Public CTOR
      * is not needed as all methods are static.
      */
     private CryptoHelper() {
+    	;	// Prevent default CTOR from being auto-created.
     }
 }

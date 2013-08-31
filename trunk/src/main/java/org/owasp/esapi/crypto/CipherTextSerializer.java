@@ -24,27 +24,45 @@ import org.owasp.esapi.errors.EncryptionException;
  * Message Syntax (CMS) Authenticated-Enveloped-Data Content Type, or CMS' predecessor,
  * PKCS#7 (RFC 2315)), but these serialization schemes are by comparison very complicated,
  * and do not have extensive support for the various implementation languages which ESAPI
- * supports.
+ * supports. (Perhaps wishful thinking that other ESAPI implementations such as
+ * ESAPI for .NET, ESAPI for C, ESAPI for C++, etc. will all support a single, common
+ * serialization technique so they could exchange encrypted data.)
  * 
  * @author kevin.w.wall@gmail.com
  *
  */
 public class CipherTextSerializer {
-    // This should be *same* version as in CipherText & KeyDerivationFunction.
-	// If one changes, the other should as well to accommodate any differences.
+    // This should be *same* version as in CipherText & KeyDerivationFunction as
+	// these versions all need to work together.  Therefore, when one changes one
+	// one these versions, the other should be reviewed and changed as well to
+	// accommodate any differences.
 	//		Previous versions:	20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
 	//						    20130830 - Fix to issue #306 (release 2.1.0)
-	public  static final  int cipherTextSerializerVersion = 20130830; // Format: YYYYMMDD, max is 99991231.
+	// We check that in an static initialization block (when assertions are enabled)
+	// below.
+	public  static final  int cipherTextSerializerVersion = 20130830; // Current version. Format: YYYYMMDD, max is 99991231.
     private static final long serialVersionUID = cipherTextSerializerVersion;
 
     private static final Logger logger = ESAPI.getLogger("CipherTextSerializer");
     
     private CipherText cipherText_ = null;
     
+    // Check if versions of KeyDerivationFunction, CipherText, and
+    // CipherTextSerializer are all the same.
+    {
+    	// Ignore error about comparing identical versions and dead code.
+    	// We expect them to be, but the point is to catch us if they aren't.
+    	assert CipherTextSerializer.cipherTextSerializerVersion == CipherText.cipherTextVersion :
+            "Versions of CipherTextSerializer and CipherText are not compatible.";
+    	assert CipherTextSerializer.cipherTextSerializerVersion == KeyDerivationFunction.kdfVersion :
+    		"Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.";
+    }
+    
     public CipherTextSerializer(CipherText cipherTextObj) {
-        assert cipherTextObj != null : "CipherText object must not be null.";
-        assert cipherTextSerializerVersion == CipherText.cipherTextVersion :
-            "Version of CipherText and CipherTextSerializer not compatible.";
+    	if ( cipherTextObj == null ) {
+    		throw new IllegalArgumentException("CipherText object must not be null.");
+    	}
+        assert cipherTextObj != null : "CipherText object must not be null.";      
         cipherText_ = cipherTextObj;
     }
     
@@ -59,8 +77,6 @@ public class CipherTextSerializer {
     public CipherTextSerializer(byte[] cipherTextSerializedBytes)
         throws EncryptionException /* DISCUSS: Change exception type?? */
     {
-        assert cipherTextSerializerVersion == CipherText.cipherTextVersion :
-            "Version of CipherText and CipherTextSerializer not compatible.";
         cipherText_ = convertToCipherText(cipherTextSerializedBytes);
     }
 
@@ -69,7 +85,6 @@ public class CipherTextSerializer {
      * @return A serialization of this object. Note that this is <i>not</i> the
      * Java serialization.
      */
-    @SuppressWarnings("static-access")
     public byte[] asSerializedByteArray() {
         int kdfInfo = cipherText_.getKDFInfo();
         debug("asSerializedByteArray: kdfInfo = " + kdfInfo);
@@ -114,9 +129,35 @@ public class CipherTextSerializer {
      * @return The {@code CipherText} object that we are serializing.
      */
     public CipherText asCipherText() {
+    	assert cipherText_ != null;
         return cipherText_;
     }
       
+    /**
+     * Take all the individual elements that make of the serialized ciphertext
+     * format and put them in order and return them as a byte array.
+     * @param kdfInfo	Info about the KDF... which PRF and the KDF version {@link #asCipherText()}.
+     * @param timestamp	Timestamp when the data was encrypted. Intended to help
+     * 					facilitate key change operations and nothing more. If it is meaningless,
+     * 					then the expectations are just that the recipient should ignore it. Mostly
+     * 					intended when encrypted data is kept long term over a period of many
+     * 					key change operations.
+     * @param cipherXform	Details of how the ciphertext was encrypted. The format used
+     * 						is the same as used by {@code javax.crypto.Cipher}, namely,
+     * 						"cipherAlg/cipherMode/paddingScheme".
+     * @param keySize	The key size used for encrypting. Intended for cipher algorithms
+     * 					supporting multiple key sizes such as triple DES (DESede) or
+     * 					Blowfish.
+     * @param blockSize	The cipher block size. Intended to support cipher algorithms
+     * 					that support variable block sizes, such as Rijndael.
+     * @param ivLen		The length of the IV.
+     * @param iv		The actual IV (initialization vector) bytes.
+     * @param ciphertextLen	The length of the raw ciphertext.
+     * @param rawCiphertext	The actual raw ciphertext itself
+     * @param macLen	The length of the MAC (message authentication code).
+     * @param mac		The MAC itself.
+     * @return	A byte array representing the serialized ciphertext.
+     */
     private byte[] computeSerialization(int kdfInfo, long timestamp,
                                         String cipherXform, short keySize,
                                         short blockSize,
@@ -152,7 +193,9 @@ public class CipherTextSerializer {
     }
     
     // All strings are written as UTF-8 encoded byte streams with the
-    // length prepended before it as a short.
+    // length prepended before it as a short. The prepended length is
+    // more for the benefit of languages like C so they can pre-allocate
+    // char arrays without worrying about buffer overflows.
     private void writeString(ByteArrayOutputStream baos, String str) {
         byte[] bytes;
         try {
@@ -223,6 +266,13 @@ public class CipherTextSerializer {
         return ByteConversionUtil.toLong(longAsByteArray);
     }
     
+    /** Convert the serialized ciphertext byte array to a {@code CipherText}
+     * object.
+     * @param cipherTextSerializedBytes	The serialized ciphertext as a byte array.
+     * @return The corresponding {@code CipherText} object.
+     * @throws EncryptionException	Thrown if the byte array data is corrupt or
+     * 				there are version mismatches, etc.
+     */
     private CipherText convertToCipherText(byte[] cipherTextSerializedBytes)
         throws EncryptionException
     {
@@ -236,19 +286,27 @@ public class CipherTextSerializer {
             debug("kdfPrf: " + kdfPrf);
             assert kdfPrf >= 0 && kdfPrf <= 15 : "kdfPrf == " + kdfPrf + " must be between 0 and 15.";
             int kdfVers = ( kdfInfo & 0x07ffffff);
-            assert kdfVers >= 20110203 && kdfVers <= 99991231 : "KDF Version (" + kdfVers + ") out of range."; // 20110203 (orig version).
+
+            // First do a quick sanity check on the argument. Previously this was an assertion.
+            if ( ! CryptoHelper.isValidKDFVersion(kdfVers, false, false) ) {
+            	// TODO: Clean up. Use StringBuilder. Good enough for now.
+            	String logMsg = "KDF version read from serialized ciphertext (" + kdfVers + ") is out of range. " +
+            				    "Valid range for KDF version is [" + KeyDerivationFunction.originalVersion + ", " +
+            				    "99991231].";
+            	// This should never happen under actual circumstances (barring programming errors; but we've
+            	// tested the code, right?), so it is likely an attempted attack. Thus don't get the originator
+            	// of the suspect ciphertext too much info. They ought to know what they sent anyhow.
+            	throw new EncryptionException("Version info from serialized ciphertext not in valid range.",
+            				 "Likely tampering with KDF version on serialized ciphertext." + logMsg);
+            }
+            
             debug("convertToCipherText: kdfPrf = " + kdfPrf + ", kdfVers = " + kdfVers);
-            if ( kdfVers != CipherText.cipherTextVersion ) {
-                // NOTE: In future, support backward compatibility via this mechanism. When we do this
-            	//		 we will have to compare as longs and watch out for sign extension of kdfInfo
-            	//		 since it may have the sign bit set.  Then we will do different things depending
-            	//		 on what KDF version we encounter.  However, as for now, since this is
-                //       is first ESAPI 2.0 GA version, there nothing to be backward compatible with.
-            	//		 (We did not promise backward compatibility for earlier release candidates.)
-            	//		 Thus any version mismatch at this point is an error.
-                throw new InvalidClassException("This serialized byte stream not compatible " +
-                            "with loaded CipherText class. Version read = " + kdfInfo +
-                            "; version from loaded CipherText class = " + CipherText.cipherTextVersion);
+            System.err.println("convertToCipherText: kdfPrf = " + kdfPrf + ", kdfVers = " + kdfVers);
+
+            if ( ! versionIsCompatible( kdfVers) ) {
+            	throw new EncryptionException("This version of ESAPI does is not compatible with the version of ESAPI that encrypted your data.",
+            			"KDF version " + kdfVers + " from serialized ciphertext not compatibile with current KDF version of " + 
+            			KeyDerivationFunction.kdfVersion);
             }
             long timestamp = readLong(bais);
             debug("convertToCipherText: timestamp = " + new Date(timestamp));
@@ -292,8 +350,10 @@ public class CipherTextSerializer {
             cipherSpec.setIV(iv);
             debug("convertToCipherText: CipherSpec: " + cipherSpec);
             CipherText ct = new CipherText(cipherSpec);
-            assert (ivLen > 0 && ct.requiresIV()) :
-                    "convertToCipherText: Mismatch between IV length and cipher mode.";
+            if ( ! (ivLen > 0 && ct.requiresIV()) ) {
+                    throw new EncryptionException("convertToCipherText: Mismatch between IV length and cipher mode.",
+                    						      "Possible tampering of serialized ciphertext?");
+            }
             ct.setCiphertext(rawCiphertext);
               // Set this *AFTER* setting raw ciphertext because setCiphertext()
               // method also sets encryption time.
@@ -301,6 +361,13 @@ public class CipherTextSerializer {
             if ( macLen > 0 ) {
                 ct.storeSeparateMAC(mac);
             }
+            	// Fixed in ESAPI crypto version 20130839. Previously is didn't really matter
+            	// because there was only one version (20110203) and it defaulted to that
+            	// version, which was the current version. But we don't want that as now there
+            	// are two versions and we could be decrypting data encrypted using the previous
+            	// version.
+            ct.setKDF_PRF(kdfPrf);
+            ct.setKDFVersion(kdfVers);
             return ct;
         } catch(EncryptionException ex) {
             throw new EncryptionException("Cannot deserialize byte array into CipherText object",
@@ -311,8 +378,38 @@ public class CipherTextSerializer {
                     "Cannot deserialize byte array into CipherText object", e);
         }
     }
-    
-    private void debug(String msg) {
+
+    /** Check to see if we can support the KSF version that was extracted from
+     *  the serialized ciphertext. In particular, we assume that if we have a
+     *  newer version of KDF than we can support it as we assume that we have
+     *  built in backward compatibility.
+     *  
+     *  At this point (ESAPI 2.1.0, KDF version 20130830), all we need to check
+     *  if the version is either the current version or the previous version as
+     *  both versions work the same. This checking may get more complicated in
+     *  the future.
+     *  
+     *  @param readKdfVers	The version information extracted from the serialized
+     *  					ciphertext.
+     */
+    private static boolean versionIsCompatible(int readKdfVers) {
+    	// We've checked elsewhere for this, so assertion is OK here.
+    	assert readKdfVers > 0 : "Extracted KDF version is negative!";
+    	
+		switch ( readKdfVers ) {
+		case KeyDerivationFunction.originalVersion:		// First version
+			return true;
+		// Add new versions here; hard coding is OK...
+		// case YYYYMMDD:
+		//	return true;
+		case KeyDerivationFunction.kdfVersion:			// Current version
+			return true;
+		default:
+			return false;
+		}
+	}
+
+	private void debug(String msg) {
         if ( logger.isDebugEnabled() ) {
             logger.debug(Logger.EVENT_SUCCESS, msg);
         }

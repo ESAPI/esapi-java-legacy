@@ -57,7 +57,8 @@ public class KeyDerivationFunction {
 	 * @see CipherText#asPortableSerializedByteArray()
 	 * @see CipherText#fromPortableSerializedBytes(byte[])
 	 */
-	public  static final int  kdfVersion       = 20130830;   // Format: YYYYMMDD, max is 99991231.
+	public  static final int  originalVersion  = 20110203;	 // First version. Do not change. EVER!
+	public  static final int  kdfVersion       = 20130830;   // Current version. Format: YYYYMMDD, max is 99991231.
 	private static final long serialVersionUID = kdfVersion; // Format: YYYYMMDD
 	
     // Pseudo-random function algorithms suitable for NIST KDF in counter mode.
@@ -102,6 +103,17 @@ public class KeyDerivationFunction {
 	private int version_ = kdfVersion;
 	private String context_ = "";
 
+    // Check if versions of KeyDerivationFunction, CipherText, and
+    // CipherTextSerializer are all the same.
+    {
+    	// Ignore error about comparing identical versions and dead code.
+    	// We expect them to be, but the point is to catch us if they aren't.
+    	assert CipherTextSerializer.cipherTextSerializerVersion == CipherText.cipherTextVersion :
+            "Versions of CipherTextSerializer and CipherText are not compatible.";
+    	assert CipherTextSerializer.cipherTextSerializerVersion == KeyDerivationFunction.kdfVersion :
+    		"Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.";
+    }
+    
 	/**
 	 * Construct a {@code KeyDerivationFunction}.
 	 * @param prfAlg	Specifies a supported algorithm.
@@ -155,12 +167,11 @@ public class KeyDerivationFunction {
 	 * be decrypted.
 	 * @param version	Date as a integer, in format of YYYYMMDD. Maximum
 	 * 					version date is 99991231 (December 31, 9999).
+	 * @throws	IllegalArgumentException	If {@code version} is not within
+	 * 					the valid range of [20110203, 99991231].
 	 */
-	public void setVersion(int version) {
-		if ( version < 0 || version > 99991231 ) {
-			throw new IllegalArgumentException("Version (" + version + ") invalid. " +
-								"Must be date in format of YYYYMMDD < 99991231.");
-		}
+	public void setVersion(int version) throws IllegalArgumentException {
+		CryptoHelper.isValidKDFVersion(version, false, true);
 		this.version_ = version;
 	}
 
@@ -173,6 +184,12 @@ public class KeyDerivationFunction {
 		return version_;
 	}
 	
+	
+	// TODO: IMPORTANT NOTE: In a future release (hopefully starting in 2.1.1),
+	// we will be using the 'context' to mix in some additional things. At a
+	// minimum, we will be using the KDF version (version_) so that downgrade version
+	// attacks are not possible. Other candidates are the cipher xform and
+	// the timestamp.
 	/**
 	 * Set the 'context' as specified by NIST Special Publication 800-108. NIST
 	 * defines 'context' as "A binary string containing the information related
@@ -186,7 +203,7 @@ public class KeyDerivationFunction {
 	 * entities and other information to identify the derived
 	 * keying material. This is called context binding.
 	 * In particular, the identity (or identifier, as the term
-	 * is defined in [NIST SP 800- 56A , sic] and [NIST SP
+	 * is defined in [NIST SP 800-56A , sic] and [NIST SP
 	 * 800-56B , sic]) of each entity that will access (meaning
 	 * derive, hold, use, and/or distribute) any segment of
 	 * the keying material should be included in the Context
@@ -204,7 +221,9 @@ public class KeyDerivationFunction {
 	 * 					value but {@code null}.
 	 */
 	public void setContext(String context) {
-		assert context != null : "Context may not be null.";
+		if ( context == null ) {
+			throw new IllegalArgumentException("Context may not be null.");
+		}
 		context_ = context;
 	}
 	
@@ -239,7 +258,7 @@ public class KeyDerivationFunction {
 	 * @param keyDerivationKey  A key used as an input to a key derivation function
 	 *                          to derive other keys. This is the key that generally
 	 *                          is created using some key generation mechanism such as
-	 *                          {@link #generateSecretKey(String, int)}. The
+	 *                          {@link CryptoHelper#generateSecretKey(String, int)}. The
 	 *                          "input" key from which the other keys are derived.
 	 * 							The derived key will have the same algorithm type
 	 * 							as this key. This KDK cannot be null.
