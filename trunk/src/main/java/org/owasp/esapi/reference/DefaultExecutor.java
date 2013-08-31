@@ -199,8 +199,6 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * 
      * @param is
      * 			input stream to read from
-     * @return
-     * 			a string containing as many lines as the input stream contains, with newlines between lines
      * @throws IOException
      */
     private static void readStream( InputStream is, StringBuilder sb ) throws IOException {

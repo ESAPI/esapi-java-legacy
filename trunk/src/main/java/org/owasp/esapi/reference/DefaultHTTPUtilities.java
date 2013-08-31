@@ -912,7 +912,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
 
-            // TODO - URLEncode cryptToken before creating cookie? See Google Issue # 144 - KWW
+            // Do NOT URLEncode cryptToken before creating cookie. See Google Issue # 144,
+			// which was marked as "WontFix".
 
 			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
 			cookie.setMaxAge( maxAge );

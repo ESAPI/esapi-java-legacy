@@ -52,7 +52,7 @@ public class MySQLCodec extends Codec {
 
     /** Target MySQL Server is running in Standard MySQL (Default) mode. */
     public static final int MYSQL_MODE = 0;
-    /** Target MySQL Server is running in {@link http://dev.mysql.com/doc/refman/5.0/en/ansi-mode.html ANSI Mode} */
+    /** Target MySQL Server is running in {@link "http://dev.mysql.com/doc/refman/5.0/en/ansi-mode.html"} ANSI Mode */
     public static final int ANSI_MODE = 1;
 	
 	//private int mode = 0;

@@ -47,7 +47,7 @@ public class PercentCodec extends Codec
 	/**
 	 * Convinence method to encode a string into UTF-8. This
 	 * wraps the {@link UnsupportedEncodingException} that
-	 * {@link String.getBytes(String)} throws in a
+	 * {@link String#getBytes(String)} throws in a
 	 * {@link IllegalStateException} as UTF-8 support is required
 	 * by the Java spec and should never throw this exception.
 	 * @param str the string to encode
@@ -72,7 +72,7 @@ public class PercentCodec extends Codec
 	 * Append the two upper case hex characters for a byte.
 	 * @param sb The string buffer to append to.
 	 * @param b The byte to hexify
-	 * @returns sb with the hex characters appended.
+	 * @return sb with the hex characters appended.
 	 */
 	// rfc3986 2.1: For consistency, URI producers 
 	// should use uppercase hexadecimal digits for all percent-

@@ -49,12 +49,10 @@ public class PushbackString {
 		pushback = c;
 	}
 	
-	/*
-	 * Get the current index of the PushbackString. Typically used in error messages.
-	 */
+
     /**
-     *
-     * @return
+     * Get the current index of the PushbackString. Typically used in error messages.
+     * @return The current index of the PushbackString.
      */
     public int index() {
 		return index;
