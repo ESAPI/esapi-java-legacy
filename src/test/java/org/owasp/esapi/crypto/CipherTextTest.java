@@ -35,15 +35,21 @@ public class CipherTextTest {
 
     private static final boolean POST_CLEANUP = true;
     
-	private CipherSpec cipherSpec = null;
+	private CipherSpec cipherSpec_ = null;
     private Cipher encryptor = null;
     private Cipher decryptor = null;
     private IvParameterSpec ivSpec = null;
 	
     @BeforeClass public static void preCleanup() {
-        // These two calls have side-effects that cause FindBugs to complain.
-        new File("ciphertext.ser").delete();
-        new File("ciphertext-portable.ser").delete();
+    	try {
+            // These two calls have side-effects that cause FindBugs to complain.
+    		removeFile("ciphertext.ser");
+    		removeFile("ciphertext-portable.ser");
+    		// Do NOT remove this file...
+    		//		src/test/resource/ESAPI2.0-ciphertext-portable.ser
+    	} catch(Exception ex) {
+    		;	// Do nothing
+    	}
     }
     
 	@Before
@@ -62,8 +68,8 @@ public class CipherTextTest {
 	@AfterClass public static void postCleanup() {
 	    if ( POST_CLEANUP ) {
 	            // These two calls have side-effects that cause FindBugs to complain.
-	        new File("ciphertext.ser").delete();
-	        new File("ciphertext-portable.ser").delete();
+	        removeFile("ciphertext.ser");
+	        removeFile("ciphertext-portable.ser");
 	    }
 	}
 
@@ -72,18 +78,18 @@ public class CipherTextTest {
 	public final void testCipherText() {
 		CipherText ct =  new CipherText();
 
-		cipherSpec = new CipherSpec();
-		assertTrue( ct.getCipherTransformation().equals( cipherSpec.getCipherTransformation()));
-		assertTrue( ct.getBlockSize() == cipherSpec.getBlockSize() );
+		cipherSpec_ = new CipherSpec();
+		assertTrue( ct.getCipherTransformation().equals( cipherSpec_.getCipherTransformation()));
+		assertTrue( ct.getBlockSize() == cipherSpec_.getBlockSize() );
 	}
 
 	@Test
 	public final void testCipherTextCipherSpec() {
-		cipherSpec = new CipherSpec("DESede/OFB8/NoPadding", 112);
-		CipherText ct = new CipherText( cipherSpec );
+		cipherSpec_ = new CipherSpec("DESede/OFB8/NoPadding", 112);
+		CipherText ct = new CipherText( cipherSpec_ );
 		assertTrue( ct.getRawCipherText() == null );
 		assertTrue( ct.getCipherAlgorithm().equals("DESede") );
-		assertTrue( ct.getKeySize() == cipherSpec.getKeySize() );
+		assertTrue( ct.getKeySize() == cipherSpec_.getKeySize() );
 	}
 
 	@Test
@@ -200,7 +206,7 @@ public class CipherTextTest {
 
 	/** Test <i>portable</i> serialization. */
 	@Test public final void testPortableSerialization() {
-	    System.err.println("CipherTextTest.testPortableSerialization()...");
+	    System.out.println("CipherTextTest.testPortableSerialization()starting...");
 	    String filename = "ciphertext-portable.ser";
 	    File serializedFile = new File(filename);
 	    serializedFile.delete();    // Delete any old serialized file.
@@ -218,6 +224,8 @@ public class CipherTextTest {
 	        encryptor.init(Cipher.ENCRYPT_MODE, key, ivSpec);
 	        byte[] raw = encryptor.doFinal("This is my secret message!!!".getBytes("UTF8"));
 	        CipherText ciphertext = new CipherText(cipherSpec, raw);
+	        	// TODO: Replace this w/ call to KeyDerivationFunction as this is
+	        	//		 deprecated! Shame on me!
 	        SecretKey authKey = CryptoHelper.computeDerivedKey(key, key.getEncoded().length * 8, "authenticity");
 	        ciphertext.computeAndStoreMAC( authKey );
 //          System.err.println("Original ciphertext being serialized: " + ciphertext);
@@ -258,6 +266,39 @@ public class CipherTextTest {
         } finally {
             // FindBugs complains that we are ignoring this return value. We really don't care.
             serializedFile.delete();
+        }
+	}
+	
+	/** Test <i>portable</i> serialization for backward compatibility with ESAPI 2.0. */
+	@Test public final void testPortableSerializationBackwardCompatibility() {
+	    System.out.println("testPortableSerializationBackwardCompatibility()starting...");
+	    String filename = "src/test/resources/ESAPI2.0-ciphertext-portable.ser";  // Do NOT remove
+	    File serializedFile = new File(filename);
+
+	    try {
+	    	// String expectedMsg = "This is my secret message!!!";
+            
+            // NOTE: FindBugs complains about this (OS_OPEN_STREAM). It apparently
+            //       is too lame to know that 'fis.read()' is a serious side-effect.
+            FileInputStream fis = new FileInputStream(serializedFile);
+            int avail = fis.available();
+            byte[] bytes = new byte[avail];
+            fis.read(bytes, 0, avail);
+            // We can't go as far and decrypt it because the file was encrypted using a
+            // temporary session key.
+            CipherText restoredCipherText = CipherText.fromPortableSerializedBytes(bytes);
+            assertTrue( restoredCipherText != null );
+            int retrievedKdfVersion = restoredCipherText.getKDFVersion();
+	    } catch (EncryptionException e) {
+	        Assert.fail("Caught EncryptionException: " + e);
+        } catch (FileNotFoundException e) {
+            Assert.fail("Caught FileNotFoundException: " + e);
+        } catch (IOException e) {
+            Assert.fail("Caught IOException: " + e);
+        } catch (Exception e) {
+            Assert.fail("Caught Exception: " + e);
+        } finally {
+        	; // Do NOT delete the file.
         }
 	}
 	
@@ -333,5 +374,17 @@ public class CipherTextTest {
 	 */
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(CipherTextTest.class);
+	}
+	
+	private static void removeFile(String fname) {
+    	try {
+    		if ( fname != null ) {
+    			File f = new File(fname);
+    			// Findbugs complains about ignoring this return value. Too bad.
+    			f.delete();
+    		}
+    	} catch(Exception ex) {
+    		;	// Do nothing
+    	}
 	}
 }

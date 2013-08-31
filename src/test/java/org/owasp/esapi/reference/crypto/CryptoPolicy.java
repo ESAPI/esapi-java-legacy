@@ -82,7 +82,8 @@ public class CryptoPolicy {
                                 // (default) provider.
             }
         } catch( InvalidKeyException ikex ) {
-            System.out.println("Invalid key size - unlimited strength crypto NOT installed!");
+            System.out.println("CryptoPolicy: 256 bits is " +
+            		"invalid key size ==> unlimited strength crypto NOT installed!");
             return false;
         } catch( Exception ex ) {
             System.out.println("Caught unexpected exception: " + ex);
