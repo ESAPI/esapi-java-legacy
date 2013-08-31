@@ -288,7 +288,7 @@ public interface SecurityConfiguration {
      * to an empty string, which means that the preferred JCE provider is not
      * changed.
      * @return The property {@code Encryptor.PreferredJCEProvider} is returned.
-     * @see org.owasp.esapi.crypto.SecurityProvider
+     * @see org.owasp.esapi.crypto.SecurityProviderLoader
      */
     public String getPreferredJCEProvider();
     

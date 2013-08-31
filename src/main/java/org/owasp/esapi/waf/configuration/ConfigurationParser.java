@@ -56,7 +56,7 @@ import bsh.EvalError;
  * The class used to turn a policy file's contents into an object model. 
  * 
  * @author Arshan Dabirsiaghi
- * @see org.owasp.esapi.waf.AppGuardianConfiguration
+ * @see org.owasp.esapi.waf.configuration.AppGuardianConfiguration
  */
 public class ConfigurationParser {
 

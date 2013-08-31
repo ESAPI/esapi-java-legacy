@@ -23,7 +23,7 @@ import org.owasp.esapi.errors.EnterpriseSecurityException;
  * The Exception to be thrown when there is an error parsing a policy file.
  * 
  * @author Arshan Dabirsiaghi
- * @see org.owasp.esapi.configuration.ConfigurationParser
+ * @see org.owasp.esapi.waf.configuration.ConfigurationParser
  *
  */
 public class ConfigurationException extends EnterpriseSecurityException {

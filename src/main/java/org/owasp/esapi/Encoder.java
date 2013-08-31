@@ -295,9 +295,9 @@ public interface Encoder {
      * 
      * For example:
      * <pre>
-     *  <script>
-     *     window.setInterval('<%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %>');
-     *  </script>
+     *  &lt;script&gt;
+     *    &nbsp;&nbsp;window.setInterval('&lt;%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %&gt;');
+     *  &lt;/script&gt;
      * </pre>
      * @param input 
      *          the text to encode for JavaScript
