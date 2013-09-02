@@ -54,7 +54,7 @@ public class ESAPICryptoMACByPassTest {
     @Test
     public void testMacBypass() throws EncryptionException, NoSuchFieldException, IllegalAccessException {
 
-        byte[] bkey = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0xA,0x0B,0x0C,0x0D,0x0E,0x0F}; //Truly random key.
+        byte[] bkey = {0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0xA,0x0B,0x0C,0x0D,0x0E,0x0F}; //Truly random key. ;-)
         SecretKey sk = new SecretKeySpec(bkey,"AES");
 
         //Encryption with MAC
@@ -76,7 +76,6 @@ public class ESAPICryptoMACByPassTest {
         String origCipherXform =
         	ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/NoPadding");
         CipherText ct = ESAPI.encryptor().encrypt(sk,new PlainText(originalMessage));
-        ct.computeAndStoreMAC(sk);
 
         //Serialize the ciphertext in order to send it over the wire..
         byte[] serializedCt = ct.asPortableSerializedByteArray();
