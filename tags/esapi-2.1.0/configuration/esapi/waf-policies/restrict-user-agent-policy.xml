@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+	<!--
+	This test file exemplifies a restrict-user-agent rule.
+
+	Protection #1: any request with a user agent containing the word 'GoogleBot' will be rejected
+	Exception  #1: requests for /index.html are allowed to have 'GoogleBot' in user agent
+	-->
+
+<policy>
+
+	<settings>
+		<mode>redirect</mode>
+		<error-handling>
+			<default-redirect-page>/security/error.jsp</default-redirect-page>
+			<block-status>403</block-status>
+		</error-handling>
+	</settings>
+
+	<header-rules>
+		<restrict-user-agent deny=".*GoogleBot.*">
+			<path-exception type="regex">/index.html</path-exception>
+		</restrict-user-agent>
+	</header-rules>
+
+</policy>
