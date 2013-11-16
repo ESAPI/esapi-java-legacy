@@ -54,6 +54,20 @@ public class IntrusionException extends RuntimeException {
         this.logMessage = logMessage;
         logger.error(Logger.SECURITY_FAILURE, "INTRUSION - " + logMessage);
     }
+    
+    /**
+     * Creates a new instance of IntrusionException.
+     * 
+     * @param userMessage
+     *            the message to display to users. This is also the message
+     *            we log.
+     * @param cause
+	 * 			  The cause of the message
+     */
+    public IntrusionException(String userMessage, Throwable cause) {
+        super(userMessage, cause);
+        logger.error(Logger.SECURITY_FAILURE, "INTRUSION - " + userMessage, cause);
+    }
 
     /**
      * Instantiates a new intrusion exception.
