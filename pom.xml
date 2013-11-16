@@ -107,7 +107,7 @@
         </developer>
         <developer>
             <name>Kevin Wall</name>
-            <organization>Qwest</organization>
+            <organization>Wells Fargo</organization>
             <roles>
                 <role>Project Manager</role>
                 <role>Architect</role>
@@ -168,10 +168,6 @@
             <version>1.2</version>
             <scope>compile</scope>
         </dependency>
-        <!-- unused according to dependancy:analyze
-           this is a optional dependency of commons-fileupload which
-           is at least needed for testing...
-        -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -201,10 +197,15 @@
             <artifactId>bsh-core</artifactId>
             <version>2.0b4</version>
         </dependency>
-        <dependency>
-            <groupId>org.owasp.antisamy</groupId>
-            <artifactId>antisamy</artifactId>
-            <version>1.4.3</version>
+	    <dependency>
+			<groupId>com.googlecode.owasp-java-html-sanitizer</groupId>
+			<artifactId>owasp-java-html-sanitizer</artifactId>
+			<version>[r136,)</version>
+	    </dependency>
+        <dependency>  
+            <groupId>com.redhat.victims</groupId>  
+            <artifactId>enforce-victims-rule</artifactId>  
+            <version>1.0</version>
         </dependency>
     </dependencies>
 
@@ -252,15 +253,83 @@
                 <executions>
                     <execution>
                         <id>check-for-dependency-updates</id>
-                        <phase>compile</phase> <!-- Eclipse q4e plugin needs this -->
+                        <phase>compile</phase>
                         <goals>
                             <goal>display-dependency-updates</goal>
                             <goal>display-plugin-updates</goal>
-                            <goal>display-property-updates</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>  
+              <groupId>org.apache.maven.plugins</groupId>  
+              <artifactId>maven-enforcer-plugin</artifactId>  
+              <version>1.1.1</version>  
+              <dependencies>  
+                <dependency>  
+                  <groupId>com.redhat.victims</groupId>  
+                  <artifactId>enforce-victims-rule</artifactId>  
+                  <version>1.0</version>  
+                </dependency>  
+              </dependencies>  
+              <executions>  
+                <execution>  
+                  <id>enforce-victims-rule</id>  
+                  <goals>  
+                    <goal>enforce</goal>  
+                  </goals>  
+                  <configuration>  
+                    <rules>
+                      <rule implementation="com.redhat.victims.VictimsRule">     
+                        <!-- The URL where the rule should synchronize the database with --> 
+                        <url>https://victims-websec.rhcloud.com/service/v1</url>
+  
+                        <!-- 
+                          Check the project's dependencies against the database using 
+                          name and version. The default mode for this is 'warning'.
+  
+                          Valid options are: 
+  
+                          disabled: Rule is still run but only INFO level messages aand no errors.
+                          warning : Rule will spit out a warning message but doesn't result in a failure. 
+                          fatal   : Rule will spit out an error message and fail the build. 
+                        -->
+                        <metadata>warning</metadata>
+  
+                        <!--
+                          Check the project's dependencies against the database using 
+                          the SHA-512 checksum of the artifact. The default is fatal. 
+  
+                          Valid options are: 
+  
+                          disabled: Rule is still run but only INFO level messages aand no errors.
+                          warning : Rule will spit out a warning message but doesn't result in a failure. 
+                          fatal   : Rule will spit out an error message and fail the build. 
+                        -->
+                        <fingerprint>fatal</fingerprint>
+  
+                        <!-- The location to save the embedded Apache Derby instance --> 
+                        <path>.victims</path>
+  
+                        <!-- 
+                          Disables the synchronization mechansim. By default the rule will 
+                          attempt to update the database for each build. 
+  
+                          Valid options are: 
+  
+                          auto  : Automatically update the database entries on each build. 
+                          off   : Disable the synchronization mechanism. 
+  
+                        -->  
+                        <updates>auto</updates>
+                      </rule>
+                    </rules>
+                  </configuration>  
+                </execution>  
+              </executions>  
+            </plugin>  
+            
         </plugins>
     </build>
 
@@ -362,6 +431,17 @@
                     <value>true</value>
                 </property>
             </activation>
+            
+            <!-- HTML Sanitizer not in standard Maven repositories. -->
+			<!-- Note this has some major issues. Commenting it out for now. -->
+			<!--
+				One possibility might be to use the Maven in-project-repository
+				here. E.g., see
+				http://blog.dub.podval.org/2010/01/maven-in-project-repository.html
+				but that seems like more bother to set up than it's worth IMO.
+			sanitizer
+					-kevin wall
+			-->
 
             <distributionManagement>
                 <snapshotRepository>
@@ -440,7 +520,8 @@
                                             <version>1.5</version>
                                             <message>
                                                 ESAPI 2.0 uses the JDK1.5 for it's baseline. Please make sure that your
-                                                JAVA_HOME environment variable is pointed to a JDK1.5 distribution.
+                                                JAVA_HOME environment variable is pointed to a JDK1.5 distribution or later.
+                                                If you use a latter version, you can compile with '-target 1.5'.
                                             </message>
                                         </requireJavaVersion>
                                     </rules>
