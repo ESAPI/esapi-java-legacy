@@ -79,20 +79,11 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
  * @see org.owasp.esapi.Encryptor
  */
 public final class JavaEncryptor implements Encryptor {
-    private static volatile Encryptor singletonInstance;
 
-    // Note: This double-check pattern only works because singletonInstance
-    //       is declared to be volatile.  Usually this method is called
-    //       via ESAPI.encryptor() rather than directly.
+    // This class is no longer a singleton, but this (might be) still needed
+    // for backward compatibility.
     public static Encryptor getInstance() throws EncryptionException {
-        if ( singletonInstance == null ) {
-            synchronized ( JavaEncryptor.class ) {
-                if ( singletonInstance == null ) {
-                    singletonInstance = new JavaEncryptor();
-                }
-            }
-        }
-        return singletonInstance;
+    	return new JavaEncryptor();
     }
 
     private static boolean initialized = false;
@@ -118,16 +109,6 @@ public final class JavaEncryptor implements Encryptor {
 	//					  this class is first loaded. Is this a big limitation? Since there
 	//                    is no method to reset it, we may has well make it 'final' also.
 	private static Logger logger = ESAPI.getLogger("JavaEncryptor");
-	    // Used to print out warnings about deprecated methods.
-	private static int encryptCounter = 0;
-	private static int decryptCounter = 0;
-        // DISCUSS: OK to not have a property for this to set the frequency?
-        //          The desire is to persuade people to move away from these
-	    //          two deprecated encrypt(String) / decrypt(String) methods,
-        //          so perhaps the annoyance factor of not being able to
-        //          change it will help. For now, it is just hard-coded here.
-        //          We could be mean and just print a warning *every* time.
-	private static final int logEveryNthUse = 25;
 	
     // *Only* use this string for user messages for EncryptionException when
     // decryption fails. This is to prevent information leakage that may be
@@ -138,8 +119,12 @@ public final class JavaEncryptor implements Encryptor {
 
     // # of seconds that all failed decryption attempts will take. Used to
     // help prevent side-channel timing attacks.
-    private static int N_SECS = 2;
+    private static final int N_SECS = 2;
 
+    // This is the magical version where we transitioned and started using
+    // the 'context' in our KDF.
+    public static final int TRANSITION_VERSION = KeyDerivationFunction.transitionVersion;
+    
 	// Load the preferred JCE provider if one has been specified.
 	static {
 	    try {
@@ -236,6 +221,7 @@ public final class JavaEncryptor implements Encryptor {
         byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
         byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
+        // TODO: Turn these into explicit checks. Throw ConfigurationException
         assert salt != null : "Can't obtain master salt, Encryptor.MasterSalt";
         assert salt.length >= 16 : "Encryptor.MasterSalt must be at least 16 bytes. " +
                                    "Length is: " + salt.length + " bytes.";
@@ -382,6 +368,11 @@ public final class JavaEncryptor implements Encryptor {
 			 //          public CipherText encrypt(CryptoControls ctrl, SecretKey skey, PlainText plaintext)
 			 //        and this method will just call that one.
 			 Cipher encrypter = Cipher.getInstance(xform);
+			 	// This is an assertion rather than a test because instanceof is (relatively) slow and
+			 	// we generally consider the ESAPI.properties trusted. Furthermore, it probably would be
+			 	// better to test 'xform', but I'm not sure how the NullCipher is specified in a cipher
+			 	// transformation... maybe NULL/mode/padding???
+	         assert !(encrypter instanceof javax.crypto.NullCipher) : "Cipher is instance of NullCipher: " + xform;
 			 String cipherAlg = encrypter.getAlgorithm();
 			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
 
@@ -470,8 +461,11 @@ public final class JavaEncryptor implements Encryptor {
 			 if ( preferredCipherMode ) {
 			     encKey = key;
 			 } else {
+				 String kdfContext = computeKDFContext(cipherSpec.getCipherTransformation(),
+						 							   KeyDerivationFunction.kdfVersion,
+						 							   getDefaultPRF(), keySize);
 			     encKey = computeDerivedKey(KeyDerivationFunction.kdfVersion, getDefaultPRF(),
-			    		 				    key, keySize, "encryption");
+			    		 				    key, keySize, "encryption", kdfContext);
 			 }
 			 
 			 if ( cipherSpec.requiresIV() ) {
@@ -515,9 +509,12 @@ public final class JavaEncryptor implements Encryptor {
              // do this when we are not using such a cipher mode.
 			 if ( !preferredCipherMode ) {
 			     // Compute derived key, and then use it to compute and store separate MAC in CipherText object.
+				 String kdfContext = computeKDFContext(cipherSpec.getCipherTransformation(),
+						   							   KeyDerivationFunction.kdfVersion,
+						   							   getDefaultPRF(), keySize);
 			     SecretKey authKey = computeDerivedKey(KeyDerivationFunction.kdfVersion, getDefaultPRF(),
-			    		 							   key, keySize, "authenticity");
-			     ciphertext.computeAndStoreMAC(  authKey );
+			    		 							   key, keySize, "authenticity", kdfContext);
+			     ciphertext.computeAndStoreMAC( authKey );
 			 }
 			 logger.debug(Logger.EVENT_SUCCESS, "JavaEncryptor.encrypt(SecretKey,byte[],boolean,boolean) -- success!");
 			 success = true;	// W00t!!!
@@ -676,6 +673,7 @@ public final class JavaEncryptor implements Encryptor {
         int keySize = 0;
         try {
             Cipher decrypter = Cipher.getInstance(ciphertext.getCipherTransformation());
+            assert !(decrypter instanceof javax.crypto.NullCipher) : "Cipher is instance of NullCipher: " + ciphertext.getCipherTransformation();
             keySize = key.getEncoded().length * 8;  // Convert to # bits
 
             // Using cipher mode that supports *both* confidentiality *and* authenticity? If so, then
@@ -701,8 +699,11 @@ public final class JavaEncryptor implements Encryptor {
             	//		 methods there to support backward compatibility. Anyhow the intent
             	//		 is to prevent down grade attacks when we finally re-design and
             	//		 re-implement the MAC. Think about this in version 2.1.1.
+				String kdfContext = computeKDFContext(ciphertext.getCipherTransformation(),
+ 						  							  ciphertext.getKDFVersion(),
+ 						  							  ciphertext.getKDF_PRF(), keySize);
                 encKey = computeDerivedKey( ciphertext.getKDFVersion(), ciphertext.getKDF_PRF(),
-                		                    key, keySize, "encryption");
+                		                    key, keySize, "encryption", kdfContext);
             }
             if ( ciphertext.requiresIV() ) {
                 decrypter.init(Cipher.DECRYPT_MODE, encKey, new IvParameterSpec(ciphertext.getIV()));
@@ -734,8 +735,11 @@ public final class JavaEncryptor implements Encryptor {
             //during a code inspection.
             SecretKey authKey;
             try {
+				String kdfContext = computeKDFContext(ciphertext.getCipherTransformation(),
+							   						  ciphertext.getKDFVersion(),
+							   						  ciphertext.getKDF_PRF(), keySize);
                 authKey = computeDerivedKey( ciphertext.getKDFVersion(), ciphertext.getKDF_PRF(),
-                		                     key, keySize, "authenticity");
+                		                     key, keySize, "authenticity", kdfContext);
             } catch (Exception e1) {
                 throw new EncryptionException(DECRYPTION_FAILED,
                         "Decryption problem -- failed to compute derived key for authenticity: " + e1.getMessage(), e1);
@@ -931,36 +935,6 @@ public final class JavaEncryptor implements Encryptor {
 	    }
 	}
 ********************/
-
-    /**
-     * Log a security warning every Nth time one of the deprecated encrypt or
-     * decrypt methods are called. ('N' is hard-coded to be 25 by default, but
-     * may be changed via the system property
-     * {@code ESAPI.Encryptor.warnEveryNthUse}.) In other words, we nag
-     * them until the give in and change it. ;-)
-     * 
-     * @param where The string "encrypt" or "decrypt", corresponding to the
-     *              method that is being logged.
-     * @param msg   The message to log.
-     */
-    private void logWarning(String where, String msg) {
-        int counter = 0;
-        if ( where.equals("encrypt") ) {
-            counter = encryptCounter++;
-            where = "JavaEncryptor.encrypt(): [count=" + counter +"]";
-        } else if ( where.equals("decrypt") ) {
-            counter = decryptCounter++;
-            where = "JavaEncryptor.decrypt(): [count=" + counter +"]";
-        } else {
-            where = "JavaEncryptor: Unknown method: ";
-        }
-        // We log the very first time (note the use of post-increment on the
-        // counters) and then every Nth time thereafter. Logging every single
-        // time is likely to be way too much logging.
-        if ( (counter % logEveryNthUse) == 0 ) {
-            logger.warning(Logger.SECURITY_FAILURE, where + msg);
-        }
-    }
     
     private KeyDerivationFunction.PRF_ALGORITHMS getPRF(String name) {    	
 		String prfName = null;
@@ -980,7 +954,7 @@ public final class JavaEncryptor implements Encryptor {
     
     // Private interface to call ESAPI's KDF to get key for encryption or authenticity.
     private SecretKey computeDerivedKey(int kdfVersion, KeyDerivationFunction.PRF_ALGORITHMS prf,
-    									SecretKey kdk, int keySize, String purpose)
+    									SecretKey kdk, int keySize, String purpose, String context)
     	throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
     {
     	// These really should be turned into actual runtime checks and an
@@ -1003,8 +977,28 @@ public final class JavaEncryptor implements Encryptor {
     	if ( kdfVersion != 0 ) {
     		kdf.setVersion(kdfVersion);
     	}
+    	if ( context != null ) {
+    		kdf.setContext(context);
+    	}
     	return kdf.computeDerivedKey(kdk, keySize, purpose);
     }
+    
+    // Compute the 'context' label that gets used by our KDF.
+    private static String computeKDFContext(String cipherXform, int kdfVersion,
+    										KeyDerivationFunction.PRF_ALGORITHMS prf,
+    										int keySize) {
+    	assert cipherXform != null : "Cipher transformation cannot be null.";
+    	String clabel = "";		// Same as default context in KeyDerivationFunction
+    	if ( kdfVersion >= TRANSITION_VERSION ) {	// Older versions just return "".
+    		// Do NOT *EVER* change the order of these concatenations!!!!
+    		// Yes, the code is a bit brittle, but if we change this, we will
+    		// end up with a big long switch based on specific kdfVersion.
+    		clabel = cipherXform + Integer.toString(kdfVersion) +
+    				prf.getAlgName() + Integer.toString(keySize);
+    	}
+    	return clabel;
+    }
+
 
     // Get all the algorithms we will be using from ESAPI.properties.
     private static void setupAlgorithms() {

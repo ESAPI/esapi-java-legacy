@@ -380,8 +380,13 @@ public class CipherTextTest {
     	try {
     		if ( fname != null ) {
     			File f = new File(fname);
-    			// Findbugs complains about ignoring this return value. Too bad.
-    			f.delete();
+    			if ( f.exists() && f.isFile() ) {
+    				// For some reason, when f.delete() is being called (at least
+					// on my system), the file "ciphertext-portable.ser" is NOT
+    				// being deleted. I have no explanation. The file is writable,
+    				// and so is the directory.
+    				f.delete();
+    			}
     		}
     	} catch(Exception ex) {
     		;	// Do nothing

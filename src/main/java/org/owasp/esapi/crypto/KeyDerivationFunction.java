@@ -58,7 +58,9 @@ public class KeyDerivationFunction {
 	 * @see CipherText#fromPortableSerializedBytes(byte[])
 	 */
 	public  static final int  originalVersion  = 20110203;	 // First version. Do not change. EVER!
-	public  static final int  kdfVersion       = 20130830;   // Current version. Format: YYYYMMDD, max is 99991231.
+	public  static final int  transitionVersion = 20130914;	 // 1st version where context IS used. Don't EVER change.
+	
+	public  static final int  kdfVersion       = 20130830;   // Current version. Format: YYYYMMDD, max is 99991231. // TODO - looks wrong! Should be ESAPI 2.1.0 date!!!!!
 	private static final long serialVersionUID = kdfVersion; // Format: YYYYMMDD
 	
     // Pseudo-random function algorithms suitable for NIST KDF in counter mode.
@@ -189,7 +191,8 @@ public class KeyDerivationFunction {
 	// we will be using the 'context' to mix in some additional things. At a
 	// minimum, we will be using the KDF version (version_) so that downgrade version
 	// attacks are not possible. Other candidates are the cipher xform and
-	// the timestamp.
+	// the timestamp. This will be something that would be called from
+	// JavaEncryptor.
 	/**
 	 * Set the 'context' as specified by NIST Special Publication 800-108. NIST
 	 * defines 'context' as "A binary string containing the information related
@@ -276,18 +279,23 @@ public class KeyDerivationFunction {
 	 * @return				The derived {@code SecretKey} to be used according
 	 * 						to the specified purpose. 
 	 * @throws NoSuchAlgorithmException		The {@code keyDerivationKey} has an unsupported
-	 * 						encryption algorithm or no current JCE provider supports
-	 * 						"HmacSHA1".
+	 * 						encryption algorithm or no current JCE provider supports the
+	 * 						specified PRF (by default, "HmacSHA256").
 	 * @throws EncryptionException		If "UTF-8" is not supported as an encoding, then
 	 * 						this is thrown with the original {@code UnsupportedEncodingException}
 	 * 						as the cause. (NOTE: This should never happen as "UTF-8" is supposed to
 	 * 						be a common encoding supported by all Java implementations. Support
 	 * 					    for it is usually in rt.jar.)
+	 * @throws IllegalArgumentException	Thrown precondition violations occur. E.g., if
+	 * 									{@code keyDerivationKey} is null, if {@code keySize}
+	 * 									is not a multiple of 8 or if it is less than 56 bits,
+	 * 									or {@code purpose} is null or the empty string.
 	 * @throws InvalidKeyException 	Likely indicates a coding error. Should not happen.
-	 * @throws EncryptionException  Throw for some precondition violations.
+	 * @throws EncryptionException  Thrown if UTF-8 encoding not supported by JDK. Should
+	 * 								not happen.
 	 */
 	public SecretKey computeDerivedKey(SecretKey keyDerivationKey, int keySize, String purpose)
-			throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
+			throws NoSuchAlgorithmException, IllegalArgumentException, InvalidKeyException, EncryptionException
 	{
 		// Acknowledgments: David Wagner first suggested this approach, I (Kevin Wall)
 		//				    stumbled upon NIST SP 800-108 and used it as a basis to
@@ -295,14 +303,24 @@ public class KeyDerivationFunction {
 		//					to section 5.1 of NIST SP 800-108 based on feedback from
 		//					Jeffrey Walton.
 		//
-        // These probably should be turned into actual runtime checks and an
-        // IllegalArgumentException should be thrown if they are violated.
-		assert keyDerivationKey != null : "Key derivation key cannot be null.";
+
+		// These checks used to be assertions prior to ESAPI 2.1.1.
+		if ( keyDerivationKey == null ) {
+			throw new IllegalArgumentException("Key derivation key cannot be null.");
+		}
 			// We would choose a larger minimum key size, but we want to be
 			// able to accept DES for legacy encryption needs.
-		assert keySize >= 56 : "Key has size of " + keySize + ", which is less than minimum of 56-bits.";
-		assert (keySize % 8) == 0 : "Key size (" + keySize + ") must be a even multiple of 8-bits.";
-		assert purpose != null && !purpose.equals("") : "Purpose may not be null or empty.";
+		if ( keySize < 56 ) {
+			throw new IllegalArgumentException("Key has size of " + keySize +
+											   ", which is less than minimum of 56-bits.");
+		}
+		if ( (keySize % 8) != 0 ) {
+			throw new IllegalArgumentException("Key size (" + keySize +
+											   ") must be a even multiple of 8-bits.");
+		}
+		if ( purpose == null || "".equals(purpose) ) {
+			throw new IllegalArgumentException("Purpose may not be null or empty.");
+		}
 
 		keySize = calcKeySize( keySize );	// Safely convert to whole # of bytes.
 		byte[] derivedKey = new byte[ keySize ];
@@ -326,7 +344,7 @@ public class KeyDerivationFunction {
             // under the hood to create 'sk' so that it is 20 bytes. I cannot vouch
             // for how secure this key-stretching is. Worse, it might not be specified
             // as to *how* it is done and left to each JCE provider.
-		SecretKey sk = new SecretKeySpec(keyDerivationKey.getEncoded(), "HmacSHA1");
+		SecretKey sk = new SecretKeySpec(keyDerivationKey.getEncoded(), prfAlg_);
 		Mac mac = null;
 
 		try {
@@ -371,9 +389,12 @@ public class KeyDerivationFunction {
 			mac.update( ByteConversionUtil.fromInt( ctr++ ) );
 			mac.update(label);
 			mac.update((byte) '\0');
-			mac.update(context); // This is problematic for us. See Jeff Walton's
-								  // analysis of ESAPI 2.0's KDF for details.
-								  // Maybe for 2.1, we'll see; 2.0 too close to GA.
+			mac.update(context); // Note this was optional. We did't really use
+								 // in in the reference implementation prior to
+								 // ESAPI 2.1.1; before that, it defaulted to
+								 // the empty string. Starting w/ 2.1.1, we
+							     // mix in the KDF version, the PRF, and the
+								 // cipher transformation string.
 			
 	            // According to the Javadoc for Mac.doFinal(byte[]),
 	            // "A call to this method resets this Mac object to the state it was
