@@ -87,7 +87,7 @@ import org.owasp.esapi.errors.ValidationException;
  * This entire semicolon-separated string is then encrypted via one of the 
  * {@code Encryptor.encrypt()} methods and then base64-encoded, serialized
  * IV + ciphertext + MAC representation as determined by
- * {@code CipherTextasPortableSerializedByteArray()} is used as the
+ * {@code CipherText.asPortableSerializedByteArray()} is used as the
  * resulting cryptographic token.
  * <p>
  * The attributes are sorted by attribute name and the attribute names
