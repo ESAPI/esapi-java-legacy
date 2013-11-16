@@ -276,11 +276,14 @@ public class CipherTextSerializer {
     private CipherText convertToCipherText(byte[] cipherTextSerializedBytes)
         throws EncryptionException
     {
+    	long totalLen = cipherTextSerializedBytes.length;
+    	long readSoFar = 0;
         try {
         	assert cipherTextSerializedBytes != null : "cipherTextSerializedBytes cannot be null.";
         	assert cipherTextSerializedBytes.length > 0 : "cipherTextSerializedBytes must be > 0 in length.";
             ByteArrayInputStream bais = new ByteArrayInputStream(cipherTextSerializedBytes);
             int kdfInfo = readInt(bais);
+            readSoFar += 4;
             debug("kdfInfo: " + kdfInfo);
             int kdfPrf = (kdfInfo >>> 28);
             debug("kdfPrf: " + kdfPrf);
@@ -307,9 +310,21 @@ public class CipherTextSerializer {
             			KeyDerivationFunction.kdfVersion);
             }
             long timestamp = readLong(bais);
+            readSoFar += 8;
             debug("convertToCipherText: timestamp = " + new Date(timestamp));
             short strSize = readShort(bais);
+            readSoFar += 2;
             debug("convertToCipherText: length of cipherXform = " + strSize);
+
+            // Sanity check on strSize. Not a big deal in Java, but in C/C++ and
+            // similar languages, this can prevent errors trying to read past
+            // the length of the buffer stream.
+            if ( strSize >= (totalLen - readSoFar) ) {
+            	throw new EncryptionException("Invalid length for cipher transformation",
+            			"Likely tampering with cipher transformation length: " + strSize +
+            			"; total length = " + totalLen + ", bytes read so far = " + readSoFar);
+            }
+            
             String cipherXform = readString(bais, strSize);
             debug("convertToCipherText: cipherXform = " + cipherXform);
             String[] parts = cipherXform.split("/");
@@ -331,12 +346,73 @@ public class CipherTextSerializer {
                 bais.read(iv, 0, iv.length);
             }
             int ciphertextLen = readInt(bais);
+            
+            // Sanity check. Make sure that ciphertextLen is "reasonable" so we
+            // don't encounter tampered data that causes us to read past the
+            // end of the total serialized byte array that we were passed.
+            // This isn't really an issue for Java as we would get an
+            // exception, but it could cause problems in C/C++. We could do a
+            // LOT better here but we would have o add up all the bytes we
+            // read so far. For now, this is a 'sanity' check only. (It is
+            // Java after all.)
+            // TODO: We can / should do better even though this is Java.
+            if ( ciphertextLen > totalLen ) {
+            	throw new EncryptionException("Invalid ciphertext length encountered",
+            								  "Possible tampering? Invalid ciphertext length of " +
+            								  	ciphertextLen + " encountered.");
+            }
+
             debug("convertToCipherText: ciphertextLen = " + ciphertextLen);
             assert ciphertextLen > 0 : "convertToCipherText: Invalid cipher text length";
             byte[] rawCiphertext = new byte[ciphertextLen];
             bais.read(rawCiphertext, 0, rawCiphertext.length);
             short macLen = readShort(bais);
             debug("convertToCipherText: macLen = " + macLen);
+
+        	// Since we always use HMAC-SHA1 to compute the MAC (it currently
+            // is hard-coded, unlike the PRF used in the KDF, mostly to
+            // reduce the overall length of the serialized ciphertext), the MAC
+            // length should always correspond to the length of an HMAC-SHA1
+            // hash, i.e., 20 bytes, when a MAC is in fact provided. Thus the
+            // length should either be 0 or 20. In the future, if we wish to
+            // allow other HMAC algorithms (probably using the same one as in
+            // the PRF so we don't have to specify something extra), we will
+            // have to change this test to something like the commented out
+            // code, below. Changes to allow this would also have to be version
+            // dependent, so don't do this recklessly.
+            //
+            // HMAC-SHA1 being used so MAC length will either be 160 bits (20 bytes)
+            // or 0 bytes (when an AE mode is used).
+            if ( macLen != 0 && macLen != 20 ) {
+            	throw new EncryptionException("MAC length must be 0 (i.e., no MAC) or 20 (for HMAC-SHA1)",
+            								  "Possible tampering with MAC length; macLen = " + macLen);
+            }
+
+/*     See above comment.
+ * If we were going to have the HMAC used for the PRF be the same as the
+ * HMAC algorithm used for calculating the MAC then this is how we would
+ * do that test:
+
+            // HMAC alg used for the PRF. This test
+            // is new ESAPI 2.1.1. One reason for it is to prevent reading garbage from
+            // the serialized ciphertext by an adversary setting the macLen to beyond the
+            // actual MAC byte array. In Java, we'd get an exception, but in C/C++ or other
+            // unsafe languages, it could cause problems. In hindsight, we probably should
+            // not even have used a macLen but just look it up like we are doing now. So much
+            // for code inspections! Yes, we could remove it if the version is newer than
+            // version X, but that would complicate the implementation for relatively
+            // little benefit.
+            KeyDerivationFunction.PRF_ALGORITHMS prf = KeyDerivationFunction.convertIntToPRF(kdfPrf);
+            int hmacAlgLen = prf.getBits() / 8;
+            if ( hmacAlgLen != macLen ) {
+            	String hmacAlgNm = prf.getAlgName();
+            	StringBuffer sb = new StringBuffer("Possible tampering of serialized ciphertext: ");
+            	sb.append("PRF is ").append(hmacAlgNm).append(" which has len of ").append(hmacAlgLen);
+            	sb.append(" but specified MAC length in serialized ciphertext was ").append(macLen);
+            	throw new EncryptionException("convertToCipherText: Invalid MAC length.", sb.toString());
+            }
+******************************************************************************************/
+            
             byte[] mac = null;
             if ( macLen > 0 ) {
                 mac = new byte[macLen];
@@ -348,9 +424,22 @@ public class CipherTextSerializer {
             cipherSpec.setIV(iv);
             debug("convertToCipherText: CipherSpec: " + cipherSpec);
             CipherText ct = new CipherText(cipherSpec);
-            if ( ! (ivLen > 0 && ct.requiresIV()) ) {
+            if ( ct.requiresIV() ) {
+            	// Added in ESAPI 2.1.1
+            	// If the cipher mode requires an IV, the IV length should equal the cipher block size.
+            	int blocksize = ct.getBlockSize();
+            	if ( ivLen != blocksize ) {
                     throw new EncryptionException("convertToCipherText: Mismatch between IV length and cipher mode.",
-                    						      "Possible tampering of serialized ciphertext?");
+                    						      "Possible tampering of serialized ciphertext? IV length = " +
+                    						          ivLen + ", block size = " + blocksize);
+            	}
+            } else {
+            	// IV not required so IV length should be 0.
+            	if ( ivLen != 0 ) {
+            		throw new EncryptionException("convertToCipherText: IV length != 0 when IV not required",
+            									  "Possible tampering with serialized ciphertext? Cipher mode " +
+            									  		"does not require IV yet IV length set to " + ivLen);
+            	}
             }
             ct.setCiphertext(rawCiphertext);
               // Set this *AFTER* setting raw ciphertext because setCiphertext()
@@ -366,6 +455,7 @@ public class CipherTextSerializer {
             	// version.
             ct.setKDF_PRF(kdfPrf);
             ct.setKDFVersion(kdfVers);
+
             return ct;
         } catch(EncryptionException ex) {
             throw new EncryptionException("Cannot deserialize byte array into CipherText object",
