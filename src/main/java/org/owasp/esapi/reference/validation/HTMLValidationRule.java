@@ -30,6 +30,7 @@ import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
 import org.owasp.validator.html.PolicyException;
 import org.owasp.validator.html.ScanException;
+import org.owasp.esapi.reference.validation.HTMLSanitizerAntiSamyPolicy;
 
 
 /**
@@ -45,6 +46,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	
 	/** OWASP AntiSamy markup verification policy */
 	private static Policy antiSamyPolicy = null;
+	private static boolean useAntiSamy = false;		// Could add property for this.
 	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" ); 
 	
 	static {
@@ -97,6 +99,14 @@ public class HTMLValidationRule extends StringValidationRule {
 		return safe;
 	}
 
+	private String invokeHtmlSanitization( String context, String input ) throws ValidationException
+	{
+		if ( useAntiSamy ) {
+			return invokeAntiSamy(context, input);
+		} else {
+			return executeHTMLSanitation(context, input);
+		}
+	}
 	private String invokeAntiSamy( String context, String input ) throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
 	    if ( StringUtilities.isEmpty(input) ) {
@@ -123,6 +133,32 @@ public class HTMLValidationRule extends StringValidationRule {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
 		} catch (PolicyException e) {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e, context );
+		}
+	}
+	
+	private String executeHTMLSanitation( String context, String input ) throws ValidationException {
+		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+	    if ( StringUtilities.isEmpty(input) ) {
+			if (allowNull) {
+				return null;
+			}
+			throw new ValidationException( context + " is required", "HTML santization: validation error - invalid input; context=" + context + ", input=" + input, context );
+	    }
+	    
+		String canonical = super.getValid( context, input );
+
+		try {
+            String cleanHTML = HTMLSanitizerAntiSamyPolicy.sanitize( canonical );
+            
+            // CHECKME: Needs work. Is this what we really want?
+            if ( ! cleanHTML.equalsIgnoreCase( canonical ) ) {
+            	LOGGER.info( Logger.SECURITY_FAILURE,
+            		         "Cleaned up invalid HTML input; original (non-canonicalized) input was: " + input);
+            }
+			return cleanHTML.trim();
+		} catch (Exception e) {
+			// CHECKME: Don't we want to include the original input in the logged message here???
+			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
 		}
 	}
 }
