@@ -200,6 +200,16 @@ public final class ESAPI {
     // The purpose of this method is to replace the functionality provided by the setSecurityConfiguration
     // method that is no longer on this class, and allow the context configuration of the ESAPI
     // to be modified at Runtime.
+	// TODO: This method needs some JavaDoc if we are going to keep it, or at least if we are
+	//		 going to keep it 'public'. It is not currently used--even in any JUnit tests!
+	/**
+	 * This method is meant to be <i>only</i> used for testing and should be
+	 * avoided for production deployments as it has global affect across your
+	 * application and thus can result in unintended consequences.
+	 * 
+	 * @deprecated To be replaced by some yet-to-be-determined interface in a
+	 * 			   future release, or possibly completely removed.
+	 */
     public static String initialize( String impl ) {
         String oldImpl = securityConfigurationImplName;
         securityConfigurationImplName = impl;
@@ -210,13 +220,17 @@ public final class ESAPI {
      * Overrides the current security configuration with a new implementation. This is meant
      * to be used as a temporary means to alter the behavior of the ESAPI and should *NEVER*
      * be used in a production environment as it will affect the behavior and configuration of
-     * the ESAPI *GLOBALLY*.
+     * the ESAPI <b>GLOBALLY</b>.
      *
-     * To clear an overridden Configuration, simple call this method with null for the config
-     * parameter.
+     * To clear an overridden {@code SecurityConfiguration}, simply call this
+     * method with {@code null} for the {@code config} parameter.
+     * 
+     * Note: This method is generally used for JUnit tests.
      *
-     * @param config
-     * @return
+     * @param config A new security configuration to (temporarily) use.
+     * 
+     * @deprecated To be replaced by some yet-to-be-determined interface in a
+	 * 			   future release, or possibly completely removed.
      */
     public static void override( SecurityConfiguration config ) {
         overrideConfig = config;
