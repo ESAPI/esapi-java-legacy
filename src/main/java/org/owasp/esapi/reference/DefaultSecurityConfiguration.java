@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
@@ -84,7 +86,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private String cipherXformCurrent = null;		// New in ESAPI 2.0
 
 	/** The name of the ESAPI property file */
-	public static final String RESOURCE_FILE = "ESAPI.properties";
+	public static final String DEFAULT_RESOURCE_FILE = "ESAPI.properties";
 	
     public static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
     public static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
@@ -147,6 +149,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
     public static final String LOG_SERVER_IP = "Logger.LogServerIP";
     public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
+    public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
     public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
 
 
@@ -215,13 +218,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * be used to load the file.
      */
     private String resourceDirectory = ".esapi";	// For backward compatibility (vs. "esapi")
+	private final String resourceFile;
 
 //    private static long lastModified = -1;
 
     /**
      * Instantiates a new configuration.
      */
-    public DefaultSecurityConfiguration() {
+    protected DefaultSecurityConfiguration(String resourceFile) {
+    	this.resourceFile = resourceFile;
     	// load security configuration
     	try {
         	loadConfiguration();
@@ -241,11 +246,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @param properties
      */
     public DefaultSecurityConfiguration(Properties properties) {
-    	super();
+    	resourceFile = DEFAULT_RESOURCE_FILE;
     	this.properties = properties; 
     	this.setCipherXProperties();
     }
     
+    /**
+     * 
+     */
+    public DefaultSecurityConfiguration(){
+    	this(DEFAULT_RESOURCE_FILE);
+    }
     private void setCipherXProperties() {
 		// TODO: FUTURE: Replace by future CryptoControls class???
 		// See SecurityConfiguration.setCipherTransformation() for
@@ -422,74 +433,84 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 *             if the file is inaccessible
 	 */
 	protected void loadConfiguration() throws IOException {
-		
 		try {
 		    //first attempt file IO loading of properties
-			logSpecial("Attempting to load " + RESOURCE_FILE + " via file I/O.");
-			properties = loadPropertiesFromStream(getResourceStream(RESOURCE_FILE), RESOURCE_FILE);
+			logSpecial("Attempting to load " + resourceFile + " via file I/O.");
+			properties = loadPropertiesFromStream(getResourceStream(resourceFile), resourceFile);
 			
 		} catch (Exception iae) {
 		    //if file I/O loading fails, attempt classpath based loading next
-		    logSpecial("Loading " + RESOURCE_FILE + " via file I/O failed. Exception was: " + iae);
-			logSpecial("Attempting to load " + RESOURCE_FILE + " via the classpath.");
+		    logSpecial("Loading " + resourceFile + " via file I/O failed. Exception was: " + iae);
+			logSpecial("Attempting to load " + resourceFile + " via the classpath.");
 			try {
-				properties = loadConfigurationFromClasspath(RESOURCE_FILE);
+				properties = loadConfigurationFromClasspath(resourceFile);
 			} catch (Exception e) {				
-				logSpecial(RESOURCE_FILE + " could not be loaded by any means. Fail.", e);
-				throw new ConfigurationException(RESOURCE_FILE + " could not be loaded by any means. Fail.", e);
+				logSpecial(resourceFile + " could not be loaded by any means. Fail.", e);
+				throw new ConfigurationException(resourceFile + " could not be loaded by any means. Fail.", e);
 			}			
 		}
 		
 		// if properties loaded properly above, get validation properties and merge them into the main properties
 		if (properties != null) {
+			final Iterator<String> validationPropFileNames;
 			
-			String validationPropFileName = getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties");
-			Properties validationProperties = null;
-
+			//defaults to single-valued for backwards compatibility
+			final boolean multivalued= getESAPIProperty(VALIDATION_PROPERTIES_MULTIVALUED, false);
+			final String validationPropValue = getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties");
+			
+			if(multivalued){
+				// the following cast warning goes away if the apache commons lib is updated to current version				
+				validationPropFileNames = StrTokenizer.getCSVInstance(validationPropValue);
+			} else {
+				validationPropFileNames = Collections.singletonList(validationPropValue).iterator();
+			}
+			
 			//clear any cached validation patterns so they can be reloaded from validation.properties
 			patternCache.clear();
-			
-			try {
-			    //first attempt file IO loading of properties
-				logSpecial("Attempting to load " + validationPropFileName + " via file I/O.");
-				validationProperties = loadPropertiesFromStream(getResourceStream(validationPropFileName), validationPropFileName);
-				
-			} catch (Exception iae) {
-			    //if file I/O loading fails, attempt classpath based loading next
-			    logSpecial("Loading " + validationPropFileName + " via file I/O failed.");
-				logSpecial("Attempting to load " + validationPropFileName + " via the classpath.");		
+			while(validationPropFileNames.hasNext()){
+				String validationPropFileName = validationPropFileNames.next();
+				Properties validationProperties = null;
 				try {
-					validationProperties = loadConfigurationFromClasspath(validationPropFileName);
-				} catch (Exception e) {				
-					logSpecial(validationPropFileName + " could not be loaded by any means. fail.", e);
-				}			
-			}
-			
-			if (validationProperties != null) {
-		    	Iterator<?> i = validationProperties.keySet().iterator();
-		    	while( i.hasNext() ) {
-		    		String key = (String)i.next();
-		    		String value = validationProperties.getProperty(key);
-		    		properties.put( key, value);
-		    	}
-			}
-			
-	        if ( shouldPrintProperties() ) {
-	    	
-	    	//FIXME - make this chunk configurable
-	    	/*
-	        logSpecial("  ========Master Configuration========", null);
-	        //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
-	        Iterator j = new TreeSet( properties.keySet() ).iterator();
-	        while (j.hasNext()) {
-	            String key = (String)j.next();
-	            // print out properties, but not sensitive ones like MasterKey and MasterSalt
-	            if ( !key.contains( "Master" ) ) {
-	            		logSpecial("  |   " + key + "=" + properties.get(key), null);
-	        	}
-	        }
-	        */
-	        	
+				    //first attempt file IO loading of properties
+					logSpecial("Attempting to load " + validationPropFileName + " via file I/O.");
+					validationProperties = loadPropertiesFromStream(getResourceStream(validationPropFileName), validationPropFileName);
+					
+				} catch (Exception iae) {
+				    //if file I/O loading fails, attempt classpath based loading next
+				    logSpecial("Loading " + validationPropFileName + " via file I/O failed.");
+					logSpecial("Attempting to load " + validationPropFileName + " via the classpath.");		
+					try {
+						validationProperties = loadConfigurationFromClasspath(validationPropFileName);
+					} catch (Exception e) {				
+						logSpecial(validationPropFileName + " could not be loaded by any means. fail.", e);
+					}			
+				}
+				
+				if (validationProperties != null) {
+			    	Iterator<?> i = validationProperties.keySet().iterator();
+			    	while( i.hasNext() ) {
+			    		String key = (String)i.next();
+			    		String value = validationProperties.getProperty(key);
+			    		properties.put( key, value);
+			    	}
+				}
+				
+		        if ( shouldPrintProperties() ) {
+		    	
+		    	//FIXME - make this chunk configurable
+		    	/*
+		        logSpecial("  ========Master Configuration========", null);
+		        //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
+		        Iterator j = new TreeSet( properties.keySet() ).iterator();
+		        while (j.hasNext()) {
+		            String key = (String)j.next();
+		            // print out properties, but not sensitive ones like MasterKey and MasterSalt
+		            if ( !key.contains( "Master" ) ) {
+		            		logSpecial("  |   " + key + "=" + properties.get(key), null);
+		        	}
+		        }
+		        */
+		        }   	
 	        }
 		}
 	}	
@@ -541,7 +562,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		}
 
 		// if not found, then try the programmatically set resource directory
-		// (this defaults to SystemResource directory/RESOURCE_FILE
+		// (this defaults to SystemResource directory/resourceFile
 		URL fileUrl = ClassLoader.getSystemResource(resourceDirectory + "/" + filename);
         if ( fileUrl == null ) {
             fileUrl = ClassLoader.getSystemResource("esapi/" + filename);
@@ -664,7 +685,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
 		if (result == null) {
 			// CHECKME: This is odd...why not ConfigurationException?
-		    throw new IllegalArgumentException("Failed to load " + RESOURCE_FILE + " as a classloader resource.");
+		    throw new IllegalArgumentException("Failed to load " + resourceFile + " as a classloader resource.");
 		}
 
 		return result;
