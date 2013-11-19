@@ -223,9 +223,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 //    private static long lastModified = -1;
 
     /**
-     * Instantiates a new configuration.
+     * Instantiates a new configuration, using the provided property file name
+     * 
+     * @param resourceFile The name of the property file to load
      */
-    protected DefaultSecurityConfiguration(String resourceFile) {
+    DefaultSecurityConfiguration(String resourceFile) {
     	this.resourceFile = resourceFile;
     	// load security configuration
     	try {
@@ -252,7 +254,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
     
     /**
-     * 
+     * Instantiates a new configuration.
      */
     public DefaultSecurityConfiguration(){
     	this(DEFAULT_RESOURCE_FILE);
