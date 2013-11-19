@@ -1,5 +1,7 @@
 package org.owasp.esapi.reference;
 
+import java.util.regex.Pattern;
+
 import junit.framework.Assert;
 
 import org.junit.Test;
@@ -385,6 +387,32 @@ public class DefaultSecurityConfigurationTest {
 		secConf = this.createWithProperty(DefaultSecurityConfiguration.MAX_LOG_FILE_SIZE, String.valueOf(maxLogSize));
 		Assert.assertEquals(maxLogSize, secConf.getMaxLogFileSize());
 	}
+	
+	private String patternOrNull(Pattern p){
+		return null==p?null:p.pattern();
+	}
 
+	@Test
+	public void testValidationsPropertiesFileOptions(){
+		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration("ESAPI-SingleValidatorFileChecker.properties");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("Test1")), "ValueFromFile1");
+		Assert.assertNull(secConf.getValidationPattern("Test2"));
+		Assert.assertNull(secConf.getValidationPattern("TestC"));
+		
+		secConf = new DefaultSecurityConfiguration("ESAPI-DualValidatorFileChecker.properties");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("Test1")), "ValueFromFile1");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("Test2")), "ValueFromFile2");
+		Assert.assertNull(secConf.getValidationPattern("TestC"));
+
+		secConf = new DefaultSecurityConfiguration("ESAPI-CommaValidatorFileChecker.properties");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("TestC")), "ValueFromCommaFile");
+		Assert.assertNull(secConf.getValidationPattern("Test1"));
+		Assert.assertNull(secConf.getValidationPattern("Test2"));
+
+		secConf = new DefaultSecurityConfiguration("ESAPI-QuotedValidatorFileChecker.properties");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("Test1")), "ValueFromFile1");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("Test2")), "ValueFromFile2");
+		Assert.assertEquals(patternOrNull(secConf.getValidationPattern("TestC")), "ValueFromCommaFile");
+	}
 	
 }
