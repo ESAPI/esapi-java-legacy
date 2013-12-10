@@ -186,7 +186,7 @@ public class CryptoTokenTest {
             fail("Failed to throw expected AssertionError or NullPointerException");
         } catch (ValidationException e) {
             fail("Wrong type of exception thrown (ValidationException): " + e);
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException e) {
             ;   // Success
         } catch (AssertionError e) {
             ;   // Success
