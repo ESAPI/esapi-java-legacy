@@ -144,14 +144,14 @@ public class CipherSpecTest extends TestCase {
 	/** Test setBlockSize() */
 	@Test public void testSetBlockSize() {
 		try {
-			cipherSpec.setBlockSize(0); // Throws AssertionError
-		} catch (AssertionError e) {
-			assertTrue(true);	// Doesn't work w/ @Test(expected=AssertionError.class)
+			cipherSpec.setBlockSize(0); // Throws IllegalArgumentException
+		} catch (IllegalArgumentException e) {
+			assertTrue(true);
 		}
 		try {
-			cipherSpec.setBlockSize(-1); // Throws AssertionError
-		} catch (AssertionError e) {
-			assertTrue(true);	// Doesn't work w/ @Test(expected=AssertionError.class)
+			cipherSpec.setBlockSize(-1); // Throws IllegalArgumentException
+		} catch (IllegalArgumentException e) {
+			assertTrue(true);
 		}
 		assertTrue( cipherSpec.setBlockSize(4).getBlockSize() == 4 );
 	}
@@ -183,15 +183,15 @@ public class CipherSpecTest extends TestCase {
 			cipherSpec = new CipherSpec(dfltECBCipher);
 			cipherSpec.setIV(null);
 			assertTrue(true);
-		} catch ( AssertionError e) {
+		} catch ( IllegalArgumentException e) {
 			assertFalse("Test failed; unexpected exception", false);
 		}
 		try {
-			// Test that CBC mode does allows a null IV
+			// Test that CBC mode does NOT allow a null IV
 			cipherSpec = new CipherSpec(dfltAESCipher);
 			cipherSpec.setIV(null);
 			assertFalse("Test failed; Expected exception not thrown", false);
-		} catch ( AssertionError e) {
+		} catch ( IllegalArgumentException e) {
 			assertTrue(true);
 		}
 	}
