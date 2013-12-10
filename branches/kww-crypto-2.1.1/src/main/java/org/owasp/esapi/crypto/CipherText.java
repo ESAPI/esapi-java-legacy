@@ -457,7 +457,11 @@ public final class CipherText implements Serializable {
 	        // compare to stored value (separate_mac_). If same, then return true,
 	        // else return false.
 	        byte[] mac = computeMAC(authKey);
-	        assert mac.length == separate_mac_.length : "MACs are of differnt lengths. Should both be the same.";
+	        if ( mac.length != separate_mac_.length ) {
+	        	// DISCUSS: TODO: Better exception type? Prefer not to change signature so
+	        	//                probably needs to be some kind of RuntimeException.
+	        	throw new RuntimeException("MACs are of differnt lengths. Should both be the same length.");
+	        }	        
 	        return CryptoHelper.arrayCompare(mac, separate_mac_); // Safe compare!!!
 	    } else if ( ! requiresMAC ) {           // Doesn't require a MAC
 	        return true;
@@ -560,6 +564,10 @@ public final class CipherText implements Serializable {
                     throw new EncryptionException("Encryption failed -- mandatory IV missing", // DISCUSS - also log? See below.
                                                   "Cipher mode " + getCipherMode() + " has null or empty IV");
                 }
+  // TODO: FIXME: As per email from Jeff Walton to Kevin Wall dated 12/03/2013,
+  //			  this is not always true. E.g., for CCM, the IV length is supposed
+  //			  to be 7, 8,  7, 8, 9, 10, 11, 12, or 13 octets because of
+  //			  it's formatting function.
             } else if ( iv.length != getBlockSize() ) {
                     throw new EncryptionException("Encryption failed -- bad parameters passed to encrypt",  // DISCUSS - also log? See below.
                                                   "IV length does not match cipher block size of " + getBlockSize());
@@ -592,7 +600,9 @@ public final class CipherText implements Serializable {
     }
     
     public void setKDF_PRF(int prfSelection) {
-        assert prfSelection >= 0 && prfSelection <= 15 : "kdfPrf == " + prfSelection + " must be between 0 and 15.";
+        if ( prfSelection < 0 || prfSelection > 15 ) {
+        	throw new IllegalArgumentException("kdfPrf == " + prfSelection + " must be between 0 and 15, inclusive.");
+        }
     	kdfPrfSelection_ = prfSelection;
     }
     
@@ -629,7 +639,9 @@ public final class CipherText implements Serializable {
      *                  January 1, 1970 GMT).
      */ // Package level access. ESAPI jar should be sealed and signed.
     void setEncryptionTimestamp(long timestamp) {
-        assert timestamp > 0 : "Timestamp must be greater than zero.";
+        if ( timestamp <= 0 ) {
+        	throw new IllegalArgumentException("Timestamp must be greater than zero.");
+        }
         if ( encryption_timestamp_ == 0 ) {     // Only set it if it's not yet been set.
             logger.warning(Logger.EVENT_FAILURE, "Attempt to reset non-zero " +
                            "CipherText encryption timestamp to " + new Date(timestamp) + "!");
@@ -767,10 +779,14 @@ public final class CipherText implements Serializable {
      * @return The value for the MAC.
      */ 
     private byte[] computeMAC(SecretKey authKey) {
+    		// These assertions are okay and leaving them as assertions rather than
+    		// changing the to conditional statements that throw should be all right
+    		// because these are private methods and presumably we should have already
+    		// checked things in the public or protected methods where appropriate.
         assert raw_ciphertext_ != null && raw_ciphertext_.length != 0 : "Raw ciphertext may not be null or empty.";
         assert authKey != null && authKey.getEncoded().length != 0 : "Authenticity secret key may not be null or zero length.";
         try {
-        	// IMPORTANT NOTE: The NSA review was (apparently) OK with using HmacSHA1
+        	// IMPORTANT NOTE: The NSA review was (apparently) okay with using HmacSHA1
         	// to calculate the MAC that ensures authenticity of the IV+ciphertext.
         	// (Not true of calculation of the use HmacSHA1 for the KDF though.) Therefore,
         	// we did not make this configurable. Note also that choosing an improved
@@ -852,7 +868,7 @@ public final class CipherText implements Serializable {
      * @see <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-ciphertext-serialization.pdf">Format of portable serialization of org.owasp.esapi.crypto.CipherText object (pg 2)</a>
      */
 	public int getKDFInfo() {
-		final int unusedBit28 = 0x8000000;  // 1000000000000000000000000000
+		final int unusedBit28 = 0x8000000;  // 1000 0000 0000 0000 0000 0000 0000
 		
 		// 		kdf version is bits 1-27, bit 28 (reserved) should be 0, and
 		//		bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
@@ -860,6 +876,7 @@ public final class CipherText implements Serializable {
 		assert CryptoHelper.isValidKDFVersion(kdfVers, true, false);
 		int kdfInfo = kdfVers;
 		int macAlg = kdfPRFAsInt();
+			// DISCUSS: TODO: Change to conditional check and throw exception here???
 		assert macAlg >= 0 && macAlg <= 15 : "MAC algorithm indicator must be between 0 to 15 inclusion; value is: " + macAlg;
 		
 	    // Make sure bit28 is cleared. (Reserved for future use.)

@@ -141,7 +141,9 @@ public class CryptoToken {
      * @param skey  The specified {@code SecretKey} to use to encrypt the token.
      */
     public CryptoToken(SecretKey skey) {
-        assert skey != null : "SecretKey may not be null.";
+        if ( skey == null ) {
+        	throw new IllegalArgumentException("SecretKey may not be null.");
+        }
         secretKey = skey;
         long now = System.currentTimeMillis();
         expirationTime = now + DEFAULT_EXP_TIME;
@@ -161,6 +163,9 @@ public class CryptoToken {
      *                              token is not properly formatted.
      */
     public CryptoToken(String token) throws EncryptionException {
+    	if ( token == null ) {
+    		throw new IllegalArgumentException("Token may not be null.");
+    	}
         secretKey = getDefaultSecretKey(
                 ESAPI.securityConfiguration().getEncryptionAlgorithm()
             );
@@ -170,8 +175,6 @@ public class CryptoToken {
             throw new EncryptionException("Decryption of token failed. Token improperly encoded or encrypted with different key.",
                                           "Can't decrypt token because not correctly encoded or encrypted with different key.", e);
         }
-        assert username != null : "Programming error: Decrypted token found username null.";
-        assert expirationTime > 0 : "Programming error: Decrypted token found expirationTime <= 0.";
     }
 
     /** 
@@ -188,17 +191,19 @@ public class CryptoToken {
     // token is a previously encrypted token (i.e., CryptoToken.getToken())
     // with different SecretKey other than the one in ESAPI.properties
     public CryptoToken(SecretKey skey, String token) throws EncryptionException {
-        assert skey != null : "SecretKey may not be null.";
-        assert token != null : "Token may not be null";
+        if ( skey == null ) {
+        	throw new IllegalArgumentException("SecretKey may not be null.");
+        }
+    	if ( token == null ) {
+    		throw new IllegalArgumentException("Token may not be null.");
+    	}
         secretKey = skey;
         try {
             decryptToken(secretKey, token);
         } catch (EncodingException e) {
-            throw new EncryptionException("Decryption of token failed. Token improperly encoded.",
-                                          "Can't decrypt token because not correctly encoded.", e);
+            throw new EncryptionException("Decryption of token failed. Token improperly encoded or encrypted with different key.",
+            							  "Can't decrypt token because not correctly encoded or encrypted with different key.", e);
         }
-        assert username != null : "Programming error: Decrypted token found username null.";
-        assert expirationTime > 0 : "Programming error: Decrypted token found expirationTime <= 0.";
     }
 
     /**
@@ -224,7 +229,9 @@ public class CryptoToken {
      *                              expression.)
      */
     public void setUserAccountName(String userAccountName) throws ValidationException {
-        assert userAccountName != null : "User account name may not be null.";
+        if ( userAccountName == null ) {
+        	throw new IllegalArgumentException("User account name may not be null.");
+        }
         
         // Converting to lower case first allows a simpler regex.
         String userAcct = userAccountName.toLowerCase();
@@ -360,7 +367,9 @@ public class CryptoToken {
      */
     public void addAttributes(final Map<String, String> attrs) throws ValidationException {
         // CHECKME: Assertion vs. IllegalArgumentException
-        assert attrs != null : "Attribute map may not be null.";
+        if ( attrs == null ) {
+        	throw new IllegalArgumentException("Attribute map may not be null.");
+        }
         Set< Entry<String,String> > keyValueSet = attrs.entrySet();
         Iterator<Entry<String, String>> it = keyValueSet.iterator();
         while( it.hasNext() ) {
@@ -656,9 +665,18 @@ public class CryptoToken {
         assert fieldNo == objArray.length : "Program error: Mismatch of delimited field count.";
         logger.debug(Logger.EVENT_UNSPECIFIED, "Found " + objArray.length + " fields.");
         assert objArray.length >= 2 : "Missing mandatory fields from decrypted token (username &/or expiration time).";
+        
         username = ((String)(objArray[0])).toLowerCase();
         String expTime = (String)objArray[1];
         expirationTime = Long.parseLong(expTime);
+        if ( username == null ) {
+        	throw new EncryptionException("Username null in decrypted token.",
+        							      "Programming error? Decrypted token found username null.");
+        }
+        if ( expirationTime <= 0 ) {
+        	throw new EncryptionException("Expiration time <= 0 in decrypted token.",
+        								  "Programming error? Decrypted token found expirationTime <= 0.");
+        }
         
         for( int i = 2; i < objArray.length; i++ ) {
             String nvpair = (String)objArray[i];
@@ -689,7 +707,9 @@ public class CryptoToken {
     }
     
     private SecretKey getDefaultSecretKey(String encryptAlgorithm) {
-        assert encryptAlgorithm != null : "Encryption algorithm cannot be null";
+        if ( encryptAlgorithm == null ) {
+        	throw new IllegalArgumentException("Encryption algorithm cannot be null.");
+        }
         byte[] skey = ESAPI.securityConfiguration().getMasterKey();
         assert skey != null : "Can't obtain master key, Encryptor.MasterKey";
         assert skey.length >= 7 :

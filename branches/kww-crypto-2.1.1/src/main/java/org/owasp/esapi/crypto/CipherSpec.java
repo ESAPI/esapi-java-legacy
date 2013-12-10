@@ -45,6 +45,8 @@ public final class CipherSpec implements Serializable {
 	private int     keySize_        = ESAPI.securityConfiguration().getEncryptionKeyLength(); // In bits
 	private int     blockSize_      = 16;   // In bytes! I.e., 128 bits!!!
 	private byte[]  iv_             = null;
+
+	private boolean blockSizeExplicitlySet = false;	// Used for check in setIV().
 	
 	// Cipher transformation component. Format is ALG/MODE/PADDING
     private enum CipherTransformationComponent { ALG, MODE, PADDING }
@@ -72,7 +74,7 @@ public final class CipherSpec implements Serializable {
 	public CipherSpec(String cipherXform, int keySize, int blockSize) {
 		// Note: Do NOT use
 		//			this(cipherXform, keySize, blockSize, null);
-		// because of assertion in setIV().
+		// because of checks in setIV().
 		//
 		setCipherTransformation(cipherXform);
 		setKeySize(keySize);
@@ -194,7 +196,9 @@ public final class CipherSpec implements Serializable {
 	 * @return	This current {@code CipherSpec} object.
 	 */
 	public CipherSpec setKeySize(int keySize) {
-		assert keySize > 0 : "keySize must be > 0; keySize=" + keySize;
+		if ( keySize <= 0 ) {
+			throw new IllegalArgumentException("keySize must be > 0; keySize=" + keySize);
+		}
 		this.keySize_ = keySize;
 		return this;
 	}
@@ -209,12 +213,16 @@ public final class CipherSpec implements Serializable {
 
 	/**
 	 * Set the block size for this {@code CipherSpec}.
-	 * @param blockSize	The block size, in bytes. Must be positive integer.
+	 * @param blockSize	The block size, in bytes. Must be positive integer appropriate
+	 * 					for the specified cipher algorithm.
 	 * @return	This current {@code CipherSpec} object.
 	 */
 	public CipherSpec setBlockSize(int blockSize) {
-		assert blockSize > 0 : "blockSize must be > 0; blockSize=" + blockSize;
+		if ( blockSize <= 0 ) {
+			throw new IllegalArgumentException("blockSize must be > 0; blockSize=" + blockSize);
+		}
 		this.blockSize_ = blockSize;
+		blockSizeExplicitlySet = true;
 		return this;
 	}
 
@@ -266,9 +274,23 @@ public final class CipherSpec implements Serializable {
 	 * @return		This current {@code CipherSpec} object.
 	 */
 	public CipherSpec setIV(final byte[] iv) {
-		assert requiresIV() && (iv != null && iv.length != 0) : "Required IV cannot be null or 0 length";
-		// Don't store a reference, but make a copy!
+		if ( ! ( requiresIV() && (iv != null && iv.length != 0) ) ) {
+			throw new IllegalArgumentException("Required IV cannot be null or 0 length.");
+		}
+		
+		// Don't store a reference, but make a copy! When an IV is provided, it should
+		// be the same length as the block size of the cipher.
 		if ( iv != null ) {	// Allow null IV for ECB mode.
+			  // TODO: FIXME: As per email from Jeff Walton to Kevin Wall dated 12/03/2013,
+			  //			  this is not always true. E.g., for CCM, the IV length is supposed
+			  //			  to be 7, 8,  7, 8, 9, 10, 11, 12, or 13 octets because of
+			  //			  it's formatting function.
+/***
+			if ( iv.length != this.getBlockSize() && blockSizeExplicitlySet ) {
+				throw new IllegalArgumentException("IV must be same length as cipher block size (" +
+													this.getBlockSize() + " bytes)");
+			}
+***/
 			iv_ = new byte[ iv.length ];
 			CryptoHelper.copyByteArray(iv, iv_);
 		}

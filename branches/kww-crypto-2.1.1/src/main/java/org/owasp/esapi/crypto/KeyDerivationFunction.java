@@ -472,6 +472,7 @@ public class KeyDerivationFunction {
      *              {@code ks} bits.
      */
     private static int calcKeySize(int ks) {
+    		// Private method; assertion okay here.
         assert ks > 0 : "Key size must be > 0 bits.";
         int numBytes = 0;
         int n = ks/8;

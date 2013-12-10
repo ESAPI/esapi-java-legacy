@@ -155,7 +155,9 @@ public class SecurityProviderLoader  {
         Class<?> providerClass = null;
         String clzName = null;
         Provider cryptoProvider = null;
-        assert (pos == -1 || pos >= 1) : "Position pos must be -1 or integer >= 1";
+        if ( ! (pos == -1 || pos >= 1) ) {
+        	throw new IllegalArgumentException("Position pos must be -1 or integer >= 1");
+        }
         try {
             // Does algProvider look like a class name?
             if (algProvider.indexOf('.') != -1) {
