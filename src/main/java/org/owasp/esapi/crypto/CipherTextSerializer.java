@@ -62,7 +62,6 @@ public class CipherTextSerializer {
     	if ( cipherTextObj == null ) {
     		throw new IllegalArgumentException("CipherText object must not be null.");
     	}
-        assert cipherTextObj != null : "CipherText object must not be null.";      
         cipherText_ = cipherTextObj;
     }
     
@@ -92,6 +91,8 @@ public class CipherTextSerializer {
         String cipherXform = cipherText_.getCipherTransformation();
         assert cipherText_.getKeySize() < Short.MAX_VALUE :
                             "Key size too large. Max is " + Short.MAX_VALUE;
+        	// DISCUSS: TODO: Should we also check for minimum acceptable key size
+        	//				  as per ESAPI.properties???
         short keySize = (short) cipherText_.getKeySize();
         assert cipherText_.getBlockSize() < Short.MAX_VALUE :
                             "Block size too large. Max is " + Short.MAX_VALUE;
@@ -180,6 +181,9 @@ public class CipherTextSerializer {
         writeLong(baos, timestamp);
         String[] parts = cipherXform.split("/");
         assert parts.length == 3 : "Malformed cipher transformation";
+        if ( parts.length != 3 ) {
+        	throw new RuntimeException("Malformed cipher transformation. Must have form 'alg/mode/padding_scheme'.");
+        }
         writeString(baos, cipherXform); // Size of string is prepended to string
         writeShort(baos, keySize);
         writeShort(baos, blockSize);

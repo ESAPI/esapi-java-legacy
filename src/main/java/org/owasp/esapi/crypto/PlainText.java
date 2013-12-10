@@ -42,7 +42,6 @@ public final class PlainText implements Serializable {
 	 */
 	public PlainText(String str) {
 		try {
-		    assert str != null : "String for plaintext cannot be null.";
 		    if ( str == null ) {
 		    	throw new IllegalArgumentException("String for plaintext may not be null!");
 		    }
@@ -61,7 +60,9 @@ public final class PlainText implements Serializable {
 	 */
 	public PlainText(byte[] b) {
 		// Must allow 0 length arrays though, to represent empty strings.
-		assert b != null : "Byte array representing plaintext cannot be null.";
+		if ( b == null ) {
+			throw new IllegalArgumentException("Byte array representing plaintext cannot be null.");
+		}
 		    // Make copy so mutable byte array b can't change PlainText.
 		rawBytes = new byte[ b.length ];
 		System.arraycopy(b, 0, rawBytes, 0, b.length);

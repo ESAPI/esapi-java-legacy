@@ -57,7 +57,9 @@ public class KDFContext {
 	}
 	
 	public KDFContext setKeySize(int keySize) {
-        assert keySize >= 56 : "Keysize must be at least 56 bits.";
+        if ( keySize < 56 ) {
+        	throw new IllegalArgumentException("Keysize must be at least 56 bits.");
+        }
 		keySize_ = keySize;
         return this;
 	}
