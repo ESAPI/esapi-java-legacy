@@ -229,11 +229,12 @@ public class CryptoToken {
      *                              expression.)
      */
     public void setUserAccountName(String userAccountName) throws ValidationException {
-        if ( userAccountName == null ) {
-        	throw new IllegalArgumentException("User account name may not be null.");
+        if ( userAccountName == null || userAccountName.equals("") ) {
+        	throw new IllegalArgumentException("User account name may not be null or empty.");
         }
         
-        // Converting to lower case first allows a simpler regex.
+        // Converting to lower case first allows a simpler regex. Also, generally user account
+        // names (but not passwords) are case insensitive in many OSes.
         String userAcct = userAccountName.toLowerCase();
         
         // Check to make sure that attribute name is valid as per our regex.
