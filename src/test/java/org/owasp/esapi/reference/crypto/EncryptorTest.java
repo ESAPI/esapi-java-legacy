@@ -34,6 +34,11 @@ import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
 import org.owasp.esapi.reference.crypto.JavaEncryptor;
 
+// TODO: Remove deprecated calls to ESAPI.securityConfiguration.setCipherTransformation() and
+//       replace with calls to JavaEncryptor.getInstance(Properties) to override that
+//		 property.
+
+
 /**
  * The Class EncryptorTest.
  * 
@@ -163,11 +168,11 @@ public class EncryptorTest extends TestCase {
         System.out.println("testEncryptNull()");
         Encryptor instance = ESAPI.encryptor();
         try {
-			CipherText ct = instance.encrypt( null );  // Should throw NPE or AssertionError
+			CipherText ct = instance.encrypt( null );  // Should throw IllegalArgumentException
             fail("New encrypt(PlainText) method did not throw. Result was: " + ct.toString());
         } catch(Throwable t) {
             // It should be one of these, depending on whether or not assertions are enabled.
-            assertTrue( t instanceof IllegalArgumentException || t instanceof AssertionError);
+            assertTrue( t instanceof IllegalArgumentException );
         }
     }
 
@@ -178,11 +183,11 @@ public class EncryptorTest extends TestCase {
         System.out.println("testDecryptNull()");
         Encryptor instance = ESAPI.encryptor();
         try {
-			PlainText pt = instance.decrypt( null );  // Should throw IllegalArgumentException or AssertionError
+			PlainText pt = instance.decrypt( null );  // Should throw IllegalArgumentException
             fail("New decrypt(PlainText) method did not throw. Result was: " + pt.toString());
         } catch(Throwable t) {
             // It should be one of these, depending on whether or not assertions are enabled.
-            assertTrue( t instanceof IllegalArgumentException || t instanceof AssertionError);
+            assertTrue( t instanceof IllegalArgumentException );
         }
     }
     
