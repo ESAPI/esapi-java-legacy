@@ -34,6 +34,7 @@ import java.security.Signature;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.Map.Entry;
@@ -51,6 +52,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.codecs.Hex;
 import org.owasp.esapi.crypto.CipherSpec;
 import org.owasp.esapi.crypto.CipherText;
@@ -81,29 +83,38 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 public final class JavaEncryptor implements Encryptor {
 
     // This class is no longer a singleton, but this (might be) still needed
-    // for backward compatibility.
+    // for backward compatibility. ObjFactory might do the right thing w/out
+	// it, but it is doubtful that it's ever been tested that way.
     public static Encryptor getInstance() throws EncryptionException {
     	return new JavaEncryptor();
+    }
+    
+    public static Encryptor getInstance(Properties props) {
+    	return new JavaEncryptor(props);
     }
 
     private static boolean initialized = false;
     
+    // Holds default crypto related properties. Initialized once when class is
+    // first loaded.
+    private static Properties defaultCryptoProps = null;
+    
     // encryption
-    private static SecretKeySpec secretKeySpec = null; // DISCUSS: Why static? Implies one key?!?
-    private static String encryptAlgorithm = "AES";
-    private static String encoding = "UTF-8"; 
-    private static int encryptionKeyLength = 128;
+    private SecretKeySpec secretKeySpec = null; // Note: Was 'static' pre-2.1.1
+    private String encryptAlgorithm = "AES";
+    private String encoding = "UTF-8"; 
+    private int encryptionKeyLength = 128;
     
     // digital signatures
-    private static PrivateKey privateKey = null;
-	private static PublicKey publicKey = null;
-	private static String signatureAlgorithm = "SHA1withDSA";
-    private static String randomAlgorithm = "SHA1PRNG";
-	private static int signatureKeyLength = 1024;
+    private PrivateKey privateKey = null;	// Note: Was 'static' pre-2.1.1
+	private PublicKey publicKey = null;		// Note: Was 'static' pre-2.1.1
+	private String signatureAlgorithm = "SHA1withDSA";
+    private String randomAlgorithm = "SHA1PRNG";
+	private int signatureKeyLength = 1024;
 	
 	// hashing
-	private static String hashAlgorithm = "SHA-512";
-	private static int hashIterations = 1024;
+	private String hashAlgorithm = "SHA-512";
+	private int hashIterations = 1024;
 	
 	// Logging - DISCUSS: This "sticks" us with a specific logger to whatever it was when
 	//					  this class is first loaded. Is this a big limitation? Since there
@@ -125,9 +136,11 @@ public final class JavaEncryptor implements Encryptor {
     // the 'context' in our KDF.
     public static final int TRANSITION_VERSION = KeyDerivationFunction.transitionVersion;
     
-	// Load the preferred JCE provider if one has been specified.
+	// Load the default ESAPI.properties and set preferred JCE provider if one has
+    // been specified.
 	static {
 	    try {
+	    	setDefaultCryptoProps();
             SecurityProviderLoader.loadESAPIPreferredJCEProvider();
         } catch (NoSuchProviderException ex) {
         	// Note that audit logging is done elsewhere in called method.
@@ -135,7 +148,6 @@ public final class JavaEncryptor implements Encryptor {
                          "JavaEncryptor failed to load preferred JCE provider.", ex);
             throw new ExceptionInInitializerError(ex);
         }
-        setupAlgorithms();
 	}
 	
     /**
@@ -194,12 +206,12 @@ public final class JavaEncryptor implements Encryptor {
         // setup algorithms -- Each of these have defaults if not set, although
 		//					   someone could set them to something invalid. If
 		//					   so a suitable exception will be thrown and displayed.
-        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
-		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
-		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
+        String encryptAlg = ESAPI.securityConfiguration().getEncryptionAlgorithm();
+		int eKeyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
+		String randomAlg = ESAPI.securityConfiguration().getRandomAlgorithm();
 
-		SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
-		SecretKey secretKey = CryptoHelper.generateSecretKey(encryptAlgorithm, encryptionKeyLength);
+		SecureRandom random = SecureRandom.getInstance(randomAlg);
+		SecretKey secretKey = CryptoHelper.generateSecretKey(encryptAlg, eKeyLen);
         byte[] raw = secretKey.getEncoded();
         byte[] salt = new byte[20];	// Or 160-bits; big enough for SHA1, but not SHA-256 or SHA-512.
         random.nextBytes( salt );
@@ -229,6 +241,8 @@ public final class JavaEncryptor implements Encryptor {
         assert skey.length >= 7 : "Encryptor.MasterKey must be at least 7 bytes. " +
                                   "Length is: " + skey.length + " bytes.";
         
+        setupAlgorithms();
+        
         // Set up secretKeySpec for use for symmetric encryption and decryption,
         // and set up the public/private keys for asymmetric encryption /
         // decryption.
@@ -238,7 +252,7 @@ public final class JavaEncryptor implements Encryptor {
         //       Encryptor.CipherTransformation and just pull off the cipher
         //       algorithm name so we can use it here.
         synchronized(JavaEncryptor.class) {
-            if ( ! initialized ) {
+            if ( ! initialized ) {		// TODO: Needs work - still implies singleton
                 //
                 // For symmetric encryption
                 //
@@ -272,8 +286,29 @@ public final class JavaEncryptor implements Encryptor {
             }
         }
     }
-     
 
+    /**
+     *   Construct a new {@code JavaEncryptor} instance with the specified
+     *   properties. The properties from {@code ESAPI.properties}
+     *   are first applied and the specified properties are then loaded via
+     *   the {@code Properties(Properties)} constructor to override the
+     *   defaults.
+     *
+     *   @param  props   New properties that override the default
+     *                   crypto-related properties. Note that these property
+     *                   values only apply to this particular instance. If an
+     *                   unknown property or a non-crypto related property
+     *                   is given, then those properties are simply silently
+     *                   ignored and the relevant default property is used
+     *                   instead.
+     */
+    public JavaEncryptor(Properties props) {
+    	if ( props == null ) {
+    		throw new IllegalArgumentException("Specified Properties instance may not be null.");
+    	}
+    	
+    	// TODO
+    }
 
 	/**
      * {@inheritDoc}
@@ -834,7 +869,8 @@ public final class JavaEncryptor implements Encryptor {
 		        cipherText = CipherText.fromPortableSerializedBytes(encryptedBytes);
 		    } catch( AssertionError e) {
 	            // Some of the tests in EncryptorTest.testVerifySeal() are examples of
-		        // this if assertions are enabled.
+		        // this if assertions are enabled, but we don't want to throw
+		    	// AssertionErrors for this even if assertions are enabled.
 		        throw new EncryptionException("Invalid seal",
 	                                          "Seal passed garbarge data resulting in AssertionError: " + e);
 	        }
@@ -1001,7 +1037,7 @@ public final class JavaEncryptor implements Encryptor {
 
 
     // Get all the algorithms we will be using from ESAPI.properties.
-    private static void setupAlgorithms() {
+    private void setupAlgorithms() {
         // setup algorithms
         encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
         signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
@@ -1011,11 +1047,65 @@ public final class JavaEncryptor implements Encryptor {
         encoding = ESAPI.securityConfiguration().getCharacterEncoding();
         encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
         signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
+        
+        return;
+    }
+    
+    // Note: There is very little sanity testing here as these are the default
+    // properties as specified by ESAPI.properties file.  For now at least,
+    // we only allow a limited # of relevant properties to be overrode.
+    private static void setDefaultCryptoProps() {
+        Properties p = new Properties();
+
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+        assert sc != null : "ESAPI.securityConfiguration() returned null!";
+
+
+        p.setProperty( DefaultSecurityConfiguration.KEY_LENGTH, 
+                       Integer.toString( sc.getEncryptionKeyLength() )
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.ENCRYPTION_ALGORITHM,
+                       sc.getEncryptionAlgorithm()
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.HASH_ALGORITHM,
+                       sc.getHashAlgorithm()
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.RANDOM_ALGORITHM,
+                       sc.getRandomAlgorithm()
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.DIGITAL_SIGNATURE_ALGORITHM,
+                       sc.getDigitalSignatureAlgorithm()
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.HASH_ITERATIONS,
+                       Integer.toString( sc.getHashIterations() )
+                     );
+
+        // Allow this to be overridden?
+        p.setProperty( DefaultSecurityConfiguration.CHARACTER_ENCODING,
+                       sc.getCharacterEncoding()
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.DIGITAL_SIGNATURE_KEY_LENGTH,
+                       Integer.toString( sc.getDigitalSignatureKeyLength() )
+                     );
+
+        p.setProperty( DefaultSecurityConfiguration.PREFERRED_JCE_PROVIDER,
+                       sc.getPreferredJCEProvider()
+                     );
+
+        defaultCryptoProps = p;
+
+        return;
     }
     
     // Set up signing key pair using the master password and salt. Called (once)
     // from the JavaEncryptor CTOR.
-    private static void initKeyPair(SecureRandom prng) throws NoSuchAlgorithmException {
+    private void initKeyPair(SecureRandom prng) throws NoSuchAlgorithmException {
         String sigAlg = signatureAlgorithm.toLowerCase();
         if ( sigAlg.endsWith("withdsa") ) {
             //
