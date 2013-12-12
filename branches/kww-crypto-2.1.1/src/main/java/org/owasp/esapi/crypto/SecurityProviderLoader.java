@@ -78,6 +78,51 @@ public class SecurityProviderLoader  {
             // old copy at http://www.archive.org/
         jceProviders.put("ABA", "au.net.aba.crypto.provider.ABAProvider");
     }
+    
+    /** 
+     * This methods returns a {@code Provider} instance corresponding to the
+     * requested {@code algProvider} parameter or throw a {@code NoSuchProviderException}
+     * if a suitable JCE provider cannot be located.
+     * 
+     * @param algProvider	Either generic name JCE provider name (e.g., "BC" (for
+     * 						"Bouncy Castle"), "IBMJCE", "SunJCE", etc.) or by the
+     * 						the fully qualified class name for that JCE provider.
+     * @throws NoSuchProviderException	Thrown if a suitable JCE provider cannot be found.
+     */
+    public static Provider getProviderInstanceFor(String algProvider)
+    	throws NoSuchProviderException
+    {
+    	// We assume that if the algorithm provider contains a ".", then
+    	// we interpret this as a crypto provider class name and dynamically
+    	// add the provider. If it's one of the special ones we know about,
+    	// we also dynamically create it. Otherwise, we assume the provider
+    	// is in the "java.security" file.
+    	Class<?> providerClass = null;
+    	String clzName = null;
+    	Provider cryptoProvider = null;
+
+    	// Does algProvider look like a class name?
+    	if (algProvider.indexOf('.') != -1) {
+    		clzName = algProvider;
+    	} else if ( jceProviders.containsKey(algProvider) ) {
+    		// One of the special cases we know about.
+    		clzName = jceProviders.get(algProvider);
+    	} else {
+    		throw new NoSuchProviderException("Unable to locate Provider class for " +
+    				"provider " + algProvider + ". Try using fully qualified class name " +
+    				"or check provider name for typos. Builtin provider names are: " +
+    				jceProviders.toString());
+    	}
+
+    	try {
+			providerClass = Class.forName(clzName);
+	    	cryptoProvider = (Provider)providerClass.newInstance();
+		} catch (Exception e) {
+			throw new NoSuchProviderException("Cannot create JCE Provider instance for '" +
+											  algProvider + "'; Exception was" + e);
+		}
+    	return cryptoProvider;
+    }
 
     /** 
      * This methods adds a provider to the {@code SecurityManager}
@@ -144,103 +189,81 @@ public class SecurityProviderLoader  {
      *         could not be loaded or added to the {@code SecurityManager} or
      *         any other reason for failure.
      */
-    public static int insertProviderAt(String algProvider, int pos)
+     public static int insertProviderAt(String algProvider, int pos)
         throws NoSuchProviderException
-    {
-        // We assume that if the algorithm provider contains a ".", then
-        // we interpret this as a crypto provider class name and dynamically
-        // add the provider. If it's one of the special ones we know about,
-        // we also dynamically create it. Otherwise, we assume the provider
-        // is in the "java.security" file.
-        Class<?> providerClass = null;
-        String clzName = null;
-        Provider cryptoProvider = null;
-        if ( ! (pos == -1 || pos >= 1) ) {
-        	throw new IllegalArgumentException("Position pos must be -1 or integer >= 1");
-        }
-        try {
-            // Does algProvider look like a class name?
-            if (algProvider.indexOf('.') != -1) {
-                clzName = algProvider;
-            } else if ( jceProviders.containsKey(algProvider) ) {
-                // One of the special cases we know about.
-                clzName = jceProviders.get(algProvider);
-            } else {
-                throw new NoSuchProviderException("Unable to locate Provider class for " +
-                             "provider " + algProvider + ". Try using fully qualified class name " +
-                             "or check provider name for typos. Builtin provider names are: " +
-                             jceProviders.toString());
-            }
+     {
+    	 if ( ! (pos == -1 || pos >= 1) ) {
+    		 throw new IllegalArgumentException("Position pos must be -1 or integer >= 1");
+    	 }
+    	 try {
+    		 Provider cryptoProvider = getProviderInstanceFor(algProvider);
 
-            providerClass = Class.forName(clzName);
-            cryptoProvider = (Provider)providerClass.newInstance();
-
-            // Found from above. Note that Security.insertProviderAt() can
-            // throw a SecurityException if a Java SecurityManager is
-            // installed and application doesn't have appropriate
-            // permissions in policy file.
-            //
-            // However, since SecurityException is a RuntimeException it
-            // doesn't need to be explicitly declared on the throws clause.
-            // The application must be given the SecurityPermission with
-            // a value of "insertProvider.<provider_name>" (where
-            // <provider_name> is the name of the algorithm provider) if
-            // a SecurityManager is installed.
-            int ret;
-            if ( pos == -1 ) {      // Special case: Means place _last_.
-                ret = Security.addProvider(cryptoProvider);
-            } else {
-                ret = Security.insertProviderAt(cryptoProvider, pos);
-            }
-            if ( ret == -1 ) {
-                // log INFO that provider was already loaded.
-                String msg = "JCE provider '" + algProvider + "' already loaded";
-                if (pos == -1) {
-                    // The just wanted it available (loaded last) and it is, so
-                    // this is not critical.
-                    logger.always(Logger.SECURITY_SUCCESS, msg);
-                } else {
-                    // In this case, it's a warning because it may have already
-                    // been loaded, but *after* the position they requested.
-                    // For example, if they were trying to load a FIPS 140-2
-                    // compliant JCE provider at the first position and it was
-                    // already loaded at position 3, then this is not FIPS 140-2
-                    // compliant. Therefore, we make it a warning and a failure.
-                	// Also log separately using 'always' in case warnings suppressed
-                	// as per NSA suggestion.
-                    logger.warning(Logger.SECURITY_FAILURE, msg);
-                    logger.always(Logger.SECURITY_FAILURE, "(audit) " + msg);
-                }
-            } else {
-            	// As per NSA suggestion.
-                logger.always(Logger.SECURITY_AUDIT,
-                        "Successfully loaded preferred JCE provider " +
-                        algProvider + " at position " + pos);
-            }
-            return ret;
-        } catch(SecurityException ex) {
-            // CHECKME: Log security event here too? This is a RuntimeException.
-        	// It would only be thrown if a SecurityManager is installed that
-        	// prohibits Security.addProvider() or Security.insertProviderAt()
-        	// by the current user of this thread. Will log it here. Can always
-        	// be ignored.
-        	logger.always(Logger.SECURITY_FAILURE, "Failed to load preferred JCE provider " +
-        				  algProvider + " at position " + pos, ex);
-            throw ex;
-        } catch(Exception ex) {
-            // Possibilities include: ClassNotFoundException,
-            //                        InstantiationException, and others???
-            //
-            // Log an error & re-throw original message as NoSuchProviderException,
-            // since that what it probably really implied here. This probably a configuration
-        	// error (e.g., classpath problem, etc.) so we use EVENT_FAILURE rather than
-        	// SECURITY_FAILURE here.
-            logger.error(Logger.EVENT_FAILURE, "Failed to insert failed crypto " +
-                    " provider " + algProvider + " at position " + pos, ex);
-            throw new NoSuchProviderException("Failed to insert crypto " +
-                                       " provider for " + algProvider +
-                                       "; exception msg: " + ex.toString());
-        }
+    		 // Found from above. Note that Security.insertProviderAt() can
+    		 // throw a SecurityException if a Java SecurityManager is
+    		 // installed and application doesn't have appropriate
+    		 // permissions in policy file.
+    		 //
+    		 // However, since SecurityException is a RuntimeException it
+    		 // doesn't need to be explicitly declared on the throws clause.
+    		 // The application must be given the SecurityPermission with
+    		 // a value of "insertProvider.<provider_name>" (where
+    		 // <provider_name> is the name of the algorithm provider) if
+    		 // a SecurityManager is installed.
+    		 int ret;
+    		 if ( pos == -1 ) {      // Special case: Means place _last_.
+    			 ret = Security.addProvider(cryptoProvider);
+    		 } else {
+    			 ret = Security.insertProviderAt(cryptoProvider, pos);
+    		 }
+    		 if ( ret == -1 ) {
+    			 // log INFO that provider was already loaded.
+    			 String msg = "JCE provider '" + algProvider + "' already loaded";
+    			 if (pos == -1) {
+    				 // The just wanted it available (loaded last) and it is, so
+    				 // this is not critical.
+    				 logger.always(Logger.SECURITY_SUCCESS, msg);
+    			 } else {
+    				 // In this case, it's a warning because it may have already
+    				 // been loaded, but *after* the position they requested.
+    				 // For example, if they were trying to load a FIPS 140-2
+    				 // compliant JCE provider at the first position and it was
+    				 // already loaded at position 3, then this is not FIPS 140-2
+    				 // compliant. Therefore, we make it a warning and a failure.
+    				 // Also log separately using 'always' in case warnings suppressed
+    				 // as per NSA suggestion.
+    				 logger.warning(Logger.SECURITY_FAILURE, msg);
+    				 logger.always(Logger.SECURITY_FAILURE, "(audit) " + msg);
+    			 }
+    		 } else {
+    			 // As per NSA suggestion.
+    			 logger.always(Logger.SECURITY_AUDIT,
+    					 "Successfully loaded preferred JCE provider " +
+    					 algProvider + " at position " + pos);
+    		 }
+    		 return ret;
+    	 } catch(SecurityException ex) {
+    		 // CHECKME: Log security event here too? This is a RuntimeException.
+    		 // It would only be thrown if a SecurityManager is installed that
+    		 // prohibits Security.addProvider() or Security.insertProviderAt()
+    		 // by the current user of this thread. Will log it here. Can always
+    		 // be ignored.
+    		 logger.always(Logger.SECURITY_FAILURE, "Failed to load preferred JCE provider " +
+    				 algProvider + " at position " + pos, ex);
+    		 throw ex;
+    	 } catch(Exception ex) {
+    		 // Possibilities include: ClassNotFoundException,
+    		 //                        InstantiationException, and others???
+    		 //
+    		 // Log an error & re-throw original message as NoSuchProviderException,
+    		 // since that what it probably really implied here. This probably a configuration
+    		 // error (e.g., classpath problem, etc.) so we use EVENT_FAILURE rather than
+    		 // SECURITY_FAILURE here.
+    		 logger.error(Logger.EVENT_FAILURE, "Failed to insert failed crypto " +
+    				 " provider " + algProvider + " at position " + pos, ex);
+    		 throw new NoSuchProviderException("Failed to insert crypto " +
+    				 " provider for " + algProvider +
+    				 "; exception msg: " + ex.toString());
+    	 }
     }
     
     /**
