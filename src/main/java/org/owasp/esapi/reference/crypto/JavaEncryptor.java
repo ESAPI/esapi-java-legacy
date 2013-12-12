@@ -16,7 +16,6 @@
  */
 package org.owasp.esapi.reference.crypto;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -32,6 +31,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.Signature;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -63,7 +63,11 @@ import org.owasp.esapi.crypto.SecurityProviderLoader;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;	// For ESAPI property names. Ugly. These
+																// really should be kept elsewhere, not in
+																// a reference implementation.
+																// TODO: Fix... maybe move to
+																// SecurityConfiguration interface?
 
 /**
  * Reference implementation of the {@code Encryptor} interface. This implementation
@@ -99,6 +103,9 @@ public final class JavaEncryptor implements Encryptor {
     // first loaded.
     private static Properties defaultCryptoProps = null;
     
+	private String jceProviderProp = "SunJCE";	// Property value for Encryptor.PreferredJCEProvider
+    private Provider jceProvider = null;  		// Preferred JCE provider corresponding to jceProviderProp.
+
     // encryption
     private SecretKeySpec secretKeySpec = null; // Note: Was 'static' pre-2.1.1
     private String encryptAlgorithm = "AES";
@@ -115,6 +122,8 @@ public final class JavaEncryptor implements Encryptor {
 	// hashing
 	private String hashAlgorithm = "SHA-512";
 	private int hashIterations = 1024;
+
+
 	
 	// Logging - DISCUSS: This "sticks" us with a specific logger to whatever it was when
 	//					  this class is first loaded. Is this a big limitation? Since there
@@ -141,7 +150,7 @@ public final class JavaEncryptor implements Encryptor {
 	static {
 	    try {
 	    	setDefaultCryptoProps();
-            SecurityProviderLoader.loadESAPIPreferredJCEProvider();
+            SecurityProviderLoader.loadESAPIPreferredJCEProvider();	// Always from ESAPI.properties file.
         } catch (NoSuchProviderException ex) {
         	// Note that audit logging is done elsewhere in called method.
             logger.fatal(Logger.SECURITY_FAILURE,
@@ -234,6 +243,8 @@ public final class JavaEncryptor implements Encryptor {
         byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
         // TODO: Turn these into explicit checks. Throw ConfigurationException
+        //       Or...should we only check them when needed? That way if the
+        //       master salt is never set, it wouldn't matter.
         assert salt != null : "Can't obtain master salt, Encryptor.MasterSalt";
         assert salt.length >= 16 : "Encryptor.MasterSalt must be at least 16 bytes. " +
                                    "Length is: " + salt.length + " bytes.";
@@ -241,7 +252,7 @@ public final class JavaEncryptor implements Encryptor {
         assert skey.length >= 7 : "Encryptor.MasterKey must be at least 7 bytes. " +
                                   "Length is: " + skey.length + " bytes.";
         
-        setupAlgorithms();
+        setupPrivateInstanceVariables(null);
         
         // Set up secretKeySpec for use for symmetric encryption and decryption,
         // and set up the public/private keys for asymmetric encryption /
@@ -276,7 +287,7 @@ public final class JavaEncryptor implements Encryptor {
                     // initializer.
                     byte[] seed = hash(new String(skey, encoding),new String(salt, encoding)).getBytes(encoding);
                     prng.setSeed(seed);
-                    initKeyPair(prng);
+                    initKeyPair(prng);  // Needs work. Would like to save/restore key pair from keystore file.
                 } catch (Exception e) {
                     throw new EncryptionException("Encryption failure", "Error creating Encryptor", e);
                 }             
@@ -409,7 +420,7 @@ public final class JavaEncryptor implements Encryptor {
 			 	// transformation... maybe NULL/mode/padding???
 	         assert !(encrypter instanceof javax.crypto.NullCipher) : "Cipher is instance of NullCipher: " + xform;
 			 String cipherAlg = encrypter.getAlgorithm();
-			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
+			 int keyLen = encryptionKeyLength;
 
 			 // DISCUSS: OK, what do we want to do here if keyLen != keySize? If use keyLen, encryption
 			 //		     could fail with an exception, but perhaps that's what we want. Or we may just be
@@ -1036,18 +1047,81 @@ public final class JavaEncryptor implements Encryptor {
     }
 
 
-    // Get all the algorithms we will be using from ESAPI.properties.
-    private void setupAlgorithms() {
-        // setup algorithms
-        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
-        signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
-        randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
-        hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
-        hashIterations = ESAPI.securityConfiguration().getHashIterations();
-        encoding = ESAPI.securityConfiguration().getCharacterEncoding();
-        encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
-        signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
-        
+    // Set up all the private instance variables we will be using from the default properties.
+    private void setupPrivateInstanceVariables(Properties overrideProps) {
+        Properties p = null;
+        if ( overrideProps == null ) {
+           p = defaultCryptoProps;
+        } else {
+            // Use defaultCryptoProps as the default and override them with specified props.
+            p = new Properties(defaultCryptoProps);
+
+            // Enumerate through all the keys in overrideProps and apply them to p.
+            Enumeration<String> e = (Enumeration<String>) overrideProps.propertyNames();
+            while( e.hasMoreElements() ) {
+                String key = (String)e.nextElement();
+                String value = overrideProps.getProperty( key );
+
+                if ( p.getProperty( key ) == null ) {
+                    // DISCUSS: Threshold or drop this to 'info' or what?
+                    logger.warning(Logger.SECURITY_FAILURE, "Property with key '" + key + "' does not override any known crypto property. Typo???");
+                }
+
+                // DISCUSS: Is there any reason to exclude any particular properties here? If so, what
+                //          mechanism.
+                p.setProperty( key, value );
+            }
+        }
+        ////////////////////////
+        //
+        //      There is only some very basic sanity checking here; e.g., making sure that integer
+        //      property values are in fact integers and possibly checking for minimum size.
+        String sval = null;
+        int    ival = -1;
+
+        sval = p.getProperty( DefaultSecurityConfiguration.KEY_LENGTH ); 
+        ival = Integer.parseInt( sval );
+        if ( ival >= 56 ) {
+            encryptionKeyLength = ival;
+        } else {
+            logger.warning(Logger.SECURITY_FAILURE,
+            		"Ignoring encryption key size and using default as key size less than 56 bits.");
+        }
+
+        encryptAlgorithm   = p.getProperty( DefaultSecurityConfiguration.ENCRYPTION_ALGORITHM );
+        hashAlgorithm      = p.getProperty( DefaultSecurityConfiguration.HASH_ALGORITHM );
+        randomAlgorithm    = p.getProperty( DefaultSecurityConfiguration.RANDOM_ALGORITHM );
+        signatureAlgorithm = p.getProperty( DefaultSecurityConfiguration.DIGITAL_SIGNATURE_ALGORITHM );
+
+        sval = p.getProperty( DefaultSecurityConfiguration.HASH_ITERATIONS );
+        ival = Integer.parseInt( sval );
+        hashIterations = ival;
+        if ( ival >= 1000 ) {
+            hashIterations = ival;
+        } else {
+            logger.warning(Logger.SECURITY_FAILURE,
+            		"Ignoring hash iterations and using default as hash iterations size less than 1000.");
+        }
+
+        // Allow this to be overridden?
+        encoding = p.getProperty( DefaultSecurityConfiguration.CHARACTER_ENCODING );
+
+        sval = p.getProperty( DefaultSecurityConfiguration.DIGITAL_SIGNATURE_KEY_LENGTH );
+        ival = Integer.parseInt( sval );
+        if ( ival >= 512 ) {
+            signatureKeyLength = ival;
+        } else {
+            logger.warning(Logger.SECURITY_FAILURE,
+            		"Ignoring digital signature key length default as length is than 512.");
+        }
+
+        jceProviderProp = p.getProperty( DefaultSecurityConfiguration.PREFERRED_JCE_PROVIDER );
+        try {
+        	jceProvider = SecurityProviderLoader.getProviderInstanceFor(jceProviderProp);
+        } catch( NoSuchProviderException e ) {
+        	throw new ConfigurationException("Failed to set requested JCE Provider for '" +
+        			                         jceProvider + "'. Try using fully qualified classname of provider.", e);
+        }
         return;
     }
     
@@ -1120,6 +1194,16 @@ public final class JavaEncryptor implements Encryptor {
             // this was tested with JDK 1.6.0_21, but likely fails with earlier
             // versions of the JDK as well.)
             //
+        	// Note also for DSA, we accept the default p, q, and g parameters,
+        	// otherwise, we would have to use DSAKeyPairGenerator instead of
+        	// KeyPairGenerator here so we could pass in the additional
+        	// DSAParameterSpec instance to the initialize() method. However,
+        	// there is no reason to think that the default p, q, and g
+        	// parameters are not sufficient (unless one is using a JCE
+        	// provider library written by the NSA ;-) and choosing one's own
+        	// p, q, and g parameters means something else that you need to
+        	// exchange with participating parties. So in this case, simplicity
+        	// trumps flexibility.
             sigAlg = "DSA";
         } else if ( sigAlg.endsWith("withrsa") ) {
             // Ditto for RSA.
