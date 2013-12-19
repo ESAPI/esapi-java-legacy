@@ -730,22 +730,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * {@inheritDoc}
      */
-    public String setCipherTransformation(String cipherXform) {
-    	String previous = getCipherTransformation();
-    	if ( cipherXform == null ) {
-    		// Special case... means set it to original value from ESAPI.properties
-    		cipherXformCurrent = cipherXformFromESAPIProp;
-    	} else {
-    		assert ! cipherXform.trim().equals("") :
-    			"Cipher transformation cannot be just white space or empty string";
-    		cipherXformCurrent = cipherXform;	// Note: No other sanity checks!!!
-    	}
-    	return previous;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     public boolean useMACforCipherText() {
     	return getESAPIProperty(CIPHERTEXT_USE_MAC, true);
     }
