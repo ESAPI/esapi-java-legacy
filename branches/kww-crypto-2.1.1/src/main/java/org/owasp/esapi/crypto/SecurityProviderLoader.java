@@ -26,6 +26,7 @@ import org.owasp.esapi.Logger;
  */
 public class SecurityProviderLoader  {
     private static Logger logger = ESAPI.getLogger("SecurityProviderLoader");
+    private static boolean loggedOnce = false;
     private static Hashtable<String, String> jceProviders;
 
     static {
@@ -92,6 +93,14 @@ public class SecurityProviderLoader  {
     public static Provider getProviderInstanceFor(String algProvider)
     	throws NoSuchProviderException
     {
+    	if ( algProvider == null || algProvider.trim().equals("") ) {
+    		if ( ! loggedOnce ) {
+    			logger.always(Logger.SECURITY_AUDIT,
+    					      "No JCE Provider specified in ESAPI.properties file.");
+    			loggedOnce = true;
+    		}
+    		return null;
+    	}
     	// We assume that if the algorithm provider contains a ".", then
     	// we interpret this as a crypto provider class name and dynamically
     	// add the provider. If it's one of the special ones we know about,
