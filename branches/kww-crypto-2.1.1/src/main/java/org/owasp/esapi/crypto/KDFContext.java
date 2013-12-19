@@ -1,5 +1,9 @@
 package org.owasp.esapi.crypto;
 
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.errors.ConfigurationException;
+
 // NOTE: This class is not complete.
 // DISCUSS: Should some of these methods be package level...e.g., parts
 //			of the KDF context that JavaEncryptor sets such as the
@@ -12,17 +16,34 @@ package org.owasp.esapi.crypto;
  * for each party.
  */
 public class KDFContext {
-
+		// These are reset in the default CTOR.
 	private String cipherXform_ = "";
-	private int    kdfVersion_  = KeyDerivationFunction.kdfVersion;
 	private String prfAlgName_  = "";
-	private int    keySize_     = 128;  // ???
+	private int    keySize_     = 128;
+	
+		// These are optional and the defaults should be the empty string.
 	private String usage_       = "";
 	private String sender_      = "";
 	private String recipient_   = "";
 
+	// Developers should not normally change this one. It is for implementing
+	// backward compatibility with previous ESAPI 2.x crypto and only those
+	// implementing a new Encryptor implementation would be expected to use it.
+	private int    kdfVersion_  = KeyDerivationFunction.kdfVersion;
+	
 	public KDFContext() {
-		// TODO
+		try {
+			SecurityConfiguration sc = ESAPI.securityConfiguration();
+			cipherXform_ = notNullOrEmpty("Encryptor.CipherTransformation", sc.getCipherTransformation() );
+			prfAlgName_  = notNullOrEmpty("Encryptor.KDF.PRF", sc.getKDFPseudoRandomFunction() );
+			keySize_     = sc.getEncryptionKeyLength();
+			if ( keySize_ < 56 ) {
+				throw new IllegalArgumentException("ESAPI.properties: " +
+							"Property 'Encryptor.EncryptionKeyLength' has illegal size; min size is 56 (bits).");
+			}
+		} catch( Exception ex ) {
+			throw new ConfigurationException("Configuration error for crypto property in ESAPI.properties", ex);
+		}
 	}
 	
 	public String getCipherXform() {
@@ -39,7 +60,7 @@ public class KDFContext {
     }
 
 	public KDFContext setKdfVersion(int kdfVersion) {
-		kdfVersion_ = kdfVersion;	// Need sanity check here.
+		kdfVersion_ = kdfVersion;	// TODO: Need sanity check here.
         return this;
 	}
 	
@@ -93,7 +114,7 @@ public class KDFContext {
 
     public String toString() {
     	//
-        // Do NOT change this order or the delimiter--EVER--or old stored
+        // Do NOT *ever* change this order or the delimiter--EVER--or old stored
     	// ciphertext will no longer be able to be decrypted because the
     	// derived keys would be computed differently.
     	//
