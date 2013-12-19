@@ -176,9 +176,9 @@ public class CryptoTokenTest {
         }
         try {
             ctok.setUserAccountName("");    // Can't be empty
-            fail("Failed to throw expected ValidationException");
-        } catch (ValidationException e) {
-            ;   // Success
+            fail("Failed to throw expected IllegalArgumentException");
+        } catch (Throwable t) {
+            assertTrue( t instanceof IllegalArgumentException );	// Success
         }
         try {
             ctok.setUserAccountName(null);    // Can't be null
