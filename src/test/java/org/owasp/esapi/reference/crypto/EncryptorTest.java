@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference.crypto;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Properties;
 
 import javax.crypto.SecretKey;
 
@@ -32,6 +33,7 @@ import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
 import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.owasp.esapi.reference.crypto.JavaEncryptor;
 
 // TODO: Remove deprecated calls to ESAPI.securityConfiguration.setCipherTransformation() and
@@ -63,10 +65,7 @@ public class EncryptorTest extends TestCase {
      */
     @SuppressWarnings("deprecation")
 	protected void setUp() throws Exception {
-        // This is only mechanism to change this for now. Will do this with
-        // a soon to be CryptoControls class or equivalent mechanism in a
-    	// future release.
-        ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
+    	// none
     }
 
     /**
@@ -113,7 +112,7 @@ public class EncryptorTest extends TestCase {
 	 *             the encryption exception
 	 */
     public void testEncryptDecrypt1() throws EncryptionException {
-        System.out.println("testEncryptDecrypt2()");
+        System.out.println("testEncryptDecrypt1()");
         Encryptor instance = ESAPI.encryptor();
         String plaintext = "test1234test1234tes"; // Not a multiple of block size (16 bytes)
         try {
@@ -259,17 +258,15 @@ public class EncryptorTest extends TestCase {
 			assertTrue( (keySize / 8) == skey.getEncoded().length );
 //			System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.getEncoded().length);
 
-			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
-			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
-			// Change the cipher transform from whatever it currently is to the specified cipherXform.
-	    	@SuppressWarnings("deprecation")
-			String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
-	    	if ( ! cipherXform.equals(oldCipherXform) ) {
-	    		System.out.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
-	    	}
-	    	
+			// Set up properties to use the new specified cipher transformation and
+            // key size.
+            Properties myEnv = new Properties();
+    		myEnv.setProperty(DefaultSecurityConfiguration.CIPHER_TRANSFORMATION_IMPLEMENTATION,
+    				          cipherXform);
+    		myEnv.setProperty(DefaultSecurityConfiguration.KEY_LENGTH, Integer.toString( keySize ) );
+
 	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
-	    	Encryptor instance = ESAPI.encryptor();
+	    	Encryptor instance = JavaEncryptor.getInstance(myEnv);
 	    	PlainText plaintext = new PlainText(plaintextBytes);
 	    	PlainText origPlainText = new PlainText( plaintext.toString() ); // Make _copy_ of original for comparison.
 	    	
@@ -296,13 +293,6 @@ public class EncryptorTest extends TestCase {
 	    	System.out.println("\tOriginal plaintext: " + origPlainText);
 	    	System.out.println("\tResult after decryption: " + decryptedPlaintext);
 			assertTrue( "Failed to decrypt properly.", origPlainText.toString().equals( decryptedPlaintext.toString() ) );
-	    	
-	    	// Restore the previous cipher transformation. For now, this is only way to do this.
-	    	@SuppressWarnings("deprecation")
-			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
-	    	assertTrue( previousCipherXform.equals( cipherXform ) );
-	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
-	    	assertTrue( defaultCipherXform.equals( oldCipherXform ) );
 	    	
 	    	return ciphertext.getEncodedIVCipherText();
 		} catch (Exception e) {
@@ -501,7 +491,6 @@ public class EncryptorTest extends TestCase {
     @SuppressWarnings("deprecation")
     public void testEncryptionSerialization() throws EncryptionException {
         String secretMsg = "Secret Message";
-        ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
         CipherText ct = ESAPI.encryptor().encrypt(new PlainText(secretMsg));
         
         byte[] serializedCipherText = ct.asPortableSerializedByteArray();
