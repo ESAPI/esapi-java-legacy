@@ -4,6 +4,9 @@ import static org.junit.Assert.*;
 
 import java.security.NoSuchProviderException;
 import java.security.Provider;
+import java.util.Properties;
+
+import javax.crypto.SecretKey;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -11,7 +14,10 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.reference.crypto.JavaEncryptor;
 
 /**
  * Test for class {@code SecurityProviderLoader}. Note that these tests
@@ -116,13 +122,19 @@ public class SecurityProviderLoaderTest {
         }
         
         // Next, try a "combined mode" cipher mode available in Bouncy Castle.
-        String origCipherXform = null;
+        String encryptor = null;
         try {
-            origCipherXform = ESAPI.securityConfiguration().setCipherTransformation("AES/GCM/NoPadding");
+            Properties myEnv = new Properties();
+    		myEnv.setProperty(DefaultSecurityConfiguration.CIPHER_TRANSFORMATION_IMPLEMENTATION,
+    						  "AES/GCM/NoPadding");
+
+	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
+	    	Encryptor aesGCMencryptor = JavaEncryptor.getInstance(myEnv);
+	    	
             PlainText clearMsg = new PlainText("This is top secret! We are all out of towels!");
             String origMsg = clearMsg.toString(); // Must keep 'cuz by default, clearMsg is overwritten.
-            CipherText ct = ESAPI.encryptor().encrypt(clearMsg);
-            PlainText plain = ESAPI.encryptor().decrypt(ct);
+            CipherText ct = aesGCMencryptor.encrypt(clearMsg);
+            PlainText plain = aesGCMencryptor.decrypt(ct);
             assertEquals( origMsg, plain.toString() );
             // Verify that no MAC is calculated for GCM cipher mode. There is no method to
             // validate this, so we look at the String representation of this CipherText
@@ -132,8 +144,6 @@ public class SecurityProviderLoaderTest {
         } catch (EncryptionException e) {
             fail("Encryption w/ Bouncy Castle failed with EncryptionException for preferred " +
                  "cipher transformation; exception was: " + e);
-        } finally {
-            ESAPI.securityConfiguration().setCipherTransformation(origCipherXform);
         }
     }
 }
