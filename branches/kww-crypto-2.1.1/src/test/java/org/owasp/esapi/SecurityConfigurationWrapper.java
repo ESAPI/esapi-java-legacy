@@ -257,15 +257,6 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 * {@inheritDoc}
 	 */
 	// @Override
-	public String setCipherTransformation(String cipherXform)
-	{
-		return wrapped.setCipherTransformation(cipherXform);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	// @Override
 	public boolean useMACforCipherText()
 	{
 		return wrapped.useMACforCipherText();
