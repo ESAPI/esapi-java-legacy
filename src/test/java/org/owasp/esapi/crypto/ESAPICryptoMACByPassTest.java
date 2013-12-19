@@ -25,9 +25,12 @@ package org.owasp.esapi.crypto;
 
 import org.apache.commons.codec.binary.Hex;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.reference.crypto.JavaEncryptor;
 import org.owasp.esapi.util.ByteConversionUtil;
 
 import javax.crypto.SecretKey;
@@ -38,6 +41,7 @@ import java.lang.reflect.Field;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Date;
+import java.util.Properties;
 
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -73,9 +77,11 @@ public class ESAPICryptoMACByPassTest {
         	//		 is to add "OFB" mode to Encryptor.cipher_modes.additional_allowed;
         	//		 e.g.,  Encryptor.cipher_modes.additional_allowed=CBC,OFB
         	//
-        String origCipherXform =
-        	ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/NoPadding");
-        CipherText ct = ESAPI.encryptor().encrypt(sk,new PlainText(originalMessage));
+        Properties myEnv = new Properties();
+		myEnv.setProperty(DefaultSecurityConfiguration.CIPHER_TRANSFORMATION_IMPLEMENTATION,
+				          "AES/CBC/NoPadding");
+        Encryptor myEncryptor = JavaEncryptor.getInstance(myEnv);
+        CipherText ct = myEncryptor.encrypt(sk,new PlainText(originalMessage));
 
         //Serialize the ciphertext in order to send it over the wire..
         byte[] serializedCt = ct.asPortableSerializedByteArray();
@@ -86,7 +92,10 @@ public class ESAPICryptoMACByPassTest {
         //Decrypt
         CipherText modifierCtObj = CipherText.fromPortableSerializedBytes(modifiedCt);
         try {
-        	ESAPI.securityConfiguration().setCipherTransformation(origCipherXform);
+        		// Note back to using the default cipher transformation which
+        		// should be:
+        		//		AES/CBC/PKCS5Padding
+        		//
         		// This decryption should fail by throwing an EncryptionException
         		// if ESAPI crypto is NOT vulnerable and you never get to the
         		// subsequent lines in the try block.
