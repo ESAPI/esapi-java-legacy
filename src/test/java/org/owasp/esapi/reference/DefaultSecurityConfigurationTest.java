@@ -258,12 +258,6 @@ public class DefaultSecurityConfigurationTest {
 		properties.setProperty(DefaultSecurityConfiguration.CIPHER_TRANSFORMATION_IMPLEMENTATION, "Blowfish/CFB/ISO10126Padding");
 		secConf = new DefaultSecurityConfiguration(properties);
 		Assert.assertEquals("Blowfish/CFB/ISO10126Padding", secConf.getCipherTransformation());
-		
-		secConf.setCipherTransformation("DESede/PCBC/PKCS5Padding");
-		Assert.assertEquals("DESede/PCBC/PKCS5Padding", secConf.getCipherTransformation());
-		
-		secConf.setCipherTransformation(null);//sets it back to default
-		Assert.assertEquals("Blowfish/CFB/ISO10126Padding", secConf.getCipherTransformation());
 	}
 	
 	@Test
