@@ -33,7 +33,7 @@ import java.lang.reflect.Modifier;
  * 		...
  * 		DrinkingEstablishment bar = ObjFactory.make(barName, "DrinkingEstablishment");
  * 		Beer beer = ObjFactory.make(beerBrand, "Beer");
- *		bar.drink(beer);	// Drink a Guiness beer at the foo Bar. :)
+ *		bar.drink(beer);	// Drink a Guinness beer at the foo Bar. :)
  *		...
  * </pre>
  * </p><p>
