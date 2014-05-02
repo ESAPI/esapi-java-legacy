@@ -107,7 +107,8 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 	 * Hence we renamed it to {@code getESAPILevel()}.
 	 */
 	public int getESAPILevel() {
-		return super.getLevel().toInt();
+		Level level = super.getLevel();
+    return (level == null ) ? Level.OFF_INT : level.toInt();
 	}
 
 	/**
