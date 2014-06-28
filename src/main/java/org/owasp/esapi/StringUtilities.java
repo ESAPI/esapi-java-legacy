@@ -61,12 +61,12 @@ public class StringUtilities {
     public static char[] union(char[]... list) {
     	StringBuilder sb = new StringBuilder();
     	
-    	for (char[] characters : list) {
-	        for (int i = 0; i < list.length; i++) {
-	            if (!contains(sb, characters[i]))
-	                sb.append(list[i]);
-	        }
-    	}
+		for (char[] characters : list) {
+			for ( char c : characters ) {
+				if ( !contains( sb, c ) )
+					sb.append( c );
+			}
+		}
 
         char[] toReturn = new char[sb.length()];
         sb.getChars(0, sb.length(), toReturn, 0);

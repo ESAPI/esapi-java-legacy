@@ -15,6 +15,8 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import junit.framework.Test;
@@ -76,15 +78,27 @@ public class RandomizerTest extends TestCase {
     public void testGetRandomString() {
         System.out.println("getRandomString");
         int length = 20;
+        int trials = 1000;
         Randomizer instance = ESAPI.randomizer();
-        for ( int i = 0; i < 100; i++ ) {
+        int[] counts = new int[128];
+        for ( int i = 0; i < 1000; i++ ) {
             String result = instance.getRandomString(length, EncoderConstants.CHAR_ALPHANUMERICS );
             for ( int j=0;j<result.length();j++ ) {
-            	if ( !Codec.containsCharacter( result.charAt(j), EncoderConstants.CHAR_ALPHANUMERICS) ) {
-            		fail();
-            	}
+            	char c = result.charAt(j);
+            	counts[c]++;
             }
             assertEquals(length, result.length());
+        }
+        
+        // Simple check to see if the overall character counts are within 10% of each other
+        int min=Integer.MAX_VALUE;
+        int max=0;
+        for ( int i = 0; i < 128; i++ ) {
+        	if ( counts[i] > max ) { max = counts[i]; } 
+        	if ( counts[i] > 0 && counts[i] < min ) { min = counts[i]; }
+        	if ( max - min > trials/10 ) {
+        		fail( "getRandomString randomness counts are off" );
+        	}
         }
     }
 
@@ -139,6 +153,25 @@ public class RandomizerTest extends TestCase {
             list.add( guid );
         }
     }
+
+    
+    /**
+     * Run this class to generate a file named "tokens.txt" with 20,000 random 20 character ALPHANUMERIC tokens.
+     * Use Burp Pro sequencer to load this file and run a series of randomness tests.
+     * 
+     * NOTE: be careful not to include any CRLF characters (10 or 13 ASCII) because they'll create new tokens
+     * Check to be sure your analysis tool loads exactly 20,000 tokens of 20 characters each.
+     */
+    
+	public static void main(String[] args) throws IOException {
+		FileWriter fw = new FileWriter("tokens.txt");
+		for (int i = 0; i < 20000; i++) {
+			String token = ESAPI.randomizer().getRandomString(20, EncoderConstants.CHAR_ALPHANUMERICS);
+			fw.write(token + "\n");
+		}
+		fw.close();
+	}
+
 
      
 }
