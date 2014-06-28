@@ -1,5 +1,7 @@
 package org.owasp.esapi;
 
+import java.util.Arrays;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -42,7 +44,22 @@ public class StringUtilitiesTest extends TestCase {
     		assertTrue( ex.getClass().getName().equals( IllegalArgumentException.class.getName() ));
     	}
     }
+
+    /** Test the union() method. */
+    public void testUnion() {
+		char[] a1 = { 'a', 'b', 'c' };
+		char[] a2 = { 'c', 'd', 'e' };
+		char[] union = StringUtilities.union(a1, a2);
+		assertTrue( Arrays.equals( union, new char[] {'a','b','c','d','e' } ) );
+    }
     
+    /** Test the contains() method. */
+    public void contains() {
+		StringBuilder sb = new StringBuilder( "abc" );
+		assertTrue( StringUtilities.contains(sb, 'b') );
+		assertFalse( StringUtilities.contains(sb, 'x') );
+    }
+
     /** Test the notNullOrEmpty() method. */
     public void testNotNullOrEmpty() {
     	String str = "A string";
