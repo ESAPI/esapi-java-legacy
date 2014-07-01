@@ -302,7 +302,7 @@ public class CipherTextSerializer {
             
             debug("convertToCipherText: kdfPrf = " + kdfPrf + ", kdfVers = " + kdfVers);
             if ( ! versionIsCompatible( kdfVers) ) {
-            	throw new EncryptionException("This version of ESAPI does is not compatible with the version of ESAPI that encrypted your data.",
+            	throw new EncryptionException("This version of ESAPI is not compatible with the version of ESAPI that encrypted your data.",
             			"KDF version " + kdfVers + " from serialized ciphertext not compatibile with current KDF version of " + 
             			KeyDerivationFunction.kdfVersion);
             }
