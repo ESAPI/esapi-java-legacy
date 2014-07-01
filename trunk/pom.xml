@@ -81,28 +81,14 @@
             <name>Jeff Williams</name>
             <organization>Aspect Security</organization>
             <roles>
-                <role>Project Owner</role>
-                <role>Architect</role>
-                <role>Developer</role>
-            </roles>
-        </developer>
-        <developer>
-            <name>Jim Manico</name>
-            <roles>
-                <role>Project Manager</role>
-                <role>BuildMaster</role>
-                <role>Developer</role>
-                <role>Architect</role>
+                <role>Project Inventor</role>
             </roles>
         </developer>
         <developer>
             <name>Chris Schmidt</name>
             <organization>Aspect Security</organization>
             <roles>
-                <role>Project Manager</role>
-                <role>Continuous Integration Admin</role>
-                <role>Architect</role>
-                <role>Developer</role>
+                <role>Project Owner</role>
             </roles>
         </developer>
         <developer>
@@ -110,9 +96,6 @@
             <organization>Wells Fargo</organization>
             <roles>
                 <role>Project Manager</role>
-                <role>Architect</role>
-                <role>Developer</role>
-                <role>Crypto Guy</role>
             </roles>
         </developer>
     </developers>
@@ -121,11 +104,9 @@
         <contributor>
             <name>Dave Wichers</name>
             <organization>Aspect Security</organization>
-            <roles>
-                <role>Documentation and Examples</role>
-                <role>Minor Code Contributions</role>
-                <role>Project Guidance</role>
-            </roles>
+        </contributor>
+        <contributor>
+            <name>Jim Manico</name>
         </contributor>
     </contributors>
 
@@ -137,23 +118,23 @@
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
-            <version>1.5</version>
+            <version>1.10</version>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils-core</artifactId>
-            <version>1.7.0</version>
+            <version>1.8.3</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.4</version>
+            <version>4.5</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
-            <version>2.4</version>
+            <version>2.5</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -165,23 +146,19 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.2</version>
+            <version>1.3.1</version>
             <scope>compile</scope>
         </dependency>
-        <!-- unused according to dependancy:analyze
-           this is a optional dependency of commons-fileupload which
-           is at least needed for testing...
-        -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>1.3</version>
+            <version>2.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
-            <version>3.2</version>
+            <version>3.2.1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -204,7 +181,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.4.3</version>
+            <version>1.5.3</version>
         </dependency>
     </dependencies>
 
@@ -212,10 +189,10 @@
         <plugins>
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>3.1</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>false</showDeprecation>
@@ -225,7 +202,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-eclipse-plugin</artifactId>
-                <version>2.8</version>
+                <version>2.9</version>
                 <configuration>
                     <downloadSources>true</downloadSources>
                 </configuration>
@@ -233,7 +210,7 @@
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.4</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -245,24 +222,23 @@
             </plugin>
 
             <!-- Check for updates to dependencies and report on them. -->
-<!--
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>1.2</version>
+                <version>2.1</version>
                 <executions>
                     <execution>
                         <id>check-for-dependency-updates</id>
-                        <phase>compile</phase> &lt;!&ndash; Eclipse q4e plugin needs this &ndash;&gt;
+                        <phase>compile</phase> <!-- Eclipse q4e plugin needs this -->
                         <goals>
                             <goal>display-dependency-updates</goal>
                             <goal>display-plugin-updates</goal>
-                            <goal>display-property-updates</goal>
+                            <!--<goal>display-property-updates</goal>-->
                         </goals>
                     </execution>
                 </executions>
             </plugin>
--->
+
         </plugins>
     </build>
 
@@ -271,7 +247,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.5.3</version>
                 <configuration>
                     <findbugsXmlOutput>true</findbugsXmlOutput>
                     <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
@@ -284,7 +260,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>cobertura-maven-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.6</version>
                 <configuration>
                     <formats>
                         <format>html</format>
@@ -295,11 +271,11 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0-beta-2</version>
+                <version>2.0</version>
             </plugin>
             <plugin>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>2.5</version>
+                <version>3.1</version>
                 <configuration>
                     <targetJdk>1.5</targetJdk>
                     <sourceEncoding>utf-8</sourceEncoding>
@@ -308,7 +284,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.9.1</version>
                 <configuration>
                     <detectJavaApiLink>false</detectJavaApiLink>
                     <detectLinks>false</detectLinks>
@@ -328,14 +304,14 @@
                     <issueLinkUrl>http://code.google.com/p/owasp-esapi-java/issues/detail?id=%ISSUE%</issueLinkUrl>
                     <type>date</type>
                     <dates>
-                        <date>2011-05-11 00:00:00</date>
+                        <date>2013-09-02 00:00:00</date>
                     </dates>
                 </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>1.2</version>
+                <version>2.1</version>
                 <reportSets>
                     <reportSet>
                         <reports>
@@ -345,6 +321,19 @@
                         </reports>
                     </reportSet>
                 </reportSets>
+            </plugin>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>1.1.4</version>
+                <configuration>
+                    <externalReport>false</externalReport>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.17</version>
             </plugin>
         </plugins>
     </reporting>
@@ -383,6 +372,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -400,7 +390,8 @@
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
-						<version>2.3.1</version>
+						<version>2.4</version>
+<!--
 						<executions>
 							<execution>
 								<phase>package</phase>
@@ -409,10 +400,13 @@
 								</goals>
 							</execution>
 						</executions>
+-->
 						<configuration>
+<!--
 							<keystore>codesign.keystore</keystore>
 							<alias>owasp foundation, inc.'s godaddy.com, inc. id</alias>
 							<verify>true</verify>
+-->
 							<archive>
 								<manifest>
 									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
@@ -425,11 +419,12 @@
 						</configuration>
 					</plugin>
 					
-                    <!-- Baseline for ESAPI 2.0 is JDK1.5 - Enforces that a JDK1.5 compiler is being
+                    <!-- Baseline for ESAPI 2.1 is JDK1.6 - Enforces that a JDK1.6 compiler is being
                          used to build this release -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-enforcer-plugin</artifactId>
+                        <version>1.3.1</version>
                         <executions>
                             <execution>
                                 <id>enforce-jdk-version</id>
@@ -439,10 +434,10 @@
                                 <configuration>
                                     <rules>
                                         <requireJavaVersion>
-                                            <version>1.5</version>
+                                            <version>1.6</version>
                                             <message>
-                                                ESAPI 2.0 uses the JDK1.5 for it's baseline. Please make sure that your
-                                                JAVA_HOME environment variable is pointed to a JDK1.5 distribution.
+                                                ESAPI 2.1 uses the JDK1.6 for it's baseline. Please make sure that your
+                                                JAVA_HOME environment variable is pointed to a JDK1.6 distribution.
                                             </message>
                                         </requireJavaVersion>
                                     </rules>
@@ -455,6 +450,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
                         <executions>
                             <execution>
                                 <id>attach-javadocs</id>
@@ -469,7 +465,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.2</version>
+                        <version>2.4</version>
                         <configuration>
                             <descriptors>
                                 <descriptor>src/main/assembly/dist.xml</descriptor>
@@ -491,7 +487,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
-                        <version>2.1</version>
+                        <version>2.5</version>
                         <configuration>
                             <tagBase>https://owasp-esapi-java.googlecode.com/svn/tags/releases/</tagBase>
                         </configuration>

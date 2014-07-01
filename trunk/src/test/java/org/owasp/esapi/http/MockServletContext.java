@@ -57,6 +57,11 @@ import org.owasp.esapi.Logger;
  * @version $Rev: 46019 $ $Date: 2004-09-14 04:56:06 -0500 (Tue, 14 Sep 2004) $
  */
 public class MockServletContext implements ServletContext {
+    @Override
+    public String getContextPath() {
+        return "/";
+    }
+
     /**
      * Returns a <code>ServletContext</code> object that
      * corresponds to a specified URL on the server.
