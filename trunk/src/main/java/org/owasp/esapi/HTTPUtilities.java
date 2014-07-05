@@ -528,14 +528,14 @@ public interface HTTPUtilities
      * Note that the header "pragma: no-cache" is intended only for use in HTTP requests, not HTTP responses. However, Microsoft has chosen to
      * directly violate the standards, so we need to include that header here. For more information, please refer to the relevant standards:
      * <UL>
-     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html">HTTP/1.1 Cache-Control "no-cache"</a>
-     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.1">HTTP/1.1 Cache-Control "no-store"</a>
-     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.2">HTTP/1.0 Pragma "no-cache"</a>
-     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.32">HTTP/1.0 Expires</a>
-     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21">IE6 Caching Issues</a>
-     * <LI><a href="http://support.microsoft.com/kb/937479">Firefox browser.cache.disk_cache_ssl</a>
+     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.1">HTTP/1.1 Cache-Control "no-cache"</a>
+     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.9.2">HTTP/1.1 Cache-Control "no-store"</a>
+     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.32">HTTP/1.0 Pragma "no-cache"</a>
+     * <LI><a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.21">HTTP/1.0 Expires</a>
+     * <LI><a href="http://support.microsoft.com/kb/937479">IE6 Caching Issues</a>
      * <LI><a href="http://support.microsoft.com/kb/234067">Microsoft directly violates specification for pragma: no-cache</a>
-     * <LI><a href="http://www.mozilla.org/quality/networking/docs/netprefs.html">Mozilla</a>
+     * <LI><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Preferences/Mozilla_networking_preferences#Cache">Firefox browser.cache.disk_cache_ssl</a>
+     * <LI><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Preferences/Mozilla_networking_preferences">Mozilla</a>
      * </UL>
      *
      * @param response
