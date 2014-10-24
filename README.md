@@ -3,13 +3,12 @@ esapi-java-legacy
 
 OWASP ESAPI (The OWASP Enterprise Security API) is a free, open source, web application security control library that makes it easier for programmers to write lower-risk applications. The ESAPI for Java library is designed to make it easier for programmers to retrofit security into existing applications. ESAPI for Java also serves as a solid foundation for new development.
 
-For more information, please visit our Wiki.
+Wiki: https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
 
-You can view the latest version of our Javadocs here.
+Nightly Build: https://esapi.ci.cloudbees.com
 
-You can see the status of what we are working on for the next release here.
+JIRA: Coming Soon
 
-View Contributed ESAPI Components
 
 Realtime Support available on our IRC Channel:
 
