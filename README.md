@@ -17,12 +17,19 @@ https://github.com/ESAPI/esapi-java
 <b>How can I contribute or fix bugs?</b><br/>
 Fork and submit a pull request! Simple as pi!
 
+<b>What happened to Google code?</b><br/>
+In mid-2014 ESAPI Migrated all code to GitHub, in November we started using JIRA/Confluence. 
+
+<b>What about the issues still located on Google Code</b><br/>
+We will be migrating the issues from Google Code to JIRA as time allows, in the meantime - if you would like to work on a Google Code issue, please create a new issue in JIRA and reference the Google Code issue in the issue Description.
+
 Wiki: https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
 
 Nightly Build: https://esapi.ci.cloudbees.com
 
-JIRA: Coming Soon
+JIRA: https://owasp-esapi.atlassian.net/browse/ESAPILEG
 
+Documentation: https://owasp-esapi.atlassian.net/wiki/display/ESAPILEG/ESAPI+Legacy (Coming Soon)
 
 Realtime Support available on our IRC Channel:<br/>
 Server: irc.freenode.net<br/>
