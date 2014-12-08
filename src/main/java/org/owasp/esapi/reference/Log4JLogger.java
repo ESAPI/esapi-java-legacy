@@ -447,7 +447,9 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 		}
 
 		// log the message
-		log(level, "[" + typeInfo + getUserInfo() + " -> " + appInfo + "] " + clean, throwable);
+		// Fix for https://code.google.com/p/owasp-esapi-java/issues/detail?id=268
+		// need to pass callerFQCN so the log is not generated as if it were always generated from this wrapper class
+		log(Log4JLogger.class.getName(), level, "[" + typeInfo + getUserInfo() + " -> " + appInfo + "] " + clean, throwable);
 	}
 
 	/**
