@@ -16,12 +16,15 @@
 package org.owasp.esapi.reference;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.util.Arrays;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.apache.log4j.*;
+import org.apache.log4j.xml.XMLLayout;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
@@ -460,4 +463,24 @@ public class Log4JLoggerTest extends TestCase {
         }
 	}
 
+	/**
+	 * Validation for issue: https://code.google.com/p/owasp-esapi-java/issues/detail?id=268
+	 * Line number must be the line of the caller and not of the wrapper.
+	 */
+	public void testLine() {
+		StringWriter sw = new StringWriter();
+		Layout layout = new PatternLayout("%d{ISO8601}%5p [%t] %C:%L - %m%n");
+		Appender appender = new WriterAppender(layout, sw);
+		log4JLogger.addAppender(appender);
+		try {
+			log4JLogger.fatal("testLine");
+			String generatedLine = sw.toString();
+			System.out.println("-> " + generatedLine + " <-");
+			assertTrue("generated line should not have the name of the wrapper class",
+					// need to add the ":" sufix otherwise the test would also fail with this test class name
+					!generatedLine.contains(Log4JLogger.class.getName()+":"));
+		} finally {
+			log4JLogger.removeAppender(appender);
+		}
+	}
 }
