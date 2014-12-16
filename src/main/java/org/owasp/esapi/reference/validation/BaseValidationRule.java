@@ -100,7 +100,7 @@ public abstract class BaseValidationRule implements ValidationRule {
 		try {
 			valid = getValid( context, input );
 		} catch (ValidationException e) {
-			if( errorList == null { 
+			if( errorList == null) { 
 				throw e;
 			} else {
 				errorList.addError(context, e);
