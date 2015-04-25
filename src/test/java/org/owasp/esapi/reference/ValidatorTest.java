@@ -323,7 +323,7 @@ public class ValidatorTest extends TestCase {
     public void testIsValidDate() {
         System.out.println("isValidDate");
         Validator instance = ESAPI.validator();
-        DateFormat format = SimpleDateFormat.getDateInstance();
+        DateFormat format = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.US);
         assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true));
         assertFalse(instance.isValidDate("datetest2", null, format, false));
         assertFalse(instance.isValidDate("datetest3", "", format, false));
