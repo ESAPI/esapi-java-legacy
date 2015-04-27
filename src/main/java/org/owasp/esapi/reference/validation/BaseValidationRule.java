@@ -89,7 +89,7 @@ public abstract class BaseValidationRule implements ValidationRule {
      * {@inheritDoc}
 	 */
 	public void assertValid( String context, String input ) throws ValidationException {
-		getValid( context, input, null );
+		getValid( context, input );
 	}
 
     /**
@@ -100,7 +100,11 @@ public abstract class BaseValidationRule implements ValidationRule {
 		try {
 			valid = getValid( context, input );
 		} catch (ValidationException e) {
-			errorList.addError(context, e);
+			if( errorList == null) { 
+				throw e;
+			} else {
+				errorList.addError(context, e);
+			}
 		}
 		return valid;
 	}
