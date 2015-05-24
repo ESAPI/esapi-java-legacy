@@ -183,6 +183,14 @@
             <artifactId>antisamy</artifactId>
             <version>1.5.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-css</artifactId>
+            <version>1.8</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -325,7 +333,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>1.1.4</version>
+                <version>1.2.11</version>
                 <configuration>
                     <externalReport>false</externalReport>
                 </configuration>
