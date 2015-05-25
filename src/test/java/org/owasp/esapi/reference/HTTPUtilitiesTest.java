@@ -316,13 +316,13 @@ public class HTTPUtilitiesTest extends TestCase
 		try {
 			ESAPI.httpUtilities().sendRedirect(response,"http://www.aspectsecurity.com");
 			fail();
-		} catch (IOException e) {
+		} catch (ValidationException e) {
 			// expected
 		}
 		try {
 			ESAPI.httpUtilities().sendRedirect(response,"/ridiculous");
 			fail();
-		} catch (IOException e) {
+		} catch (ValidationException e) {
 			// expected
 		}
 	}

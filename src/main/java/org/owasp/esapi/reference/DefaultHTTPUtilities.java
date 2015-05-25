@@ -808,11 +808,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      *
      * @param response
      */
-    public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
+    public void sendRedirect(HttpServletResponse response, String location) throws ValidationException, IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
 			String logMessage = "Bad redirect location: " + location;
 			logger.fatal(Logger.SECURITY_FAILURE, logMessage);
-            throw new AccessControlException("Redirect failed", logMessage);
+            throw new ValidationException("Redirect failed", logMessage);
         }
         response.sendRedirect(location);
     }
@@ -820,7 +820,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	/**
 	 * {@inheritDoc}
 	 */
-    public void sendRedirect( String location )  throws AccessControlException,IOException {
+    public void sendRedirect( String location )  throws ValidationException,IOException {
     	sendRedirect( getCurrentResponse(), location);
     }
 

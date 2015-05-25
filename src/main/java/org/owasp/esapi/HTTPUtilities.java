@@ -433,7 +433,7 @@ public interface HTTPUtilities
      *
 	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
 	 */
-    void sendRedirect(String location) throws AccessControlException, IOException;
+    void sendRedirect(String location) throws ValidationException, IOException;
 
 
     /**
@@ -448,7 +448,7 @@ public interface HTTPUtilities
      * @throws ServletException
      * @throws IOException
      */
-    void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException;
+    void sendRedirect(HttpServletResponse response, String location) throws ValidationException, IOException;
 
 	/**
 	 * Calls setContentType with the *current* request and response.
