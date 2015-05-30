@@ -811,7 +811,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
             logger.fatal(Logger.SECURITY_FAILURE, "Bad redirect location: " + location);
-            throw new AccessControlException("Redirect failed");
+            throw new AccessControlException("Redirect failed", "Bad redirect location: " + location);
         }
         response.sendRedirect(location);
     }

@@ -26,6 +26,7 @@ import org.owasp.esapi.User;
 import org.owasp.esapi.codecs.Hex;
 import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.PlainText;
+import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EnterpriseSecurityException;
@@ -310,19 +311,19 @@ public class HTTPUtilitiesTest extends TestCase
 		try {
 			ESAPI.httpUtilities().sendRedirect(response, "/test1/abcdefg");
 			ESAPI.httpUtilities().sendRedirect(response,"/test2/1234567");
-		} catch (IOException e) {
+		} catch (AccessControlException e) {
 			fail();
 		}
 		try {
 			ESAPI.httpUtilities().sendRedirect(response,"http://www.aspectsecurity.com");
 			fail();
-		} catch (IOException e) {
+		} catch (AccessControlException e) {
 			// expected
 		}
 		try {
 			ESAPI.httpUtilities().sendRedirect(response,"/ridiculous");
 			fail();
-		} catch (IOException e) {
+		} catch (AccessControlException e) {
 			// expected
 		}
 	}
