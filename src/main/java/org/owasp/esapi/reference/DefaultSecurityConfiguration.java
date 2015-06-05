@@ -15,28 +15,18 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.configuration.StandardEsapiPropertyLoader;
 import org.owasp.esapi.errors.ConfigurationException;
+
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
@@ -219,6 +209,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     private String resourceDirectory = ".esapi";	// For backward compatibility (vs. "esapi")
 	private final String resourceFile;
+    private StandardEsapiPropertyLoader standardPropertyLoader;
 
 //    private static long lastModified = -1;
 
@@ -998,8 +989,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public int getMaxLogFileSize() {
     	return getESAPIProperty( MAX_LOG_FILE_SIZE, DEFAULT_MAX_LOG_FILE_SIZE );
     }
-
-
+    
     /**
 	 * {@inheritDoc}
 	 */
@@ -1236,6 +1226,80 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	    String[] parts = property.split(",");
 	    return Arrays.asList( parts );
 	}
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getIntProp(String propertyName) throws ConfigurationException {
+        String property = properties.getProperty( propertyName );
+        if ( property == null ) {
+            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
+        }
+        try {
+            return Integer.parseInt( property );
+        } catch( NumberFormatException e ) {
+            throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
+                    "cannot be converted to integer");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public byte[] getByteArrayProp(String propertyName) throws ConfigurationException {
+        String property = properties.getProperty( propertyName );
+        if ( property == null ) {
+            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
+        }
+        try {
+            return ESAPI.encoder().decodeFromBase64(property);
+        } catch( IOException e ) {
+            throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
+                    "cannot be converted to byte array");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean getBooleanProp(String propertyName) throws ConfigurationException {
+        String property = properties.getProperty( propertyName );
+        if ( property == null ) {
+            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
+        }
+        if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes" ) ) {
+            return true;
+        }
+        if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase( "no" ) ) {
+            return false;
+        } else {
+            throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
+                    "cannot be converted to boolean"); 
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getStringProp(String propertyName) throws ConfigurationException {
+        String property = properties.getProperty( propertyName );
+        if ( property == null ) {
+            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
+        }
+        return property;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int priority() {
+        return 0;
+    }
 
 	protected boolean shouldPrintProperties() {
         return getESAPIProperty(PRINT_PROPERTIES_WHEN_LOADED, false);

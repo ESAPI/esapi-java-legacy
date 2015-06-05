@@ -16,6 +16,8 @@
  */
 package org.owasp.esapi;
 
+import org.owasp.esapi.configuration.EsapiPropertyLoader;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,53 +50,62 @@ import java.util.regex.Pattern;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public interface SecurityConfiguration {
+public interface SecurityConfiguration extends EsapiPropertyLoader {
 
 	/**
 	 * Gets the application name, used for logging
 	 * 
 	 * @return the name of the current application
 	 */
+	@Deprecated
 	public String getApplicationName();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Logging implementation.
 	 */
+	@Deprecated
 	public String getLogImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Authentication implementation.
 	 */
+	@Deprecated
 	public String getAuthenticationImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Encoder implementation.
 	 */
+	@Deprecated
 	public String getEncoderImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Access Control implementation.
 	 */
+	@Deprecated
 	public String getAccessControlImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Intrusion Detection implementation.
 	 */
+	@Deprecated
 	public String getIntrusionDetectionImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Randomizer implementation.
 	 */
+	@Deprecated
 	public String getRandomizerImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Encryption implementation.
 	 */
+	@Deprecated
 	public String getEncryptionImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Validation implementation.
 	 */
+	@Deprecated
 	public String getValidationImplementation();
 	
 	/**
@@ -102,6 +113,7 @@ public interface SecurityConfiguration {
 	 * @param typeName
 	 * @return the validation pattern
 	 */
+	@Deprecated
     public Pattern getValidationPattern( String typeName );
     
     /**
@@ -113,16 +125,19 @@ public interface SecurityConfiguration {
      * @return True if lenient dates are accepted; false otherwise.
      * @see java.text.DateFormat#setLenient(boolean)
      */
+	@Deprecated
     public boolean getLenientDatesAccepted();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI OS Execution implementation.
 	 */
+	@Deprecated
 	public String getExecutorImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI HTTPUtilities implementation.
 	 */
+	@Deprecated
 	public String getHTTPUtilitiesImplementation();
 	
 	/**
@@ -131,18 +146,21 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current master key
 	 */
+	@Deprecated
 	public byte[] getMasterKey();
 
 	/**
      * Retrieves the upload directory as specified in the ESAPI.properties file.
      * @return the upload directory
      */
+	@Deprecated
     public File getUploadDirectory();
 	
     /**
      * Retrieves the temp directory to use when uploading files, as specified in ESAPI.properties.
      * @return the temp directory
      */
+	@Deprecated
     public File getUploadTempDirectory();
 
 	/**
@@ -150,6 +168,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the key length.
 	 */
+	@Deprecated
     public int getEncryptionKeyLength();
     
 	/**
@@ -158,6 +177,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current master salt
 	 */
+	@Deprecated
 	public byte[] getMasterSalt();
 
 	/**
@@ -165,6 +185,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
+	@Deprecated
 	public List<String> getAllowedExecutables();
 
 	/**
@@ -172,6 +193,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
+	@Deprecated
 	public List<String> getAllowedFileExtensions();
 
 	/**
@@ -179,6 +201,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current allowed file upload size
 	 */
+	@Deprecated
 	public int getAllowedFileUploadSize();
 
 	/**
@@ -186,6 +209,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the name of the password parameter
 	 */
+	@Deprecated
 	public String getPasswordParameterName();
 
 	/**
@@ -193,6 +217,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the name of the username parameter
 	 */
+	@Deprecated
 	public String getUsernameParameterName();
 
 	/**
@@ -203,6 +228,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current encryption algorithm
 	 */
+	@Deprecated
 	public String getEncryptionAlgorithm();
 
 	/**
@@ -245,6 +271,7 @@ public interface SecurityConfiguration {
 	 * should be avoided.
 	 * @return	The cipher transformation.
 	 */
+	@Deprecated
     public String getCipherTransformation();
     
     /**
@@ -290,6 +317,7 @@ public interface SecurityConfiguration {
      * @return The property {@code Encryptor.PreferredJCEProvider} is returned.
      * @see org.owasp.esapi.crypto.SecurityProviderLoader
      */
+	@Deprecated
     public String getPreferredJCEProvider();
     
 // TODO - DISCUSS: Where should this web page (below) go? Maybe with the Javadoc? But where?
@@ -307,6 +335,7 @@ public interface SecurityConfiguration {
      * </p>
      * @return	{@code true} if a you want a MAC to be used, otherwise {@code false}.
      */
+	@Deprecated
     public boolean useMACforCipherText();
 
     /**
@@ -323,6 +352,7 @@ public interface SecurityConfiguration {
      * @return	True if it is OK to overwrite the {@code PlainText} objects
      *			after encrypting, false otherwise.
      */
+	@Deprecated
     public boolean overwritePlainText();
     
     /**
@@ -336,6 +366,7 @@ public interface SecurityConfiguration {
      * 
      * @see #getFixedIV()
      */
+	@Deprecated
     public String getIVType();
     
     /**
@@ -343,6 +374,7 @@ public interface SecurityConfiguration {
      * this will return the IV value as a hex-encoded string.
      * @return The fixed IV as a hex-encoded string.
      */
+	@Deprecated
     public String getFixedIV();
     
     /**
@@ -361,12 +393,13 @@ public interface SecurityConfiguration {
      * was specified in {@code ESAPI.properties}; otherwise the empty list is
      * returned.
      */
+	@Deprecated
     public List<String> getCombinedCipherModes();
 
     /**
      * Return {@code List} of strings of additional cipher modes that are
      * permitted (i.e., in <i>addition<i> to those returned by
-     * {@link #getPreferredCipherModes()}) to be used for encryption and
+     * {@link #getCombinedCipherModes()}) to be used for encryption and
      * decryption operations.
      * </p><p>
      * The list is taken from the comma-separated list of cipher modes specified
@@ -377,8 +410,9 @@ public interface SecurityConfiguration {
      * was specified in {@code ESAPI.properties}; otherwise the empty list is
      * returned.
      *
-     * @see #getPreferredCipherModes() 
+     * @see #getCombinedCipherModes()
      */
+	@Deprecated
     public List<String> getAdditionalAllowedCipherModes();
 
 	/**
@@ -386,6 +420,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current hashing algorithm
 	 */
+	@Deprecated
 	public String getHashAlgorithm();
 
 	/**
@@ -393,6 +428,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current hashing algorithm
 	 */
+	@Deprecated
 	public int getHashIterations();
 
 	/**
@@ -401,6 +437,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return	The KDF PRF algorithm name.
 	 */
+	@Deprecated
 	public String getKDFPseudoRandomFunction();
 	
 	/**
@@ -414,6 +451,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current character encoding scheme
 	 */
+	@Deprecated
 	public String getCharacterEncoding();
 
 	/**
@@ -421,6 +459,7 @@ public interface SecurityConfiguration {
 	 *
 	 * @return whether multiple encoding is allowed when canonicalizing data
 	 */
+	@Deprecated
 	public boolean getAllowMultipleEncoding();
 
 	/**
@@ -428,6 +467,7 @@ public interface SecurityConfiguration {
 	 *
 	 * @return whether mixed encoding is allowed when canonicalizing data
 	 */
+	@Deprecated
 	public boolean getAllowMixedEncoding();
 
 	/**
@@ -435,6 +475,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the codec list
 	 */
+	@Deprecated
 	public List<String> getDefaultCanonicalizationCodecs();
 
 	/**
@@ -442,6 +483,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current digital signature algorithm
 	 */
+	@Deprecated
 	public String getDigitalSignatureAlgorithm();
 
 	/**
@@ -449,6 +491,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current digital signature key length
 	 */
+	@Deprecated
 	public int getDigitalSignatureKeyLength();
 		   
 	/**
@@ -456,6 +499,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the current random number generation algorithm
 	 */
+	@Deprecated
 	public String getRandomAlgorithm();
 
 	/**
@@ -464,6 +508,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the number of failed login attempts that cause an account to be locked
 	 */
+	@Deprecated
 	public int getAllowedLoginAttempts();
 
 	/**
@@ -473,6 +518,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the number of old hashed passwords to retain
 	 */
+	@Deprecated
 	public int getMaxOldPasswordHashes();
 
 	/**
@@ -480,6 +526,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return true if intrusion detection should be disabled
 	 */
+	@Deprecated
 	public boolean getDisableIntrusionDetection();
 	
 	/**
@@ -489,6 +536,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return the Quota that has been configured for the specified type of event
 	 */
+	@Deprecated
 	public Threshold getQuota(String eventName);
 
 	/**
@@ -497,31 +545,37 @@ public interface SecurityConfiguration {
      * @param filename The file name resource.
      * @return A {@code File} object representing the specified file name or null if not found.
      */
+	@Deprecated
     public File getResourceFile( String filename );
     
 	/**
 	 * Forces new cookies to have HttpOnly flag set.
      */
+	@Deprecated
     public boolean getForceHttpOnlySession() ;
 
 	/**
 	 * Forces session cookies to have Secure flag set.
      */
+	@Deprecated
     public boolean getForceSecureSession() ;
 
 	/**
 	 * Forces new cookies to have HttpOnly flag set.
      */
+	@Deprecated
     public boolean getForceHttpOnlyCookies() ;
 
 	/**
 	 * Forces new cookies to have Secure flag set.
      */
+	@Deprecated
     public boolean getForceSecureCookies() ;
 
 	/**
 	 * Returns the maximum allowable HTTP header size.
 	 */
+	@Deprecated
 	public int getMaxHttpHeaderSize() ;
 
 	/**
@@ -531,6 +585,7 @@ public interface SecurityConfiguration {
      * @return An {@code InputStream} to the specified file name in the resource directory.
      * @throws IOException If the specified file name cannot be found or opened for reading.
      */
+	@Deprecated
     public InputStream getResourceStream( String filename ) throws IOException;
 
     	
@@ -539,6 +594,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @param dir The location of the resource directory.
 	 */
+	@Deprecated
 	public void setResourceDirectory(String dir);
 	
 	/**
@@ -549,6 +605,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return The current content-type set for responses.
 	 */
+	@Deprecated
 	public String getResponseContentType();
 
 	/**
@@ -557,6 +614,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return The name of the session identifier, like "JSESSIONID"
 	 */
+	@Deprecated
 	public String getHttpSessionIdName();
 	
 	/**
@@ -564,6 +622,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return The time to live length for generated remember me tokens.
 	 */
+	@Deprecated
 	public long getRememberTokenDuration();
 
 	
@@ -574,6 +633,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return The session idle timeout length.
 	 */
+	@Deprecated
 	public int getSessionIdleTimeoutLength();
 	
 	/**
@@ -583,6 +643,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return The session absolute timeout length.
 	 */
+	@Deprecated
 	public int getSessionAbsoluteTimeoutLength();
 	
 	
@@ -591,6 +652,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return True if log entries are to be HTML Entity encoded. False otherwise.
 	 */
+	@Deprecated
 	public boolean getLogEncodingRequired();
 	
 	/**
@@ -599,6 +661,7 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return True if ESAPI should log the application name, False otherwise
 	 */
+	@Deprecated
 	public boolean getLogApplicationName();
 
 	/**
@@ -607,12 +670,14 @@ public interface SecurityConfiguration {
 	 * 
 	 * @return True if ESAPI should log the server IP and port, False otherwise
 	 */
+	@Deprecated
 	public boolean getLogServerIP();
 
 	/**
 	 * Returns the current log level.
 	 * @return	An integer representing the current log level.
 	 */
+	@Deprecated
     public int getLogLevel();
 	
     /**
@@ -621,6 +686,7 @@ public interface SecurityConfiguration {
      * 
      * @return the log file name defined in the properties file.
      */
+	@Deprecated
     public String getLogFileName();
 
     /**
@@ -629,6 +695,7 @@ public interface SecurityConfiguration {
      * 
      * @return the maximum size of a single log file (in bytes).
      */
+	@Deprecated
     public int getMaxLogFileSize();
 
 	/**
