@@ -3,6 +3,7 @@ package org.owasp.esapi.configuration;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
+import java.io.FileNotFoundException;
 import java.util.TreeSet;
 
 import static org.owasp.esapi.configuration.EsapiPropertyLoaderFactory.createPropertyLoader;
@@ -35,8 +36,18 @@ public class PropertyLoadManager {
 
     private void initLoaders() {
         loaders = new TreeSet<EsapiPropertyLoader>();
-        loaders.add(createPropertyLoader(DEVTEAM_ESAPI_CFG));
-        loaders.add(createPropertyLoader(OPTEAM_ESAPI_CFG));
+
+        try {
+            loaders.add(createPropertyLoader(DEVTEAM_ESAPI_CFG));
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
+        try {
+            loaders.add(createPropertyLoader(OPTEAM_ESAPI_CFG));
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        }
+
         // legacy default security configuration
         loaders.add(new DefaultSecurityConfiguration());
     }

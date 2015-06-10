@@ -3,6 +3,8 @@ package org.owasp.esapi.configuration;
 import org.owasp.esapi.configuration.consts.EsapiPropertiesStore;
 import org.owasp.esapi.errors.ConfigurationException;
 
+import java.io.FileNotFoundException;
+
 import static org.owasp.esapi.configuration.consts.EsapiStoreType.PROPERTIES;
 import static org.owasp.esapi.configuration.consts.EsapiStoreType.XML;
 
@@ -12,12 +14,13 @@ import static org.owasp.esapi.configuration.consts.EsapiStoreType.XML;
  */
 public class EsapiPropertyLoaderFactory {
     
-    public static EsapiPropertyLoader createPropertyLoader(EsapiPropertiesStore store) throws ConfigurationException {
+    public static EsapiPropertyLoader createPropertyLoader(EsapiPropertiesStore store)
+            throws ConfigurationException, FileNotFoundException {
         if (store.storeType().equals(XML)) {
-            return new StandardEsapiPropertyLoader(store.filename(), store.priority());
+            return new XmlEsapiPropertyLoader(store.filename(), store.priority());
         }
         if (store.storeType().equals(PROPERTIES)) {
-            return new XmlEsapiPropertyLoader(store.filename(), store.priority());
+            return new StandardEsapiPropertyLoader(store.filename(), store.priority());
         } else {
             throw new ConfigurationException("Configuration storage type [" + store.storeType().name() + "] is not " +
                     "supported");
