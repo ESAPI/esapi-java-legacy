@@ -11,20 +11,17 @@ import java.util.Properties;
  */
 public class StandardEsapiPropertyLoader implements EsapiPropertyLoader, Comparable<EsapiPropertyLoader>  {
 
-    private String filename;
-
     private int priority;
 
     protected Properties properties;
 
     public StandardEsapiPropertyLoader(String filename, int priority) throws FileNotFoundException {
-        this.filename = filename;
         this.priority = priority;
         properties = new Properties();
 
         File file = new File(filename);
         if (file.exists() && file.isFile()) {
-            loadPropertiesFromFile();
+            loadPropertiesFromFile(file);
         } else {
             throw new FileNotFoundException();
         }
@@ -99,13 +96,13 @@ public class StandardEsapiPropertyLoader implements EsapiPropertyLoader, Compara
         return 0;
     }
 
-    private void loadPropertiesFromFile() {
+    private void loadPropertiesFromFile(File file) {
         InputStream input = null;
         try {
-            input = new FileInputStream(filename);
+            input = new FileInputStream(file);
             properties.load(input);
         } catch (IOException ex) {
-            System.err.println("Loading " + filename + " via file I/O failed. Exception was: " + ex);
+            System.err.println("Loading " + file.getName() + " via file I/O failed. Exception was: " + ex);
         } finally {
             if (input != null) {
                 try {
