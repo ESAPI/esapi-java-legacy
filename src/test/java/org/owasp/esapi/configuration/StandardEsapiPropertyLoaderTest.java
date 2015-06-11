@@ -1,6 +1,5 @@
 package org.owasp.esapi.configuration;
 
-import static junit.framework.Assert.*;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -10,6 +9,8 @@ import org.owasp.esapi.errors.ConfigurationException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import static junit.framework.Assert.*;
 
 public class StandardEsapiPropertyLoaderTest {
 
@@ -27,19 +28,27 @@ public class StandardEsapiPropertyLoaderTest {
 
     @Test
     public void testPropertiesLoaded() {
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
-
+        
+        // then
         assertFalse(testPropertyLoader.properties.isEmpty());
     }
 
     @Test(expected = FileNotFoundException.class)
     public void testPropertiesFileNotFound() throws FileNotFoundException {
+        // given
         String wrongFilename = "wrong_filename";
         testPropertyLoader = new StandardEsapiPropertyLoader(wrongFilename, priority);
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+
+        // then expect exception
     }
 
     @Test
@@ -97,103 +106,154 @@ public class StandardEsapiPropertyLoaderTest {
 
     @Test
     public void testGetIntProp() {
-        String key = "int_property";
-        int expectedValue = 5;
+        // given
+        String propertyKey = "int_property";
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            int value = testPropertyLoader.getIntProp(key);
-            assertEquals(expectedValue, value);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+        int propertyValue = testPropertyLoader.getIntProp(propertyKey);
+
+        // then
+        assertEquals(5, propertyValue);
     }
 
     @Test(expected = ConfigurationException.class)
     public void testIntPropertyNotFound() throws ConfigurationException {
-        String key = "non-existing-key";
+        // given
+        String propertyKey = "non-existing-key";
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getIntProp(key);
+            testPropertyLoader.getIntProp(propertyKey);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+
+        // then expect exception
     }
 
     @Test
     public void testGetStringProp() {
-        String key = "string_property";
+        // given
+        String propertyKey = "string_property";
         String expectedValue = "test_string_property";
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            String value = testPropertyLoader.getStringProp(key);
-            assertEquals(expectedValue, value);
+            
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+        String propertyValue = testPropertyLoader.getStringProp(propertyKey);
+        
+        // then
+        assertEquals(expectedValue, propertyValue);
     }
 
     @Test(expected = ConfigurationException.class)
     public void testStringPropertyNotFound() throws ConfigurationException {
-        String key = "non-existing-key";
+        // given
+        String propertyKey = "non-existing-key";
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getStringProp(key);
+            testPropertyLoader.getStringProp(propertyKey);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+
+        // then expect exception
     }
 
     @Test
     public void testGetBooleanProp() {
-        String key = "boolean_property";
+        // given
+        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+                "esapi" + File.separator + "ESAPI-test.properties";
+        int priority = 1;
+        String propertyKey = "boolean_property";
         boolean expectedValue = true;
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            boolean value = testPropertyLoader.getBooleanProp(key);
-            assertEquals(expectedValue, value);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+        boolean value = testPropertyLoader.getBooleanProp(propertyKey);
+        
+        // then
+        assertEquals(expectedValue, value);
     }
 
     @Test(expected = ConfigurationException.class)
     public void testBooleanPropertyNotFound() throws ConfigurationException {
-        String key = "non-existing-key";
+        // given
+        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+                "esapi" + File.separator + "ESAPI-test.properties";        int priority = 1;
+        String propertyKey = "non-existing-key";
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getBooleanProp(key);
+            testPropertyLoader.getBooleanProp(propertyKey);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+
+        // then expect exception
     }
 
     @Test
     public void testGetByteArrayProp() {
-        String key = "string_property";
+        // given
+        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+                "esapi" + File.separator + "ESAPI-test.properties";
+        int priority = 1;
+        String propertyKey = "string_property";
+        
         byte[] expectedValue = new byte[0];
         try {
             expectedValue = ESAPI.encoder().decodeFromBase64("test_string_property");
         } catch (IOException e) {
             fail(e.getMessage());
         }
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            byte[] value = testPropertyLoader.getByteArrayProp(key);
-            assertEquals(expectedValue, value);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+        byte[] value = testPropertyLoader.getByteArrayProp(propertyKey);
+        
+        // then
+        assertEquals(expectedValue, value);
     }
 
     @Test(expected = ConfigurationException.class)
     public void testByteArrayPropertyNotFound() throws ConfigurationException {
-        String key = "non-existing-key";
+        // given
+        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+                "esapi" + File.separator + "ESAPI-test.properties";        int priority = 1;
+        String propertyKey = "non-existing-key";
+        
+        // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getByteArrayProp(key);
+            testPropertyLoader.getByteArrayProp(propertyKey);
         } catch (FileNotFoundException e) {
             fail(e.getMessage());
         }
+
+        // then expect exception
     }
 
 }
