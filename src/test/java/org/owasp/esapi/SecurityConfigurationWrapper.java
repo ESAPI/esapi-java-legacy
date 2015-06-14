@@ -598,11 +598,6 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 		return wrapped.getStringProp(propertyName);
 	}
 
-	@Override
-	public int priority() {
-		return 0;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */

@@ -13,8 +13,8 @@ import static org.owasp.esapi.configuration.consts.EsapiStoreType.XML;
  * based on EsapiPropertiesStore
  */
 public class EsapiPropertyLoaderFactory {
-    
-    public static EsapiPropertyLoader createPropertyLoader(EsapiPropertiesStore store)
+
+    public static AbstractPrioritizedPropertyLoader createPropertyLoader(EsapiPropertiesStore store)
             throws ConfigurationException, FileNotFoundException {
         if (store.storeType().equals(XML)) {
             return new XmlEsapiPropertyLoader(store.filename(), store.priority());

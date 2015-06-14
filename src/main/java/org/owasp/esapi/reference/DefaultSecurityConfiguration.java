@@ -1293,13 +1293,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return property;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int priority() {
-        return 0;
-    }
 
 	protected boolean shouldPrintProperties() {
         return getESAPIProperty(PRINT_PROPERTIES_WHEN_LOADED, false);
