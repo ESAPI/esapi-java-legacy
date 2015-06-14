@@ -17,8 +17,8 @@ import static org.owasp.esapi.configuration.consts.EsapiPropertiesStore.OPTEAM_E
  */
 public class EsapiPropertyManager implements EsapiPropertyLoader {
 
-    private TreeSet<AbstractPrioritizedPropertyLoader> loaders;
-    private SecurityConfiguration defaultSecurityConfiguration;
+    protected TreeSet<AbstractPrioritizedPropertyLoader> loaders;
+    protected SecurityConfiguration defaultSecurityConfiguration;
 
     public EsapiPropertyManager() {
         initLoaders();

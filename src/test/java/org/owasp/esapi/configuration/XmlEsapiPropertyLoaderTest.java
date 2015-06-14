@@ -6,7 +6,6 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static junit.framework.Assert.assertEquals;
