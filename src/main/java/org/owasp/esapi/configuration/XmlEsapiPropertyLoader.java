@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
 
-    public XmlEsapiPropertyLoader(String filename, int priority) throws FileNotFoundException {
+    public XmlEsapiPropertyLoader(String filename, int priority) {
         super(filename, priority);
     }
 

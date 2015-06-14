@@ -10,7 +10,7 @@ import java.io.*;
  */
 public class StandardEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
 
-    public StandardEsapiPropertyLoader(String filename, int priority) throws FileNotFoundException {
+    public StandardEsapiPropertyLoader(String filename, int priority) {
         super(filename, priority);
     }
 

@@ -7,7 +7,6 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static junit.framework.Assert.*;
@@ -29,79 +28,67 @@ public class StandardEsapiPropertyLoaderTest {
     @Test
     public void testPropertiesLoaded() {
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         
         // then
         assertFalse(testPropertyLoader.properties.isEmpty());
     }
 
-    @Test(expected = FileNotFoundException.class)
-    public void testPropertiesFileNotFound() throws FileNotFoundException {
+    @Test
+    public void testPriority() {
         // given
-        String wrongFilename = "wrong_filename";
-        testPropertyLoader = new StandardEsapiPropertyLoader(wrongFilename, priority);
+        int expectedValue = 1;
 
         // when
         testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        int value = testPropertyLoader.priority();
 
-        // then expect exception
-    }
-
-    @Test
-    public void testPriority() {
-        int expectedValue = 1;
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            int value = testPropertyLoader.priority();
-            assertEquals(expectedValue, value);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        // then
+        assertEquals(expectedValue, value);
     }
 
     @Test
     public void testLoadersAreEqual() {
+        // given
         int expectedValue = 0;
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            StandardEsapiPropertyLoader otherPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            int value = testPropertyLoader.compareTo(otherPropertyLoader);
-            assertEquals(expectedValue, value);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        StandardEsapiPropertyLoader otherPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        int value = testPropertyLoader.compareTo(otherPropertyLoader);
+
+        // then
+        assertEquals(expectedValue, value);
     }
 
     @Test
     public void testCompareWithOtherLoaderWithHigherPriority() {
+        // given
         int expectedValue = -1;
         int higherPriority = 2;
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            StandardEsapiPropertyLoader otherPropertyLoader = new StandardEsapiPropertyLoader(filename, higherPriority);
-            int value = testPropertyLoader.compareTo(otherPropertyLoader);
-            assertEquals(expectedValue, value);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        StandardEsapiPropertyLoader otherPropertyLoader = new StandardEsapiPropertyLoader(filename, higherPriority);
+        int value = testPropertyLoader.compareTo(otherPropertyLoader);
+
+        // then
+        assertEquals(expectedValue, value);
     }
 
     @Test
     public void testCompareWithOtherLoaderWithLowerPriority() {
+        // given
         int expectedValue = 1;
         int lowerPriority = 0;
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            StandardEsapiPropertyLoader otherPropertyLoader = new StandardEsapiPropertyLoader(filename, lowerPriority);
-            int value = testPropertyLoader.compareTo(otherPropertyLoader);
-            assertEquals(expectedValue, value);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        StandardEsapiPropertyLoader otherPropertyLoader = new StandardEsapiPropertyLoader(filename, lowerPriority);
+        int value = testPropertyLoader.compareTo(otherPropertyLoader);
+
+        // then
+        assertEquals(expectedValue, value);
     }
 
     @Test
@@ -110,11 +97,7 @@ public class StandardEsapiPropertyLoaderTest {
         String propertyKey = "int_property";
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         int propertyValue = testPropertyLoader.getIntProp(propertyKey);
 
         // then
@@ -127,12 +110,8 @@ public class StandardEsapiPropertyLoaderTest {
         String propertyKey = "non-existing-key";
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getIntProp(propertyKey);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getIntProp(propertyKey);
 
         // then expect exception
     }
@@ -144,12 +123,7 @@ public class StandardEsapiPropertyLoaderTest {
         String expectedValue = "test_string_property";
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         String propertyValue = testPropertyLoader.getStringProp(propertyKey);
         
         // then
@@ -162,12 +136,8 @@ public class StandardEsapiPropertyLoaderTest {
         String propertyKey = "non-existing-key";
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getStringProp(propertyKey);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getStringProp(propertyKey);
 
         // then expect exception
     }
@@ -182,11 +152,7 @@ public class StandardEsapiPropertyLoaderTest {
         boolean expectedValue = true;
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         boolean value = testPropertyLoader.getBooleanProp(propertyKey);
         
         // then
@@ -201,12 +167,8 @@ public class StandardEsapiPropertyLoaderTest {
         String propertyKey = "non-existing-key";
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getBooleanProp(propertyKey);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getBooleanProp(propertyKey);
 
         // then expect exception
     }
@@ -227,11 +189,7 @@ public class StandardEsapiPropertyLoaderTest {
         }
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         byte[] value = testPropertyLoader.getByteArrayProp(propertyKey);
         
         // then
@@ -246,12 +204,8 @@ public class StandardEsapiPropertyLoaderTest {
         String propertyKey = "non-existing-key";
         
         // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-            testPropertyLoader.getByteArrayProp(propertyKey);
-        } catch (FileNotFoundException e) {
-            fail(e.getMessage());
-        }
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getByteArrayProp(propertyKey);
 
         // then expect exception
     }
