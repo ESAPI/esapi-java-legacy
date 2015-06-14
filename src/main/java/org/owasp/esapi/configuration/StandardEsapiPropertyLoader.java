@@ -37,7 +37,7 @@ public class StandardEsapiPropertyLoader implements EsapiPropertyLoader, Compara
             return Integer.parseInt( property );
         } catch( NumberFormatException e ) {
             throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to integer");
+                    "cannot be converted to integer", e);
         }
     }
 
@@ -51,7 +51,7 @@ public class StandardEsapiPropertyLoader implements EsapiPropertyLoader, Compara
             return ESAPI.encoder().decodeFromBase64(property);
         } catch( IOException e ) {
             throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to byte array");
+                    "cannot be converted to byte array", e);
         }
     }
 
@@ -108,7 +108,7 @@ public class StandardEsapiPropertyLoader implements EsapiPropertyLoader, Compara
                 try {
                     input.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    System.err.println("Could not close stream");
                 }
             }
         }

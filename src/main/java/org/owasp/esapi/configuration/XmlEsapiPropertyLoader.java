@@ -9,9 +9,9 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -20,13 +20,10 @@ import java.util.Properties;
 public class XmlEsapiPropertyLoader implements EsapiPropertyLoader, Comparable<EsapiPropertyLoader>  {
 
     private int priority;
-
-//    protected Map<String, String> properties;
     protected Properties properties;
 
     public XmlEsapiPropertyLoader(String filename, int priority) throws FileNotFoundException {
         this.priority = priority;
-//        properties = new HashMap<String, String>();
         properties = new Properties();
 
         File file = new File(filename);
@@ -47,7 +44,7 @@ public class XmlEsapiPropertyLoader implements EsapiPropertyLoader, Comparable<E
             return Integer.parseInt(property);
         } catch (NumberFormatException e) {
             throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to integer");
+                    "cannot be converted to integer", e);
         }
     }
 
@@ -61,7 +58,7 @@ public class XmlEsapiPropertyLoader implements EsapiPropertyLoader, Comparable<E
             return ESAPI.encoder().decodeFromBase64(property);
         } catch (IOException e) {
             throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to byte array");
+                    "cannot be converted to byte array", e);
         }
     }
 
@@ -111,8 +108,6 @@ public class XmlEsapiPropertyLoader implements EsapiPropertyLoader, Comparable<E
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(file);
-
-            //optional, but recommended
             doc.getDocumentElement().normalize();
 
             NodeList nodeList = doc.getElementsByTagName("property");
@@ -126,26 +121,8 @@ public class XmlEsapiPropertyLoader implements EsapiPropertyLoader, Comparable<E
                 }
             }
         } catch (Exception e) {
-            throw new ConfigurationException("Invalid xml configuration file content");
+            throw new ConfigurationException("Invalid xml configuration file content", e);
         }
     }
-
-//    private void loadPropertiesFromFile(File file) {
-//        InputStream input = null;
-//        try {
-//            input = new FileInputStream(file);
-//            properties.loadFromXML(input);
-//        } catch (IOException ex) {
-//            System.err.println("Loading " + file.getName() + " via file I/O failed. Exception was: " + ex);
-//        } finally {
-//            if (input != null) {
-//                try {
-//                    input.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
-//    }
 
 }
