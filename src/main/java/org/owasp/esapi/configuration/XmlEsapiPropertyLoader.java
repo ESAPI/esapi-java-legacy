@@ -7,16 +7,21 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+import java.io.*;
 
 /**
  * Loader capable of loading single security configuration property from xml configuration file.
  */
 public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
+
+    private static final String XSD_FILENAME = "configuration" + File.separator + "esapi" + File.separator + "ESAPI-properties.xsd";
 
     public XmlEsapiPropertyLoader(String filename, int priority) {
         super(filename, priority);
@@ -94,6 +99,8 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
      */
     protected void loadPropertiesFromFile(File file) throws ConfigurationException {
         try {
+            validateAgainstXSD(new FileInputStream(file));
+
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(file);
@@ -112,6 +119,15 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
         } catch (Exception e) {
             throw new ConfigurationException("Invalid xml configuration file content", e);
         }
+    }
+
+    private void validateAgainstXSD(InputStream xml) throws Exception {
+        InputStream xsd = new FileInputStream(XSD_FILENAME);
+        SchemaFactory factory =
+                SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        Schema schema = factory.newSchema(new StreamSource(xsd));
+        Validator validator = schema.newValidator();
+        validator.validate(new StreamSource(xml));
     }
 
 }
