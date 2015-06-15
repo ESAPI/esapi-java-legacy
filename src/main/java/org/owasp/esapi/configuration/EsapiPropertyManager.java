@@ -1,14 +1,11 @@
 package org.owasp.esapi.configuration;
 
-import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 import java.util.TreeSet;
 
 import static org.owasp.esapi.configuration.EsapiPropertyLoaderFactory.createPropertyLoader;
-import static org.owasp.esapi.configuration.consts.EsapiPropertiesStore.DEVTEAM_ESAPI_CFG;
-import static org.owasp.esapi.configuration.consts.EsapiPropertiesStore.OPTEAM_ESAPI_CFG;
+import static org.owasp.esapi.configuration.consts.EsapiPropertiesStore.*;
 
 /**
  * Manager used for loading security configuration properties. Does all the logic to obtain the correct property from
@@ -17,7 +14,6 @@ import static org.owasp.esapi.configuration.consts.EsapiPropertiesStore.OPTEAM_E
 public class EsapiPropertyManager implements EsapiPropertyLoader {
 
     protected TreeSet<AbstractPrioritizedPropertyLoader> loaders;
-    protected SecurityConfiguration defaultSecurityConfiguration;
 
     public EsapiPropertyManager() {
         initLoaders();
@@ -35,7 +31,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
                 System.err.println("Property not found in " + loader.toString());
             }
         }
-        return defaultSecurityConfiguration.getIntProp(propertyName);
+        throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
     }
 
     /**
@@ -50,7 +46,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
                 System.err.println("Property not found in " + loader.toString());
             }
         }
-        return defaultSecurityConfiguration.getByteArrayProp(propertyName);
+        throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
     }
 
     /**
@@ -65,7 +61,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
                 System.err.println("Property not found in " + loader.toString());
             }
         }
-        return defaultSecurityConfiguration.getBooleanProp(propertyName);
+        throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
     }
 
     /**
@@ -80,7 +76,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
                 System.err.println("Property not found in " + loader.name());
             }
         }
-        return defaultSecurityConfiguration.getStringProp(propertyName);
+        throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
     }
 
     private void initLoaders() {
@@ -96,9 +92,11 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-
-        // legacy default security configuration
-        defaultSecurityConfiguration = DefaultSecurityConfiguration.getInstance();
+        try {
+            loaders.add(createPropertyLoader(LEGACY_ESAPI_CFG));
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
     }
 
 

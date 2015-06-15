@@ -38,7 +38,6 @@ public class EsapiPropertyManagerTest {
 
         // then
         assertNotNull(testPropertyManager.loaders);
-        assertNotNull(testPropertyManager.defaultSecurityConfiguration);
         assertNotSame(0, testPropertyManager.loaders.size());
     }
 
@@ -116,7 +115,7 @@ public class EsapiPropertyManagerTest {
 
         // when
         testPropertyManager = new EsapiPropertyManager();
-        testPropertyManager.loaders.clear();
+//        testPropertyManager.loaders.clear();
         String propertyValue = testPropertyManager.getStringProp("Encryptor.ChooseIVMethod");
 
         // then
@@ -211,7 +210,6 @@ public class EsapiPropertyManagerTest {
 
         // when
         testPropertyManager = new EsapiPropertyManager();
-        testPropertyManager.loaders.clear();
         int propertyValue = testPropertyManager.getIntProp(propertyKey);
 
         // then
@@ -255,7 +253,6 @@ public class EsapiPropertyManagerTest {
 
         // when
         testPropertyManager = new EsapiPropertyManager();
-        testPropertyManager.loaders.clear();
         boolean propertyValue = testPropertyManager.getBooleanProp(propertyKey);
 
         // then
@@ -370,7 +367,6 @@ public class EsapiPropertyManagerTest {
 
         // when
         testPropertyManager = new EsapiPropertyManager();
-        testPropertyManager.loaders.clear();
         byte[] propertyValue = testPropertyManager.getByteArrayProp("Encryptor.ChooseIVMethod");
 
         // then

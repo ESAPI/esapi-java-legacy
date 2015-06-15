@@ -19,7 +19,7 @@ import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.configuration.StandardEsapiPropertyLoader;
+import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.*;
@@ -209,7 +209,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     private String resourceDirectory = ".esapi";	// For backward compatibility (vs. "esapi")
 	private final String resourceFile;
-    private StandardEsapiPropertyLoader standardPropertyLoader;
+    private EsapiPropertyManager esapiPropertyManager;
 
 //    private static long lastModified = -1;
 
@@ -220,6 +220,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     DefaultSecurityConfiguration(String resourceFile) {
     	this.resourceFile = resourceFile;
+        this.esapiPropertyManager = new EsapiPropertyManager();
     	// load security configuration
     	try {
         	loadConfiguration();
@@ -1232,16 +1233,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     @Override
     public int getIntProp(String propertyName) throws ConfigurationException {
-        String property = properties.getProperty( propertyName );
-        if ( property == null ) {
-            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
-        }
-        try {
-            return Integer.parseInt( property );
-        } catch( NumberFormatException e ) {
-            throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to integer");
-        }
+        return esapiPropertyManager.getIntProp(propertyName);
     }
 
     /**
@@ -1249,16 +1241,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     @Override
     public byte[] getByteArrayProp(String propertyName) throws ConfigurationException {
-        String property = properties.getProperty( propertyName );
-        if ( property == null ) {
-            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
-        }
-        try {
-            return ESAPI.encoder().decodeFromBase64(property);
-        } catch( IOException e ) {
-            throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to byte array");
-        }
+        return esapiPropertyManager.getByteArrayProp(propertyName);
     }
 
     /**
@@ -1266,19 +1249,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     @Override
     public Boolean getBooleanProp(String propertyName) throws ConfigurationException {
-        String property = properties.getProperty( propertyName );
-        if ( property == null ) {
-            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
-        }
-        if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes" ) ) {
-            return true;
-        }
-        if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase( "no" ) ) {
-            return false;
-        } else {
-            throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to boolean"); 
-        }
+        return esapiPropertyManager.getBooleanProp(propertyName);
     }
 
     /**
@@ -1286,15 +1257,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     @Override
     public String getStringProp(String propertyName) throws ConfigurationException {
-        String property = properties.getProperty( propertyName );
-        if ( property == null ) {
-            throw new ConfigurationException("Property : " + propertyName + "not found in default configuration");
-        }
-        return property;
+        return esapiPropertyManager.getStringProp(propertyName);
     }
 
 
-	protected boolean shouldPrintProperties() {
+    protected boolean shouldPrintProperties() {
         return getESAPIProperty(PRINT_PROPERTIES_WHEN_LOADED, false);
 	}
 
