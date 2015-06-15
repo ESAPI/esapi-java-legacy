@@ -35,6 +35,18 @@ public class XmlEsapiPropertyLoaderTest {
         assertFalse(testPropertyLoader.properties.isEmpty());
     }
 
+    @Test(expected = ConfigurationException.class)
+    public void testInvalidPropertyFile() {
+        // given
+        String invalidFilename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+                "esapi" + File.separator + "ESAPI-test-invalid-content.xml";
+
+        // when
+        testPropertyLoader = new XmlEsapiPropertyLoader(invalidFilename, priority);
+
+        // then expect exception
+    }
+
     @Test
     public void testPriority() {
         // given
@@ -118,6 +130,18 @@ public class XmlEsapiPropertyLoaderTest {
         // then expect exception
     }
 
+    @Test(expected = ConfigurationException.class)
+    public void testIncorrectIntPropertyType() {
+        // given
+        String key = "invalid_int_property";
+
+        // when
+        testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getIntProp(key);
+
+        // then expect exception
+    }
+
     @Test
     public void testGetStringProp() {
         // given
@@ -158,10 +182,50 @@ public class XmlEsapiPropertyLoaderTest {
         assertEquals(expectedValue, value);
     }
 
+    @Test
+    public void testGetBooleanYesProperty() {
+        // given
+        String key = "boolean_yes_property";
+        boolean expectedValue = true;
+
+        // when
+        testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
+        boolean value = testPropertyLoader.getBooleanProp(key);
+
+        // then
+        assertEquals(expectedValue, value);
+    }
+
+    @Test
+    public void testGetBooleanNoProperty() {
+        // given
+        String key = "boolean_no_property";
+        boolean expectedValue = false;
+
+        // when
+        testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
+        boolean value = testPropertyLoader.getBooleanProp(key);
+
+        // then
+        assertEquals(expectedValue, value);
+    }
+
     @Test(expected = ConfigurationException.class)
     public void testBooleanPropertyNotFound() throws ConfigurationException {
         // given
         String key = "non-existing-key";
+
+        // when
+        testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getBooleanProp(key);
+
+        // then expect exception
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void testIncorrectBooleanPropertyType() throws ConfigurationException {
+        // given
+        String key = "invalid_boolean_property";
 
         // when
         testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);

@@ -4,7 +4,6 @@ import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
-import java.io.FileNotFoundException;
 import java.util.TreeSet;
 
 import static org.owasp.esapi.configuration.EsapiPropertyLoaderFactory.createPropertyLoader;
@@ -89,12 +88,12 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
 
         try {
             loaders.add(createPropertyLoader(DEVTEAM_ESAPI_CFG));
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         try {
             loaders.add(createPropertyLoader(OPTEAM_ESAPI_CFG));
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             System.err.println(e.getMessage());
         }
 

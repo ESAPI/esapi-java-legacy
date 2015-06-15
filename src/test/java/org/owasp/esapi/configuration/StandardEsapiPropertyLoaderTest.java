@@ -116,6 +116,18 @@ public class StandardEsapiPropertyLoaderTest {
         // then expect exception
     }
 
+    @Test(expected = ConfigurationException.class)
+    public void testIncorrectIntPropertyType() {
+        // given
+        String key = "invalid_int_property";
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getIntProp(key);
+
+        // then expect exception
+    }
+
     @Test
     public void testGetStringProp() {
         // given
@@ -159,6 +171,34 @@ public class StandardEsapiPropertyLoaderTest {
         assertEquals(expectedValue, value);
     }
 
+    @Test
+    public void testGetBooleanYesProperty() {
+        // given
+        String key = "boolean_yes_property";
+        boolean expectedValue = true;
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        boolean value = testPropertyLoader.getBooleanProp(key);
+
+        // then
+        assertEquals(expectedValue, value);
+    }
+
+    @Test
+    public void testGetBooleanNoProperty() {
+        // given
+        String key = "boolean_no_property";
+        boolean expectedValue = false;
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        boolean value = testPropertyLoader.getBooleanProp(key);
+
+        // then
+        assertEquals(expectedValue, value);
+    }
+
     @Test(expected = ConfigurationException.class)
     public void testBooleanPropertyNotFound() throws ConfigurationException {
         // given
@@ -169,6 +209,18 @@ public class StandardEsapiPropertyLoaderTest {
         // when
         testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
         testPropertyLoader.getBooleanProp(propertyKey);
+
+        // then expect exception
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void testIncorrectBooleanPropertyType() throws ConfigurationException {
+        // given
+        String key = "invalid_boolean_property";
+
+        // when
+        testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
+        testPropertyLoader.getBooleanProp(key);
 
         // then expect exception
     }
