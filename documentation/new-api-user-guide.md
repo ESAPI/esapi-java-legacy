@@ -30,10 +30,26 @@ XML configuration storage is supported. XmlEsapiPropertyLoader is designed to co
 XML configuration is validated against xsd schema named ESAPI-properties.xsd held in configuration/esapi. If 
 validation against schema fails, ConfigurationException is thrown and error is logged that it is impossible to load 
 file because of incorrect xml structure. This exception is caught by EsapiPropertyManager, so it does not make 
-configuration initialization to file, only this specific file will not be loaded.
+configuration initialization to fail, only this specific file will not be loaded.
+
+### Example:
+XML file structure:
+```
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<entry key="Logger.LogServerIP">true</entry>
+<entry key="Encryptor.HashAlgorithm">SHA-512</entry>
+<entry key="Encryptor.HashIterations">1024</entry>
+.
+.
+.
+</properties>
+```
 
 The choice of the type of configuration file is currently available only for esapi developers. It is hardcoded and
 cannot be configured by user at the moment. See more info in next paragraph. // this has to be changed
+
 
 ## Multiple configuration files support
 
