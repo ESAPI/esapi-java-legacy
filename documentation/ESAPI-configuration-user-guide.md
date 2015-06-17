@@ -1,4 +1,11 @@
-# ESAPI security API enhancements - user guide
+# ESAPI security configuration API enhancements - user guide
+
+## Motivation
+High number of open Google Issues against security configuration component highlighted problem with ESAPI configuration. Moreover, the rules for how and where the ESAPI.properties file is found are overly complicated making questions about it one of the most frequently asked questions. 
+
+The ESAPI interface for its configuration (SecurityConfiguration) is overly complicated; it has a 'getter' method specific to almost every ESAPI configuration property. This complication leads to a unduly intricate, non-modular reference implementation (DefaultSecurityConfiguration) that makes it difficult to extend in terms of new functionality. 
+
+A new, simpler security configuration interface and implementation is needed. Such an implementation would not only be useful for ESAPI 2.x, but could very well be used to build the configurator needed by ESAPI 3. 
 
 This document describes following changes to ESAPI security API:
 
@@ -32,23 +39,24 @@ validation against schema fails, ConfigurationException is thrown and error is l
 file because of incorrect xml structure. This exception is caught by EsapiPropertyManager, so it does not make 
 configuration initialization to fail, only this specific file will not be loaded.
 
+In comparison to java properties file, xml structure contains additional information about property type: string, boolean, int or byteArray. This attribute is required and validated by xsd schema. If there is attempt of getting property with incorrect method (type missmatch) - exception will be thrown.
+
 ### Example:
 XML file structure:
 ```
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<?xml version="1.0" encoding="UTF-8"?>
 <properties>
-<entry key="Logger.LogServerIP">true</entry>
-<entry key="Encryptor.HashAlgorithm">SHA-512</entry>
-<entry key="Encryptor.HashIterations">1024</entry>
-.
-.
-.
+    <property name="string_property" type="string">test_string_property</property>
+    <property name="int_property" type="int">5</property>
+    <property name="invalid_int_property" type="int">invalid int</property>
+    <property name="boolean_property" type="boolean">true</property>
+    <property name="boolean_yes_property" type="boolean">yes</property>
+    <property name="boolean_no_property" type="boolean">no</property>
+    <property name="invalid_boolean_property" type="boolean">invalid boolean</property>
 </properties>
 ```
 
-The choice of the type of configuration file is currently available only for esapi developers. It is hardcoded and
-cannot be configured by user at the moment. See more info in next paragraph. // this has to be changed
+The choice of the type of configuration file is currently available only for esapi developers.  // this has to be changed
 
 
 ## Multiple configuration files support
@@ -72,24 +80,24 @@ If given property is not found in any of two configurations, EsapiPropertyManage
 
 Consider we have two new files specified with following content:
 
-* org.owasp.esapi.resources.devteam.properties (priority 1) :
+* org.owasp.esapi.resources.opsteam.properties (higher priority):
+    
+    propA = valueA2
+    propB = valueB2
+
+* org.owasp.esapi.resources.devteam.properties (lower priority):
 
     propA = valueA1
     propC = valueC1
-    
-* org.owasp.esapi.resources.opsteam.properties (priority 2):
-    
-    propA = valueA2
-    propB = valueB1
-    
+
 * ESAPI.properties (legacy file):
 
     propA = valueA3
 
 
-1. In above example, when we want to get any property value, PropertyManager looks for it in file with highest priority. If it fails
-to find property or it has incorrect type, the ConfigurationException is thrown, which is caught in PropertyManager. Also we log error that property was not found in this file.
+1. In above example, when we want to get any property value, PropertyManager looks for it in file with highest priority. If it fails to find property or it has incorrect type, the ConfigurationException is thrown, which is caught in PropertyManager. Also we log error that property was not found in this file.
 2. If step 1 failed (ConfigurationException was thrown), we repeat it for lower priority file.
 3. If step 2 also failed, we use ESAPI.properties to obtain property. If we fail this time, ConfigurationException 
 is thrown outside of PropertyManager to signal that the property is not configured in any configuration
 file and now user has to deal with this situation.
+
