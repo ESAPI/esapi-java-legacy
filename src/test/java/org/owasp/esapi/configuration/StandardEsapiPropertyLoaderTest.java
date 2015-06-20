@@ -1,9 +1,10 @@
 package org.owasp.esapi.configuration;
 
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.File;
@@ -18,8 +19,10 @@ public class StandardEsapiPropertyLoaderTest {
 
     private StandardEsapiPropertyLoader testPropertyLoader;
 
-    @BeforeClass
-    public static void init() {
+    @Before
+    public void init() {
+        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), "");
+        System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), "");
         filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "esapi" + File.separator + "ESAPI-test.properties";
         priority = 1;
@@ -202,7 +205,7 @@ public class StandardEsapiPropertyLoaderTest {
     @Test(expected = ConfigurationException.class)
     public void testBooleanPropertyNotFound() throws ConfigurationException {
         // given
-        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+        String filename = "src" + File.separator + "test" + File.separator + "src/main/resources" + File.separator +
                 "esapi" + File.separator + "ESAPI-test.properties";        int priority = 1;
         String propertyKey = "non-existing-key";
         
@@ -251,7 +254,7 @@ public class StandardEsapiPropertyLoaderTest {
     @Test(expected = ConfigurationException.class)
     public void testByteArrayPropertyNotFound() throws ConfigurationException {
         // given
-        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
+        String filename = "src" + File.separator + "test" + File.separator + "src/main/resources" + File.separator +
                 "esapi" + File.separator + "ESAPI-test.properties";        int priority = 1;
         String propertyKey = "non-existing-key";
         

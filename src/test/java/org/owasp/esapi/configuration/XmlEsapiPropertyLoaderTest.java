@@ -1,16 +1,15 @@
 package org.owasp.esapi.configuration;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertFalse;
-import static junit.framework.Assert.fail;
+import static junit.framework.Assert.*;
 
 public class XmlEsapiPropertyLoaderTest {
 
@@ -19,8 +18,10 @@ public class XmlEsapiPropertyLoaderTest {
 
     private XmlEsapiPropertyLoader testPropertyLoader;
 
-    @BeforeClass
-    public static void init() {
+    @Before
+    public void init() {
+        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), "");
+        System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), "");
         filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "esapi" + File.separator + "ESAPI-test.xml";
         priority = 1;

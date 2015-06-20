@@ -1,12 +1,12 @@
 package org.owasp.esapi.configuration;
 
-import org.owasp.esapi.configuration.consts.EsapiPropertiesStore;
+import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.FileNotFoundException;
 
-import static org.owasp.esapi.configuration.consts.EsapiStoreType.PROPERTIES;
-import static org.owasp.esapi.configuration.consts.EsapiStoreType.XML;
+import static org.owasp.esapi.configuration.consts.EsapiConfigurationType.PROPERTIES;
+import static org.owasp.esapi.configuration.consts.EsapiConfigurationType.XML;
 
 /**
  * Factory class that takes care of initialization of proper instance of EsapiPropertyLoader
@@ -14,16 +14,23 @@ import static org.owasp.esapi.configuration.consts.EsapiStoreType.XML;
  */
 public class EsapiPropertyLoaderFactory {
 
-    public static AbstractPrioritizedPropertyLoader createPropertyLoader(EsapiPropertiesStore store)
+    public static AbstractPrioritizedPropertyLoader createPropertyLoader(EsapiConfiguration cfg)
             throws ConfigurationException, FileNotFoundException {
-        if (store.storeType().equals(XML)) {
-            return new XmlEsapiPropertyLoader(store.filename(), store.priority());
+        String cfgPath = System.getProperty(cfg.getConfigName());
+        if (cfgPath == null) {
+            throw new ConfigurationException("System property [" + cfg.getConfigName() + "] is not set");
         }
-        if (store.storeType().equals(PROPERTIES)) {
-            return new StandardEsapiPropertyLoader(store.filename(), store.priority());
+        String fileExtension = cfgPath.substring(cfgPath.lastIndexOf('.') + 1);
+
+        if (XML.getTypeName().equals(fileExtension)) {
+            return new XmlEsapiPropertyLoader(cfgPath, cfg.getPriority());
+        }
+        if (PROPERTIES.getTypeName().equals(fileExtension)) {
+            return new StandardEsapiPropertyLoader(cfgPath, cfg.getPriority());
         } else {
-            throw new ConfigurationException("Configuration storage type [" + store.storeType().name() + "] is not " +
+            throw new ConfigurationException("Configuration storage type [" + fileExtension + "] is not " +
                     "supported");
         }
     }
+    
 }

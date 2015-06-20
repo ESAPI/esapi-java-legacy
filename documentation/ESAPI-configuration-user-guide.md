@@ -30,19 +30,65 @@ SecurityConfiguration interface is extended with this new contract. Old methods 
 DefaultSecurityConfiguration implements the new contract. New contract methods implementations work as described in 
 'Multiple configuration files support' paragraph.
 
+## Multiple configuration files support
+
+EsapiPropertyManager is the new implementation for getting properties, which uses prioritized property loaders 
+(each one connected with specific configuration file). This allows to have multiple configuration files existing with
+priority connected to each one. At this moment, there are two configuration files possible to use, path to them is 
+set through following java system properties:
+ 
+* org.owasp.esapi.opsteam = <full_path_to_file> (higher priority config)
+* org.owasp.esapi.devteam = <full_path_to_file> (lower priority config)
+
+DefaultSecurityConfiguration uses this mechanism through new API for getting 
+properties.
+
+It is not mandatory to have both files configured or even any of them for DefaultSecurityConfiguration to work. It 
+can still use ESAPI.properties to search for property. In case of any of the configurations or both of the existing, 
+ESAPI.properties has LOWEST priority, so it will be searched as last.
+
+### Example properties extraction through DefaultSecurityConfiguration
+
+```java
+ESAPI.securityConfiguration().getBooleanProp("propertyXXX);
+```
+ 
+In above example, following happens:
+  
+1. org.owasp.esapi.opsteam configuration is used to get propertyXXX and return it as boolean.
+2. If (1) fails to find property, org.owasp.esapi.devteam is used to get propertyXXX and return it as boolean.
+3. If (2) fails to find property, ESAPI.properties is used to get propertyXXX and return it as boolean.
+4. If (3) fails to find property, unchecked ConfigurationException will be thrown.
+
+ConfigurationException will be also thrown if propertyXXX will be found in one of the configuration, but it will be
+impossible to convert it to boolean.
+
 ## XML configuration support
 
-XML configuration storage is supported. XmlEsapiPropertyLoader is designed to consume this type of configuration files.
+XML configuration storage is supported. Both org.owasp.esapi.opsteam and org.owasp.esapi.devteam can be xml files, 
+but they must accord to xsd schema:
 
-XML configuration is validated against xsd schema named ESAPI-properties.xsd held in configuration/esapi. If 
-validation against schema fails, ConfigurationException is thrown and error is logged that it is impossible to load 
-file because of incorrect xml structure. This exception is caught by EsapiPropertyManager, so it does not make 
-configuration initialization to fail, only this specific file will not be loaded.
+```xml
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="properties">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="property" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="name" use="optional"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>
+```
 
-In comparison to java properties file, xml structure contains additional information about property type: string, boolean, int or byteArray. This attribute is required and validated by xsd schema. If there is attempt of getting property with incorrect method (type missmatch) - exception will be thrown.
-
-### Example:
-XML file structure:
+### XML configuration example:
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <properties>
@@ -55,49 +101,3 @@ XML file structure:
     <property name="invalid_boolean_property" type="boolean">invalid boolean</property>
 </properties>
 ```
-
-The choice of the type of configuration file is currently available only for esapi developers.  // this has to be changed
-
-
-## Multiple configuration files support
-
-EsapiPropertyManager is the new implementation for getting properties, which uses prioritized property loaders 
-(each one connected with specific configuration file). This allows to have multiple configuration files existing with
- priority connected to each one. DefaultSecurityConfiguration uses this mechanism in new methods for getting properties.
-
-The priority is used to determine in which configuration file we should look for given property, the config file 
-with higher priority will be used first. Each property loader is tied with specific configuration file, so the name 
-of file must be exactly the same as property loader expects it. Configuration files must be inserted into 
-configuration/esapi directory. Files names and types are currently hardcoded and both files have to defined like this:
-
-* org.owasp.esapi.resources.devteam.properties (lower priority dev file)
-* org.owasp.esapi.resources.opsteam.properties (higher priority ops file)
-
-If given property is not found in any of two configurations, EsapiPropertyManager uses currently existing ESAPI
-.properties file to get the property.
-
-### Example
-
-Consider we have two new files specified with following content:
-
-* org.owasp.esapi.resources.opsteam.properties (higher priority):
-    
-    propA = valueA2
-    propB = valueB2
-
-* org.owasp.esapi.resources.devteam.properties (lower priority):
-
-    propA = valueA1
-    propC = valueC1
-
-* ESAPI.properties (legacy file):
-
-    propA = valueA3
-
-
-1. In above example, when we want to get any property value, PropertyManager looks for it in file with highest priority. If it fails to find property or it has incorrect type, the ConfigurationException is thrown, which is caught in PropertyManager. Also we log error that property was not found in this file.
-2. If step 1 failed (ConfigurationException was thrown), we repeat it for lower priority file.
-3. If step 2 also failed, we use ESAPI.properties to obtain property. If we fail this time, ConfigurationException 
-is thrown outside of PropertyManager to signal that the property is not configured in any configuration
-file and now user has to deal with this situation.
-

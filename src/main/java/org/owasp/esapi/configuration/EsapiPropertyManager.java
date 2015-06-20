@@ -1,15 +1,17 @@
 package org.owasp.esapi.configuration;
 
+import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.util.TreeSet;
 
 import static org.owasp.esapi.configuration.EsapiPropertyLoaderFactory.createPropertyLoader;
-import static org.owasp.esapi.configuration.consts.EsapiPropertiesStore.*;
 
 /**
  * Manager used for loading security configuration properties. Does all the logic to obtain the correct property from
- * correct source.
+ * correct source. Uses following system properties to find configuration files:
+ * - org.owasp.esapi.devteam - lower priority dev file path
+ * - org.owasp.esapi.opsteam - higher priority ops file path
  */
 public class EsapiPropertyManager implements EsapiPropertyLoader {
 
@@ -28,7 +30,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getIntProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.toString());
+                System.err.println("Property not found in " + loader.name());
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -43,7 +45,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getByteArrayProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.toString());
+                System.err.println("Property not found in " + loader.name());
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -58,7 +60,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getBooleanProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.toString());
+                System.err.println("Property not found in " + loader.name());
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -73,7 +75,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getStringProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                System.err.println("Property : " + propertyName + " not found in " + loader.name());
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -81,19 +83,13 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
 
     private void initLoaders() {
         loaders = new TreeSet<AbstractPrioritizedPropertyLoader>();
-
         try {
-            loaders.add(createPropertyLoader(DEVTEAM_ESAPI_CFG));
+            loaders.add(createPropertyLoader(EsapiConfiguration.OPSTEAM_ESAPI_CFG));
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
         try {
-            loaders.add(createPropertyLoader(OPTEAM_ESAPI_CFG));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-        }
-        try {
-            loaders.add(createPropertyLoader(LEGACY_ESAPI_CFG));
+            loaders.add(createPropertyLoader(EsapiConfiguration.DEVTEAM_ESAPI_CFG));
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
