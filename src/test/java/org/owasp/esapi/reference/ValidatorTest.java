@@ -15,9 +15,20 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
 import org.owasp.esapi.*;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
@@ -27,10 +38,7 @@ import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
 
 import javax.servlet.http.Cookie;
-import java.io.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * The Class ValidatorTest.
@@ -289,8 +297,7 @@ public class ValidatorTest extends TestCase {
 
         assertEquals("Test. &lt;<div>load=alert()</div>", rule.getSafe("test", "Test. <<div on<script></script>load=alert()"));
         assertEquals("Test. <div>b</div>", rule.getSafe("test", "Test. <div style={xss:expression(xss)}>b</div>"));
-        // TODO: below assertion fails due to incorrect sanitazation made by Antisamy 1.5.3
-//        assertEquals("Test.", rule.getSafe("test", "Test. <s%00cript>alert(document.cookie)</script>"));
+        assertEquals("Test. alert(document.cookie)", rule.getSafe("test", "Test. <s%00cript>alert(document.cookie)</script>"));
         assertEquals("Test. alert(document.cookie)", rule.getSafe("test", "Test. <s\tcript>alert(document.cookie)</script>"));
         assertEquals("Test. alert(document.cookie)", rule.getSafe("test", "Test. <s\tcript>alert(document.cookie)</script>"));
         // TODO: ENHANCE waiting for a way to validate text headed for an attribute for scripts
@@ -346,20 +353,16 @@ public class ValidatorTest extends TestCase {
         ValidationErrorList errors = new ValidationErrorList();
 
         if (isWindows) {
-
-            // on windows, parent canonical depends on drive letter on which source code lies
-            File cParent = new File("C:\\");
-            
             String sysRoot = new File(System.getenv("SystemRoot")).getCanonicalPath();
             // Windows paths that don't exist and thus should fail
-            assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", cParent, false));
-            assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", cParent, false));
-            assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", cParent, false));
+            assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
+            assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", parent, false));
+            assertFalse(instance.isValidDirectoryPath("test", "c:\\temp\\..\\etc", parent, false));
 
             // Windows paths
-            assertTrue(instance.isValidDirectoryPath("test", "C:\\", cParent, false));                        // Windows root directory
-            assertTrue(instance.isValidDirectoryPath("test", sysRoot, cParent, false));                  // Windows always exist directory
-            assertFalse(instance.isValidDirectoryPath("test", sysRoot + "\\System32\\cmd.exe", cParent, false));      // Windows command shell
+            assertTrue(instance.isValidDirectoryPath("test", "C:\\", parent, false));                        // Windows root directory
+            assertTrue(instance.isValidDirectoryPath("test", sysRoot, parent, false));                  // Windows always exist directory
+            assertFalse(instance.isValidDirectoryPath("test", sysRoot + "\\System32\\cmd.exe", parent, false));      // Windows command shell
 
             // Unix specific paths should not pass
             assertFalse(instance.isValidDirectoryPath("test", "/tmp", parent, false));      // Unix Temporary directory
@@ -378,11 +381,11 @@ public class ValidatorTest extends TestCase {
             assertTrue(errors.size()==3);
 
             // Windows paths
-            assertTrue(instance.isValidDirectoryPath("test4", "C:\\", cParent, false, errors));                        // Windows root directory
+            assertTrue(instance.isValidDirectoryPath("test4", "C:\\", parent, false, errors));                        // Windows root directory
             assertTrue(errors.size()==3);
-            assertTrue(instance.isValidDirectoryPath("test5", sysRoot, cParent, false, errors));                  // Windows always exist directory
+            assertTrue(instance.isValidDirectoryPath("test5", sysRoot, parent, false, errors));                  // Windows always exist directory
             assertTrue(errors.size()==3);
-            assertFalse(instance.isValidDirectoryPath("test6", sysRoot + "\\System32\\cmd.exe", cParent, false, errors));      // Windows command shell
+            assertFalse(instance.isValidDirectoryPath("test6", sysRoot + "\\System32\\cmd.exe", parent, false, errors));      // Windows command shell
             assertTrue(errors.size()==4);
 
             // Unix specific paths should not pass
@@ -1145,3 +1148,4 @@ public class ValidatorTest extends TestCase {
         assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
     }
 }
+
