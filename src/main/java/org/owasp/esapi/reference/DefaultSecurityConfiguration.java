@@ -15,28 +15,18 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
-
 import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
+
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
@@ -219,6 +209,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     private String resourceDirectory = ".esapi";	// For backward compatibility (vs. "esapi")
 	private final String resourceFile;
+    private EsapiPropertyManager esapiPropertyManager;
 
 //    private static long lastModified = -1;
 
@@ -229,6 +220,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     DefaultSecurityConfiguration(String resourceFile) {
     	this.resourceFile = resourceFile;
+        this.esapiPropertyManager = new EsapiPropertyManager();
     	// load security configuration
     	try {
         	loadConfiguration();
@@ -661,8 +653,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					
 					// try resources folder
 					if (in == null) {
-						currentClasspathSearchLocation = "resources/";
-						in = currentLoader.getResourceAsStream("resources/" + fileName);
+						currentClasspathSearchLocation = "src/main/resources/";
+						in = currentLoader.getResourceAsStream("src/main/resources/" + fileName);
 					}
 		
 					// now load the properties
@@ -998,8 +990,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public int getMaxLogFileSize() {
     	return getESAPIProperty( MAX_LOG_FILE_SIZE, DEFAULT_MAX_LOG_FILE_SIZE );
     }
-
-
+    
     /**
 	 * {@inheritDoc}
 	 */
@@ -1237,7 +1228,102 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	    return Arrays.asList( parts );
 	}
 
-	protected boolean shouldPrintProperties() {
+    /**
+     * {@inheritDoc}
+     * Looks for property in three configuration files in following order:
+     * 1.) In file defined as org.owasp.esapi.opsteam system property 
+     * 2.) In file defined as org.owasp.esapi.devteam system property 
+     * 3.) In ESAPI.properties* 
+     */
+    @Override
+    public int getIntProp(String propertyName) throws ConfigurationException {
+        try {
+            return esapiPropertyManager.getIntProp(propertyName);
+        } catch (ConfigurationException ex) {
+            String property = properties.getProperty(propertyName);
+            try {
+                return Integer.parseInt(property);
+            } catch (NumberFormatException e) {
+                throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " has incorrect " +
+                        "type");
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Looks for property in three configuration files in following order:
+     * 1.) In file defined as org.owasp.esapi.opsteam system property 
+     * 2.) In file defined as org.owasp.esapi.devteam system property 
+     * 3.) In ESAPI.properties
+     */
+    @Override
+    public byte[] getByteArrayProp(String propertyName) throws ConfigurationException {
+        try {
+            return esapiPropertyManager.getByteArrayProp(propertyName);
+        } catch (ConfigurationException ex) {
+            String property = properties.getProperty(propertyName);
+            if ( property == null ) {
+                throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " not found in ESAPI.properties");
+            }
+            try {
+                return ESAPI.encoder().decodeFromBase64(property);
+            } catch( IOException e ) {
+                throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " has incorrect " +
+                        "type");
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}  
+     * Looks for property in three configuration files in following order:
+     * 1.) In file defined as org.owasp.esapi.opsteam system property 
+     * 2.) In file defined as org.owasp.esapi.devteam system property 
+     * 3.) In ESAPI.properties
+     */
+    @Override
+    public Boolean getBooleanProp(String propertyName) throws ConfigurationException {
+        try {
+            return esapiPropertyManager.getBooleanProp(propertyName);
+        } catch (ConfigurationException ex) {
+            String property = properties.getProperty( propertyName );
+            if ( property == null ) {
+                throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " not found in ESAPI.properties");
+            }
+            if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes" ) ) {
+                return true;
+            }
+            if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase( "no" ) ) {
+                return false;
+            }
+            throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " has incorrect " +
+                    "type");
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     * Looks for property in three configuration files in following order:
+     * 1.) In file defined as org.owasp.esapi.opsteam system property
+     * 2.) In file defined as org.owasp.esapi.devteam system property
+     * 3.) In ESAPI.properties
+     */
+    @Override
+    public String getStringProp(String propertyName) throws ConfigurationException {
+        try {
+            return esapiPropertyManager.getStringProp(propertyName);
+        } catch (ConfigurationException ex) {
+            String property = properties.getProperty( propertyName );
+            if ( property == null ) {
+                throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " not found in ESAPI.properties");
+            }
+            return property;
+        }
+    }
+
+
+    protected boolean shouldPrintProperties() {
         return getESAPIProperty(PRINT_PROPERTIES_WHEN_LOADED, false);
 	}
 
