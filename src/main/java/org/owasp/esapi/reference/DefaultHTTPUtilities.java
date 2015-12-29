@@ -15,15 +15,17 @@
  */
 package org.owasp.esapi.reference;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.ProgressListener;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.owasp.esapi.*;
-import org.owasp.esapi.codecs.Hex;
-import org.owasp.esapi.crypto.CipherText;
-import org.owasp.esapi.crypto.PlainText;
-import org.owasp.esapi.errors.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -31,10 +33,28 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.ProgressListener;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.StringUtilities;
+import org.owasp.esapi.User;
+import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.codecs.Hex;
+import org.owasp.esapi.crypto.CipherText;
+import org.owasp.esapi.crypto.PlainText;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncodingException;
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.IntegrityException;
+import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.errors.ValidationUploadException;
 
 /**
  * Reference implementation of the HTTPUtilities interface. This implementation
@@ -811,7 +831,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
             logger.fatal(Logger.SECURITY_FAILURE, "Bad redirect location: " + location);
-            throw new AccessControlException("Redirect failed", "Bad redirect location: " + location);
+            throw new AccessControlException("Redirect failed", "Bad Redirect location: " + location);
         }
         response.sendRedirect(location);
     }
