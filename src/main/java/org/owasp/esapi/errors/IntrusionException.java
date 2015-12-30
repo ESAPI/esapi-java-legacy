@@ -28,7 +28,7 @@ import org.owasp.esapi.Logger;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class IntrusionException extends EnterpriseSecurityException {
+public class IntrusionException extends EnterpriseSecurityRuntimeException {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 1L;
