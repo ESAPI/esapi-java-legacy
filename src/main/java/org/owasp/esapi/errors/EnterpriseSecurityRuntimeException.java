@@ -50,11 +50,38 @@ public class EnterpriseSecurityRuntimeException extends java.lang.RuntimeExcepti
     protected String logMessage = null;
 
     /**
-     * Instantiates a new security exception.
+     * Instantiates a new enterprise security runtime exception.
      */
     protected EnterpriseSecurityRuntimeException() {
         // hidden
     }
+
+    /**
+     * Instantiates a new enterprise security runtime exception with a user
+     * message. (Needed by anything which subclasses this.)
+     *
+     * @param userMessage Message displayed to user.
+     */
+    protected EnterpriseSecurityRuntimeException(String userMessage) {
+        super(userMessage);
+    }
+
+    /**
+     * Instantiates a new enterprise security runtime exception with a
+     * user message and cause. (Needed by anything which subclasses this.)
+     *
+     * @param userMessage Message displayed to user.
+     * @param cause The cause (which is saved for later retrieval by the
+     * getCause() method). (A null value is permitted, and indicates that the
+     * cause is nonexistent or unknown.)
+     */
+    protected EnterpriseSecurityRuntimeException(String userMessage,
+                                                  Throwable cause)
+    {
+        // hidden
+        super(userMessage, cause);
+    }
+
 
     /**
      * Creates a new instance of EnterpriseSecurityException. This exception is automatically logged, so that simply by
