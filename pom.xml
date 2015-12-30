@@ -6,6 +6,10 @@
     <version>2.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
 
+    <prerequisites>
+        <maven>3.0</maven>
+    </prerequisites>
+
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
