@@ -445,7 +445,6 @@ public interface HTTPUtilities
      * @param response
      * @param location the URL to forward to, including parameters
      * @throws AccessControlException
-     * @throws ServletException
      * @throws IOException
      */
     void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException;

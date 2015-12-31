@@ -18,19 +18,10 @@ package org.owasp.esapi.reference;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.owasp.esapi.Authenticator;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.EncoderConstants;
-import org.owasp.esapi.HTTPUtilities;
-import org.owasp.esapi.User;
+import org.owasp.esapi.*;
 import org.owasp.esapi.codecs.Hex;
 import org.owasp.esapi.crypto.CipherText;
-import org.owasp.esapi.crypto.PlainText;
-import org.owasp.esapi.errors.AccessControlException;
-import org.owasp.esapi.errors.AuthenticationException;
-import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.errors.EnterpriseSecurityException;
-import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.errors.*;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
@@ -506,3 +497,4 @@ public class HTTPUtilitiesTest extends TestCase
 		assertEquals( test2, 43f );
 	}
 }
+

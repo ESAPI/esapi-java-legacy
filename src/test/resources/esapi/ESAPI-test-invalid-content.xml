@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property name="string_property">test_string_property</property>
+    <property name="int_property">5</property>
+    <property name="boolean_property">true</property>
+    <invalid name="invalid_property">invalid</invalid>
+</properties>

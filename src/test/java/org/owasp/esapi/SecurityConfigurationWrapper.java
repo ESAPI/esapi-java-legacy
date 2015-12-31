@@ -1,5 +1,7 @@
 package org.owasp.esapi;
 
+import org.owasp.esapi.errors.ConfigurationException;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -574,6 +576,26 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	public int getMaxLogFileSize()
 	{
 	 	return wrapped.getMaxLogFileSize();
+	}
+
+	@Override
+	public int getIntProp(String propertyName) throws ConfigurationException {
+		return wrapped.getIntProp(propertyName);
+	}
+
+	@Override
+	public byte[] getByteArrayProp(String propertyName) throws ConfigurationException {
+		return wrapped.getByteArrayProp(propertyName);
+	}
+
+	@Override
+	public Boolean getBooleanProp(String propertyName) throws ConfigurationException {
+		return wrapped.getBooleanProp(propertyName);
+	}
+
+	@Override
+	public String getStringProp(String propertyName) throws ConfigurationException {
+		return wrapped.getStringProp(propertyName);
 	}
 
 	/**

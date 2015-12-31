@@ -825,13 +825,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 *
 	 * This implementation checks against the list of safe redirect locations defined in ESAPI.properties.
-     *
-     * @param response
      */
     public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
             logger.fatal(Logger.SECURITY_FAILURE, "Bad redirect location: " + location);
-            throw new AccessControlException("Redirect failed", "Bad Redirect location: " + location);
+            throw new AccessControlException("Redirect failed", "Bad redirect location: " + location);
         }
         response.sendRedirect(location);
     }
@@ -1040,3 +1038,4 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         return plaintext.toString();
     }
 }
+

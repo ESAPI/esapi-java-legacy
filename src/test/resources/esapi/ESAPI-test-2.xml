@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property name="string_property">test_string_property_2</property>
+    <property name="int_property">52</property>
+    <property name="boolean_property">false</property>
+</properties>
