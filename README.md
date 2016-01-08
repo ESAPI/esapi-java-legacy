@@ -27,7 +27,8 @@ Wiki: https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
 
 Nightly Build: https://esapi.ci.cloudbees.com
 
-JIRA: https://owasp-esapi.atlassian.net/browse/ESAPILEG
+~~JIRA: https://owasp-esapi.atlassian.net/browse/ESAPILEG~~<br />Issues: Until further notice, use the GitHub issues for reporting bugs and enhancement requests.
+
 
 Documentation: https://owasp-esapi.atlassian.net/wiki/display/ESAPILEG/ESAPI+Legacy (Coming Soon)
 
