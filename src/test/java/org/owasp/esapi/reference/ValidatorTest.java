@@ -1078,8 +1078,8 @@ public class ValidatorTest extends TestCase {
         SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
         request.addHeader("p1", "login");
         request.addHeader("f1", "<A HREF=\"http://0x42.0x0000066.0x7.0x93/\">XSS</A>");
-        request.addHeader("p2", generateStringOfLength(150));
-        request.addHeader("f2", generateStringOfLength(151));
+        request.addHeader("p2", generateStringOfLength(200));   // Upper limit increased from 150 -> 200, GitHub issue #351
+        request.addHeader("f2", generateStringOfLength(201));
         assertEquals(safeRequest.getHeader("p1"), request.getHeader("p1"));
         assertEquals(safeRequest.getHeader("p2"), request.getHeader("p2"));
         assertFalse(safeRequest.getHeader("f1").equals(request.getHeader("f1")));
@@ -1093,8 +1093,11 @@ public class ValidatorTest extends TestCase {
         SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
         request.addHeader("d-49653-p", "pass");
         request.addHeader("<img ", "fail");
-        request.addHeader(generateStringOfLength(32), "pass");
-        request.addHeader(generateStringOfLength(33), "fail");
+            // Note: Max length in ESAPI.properties as per
+            // Validator.HTTPHeaderName regex is 50, but upper
+            // bound of 150 imposed by SecurityRequestWrapper.
+        request.addHeader(generateStringOfLength(50), "pass");
+        request.addHeader(generateStringOfLength(51), "fail");
         assertEquals(Collections.list(safeRequest.getHeaderNames()).size(), 2);
     }
 
@@ -1124,7 +1127,8 @@ public class ValidatorTest extends TestCase {
     }
 
     private String generateStringOfLength(int length) {
-        StringBuilder longString = new StringBuilder();
+        assert length >= 0 : "length must be >= 0";
+        StringBuilder longString = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
             longString.append("a");
         }

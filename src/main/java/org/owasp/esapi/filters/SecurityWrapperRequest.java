@@ -38,6 +38,12 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.errors.AccessControlException;
 
+// TODO: Parameterize these various lengths in calls to ESAPI.validator().getValidInput()
+// so that they can be placed in ESAPI.properties file (or other property file,
+// such as Validator.properties) rather than being hard-coded. This is desirable
+// because many of the values are well less than the commonly accepted maximum
+// values.
+
 /**
  * This request wrapper simply overrides unsafe methods in the
  * HttpServletRequest API with safe versions that return canonicalized data
@@ -157,9 +163,13 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
                 n.setMaxAge(maxAge);
 
                 if (domain != null) {
+                    // kww TODO: HTTPHeaderValue seems way too liberal of a regex for cookie domain
+                    // as it allows invalid characters for a domain name. Maybe create a new custom
+                    // HTTPCookieDomain regex???
                     n.setDomain(ESAPI.validator().getValidInput("Cookie domain: " + domain, domain, "HTTPHeaderValue", 200, false));
                 }
                 if (path != null) {
+                    // kww TODO: OPEN ISSUE: Would not HTTPServletPath make more sense here???
                     n.setPath(ESAPI.validator().getValidInput("Cookie path: " + path, path, "HTTPHeaderValue", 200, false));
                 }
                 newCookies.add(n);
@@ -192,8 +202,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         String value = getHttpServletRequest().getHeader(name);
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP header value: " +
-            value, value, "HTTPHeaderValue", 200, true);
+            clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 200, true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -233,7 +242,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         while (en.hasMoreElements()) {
             try {
                 String value = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP header value (" + name + "): " + value, value, "HTTPHeaderValue", 150, true);
+                String clean = ESAPI.validator().getValidInput("HTTP header value (" + name + "): " + value, value, "HTTPHeaderValue", 200, true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
