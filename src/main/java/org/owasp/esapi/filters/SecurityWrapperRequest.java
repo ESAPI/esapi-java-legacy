@@ -192,7 +192,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         String value = getHttpServletRequest().getHeader(name);
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, true);
+            clean = ESAPI.validator().getValidInput("HTTP header value: " +
+            value, value, "HTTPHeaderValue", 200, true);
         } catch (ValidationException e) {
             // already logged
         }
