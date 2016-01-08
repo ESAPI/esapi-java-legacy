@@ -12,7 +12,8 @@ import org.owasp.esapi.Logger;
 
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
- * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>.</p>
+ * <p>Homepage: <a href="http://iharder.net/base64">http://iharder.net/base64</a>
+ * (based on version 2.2.2).</p>
  *
  * <p>The <tt>options</tt> parameter, which appears in a few places, is used to pass 
  * several pieces of information to the encoder. In the "higher level" methods such as 
@@ -30,7 +31,7 @@ import org.owasp.esapi.Logger;
  *
  *
  * <p>
- * Change Log:
+ * Original change Log:
  * </p>
  * <ul>
  *  <li>v2.2.2 - Fixed encodeFileToFile and decodeFileToFile to use the
@@ -1085,10 +1086,28 @@ public class Base64
      * Attempts to decode Base64 data and deserialize a Java
      * Object within. Returns <tt>null</tt> if there was an error.
      *
+     * <p>
+     * <b>WARNING:</b> Using this method to decode non-validated /
+     *      untrusted data from a string and deserialize it into
+     *      an object can potentially result in remote command
+     *      injection vulnerabilities. Use at your own risk!
+     * </p>
+     *
      * @param encodedObject The Base64 data to decode
      * @return The decoded and deserialized object
      * @since 1.5
+     *
+     * @deprecated  Because of security issues, this method will be
+     *      removed from ESAPI in a future release and no substitute
+     *      is planned. Because as of JDK 8 (in 1Q2016) there is
+     *      currently no way to restrict which objects
+     *      <code>ObjectInputStream.readObject()</code>
+     *      may safely deserialize in the general case. Oracle
+     *      may decide to address this deficiency in a future Java
+     *      release, but until they do, there is no <i>simple</i> way for
+     *      a general class library like ESAPI to address this.
      */
+    @Deprecated
     public static Object decodeToObject( String encodedObject )
     {
         // Decode and gunzip if necessary
