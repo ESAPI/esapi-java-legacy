@@ -444,7 +444,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         try {
             String strippedName = StringUtilities.stripControls(name);
             String strippedValue = StringUtilities.stripControls(value);
-            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 20, false);
+            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 50, false);
             String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false);
             getHttpServletResponse().setHeader(safeName, safeValue);
         } catch (ValidationException e) {

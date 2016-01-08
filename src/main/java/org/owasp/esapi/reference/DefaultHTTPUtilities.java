@@ -871,7 +871,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         try {
             String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
             String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
-            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 20, false);
+            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 50, false);
             String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", 500, false);
             response.setHeader(safeName, safeValue);
         } catch (ValidationException e) {
