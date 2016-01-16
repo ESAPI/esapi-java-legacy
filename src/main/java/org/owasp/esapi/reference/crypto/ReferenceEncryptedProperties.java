@@ -129,7 +129,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
 	 * @throws EncryptionRuntimeException Thrown if decryption fails.
 	 */
 	@Override
-	public String getProperty(String key, String defaultValue) throws EncryptionRuntimeException {
+	public synchronized String getProperty(String key, String defaultValue) throws EncryptionRuntimeException {
 		String value = getProperty(key);
 
 		if (value == null) return defaultValue;
