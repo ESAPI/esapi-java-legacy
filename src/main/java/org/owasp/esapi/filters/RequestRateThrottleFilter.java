@@ -53,8 +53,8 @@ public class RequestRateThrottleFilter implements Filter
      */
     public void init(FilterConfig filterConfig)
     {
-        hits = Integer.parseInt(filterConfig.getInitParameter(HITS));
-        period = Integer.parseInt(filterConfig.getInitParameter(PERIOD));
+        hits = filterConfig.getInitParameter(HITS) == null ? 5 : Integer.parseInt(filterConfig.getInitParameter(HITS));
+        period = filterConfig.getInitParameter(PERIOD) == null ? 10 : Integer.parseInt(filterConfig.getInitParameter(PERIOD));
     }
 
     /**
@@ -75,27 +75,22 @@ public class RequestRateThrottleFilter implements Filter
         HttpSession session = httpRequest.getSession(true);
         
         synchronized( session.getId().intern() ) {
-	        Stack<Date> times = ESAPI.httpUtilities().getSessionAttribute("times");
-	        if (times == null)
-	        {
-	            times = new Stack<Date>();
-	            times.push(new Date(0));
-	            session.setAttribute("times", times);
-	        }
-	        times.push(new Date());
-	        if (times.size() >= hits)
-	        {
-	            times.removeElementAt(0);
-	        }
-	        Date newest = times.get(times.size() - 1);
-	        Date oldest = times.get(0);
-	        long elapsed = newest.getTime() - oldest.getTime();        
-	        if (elapsed < period * 1000) // seconds
-	        {
-	            response.getWriter().println("Request rate too high");
-	            return;
-	        }
-        }        
+            List<Long> times = ESAPI.httpUtilities().getSessionAttribute("times");
+            if (times == null) {
+                times = new LinkedList<Long>();
+                session.setAttribute("times", times);
+            }
+            Long newest = System.currentTimeMillis();
+            times.add(newest);
+            if (times.size() > hits) {
+                Long oldest = times.remove(0);
+                long elapsed = newest - oldest;
+                if (elapsed < period * 1000) {
+                    response.getWriter().println("Request rate too high");
+                    return;
+                }
+            }
+        }
         chain.doFilter(request, response);
     }
 
