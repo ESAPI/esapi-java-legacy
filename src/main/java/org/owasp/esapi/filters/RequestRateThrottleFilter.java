@@ -22,7 +22,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Stack;
+import java.util.List;
+import java.util.LinkedList;
 
 /**
  * A simple servlet filter that limits the request rate to a certain threshold of requests per second.
