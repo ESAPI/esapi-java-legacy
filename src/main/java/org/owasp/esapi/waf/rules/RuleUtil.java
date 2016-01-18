@@ -76,7 +76,7 @@ public class RuleUtil {
 			} else if ( o instanceof Double ) {
 
 				try {
-					if ( Double.parseDouble(s) == ((Double)o).doubleValue() ) {
+					if ( Double.compare(Double.parseDouble(s), ((Double)o).doubleValue()) ==  0 ) {
 						return true;
 					}
 				} catch (Exception e) {}
@@ -121,7 +121,7 @@ public class RuleUtil {
 			} else if ( o instanceof Double ) {
 
 				try {
-					if ( Double.parseDouble(s) == ((Double)o).doubleValue() ) {
+					if ( Double.compare(Double.parseDouble(s), ((Double)o).doubleValue()) ==  0 ) {
 						return true;
 					}
 				} catch (Exception e) {}

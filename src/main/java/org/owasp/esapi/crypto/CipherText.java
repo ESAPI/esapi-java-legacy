@@ -26,6 +26,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.EnterpriseSecurityRuntimeException;
 
 // CHECKME: Some of these assertions probably should be actual runtime checks
 //          with suitable exceptions to account for cases where programmers
@@ -457,7 +458,18 @@ public final class CipherText implements Serializable {
 	        // compare to stored value (separate_mac_). If same, then return true,
 	        // else return false.
 	        byte[] mac = computeMAC(authKey);
-	        assert mac.length == separate_mac_.length : "MACs are of differnt lengths. Should both be the same.";
+	        if ( mac.length != separate_mac_.length ) {
+                    // Note: We want some type of unchecked exception
+                    //       here so this will not require code changes.
+                    //       Unfortunately, EncryptionException, which might
+                    //       make more sense here, is not a RuntimeException.
+                    String exm = "MACs are of different lengths. " +
+                                 "Should both be the same length";
+                    throw new EnterpriseSecurityRuntimeException(exm,
+                                "Possible tampering of MAC? " + exm +
+                                "computed MAC len: " + mac.length +
+                                ", received MAC len: " + separate_mac_.length);
+            }
 	        return CryptoHelper.arrayCompare(mac, separate_mac_); // Safe compare!!!
 	    } else if ( ! requiresMAC ) {           // Doesn't require a MAC
 	        return true;
@@ -593,6 +605,9 @@ public final class CipherText implements Serializable {
     
     public void setKDF_PRF(int prfSelection) {
         assert prfSelection >= 0 && prfSelection <= 15 : "kdfPrf == " + prfSelection + " must be between 0 and 15.";
+        if ( prfSelection < 0 || prfSelection > 15 ) {
+            throw new IllegalArgumentException("kdfPrf == " + prfSelection + " must be between 0 and 15, inclusive.");
+        }
     	kdfPrfSelection_ = prfSelection;
     }
     
@@ -629,7 +644,9 @@ public final class CipherText implements Serializable {
      *                  January 1, 1970 GMT).
      */ // Package level access. ESAPI jar should be sealed and signed.
     void setEncryptionTimestamp(long timestamp) {
-        assert timestamp > 0 : "Timestamp must be greater than zero.";
+        if ( timestamp <= 0 ) {
+            throw new IllegalArgumentException("Timestamp must be greater than zero.");
+        }
         if ( encryption_timestamp_ == 0 ) {     // Only set it if it's not yet been set.
             logger.warning(Logger.EVENT_FAILURE, "Attempt to reset non-zero " +
                            "CipherText encryption timestamp to " + new Date(timestamp) + "!");
@@ -767,6 +784,10 @@ public final class CipherText implements Serializable {
      * @return The value for the MAC.
      */ 
     private byte[] computeMAC(SecretKey authKey) {
+        // These assertions are okay and leaving them as assertions rather than
+        // changing the to conditional statements that throw should be all right
+        // because this is private method and presumably we should have already
+        // checked things in the public or protected methods where appropriate.
         assert raw_ciphertext_ != null && raw_ciphertext_.length != 0 : "Raw ciphertext may not be null or empty.";
         assert authKey != null && authKey.getEncoded().length != 0 : "Authenticity secret key may not be null or zero length.";
         try {
