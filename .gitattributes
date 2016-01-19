@@ -1,9 +1,22 @@
-# Set the default behavior, in case people don't have core.autocrlf set.
+# Autodetect text files
+#
+# In addition:
+#   Windows developers should set:
+#       git config --global core.autocrlf true
+#   UNIX / MacOS develoers should set:
+#       git config --global core.autocrlf input
 * text=auto
+
+# And configure default EOL terminators.
+#
+# Force the following filetypes to have Unix eols, so Windows does not break them
+# Those that are not explicitly set to use Windows EOL will use LF as EOL terminator.
+# (e.g., see *.bat, below).
+*.* text eol=lf
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
-*.java eol=lf
+*.java text
 *.properties text
 *.xml text
 *.xsd text
@@ -18,17 +31,22 @@
 *.cmd text eol=crlf
 *.bat text eol=crlf
 # Because *nix editors / paginators can handle either way, but braindead
-# Windoze notepad, the default to open .txt files, not so much.
+# Windoze notepad which is used by default to handle text files in Windows,
+# not so much, we also make the concession here to use CRLF for EOL.
 *.txt text eol=crlf
+# Ditto for Eclipse related preferences
+*.prefs text eol=crlf
 
 # Declare files that will always have LF line endings on checkout
 *.sh text eol=lf
 *.bsh text eol=lf
+*.ksh text eol=lf
 
 # Denote all files that are truly binary and should not be modified,
 # or simply replaced in whole if committed.
 *.jpg binary
 *.JPG binary
+*.png binary
 *.jks binary
 *.ser binary
 *.doc binary
