@@ -39,10 +39,14 @@
 *.bsh text eol=lf
 *.ksh text eol=lf
 
-# More
-.gitattributes text
+# Eclipse stuff
 .settings/* text eol=crlf
 .classpath text eol=crlf
+.project text eol=crlf
+
+# Miscellaneous text
+.gitattributes text eol=lf
+.gitignore text eol=lf
 *.MF text eol=crlf
 LICENSE text eol=crlf
 LICENSE-CONTENT text eol=crlf
