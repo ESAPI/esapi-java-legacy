@@ -7,12 +7,9 @@
 #       git config --global core.autocrlf input
 * text=auto
 
-# And configure default EOL terminators.
 #
-# Force the following filetypes to have Unix eols, so Windows does not break them
-# Those that are not explicitly set to use Windows EOL will use LF as EOL terminator.
-# (e.g., see *.bat, below).
-*.* text eol=lf
+# And configure default EOL terminators for various text types
+#
 
 # Explicitly declare text files you want to always be normalized and converted
 # to native line endings on checkout.
@@ -42,6 +39,16 @@
 *.bsh text eol=lf
 *.ksh text eol=lf
 
+# More
+.gitattributes text
+.settings/* text eol=crlf
+.classpath text eol=crlf
+*.MF text eol=crlf
+LICENSE text eol=crlf
+LICENSE-CONTENT text eol=crlf
+LICENSE-README text eol=crlf
+
+
 # Denote all files that are truly binary and should not be modified,
 # or simply replaced in whole if committed.
 *.jpg binary
@@ -56,3 +63,11 @@
 *.pptx binary
 *.odt binary
 *.pdf binary
+*.zip binary
+*.jar binary
+*.war binary
+*.ear binary
+*.7z binary
+*.rar binary
+*.tgz binary
+*.tar binary
