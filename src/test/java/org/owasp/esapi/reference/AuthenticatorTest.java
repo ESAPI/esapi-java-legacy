@@ -15,13 +15,32 @@
  */
 package org.owasp.esapi.reference;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeTrue;
+
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ErrorCollector;
+import org.junit.rules.TestName;
+import org.junit.rules.Timeout;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncoderConstants;
@@ -38,47 +57,49 @@ import org.owasp.esapi.http.MockHttpServletResponse;
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class AuthenticatorTest extends TestCase {
-
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AuthenticatorTest.class);
-
-		return suite;
-	}
-
-	/**
-	 * Instantiates a new authenticator test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public AuthenticatorTest(String testName) {
-		super(testName);
-	}
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws Exception
+public class AuthenticatorTest {
+    private static Authenticator instance;
+    /** 
+     * User session information is stored on a per-thread basis.  So long as this has potential to run single threaded then we'll maintain a synchronous nature execution.
+     * This is done to prevent tests corrupting each others states since all will be executed on a limited set of Threads within the JVM.
      */
-	protected void setUp() throws Exception {
-		// none
-	}
+    private static Semaphore threadIsolation = new Semaphore(1, true);
 
-    /**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void tearDown() throws Exception {
-		// none
-	}
+    @Rule
+    public ErrorCollector collector = new ErrorCollector();
+    @Rule
+    public Timeout testTimout = new Timeout(10, TimeUnit.SECONDS);
+    @Rule
+    public TestName name = new TestName();
+
+    @BeforeClass
+    public static void setUpStatic() {
+        instance = ESAPI.authenticator();
+    }
+
+    @Before
+    public void setup() throws InterruptedException {
+        while (!threadIsolation.tryAcquire(500, TimeUnit.MILLISECONDS)) {
+            //Spurious Interrupt Guard
+        }       
+    }
+
+    @After
+    public void cleanup() {
+        try {
+            instance.logout();
+            instance.clearCurrent();
+            HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
+            HttpServletResponse response = ESAPI.httpUtilities().getCurrentResponse();
+            if (request != null  && response != null) {
+                //I don't know why killAllCookies doesn't nullcheck state.  I'm assuming this is unique to the test environment.
+                ESAPI.httpUtilities().killAllCookies();
+            }
+            ESAPI.httpUtilities().clearCurrent();
+        } finally {
+            threadIsolation.release();
+        }
+    }
 
 	
 	/**
@@ -88,10 +109,9 @@ public class AuthenticatorTest extends TestCase {
      *             the authentication exception
      * @throws EncryptionException
 	 */
-	public void testCreateUser() throws AuthenticationException, EncryptionException {
+	@Test public void testCreateUser() throws AuthenticationException, EncryptionException {
 		System.out.println("createUser");
 		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
 		assertTrue(user.verifyPassword(password));
@@ -141,9 +161,8 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testGenerateStrongPassword() throws AuthenticationException {
+	@Test public void testGenerateStrongPassword() throws AuthenticationException {
 		System.out.println("generateStrongPassword");		
-		Authenticator instance = ESAPI.authenticator();
 		String oldPassword = "iiiiiiiiii";  // i is not allowed in passwords - this prevents failures from containing pieces of old password
 		String newPassword = null;
 		String username = "FictionalEsapiUser";
@@ -171,9 +190,8 @@ public class AuthenticatorTest extends TestCase {
      *
      * @throws Exception
      */
-	public void testGetCurrentUser() throws Exception {
+	@Test public void testGetCurrentUser() throws Exception {
 		System.out.println("getCurrentUser");
-        Authenticator instance = ESAPI.authenticator();
 		String username1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String username2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
@@ -192,21 +210,21 @@ public class AuthenticatorTest extends TestCase {
 			private int count = 1;
             private boolean result = false;
 			public void run() {
-		        Authenticator auth = ESAPI.authenticator();
 				User a = null;
 				try {
-					String password = auth.generateStrongPassword();
+					String password = instance.generateStrongPassword();
 					String accountName = "TestAccount" + count++;
-					a = auth.getUser(accountName);
+					a = instance.getUser(accountName);
 					if ( a != null ) {
-						auth.removeUser(accountName);
+					    instance.removeUser(accountName);
 					}
-					a = auth.createUser(accountName, password, password);
-					auth.setCurrentUser(a);
+					a = instance.createUser(accountName, password, password);
+					instance.setCurrentUser(a);
 				} catch (AuthenticationException e) {
-					e.printStackTrace();
+				    //Use ErrorCollector to fail test.
+                    collector.addError(e);
 				}
-				User b = auth.getCurrentUser();
+				User b = instance.getCurrentUser();
 				result &= a.equals(b);
 			}
 		};
@@ -225,9 +243,8 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testGetUser() throws AuthenticationException {
+	@Test public void testGetUser() throws AuthenticationException {
 		System.out.println("getUser");
-        Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		instance.createUser(accountName, password, password);
@@ -239,10 +256,8 @@ public class AuthenticatorTest extends TestCase {
      *
      * @throws org.owasp.esapi.errors.AuthenticationException
      */
-    public void testGetUserFromRememberToken() throws AuthenticationException {
+    @Test public void testGetUserFromRememberToken() throws AuthenticationException {
 		System.out.println("getUserFromRememberToken");
-        Authenticator instance = ESAPI.authenticator();
-        instance.logout();  // in case anyone is logged in
 		String password = instance.generateStrongPassword();
 		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		User user = instance.createUser(accountName, password, password);
@@ -255,6 +270,7 @@ public class AuthenticatorTest extends TestCase {
 		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
 		try {
 			instance.login( request, response );  // wrong cookie will fail
+			fail();
 		} catch( AuthenticationException e ) {
 			// expected
 		}
@@ -278,10 +294,9 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testGetUserFromSession() throws AuthenticationException {
+	@Test public void testGetUserFromSession() throws AuthenticationException {
 		System.out.println("getUserFromSession");
-        FileBasedAuthenticator instance = (FileBasedAuthenticator)ESAPI.authenticator();
-        instance.logout();  // in case anyone is logged in
+		assumeTrue(instance instanceof FileBasedAuthenticator);
 		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(accountName, password, password);
@@ -292,7 +307,7 @@ public class AuthenticatorTest extends TestCase {
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		ESAPI.httpUtilities().setCurrentHTTP( request, response );
 		instance.login( request, response);
-		User test = instance.getUserFromSession();
+		User test = ((FileBasedAuthenticator)instance).getUserFromSession();
 		assertEquals( user, test );
 	}
 
@@ -302,9 +317,8 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testGetUserNames() throws AuthenticationException {
+	@Test public void testGetUserNames() throws AuthenticationException {
 		System.out.println("getUserNames");
-        Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		String[] testnames = new String[10];
 		for(int i=0;i<testnames.length;i++) {
@@ -324,11 +338,10 @@ public class AuthenticatorTest extends TestCase {
      *
      * @throws EncryptionException
      */
-	public void testHashPassword() throws EncryptionException {
+	@Test public void testHashPassword() throws EncryptionException {
 		System.out.println("hashPassword");
 		String username = "Jeff";
 		String password = "test";
-        Authenticator instance = ESAPI.authenticator();
 		String result1 = instance.hashPassword(password, username);
 		String result2 = instance.hashPassword(password, username);
 		assertTrue(result1.equals(result2));
@@ -340,9 +353,8 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testLogin() throws AuthenticationException {
+	@Test public void testLogin() throws AuthenticationException {
 		System.out.println("login");
-        Authenticator instance = ESAPI.authenticator();
         String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 		String password = instance.generateStrongPassword();
 		User user = instance.createUser(username, password, password);
@@ -351,8 +363,10 @@ public class AuthenticatorTest extends TestCase {
 		request.addParameter("username", username);
 		request.addParameter("password", password);
 		MockHttpServletResponse response = new MockHttpServletResponse();
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		User test = instance.login( request, response);
 		assertTrue( test.isLoggedIn() );
+		assertSame(user, test);
 	}
 	
 	/**
@@ -361,10 +375,9 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void testRemoveUser() throws Exception {
+	@Test public void testRemoveUser() throws Exception {
 		System.out.println("removeUser");
 		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-        Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		instance.createUser(accountName, password, password);
 		assertTrue( instance.exists(accountName));
@@ -378,13 +391,13 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void testSaveUsers() throws Exception {
+	@Test public void testSaveUsers() throws Exception {
 		System.out.println("saveUsers");
+		assumeTrue(instance instanceof FileBasedAuthenticator);
 		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-        FileBasedAuthenticator instance = (FileBasedAuthenticator)ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		instance.createUser(accountName, password, password);
-		instance.saveUsers();
+		((FileBasedAuthenticator)instance).saveUsers();
 		assertNotNull( instance.getUser(accountName) );
 		instance.removeUser(accountName);
 		assertNull( instance.getUser(accountName) );
@@ -396,10 +409,10 @@ public class AuthenticatorTest extends TestCase {
 	 * 
 	 * @throws AuthenticationException
 	 *             the authentication exception
+	 * @throws InterruptedException Thrown if test is interrupted while awaiting completion of child threads.
 	 */
-	public void testSetCurrentUser() throws AuthenticationException {
+	@Test public void testSetCurrentUser() throws AuthenticationException, InterruptedException {
 		System.out.println("setCurrentUser");
-        final Authenticator instance = ESAPI.authenticator();
 		String user1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		String user2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
@@ -413,7 +426,7 @@ public class AuthenticatorTest extends TestCase {
 		User userTwo = instance.createUser(user2, "getCurrentUser", "getCurrentUser");		
 		instance.setCurrentUser( userTwo );
 		assertFalse( currentUser.getAccountName().equals( userTwo.getAccountName() ) );
-		
+		final CountDownLatch latch = new CountDownLatch(10);
 		Runnable echo = new Runnable() {
 			private int count = 1;
 			public void run() {
@@ -423,15 +436,21 @@ public class AuthenticatorTest extends TestCase {
 					u = instance.createUser("test" + count++, password, password);
 					instance.setCurrentUser(u);
 					ESAPI.getLogger("test").info( Logger.SECURITY_SUCCESS, "Got current user" );
-					// ESAPI.authenticator().removeUser( u.getAccountName() );
+					//If the user isn't removed every subsequent execution will fail because we cannot create a duplicate user of the same name!
+                    instance.removeUser( u.getAccountName() );
 				} catch (AuthenticationException e) {
-					e.printStackTrace();
-				}
+				    collector.addError(e);
+                } finally {
+                    latch.countDown();
+                }
 			}
 		};
 		for ( int i = 0; i<10; i++ ) {
 			new Thread( echo ).start();
 		}
+		while(!latch.await(500, TimeUnit.MILLISECONDS)) {
+            //Spurious Interrupt Guard. 
+        }
 	}
 	
 
@@ -441,9 +460,8 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testSetCurrentUserWithRequest() throws AuthenticationException {
+	@Test public void testSetCurrentUserWithRequest() throws AuthenticationException {
 		System.out.println("setCurrentUser(req,resp)");
-        Authenticator instance = ESAPI.authenticator();
         instance.logout();  // in case anyone is logged in
 		String password = instance.generateStrongPassword();
 		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
@@ -453,26 +471,33 @@ public class AuthenticatorTest extends TestCase {
 		request.addParameter("username", accountName);
 		request.addParameter("password", password);
 		MockHttpServletResponse response = new MockHttpServletResponse();
-		instance.login( request, response );
-		assertEquals( user, instance.getCurrentUser() );
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        User loggedIn = instance.login( request, response );
+        User currentUser = instance.getCurrentUser();
+        assertTrue(loggedIn.isLoggedIn());
+        assertSame(currentUser, loggedIn);
+        assertSame(user, loggedIn);
 		try {
 			user.disable();
 			instance.login( request, response );
-		} catch( Exception e ) {
+			fail();
+		} catch( AuthenticationException e ) {
 			// expected
 		}
 		try {
 			user.enable();
 			user.lock();
 			instance.login( request, response );
-		} catch( Exception e ) {
+			fail();
+		} catch( AuthenticationException e ) {
 			// expected
 		}
 		try {
 			user.unlock();
 			user.setExpirationTime( new Date() );
 			instance.login( request, response );
-		} catch( Exception e ) {
+			fail();
+		} catch( AuthenticationException e ) {
 			// expected
 		}
 	}
@@ -486,9 +511,8 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws AuthenticationException
 	 *             the authentication exception
 	 */
-	public void testValidatePasswordStrength() throws AuthenticationException {
+	@Test public void testValidatePasswordStrength() throws AuthenticationException {
 		System.out.println("validatePasswordStrength");
-        Authenticator instance = ESAPI.authenticator();
         
         String username = "FictionalEsapiUser";
 		User user = new DefaultUser(username);
@@ -572,10 +596,9 @@ public class AuthenticatorTest extends TestCase {
 	 * @throws Exception
 	 *             the exception
 	 */
-	public void testExists() throws Exception {
+	@Test public void testExists() throws Exception {
 		System.out.println("exists");
 		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-        Authenticator instance = ESAPI.authenticator();
 		String password = instance.generateStrongPassword();
 		instance.createUser(accountName, password, password);
 		assertTrue(instance.exists(accountName));
@@ -587,9 +610,8 @@ public class AuthenticatorTest extends TestCase {
      * Test of main method, of class org.owasp.esapi.Authenticator.
      * @throws Exception
      */
-    public void testMain() throws Exception {
+    @Test public void testMain() throws Exception {
         System.out.println("Authenticator Main");
-        Authenticator instance = ESAPI.authenticator();
         String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         String password = instance.generateStrongPassword();
         String role = "test";
