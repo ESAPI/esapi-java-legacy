@@ -8,7 +8,7 @@ import org.owasp.esapi.Logger;
 // I think that really depends on how much OWASP ESAPI plans on tracking changes to this
 // version vs. if the plan was just to fork from it and maintain OWASP's own version.
 // At this point, I think I prefer split from tracking Harder's original, but I'm easily
-// persuaded otherwise. - Kevin Wall
+// persuaded otherwise. (In fact, we have already done so w/ decodeToObject().) - Kevin Wall
 
 /**
  * <p>Encodes and decodes to and from Base64 notation.</p>
@@ -136,6 +136,12 @@ public class Base64
 	  */
 	 public final static int ORDERED = 32;
     
+     /**
+      * System property name that must be set to true in order to invoke {@code Base64.decodeToObject()}.
+      * @see https://github.com/ESAPI/esapi-java-legacy/issues/354
+      * @see http://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-application-have-in-common-this-vulnerability/
+      */
+     public final static String ENABLE_UNSAFE_SERIALIZATION = "org.owasp.esapi.enableUnsafeSerialization"; // Do NOT change!
     
 /* ********  P R I V A T E   F I E L D S  ******** */  
     
@@ -1091,6 +1097,15 @@ public class Base64
      *      untrusted data from a string and deserialize it into
      *      an object can potentially result in remote command
      *      injection vulnerabilities. Use at your own risk!
+     * </p><p><b>IMPORTANT BACKWARD COMPATIBILITY NOTICE</b></br>
+     * Because this static method can easily be used as an attack vector
+     * for those passing in deserialized objects, in a manner similar to the
+     * <a href="https://issues.apache.org/jira/browse/COLLECTIONS-580">Apache Commons Collections InvokerTransformer</a>
+     * issue, we are requiring that the system property
+     * {@code org.owasp.esapi.enableUnsafeSerialization}
+     * be set to "true" in order for this method to be successfully invoked.
+     * We apologize for the inconvenience this may cause in breaking anyone's
+     * application, but we feel that it is for the greater good.
      * </p>
      *
      * @param encodedObject The Base64 data to decode
@@ -1110,6 +1125,16 @@ public class Base64
     @Deprecated
     public static Object decodeToObject( String encodedObject )
     {
+        // We will do better when we attempt this again, allowing for a second argument
+        // to specify some sort of a collection of white-listed classes. Until then...
+        // See: http://www.ibm.com/developerworks/library/se-lookahead/ for how-to.
+        if ( ! "true".equalsIgnoreCase( System.getProperty( ENABLE_UNSAFE_SERIALIZATION ) ) ) {
+            throw new UnsupportedOperationException(
+                "Deserialization by Base64.decodeToObject(String) is disabled for security reasons. " +
+                "To re-enable it, set the system property '" + ENABLE_UNSAFE_SERIALIZATION + "' to 'true'." +
+                "For details, see: https://github.com/ESAPI/esapi-java-legacy/issues/354");
+        }
+
         // Decode and gunzip if necessary
         byte[] objBytes = decode( encodedObject );
         
