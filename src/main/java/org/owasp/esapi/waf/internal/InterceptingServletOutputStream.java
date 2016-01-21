@@ -56,7 +56,10 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
 		 * the prefix and suffix small for less processing. The "oew" is intended
 		 * to stand for "OWASP ESAPI WAF" and the "hop" for HTTP output.
 		 */
-		this.out = new RandomAccessFile ( File.createTempFile("oew", ".hop"), "rw" ); 
+		File tempFile= File.createTempFile("oew", ".hop");
+		this.out = new RandomAccessFile (tempFile, "rw" ); 
+		tempFile.deleteOnExit();
+		
 	}
 
 	public void reset() throws IOException {
