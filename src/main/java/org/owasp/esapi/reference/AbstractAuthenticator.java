@@ -96,7 +96,9 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
      * @return the user from session or null if no user is found in the session
      */
     protected User getUserFromSession() {
-        HttpSession session = ESAPI.httpUtilities().getCurrentRequest().getSession(false);
+    	HTTPUtilities httpUtils = ESAPI.httpUtilities();
+    	HttpServletRequest req = httpUtils.getCurrentRequest();
+        HttpSession session = req.getSession(false);
         if (session == null) return null;
         return ESAPI.httpUtilities().getSessionAttribute(USER);
     }

@@ -15,24 +15,38 @@
  */
 package org.owasp.esapi.reference;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.owasp.esapi.*;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.owasp.esapi.Authenticator;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.HTTPUtilities;
+import org.owasp.esapi.User;
 import org.owasp.esapi.codecs.Hex;
 import org.owasp.esapi.crypto.CipherText;
-import org.owasp.esapi.errors.*;
+import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.EnterpriseSecurityException;
+import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
 import org.owasp.esapi.util.FileTestUtils;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The Class HTTPUtilitiesTest.
@@ -462,6 +476,7 @@ public class HTTPUtilitiesTest extends TestCase
 		request.addParameter("username", accountName);
 		request.addParameter("password", password);
 		MockHttpServletResponse response = new MockHttpServletResponse();
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
 		instance.login( request, response);
 
 		int maxAge = ( 60 * 60 * 24 * 14 );
