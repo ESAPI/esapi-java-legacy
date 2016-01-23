@@ -16,7 +16,6 @@
 package org.owasp.esapi.reference.crypto;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.Properties;
@@ -24,8 +23,6 @@ import java.util.Properties;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.owasp.esapi.errors.EncryptionException;
 
 /**
  * The Class EncryptedPropertiesTest.
