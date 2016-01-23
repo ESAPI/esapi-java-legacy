@@ -15,14 +15,17 @@
  */
 package org.owasp.esapi.reference.crypto;
 
+import static org.junit.Assert.*;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 
 /**
  * The Class EncryptedPropertiesTest.
@@ -31,7 +34,7 @@ import junit.framework.TestSuite;
  *         <a href="http://www.codemagi.com">CodeMagi, Inc.</a>
  * @since October 8, 2010
  */
-public class EncryptedPropertiesUtilsTest extends TestCase {
+public class EncryptedPropertiesUtilsTest {
 
 	private static final String KEY1	= "quick";
 	private static final String VALUE1	= "brown fox";
@@ -47,19 +50,9 @@ public class EncryptedPropertiesUtilsTest extends TestCase {
 	private static final String ENCRYPTED_FILENAME_2	= "encrypted.2.properties";
 
 	/**
-	 * Instantiates a new encrypted properties test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public EncryptedPropertiesUtilsTest(String testName) {
-		super(testName);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
-	protected void setUp() throws Exception {
+	@Before public void setUp() throws Exception {
 		//write an initial plaintext properties file
 		Properties props = new Properties();
 		props.setProperty(KEY3, VALUE3);
@@ -71,22 +64,11 @@ public class EncryptedPropertiesUtilsTest extends TestCase {
 	/**
 	 * {@inheritDoc}
 	 */
-	protected void tearDown() throws Exception {
+	@After public void tearDown() throws Exception {
 		File[] delFiles = new File[] { new File(PLAINTEXT_FILENAME), new File(ENCRYPTED_FILENAME_1), new File(ENCRYPTED_FILENAME_2) };
         for ( File f : delFiles ) {
             f.deleteOnExit();
         }
-	}
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(EncryptedPropertiesUtilsTest.class);
-
-		return suite;
 	}
 
 	/**
@@ -98,7 +80,7 @@ public class EncryptedPropertiesUtilsTest extends TestCase {
 	 *
 	 * @throws Exception Any exception that occurs
 	 */
-	public void testCreateNew() throws Exception {
+	@Test public void testCreateNew() throws Exception {
 
 		//create a new properties with no input
 		Properties props = EncryptedPropertiesUtils.loadProperties(null, null);
@@ -130,7 +112,7 @@ public class EncryptedPropertiesUtilsTest extends TestCase {
 	 *
 	 * @throws Exception Any exception that occurs
 	 */
-	public void testLoadPlaintextAndEncrypt() throws Exception {
+	@Test public void testLoadPlaintextAndEncrypt() throws Exception {
 
 		//load the plaintext properties file
 		Properties props = EncryptedPropertiesUtils.loadProperties(PLAINTEXT_FILENAME, false);
@@ -159,7 +141,7 @@ public class EncryptedPropertiesUtilsTest extends TestCase {
 	 *
 	 * @throws Exception Any exception that occurs
 	 */
-	public void testLoadEncryptedAndAdd() throws Exception {
+	@Test public void testLoadEncryptedAndAdd() throws Exception {
 
 		//load the plaintext properties file
 		Properties props = EncryptedPropertiesUtils.loadProperties(ENCRYPTED_FILENAME_1, true);
