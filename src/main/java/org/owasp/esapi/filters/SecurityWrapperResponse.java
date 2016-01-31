@@ -172,7 +172,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
             String strippedValue = StringUtilities.stripControls(value);
             String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", 20, false);
             String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false);
-            getHttpServletResponse().setHeader(safeName, safeValue);
+            getHttpServletResponse().addHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
         }
