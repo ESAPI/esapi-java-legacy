@@ -166,7 +166,7 @@ public class UserTest extends TestCase {
 		try {
 			// Test for GitHub issue 288
 			user.changePassword(password2, oldPassword, oldPassword);
-			fail("Shouldn't be able to reuse original (initial) password.")
+			fail("Shouldn't be able to reuse original (initial) password.");
 		} catch( AuthenticationException e ) {
 			// expected
 		}
