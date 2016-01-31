@@ -30,7 +30,7 @@
     </licenses>
 
     <name>ESAPI</name>
-    <url>http://www.esapi.org/</url>
+    <url>https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API</url>
     <description>The Enterprise Security API (ESAPI) project is an OWASP project
         to create simple strong security controls for every web platform.
         Security controls are not simple to build. You can read about the
@@ -70,14 +70,14 @@
     </mailingLists>
 
     <scm>
-        <connection>scm:svn:http://owasp-esapi-java.googlecode.com/svn/trunk</connection>
-        <developerConnection>scm:svn:https://owasp-esapi-java.googlecode.com/svn/trunk</developerConnection>
-        <url>http://code.google.com/p/owasp-esapi-java/source/checkout</url>
+        <connection>scm:git:git://github.com/ESAPI/esapi-java-legacy.git</connection>
+        <developerConnection>scm:git:git@github.com:ESAPI/esapi-java-legacy.git</developerConnection>
+        <url>https://github.com/ESAPI/esapi-java-legacy</url>
     </scm>
 
     <issueManagement>
-        <system>Google Code Issue Tracking</system>
-        <url>http://code.google.com/p/owasp-esapi-java/issues/list</url>
+        <system>GitHub Issue Tracking</system>
+        <url>https://github.com/ESAPI/esapi-java-legacy/issues</url>
     </issueManagement>
 
     <developers>
@@ -92,14 +92,14 @@
             <name>Chris Schmidt</name>
             <organization>Aspect Security</organization>
             <roles>
-                <role>Project Owner</role>
+                <role>Project Co-owner</role>
             </roles>
         </developer>
         <developer>
             <name>Kevin W. Wall</name>
             <organization>Wells Fargo</organization>
             <roles>
-                <role>Project Manager</role>
+                <role>Project Co-owner</role>
             </roles>
         </developer>
     </developers>
