@@ -1,0 +1,126 @@
+Release notes for ESAPI 2.1.0.1
+    Release date: 2016-Feb-??
+    -Kevin W. Wall <kevin.w.wall@gmail.com>
+
+Previous release: ESAPI 2.1.0, Sept 2013
+
+
+-----------------------------------------------------------------------------
+                GitHub Issues fixed in this release:
+                          35 issues closed
+
+32 - URLs in doc for HTTPUtilities.setNoCacheHeaders are wrong
+58 - Separate Crypto Related Properties into Separate File
+     Fixed as part of issue #350. Can be addressed by placing sensitive
+     ESAPI crypto properties into a separate properties file controlled by
+     the operations team and not checked into your SCM. For further details,
+     see documentation/ESAPI-configuration-user-guide.md and use system property
+     org.owasp.esapi.opsteam.
+96 - Need validation configuration enhancements
+103 - Make ESAPI configuration XML
+200 - DefaultHttpUtilities.sendRedirect should throw AccessControlException, not IOException
+205 - BaseValidationRule.assertValid(String context, String input) causes NPE if input is not valid.
+221 - IntrusionException should extend EnterpriseRuntimeException
+229 - printStackTrace when loading configuration file
+237 - how can we use esapi in java for validation,please see files attached containing java code and for errors
+261 - Could not set multiple cookies one by one at single request
+275 - Log4JLogger.java doesn't output correct file & line number because FQCN isn't forwarded to Log4J
+276 - Patch for /branches/2.1/src/main/java/org/owasp/esapi/reference/DefaultExecutor.java
+287 - Patch for /branches/2.1/src/main/java/org/owasp/esapi/reference/FileBasedAuthenticator.java
+288 - Patch for /trunk/src/test/java/org/owasp/esapi/reference/UserTest.java
+289 - ClickjackFilter after doFilter
+306 - Canonicalizing "&#37;Device&#37; changes the meaning of the input string
+313 - Insecure default configuation for Executor.ApprovedExecutables in ESAPI.properties file
+315 - ValidatorTest.testIsValidDate fails if default locale is not US
+318 - Incorrect Equality test on floating point values
+319 - Resource leak: FileInputStream is not closed on method exit
+321 - Unsynchronized get method, synchronized set method
+322 - RequestRateThrottleFilter may not work as expected with hits=1 or hits=2
+323 - PolicyFactory Sanitize method weird output
+328 - StringUtils.union broken which has minor impact on CSRF Protection and random file name generation
+330 - setHeader blocks legitimate headers due to header name size limit being too low
+331 - Log4j configuration with no root level causes NPE in Log4jLogger.java
+334 - Regex in ESAPI.properties is not considering few of the french characters
+336 - Log4JLogger.java doesn't output correct file & line number-Similar issue as reported in Issue 268
+344 - JUnit test failure in ValidatorTest.testGetValidSafeHTML()
+345 - JUnit test failure in ValidatorTest.testIsValidDate()
+347 - Fixes #345 - JUnit test failure in ValidatorTest.testIsValidDate()
+349 - Package correctly the esapi.tld into ESAPI jar
+350 - [ESAPI Spring Code Sprint – May / June 2015] Implementation of requirements
+351 - getHeader length limit error
+354 - Add stern javadoc warning about Base64.decodeToObject() being unsafe and mark method as deprecated.
+      Note: This method no longer functions unless the system property org.owasp.esapi.enableUnsafeSerialization
+      is set to "true". This breaks backward compatibility in favor of taking a more secure posture.
+355 - Temp files created by org.owasp.esapi.waf.internal.InterceptingServletOutputStream not removed by WAF JUnit tests
+356 - Make end-of-line terminators consistent for .java, .xml, and other ESAPI source files.
+359 - CodecTest unit tests never test with a populated char array.
+
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release not tracked via GitHub issues
+
+* Miscellaneous minor javadoc fixes and updates.
+* Fixed grammatical error in CipherTextSerializer class error message.
+* Upgraded versions of several ESAPI dependencies (i.e., 3rd party jars), including several that had unpatched CVEs.
+* Added the Maven plug-in for OWASP Dependency Check so 3rd party dependencies can be kept up-to-date.
+* Added .gitignore file so that certain files won't get accidentally commited such as IDE files.
+* Added .gitattributes file so to help resolve end-of-line issues. (Part of issue 356.)
+* Added new documentation (documentation/ESAPI-configuration-user-guide.md) describing new ESAPI configuration feature.
+* Changed many assertions in ESAPI crypto to explicit runtime checks that
+  throw IllegalArgumentException instead.
+
+-----------------------------------------------------------------------------
+                    ATTENTION: Other Important Notes
+
+The JUnit test AuthenticatorTest.setCurrentUser() is periodically failing
+due to an apparent race condition either in the test itself or in
+FileBasedAuthenticator. See GitHub issue #360 for details, including
+why we don't think it is worth holding up the release for.
+
+-----------------------------------------------------------------------------
+
+                Contributors for ESAPI 2.1.0.1 release
+
+Notice: My appologies if I've missed anyone, but you did have an opportunity
+        to send me your names. (I solicited for contributors names to emails
+        to the ESAPI-Dev and ESAPI-User mailing lists sent on 1/23/2016.)
+        If I missed you and you contributed to THIS release, please send
+        me an email with your first and last name and what your SPECIFIC
+        contribution was and I will see you name is added to this list.
+                                                    - Kevin W. Wall
+
+Project co-leaders
+    Kevin W. Wall (kwwall)
+    Chris Schmidt (chrisisbeef)
+
+Special shout-outs to:
+    Matt Seil (xeno6696)
+    Jeremiah Stacey (jeremiahjstacey)
+
+Special contributions:
+    ESAPI Hackathon participants - November 18, 2014 - January 20, 2014
+        Daniel Amodio
+        Eric Kobrin
+        Eric Citaire
+        Eamonn Washington
+        John Melton
+        Special thanks to Samantha Groves for assisting with the ESAPI hackathon
+
+    Professor and students involved in ESAPI Spring Code Sprint (May - June, 2015):
+        Marek Zachara - instructor
+        Patryk Bak - student
+        Marcin Siedlarz - student
+        Szymon Bobowiec - student
+        Karol Kapcia - student
+        Fabio Cerullo - OWASP board coordination for code sprint
+
+Other Contributors:
+    Karan Sanwal
+    Arpit Gupta
+    Constantino Cronemberger
+    Tàrin Gamberìni
+    Kad Dembele
+    Anthony Musyoki
+    Andrew VanLoo
+    Ashish Tripathy
