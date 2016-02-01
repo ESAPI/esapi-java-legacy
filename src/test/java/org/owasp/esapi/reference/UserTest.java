@@ -163,14 +163,15 @@ public class UserTest extends TestCase {
 		} catch( AuthenticationException e ) {
 			// expected
 		}
-        // Invalid test until we implement an actual password history!
-		// try {
-		// 	// Test for GitHub issue 288
-		// 	user.changePassword(password2, oldPassword, oldPassword);
-		// 	fail("Shouldn't be able to reuse original (initial) password.");
-		// } catch( AuthenticationException e ) {
-		//  // expected
-		// }
+		try {
+			// Test for GitHub issue 288; note that GitHub issue 287
+			// needed fixed first, because that's what made the password
+			// history work!
+			user.changePassword(password2, oldPassword, oldPassword);
+			fail("Shouldn't be able to reuse original (initial) password.");
+		} catch( AuthenticationException e ) {
+			// expected
+		}
 		assertTrue(user.verifyPassword(password2));
 		assertFalse(user.verifyPassword("badpass"));
 	}
