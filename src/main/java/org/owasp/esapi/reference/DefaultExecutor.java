@@ -143,9 +143,9 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             pb.redirectErrorStream(redirectErrorStream);
 
             if ( logParams ) {
-            	logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
+            	logger.debug(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
             } else {
-            	logger.warning(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " [sensitive parameters obscured] in " + workdir);
+            	logger.debug(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " [sensitive parameters obscured] in " + workdir);
             }
 
             final StringBuilder outputBuffer = new StringBuilder();
@@ -187,7 +187,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             	logger.warning( Logger.EVENT_FAILURE, "System command exited with non-zero status: " + exitValue );
             }
 
-            logger.warning(Logger.SECURITY_SUCCESS, "System command complete");
+            logger.debug(Logger.SECURITY_SUCCESS, "System command complete");
             return new ExecuteResult(exitValue, output, errors);
         } catch (IOException e) {
             throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
