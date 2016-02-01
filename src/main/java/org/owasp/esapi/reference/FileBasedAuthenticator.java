@@ -161,12 +161,12 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
      * Set the specified User's old password hashes.  This will not set the User's current password hash.
      *
      * @param user      the User whose old password hashes will be set
-     * @param oldHashes a list of the User's old password hashes     *
+     * @param oldHashes a list of the User's old password hashes
      */
     void setOldPasswordHashes(User user, List<String> oldHashes) {
         List<String> hashes = getAllHashedPasswords(user, true);
         if (hashes.size() > 1) {
-            hashes.removeAll(hashes.subList(1, hashes.size() - 1));
+            hashes.removeAll(hashes.subList(1, hashes.size()));
         }
         hashes.addAll(oldHashes);
     }
@@ -205,7 +205,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
     List<String> getOldPasswordHashes(User user) {
         List<String> hashes = getAllHashedPasswords(user, false);
         if (hashes.size() > 1) {
-            return Collections.unmodifiableList(hashes.subList(1, hashes.size() - 1));
+            return Collections.unmodifiableList(hashes.subList(1, hashes.size()));
         }
         return Collections.emptyList();
     }
