@@ -10,8 +10,13 @@ PROG=${0##*/}
 #   Default starting directory is Maven2 repository under $HOME ...
 starting_dir=$HOME/.m2/repository
 
+# If we are on Cygwin on Windows, the Maven repo may be under $USERPROFILE.
+if [[ $(uname -o) == "Cygwin" && ! -d "$starting_dir" ]]
+then    starting_dir="$(cygpath --unix ${USERPROFILE:-$HOME}/.m2/repository)"
+fi
+
 case "$1" in
--start) shift; starting_dir="$1"; shift ;;
+-start) shift; starting_dir="$1"; shift ;;  # Expected to be right if provided
 -\?)    echo "$USAGE" >&2; exit 2 ;;
 -*)     echo "$PROG: Unknown option: $1; treating as a jar pattern." >&2 ;;
 esac
@@ -25,5 +30,11 @@ esac
 
 # echo "Starting location: $starting_dir"   # DEBUG
 # echo "Jar pattern: $jar_pattern"          # DEBUG
-find "$starting_dir" -type f -name "$jar_pattern" -print |
-    egrep -v 'javadoc|sources'
+if [[ -d "$starting_dir" ]]
+then
+    find "$starting_dir" -type f -name "$jar_pattern" -print |
+        egrep -v 'javadoc|sources'
+else
+    echo "$PROG: Can't find starting directory for Maven repo: $starting_dir" >&2
+    exit 1
+fi

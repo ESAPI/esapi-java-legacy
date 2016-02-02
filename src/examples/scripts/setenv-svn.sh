@@ -1,6 +1,6 @@
 #/bin/bash
 # Purpose:  Use to set up environment to compile and run examples if ESAPI
-#           downloaded from the SVN repository.
+#           downloaded from the Svn or Git repository.
 # Usage:    From csh, tcsh:
 #               $ source ./setenv-svn.sh
 #           From most other *nix shells:
@@ -18,9 +18,9 @@
 esapi_classpath=".:\
 ../../../target/classes:\
 $(ls ../../../target/esapi-*.jar 2>&- || echo .):\
-$(./findjar.sh log4j-1.2.16.jar):\
-$(./findjar.sh commons-fileupload-1.2.jar):\
-$(./findjar.sh servlet-api-2.4.jar)"
+$(./findjar.sh log4j-1.2.17.jar):\
+$(./findjar.sh commons-fileupload-1.3.1.jar):\
+$(./findjar.sh servlet-api-2.5.jar)"
 
 esapi_resources="$(\cd ../../../configuration/esapi >&- 2>&- && pwd)"
 esapi_resources_test="$(\cd ../../../src/test/resources/esapi >&- 2>&- && pwd)"

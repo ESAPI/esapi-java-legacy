@@ -13,7 +13,7 @@
 # since the specific version of the library is delivered as part of the
 # ESAPI zip file. In this manner, we do not have to update this if these
 # versions change. For the record, at the time of this writing, these were
-# log4j-1.2.16.jar, commons-fileupload-1.2.jar, and servlet-api-2.4.jar.
+# log4j-1.2.17.jar, commons-fileupload-1.3.1.jar, and servlet-api-2.5.jar.
 esapi_classpath=".:\
 $(ls ../../../esapi*.jar):\
 $(./findjar.sh -start ../../../libs log4j-*.jar):\
