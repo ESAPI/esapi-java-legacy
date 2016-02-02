@@ -413,6 +413,9 @@ public class AuthenticatorTest {
 	 */
 	@Test public void testSetCurrentUser() throws AuthenticationException, InterruptedException {
 		System.out.println("setCurrentUser");
+        System.err.println("AuthenticatorTest.setCurrentUser(): This test " +
+                           "occasionally fails due to some undiscovered race condition. " +
+                           "This has been reported as GitHub issue #360. Patches to fix welcome.");
 		String user1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		String user2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
