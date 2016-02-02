@@ -1,13 +1,14 @@
 Release notes for ESAPI 2.1.0.1
     Release date: 2016-Feb-??
-    -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Chris Schmidt <chris.schmidt@owasp.org>
 
 Previous release: ESAPI 2.1.0, Sept 2013
 
 
 -----------------------------------------------------------------------------
                 GitHub Issues fixed in this release:
-                          35 issues closed
+                          36 issues closed
 
 32 - URLs in doc for HTTPUtilities.setNoCacheHeaders are wrong
 58 - Separate Crypto Related Properties into Separate File
@@ -23,6 +24,7 @@ Previous release: ESAPI 2.1.0, Sept 2013
 221 - IntrusionException should extend EnterpriseRuntimeException
 229 - printStackTrace when loading configuration file
 237 - how can we use esapi in java for validation,please see files attached containing java code and for errors
+254 - Patch for /trunk/src/main/java/org/owasp/esapi/reference/crypto/JavaEncryptor.java
 261 - Could not set multiple cookies one by one at single request
 275 - Log4JLogger.java doesn't output correct file & line number because FQCN isn't forwarded to Log4J
 276 - Patch for /branches/2.1/src/main/java/org/owasp/esapi/reference/DefaultExecutor.java
