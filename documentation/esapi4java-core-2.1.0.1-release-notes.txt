@@ -1,5 +1,5 @@
 Release notes for ESAPI 2.1.0.1
-    Release date: 2016-Feb-??
+    Release date: 2016-Feb-05
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Chris Schmidt <chris.schmidt@owasp.org>
 
