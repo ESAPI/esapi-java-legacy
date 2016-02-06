@@ -11,6 +11,9 @@ OWASP ESAPI (The OWASP Enterprise Security API) is a free, open source, web appl
 <b>What does Legacy mean?</b><br/>
 <p>This is the legacy branch of ESAPI which means it is an actively maintained branch of the project, however feature development for this branch will not be done. Features that have already been scheduled for the 2.x branch will move forward, but the main focus will be working on the ESAPI 3.x branch.
 
+<b>IMPORTANT NOTE:<b>
+The default branch for ESAPI legacy is now the 'develop' branch (rather than the 'master' branch), where future development, bug fixes, etc. will now be done. The 'master' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.1.0.1 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
+
 <b>Where can I find ESAPI 3.x</b><br/>
 https://github.com/ESAPI/esapi-java
 
