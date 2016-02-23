@@ -1,56 +1,35 @@
 package org.owasp.esapi.crypto;
 
 import static org.junit.Assert.*;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
-import junit.framework.Assert;
-import junit.framework.JUnit4TestAdapter;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.crypto.CipherSpec;
-import org.owasp.esapi.crypto.CipherText;
-import org.owasp.esapi.crypto.CryptoHelper;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.reference.crypto.CryptoPolicy;
 
+import junit.framework.Assert;
+import junit.framework.JUnit4TestAdapter;
+
 public class CipherTextTest {
 
-    private static final boolean POST_CLEANUP = true;
-    
 	private CipherSpec cipherSpec_ = null;
     private Cipher encryptor = null;
     private Cipher decryptor = null;
     private IvParameterSpec ivSpec = null;
-	
-    @BeforeClass public static void preCleanup() {
-    	try {
-            // These two calls have side-effects that cause FindBugs to complain.
-    		removeFile("ciphertext.ser");
-    		removeFile("ciphertext-portable.ser");
-    		// Do NOT remove this file...
-    		//		src/test/resource/ESAPI2.0-ciphertext-portable.ser
-    	} catch(Exception ex) {
-    		;	// Do nothing
-    	}
-    }
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+   
     
 	@Before
 	public void setUp() throws Exception {
@@ -59,18 +38,6 @@ public class CipherTextTest {
         byte[] ivBytes = null;
         ivBytes = ESAPI.randomizer().getRandomBytes(encryptor.getBlockSize());
         ivSpec = new IvParameterSpec(ivBytes);
-	}
-
-	@After
-	public void tearDown() throws Exception {
-	}
-	
-	@AfterClass public static void postCleanup() {
-	    if ( POST_CLEANUP ) {
-	            // These two calls have side-effects that cause FindBugs to complain.
-	        removeFile("ciphertext.ser");
-	        removeFile("ciphertext-portable.ser");
-	    }
 	}
 
 	/** Test the default CTOR */
@@ -205,11 +172,11 @@ public class CipherTextTest {
 	}
 
 	/** Test <i>portable</i> serialization. */
-	@Test public final void testPortableSerialization() {
+	@Test public final void testPortableSerialization() throws Exception{
 	    System.out.println("CipherTextTest.testPortableSerialization()starting...");
 	    String filename = "ciphertext-portable.ser";
-	    File serializedFile = new File(filename);
-	    serializedFile.delete();    // Delete any old serialized file.
+	    File serializedFile = tempFolder.newFile(filename);
+	  
 
 	    int keySize = 128;
 	    if ( CryptoPolicy.isUnlimitedStrengthCryptoAvailable() ) {
@@ -305,9 +272,9 @@ public class CipherTextTest {
 	/** Test Java serialization. */
 	@Test public final void testJavaSerialization() {
         String filename = "ciphertext.ser";
-        File serializedFile = new File(filename);
+      
         try {
-            serializedFile.delete();	// Delete any old serialized file.
+            File serializedFile = tempFolder.newFile(filename);
             
             CipherSpec cipherSpec = new CipherSpec(encryptor, 128);
 			cipherSpec.setIV(ivSpec.getIV());
@@ -317,13 +284,13 @@ public class CipherTextTest {
 			byte[] raw = encryptor.doFinal("This is my secret message!!!".getBytes("UTF8"));
 			CipherText ciphertext = new CipherText(cipherSpec, raw);
 
-            FileOutputStream fos = new FileOutputStream(filename);
+            FileOutputStream fos = new FileOutputStream(serializedFile);
             ObjectOutputStream out = new ObjectOutputStream(fos);
             out.writeObject(ciphertext);
             out.close();
             fos.close();
 
-            FileInputStream fis = new FileInputStream(filename);
+            FileInputStream fis = new FileInputStream(serializedFile);
             ObjectInputStream in = new ObjectInputStream(fis);
             CipherText restoredCipherText = (CipherText)in.readObject();
             in.close();
@@ -361,10 +328,7 @@ public class CipherTextTest {
 		} catch (InvalidAlgorithmParameterException ex) {
 			ex.printStackTrace(System.err);
 			fail("testJavaSerialization(): Unexpected InvalidAlgorithmParameterException: " + ex);
-		}  finally {
-		    // FindBugs complains that we are ignoring this return value. We really don't care.
-            serializedFile.delete();
-        }
+		} 
 	}
 	
 	/**
@@ -374,17 +338,5 @@ public class CipherTextTest {
 	 */
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(CipherTextTest.class);
-	}
-	
-	private static void removeFile(String fname) {
-    	try {
-    		if ( fname != null ) {
-    			File f = new File(fname);
-    			// Findbugs complains about ignoring this return value. Too bad.
-    			f.delete();
-    		}
-    	} catch(Exception ex) {
-    		;	// Do nothing
-    	}
 	}
 }
