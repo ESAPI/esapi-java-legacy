@@ -15,16 +15,17 @@
  */
 package org.owasp.esapi.reference.crypto;
 
+import static org.junit.Assert.*;
+
 import java.io.*;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Properties;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.EncryptionRuntimeException;
 
@@ -35,50 +36,18 @@ import org.owasp.esapi.errors.EncryptionRuntimeException;
  *         <a href="http://www.codemagi.com">CodeMagi, Inc.</a>
  * @since October 8, 2010
  */
-public class ReferenceEncryptedPropertiesTest extends TestCase {
+public class ReferenceEncryptedPropertiesTest {
 
-	/**
-	 * Instantiates a new encrypted properties test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public ReferenceEncryptedPropertiesTest(String testName) {
-		super(testName);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void setUp() throws Exception {
-		// none
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	protected void tearDown() throws Exception {
-		// none
-	}
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ReferenceEncryptedPropertiesTest.class);
-
-		return suite;
-	}
-
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
+	
 	/**
 	 * Test of getProperty method, of class org.owasp.esapi.EncryptedProperties.
 	 * 
 	 * @throws EncryptionException
 	 *             the encryption exception
 	 */
-	public void testGetProperty() throws EncryptionException {
+	@Test public void testGetProperty() throws EncryptionException {
 		System.out.println("getProperty");
 		ReferenceEncryptedProperties instance = new ReferenceEncryptedProperties();
 		String name = "name";
@@ -95,7 +64,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	 * @throws EncryptionException
 	 *             the encryption exception
 	 */
-	public void testSetProperty() throws EncryptionException {
+	@Test public void testSetProperty() throws EncryptionException {
 		System.out.println("setProperty");
 		ReferenceEncryptedProperties instance = new ReferenceEncryptedProperties();
 		String name = "name";
@@ -131,7 +100,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	/**
 	 * Test the behavior when the requested key does not exist.
 	 */
-	public void testNonExistantKeyValue() throws Exception
+	@Test public void testNonExistantKeyValue() throws Exception
 	{
 		ReferenceEncryptedProperties instance = new ReferenceEncryptedProperties();
 		assertNull(instance.getProperty("not.there"));
@@ -140,7 +109,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	/**
 	 * Test of keySet method, of class org.owasp.esapi.EncryptedProperties.
 	 */
-	public void testKeySet() throws Exception
+	@Test public void testKeySet() throws Exception
 	{
 		boolean sawTwo = false;
 		boolean sawOne = false;
@@ -175,7 +144,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	/**
 	 * Test storing and loading of encrypted properties.
 	 */
-	public void testStoreLoad() throws Exception
+	@Test public void testStoreLoad() throws Exception
 	{
 		ReferenceEncryptedProperties toLoad = new ReferenceEncryptedProperties();
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -234,7 +203,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	/**
 	 * Test storing and loading of encrypted properties.
 	 */
-	public void testStoreLoadWithReader() throws Exception
+	@Test public void testStoreLoadWithReader() throws Exception
 	{
 /*
 		//create an EncryptedProperties to store
@@ -300,7 +269,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	/**
 	 * Test overridden put method.
 	 */
-	public void testPut() throws Exception
+	@Test public void testPut() throws Exception
 	{
 		ReferenceEncryptedProperties props = new ReferenceEncryptedProperties();
 
@@ -367,7 +336,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	 * Test that ReferenceEncryptedProperties can be properly constructed
 	 * with an instance of Properties.
 	 */
-	public void testConstructWithProperties() {
+	@Test public void testConstructWithProperties() {
 		Properties props = new Properties();
 		props.setProperty("one", "two");
 		props.setProperty("two", "three");
@@ -421,7 +390,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	 * Test that ReferenceEncryptedProperties can be properly constructed
 	 * with an instance of EncryptedProperties.
 	 */
-	public void testConstructWithEncryptedProperties() throws Exception {
+	@Test public void testConstructWithEncryptedProperties() throws Exception {
 		ReferenceEncryptedProperties props = new ReferenceEncryptedProperties();
 		props.setProperty("one", "two");
 		props.setProperty("two", "three");
@@ -475,13 +444,13 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 	/**
 	 * Test overridden methods from Properties and Hashtable.
 	 */
-	public void testOverriddenMethods() throws Exception {
+	@Test public void testOverriddenMethods() throws Exception {
 		Properties props = new ReferenceEncryptedProperties();
 		props.setProperty("one", "two");
 		props.setProperty("two", "three");
 		props.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
 
-		FileOutputStream out = new FileOutputStream("ReferenceEncryptedProperties.test.txt");
+		FileOutputStream out = new FileOutputStream(tempFolder.newFile("ReferenceEncryptedProperties.test.txt"));
 		PrintStream ps = new PrintStream(out);
 		try {
 			props.list(ps);
@@ -490,7 +459,7 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 		    assertTrue( e instanceof UnsupportedOperationException );
 		}
 
-		PrintWriter pw = new PrintWriter(new FileWriter("test.out"));
+		PrintWriter pw = new PrintWriter(new FileWriter(tempFolder.newFile("test.out")));
 		try {
 			props.list(pw);
 			fail("testOverriddenMethods(): list(PrintWriter) did not result in expected Exception");
@@ -525,11 +494,6 @@ public class ReferenceEncryptedPropertiesTest extends TestCase {
 		} catch( Exception e ) {
 		    assertTrue( e instanceof UnsupportedOperationException );
 		}
-
-        File f1 = new File("test.out");
-        f1.delete();
-        File f = new File("ReferenceEncryptedProperties.test.txt");
-        f.delete();
 	}
 
 }
