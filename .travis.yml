@@ -1,5 +1,10 @@
 language: java
 jdk:
-  - openjdk7
-  - oraclejdk7
-  - oraclejdk8
+- openjdk7
+- oraclejdk7
+- oraclejdk8
+env:
+  global:
+    secure: Y9wWuSnUDNhnv+a852iwWauBYggZCtbFM0Ho2hns7ZKcoTduSRENy5UGQsomVdOd+ONCNDsoCSIUjRlBiPafsh+w2Y3TVX14PamIiVsxtFFoOdAtAo4cYqnbFSuQOcX71ZANxCltdhpgH/+w7TVfbtqpW7+Z4TCiwTx7MJZmt4d19XzjSEcY1HK/fZJL4Xnw8XistdOKatk4TIFd4lnmp5lfbveJ/5LtgqI39bCZr5XgS9cIxBNE/9oR4k9yf8EIrI49UQKsMV90aM38iRCXA8/pw4dnPh4ASph//v8oScI0OLwog0voGTExOwQ+Yf/OvANQRNCrWBS6tw34XMs5amJ56E9DhsWMHfu5gRHtHnxP6gE9Hjd/J8IpyeF2hIAmdo3CWru2XqcWKOIsAsXYHlQMSpMiYTnc3AevfrUKUOx0ghVIsGbI5XtCrzJ1GZiD9Ioi2rDCZC67w9XC+0YX2No/bDxjTKNU5Np6asT4rsk4OHnchFMWnuIyO+kUFZZ3EMRP9y0GtflK1mafuSOMQ7WLBaEyxcxKBayMMZIMUtdpsKbBFGoRF98cTvYn7gjktIzy5m9oRQjUIVAZfBvHQAQz2O5WiW/t7PvxdxFukadQDXgQm3SESEBsz2w7NrFamoITgdKmHjC94YkbnY0jtHORpMVCbfF0Qb0gEwop9aY=
+after_success:
+  - mvn clean cobertura:cobertura coveralls:report
