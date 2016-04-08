@@ -5,3 +5,7 @@
 *.swp
 *~
 *.iml
+.idea/
+*.iws
+*.eml
+out/
