@@ -5,3 +5,7 @@
 *.swp
 *~
 *.iml
+
+# IntelliJ
+
+/.idea
