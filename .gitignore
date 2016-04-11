@@ -1,3 +1,4 @@
+# Eclipse / IntelliJ / Maven
 /target
 /.settings/**
 .classpath
@@ -9,3 +10,8 @@
 *.iws
 *.eml
 out/
+
+# Leftover test files
+ciphertext-portable.ser
+ReferenceEncryptedProperties.test.txt
+test.out
