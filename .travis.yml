@@ -3,6 +3,15 @@ jdk:
 - oraclejdk7
 env:
   global:
-    secure: Y9wWuSnUDNhnv+a852iwWauBYggZCtbFM0Ho2hns7ZKcoTduSRENy5UGQsomVdOd+ONCNDsoCSIUjRlBiPafsh+w2Y3TVX14PamIiVsxtFFoOdAtAo4cYqnbFSuQOcX71ZANxCltdhpgH/+w7TVfbtqpW7+Z4TCiwTx7MJZmt4d19XzjSEcY1HK/fZJL4Xnw8XistdOKatk4TIFd4lnmp5lfbveJ/5LtgqI39bCZr5XgS9cIxBNE/9oR4k9yf8EIrI49UQKsMV90aM38iRCXA8/pw4dnPh4ASph//v8oScI0OLwog0voGTExOwQ+Yf/OvANQRNCrWBS6tw34XMs5amJ56E9DhsWMHfu5gRHtHnxP6gE9Hjd/J8IpyeF2hIAmdo3CWru2XqcWKOIsAsXYHlQMSpMiYTnc3AevfrUKUOx0ghVIsGbI5XtCrzJ1GZiD9Ioi2rDCZC67w9XC+0YX2No/bDxjTKNU5Np6asT4rsk4OHnchFMWnuIyO+kUFZZ3EMRP9y0GtflK1mafuSOMQ7WLBaEyxcxKBayMMZIMUtdpsKbBFGoRF98cTvYn7gjktIzy5m9oRQjUIVAZfBvHQAQz2O5WiW/t7PvxdxFukadQDXgQm3SESEBsz2w7NrFamoITgdKmHjC94YkbnY0jtHORpMVCbfF0Qb0gEwop9aY=
+    - secure: "aDhH/FBa9CSX3P3UucVJGghHkzHwmw8DhEdklUnb5HI44CpQs5rVNBQLG6ClqrJGl5BEghaHG9mQ0alVrZoqGCR4UA0qhGCmeRyo+SL7z44tHFq/VdWbZJcnSXeq+CzGc4rgkIg2XBrgGKKq5EfUxXjsYQUA/mIslWhnmQtfn0gjiobJkOdGAOJ4RY6cAyTtgNbv8AZg71hnPDusz+F/Somy1GPp2oFW0gAJyOUbDqol6bx8ajTl/+NJkQL9uSlUEGqyeMwXGW0Z901Vbn+Btwl7QtnrSFxOOOlQSUIAFGKTqAt/DzOeKi0Guv5uE4nqR50veOge5StbpgDqTq6a101DYNTyMFeE4plTNKHawnnyMe7v0yTDsnk+PeeSe8hkkdqiRLiBufriVnlzlfQt9TbWfE7aRhy6U0wqvlMvMgOOmXl5+eyLf1CtdRCbWeh2eZFISbD35y8EZbGY/bP33sC8jHlWROtykdMkVzcZ6N+mP+pB+SSqy+5hUMFUCDKyzRoIjHioVJS0S+Ul7CpEeLNKTy23IzO5VSh9dysH+hf+dbdAhgEe/XBEpUxZnV400fww5LW+vAlDpY+QwqdzwpabofTYaRfyRT7nQC3qAgMrQZopqwehdKyOTgpGIKM4lqqsSLz0F/LZ57fUh8DD2sZl2M4VKL6SQ3KPEM+DC/w="
 after_success:
   - mvn clean cobertura:cobertura coveralls:report
+addons:
+  coverity_scan:
+    project:
+      name: "bkimminich/esapi-java-legacy"
+      description: "OWASP ESAPI 2.x (Legacy) build submitted via Travis CI"
+    notification_email: bjoern.kimminich@owasp.org
+    build_command_prepend: "mvn clean"
+    build_command: "mvn assemble"
+    branch_pattern: coverity_scan
