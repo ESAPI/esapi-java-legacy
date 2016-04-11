@@ -13,5 +13,5 @@ addons:
       description: "OWASP ESAPI 2.x (Legacy) build submitted via Travis CI"
     notification_email: bjoern.kimminich@owasp.org
     build_command_prepend: "mvn clean"
-    build_command: "mvn assemble"
+    build_command: "mvn -DskipTests=true compile"
     branch_pattern: coverity_scan
