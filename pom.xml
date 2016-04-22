@@ -250,8 +250,16 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>configuration/META-INF</directory>
+                <targetPath>META-INF</targetPath>
+            </resource>
+    </resources>
     </build>
 
     <reporting>
