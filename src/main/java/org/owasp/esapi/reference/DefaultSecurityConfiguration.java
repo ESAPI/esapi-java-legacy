@@ -1067,8 +1067,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public long getRememberTokenDuration() {
-        int days = getESAPIProperty( REMEMBER_TOKEN_DURATION, 14 );
-        return (long) (1000 * 60 * 60 * 24 * days);
+        long days = getESAPIProperty( REMEMBER_TOKEN_DURATION, 14 );
+        return (1000 * 60 * 60 * 24 * days);
     }
 
     /**
