@@ -104,6 +104,7 @@ public class CipherTextSerializer {
         int ciphertextLen = rawCiphertext.length;
         assert ciphertextLen >= 1 : "Raw ciphertext length must be >= 1 byte.";
         byte[] mac = cipherText_.getSeparateMAC();
+        assert mac.length > 0 : "MAC lenght is zero";
         assert mac.length < Short.MAX_VALUE :
                             "MAC length too large. Max is " + Short.MAX_VALUE;
         short macLen = (short) mac.length;

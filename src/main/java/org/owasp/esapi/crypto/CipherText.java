@@ -668,7 +668,7 @@ public final class CipherText implements Serializable {
      */
     public byte[] getSeparateMAC() {
         if ( separate_mac_ == null ) {
-            return null;
+            return new byte[0];
         }
         byte[] copy = new byte[ separate_mac_.length ];
         System.arraycopy(separate_mac_, 0, copy, 0, separate_mac_.length);
