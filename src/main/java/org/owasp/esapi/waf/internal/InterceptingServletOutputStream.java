@@ -117,7 +117,7 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
 				
 				byte[] buff = new byte[FLUSH_BLOCK_SIZE];
 				
-				for(int i=0;i<out.length();) {
+				for(long i=0;i<out.length();) {
 					
 					long currentPos = out.getFilePointer();
 					long totalSize = out.length();
