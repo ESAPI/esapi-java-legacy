@@ -109,6 +109,8 @@ public class BeanShellRule extends Rule {
 		while( (line=br.readLine()) != null ) {
 			sb.append(line + System.getProperty("line.separator"));
 		}
+
+		br.close();
 		
 		return sb.toString();
 	}
