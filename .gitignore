@@ -1,3 +1,4 @@
+# Eclipse / IntelliJ / Maven / backup editor files
 /target
 /.settings/**
 .classpath
@@ -5,7 +6,12 @@
 *.swp
 *~
 *.iml
+.idea/
+*.iws
+*.eml
+out/
 
-# IntelliJ
-
-/.idea
+# Leftover test files
+ciphertext-portable.ser
+ReferenceEncryptedProperties.test.txt
+test.out
