@@ -26,14 +26,14 @@ https://github.com/ESAPI/esapi-java
 Fork and submit a pull request! Simple as pi!
 
 <b>What happened to Google code?</b><br/>
-In mid-2014 ESAPI Migrated all code to GitHub, in November we started using JIRA/Confluence. 
+In mid-2014 ESAPI Migrated all code to GitHub. This migration was completed in November 2014.
 
 <b>What about the issues still located on Google Code</b><br/>
-We will be migrating the issues from Google Code to JIRA as time allows, in the meantime - if you would like to work on a Google Code issue, please create a new issue in JIRA and reference the Google Code issue in the issue Description.
+All issues from Google Code have been migrated to GitHub issues. We have a JIRA/Confluence instance allocated to us, but it has not be configured to synchronize with the GitHub issues, and thus is should not be used. JIRA is fine, but if we can't have it synchronized with GitHub issues (which is where the majority of our users report issues), it is not usuable. As developers, we do not want to spent time having to close issues from multiple bug-tracking sites. Therefore, until this synchronization happens (see GitHub issue #371), please ONLY use GitHub for reporting bugs.
 
 Wiki: https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
 
-Nightly Build: https://esapi.ci.cloudbees.com
+Nightly Build: Travis CI - https://travis-ci.org/bkimminich/esapi-java-legacy
 
 ~~JIRA: https://owasp-esapi.atlassian.net/browse/ESAPILEG~~<br />Issues: Until further notice, use the GitHub issues for reporting bugs and enhancement requests.
 
