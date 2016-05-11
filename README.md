@@ -38,10 +38,13 @@ Nightly Build: Travis CI - https://travis-ci.org/bkimminich/esapi-java-legacy
 ~~JIRA: https://owasp-esapi.atlassian.net/browse/ESAPILEG~~<br />Issues: Until further notice, use the GitHub issues for reporting bugs and enhancement requests.
 
 
-Documentation: https://owasp-esapi.atlassian.net/wiki/display/ESAPILEG/ESAPI+Legacy (Coming Soon)
+Documentation: https://owasp-esapi.atlassian.net/wiki/display/ESAPILEG/ESAPI+Legacy (Coming Soon), for now find general documentation under the 'documentation/' directory, and the latest Javadoc under https://www.javadoc.io/doc/org.owasp.esapi/esapi/
 
 Realtime Support available on our IRC Channel:<br/>
 Server: irc.freenode.net<br/>
 Channel: #esapi<br/>
 Webchat http://webchat.freenode.net/
 
+Mailing lists:
+[ESAPI-Users mailing list](https://lists.owasp.org/mailman/listinfo/esapi-user/) and
+[ESAPI-Developers mailing list](https://lists.owasp.org/mailman/listinfo/esapi-dev/)
