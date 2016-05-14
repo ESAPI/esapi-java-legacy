@@ -22,8 +22,8 @@ The default branch for ESAPI legacy is now the 'develop' branch (rather than the
 <b>Where can I find ESAPI 3.x</b><br/>
 https://github.com/ESAPI/esapi-java
 
-<b>How can I contribute or fix bugs?</b><br/>
-Fork and submit a pull request! Simple as pi!
+<b>How can I contribute or help with fix bugs?</b><br/>
+Fork and submit a pull request! Simple as pi! We generally only accept bug fixes, not new features because as a legacy project, we don't intend on adding new features, although we may make exceptions. If you wish to propose a new feature, the best place to discuss it is via the ESAPI-DEV mailing list mentioned below. Note that we vet all pull requests, including coding style of any contributions; use the same coding style found in the files you are already editing.
 
 <b>What happened to Google code?</b><br/>
 In mid-2014 ESAPI Migrated all code to GitHub. This migration was completed in November 2014.
