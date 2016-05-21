@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.Authenticator;
@@ -47,7 +49,6 @@ import org.owasp.esapi.util.FileTestUtils;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 /**
  * The Class HTTPUtilitiesTest.
  * 
@@ -465,7 +466,7 @@ public class HTTPUtilitiesTest extends TestCase
 	 *
 	 * @throws org.owasp.esapi.errors.AuthenticationException
 	 */
-	public void testSetRememberToken() throws AuthenticationException {
+	public void testDeprecatedSetRememberToken() throws AuthenticationException {
 		System.out.println("setRememberToken");
 		Authenticator instance = (Authenticator)ESAPI.authenticator();
 		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
@@ -484,6 +485,41 @@ public class HTTPUtilitiesTest extends TestCase
 		// Can't test this because we're using safeSetCookie, which sets a header, not a real cookie!
 		// String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
 		// assertEquals( user.getRememberToken(), value );
+	}
+	
+	/**
+	 *
+	 * @throws org.owasp.esapi.errors.AuthenticationException
+	 */
+	public void testSetRememberToken() throws Exception {
+		System.out.println("setRememberToken");
+		Authenticator instance = (Authenticator)ESAPI.authenticator();
+		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+		String password = instance.generateStrongPassword();
+		User user = instance.createUser(accountName, password, password);
+		user.enable();
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.addParameter("username", accountName);
+		request.addParameter("password", password);
+		HttpServletResponse response = new MockHttpServletResponse();
+		ESAPI.httpUtilities().setCurrentHTTP(request, response);
+		instance.login( request, response);
+
+		int maxAge = ( 60 * 60 * 24 * 14 );
+
+		ESAPI.httpUtilities().setRememberToken( request, response, maxAge, "domain", "/" );
+		
+		Field field = response.getClass().getDeclaredField("cookies");
+		field.setAccessible(true);
+		List<Cookie> cookies = (List<Cookie>) field.get(response);
+		Cookie cookie = null;
+		for(Cookie c: cookies){
+			if(c.getName().equals(HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME)){
+				cookie = c; 
+				break;
+			}
+		}
+		assertEquals(HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, cookie.getName());
 	}
 
 	public void testGetSessionAttribute() throws Exception {

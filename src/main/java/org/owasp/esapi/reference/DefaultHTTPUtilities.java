@@ -945,6 +945,36 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			return null;
 		}
 	}
+	
+	
+	public String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path){
+		String rval = "";
+		User user = ESAPI.authenticator().getCurrentUser();
+		
+		try{
+			killCookie(request,response, REMEMBER_TOKEN_COOKIE_NAME);
+			// seal already contains random data
+			String clearToken = user.getAccountName();
+			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
+			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
+
+            // Do NOT URLEncode cryptToken before creating cookie. See Google Issue # 144,
+			// which was marked as "WontFix".
+
+			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
+			cookie.setMaxAge( maxAge );
+			cookie.setDomain( domain );
+			cookie.setPath( path );
+			response.addCookie( cookie );
+			logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
+		} catch( IntegrityException e){
+			logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
+			return null;
+		}
+		
+		
+		return rval;
+	}
 
     /**
 	 * {@inheritDoc}

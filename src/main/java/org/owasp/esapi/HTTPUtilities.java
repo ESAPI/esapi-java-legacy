@@ -543,12 +543,21 @@ public interface HTTPUtilities
 
 	/**
 	 * Calls setNoCacheHeaders with the *current* response.
+	 * 
+	 * ~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
+	 * company's stated security policies.  
      *
 	 * @see {@link HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)}
 	 */
+    @Deprecated
     String setRememberToken(String password, int maxAge, String domain, String path);
 
+    /**
+     * 
+     */
+    String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path);
 
+    
     /**
 	 * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
 	 * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
@@ -564,6 +573,9 @@ public interface HTTPUtilities
      * <p/>
      * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser();
      *
+     *~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
+	 * company's stated security policies.  
+     *
      * @param request
      * @param password the user's password
      * @param response
@@ -572,6 +584,7 @@ public interface HTTPUtilities
 	 * @param path the path to restrict the token to or null
 	 * @return encrypted "Remember Me" token stored as a String
 	 */
+    @Deprecated
     String setRememberToken(HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path);
 
 
