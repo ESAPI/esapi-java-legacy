@@ -17,6 +17,7 @@ package org.owasp.esapi;
 
 import java.io.File;
 import java.io.InputStream;
+import java.net.URI;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -687,5 +688,42 @@ public interface Validator {
 	 */
 	String safeReadLine(InputStream inputStream, int maxLength) throws ValidationException;
 
-}
+	/**
+	 * 
+	 * Parses and ensures that the URI in question is a valid RFC-3986 URI.  This simplifies
+	 * the kind of regex required for subsequent validation to mitigate regex-based 
+	 * DoS attacks.  
+	 * 
+ 	 *	@param context
+	 *  		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+	 *  @param input
+	 *  		redirect location to be returned as valid, according to encoding rules set in "ESAPI.properties"
+	 *  @param allowNull
+	 *  		If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 *
+	 * @return
+	 * @throws ValidationException 
+	 */
+	boolean isValidURI(String context, String input, boolean allowNull);
 
+	/**
+	 * 
+	 * Get a version of the input URI that will be safe to run regex and other validations against.  
+	 * It is not recommended to persist this value as it will transform user input.  This method 
+	 * will not test to see if the URI is RFC-3986 compliant.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public String getCanonicalizedURI(URI dirtyUri);
+	
+	/**
+	 * Will return a {@code URI} object that will represent a fully parsed and legal URI
+	 * as specified in RFC-3986.  
+	 *  
+	 * @param input String
+	 * @return URI object representing a parsed URI, or {@code null} if the URI was non-compliant in some way.  
+	 */
+	public URI getRfcCompliantURI(String input);
+	
+}
