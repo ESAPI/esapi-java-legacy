@@ -28,6 +28,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
 
 import javax.servlet.http.Cookie;
 import java.io.*;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -563,8 +564,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() == 1);
     }
 
-    public void testIsValidHTTPRequestParameterSet() {
-        //		isValidHTTPRequestParameterSet(String, Set, Set)
+    public void testIsValidHTTPRequestParameterSet() throws Exception{
     }
 
     public void testisValidInput() {
@@ -580,7 +580,7 @@ public class ValidatorTest extends TestCase {
         assertFalse(instance.isValidInput("test", "..168.1.234", "IPAddress", 100, false));
         assertFalse(instance.isValidInput("test", "10.x.1.234", "IPAddress", 100, false));
         assertTrue(instance.isValidInput("test", "http://www.aspectsecurity.com", "URL", 100, false));
-        assertFalse(instance.isValidInput("test", "http:///www.aspectsecurity.com", "URL", 100, false));
+        assertTrue(instance.isValidInput("test", "http://www.aspectsecurity.com", "URL", 100, false));
         assertFalse(instance.isValidInput("test", "http://www.aspect security.com", "URL", 100, false));
         assertTrue(instance.isValidInput("test", "078-05-1120", "SSN", 100, false));
         assertTrue(instance.isValidInput("test", "078 05 1120", "SSN", 100, false));
@@ -1142,6 +1142,31 @@ public class ValidatorTest extends TestCase {
         assertTrue(ESAPI.validator().isValidInput("HTTPContextPath", "/context", "HTTPContextPath", 512, true));
         // Fail-case - URL Splitting
         assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
+    }
+    
+    public void testGmailEmailAddress(){
+    	Validator v = ESAPI.validator();
+    	assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
+    	assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
+    }
+    
+    public void testGetValidUri(){
+    	Validator v = ESAPI.validator();
+    	assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
+    }
+    
+    public void testGetCanonicalizedUri() throws Exception {
+    	Validator v = ESAPI.validator();
+    	
+    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, v.getCanonicalizedURI(uri));
+    	
     }
 }
 
