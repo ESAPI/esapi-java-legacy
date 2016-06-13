@@ -1,3 +1,5 @@
+https://127.0.0.1:8080/foo/bar,TRUE
+http://shareasale.com:8080/sem/fusce.xml?sed=sodales&tristique=scelerisque,TRUE
 http://shareasale.com/sem/fusce.xml?sed=sodales&tristique=scelerisque,TRUE
 http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg,FALSE
 https://wunderground.com/luctus/rutrum/nulla/tellus/in/sagittis.xml?et=vulputate&magnis=ut&dis=ultrices&parturient=vel&montes=augue&nascetur=vestibulum&ridiculus=ante&mus=ipsum&vivamus=primis&vestibulum=in&sagittis=faucibus&sapien=orci&cum=luctus&sociis=et&natoque=ultrices&penatibus=posuere&et=cubilia&magnis=curae&dis=donec&parturient=pharetra&montes=magna&nascetur=vestibulum&ridiculus=aliquet&mus=ultrices&etiam=erat&vel=tortor&augue=sollicitudin&vestibulum=mi&rutrum=sit&rutrum=amet&neque=lobortis&aenean=sapien&auctor=sapien&gravida=non&sem=mi&praesent=integer&id=ac&massa=neque&id=duis&nisl=bibendum&venenatis=morbi&lacinia=non&aenean=quam&sit=nec&amet=dui&justo=luctus&morbi=rutrum&ut=nulla&odio=tellus&cras=in&mi=sagittis&pede=dui&malesuada=vel&in=nisl&imperdiet=duis&et=ac&commodo=nibh&vulputate=fusce&justo=lacus&in=purus&blandit=aliquet&ultrices=at&enim=feugiat&lorem=non&ipsum=pretium&dolor=quis&sit=lectus,TRUE

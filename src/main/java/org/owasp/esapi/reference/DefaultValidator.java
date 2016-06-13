@@ -1331,6 +1331,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 					logger.debug(Logger.EVENT_FAILURE, "decoding error when parsing [" + dirtyUri.toString() + "]");
 				}
 			}
+			//Check if the port is -1, if it is, omit it from the output.
+			if(seg == UriSegment.PORT){
+				if("-1" == parseMap.get(seg)){
+					value = "";
+				}
+			}
 			parseMap.put(seg, value );
 		}
 		
