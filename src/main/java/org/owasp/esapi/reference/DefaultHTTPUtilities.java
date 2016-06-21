@@ -340,7 +340,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
         // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly]
         String header = name + "=" + value;
-        header += "; Max-Age=" + maxAge;
+		if (maxAge >= 0) {
+			header += "; Max-Age=" + maxAge;
+		}
         if (domain != null) {
             header += "; Domain=" + domain;
         }
