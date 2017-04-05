@@ -15,3 +15,4 @@ out/
 ciphertext-portable.ser
 ReferenceEncryptedProperties.test.txt
 test.out
+/pom.xml
