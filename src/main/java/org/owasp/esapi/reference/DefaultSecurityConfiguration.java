@@ -252,7 +252,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	this(DEFAULT_RESOURCE_FILE);
     }
     
-    protected final void setCipherXProperties() {
+    private void setCipherXProperties() {
 		// TODO: FUTURE: Replace by future CryptoControls class???
 		// See SecurityConfiguration.setCipherTransformation() for
 		// explanation of this.
