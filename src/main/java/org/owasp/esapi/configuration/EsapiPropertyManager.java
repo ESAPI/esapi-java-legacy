@@ -30,7 +30,8 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getIntProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                //System.err.println("Property not found in " + loader.name());
+                //FIXME: avoid using System.err (see issue #386)
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -45,7 +46,8 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getByteArrayProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                //System.err.println("Property not found in " + loader.name());
+                //FIXME: avoid using System.err (see issue #386)
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -60,7 +62,8 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getBooleanProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                //System.err.println("Property not found in " + loader.name());
+                //FIXME: avoid using System.err (see issue #386)
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -75,7 +78,8 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getStringProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property : " + propertyName + " not found in " + loader.name());
+                //System.err.println("Property : " + propertyName + " not found in " + loader.name());
+                //FIXME: avoid using System.err (see issue #386)
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -86,12 +90,14 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
         try {
             loaders.add(createPropertyLoader(EsapiConfiguration.OPSTEAM_ESAPI_CFG));
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            //System.err.println(e.getMessage());
+            //FIXME: avoid using System.err (see issue #386)
         }
         try {
             loaders.add(createPropertyLoader(EsapiConfiguration.DEVTEAM_ESAPI_CFG));
         } catch (Exception e) {
-            System.err.println(e.getMessage());
+            //System.err.println(e.getMessage());
+            //FIXME: avoid using System.err (see issue #386)
         }
     }
 
