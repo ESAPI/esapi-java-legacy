@@ -49,6 +49,10 @@ import org.owasp.esapi.util.FileTestUtils;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
 /**
  * The Class HTTPUtilitiesTest.
  * 
@@ -334,6 +338,9 @@ public class HTTPUtilitiesTest extends TestCase
 		}
 	}
 
+        @Rule
+        public ExpectedException thrown = ExpectedException.none();
+        
 	/**
 	 * Test of setCookie method, of class org.owasp.esapi.HTTPUtilities.
 	 */
@@ -349,9 +356,13 @@ public class HTTPUtilitiesTest extends TestCase
 		instance.addCookie( response, new Cookie( "test2", "test2" ) );
 		assertTrue(response.getHeaderNames().size() == 2);
 
-		// test illegal name
-		instance.addCookie( response, new Cookie( "tes<t3", "test3" ) );
-		assertTrue(response.getHeaderNames().size() == 2);
+		// test illegal name - this case is now handled by the servlet API
+                try {
+                    instance.addCookie( response, new Cookie( "tes<t3", "test3" ) );
+                    fail("Expected IllegalArgumentException");
+                } catch (IllegalArgumentException iae) {
+                    assertThat(iae.getMessage(), is("Cookie name \"tes<t3\" is a reserved token"));
+                }
 
 		// test illegal value
 		instance.addCookie( response, new Cookie( "test3", "tes<t3" ) );
