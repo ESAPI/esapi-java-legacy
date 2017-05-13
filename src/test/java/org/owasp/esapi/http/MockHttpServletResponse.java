@@ -18,6 +18,7 @@ package org.owasp.esapi.http;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -459,5 +460,10 @@ public class MockHttpServletResponse implements HttpServletResponse {
         System.out.println( "  BODY: " + this.getBody() );
         System.out.println();
 	}
+
+    @Override
+    public Collection<String> getHeaders(String string) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 	
 }
