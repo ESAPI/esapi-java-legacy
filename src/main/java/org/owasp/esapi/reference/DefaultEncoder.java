@@ -287,7 +287,7 @@ public class DefaultEncoder implements Encoder {
 	/**
 	 * {@inheritDoc}
 	 */
-	public String encodeForLDAP(String input, boolean escapeWildcards) {
+	public String encodeForLDAP(String input, boolean encodeWildcards) {
 	    if( input == null ) {
 	    	return null;	
 	    }
@@ -299,7 +299,7 @@ public class DefaultEncoder implements Encoder {
 			if (c == '\\') {
 	            sb.append("\\5c");
 	        }
-	        else if ((c == '*') && escapeWildcards) {
+	        else if ((c == '*') && encodeWildcards) {
 	            sb.append("\\2a");
 	        }
 	        else if (c == '(') {
