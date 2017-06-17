@@ -1307,10 +1307,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		Set<UriSegment> set = parseMap.keySet();
 		
 		SecurityConfiguration sg = ESAPI.securityConfiguration();
-//		boolean restrictMixed = sg.getBooleanProp("AllowMixedEncoding");
-//		boolean restrictMultiple = sg.getBooleanProp("AllowMultipleEncoding");
-		boolean allowMixed = sg.getAllowMixedEncoding();
-		boolean allowMultiple = sg.getAllowMultipleEncoding();
+		boolean allowMixed = sg.getBooleanProp("Encoder.AllowMixedEncoding");
+		boolean allowMultiple = sg.getBooleanProp("Encoder.AllowMultipleEncoding");
 		for(UriSegment seg: set){
 			String value = encoder.canonicalize(parseMap.get(seg), allowMultiple, allowMixed);
 			value = value == null ? "" : value;
