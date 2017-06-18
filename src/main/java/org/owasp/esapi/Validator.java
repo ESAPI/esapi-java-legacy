@@ -694,7 +694,7 @@ public interface Validator {
 	 * the kind of regex required for subsequent validation to mitigate regex-based 
 	 * DoS attacks.  
 	 * 
-	 * @see <a href="https://www.ietf.org/rfc/rfc3986.txt">https://www.ietf.org/rfc/rfc3986.txt</a>
+	 * @see <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986.</a>
 	 * 
  	 *	@param context
 	 *  		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.

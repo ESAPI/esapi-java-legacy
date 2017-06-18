@@ -1222,10 +1222,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				//This part will use the regex from validation.properties.  This regex should be super-simple, and 
 				//used mainly to restrict certain parts of a URL.  
 				Pattern p = ESAPI.securityConfiguration().getValidationPattern( "URL" );
-				//We're doing this instead of using the normal validator API, because it will canonicalize the input again
-				//and if the URI has any queries that also happen to match HTML entities, like &para;
-				//it will cease conforming to the regex we now specify for a URL.
-				isValid = p.matcher(canonicalizedURI).matches();
+				if(p != null){
+					//We're doing this instead of using the normal validator API, because it will canonicalize the input again
+					//and if the URI has any queries that also happen to match HTML entities, like &para;
+					//it will cease conforming to the regex we now specify for a URL.
+					isValid = p.matcher(canonicalizedURI).matches();
+				}else{
+					logger.error(Logger.EVENT_FAILURE, "Invalid regex pulled from configuration.  Check the regex for URL and correct.");
+				}
 			}else{
 				if(allowNull && inputIsNullOrEmpty ){
 					isValid = true;
