@@ -66,6 +66,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
+ * @author Matt Seil (mseil .at. acm.org) 
  *
  * @since June 1, 2007
  * @see org.owasp.esapi.Validator
@@ -1208,14 +1209,15 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public boolean isValidURI(String context, String input, boolean allowNull) {
 		boolean isValid = false;
-		URI compliantURI = this.getRfcCompliantURI(input);
+		boolean inputIsNullOrEmpty = input == null || "".equals(input);
 		
 		try{
-			if(null != compliantURI){
+			URI compliantURI = null == input ? new URI("") :  this.getRfcCompliantURI(input);
+			if(null != compliantURI && input != null){
 				String canonicalizedURI = getCanonicalizedURI(compliantURI);
 				//if getCanonicalizedURI doesn't throw an IntrusionException, then the URI contains no mixed or 
 				//double-encoding attacks.  
-				logger.info(Logger.SECURITY_SUCCESS, "We did not detect any mixed or multiple encoding in the uri:[" + input + "]");
+				logger.debug(Logger.SECURITY_SUCCESS, "We did not detect any mixed or multiple encoding in the uri:[" + input + "]");
 				Validator v = ESAPI.validator();
 				//This part will use the regex from validation.properties.  This regex should be super-simple, and 
 				//used mainly to restrict certain parts of a URL.  
@@ -1224,11 +1226,17 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 				//and if the URI has any queries that also happen to match HTML entities, like &para;
 				//it will cease conforming to the regex we now specify for a URL.
 				isValid = p.matcher(canonicalizedURI).matches();
+			}else{
+				if(allowNull && inputIsNullOrEmpty ){
+					isValid = true;
+				}
 			}
 			
 		}catch (IntrusionException e){
 			logger.error(Logger.SECURITY_FAILURE, e.getMessage());
 			isValid = false;
+		} catch (URISyntaxException e) {
+			logger.error(Logger.EVENT_FAILURE, e.getMessage());
 		}
 		
 		
@@ -1249,11 +1257,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	}
 	
 	/**
-	 * This does alot.  This will extract each piece of a URI according to parse zone, and it will construct 
-	 * a canonicalized String representing a version of the URI that is safe to run regex against to it. 
+	 * {@inheritDoc}
+	 * 
+	 * This will extract each piece of a URI according to parse zone as specified in <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986</a> section 3, 
+	 * and it will construct a canonicalized String representing a version of the URI that is safe to 
+	 * run regex against. 
 	 * 
 	 * @param dirtyUri
-	 * @return
+	 * @return Canonicalized URI string.
 	 * @throws IntrusionException
 	 */
 	public String getCanonicalizedURI(URI dirtyUri) throws IntrusionException{
@@ -1296,10 +1307,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		Set<UriSegment> set = parseMap.keySet();
 		
 		SecurityConfiguration sg = ESAPI.securityConfiguration();
-//		boolean restrictMixed = sg.getBooleanProp("AllowMixedEncoding");
-//		boolean restrictMultiple = sg.getBooleanProp("AllowMultipleEncoding");
-		boolean allowMixed = sg.getAllowMixedEncoding();
-		boolean allowMultiple = sg.getAllowMultipleEncoding();
+		boolean allowMixed = sg.getBooleanProp("Encoder.AllowMixedEncoding");
+		boolean allowMultiple = sg.getBooleanProp("Encoder.AllowMultipleEncoding");
 		for(UriSegment seg: set){
 			String value = encoder.canonicalize(parseMap.get(seg), allowMultiple, allowMixed);
 			value = value == null ? "" : value;

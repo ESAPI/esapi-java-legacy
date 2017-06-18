@@ -1,3 +1,4 @@
+#Format is URI,Expected test value
 https://127.0.0.1:8080/foo/bar,TRUE
 http://shareasale.com:8080/sem/fusce.xml?sed=sodales&tristique=scelerisque,TRUE
 http://shareasale.com/sem/fusce.xml?sed=sodales&tristique=scelerisque,TRUE
