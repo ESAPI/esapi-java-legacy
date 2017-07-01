@@ -15,18 +15,29 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
-
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
@@ -653,8 +664,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					
 					// try resources folder
 					if (in == null) {
-						currentClasspathSearchLocation = "src/main/resources/";
-						in = currentLoader.getResourceAsStream("src/main/resources/" + fileName);
+						currentClasspathSearchLocation = "resources/";
+						in = currentLoader.getResourceAsStream("resources/" + fileName);
+					}
+					
+					// try src/main/resources folder
+					if (in == null) {
+						currentClasspathSearchLocation = "resources/";
+						in = currentLoader.getResourceAsStream("resources/" + fileName);
 					}
 		
 					// now load the properties
