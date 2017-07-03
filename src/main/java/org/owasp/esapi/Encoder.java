@@ -369,7 +369,7 @@ public interface Encoder {
 	String encodeForOS(Codec codec, String input);
 
 	/**
-	 * Encode data for use in LDAP queries.
+	 * Encode data for use in LDAP queries. Wildcard (*) characters will be encoded.
 	 * 
 	 * @param input 
 	 * 		the text to encode for LDAP
@@ -378,6 +378,18 @@ public interface Encoder {
 	 */
 	String encodeForLDAP(String input);
 
+	/**
+	 * Encode data for use in LDAP queries. You have the option whether or not to encode wildcard (*) characters.
+	 * 
+	 * @param input 
+	 * 		the text to encode for LDAP
+	 * @param encodeWildcards 
+	 *      whether or not wildcard (*) characters will be encoded.
+     *
+	 * @return input encoded for use in LDAP
+	 */
+	String encodeForLDAP(String input, boolean encodeWildcards);
+	 
 	/**
 	 * Encode data for use in an LDAP distinguished name.
 	 * 

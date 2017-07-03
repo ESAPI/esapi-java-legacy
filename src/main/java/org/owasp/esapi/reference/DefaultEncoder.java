@@ -281,6 +281,13 @@ public class DefaultEncoder implements Encoder {
 	 * {@inheritDoc}
 	 */
 	public String encodeForLDAP(String input) {
+		return encodeForLDAP(input, true);
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public String encodeForLDAP(String input, boolean encodeWildcards) {
 	    if( input == null ) {
 	    	return null;	
 	    }
@@ -288,25 +295,25 @@ public class DefaultEncoder implements Encoder {
 	    StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
-			switch (c) {
-			case '\\':
-				sb.append("\\5c");
-				break;
-			case '*':
-				sb.append("\\2a");
-				break;
-			case '(':
-				sb.append("\\28");
-				break;
-			case ')':
-				sb.append("\\29");
-				break;
-			case '\0':
-				sb.append("\\00");
-				break;
-			default:
-				sb.append(c);
-			}
+
+			if (c == '\\') {
+	            sb.append("\\5c");
+	        }
+	        else if ((c == '*') && encodeWildcards) {
+	            sb.append("\\2a");
+	        }
+	        else if (c == '(') {
+	            sb.append("\\28");
+	        }
+	        else if (c == ')') {
+	            sb.append("\\29");
+	        }
+	        else if (c == '\0') {
+	            sb.append("\\00");
+	        }
+	        else {
+	            sb.append(c);
+	        }
 		}
 		return sb.toString();
 	}

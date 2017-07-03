@@ -471,7 +471,19 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of encodeForLDAP method, of class org.owasp.esapi.Encoder.
+	 * Test of encodeForLDAP method with without encoding wildcard characters, of class org.owasp.esapi.Encoder.
+	 */
+    public void testEncodeForLDAPWithoutEncodingWildcards() {
+        System.out.println("encodeForLDAPWithoutEncodingWildcards");
+        Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForLDAP(null, false));
+        assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��", false));
+        assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000", false));
+        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is * a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �", false));
+    }
+    
+    /**
+	 * Test of encodeForDN method, of class org.owasp.esapi.Encoder.
 	 */
     public void testEncodeForDN() {
         System.out.println("encodeForDN");
