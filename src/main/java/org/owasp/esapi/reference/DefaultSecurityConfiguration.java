@@ -670,8 +670,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					
 					// try src/main/resources folder
 					if (in == null) {
-						currentClasspathSearchLocation = "resources/";
-						in = currentLoader.getResourceAsStream("resources/" + fileName);
+						currentClasspathSearchLocation = "src/main/resources/";
+						in = currentLoader.getResourceAsStream("src/main/resources/" + fileName);
 					}
 		
 					// now load the properties
