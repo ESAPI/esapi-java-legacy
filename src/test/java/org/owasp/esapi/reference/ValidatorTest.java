@@ -1161,33 +1161,5 @@ public class ValidatorTest extends TestCase {
     	boolean isValid = v.isValidURI("test", null, true);
     	assertTrue(isValid);
     }
-    
-    public void testGetCanonicalizedUri() throws Exception {
-    	Validator v = ESAPI.validator();
-    	
-    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
-    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
-    	//password information as in http://palpatine:password@foo.com, and this will
-    	//not appear in the userinfo field.  
-    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
-    	URI uri = new URI(input);
-    	System.out.println(uri.toString());
-    	assertEquals(expectedUri, v.getCanonicalizedURI(uri));
-    	
-    }
-    
-    public void testGetCanonicalizedUriWithMailto() throws Exception {
-    	Validator v = ESAPI.validator();
-    	
-    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
-    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
-    	//password information as in http://palpatine:password@foo.com, and this will
-    	//not appear in the userinfo field.  
-    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
-    	URI uri = new URI(input);
-    	System.out.println(uri.toString());
-    	assertEquals(expectedUri, v.getCanonicalizedURI(uri));
-    	
-    }
 }
 

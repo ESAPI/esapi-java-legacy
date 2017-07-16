@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.EncodingException;
@@ -524,5 +525,16 @@ public interface Encoder {
 	 * @throws IOException
 	 */
 	byte[] decodeFromBase64(String input) throws IOException;
+
+	/**
+	 * 
+	 * Get a version of the input URI that will be safe to run regex and other validations against.  
+	 * It is not recommended to persist this value as it will transform user input.  This method 
+	 * will not test to see if the URI is RFC-3986 compliant.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public String getCanonicalizedURI(URI dirtyUri);
 
 }

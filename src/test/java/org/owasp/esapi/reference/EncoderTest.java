@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.ByteArrayOutputStream;
@@ -866,5 +867,32 @@ public class EncoderTest extends TestCase {
 		}
     }
     
+    public void testGetCanonicalizedUri() throws Exception {
+    	Encoder e = ESAPI.encoder();
+    	
+    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+    	
+    }
+    
+    public void testGetCanonicalizedUriWithMailto() throws Exception {
+    	Encoder e = ESAPI.encoder();
+    	
+    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+    	
+    }
 }
 

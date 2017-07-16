@@ -15,18 +15,29 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
-
-import java.io.*;
-import java.net.URL;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.PatternSyntaxException;
 
 /**
  * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
@@ -631,30 +642,36 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				try {
 					// try root
 					String currentClasspathSearchLocation = "/ (root)";
-					in = loaders[i].getResourceAsStream(fileName);
+					in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.toString());
 					
 					// try resourceDirectory folder
 					if (in == null) {
 						currentClasspathSearchLocation = resourceDirectory + "/";
-						in = currentLoader.getResourceAsStream(resourceDirectory + "/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCE_DIRECTORY + fileName);
 					}
 
 					// try .esapi folder. Look here first for backward compatibility.
 					if (in == null) {
 						currentClasspathSearchLocation = ".esapi/";
-						in = currentLoader.getResourceAsStream(".esapi/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.DOT_ESAPI + fileName);
 					} 
 					
 					// try esapi folder (new directory)
 					if (in == null) {
 						currentClasspathSearchLocation = "esapi/";
-						in = currentLoader.getResourceAsStream("esapi/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.ESAPI + fileName);
 					} 
 					
 					// try resources folder
 					if (in == null) {
+						currentClasspathSearchLocation = "resources/";
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCES + fileName);
+					}
+					
+					// try src/main/resources folder
+					if (in == null) {
 						currentClasspathSearchLocation = "src/main/resources/";
-						in = currentLoader.getResourceAsStream("src/main/resources/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.SRC_MAIN_RESOURCES + fileName);
 					}
 		
 					// now load the properties
@@ -1329,5 +1346,27 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     protected Properties getESAPIProperties() {
         return properties;
+    }
+    
+    public enum DefaultSearchPath {
+    	
+    	RESOURCE_DIRECTORY("resourceDirectory/"),
+    	SRC_MAIN_RESOURCES("src/main/resources/"),
+    	ROOT("/"),
+    	DOT_ESAPI(".esapi/"),
+    	ESAPI("esapi/"),
+    	RESOURCES("resources/");
+    	
+    	private final String path;
+    	
+
+    	
+    	private DefaultSearchPath(String s){
+    		this.path = s;
+    	}
+    	
+    	public String value(){
+    		return path;
+    	}
     }
 }

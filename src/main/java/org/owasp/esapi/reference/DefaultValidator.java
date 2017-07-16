@@ -1210,11 +1210,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public boolean isValidURI(String context, String input, boolean allowNull) {
 		boolean isValid = false;
 		boolean inputIsNullOrEmpty = input == null || "".equals(input);
-		
+		Encoder encoder = ESAPI.encoder();
 		try{
 			URI compliantURI = null == input ? new URI("") :  this.getRfcCompliantURI(input);
 			if(null != compliantURI && input != null){
-				String canonicalizedURI = getCanonicalizedURI(compliantURI);
+				String canonicalizedURI = encoder.getCanonicalizedURI(compliantURI);
 				//if getCanonicalizedURI doesn't throw an IntrusionException, then the URI contains no mixed or 
 				//double-encoding attacks.  
 				logger.debug(Logger.SECURITY_SUCCESS, "We did not detect any mixed or multiple encoding in the uri:[" + input + "]");
@@ -1259,150 +1259,4 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		return rval;
 	}
-	
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * This will extract each piece of a URI according to parse zone as specified in <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986</a> section 3, 
-	 * and it will construct a canonicalized String representing a version of the URI that is safe to 
-	 * run regex against. 
-	 * 
-	 * @param dirtyUri
-	 * @return Canonicalized URI string.
-	 * @throws IntrusionException
-	 */
-	public String getCanonicalizedURI(URI dirtyUri) throws IntrusionException{
-		
-//		From RFC-3986 section 3		
-//	      URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
-//
-//	    	      hier-part   = "//" authority path-abempty
-//	    	                  / path-absolute
-//	    	                  / path-rootless
-//	    	                  / path-empty
-		
-//		   The following are two example URIs and their component parts:
-//
-//		         foo://example.com:8042/over/there?name=ferret#nose
-//		         \_/   \______________/\_________/ \_________/ \__/
-//		          |           |            |            |        |
-//		       scheme     authority       path        query   fragment
-//		          |   _____________________|__
-//		         / \ /                        \
-//		         urn:example:animal:ferret:nose
-		Map<UriSegment, String> parseMap = new EnumMap<UriSegment, String>(UriSegment.class);
-		parseMap.put(UriSegment.SCHEME, dirtyUri.getScheme());
-		//authority   = [ userinfo "@" ] host [ ":" port ]
-		parseMap.put(UriSegment.AUTHORITY, dirtyUri.getRawAuthority());
-		parseMap.put(UriSegment.SCHEMSPECIFICPART, dirtyUri.getRawSchemeSpecificPart());
-		parseMap.put(UriSegment.HOST, dirtyUri.getHost());
-		//if port is undefined, it will return -1
-		Integer port = new Integer(dirtyUri.getPort());
-		parseMap.put(UriSegment.PORT, port == -1 ? "": port.toString());
-		parseMap.put(UriSegment.PATH, dirtyUri.getRawPath());
-		parseMap.put(UriSegment.QUERY, dirtyUri.getRawQuery());
-		parseMap.put(UriSegment.FRAGMENT, dirtyUri.getRawFragment());
-		
-		//Now we canonicalize each part and build our string.  
-		StringBuilder sb = new StringBuilder();
-		
-		//Replace all the items in the map with canonicalized versions.
-		
-		Set<UriSegment> set = parseMap.keySet();
-		
-		SecurityConfiguration sg = ESAPI.securityConfiguration();
-		boolean allowMixed = sg.getBooleanProp("Encoder.AllowMixedEncoding");
-		boolean allowMultiple = sg.getBooleanProp("Encoder.AllowMultipleEncoding");
-		for(UriSegment seg: set){
-			String value = encoder.canonicalize(parseMap.get(seg), allowMultiple, allowMixed);
-			value = value == null ? "" : value;
-			//In the case of a uri query, we need to break up and canonicalize the internal parts of the query.
-			if(seg == UriSegment.QUERY && null != parseMap.get(seg)){
-				StringBuilder qBuilder = new StringBuilder();
-				try {
-					Map<String, List<String>> canonicalizedMap = this.splitQuery(dirtyUri);
-					Set<Entry<String, List<String>>> query = canonicalizedMap.entrySet();
-					Iterator<Entry<String, List<String>>> i = query.iterator();
-					while(i.hasNext()){
-						Entry<String, List<String>> e = i.next(); 
-						String key = (String) e.getKey();
-						String qVal = "";
-						List<String> list = (List<String>) e.getValue();
-						if(!list.isEmpty()){
-							qVal = list.get(0);
-						}
-						qBuilder.append(key)
-						.append("=")
-						.append(qVal);
-						
-						if(i.hasNext()){
-							qBuilder.append("&");
-						}
-					}
-					value = qBuilder.toString();
-				} catch (UnsupportedEncodingException e) {
-					logger.debug(Logger.EVENT_FAILURE, "decoding error when parsing [" + dirtyUri.toString() + "]");
-				}
-			}
-			//Check if the port is -1, if it is, omit it from the output.
-			if(seg == UriSegment.PORT){
-				if("-1" == parseMap.get(seg)){
-					value = "";
-				}
-			}
-			parseMap.put(seg, value );
-		}
-		
-		return buildUrl(parseMap);
-	}
-	
-/**
- * The meat of this method was taken from StackOverflow:  http://stackoverflow.com/a/13592567/557153
- * It has been modified to return a canonicalized key and value pairing.  
- * 
- * @param java URI
- * @return a map of canonicalized query parameters.  
- * @throws UnsupportedEncodingException
- */
-	public Map<String, List<String>> splitQuery(URI uri) throws UnsupportedEncodingException {
-	  final Map<String, List<String>> query_pairs = new LinkedHashMap<String, List<String>>();
-	  final String[] pairs = uri.getQuery().split("&");
-	  for (String pair : pairs) {
-	    final int idx = pair.indexOf("=");
-	    final String key = idx > 0 ? encoder.canonicalize(pair.substring(0, idx)) : pair;
-	    if (!query_pairs.containsKey(key)) {
-	      query_pairs.put(key, new LinkedList<String>());
-	    }
-	    final String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), "UTF-8") : null;
-	    query_pairs.get(key).add(encoder.canonicalize(value));
-	  }
-	  return query_pairs;
-	}
-	
-	public enum UriSegment {
-		AUTHORITY, SCHEME, SCHEMSPECIFICPART, USERINFO, HOST, PORT, PATH, QUERY, FRAGMENT
-	}
-	
-	/**
-	 * All the parts should be canonicalized by this point.  This is straightforward assembly.  
-	 * 
-	 * @param set
-	 * @return
-	 */
-	protected String buildUrl(Map<UriSegment, String> parseMap){
-		StringBuilder sb = new StringBuilder();
-		sb.append(parseMap.get(UriSegment.SCHEME))
-		.append("://")
-		//can't use SCHEMESPECIFICPART for this, because we need to canonicalize all the parts of the query.
-		//USERINFO is also deprecated.  So we technically have more than we need.  
-		.append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).equals("") ? "" : parseMap.get(UriSegment.AUTHORITY))
-		.append(parseMap.get(UriSegment.PATH) == null || parseMap.get(UriSegment.PATH).equals("") ? ""  : parseMap.get(UriSegment.PATH))
-		.append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).equals("") 
-				? "" : "?" + parseMap.get(UriSegment.QUERY))
-		.append((parseMap.get(UriSegment.FRAGMENT) == null) || parseMap.get(UriSegment.FRAGMENT).equals("")
-				? "": "#" + parseMap.get(UriSegment.FRAGMENT))
-		;
-		return sb.toString();
-	}
-	
 }
