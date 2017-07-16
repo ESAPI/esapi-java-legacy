@@ -1087,6 +1087,13 @@ public class ValidatorTest extends TestCase {
         assertFalse(safeRequest.getHeader("f2").equals(request.getHeader("f2")));
         assertNull(safeRequest.getHeader("p3"));
     }
+    
+    public void testHeaderLengthChecks(){
+    	Validator v = ESAPI.validator();
+    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+    	assertFalse(v.isValidInput("addHeader", generateStringOfLength(257), "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false));
+    	assertFalse(v.isValidInput("addHeader", generateStringOfLength(4097), "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
+    }
 
     public void testGetHeaderNames() {
 //testing Validator.HTTPHeaderName
