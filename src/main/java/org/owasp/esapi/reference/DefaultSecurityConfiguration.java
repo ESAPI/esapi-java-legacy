@@ -1359,8 +1359,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	
     	private final String path;
     	
-
-    	
     	private DefaultSearchPath(String s){
     		this.path = s;
     	}

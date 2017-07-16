@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.IntrusionException;
@@ -168,10 +169,11 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     public void addHeader(String name, String value) {
         try {
             // TODO: make stripping a global config
+        	SecurityConfiguration sc = ESAPI.securityConfiguration();
             String strippedName = StringUtilities.stripControls(name);
             String strippedValue = StringUtilities.stripControls(value);
-            String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", 20, false);
-            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false);
+            String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false);
+            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
             getHttpServletResponse().addHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
