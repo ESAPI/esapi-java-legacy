@@ -124,7 +124,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
         // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
         String header = name + "=" + value;
-        header += "; Max-Age=" + maxAge;
+        if (maxAge >= 0) {
+            header += "; Max-Age=" + maxAge;
+        }
         if (domain != null) {
             header += "; Domain=" + domain;
         }
