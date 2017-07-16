@@ -642,36 +642,36 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				try {
 					// try root
 					String currentClasspathSearchLocation = "/ (root)";
-					in = loaders[i].getResourceAsStream(fileName);
+					in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.toString());
 					
 					// try resourceDirectory folder
 					if (in == null) {
 						currentClasspathSearchLocation = resourceDirectory + "/";
-						in = currentLoader.getResourceAsStream(resourceDirectory + "/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCE_DIRECTORY + fileName);
 					}
 
 					// try .esapi folder. Look here first for backward compatibility.
 					if (in == null) {
 						currentClasspathSearchLocation = ".esapi/";
-						in = currentLoader.getResourceAsStream(".esapi/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.DOT_ESAPI + fileName);
 					} 
 					
 					// try esapi folder (new directory)
 					if (in == null) {
 						currentClasspathSearchLocation = "esapi/";
-						in = currentLoader.getResourceAsStream("esapi/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.ESAPI + fileName);
 					} 
 					
 					// try resources folder
 					if (in == null) {
 						currentClasspathSearchLocation = "resources/";
-						in = currentLoader.getResourceAsStream("resources/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCES + fileName);
 					}
 					
 					// try src/main/resources folder
 					if (in == null) {
 						currentClasspathSearchLocation = "src/main/resources/";
-						in = currentLoader.getResourceAsStream("src/main/resources/" + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.SRC_MAIN_RESOURCES + fileName);
 					}
 		
 					// now load the properties
@@ -1346,5 +1346,27 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     protected Properties getESAPIProperties() {
         return properties;
+    }
+    
+    public enum DefaultSearchPath {
+    	
+    	RESOURCE_DIRECTORY("resourceDirectory/"),
+    	SRC_MAIN_RESOURCES("src/main/resources/"),
+    	ROOT("/"),
+    	DOT_ESAPI(".esapi/"),
+    	ESAPI("esapi/"),
+    	RESOURCES("resources/");
+    	
+    	private final String path;
+    	
+
+    	
+    	private DefaultSearchPath(String s){
+    		this.path = s;
+    	}
+    	
+    	public String value(){
+    		return path;
+    	}
     }
 }

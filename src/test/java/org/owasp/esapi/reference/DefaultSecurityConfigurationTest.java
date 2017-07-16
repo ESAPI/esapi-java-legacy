@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.ConfigurationException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
 
 public class DefaultSecurityConfigurationTest {
 
@@ -420,4 +421,20 @@ public class DefaultSecurityConfigurationTest {
 		assertEquals(patternOrNull(secConf.getValidationPattern("TestC")), "ValueFromCommaFile");
 	}
 	
+	@Test 
+	public void DefaultSearchPathTest(){
+		assertEquals("/", DefaultSearchPath.ROOT.value());
+		assertEquals("resourceDirectory/", DefaultSearchPath.RESOURCE_DIRECTORY.value());
+		assertEquals(".esapi/", DefaultSearchPath.DOT_ESAPI.value());
+		assertEquals("esapi/", DefaultSearchPath.ESAPI.value());
+		assertEquals("resources/", DefaultSearchPath.RESOURCES.value());
+		assertEquals("src/main/resources/", DefaultSearchPath.SRC_MAIN_RESOURCES.value());
+	}
+	
+	@Test
+	public void DefaultSearchPathEnumChanges(){
+		int expected = 6;
+		int testValue = DefaultSearchPath.values().length;
+		assertEquals(expected, testValue);
+	}
 }
