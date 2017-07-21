@@ -37,7 +37,7 @@ public class RequestRateThrottleFilter implements Filter
 
     private int hits = 5;
 
-    private int period = 10;
+    private long period = 10;
 
     private static final String HITS = "hits";
 
