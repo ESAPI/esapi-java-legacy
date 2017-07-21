@@ -151,7 +151,8 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void addDateHeader(String name, long date) {
         try {
-            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
+        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false);
             getHttpServletResponse().addDateHeader(safeName, date);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid date header name denied", e);
@@ -184,13 +185,14 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Add an int header to the response after ensuring that there are no
-     * encoded or illegal characters in the name and name.
+     * encoded or illegal characters in the name and value.
      * @param name 
      * @param value
      */
     public void addIntHeader(String name, int value) {
         try {
-            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
+        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false);
             getHttpServletResponse().addIntHeader(safeName, value);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid int header name denied", e);
@@ -428,7 +430,8 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void setDateHeader(String name, long date) {
         try {
-            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
+        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false);
             getHttpServletResponse().setDateHeader(safeName, date);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid date header name denied", e);
@@ -448,8 +451,9 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         try {
             String strippedName = StringUtilities.stripControls(name);
             String strippedValue = StringUtilities.stripControls(value);
-            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 50, false);
-            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false);
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
+            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false);
+            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
             getHttpServletResponse().setHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);
@@ -464,7 +468,8 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void setIntHeader(String name, int value) {
         try {
-            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", 20, false);
+        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false);
             getHttpServletResponse().setIntHeader(safeName, value);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid int header name denied", e);
