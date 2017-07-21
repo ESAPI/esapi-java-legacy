@@ -469,6 +469,7 @@ public class EncoderTest extends TestCase {
         assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��"));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �"));
+        assertEquals("Hi \\28This\\29 =", instance.encodeForLDAP("Hi (This) ="));
     }
     
     /**
@@ -499,6 +500,14 @@ public class EncoderTest extends TestCase {
         assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
     }
     
+    /**
+     * Longstanding issue of always lowercasing named HTML entities.  This will be set right now. 
+     */
+    public void testNamedUpperCaseDecoding(){
+    	String input = "&Uuml;";
+    	String expected = "Ü";
+    	assertEquals(expected, ESAPI.encoder().decodeForHTML(input));
+    }
     public void testEncodeForXMLNull() {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForXML(null));
