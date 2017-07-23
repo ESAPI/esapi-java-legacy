@@ -82,11 +82,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         String domain = cookie.getDomain();
         String path = cookie.getPath();
         boolean secure = cookie.getSecure();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
 
         // validate the name and value
         ValidationErrorList errors = new ValidationErrorList();
-        String cookieName = ESAPI.validator().getValidInput("cookie name", name, "HTTPCookieName", 50, false, errors);
-        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", ESAPI.securityConfiguration().getMaxHttpHeaderSize(), false, errors);
+        String cookieName = ESAPI.validator().getValidInput("cookie name", name, "HTTPCookieName", sc.getIntProp("HttpUtilities.MaxHeaderKeySize"), false, errors);
+        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false, errors);
 
         // if there are no errors, then just set a cookie header
         if (errors.size() == 0) {
@@ -134,10 +135,10 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         if (path != null) {
             header += "; Path=" + path;
         }
-        if ( secure || ESAPI.securityConfiguration().getForceSecureCookies() ) {
+        if ( secure || ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceSecureCookies") ) {
 			header += "; Secure";
         }
-        if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+        if ( ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlyCookies") ) {
 			header += "; HttpOnly";
         }
         return header;
