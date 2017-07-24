@@ -68,6 +68,33 @@ public class SecurityWrapperResponseTest {
 	}
 	
 	@Test
+	public void testAddIntHeader(){
+		HttpServletResponse servResp = mock(HttpServletResponse.class);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		resp.addIntHeader("aaaa", 4);
+		verify(servResp, times(1)).addIntHeader("aaaa", 4);
+	}
+	
+	@Test
+	public void testAddInvalidIntHeader(){
+		HttpServletResponse servResp = mock(HttpServletResponse.class);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		resp.addIntHeader(TestUtils.generateStringOfLength(257), Integer.MIN_VALUE);
+		verify(servResp, times(0)).addIntHeader(TestUtils.generateStringOfLength(257), Integer.MIN_VALUE);
+	}
+	
+	@Test
+	public void testContainsHeader(){
+		HttpServletResponse servResp = new MockHttpServletResponse();
+		servResp = spy(servResp);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		resp = spy(resp);
+		resp.addIntHeader("aaaa", Integer.MIN_VALUE);
+		verify(servResp, times(1)).addIntHeader("aaaa", Integer.MIN_VALUE);
+		assertEquals(true, servResp.containsHeader("aaaa"));
+	}
+	
+	@Test
 	public void testAddValidCookie(){
 		HttpServletResponse servResp = new MockHttpServletResponse();
 		servResp = spy(servResp);

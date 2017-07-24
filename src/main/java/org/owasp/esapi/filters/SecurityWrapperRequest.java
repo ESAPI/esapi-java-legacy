@@ -35,8 +35,9 @@ import javax.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.errors.AccessControlException;
+import org.owasp.esapi.errors.ValidationException;
 
 // TODO: Parameterize these various lengths in calls to ESAPI.validator().getValidInput()
 // so that they can be placed in ESAPI.properties file (or other property file,
@@ -217,10 +218,11 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public Enumeration getHeaderNames() {
         Vector<String> v = new Vector<String>();
         Enumeration en = getHttpServletRequest().getHeaderNames();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         while (en.hasMoreElements()) {
             try {
                 String name = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP header name: " + name, name, "HTTPHeaderName", 150, true);
+                String clean = ESAPI.validator().getValidInput("HTTP header name: " + name, name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
