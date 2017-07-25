@@ -418,7 +418,8 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param charset
      */
     public void setCharacterEncoding(String charset) {
-        getHttpServletResponse().setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
+    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+        getHttpServletResponse().setCharacterEncoding(sc.getStringProp("HttpUtilities.CharacterEncoding"));
     }
 
     /**
@@ -506,7 +507,13 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param sc
      */
     public void setStatus(int sc) {
-        getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+    	SecurityConfiguration config = ESAPI.securityConfiguration();
+    	if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+    		getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+    	}else{
+    		getHttpServletResponse().setStatus(sc);
+    	}
+        
     }
 
     /**
@@ -520,8 +527,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     @Deprecated
     public void setStatus(int sc, String sm) {
         try {
-            // setStatus is deprecated so use sendError instead
-            sendError(HttpServletResponse.SC_OK, sm);
+        	SecurityConfiguration config = ESAPI.securityConfiguration();
+        	if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+        		sendError(HttpServletResponse.SC_OK, sm);
+        	}else{
+        		sendError(sc, sm);
+        	}
         } catch (IOException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set response status failed", e);
         }

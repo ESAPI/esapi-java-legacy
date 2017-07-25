@@ -121,6 +121,7 @@ public class SecurityWrapperResponseTest {
 		SecurityWrapperResponse spyResp = spy(resp);
 		Cookie cookie = new Cookie("Foo", TestUtils.generateStringOfLength(10));
 		cookie.setDomain("evil.com");
+		cookie.setMaxAge(-1);
 		Mockito.doCallRealMethod().when(spyResp).addCookie(cookie);
 		spyResp.addCookie(cookie);
 		verify(servResp, times(1)).addHeader("Set-Cookie", "Foo=aaaaaaaaaa; Domain=evil.com; Secure; HttpOnly");
@@ -151,5 +152,41 @@ public class SecurityWrapperResponseTest {
 		
 		spyResp.addCookie(cookie);
 		verify(servResp, times(0)).addHeader("Set-Cookie", "Foo=" + TestUtils.generateStringOfLength(5000) + "; Secure; HttpOnly");
+	}
+	
+	@Test
+	public void testSendError() throws Exception{
+		HttpServletResponse servResp = new MockHttpServletResponse();
+		servResp = spy(servResp);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		SecurityWrapperResponse spyResp = spy(resp);
+		Mockito.doCallRealMethod().when(spyResp).sendError(200);
+		spyResp.sendError(200);
+		
+		verify(servResp, times(1)).sendError(200, "HTTP error code: 200");;
+	}
+	
+	@Test
+	public void testSendStatus() throws Exception{
+		HttpServletResponse servResp = new MockHttpServletResponse();
+		servResp = spy(servResp);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		SecurityWrapperResponse spyResp = spy(resp);
+		Mockito.doCallRealMethod().when(spyResp).setStatus(200);;
+		spyResp.setStatus(200);
+		
+		verify(servResp, times(1)).setStatus(200);;
+	}
+	
+	@Test
+	public void testSendStatusWithString() throws Exception{
+		HttpServletResponse servResp = new MockHttpServletResponse();
+		servResp = spy(servResp);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		SecurityWrapperResponse spyResp = spy(resp);
+		Mockito.doCallRealMethod().when(spyResp).setStatus(200, "foo");;
+		spyResp.setStatus(200, "foo");
+		
+		verify(servResp, times(1)).sendError(200, "foo");;
 	}
 }
