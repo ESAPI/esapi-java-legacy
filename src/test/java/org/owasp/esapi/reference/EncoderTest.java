@@ -508,6 +508,7 @@ public class EncoderTest extends TestCase {
     	String expected = "Ü";
     	assertEquals(expected, ESAPI.encoder().decodeForHTML(input));
     }
+    
     public void testEncodeForXMLNull() {
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForXML(null));
