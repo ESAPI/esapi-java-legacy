@@ -40,6 +40,40 @@ public class SecurityWrapperResponseTest {
 	}
 	
 	@Test
+	public void testSetDateHeader(){
+		HttpServletResponse servResp = mock(HttpServletResponse.class);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		long currentTime = System.currentTimeMillis();
+		resp.setDateHeader("Foo", currentTime);
+		verify(servResp, times(1)).setDateHeader("Foo", currentTime);
+	}
+	
+	@Test
+	public void testSetInvalidDateHeader(){
+		HttpServletResponse servResp = mock(HttpServletResponse.class);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		long currentTime = System.currentTimeMillis();
+		resp.setDateHeader("<scr", currentTime);
+		verify(servResp, times(0)).setDateHeader("<scr", currentTime);
+	}
+	
+	@Test
+	public void testSetHeader(){
+		HttpServletResponse servResp = mock(HttpServletResponse.class);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		resp.setHeader("foo", "bar");
+		verify(servResp, times(1)).setHeader("foo", "bar");
+	}
+	
+	@Test
+	public void testSetInvalidHeader(){
+		HttpServletResponse servResp = mock(HttpServletResponse.class);
+		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
+		resp.setHeader("foo", "<script>alert</script>");
+		verify(servResp, times(0)).setHeader("foo", "<script>alert</script>");
+	}
+	
+	@Test
 	public void testInvalidDateHeader(){
 		HttpServletResponse servResp = mock(HttpServletResponse.class);
 		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
@@ -101,8 +135,10 @@ public class SecurityWrapperResponseTest {
 		SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
 		SecurityWrapperResponse spyResp = spy(resp);
 		Cookie cookie = new Cookie("Foo", TestUtils.generateStringOfLength(10));
+		cookie.setMaxAge(5000);
 		Mockito.doCallRealMethod().when(spyResp).addCookie(cookie);
 		spyResp.addCookie(cookie);
+		
 		/*
 		 * We're indirectly testing our class.  Since it ultimately
 		 * delegates to HttpServletResponse.addHeader, we're actually 
@@ -110,7 +146,7 @@ public class SecurityWrapperResponseTest {
 		 * expected properties.  This implicitly tests the 
 		 * createCookieHeader method as well.
 		 */
-		verify(servResp, times(1)).addHeader("Set-Cookie", "Foo=aaaaaaaaaa; Secure; HttpOnly");
+		verify(servResp, times(1)).addHeader("Set-Cookie", "Foo=aaaaaaaaaa; Max-Age=5000; Secure; HttpOnly");
 	}
 	
 	@Test

@@ -384,7 +384,6 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     	}else{
     		getHttpServletResponse().sendError(sc, ESAPI.encoder().encodeForHTML(msg));
     	}
-        
     }
 
     /**
