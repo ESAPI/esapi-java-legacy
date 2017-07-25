@@ -34,6 +34,7 @@ import bsh.Interpreter;
 
 /**
  * This is the Rule subclass executed for &lt;bean-shell-script&gt; rules.
+ *
  * @author Arshan Dabirsiaghi
  *
  */
@@ -42,43 +43,41 @@ public class BeanShellRule extends Rule {
 	private Interpreter i;
 	private String script;
 	private Pattern path;
-	
-	public BeanShellRule(String fileLocation, String id, Pattern path) throws IOException, EvalError { 
+
+	public BeanShellRule(String fileLocation, String id, Pattern path) throws IOException, EvalError {
 		i = new Interpreter();
 		i.set("logger", logger);
-		this.script = getFileContents( ESAPI.securityConfiguration().getResourceFile(fileLocation));
+		this.script = getFileContents(ESAPI.securityConfiguration().getResourceFile(fileLocation));
 		this.id = id;
 		this.path = path;
 	}
-	
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
+
+	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response,
 			HttpServletResponse httpResponse) {
 
 		/*
 		 * Early fail: if the URL doesn't match one we're interested in.
 		 */
-		
-		if ( path != null && ! path.matcher(request.getRequestURI()).matches() ) {
+
+		if (path != null && !path.matcher(request.getRequestURI()).matches()) {
 			return new DoNothingAction();
 		}
-		
+
 		/*
-		 * Run the beanshell that we've already parsed
-		 * and pre-compiled. Populate the "request"
-		 * and "response" objects so the script has
+		 * Run the beanshell that we've already parsed and pre-compiled.
+		 * Populate the "request" and "response" objects so the script has
 		 * access to the same variables we do here.
 		 */
-		
+
 		try {
-		
+
 			Action a = null;
-			
+
 			i.set("action", a);
 			i.set("request", request);
-			
-			if ( response != null ) {
-				i.set("response", response);	
+
+			if (response != null) {
+				i.set("response", response);
 			} else {
 				i.set("response", httpResponse);
 			}
@@ -86,31 +85,35 @@ public class BeanShellRule extends Rule {
 			i.set("session", request.getSession());
 			i.eval(script);
 
-			a = (Action)i.get("action");
-	
-			if ( a != null ) {
+			a = (Action) i.get("action");
+
+			if (a != null) {
 				return a;
 			}
-			
+
 		} catch (EvalError e) {
-			log(request,"Error running custom beanshell rule (" + id + ") - " + e.getMessage());
+			log(request, "Error running custom beanshell rule (" + id + ") - " + e.getMessage());
 		}
-	
+
 		return new DoNothingAction();
 	}
-	
+
 	private String getFileContents(File f) throws IOException {
-		
-		FileReader fr = new FileReader(f);
 		StringBuffer sb = new StringBuffer();
-		String line;
-		BufferedReader br = new BufferedReader(fr);
-		
-		while( (line=br.readLine()) != null ) {
-			sb.append(line + System.getProperty("line.separator"));
+		BufferedReader br = null;
+
+		try {
+			br = new BufferedReader(new FileReader(f));
+			String line;
+			while ((line = br.readLine()) != null) {
+				sb.append(line + System.getProperty("line.separator"));
+			}
+
+		} finally {
+			if (br != null) {
+				br.close();
+			}
 		}
-		
 		return sb.toString();
 	}
-
 }
