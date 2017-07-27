@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.ByteArrayOutputStream;
@@ -468,10 +469,23 @@ public class EncoderTest extends TestCase {
         assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��"));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �"));
+        assertEquals("Hi \\28This\\29 =", instance.encodeForLDAP("Hi (This) ="));
     }
     
     /**
-	 * Test of encodeForLDAP method, of class org.owasp.esapi.Encoder.
+	 * Test of encodeForLDAP method with without encoding wildcard characters, of class org.owasp.esapi.Encoder.
+	 */
+    public void testEncodeForLDAPWithoutEncodingWildcards() {
+        System.out.println("encodeForLDAPWithoutEncodingWildcards");
+        Encoder instance = ESAPI.encoder();
+        assertEquals(null, instance.encodeForLDAP(null, false));
+        assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��", false));
+        assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000", false));
+        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is * a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �", false));
+    }
+    
+    /**
+	 * Test of encodeForDN method, of class org.owasp.esapi.Encoder.
 	 */
     public void testEncodeForDN() {
         System.out.println("encodeForDN");
@@ -484,6 +498,15 @@ public class EncoderTest extends TestCase {
         assertEquals("less than greater than", "Hello\\<\\>", instance.encodeForDN("Hello<>"));
         assertEquals("only 3 spaces", "\\  \\ ", instance.encodeForDN("   "));
         assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
+    }
+    
+    /**
+     * Longstanding issue of always lowercasing named HTML entities.  This will be set right now. 
+     */
+    public void testNamedUpperCaseDecoding(){
+    	String input = "&Uuml;";
+    	String expected = "Ü";
+    	assertEquals(expected, ESAPI.encoder().decodeForHTML(input));
     }
     
     public void testEncodeForXMLNull() {
@@ -854,5 +877,32 @@ public class EncoderTest extends TestCase {
 		}
     }
     
+    public void testGetCanonicalizedUri() throws Exception {
+    	Encoder e = ESAPI.encoder();
+    	
+    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+    	
+    }
+    
+    public void testGetCanonicalizedUriWithMailto() throws Exception {
+    	Encoder e = ESAPI.encoder();
+    	
+    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+    	
+    }
 }
 

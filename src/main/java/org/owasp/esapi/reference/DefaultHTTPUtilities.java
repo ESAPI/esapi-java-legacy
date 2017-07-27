@@ -41,6 +41,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.User;
 import org.owasp.esapi.ValidationErrorList;
@@ -340,7 +341,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
         // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly]
         String header = name + "=" + value;
-        header += "; Max-Age=" + maxAge;
+		if (maxAge >= 0) {
+			header += "; Max-Age=" + maxAge;
+		}
         if (domain != null) {
             header += "; Domain=" + domain;
         }
@@ -929,6 +932,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String clearToken = user.getAccountName() + "|" + password;
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
+			SecurityConfiguration sg = ESAPI.securityConfiguration();
+			boolean forceSecureCookies = sg.getBooleanProp("HttpUtilities.ForceSecureCookies");
+			boolean forceHttpOnly = sg.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
 
             // Do NOT URLEncode cryptToken before creating cookie. See Google Issue # 144,
 			// which was marked as "WontFix".
@@ -937,6 +943,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			cookie.setMaxAge( maxAge );
 			cookie.setDomain( domain );
 			cookie.setPath( path );
+			cookie.setHttpOnly(forceHttpOnly);
+			cookie.setSecure(forceSecureCookies);
 			response.addCookie( cookie );
 			logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
 			return cryptToken;
@@ -957,7 +965,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			String clearToken = user.getAccountName();
 			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
 			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
-
+			SecurityConfiguration sg = ESAPI.securityConfiguration();
+			boolean forceSecureCookies = sg.getBooleanProp("HttpUtilities.ForceSecureCookies");
+			boolean forceHttpOnly = sg.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
             // Do NOT URLEncode cryptToken before creating cookie. See Google Issue # 144,
 			// which was marked as "WontFix".
 
@@ -965,6 +975,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			cookie.setMaxAge( maxAge );
 			cookie.setDomain( domain );
 			cookie.setPath( path );
+			cookie.setHttpOnly(forceHttpOnly);
+			cookie.setSecure(forceSecureCookies);
 			response.addCookie( cookie );
 			logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
 		} catch( IntegrityException e){

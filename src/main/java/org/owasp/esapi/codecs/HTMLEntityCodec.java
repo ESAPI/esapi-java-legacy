@@ -250,12 +250,21 @@ public class HTMLEntityCodec extends Codec
 		// kludge around PushbackString....
 		len = Math.min(input.remainder().length(), entityToCharacterTrie.getMaxKeyLength());
 		for(int i=0;i<len;i++)
-			possible.append(Character.toLowerCase(input.next()));
+			possible.append(input.next());
 
 		// look up the longest match
 		entry = entityToCharacterTrie.getLongestMatch(possible);
-		if(entry == null)
-			return null;	// no match, caller will reset input
+		if(entry == null) {
+			// We are lowercasing & comparing the result because of this all the upper case named entities are getting converted lowercase named entities.
+			// check is there any exact match https://github.com/ESAPI/esapi-java-legacy/issues/302
+			String possibleString = possible.toString();
+			String possibleStringLowerCase = possibleString.toLowerCase();
+		        if(!possibleString.equals(possibleStringLowerCase)) {
+		           Map.Entry<CharSequence,Character> exactEntry = entityToCharacterTrie.getLongestMatch(possibleStringLowerCase);
+		           if(exactEntry != null) entry = exactEntry;
+		        }
+		        if(entry == null) return null; // no match, caller will reset input
+		}
 
 		// fixup input
 		input.reset();

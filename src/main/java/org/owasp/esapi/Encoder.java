@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.io.IOException;
+import java.net.URI;
 
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.errors.EncodingException;
@@ -369,7 +370,7 @@ public interface Encoder {
 	String encodeForOS(Codec codec, String input);
 
 	/**
-	 * Encode data for use in LDAP queries.
+	 * Encode data for use in LDAP queries. Wildcard (*) characters will be encoded.
 	 * 
 	 * @param input 
 	 * 		the text to encode for LDAP
@@ -378,6 +379,18 @@ public interface Encoder {
 	 */
 	String encodeForLDAP(String input);
 
+	/**
+	 * Encode data for use in LDAP queries. You have the option whether or not to encode wildcard (*) characters.
+	 * 
+	 * @param input 
+	 * 		the text to encode for LDAP
+	 * @param encodeWildcards 
+	 *      whether or not wildcard (*) characters will be encoded.
+     *
+	 * @return input encoded for use in LDAP
+	 */
+	String encodeForLDAP(String input, boolean encodeWildcards);
+	 
 	/**
 	 * Encode data for use in an LDAP distinguished name.
 	 * 
@@ -512,5 +525,16 @@ public interface Encoder {
 	 * @throws IOException
 	 */
 	byte[] decodeFromBase64(String input) throws IOException;
+
+	/**
+	 * 
+	 * Get a version of the input URI that will be safe to run regex and other validations against.  
+	 * It is not recommended to persist this value as it will transform user input.  This method 
+	 * will not test to see if the URI is RFC-3986 compliant.
+	 * 
+	 * @param input
+	 * @return
+	 */
+	public String getCanonicalizedURI(URI dirtyUri);
 
 }

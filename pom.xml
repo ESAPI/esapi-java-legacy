@@ -205,12 +205,48 @@
             <artifactId>batik-css</artifactId>
             <version>1.9</version>
         </dependency>
-		<dependency>
+		<!--  <dependency>
 		    <groupId>org.mockito</groupId>
 		    <artifactId>mockito-all</artifactId>
 		    <version>1.10.19</version>
 		    <scope>test</scope>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito -->
+		<dependency>
+		    <groupId>org.powermock</groupId>
+		    <artifactId>powermock-api-mockito</artifactId>
+		    <version>1.7.0</version>
+		    <scope>test</scope>
 		</dependency>
+		<dependency>
+		    <groupId>org.powermock</groupId>
+		    <artifactId>powermock-module-junit4</artifactId>
+		    <version>1.7.0</version>
+		    <scope>test</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/eu.codearte.catch-exception/catch-exception 
+		<dependency>
+		    <groupId>eu.codearte.catch-exception</groupId>
+		    <artifactId>catch-exception</artifactId>
+		    <version>1.4.6</version>
+		    <scope>test</scope>
+		</dependency>-->
+				
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-core 
+		<dependency>
+		    <groupId>org.powermock</groupId>
+		    <artifactId>powermock-core</artifactId>
+		    <version>1.7.0</version>
+		    <scope>test</scope>
+		</dependency>-->
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-easymock 
+		<dependency>
+		    <groupId>org.powermock</groupId>
+		    <artifactId>powermock-api-easymock</artifactId>
+		    <version>1.7.0</version>
+		    <scope>test</scope>
+		</dependency>-->
+		
     </dependencies>
 
     <build>
@@ -219,8 +255,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>false</showDeprecation>
@@ -309,7 +345,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.5</version>
+                <version>3.0.4</version>
                 <configuration>
                     <findbugsXmlOutput>true</findbugsXmlOutput>
                     <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
@@ -412,6 +448,39 @@
     </reporting>
 
     <profiles>
+        <profile>
+          <id>doclint-java8-disable</id>
+          <activation>
+            <jdk>[1.8,)</jdk>
+          </activation>
+          <build>
+            <plugins>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                  <additionalparam>-Xdoclint:none</additionalparam>
+                </configuration>
+              </plugin>
+              <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.4</version>
+                <configuration>
+                  <reportPlugins>
+                    <plugin>
+                      <groupId>org.apache.maven.plugins</groupId>
+                      <artifactId>maven-javadoc-plugin</artifactId>
+                      <configuration>
+                        <additionalparam>-Xdoclint:none</additionalparam>
+                      </configuration>
+                    </plugin>
+                  </reportPlugins>
+                </configuration>
+              </plugin>
+            </plugins>
+          </build>
+        </profile>
         <profile>
             <!-- Activate to sign jars and build distributable download. -->
             <id>dist</id>

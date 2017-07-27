@@ -694,6 +694,8 @@ public interface Validator {
 	 * the kind of regex required for subsequent validation to mitigate regex-based 
 	 * DoS attacks.  
 	 * 
+	 * @see <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986.</a>
+	 * 
  	 *	@param context
 	 *  		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
 	 *  @param input
@@ -706,17 +708,6 @@ public interface Validator {
 	 */
 	boolean isValidURI(String context, String input, boolean allowNull);
 
-	/**
-	 * 
-	 * Get a version of the input URI that will be safe to run regex and other validations against.  
-	 * It is not recommended to persist this value as it will transform user input.  This method 
-	 * will not test to see if the URI is RFC-3986 compliant.
-	 * 
-	 * @param input
-	 * @return
-	 */
-	public String getCanonicalizedURI(URI dirtyUri);
-	
 	/**
 	 * Will return a {@code URI} object that will represent a fully parsed and legal URI
 	 * as specified in RFC-3986.  

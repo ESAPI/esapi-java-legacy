@@ -25,6 +25,7 @@ import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
+import org.owasp.esapi.util.TestUtils;
 
 import javax.servlet.http.Cookie;
 import java.io.*;
@@ -592,10 +593,11 @@ public class ValidatorTest extends TestCase {
         assertTrue(instance.isValidInput("test", "jeffWILLIAMS123", "HTTPParameterValue", 100, false));
         assertTrue(instance.isValidInput("test", "jeff .-/+=@_ WILLIAMS", "HTTPParameterValue", 100, false));
         // Removed per Issue 116 - The '*' character is valid as a parameter character
-//        assertFalse(instance.isValidInput("test", "jeff*WILLIAMS", "HTTPParameterValue", 100, false));
+//        assertFalse(instance.isValidInput("test", "jeff*WILLIAMS", "HTTPParameterValue", 100, false))
+        System.err.println(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));;
         assertFalse(instance.isValidInput("test", "jeff^WILLIAMS", "HTTPParameterValue", 100, false));
         assertFalse(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));
-
+        
         assertTrue(instance.isValidInput("test", null, "Email", 100, true));
         assertFalse(instance.isValidInput("test", null, "Email", 100, false));
 
@@ -1005,11 +1007,11 @@ public class ValidatorTest extends TestCase {
 //an example of a parameter from displaytag, should pass
         request.addParameter("d-49653-p", "pass");
         request.addParameter("<img ", "fail");
-        request.addParameter(generateStringOfLength(32), "pass");
-        request.addParameter(generateStringOfLength(33), "fail");
+        request.addParameter(TestUtils.generateStringOfLength(32), "pass");
+        request.addParameter(TestUtils.generateStringOfLength(33), "fail");
         assertEquals(safeRequest.getParameterMap().size(), 2);
         assertNull(safeRequest.getParameterMap().get("<img"));
-        assertNull(safeRequest.getParameterMap().get(generateStringOfLength(33)));
+        assertNull(safeRequest.getParameterMap().get(TestUtils.generateStringOfLength(33)));
     }
 
     public void testGetParameterNames() {
@@ -1019,8 +1021,8 @@ public class ValidatorTest extends TestCase {
 //an example of a parameter from displaytag, should pass
         request.addParameter("d-49653-p", "pass");
         request.addParameter("<img ", "fail");
-        request.addParameter(generateStringOfLength(32), "pass");
-        request.addParameter(generateStringOfLength(33), "fail");
+        request.addParameter(TestUtils.generateStringOfLength(32), "pass");
+        request.addParameter(TestUtils.generateStringOfLength(33), "fail");
         assertEquals(Collections.list(safeRequest.getParameterNames()).size(), 2);
     }
 
@@ -1079,13 +1081,20 @@ public class ValidatorTest extends TestCase {
         SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
         request.addHeader("p1", "login");
         request.addHeader("f1", "<A HREF=\"http://0x42.0x0000066.0x7.0x93/\">XSS</A>");
-        request.addHeader("p2", generateStringOfLength(200));   // Upper limit increased from 150 -> 200, GitHub issue #351
-        request.addHeader("f2", generateStringOfLength(201));
+        request.addHeader("p2", TestUtils.generateStringOfLength(200));   // Upper limit increased from 150 -> 200, GitHub issue #351
+        request.addHeader("f2", TestUtils.generateStringOfLength(201));
         assertEquals(safeRequest.getHeader("p1"), request.getHeader("p1"));
         assertEquals(safeRequest.getHeader("p2"), request.getHeader("p2"));
         assertFalse(safeRequest.getHeader("f1").equals(request.getHeader("f1")));
         assertFalse(safeRequest.getHeader("f2").equals(request.getHeader("f2")));
         assertNull(safeRequest.getHeader("p3"));
+    }
+    
+    public void testHeaderLengthChecks(){
+    	Validator v = ESAPI.validator();
+    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+    	assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(257), "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false));
+    	assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(4097), "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
     }
 
     public void testGetHeaderNames() {
@@ -1095,11 +1104,12 @@ public class ValidatorTest extends TestCase {
         request.addHeader("d-49653-p", "pass");
         request.addHeader("<img ", "fail");
             // Note: Max length in ESAPI.properties as per
-            // Validator.HTTPHeaderName regex is 50, but upper
-            // bound of 150 imposed by SecurityRequestWrapper.
-        request.addHeader(generateStringOfLength(50), "pass");
-        request.addHeader(generateStringOfLength(51), "fail");
-        assertEquals(Collections.list(safeRequest.getHeaderNames()).size(), 2);
+            // Validator.HTTPHeaderName regex is 256, but upper
+            // bound is configurable by the property HttpUtilities.MaxHeaderNameSize
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+        request.addHeader(TestUtils.generateStringOfLength(255), "pass");
+        request.addHeader(TestUtils.generateStringOfLength(257), "fail");
+        assertEquals(2, Collections.list(safeRequest.getHeaderNames()).size());
     }
 
     public void testGetQueryString() {
@@ -1127,15 +1137,6 @@ public class ValidatorTest extends TestCase {
         assertEquals(safeRequest.getRequestURI(), request.getRequestURI());
     }
 
-    private String generateStringOfLength(int length) {
-        assert length >= 0 : "length must be >= 0";
-        StringBuilder longString = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            longString.append("a");
-        }
-        return longString.toString();
-    }
-
     public void testGetContextPath() {
         // Root Context Path ("")
         assertTrue(ESAPI.validator().isValidInput("HTTPContextPath", "", "HTTPContextPath", 512, true));
@@ -1156,18 +1157,10 @@ public class ValidatorTest extends TestCase {
     	assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
     }
     
-    public void testGetCanonicalizedUri() throws Exception {
+    public void testGetValidUriNullInput(){
     	Validator v = ESAPI.validator();
-    	
-    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
-    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
-    	//password information as in http://palpatine:password@foo.com, and this will
-    	//not appear in the userinfo field.  
-    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
-    	URI uri = new URI(input);
-    	System.out.println(uri.toString());
-    	assertEquals(expectedUri, v.getCanonicalizedURI(uri));
-    	
+    	boolean isValid = v.isValidURI("test", null, true);
+    	assertTrue(isValid);
     }
 }
 
