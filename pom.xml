@@ -174,9 +174,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>xom</groupId>
+            <groupId>com.io7m.xom</groupId>
             <artifactId>xom</artifactId>
-            <version>1.2.5</version>
+            <version>1.2.10</version>
         </dependency>
         <dependency>
             <groupId>org.beanshell</groupId>
@@ -186,7 +186,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.5.5</version>
+            <version>1.5.6</version>
         </dependency>
         <!-- The following is only a TRANSITIVE dependency used by antisamy.
              Antisamy uses 2.7.0, which has unpatched vulnerability
