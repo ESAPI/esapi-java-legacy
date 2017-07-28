@@ -1082,7 +1082,7 @@ public class ValidatorTest extends TestCase {
         request.addHeader("p1", "login");
         request.addHeader("f1", "<A HREF=\"http://0x42.0x0000066.0x7.0x93/\">XSS</A>");
         request.addHeader("p2", TestUtils.generateStringOfLength(200));   // Upper limit increased from 150 -> 200, GitHub issue #351
-        request.addHeader("f2", TestUtils.generateStringOfLength(201));
+        request.addHeader("f2", TestUtils.generateStringOfLength(4097));
         assertEquals(safeRequest.getHeader("p1"), request.getHeader("p1"));
         assertEquals(safeRequest.getHeader("p2"), request.getHeader("p2"));
         assertFalse(safeRequest.getHeader("f1").equals(request.getHeader("f1")));

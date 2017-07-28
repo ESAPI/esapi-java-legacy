@@ -127,13 +127,13 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public String getContextPath() {
         String path = getHttpServletRequest().getContextPath();
-
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
 		//Return empty String for the ROOT context
 		if (path == null || "".equals(path.trim())) return "";
 
         String clean = "";
         try {
-            clean = ESAPI.validator().getValidInput("HTTP context path: " + path, path, "HTTPContextPath", 150, false);
+            clean = ESAPI.validator().getValidInput("HTTP context path: " + path, path, "HTTPContextPath", sc.getIntProp("HttpUtilities.contextPathLength"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -148,14 +148,14 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public Cookie[] getCookies() {
         Cookie[] cookies = getHttpServletRequest().getCookies();
         if (cookies == null) return new Cookie[0];
-        
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         List<Cookie> newCookies = new ArrayList<Cookie>();
         for (Cookie c : cookies) {
             // build a new clean cookie
             try {
                 // get data from original cookie
-                String name = ESAPI.validator().getValidInput("Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", 150, true);
-                String value = ESAPI.validator().getValidInput("Cookie value: " + c.getValue(), c.getValue(), "HTTPCookieValue", 1000, true);
+                String name = ESAPI.validator().getValidInput("Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), true);
+                String value = ESAPI.validator().getValidInput("Cookie value: " + c.getValue(), c.getValue(), "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), true);
                 int maxAge = c.getMaxAge();
                 String domain = c.getDomain();
                 String path = c.getPath();
@@ -167,11 +167,11 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
                     // kww TODO: HTTPHeaderValue seems way too liberal of a regex for cookie domain
                     // as it allows invalid characters for a domain name. Maybe create a new custom
                     // HTTPCookieDomain regex???
-                    n.setDomain(ESAPI.validator().getValidInput("Cookie domain: " + domain, domain, "HTTPHeaderValue", 200, false));
+                    n.setDomain(ESAPI.validator().getValidInput("Cookie domain: " + domain, domain, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
                 }
                 if (path != null) {
                     // kww TODO: OPEN ISSUE: Would not HTTPServletPath make more sense here???
-                    n.setPath(ESAPI.validator().getValidInput("Cookie path: " + path, path, "HTTPHeaderValue", 200, false));
+                    n.setPath(ESAPI.validator().getValidInput("Cookie path: " + path, path, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
                 }
                 newCookies.add(n);
             } catch (ValidationException e) {
@@ -202,8 +202,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getHeader(String name) {
         String value = getHttpServletRequest().getHeader(name);
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 200, true);
+            clean = ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -241,10 +242,11 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public Enumeration getHeaders(String name) {
         Vector<String> v = new Vector<String>();
         Enumeration en = getHttpServletRequest().getHeaders(name);
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         while (en.hasMoreElements()) {
             try {
                 String value = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP header value (" + name + "): " + value, value, "HTTPHeaderValue", 200, true);
+                String clean = ESAPI.validator().getValidInput("HTTP header value (" + name + "): " + value, value, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.httpQueryParamValueLength"), true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
@@ -345,7 +347,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return The "scrubbed" parameter value.
      */
     public String getParameter(String name, boolean allowNull) {
-        return getParameter(name, allowNull, 2000, "HTTPParameterValue");
+    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+        return getParameter(name, allowNull, sc.getIntProp("HttpUtilities.httpQueryParamValueLength"), "HTTPParameterValue");
     }
 
     /**
@@ -393,12 +396,13 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
             try {
                 Map.Entry e = (Map.Entry) o;
                 String name = (String) e.getKey();
-                String cleanName = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 100, true);
-
+                SecurityConfiguration sc = ESAPI.securityConfiguration();
+                String cleanName = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", sc.getIntProp("HttpUtilities.httpQueryParamNameLength"), true);
+                
                 String[] value = (String[]) e.getValue();
                 String[] cleanValues = new String[value.length];
                 for (int j = 0; j < value.length; j++) {
-                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value[j], value[j], "HTTPParameterValue", 2000, true);
+                    String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value[j], value[j], "HTTPParameterValue", sc.getIntProp("HttpUtilities.httpQueryParamValueLength"), true);
                     cleanValues[j] = cleanValue;
                 }
                 cleanMap.put(cleanName, cleanValues);
@@ -419,8 +423,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         Enumeration en = getHttpServletRequest().getParameterNames();
         while (en.hasMoreElements()) {
             try {
+            	SecurityConfiguration sc = ESAPI.securityConfiguration();
                 String name = (String) en.nextElement();
-                String clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", 150, true);
+                String clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", sc.getIntProp("HttpUtilities.httpQueryParamNameLength"), true);
                 v.add(clean);
             } catch (ValidationException e) {
                 // already logged
@@ -444,9 +449,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 	if(values == null)
 		return null;
         newValues = new ArrayList<String>();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         for (String value : values) {
             try {
-                String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
+                String cleanValue = ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", sc.getIntProp("HttpUtilities.URILENGTH"), true);
                 newValues.add(cleanValue);
             } catch (ValidationException e) {
                 logger.warning(Logger.SECURITY_FAILURE, "Skipping bad parameter");
@@ -465,8 +471,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         String path = getHttpServletRequest().getPathInfo();
 		if (path == null) return null;
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP path: " + path, path, "HTTPPath", 150, true);
+            clean = ESAPI.validator().getValidInput("HTTP path: " + path, path, "HTTPPath", sc.getIntProp("HttpUtilities.HTTPPATHLENGTH"), true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -500,8 +507,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getQueryString() {
         String query = getHttpServletRequest().getQueryString();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", 2000, true);
+            clean = ESAPI.validator().getValidInput("HTTP query string: " + query, query, "HTTPQueryString", sc.getIntProp("HttpUtilities.URILENGTH"), true);
         } catch (ValidationException e) {
             // already logged
         }
@@ -591,8 +599,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getRequestedSessionId() {
         String id = getHttpServletRequest().getRequestedSessionId();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("Requested cookie: " + id, id, "HTTPJSESSIONID", 50, false);
+            clean = ESAPI.validator().getValidInput("Requested cookie: " + id, id, "HTTPJSESSIONID", sc.getIntProp("HttpUtilities.HTTPJSESSIONIDLENGTH"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -607,8 +616,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getRequestURI() {
         String uri = getHttpServletRequest().getRequestURI();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP URI: " + uri, uri, "HTTPURI", 2000, false);
+            clean = ESAPI.validator().getValidInput("HTTP URI: " + uri, uri, "HTTPURI", sc.getIntProp("HttpUtilities.URILENGTH"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -623,8 +633,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public StringBuffer getRequestURL() {
         String url = getHttpServletRequest().getRequestURL().toString();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP URL: " + url, url, "HTTPURL", 2000, false);
+            clean = ESAPI.validator().getValidInput("HTTP URL: " + url, url, "HTTPURL", sc.getIntProp("HttpUtilities.URILENGTH"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -639,8 +650,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getScheme() {
         String scheme = getHttpServletRequest().getScheme();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP scheme: " + scheme, scheme, "HTTPScheme", 10, false);
+            clean = ESAPI.validator().getValidInput("HTTP scheme: " + scheme, scheme, "HTTPScheme", sc.getIntProp("HttpUtilities.HTTPSCHEMELENGTH"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -655,8 +667,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getServerName() {
         String name = getHttpServletRequest().getServerName();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP server name: " + name, name, "HTTPServerName", 100, false);
+            clean = ESAPI.validator().getValidInput("HTTP server name: " + name, name, "HTTPServerName", sc.getIntProp("HttpUtilities.HTTPHOSTLENGTH"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -686,8 +699,9 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getServletPath() {
         String path = getHttpServletRequest().getServletPath();
         String clean = "";
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
-            clean = ESAPI.validator().getValidInput("HTTP servlet path: " + path, path, "HTTPServletPath", 100, false);
+            clean = ESAPI.validator().getValidInput("HTTP servlet path: " + path, path, "HTTPServletPath", sc.getIntProp("HttpUtilities.HTTPSERVLETPATHLENGTH"), false);
         } catch (ValidationException e) {
             // already logged
         }
@@ -703,10 +717,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 		HttpSession session = getHttpServletRequest().getSession();
 
 		// send a new cookie header with HttpOnly on first and second responses
-	    if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
+	    if (ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlySession")) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 				session.setAttribute("HTTP_ONLY", "set");
-				Cookie cookie = new Cookie(ESAPI.securityConfiguration().getHttpSessionIdName(), session.getId());
+				Cookie cookie = new Cookie(ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName"), session.getId());
 				cookie.setPath( getHttpServletRequest().getContextPath() );
 				cookie.setMaxAge(-1); // session cookie
 	            HttpServletResponse response = ESAPI.currentResponse();
@@ -731,10 +745,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         }
 
         // send a new cookie header with HttpOnly on first and second responses
-        if (ESAPI.securityConfiguration().getForceHttpOnlySession()) {
+        if (ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlySession")) {
 	        if (session.getAttribute("HTTP_ONLY") == null) {
 	            session.setAttribute("HTTP_ONLY", "set");
-	            Cookie cookie = new Cookie(ESAPI.securityConfiguration().getHttpSessionIdName(), session.getId());
+	            Cookie cookie = new Cookie(ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName"), session.getId());
 	            cookie.setMaxAge(-1); // session cookie
 	            cookie.setPath( getHttpServletRequest().getContextPath() );
 	            HttpServletResponse response = ESAPI.currentResponse();
@@ -835,7 +849,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @throws UnsupportedEncodingException
      */
     public void setCharacterEncoding(String enc) throws UnsupportedEncodingException {
-        getHttpServletRequest().setCharacterEncoding(ESAPI.securityConfiguration().getCharacterEncoding());
+        getHttpServletRequest().setCharacterEncoding(ESAPI.securityConfiguration().getStringProp("HttpUtilities.CharacterEncoding"));
     }
 
     public String getAllowableContentRoot() {
