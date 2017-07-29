@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
 
@@ -436,5 +437,43 @@ public class DefaultSecurityConfigurationTest {
 		int expected = 6;
 		int testValue = DefaultSearchPath.values().length;
 		assertEquals(expected, testValue);
+	}
+	
+	@Test
+	public void defaultPropertiesTest(){
+		SecurityConfiguration sc = ESAPI.securityConfiguration();
+//		# Maximum size of JSESSIONID for the application--the validator regex may have additional values.  
+//		HttpUtilities.HTTPJSESSIONIDLENGTH=50
+		assertEquals(50, sc.getIntProp("HttpUtilities.HTTPJSESSIONIDLENGTH"));
+//		# Maximum length of a URL (see https://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers)
+//		HttpUtilities.URILENGTH=2000
+		assertEquals(2000, sc.getIntProp("HttpUtilities.URILENGTH"));
+//		# Maximum length for an http scheme
+//		HttpUtilities.HTTPSCHEMELENGTH=10
+		assertEquals(10, sc.getIntProp("HttpUtilities.HTTPSCHEMELENGTH"));
+//		# Maximum length for an http host
+//		HttpUtilities.HTTPHOSTLENGTH=100
+		assertEquals(100, sc.getIntProp("HttpUtilities.HTTPHOSTLENGTH"));
+//		# Maximum length for an http path
+//		HttpUtilities.HTTPPATHLENGTH=150
+		assertEquals(150, sc.getIntProp("HttpUtilities.HTTPPATHLENGTH"));
+//		#Maximum length for a context path 
+//		HttpUtilities.contextPathLength=150
+		assertEquals(150, sc.getIntProp("HttpUtilities.contextPathLength"));
+//		#Maximum length for an httpServletPath 
+//		HttpUtilities.HTTPSERVLETPATHLENGTH=100
+		assertEquals(100, sc.getIntProp("HttpUtilities.HTTPSERVLETPATHLENGTH"));
+//		#Maximum length for an http query parameter name
+//		HttpUtilities.httpQueryParamNameLength=100
+		assertEquals(100, sc.getIntProp("HttpUtilities.httpQueryParamNameLength"));
+//		#Maximum length for an http query parameter -- old default was 2000, but that's the max length for a URL...
+//		HttpUtilities.httpQueryParamValueLength=500
+		assertEquals(500, sc.getIntProp("HttpUtilities.httpQueryParamValueLength"));
+//		# Maximum size of HTTP header key--the validator regex may have additional values. 
+//		HttpUtilities.MaxHeaderNameSize=256
+		assertEquals(256, sc.getIntProp("HttpUtilities.MaxHeaderNameSize"));
+//		# Maximum size of HTTP header value--the validator regex may have additional values. 
+//		HttpUtilities.MaxHeaderValueSize=4096
+		assertEquals(4096, sc.getIntProp("HttpUtilities.MaxHeaderValueSize"));
 	}
 }
