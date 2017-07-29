@@ -1063,7 +1063,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public int getMaxHttpHeaderSize() {
-        return getESAPIProperty( MAX_HTTP_HEADER_SIZE, 4096 );
+        return getESAPIProperty( MAX_HTTP_HEADER_SIZE, 4096);
 	}
 
     /**
