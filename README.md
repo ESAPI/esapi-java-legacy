@@ -33,6 +33,8 @@ In mid-2014 ESAPI Migrated all code to GitHub. This migration was completed in N
 ### What about the issues still located on Google Code?
 All issues from Google Code have been migrated to GitHub issues. We have a JIRA/Confluence instance allocated to us, but it has not be configured to synchronize with the GitHub issues, and thus is should not be used. JIRA is fine, but if we can't have it synchronized with GitHub issues (which is where the majority of our users report issues), it is not usuable. As developers, we do not want to spent time having to close issues from multiple bug-tracking sites. Therefore, until this synchronization happens (see GitHub issue #371), please ONLY use GitHub for reporting bugs.
 
+When reporting an issue, please be clear and try to ensure that the ESAPI development team has sufficient information to be able to reproduce your results. If you have not already done son, this might be a good time to read Eric S. Raymond's classic "How to Ask Questions the Smart Way", at http://www.catb.org/esr/faqs/smart-questions.html before posting your issue.
+
 ### Find an Issue?
 If you have found a bug, then create an issue on the esapi-legacy-java repo: https://github.com/ESAPI/esapi-java-legacy/issues
 
