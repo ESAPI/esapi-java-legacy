@@ -872,10 +872,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      */
     public void setHeader(HttpServletResponse response, String name, String value) {
         try {
+        	SecurityConfiguration sc = ESAPI.securityConfiguration();
             String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
             String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
-            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", 50, false);
-            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", 500, false);
+            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
+            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
             response.setHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);

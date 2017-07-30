@@ -1097,14 +1097,16 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * Returns true if input is a valid redirect location.
 	 */
 	public boolean isValidRedirectLocation(String context, String input, boolean allowNull) throws IntrusionException {
-		return ESAPI.validator().isValidInput( context, input, "Redirect", 512, allowNull);
+		SecurityConfiguration sc = ESAPI.securityConfiguration();
+		return ESAPI.validator().isValidInput( context, input, "Redirect", sc.getIntProp("HttpUtilities.maxRedirectLength"), allowNull);
 	}
 
         /**
 	 * Returns true if input is a valid redirect location.
 	 */
 	public boolean isValidRedirectLocation(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-		return ESAPI.validator().isValidInput( context, input, "Redirect", 512, allowNull, errors);
+		SecurityConfiguration sc = ESAPI.securityConfiguration();
+		return ESAPI.validator().isValidInput( context, input, "Redirect", sc.getIntProp("HttpUtilities.maxRedirectLength"), allowNull, errors);
 	}
 
 
@@ -1113,7 +1115,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * will generate a descriptive IntrusionException.
 	 */
 	public String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException {
-		return ESAPI.validator().getValidInput( context, input, "Redirect", 512, allowNull);
+		SecurityConfiguration sc = ESAPI.securityConfiguration();
+		return ESAPI.validator().getValidInput( context, input, "Redirect", sc.getIntProp("HttpUtilities.maxRedirectLength"), allowNull);
 	}
 
 	/**

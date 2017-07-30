@@ -475,5 +475,8 @@ public class DefaultSecurityConfigurationTest {
 //		# Maximum size of HTTP header value--the validator regex may have additional values. 
 //		HttpUtilities.MaxHeaderValueSize=4096
 		assertEquals(4096, sc.getIntProp("HttpUtilities.MaxHeaderValueSize"));
+//		# Maximum length of a redirect 
+//		HttpUtilities.maxRedirectLength=512
+		assertEquals(512, sc.getIntProp("HttpUtilities.maxRedirectLength"));
 	}
 }
