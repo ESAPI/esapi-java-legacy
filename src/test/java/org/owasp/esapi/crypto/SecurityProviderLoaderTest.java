@@ -67,7 +67,7 @@ public class SecurityProviderLoaderTest {
     @Test
     public final void testLoadESAPIPreferredJCEProvider() {
         // Note: OK if empty string or unset, in fact default is empty string.
-        String preferredProvider = ESAPI.securityConfiguration().getStringProp("Encryptor.PreferredJCEProvider");
+        String preferredProvider = ESAPI.securityConfiguration().getPreferredJCEProvider();
         try {
             SecurityProviderLoader.loadESAPIPreferredJCEProvider();
             assertTrue(true);

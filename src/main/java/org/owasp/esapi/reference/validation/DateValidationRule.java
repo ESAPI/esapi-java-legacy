@@ -53,7 +53,7 @@ public class DateValidationRule extends BaseValidationRule {
 		}
 */
         this.format = newFormat;
-        this.format.setLenient( ESAPI.securityConfiguration().getBooleanProp("Validator.AcceptLenientDates") );
+        this.format.setLenient( ESAPI.securityConfiguration().getLenientDatesAccepted() );
     }
 
     /**

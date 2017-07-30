@@ -209,9 +209,9 @@ public final class JavaEncryptor implements Encryptor {
         // setup algorithms -- Each of these have defaults if not set, although
 		//					   someone could set them to something invalid. If
 		//					   so a suitable exception will be thrown and displayed.
-        encryptAlgorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.EncryptionAlgorithm");
-		encryptionKeyLength = ESAPI.securityConfiguration().getIntProp("Encryptor.EncryptionKeyLength");
-		randomAlgorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.RandomAlgorithm");
+        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
+		encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
+		randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
 
 		SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
 		SecretKey secretKey = CryptoHelper.generateSecretKey(encryptAlgorithm, encryptionKeyLength);
@@ -233,8 +233,8 @@ public final class JavaEncryptor implements Encryptor {
      * 					Original exception will be attached as the 'cause'.
      */
     private JavaEncryptor() throws EncryptionException {
-        byte[] salt = ESAPI.securityConfiguration().getByteArrayProp("Encryptor.MasterKey");
-        byte[] skey = ESAPI.securityConfiguration().getByteArrayProp("Encryptor.MasterSalt");
+        byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
+        byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
         assert salt != null : "Can't obtain master salt, Encryptor.MasterSalt";
         assert salt.length >= 16 : "Encryptor.MasterSalt must be at least 16 bytes. " +
@@ -311,7 +311,7 @@ public final class JavaEncryptor implements Encryptor {
 		try {
 			MessageDigest digest = MessageDigest.getInstance(hashAlgorithm);
 			digest.reset();
-			digest.update(ESAPI.securityConfiguration().getByteArrayProp("Encryptor.MasterKey"));
+			digest.update(ESAPI.securityConfiguration().getMasterSalt());
 			digest.update(salt.getBytes(encoding));
 			digest.update(plaintext.getBytes(encoding));
 
@@ -351,14 +351,14 @@ public final class JavaEncryptor implements Encryptor {
 			 throw new IllegalArgumentException("PlainText may arg not be null");
 		 }
 		 byte[] plaintext = plain.asBytes();
-		 boolean overwritePlaintext = ESAPI.securityConfiguration().getBooleanProp("Encryptor.PlainText.overwrite");
+		 boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
 
 		 boolean success = false;	// Used in 'finally' clause.
 		 String xform = null;
 		 int keySize = key.getEncoded().length * 8;	// Convert to # bits
 
 		try {
-			 xform = ESAPI.securityConfiguration().getStringProp("Encryptor.CipherTransformation");
+			 xform = ESAPI.securityConfiguration().getCipherTransformation();
              String[] parts = xform.split("/");
              assert parts.length == 3 : "Malformed cipher transformation: " + xform;
              String cipherMode = parts[1];
@@ -383,7 +383,7 @@ public final class JavaEncryptor implements Encryptor {
 			 //        and this method will just call that one.
 			 Cipher encrypter = Cipher.getInstance(xform);
 			 String cipherAlg = encrypter.getAlgorithm();
-			 int keyLen = ESAPI.securityConfiguration().getIntProp("Encryptor.EncryptionKeyLength");
+			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
 
 			 // DISCUSS: OK, what do we want to do here if keyLen != keySize? If use keyLen, encryption
 			 //		     could fail with an exception, but perhaps that's what we want. Or we may just be
@@ -475,12 +475,12 @@ public final class JavaEncryptor implements Encryptor {
 			 }
 			 
 			 if ( cipherSpec.requiresIV() ) {
-				 String ivType = ESAPI.securityConfiguration().getStringProp("Encryptor.ChooseIVMethod");
+				 String ivType = ESAPI.securityConfiguration().getIVType();
 				 IvParameterSpec ivSpec = null;
 				 if ( ivType.equalsIgnoreCase("random") ) {
 					 ivBytes = ESAPI.randomizer().getRandomBytes(encrypter.getBlockSize());
 				 } else if ( ivType.equalsIgnoreCase("fixed") ) {
-					 String fixedIVAsHex = ESAPI.securityConfiguration().getStringProp("Encryptor.fixedIV");
+					 String fixedIVAsHex = ESAPI.securityConfiguration().getFixedIV();
 					 ivBytes = Hex.decode(fixedIVAsHex);
 					 /* FUTURE		 } else if ( ivType.equalsIgnoreCase("specified")) {
 					 		// FUTURE - TODO  - Create instance of specified class to use for IV generation and
@@ -912,7 +912,7 @@ public final class JavaEncryptor implements Encryptor {
 			//			perhaps a derived key based on the master salt. (One could use
 			//			KeyDerivationFunction.computeDerivedKey().)
 			//
-			byte[] salt = ESAPI.securityConfiguration().getByteArrayProp("Encryptor.MasterKey");
+			byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
 			hmac.init( new SecretKeySpec(salt, "HMacSHA1") );	// Was:	hmac.init(secretKeySpec)	
 			byte[] inBytes;
 			try {
@@ -965,7 +965,7 @@ public final class JavaEncryptor implements Encryptor {
     private KeyDerivationFunction.PRF_ALGORITHMS getPRF(String name) {    	
 		String prfName = null;
 		if ( name == null ) {
-			prfName = ESAPI.securityConfiguration().getStringProp("Encryptor.KDF.PRF");
+			prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
 		} else {
 			prfName = name;
 		}
@@ -974,7 +974,7 @@ public final class JavaEncryptor implements Encryptor {
     }
     
     private KeyDerivationFunction.PRF_ALGORITHMS getDefaultPRF() {
-		String prfName = ESAPI.securityConfiguration().getStringProp("Encryptor.KDF.PRF");
+		String prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
 		return getPRF(prfName);
     }
     
@@ -1009,14 +1009,14 @@ public final class JavaEncryptor implements Encryptor {
     // Get all the algorithms we will be using from ESAPI.properties.
     private static void setupAlgorithms() {
         // setup algorithms
-        encryptAlgorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.EncryptionAlgorithm");
-        signatureAlgorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.DigitalSignatureAlgorithm");
-        randomAlgorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.RandomAlgorithm");
-        hashAlgorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.HashAlgorithm");
-        hashIterations = ESAPI.securityConfiguration().getIntProp("Encryptor.HashIterations");
-        encoding = ESAPI.securityConfiguration().getStringProp("Encryptor.CharacterEncoding");
-        encryptionKeyLength = ESAPI.securityConfiguration().getIntProp("Encryptor.EncryptionKeyLength");
-        signatureKeyLength = ESAPI.securityConfiguration().getIntProp("Encryptor.DigitalSignatureKeyLength");
+        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
+        signatureAlgorithm = ESAPI.securityConfiguration().getDigitalSignatureAlgorithm();
+        randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
+        hashAlgorithm = ESAPI.securityConfiguration().getHashAlgorithm();
+        hashIterations = ESAPI.securityConfiguration().getHashIterations();
+        encoding = ESAPI.securityConfiguration().getCharacterEncoding();
+        encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
+        signatureKeyLength = ESAPI.securityConfiguration().getDigitalSignatureKeyLength();
     }
     
     // Set up signing key pair using the master password and salt. Called (once)

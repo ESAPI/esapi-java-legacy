@@ -44,10 +44,10 @@ public class DefaultUser implements User, Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/** The idle timeout length specified in the ESAPI config file. */
-	private static final int IDLE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getIntProp("Authenticator.IdleTimeoutDuration");
+	private static final int IDLE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionIdleTimeoutLength();
 	
 	/** The absolute timeout length specified in the ESAPI config file. */
-	private static final int ABSOLUTE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getIntProp("Authenticator.AbsoluteTimeoutDuration");
+	private static final int ABSOLUTE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionAbsoluteTimeoutLength();
 	
 	/** The logger used by the class. */
 	private transient final Logger logger = ESAPI.getLogger("DefaultUser");
@@ -425,7 +425,7 @@ public class DefaultUser implements User, Serializable {
 			loggedIn = false;
 			setLastFailedLoginTime(new Date());
 			incrementFailedLoginCount();
-			if (getFailedLoginCount() >= ESAPI.securityConfiguration().getIntProp("Authenticator.AllowedLoginAttempts")) {
+			if (getFailedLoginCount() >= ESAPI.securityConfiguration().getAllowedLoginAttempts()) {
 				lock();
 			}
 			throw new AuthenticationLoginException("Login failed", "Incorrect password provided for " + getAccountName() );
@@ -444,7 +444,7 @@ public class DefaultUser implements User, Serializable {
             removeSession(session);
 			session.invalidate();
 		}
-		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName"));
+		ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), ESAPI.securityConfiguration().getHttpSessionIdName());
 		loggedIn = false;
 		logger.info(Logger.SECURITY_SUCCESS, "Logout successful" );
 		ESAPI.authenticator().setCurrentUser(User.ANONYMOUS);

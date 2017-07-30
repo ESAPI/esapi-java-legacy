@@ -451,7 +451,7 @@ public final class CipherText implements Serializable {
 	 * @return True if the ciphertext has not be tampered with, and false otherwise.
 	 */
 	public boolean validateMAC(SecretKey authKey) {
-	    boolean requiresMAC = ESAPI.securityConfiguration().getBooleanProp("Encryptor.CipherText.useMAC");
+	    boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
 
 	    if (  requiresMAC && macComputed() ) {  // Uses MAC and it was computed
 	        // Calculate MAC from HMAC-SHA1(nonce, IV + plaintext) and
@@ -503,7 +503,7 @@ public final class CipherText implements Serializable {
 	    
 	    // If we are supposed to be using a (separate) MAC, also make sure
 	    // that it has been computed/stored.
-	    boolean requiresMAC = ESAPI.securityConfiguration().getBooleanProp("Encryptor.CipherText.useMAC");
+	    boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
 	    if (  requiresMAC && ! macComputed() ) {
 	        String msg = "Programming error: MAC is required for this cipher mode (" +
 	                     getCipherMode() + "), but MAC has not yet been " +

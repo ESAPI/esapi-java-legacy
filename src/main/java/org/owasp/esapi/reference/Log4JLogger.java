@@ -41,13 +41,13 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 	private static LoggerFactory factory = new Log4JLoggerFactory();
 
 	/** The application name using this log */
-	private static String applicationName = ESAPI.securityConfiguration().getStringProp("Logger.ApplicationName");
+	private static String applicationName = ESAPI.securityConfiguration().getApplicationName();
 
 	/** Log the application name? */
-	private static boolean logAppName = ESAPI.securityConfiguration().getBooleanProp("Logger.LogApplicationName");
+	private static boolean logAppName = ESAPI.securityConfiguration().getLogApplicationName();
 	
 	/** Log the server ip? */
-	private static boolean logServerIP = ESAPI.securityConfiguration().getBooleanProp("Logger.LogServerIP");
+	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
 
 	public Log4JLogger(String name) {
 		super(name);
@@ -423,7 +423,7 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 
 		// ensure no CRLF injection into logs for forging records
 		String clean = message.replace('\n', '_').replace('\r', '_');
-		if (ESAPI.securityConfiguration().getBooleanProp("Logger.LogEncodingRequired")) {
+		if (ESAPI.securityConfiguration().getLogEncodingRequired()) {
 			clean = ESAPI.encoder().encodeForHTML(message);
 			if (!message.equals(clean)) {
 				clean += " (Encoded)";

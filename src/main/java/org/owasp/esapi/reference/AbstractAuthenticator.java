@@ -156,8 +156,8 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
      */
     private User loginWithUsernameAndPassword(HttpServletRequest request) throws AuthenticationException {
 
-        String username = request.getParameter(ESAPI.securityConfiguration().getStringProp("Authenticator.UsernameParameterName"));
-        String password = request.getParameter(ESAPI.securityConfiguration().getStringProp("Authenticator.PasswordParameterName"));
+        String username = request.getParameter(ESAPI.securityConfiguration().getUsernameParameterName());
+        String password = request.getParameter(ESAPI.securityConfiguration().getPasswordParameterName());
 
         // if a logged-in user is requesting to login, log them out first
         User user = getCurrentUser();

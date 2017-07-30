@@ -263,7 +263,7 @@ public class SecurityProviderLoader  {
     public static int loadESAPIPreferredJCEProvider() throws NoSuchProviderException
     {
         String prefJCEProvider =
-            ESAPI.securityConfiguration().getStringProp("Encryptor.PreferredJCEProvider");
+            ESAPI.securityConfiguration().getPreferredJCEProvider();
         try {
             // If unset or set to empty string, then don't try to change it.
             if ( prefJCEProvider == null || prefJCEProvider.trim().length() == 0) {

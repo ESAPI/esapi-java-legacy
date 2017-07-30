@@ -128,7 +128,7 @@ public class CryptoToken {
      */
     public CryptoToken() {
         secretKey = getDefaultSecretKey(
-                            ESAPI.securityConfiguration().getStringProp("Encryptor.EncryptionAlgorithm")
+                            ESAPI.securityConfiguration().getEncryptionAlgorithm()
                         );
         long now = System.currentTimeMillis();
         expirationTime = now + DEFAULT_EXP_TIME;
@@ -162,7 +162,7 @@ public class CryptoToken {
      */
     public CryptoToken(String token) throws EncryptionException {
         secretKey = getDefaultSecretKey(
-                ESAPI.securityConfiguration().getStringProp("Encryptor.EncryptionAlgorithm")
+                ESAPI.securityConfiguration().getEncryptionAlgorithm()
             );
         try {
             decryptToken(secretKey, token);
@@ -690,7 +690,7 @@ public class CryptoToken {
     
     private SecretKey getDefaultSecretKey(String encryptAlgorithm) {
         assert encryptAlgorithm != null : "Encryption algorithm cannot be null";
-        byte[] skey = ESAPI.securityConfiguration().getByteArrayProp("Encryptor.MasterSalt");
+        byte[] skey = ESAPI.securityConfiguration().getMasterKey();
         assert skey != null : "Can't obtain master key, Encryptor.MasterKey";
         assert skey.length >= 7 :
                         "Encryptor.MasterKey must be at least 7 bytes. " +
