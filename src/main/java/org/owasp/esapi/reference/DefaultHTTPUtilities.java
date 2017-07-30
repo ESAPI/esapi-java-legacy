@@ -133,7 +133,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	private final Logger logger = ESAPI.getLogger("HTTPUtilities");
 
     /** The max bytes. */
-	static final int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
+	static final int maxBytes = ESAPI.securityConfiguration().getIntProp("HttpUtilities.MaxUploadFileBytes");
 
 
     /*
@@ -190,12 +190,12 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
         // if there are no errors, then set the cookie either with a header or normally
         if (errors.size() == 0) {
-        	if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+        	if ( ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlyCookies") ) {
 	            String header = createCookieHeader(cookieName, cookieValue, maxAge, domain, path, secure);
 	            addHeader(response, "Set-Cookie", header);
         	} else {
                 // Issue 23 - If the ESAPI Configuration is set to force secure cookies, force the secure flag on the cookie before setting it
-                cookie.setSecure( secure || ESAPI.securityConfiguration().getForceSecureCookies() );
+                cookie.setSecure( secure || ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceSecureCookies") );
         		response.addCookie(cookie);
         	}
             return;
@@ -350,10 +350,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         if (path != null) {
             header += "; Path=" + path;
         }
-        if ( secure || ESAPI.securityConfiguration().getForceSecureCookies() ) {
+        if ( secure || ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceSecureCookies") ) {
             header += "; Secure";
         }
-        if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+        if ( ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlyCookies") ) {
             header += "; HttpOnly";
         }
         return header;
@@ -773,7 +773,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		    if ( cookies != null ) {
              for (Cookie cooky : cookies)
              {
-                if (!cooky.getName().equals(ESAPI.securityConfiguration().getHttpSessionIdName())) 
+                if (!cooky.getName().equals(ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName"))) 
                 {
                    params.append("+").append(cooky.getName()).append("=").append(cooky.getValue());
 		                    }
@@ -856,7 +856,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
 	public void setContentType(HttpServletResponse response) {
-		response.setContentType((ESAPI.securityConfiguration()).getResponseContentType());
+		response.setContentType((ESAPI.securityConfiguration()).getStringProp("HttpUtilities.ResponseContentType"));
 	}
 
     /**

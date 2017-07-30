@@ -68,7 +68,7 @@ public class ConfigurationParser {
 	static {
 		String sessionIdName = null;
 		try {
-			sessionIdName = ESAPI.securityConfiguration().getHttpSessionIdName();
+			sessionIdName = ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName");
 		} catch (Throwable t) {
 			sessionIdName = "JSESSIONID";	// If all else fails...
 		}

@@ -128,8 +128,8 @@ public class DefaultEncoder implements Encoder {
 
         // Issue 231 - These are reverse boolean logic in the Encoder interface, so we need to invert these values - CS
 		return canonicalize(input, 
-							!ESAPI.securityConfiguration().getAllowMultipleEncoding(),
-							!ESAPI.securityConfiguration().getAllowMixedEncoding() );
+							!ESAPI.securityConfiguration().getBooleanProp("Encoder.AllowMultipleEncoding"),
+							!ESAPI.securityConfiguration().getBooleanProp("Encoder.AllowMixedEncoding") );
 	}
 
 	
@@ -412,7 +412,7 @@ public class DefaultEncoder implements Encoder {
 			return null;
 		}
 		try {
-			return URLEncoder.encode(input, ESAPI.securityConfiguration().getCharacterEncoding());
+			return URLEncoder.encode(input, ESAPI.securityConfiguration().getStringProp("HttpUtilities.CharacterEncoding"));
 		} catch (UnsupportedEncodingException ex) {
 			throw new EncodingException("Encoding failure", "Character encoding not supported", ex);
 		} catch (Exception e) {
@@ -429,7 +429,7 @@ public class DefaultEncoder implements Encoder {
 		}
 		String canonical = canonicalize(input);
 		try {
-			return URLDecoder.decode(canonical, ESAPI.securityConfiguration().getCharacterEncoding());
+			return URLDecoder.decode(canonical, ESAPI.securityConfiguration().getStringProp("HttpUtilities.CharacterEncoding"));
 		} catch (UnsupportedEncodingException ex) {
 			throw new EncodingException("Decoding failed", "Character encoding not supported", ex);
 		} catch (Exception e) {

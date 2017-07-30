@@ -440,7 +440,7 @@ public class DefaultSecurityConfigurationTest {
 	}
 	
 	@Test
-	public void defaultPropertiesTest(){
+	public void defaultPropertiesTest() throws Exception{
 		SecurityConfiguration sc = ESAPI.securityConfiguration();
 //		# Maximum size of JSESSIONID for the application--the validator regex may have additional values.  
 //		HttpUtilities.HTTPJSESSIONIDLENGTH=50
@@ -478,5 +478,50 @@ public class DefaultSecurityConfigurationTest {
 //		# Maximum length of a redirect 
 //		HttpUtilities.maxRedirectLength=512
 		assertEquals(512, sc.getIntProp("HttpUtilities.maxRedirectLength"));
+		assertEquals("org.owasp.esapi.reference.DefaultAccessController",sc.getStringProp("ESAPI.AccessControl"));
+		assertEquals("org.owasp.esapi.reference.FileBasedAuthenticator", sc.getStringProp("ESAPI.Authenticator"));
+		assertEquals("org.owasp.esapi.reference.DefaultEncoder", sc.getStringProp("ESAPI.Encoder"));
+		assertEquals("org.owasp.esapi.reference.crypto.JavaEncryptor", sc.getStringProp("ESAPI.Encryptor"));
+		assertEquals("org.owasp.esapi.reference.DefaultExecutor", sc.getStringProp("ESAPI.Executor"));
+		assertEquals("org.owasp.esapi.reference.DefaultHTTPUtilities", sc.getStringProp("ESAPI.HTTPUtilities"));
+		assertEquals("org.owasp.esapi.reference.DefaultIntrusionDetector", sc.getStringProp("ESAPI.IntrusionDetector"));
+		assertEquals("org.owasp.esapi.reference.Log4JLogFactory",sc.getStringProp("ESAPI.Logger"));
+		assertEquals("org.owasp.esapi.reference.DefaultRandomizer", sc.getStringProp("ESAPI.Randomizer"));
+		assertEquals("org.owasp.esapi.reference.DefaultValidator", sc.getStringProp("ESAPI.Validator"));
+		assertEquals(500000000, sc.getIntProp("HttpUtilities.MaxUploadFileBytes"));
+		assertEquals(true, sc.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies"));
+		assertEquals(true, sc.getBooleanProp("HttpUtilities.ForceSecureCookies"));
+		assertEquals("JSESSIONID", sc.getStringProp("HttpUtilities.HttpSessionIdName"));
+		assertEquals("text/html; charset=UTF-8", sc.getStringProp("HttpUtilities.ResponseContentType"));
+		assertEquals(3, sc.getIntProp("Authenticator.AllowedLoginAttempts"));
+		assertEquals(20, sc.getIntProp("Authenticator.IdleTimeoutDuration"));
+		assertEquals("UTF-8", sc.getStringProp("HttpUtilities.CharacterEncoding"));
+		assertEquals(false, sc.getBooleanProp("Encoder.AllowMultipleEncoding"));
+		assertEquals(false, sc.getBooleanProp("Encoder.AllowMixedEncoding"));
+		
+		assertEquals("ExampleApplication", sc.getStringProp("Logger.ApplicationName"));
+		assertEquals(true, sc.getBooleanProp("Logger.LogApplicationName"));
+		assertEquals(true, sc.getBooleanProp("Logger.LogServerIP"));
+		assertEquals(false, sc.getBooleanProp("Logger.LogEncodingRequired"));
+		assertEquals(10000000, sc.getIntProp("Logger.MaxLogFileSize"));
+		
+		assertEquals("AES", sc.getStringProp("Encryptor.EncryptionAlgorithm"));
+		assertEquals(128, sc.getIntProp("Encryptor.EncryptionKeyLength"));
+		assertEquals("SHA1PRNG", sc.getStringProp("Encryptor.RandomAlgorithm"));
+		assertEquals("HmacSHA256", sc.getStringProp("Encryptor.KDF.PRF"));
+		assertEquals("a6H9is3hEVGKB4Jut+lOVA==", sc.getStringProp("Encryptor.MasterKey"));
+		assertEquals("SbftnvmEWD5ZHHP+pX3fqugNysc=", sc.getStringProp("Encryptor.MasterSalt"));
+		assertEquals(true, sc.getBooleanProp("Encryptor.PlainText.overwrite"));
+		assertEquals("AES/CBC/PKCS5Padding", sc.getStringProp("Encryptor.CipherTransformation"));
+		assertEquals("random", sc.getStringProp("Encryptor.ChooseIVMethod"));
+		assertEquals("0x000102030405060708090a0b0c0d0e0f", sc.getStringProp("Encryptor.fixedIV"));
+		assertEquals("SHA1withDSA", sc.getStringProp("Encryptor.DigitalSignatureAlgorithm"));
+		assertEquals("SHA-512", sc.getStringProp("Encryptor.HashAlgorithm"));
+		assertEquals(1024, sc.getIntProp("Encryptor.HashIterations"));
+		assertEquals("UTF-8", sc.getStringProp("Encryptor.CharacterEncoding"));
+		assertEquals(false, sc.getBooleanProp("IntrusionDetector.Disable"));
+		assertEquals(true, sc.getBooleanProp("Encryptor.CipherText.useMAC"));
+		assertEquals(13, sc.getIntProp("Authenticator.MaxOldPasswordHashes"));
+		assertEquals("ESAPI_logging_file", sc.getStringProp("Logger.LogFileName"));
 	}
 }

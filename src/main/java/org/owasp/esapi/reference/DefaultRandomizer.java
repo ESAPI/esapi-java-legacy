@@ -54,7 +54,7 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     private final Logger logger = ESAPI.getLogger("Randomizer");
 
     private DefaultRandomizer() {
-        String algorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
+        String algorithm = ESAPI.securityConfiguration().getStringProp("Encryptor.RandomAlgorithm");
         try {
             secureRandom = SecureRandom.getInstance(algorithm);
         } catch (NoSuchAlgorithmException e) {

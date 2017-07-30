@@ -41,8 +41,8 @@ public final class CipherSpec implements Serializable {
 
 	private static final long serialVersionUID = 20090822;	// version, in YYYYMMDD format
 	
-	private String  cipher_xform_   = ESAPI.securityConfiguration().getCipherTransformation();
-	private int     keySize_        = ESAPI.securityConfiguration().getEncryptionKeyLength(); // In bits
+	private String  cipher_xform_   = ESAPI.securityConfiguration().getStringProp("Encryptor.CipherTransformation");
+	private int     keySize_        = ESAPI.securityConfiguration().getIntProp("Encryptor.EncryptionKeyLength"); // In bits
 	private int     blockSize_      = 16;   // In bytes! I.e., 128 bits!!!
 	private byte[]  iv_             = null;
 

@@ -97,7 +97,7 @@ public class EnterpriseSecurityException extends Exception {
     public EnterpriseSecurityException(String userMessage, String logMessage) {
     	super(userMessage);
         this.logMessage = logMessage;
-        if (!ESAPI.securityConfiguration().getDisableIntrusionDetection()) {
+        if (!ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) {
         	ESAPI.intrusionDetector().addException(this);
         }
     }
@@ -118,7 +118,7 @@ public class EnterpriseSecurityException extends Exception {
     public EnterpriseSecurityException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
-        if (!ESAPI.securityConfiguration().getDisableIntrusionDetection()) {
+        if (!ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) {
         	ESAPI.intrusionDetector().addException(this);
         }
     }

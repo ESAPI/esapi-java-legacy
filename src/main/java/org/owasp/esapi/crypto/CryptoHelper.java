@@ -215,7 +215,7 @@ public class CryptoHelper {
     public static boolean isMACRequired(CipherText ct) {
         boolean preferredCipherMode =
             CryptoHelper.isCombinedCipherMode( ct.getCipherMode() );
-        boolean wantsMAC = ESAPI.securityConfiguration().useMACforCipherText();
+        boolean wantsMAC = ESAPI.securityConfiguration().getBooleanProp("Encryptor.CipherText.useMAC");
 
         // The preferred "combined" cipher modes such as CCM, GCM, etc. do
         // not require a MAC as a MAC would be superfluous and just require

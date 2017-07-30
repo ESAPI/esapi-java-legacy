@@ -59,7 +59,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * @param e
      */
 	public void addException(Exception e) {
-		if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+		if (ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) return;
 		
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY_FAILURE, ((EnterpriseSecurityException)e).getLogMessage(), e );
@@ -93,7 +93,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * {@inheritDoc}
 	 */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
-    	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+    	if (ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) return;
     	
         logger.warning( Logger.SECURITY_FAILURE, "Security event " + eventName + " received : " + logMessage );
 
@@ -122,7 +122,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * 		the message to log if the action is "log"
      */
     private void takeSecurityAction( String action, String message ) {
-    	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+    	if (ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) return;
     	
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY_FAILURE, "INTRUSION - " + message );
@@ -148,7 +148,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 	 * 			The name of the event that occurred.
 	 */
 	private void addSecurityEvent(User user, String eventName) {
-		if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+		if (ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) return;
 		
 		if ( user.isAnonymous() ) return;
 		
@@ -175,7 +175,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
             this.key = key;
         }
         public void increment(int count, long interval) throws IntrusionException {
-        	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+        	if (ESAPI.securityConfiguration().getBooleanProp("IntrusionDetector.Disable")) return;
         	
             Date now = new Date();
             times.add( 0, now );

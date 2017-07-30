@@ -150,7 +150,7 @@ public class ValidatorTest extends TestCase {
     //		  Validator.AcceptLenientDates to be false.
     public void testLenientDate() {
     	System.out.println("testLenientDate");
-    	boolean acceptLenientDates = ESAPI.securityConfiguration().getLenientDatesAccepted();
+    	boolean acceptLenientDates = ESAPI.securityConfiguration().getBooleanProp("Validator.AcceptLenientDates");
     	if ( acceptLenientDates ) {
     		assertTrue("Lenient date test skipped because Validator.AcceptLenientDates set to true", true);
     		return;

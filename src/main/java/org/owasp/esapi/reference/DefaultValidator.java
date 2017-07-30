@@ -771,7 +771,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
    			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input, context );
 		}
 
-		long esapiMaxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
+		long esapiMaxBytes = ESAPI.securityConfiguration().getIntProp("HttpUtilities.MaxUploadFileBytes");
 		if (input.length > esapiMaxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + esapiMaxBytes + " bytes", "Exceeded ESAPI max length", context );
 		if (input.length > maxBytes ) throw new ValidationException( context + ": Invalid file content can not exceed " + maxBytes + " bytes", "Exceeded maxBytes ( " + input.length + ")", context );
 

@@ -127,7 +127,7 @@ public class KeyDerivationFunction {
 	 * <b>ESAPI.property</b> property, {@code Encryptor.KDF.PRF}.
 	 */
 	public KeyDerivationFunction() {			
-		String prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
+		String prfName = ESAPI.securityConfiguration().getStringProp("Encryptor.KDF.PRF");
 		if ( ! KeyDerivationFunction.isValidPRF(prfName) ) {
     		throw new ConfigurationException("Algorithm name " + prfName +
     							" not a valid algorithm name for property " +
@@ -150,7 +150,7 @@ public class KeyDerivationFunction {
 	 * 
 	 */
 	static int getDefaultPRFSelection() {
-		String prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
+		String prfName = ESAPI.securityConfiguration().getStringProp("Encryptor.KDF.PRF");
 		for (PRF_ALGORITHMS prf : PRF_ALGORITHMS.values()) {
 			if ( prf.getAlgName().equals(prfName) ) {
 				return prf.getValue();

@@ -31,7 +31,7 @@ public class CipherSpecTest extends TestCase {
 	@Before public void setUp() throws Exception {
 			// This will throw ConfigurationException if IV type is not set to
 			// 'fixed', which it's not. (We have it set to 'random'.)
-		// myIV = Hex.decode( ESAPI.securityConfiguration().getFixedIV() );
+		// myIV = Hex.decode( ESAPI.securityConfiguration().getStringProp("Encryptor.fixedIV") );
 		myIV = Hex.decode( "0x000102030405060708090a0b0c0d0e0f" );
 
 		dfltAESCipher   = Cipher.getInstance("AES");
@@ -95,9 +95,9 @@ public class CipherSpecTest extends TestCase {
 		assertTrue( myIV.length > 0 );
 		cipherSpec = new CipherSpec(myIV);
 		assertTrue( cipherSpec.getKeySize() == 
-						ESAPI.securityConfiguration().getEncryptionKeyLength() );
+						ESAPI.securityConfiguration().getIntProp("Encryptor.EncryptionKeyLength") );
 		assertTrue( cipherSpec.getCipherTransformation().equals(
-						ESAPI.securityConfiguration().getCipherTransformation() ) );
+						ESAPI.securityConfiguration().getStringProp("Encryptor.CipherTransformation") ) );
 	}
 
 	/** Test CipherSpec() */
@@ -138,7 +138,7 @@ public class CipherSpecTest extends TestCase {
 	/** Test getKeySize() */
 	@Test public void testGetKeySize() {
 		assertTrue( (new CipherSpec()).getKeySize() ==
-			ESAPI.securityConfiguration().getEncryptionKeyLength() );
+			ESAPI.securityConfiguration().getIntProp("Encryptor.EncryptionKeyLength") );
 	}
 
 	/** Test setBlockSize() */

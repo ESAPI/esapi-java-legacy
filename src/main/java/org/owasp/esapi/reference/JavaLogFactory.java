@@ -121,13 +121,13 @@ public class JavaLogFactory implements LogFactory {
         private String moduleName = null;
 
         /** The application name defined in ESAPI.properties */
-    	private String applicationName=ESAPI.securityConfiguration().getApplicationName();
+    	private String applicationName=ESAPI.securityConfiguration().getStringProp("Logger.ApplicationName");
 
         /** Log the application name? */
-    	private static boolean logAppName = ESAPI.securityConfiguration().getLogApplicationName();
+    	private static boolean logAppName = ESAPI.securityConfiguration().getBooleanProp("Logger.LogApplicationName");
 
     	/** Log the server ip? */
-    	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
+    	private static boolean logServerIP = ESAPI.securityConfiguration().getBooleanProp("Logger.LogServerIP");
     	
         /**
          * Public constructor should only ever be called via the appropriate LogFactory
@@ -296,7 +296,7 @@ public class JavaLogFactory implements LogFactory {
             
             // ensure no CRLF injection into logs for forging records
             String clean = message.replace( '\n', '_' ).replace( '\r', '_' );
-            if ( ESAPI.securityConfiguration().getLogEncodingRequired() ) {
+            if ( ESAPI.securityConfiguration().getBooleanProp("Logger.LogEncodingRequired") ) {
             	clean = ESAPI.encoder().encodeForHTML(message);
                 if (!message.equals(clean)) {
                     clean += " (Encoded)";

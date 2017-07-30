@@ -45,7 +45,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getApplicationName()
 	{
-		return wrapped.getApplicationName();
+		return wrapped.getStringProp("Logger.ApplicationName");
 	}
 	
 	/**
@@ -54,7 +54,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getLogImplementation()
 	{
-		return wrapped.getLogImplementation();
+		return wrapped.getStringProp("ESAPI.Logger");
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getAuthenticationImplementation()
 	{
-		return wrapped.getAuthenticationImplementation();
+		return wrapped.getStringProp("ESAPI.Authenticator");
 	}
 	
 	/**
@@ -72,7 +72,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getEncoderImplementation()
 	{
-		return wrapped.getEncoderImplementation();
+		return wrapped.getStringProp("ESAPI.Encoder");
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getAccessControlImplementation()
 	{
-		return wrapped.getAccessControlImplementation();
+		return wrapped.getStringProp("ESAPI.AccessControl");
 	}
 	
 	/**
@@ -90,7 +90,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getIntrusionDetectionImplementation()
 	{
-		return wrapped.getIntrusionDetectionImplementation();
+		return wrapped.getStringProp("ESAPI.IntrusionDetector");
 	}
 	
 	/**
@@ -99,7 +99,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getRandomizerImplementation()
 	{
-		return wrapped.getRandomizerImplementation();
+		return wrapped.getStringProp("ESAPI.Randomizer");
 	}
 	
 	/**
@@ -108,7 +108,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getEncryptionImplementation()
 	{
-		return wrapped.getEncryptionImplementation();
+		return wrapped.getStringProp("ESAPI.Encryptor");
 	}
 	
 	/**
@@ -117,7 +117,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getValidationImplementation()
 	{
-		return wrapped.getValidationImplementation();
+		return wrapped.getStringProp("ESAPI.Validator");
 	}
 	
 	/**
@@ -135,7 +135,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getExecutorImplementation()
 	{
-		return wrapped.getExecutorImplementation();
+		return wrapped.getStringProp("ESAPI.Executor");
 	}
 	
 	/**
@@ -144,7 +144,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getHTTPUtilitiesImplementation()
 	{
-		return wrapped.getHTTPUtilitiesImplementation();
+		return wrapped.getStringProp("ESAPI.HTTPUtilities");
 	}
 	
 	/**
@@ -153,7 +153,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public byte[] getMasterKey()
 	{
-		return wrapped.getMasterKey();
+		return wrapped.getByteArrayProp("Encryptor.MasterSalt");
 	}
 
 	/**
@@ -180,7 +180,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getEncryptionKeyLength()
 	{
-		return wrapped.getEncryptionKeyLength();
+		return wrapped.getIntProp("Encryptor.EncryptionKeyLength");
 	}
     
 	/**
@@ -189,7 +189,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public byte[] getMasterSalt()
 	{
-		return wrapped.getMasterSalt();
+		return wrapped.getByteArrayProp("Encryptor.MasterKey");
 	}
 
 	/**
@@ -216,7 +216,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getAllowedFileUploadSize()
 	{
-		return wrapped.getAllowedFileUploadSize();
+		return wrapped.getIntProp("HttpUtilities.MaxUploadFileBytes");
 	}
 
 	/**
@@ -225,7 +225,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getPasswordParameterName()
 	{
-		return wrapped.getPasswordParameterName();
+		return wrapped.getStringProp("PasswordParameterName");
 	}
 
 	/**
@@ -234,7 +234,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getUsernameParameterName()
 	{
-		return wrapped.getUsernameParameterName();
+		return wrapped.getStringProp("Authenticator.UsernameParameterName");
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getEncryptionAlgorithm()
 	{
-		return wrapped.getEncryptionAlgorithm();
+		return wrapped.getStringProp("Encryptor.EncryptionAlgorithm");
 	}
 
 	/**
@@ -252,7 +252,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getCipherTransformation()
 	{
-		return wrapped.getCipherTransformation();
+		return wrapped.getStringProp("Encryptor.CipherTransformation");
 	}
 
 	/**
@@ -270,7 +270,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean useMACforCipherText()
 	{
-		return wrapped.useMACforCipherText();
+		return wrapped.getBooleanProp("Encryptor.CipherText.useMAC");
 	}
 
 	/**
@@ -279,7 +279,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean overwritePlainText()
 	{
-		return wrapped.overwritePlainText();
+		return wrapped.getBooleanProp("Encryptor.PlainText.overwrite");
 	}
 
 	/**
@@ -288,7 +288,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getIVType()
 	{
-		return wrapped.getIVType();
+		return wrapped.getStringProp("Encryptor.ChooseIVMethod");
 	}
 
 	/**
@@ -297,7 +297,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getFixedIV()
 	{
-		return wrapped.getFixedIV();
+		return wrapped.getStringProp("Encryptor.fixedIV");
 	}
 
 	/**
@@ -306,7 +306,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getHashAlgorithm()
 	{
-		return wrapped.getHashAlgorithm();
+		return wrapped.getStringProp("Encryptor.HashAlgorithm");
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getHashIterations()
 	{
-		return wrapped.getHashIterations();
+		return wrapped.getIntProp("Encryptor.HashIterations");
 	}
 
 	/**
@@ -324,7 +324,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getCharacterEncoding()
 	{
-		return wrapped.getCharacterEncoding();
+		return wrapped.getStringProp("HttpUtilities.CharacterEncoding");
 	}
 
 	/**
@@ -333,7 +333,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getAllowMultipleEncoding()
 	{
-		return wrapped.getAllowMultipleEncoding();
+		return wrapped.getBooleanProp("Encoder.AllowMultipleEncoding");
 	}
 
 	/**
@@ -342,7 +342,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getAllowMixedEncoding()
 	{
-		return wrapped.getAllowMixedEncoding();
+		return wrapped.getBooleanProp("Encoder.AllowMixedEncoding");
 	}
 
 	/**
@@ -360,7 +360,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getDigitalSignatureAlgorithm()
 	{
-		return wrapped.getDigitalSignatureAlgorithm();
+		return wrapped.getStringProp("Encryptor.DigitalSignatureAlgorithm");
 	}
 
 	/**
@@ -369,7 +369,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getDigitalSignatureKeyLength()
 	{
-		return wrapped.getDigitalSignatureKeyLength();
+		return wrapped.getIntProp("Encryptor.DigitalSignatureKeyLength");
 	}
 		   
 	/**
@@ -378,7 +378,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getRandomAlgorithm()
 	{
-		return wrapped.getRandomAlgorithm();
+		return wrapped.getStringProp("Encryptor.RandomAlgorithm");
 	}
 
 	/**
@@ -387,7 +387,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getAllowedLoginAttempts()
 	{
-		return wrapped.getAllowedLoginAttempts();
+		return wrapped.getIntProp("Authenticator.AllowedLoginAttempts");
 	}
 
 	/**
@@ -396,7 +396,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getMaxOldPasswordHashes()
 	{
-		return wrapped.getMaxOldPasswordHashes();
+		return wrapped.getIntProp("Authenticator.MaxOldPasswordHashes");
 	}
 
 	/**
@@ -423,7 +423,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getForceHttpOnlySession() 
 	{
-		return wrapped.getForceHttpOnlySession();
+		return wrapped.getBooleanProp("HttpUtilities.ForceHttpOnlySession");
 	}
 
 	/**
@@ -432,7 +432,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getForceSecureSession() 
 	{
-		return wrapped.getForceSecureSession();
+		return wrapped.getBooleanProp("HttpUtilities.ForceSecureSession");
 	}
 
 	/**
@@ -441,7 +441,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getForceHttpOnlyCookies()
 	{
-		return wrapped.getForceHttpOnlyCookies();
+		return wrapped.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
 	}
 
 	/**
@@ -450,7 +450,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getForceSecureCookies()
 	{
-		return wrapped.getForceSecureCookies();
+		return wrapped.getBooleanProp("HttpUtilities.ForceSecureCookies");
 	}
 
 	/**
@@ -458,7 +458,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 */
 	// @Override
 	public int getMaxHttpHeaderSize() {
-        return wrapped.getMaxHttpHeaderSize();
+        return wrapped.getIntProp("HttpUtilities.MaxHeaderValueSize");
 	}
 
 	/**
@@ -486,7 +486,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public String getResponseContentType()
 	{
-		return wrapped.getResponseContentType();
+		return wrapped.getStringProp("HttpUtilities.ResponseContentType");
 	}
 
 	/**
@@ -494,7 +494,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 */
 	// @Override
 	public String getHttpSessionIdName() {
-		return wrapped.getHttpSessionIdName();
+		return wrapped.getStringProp("HttpUtilities.HttpSessionIdName");
 	}
 	
 	/**
@@ -512,7 +512,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getSessionIdleTimeoutLength()
 	{
-		return wrapped.getSessionIdleTimeoutLength();
+		return wrapped.getIntProp("HttpUtilities.HTTPJSESSIONIDLENGTH");
 	}
 	
 	/**
@@ -521,7 +521,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getSessionAbsoluteTimeoutLength()
 	{
-		return wrapped.getSessionAbsoluteTimeoutLength();
+		return wrapped.getIntProp("Authenticator.AbsoluteTimeoutDuration");
 	}
 	
 	/**
@@ -530,7 +530,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getLogEncodingRequired()
 	{
-		return wrapped.getLogEncodingRequired();
+		return wrapped.getBooleanProp("Logger.LogEncodingRequired");
 	}
 	
 	/**
@@ -539,7 +539,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getLogApplicationName()
 	{
-		return wrapped.getLogApplicationName();
+		return wrapped.getBooleanProp("Logger.LogApplicationName");
 	}
 
 	/**
@@ -548,25 +548,16 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public boolean getLogServerIP()
 	{
-		return wrapped.getLogServerIP();
+		return wrapped.getBooleanProp("Logger.LogServerIP");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	// @Override
-	public int getLogLevel()
-	{
-		return wrapped.getLogLevel();
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	// @Override
 	public String getLogFileName()
 	{
-		return wrapped.getLogFileName();
+		return wrapped.getStringProp("Logger.LogFileName");
 	}
 
 	/**
@@ -575,7 +566,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	// @Override
 	public int getMaxLogFileSize()
 	{
-	 	return wrapped.getMaxLogFileSize();
+	 	return wrapped.getIntProp("Logger.MaxLogFileSize");
 	}
 
 	@Override
@@ -627,7 +618,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
      * {@inheritDoc}
      */
     public String getPreferredJCEProvider() {
-        return wrapped.getPreferredJCEProvider();
+        return wrapped.getStringProp("Encryptor.PreferredJCEProvider");
     }
 
 	/**
@@ -635,7 +626,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 */
 	// @Override
 	public boolean getDisableIntrusionDetection() {
-		return wrapped.getDisableIntrusionDetection();
+		return wrapped.getBooleanProp("IntrusionDetector.Disable");
 	}
 
 	/**
@@ -643,13 +634,13 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	 */
 	// @Override
 	public String getKDFPseudoRandomFunction() {
-		return wrapped.getKDFPseudoRandomFunction();
+		return wrapped.getStringProp("Encryptor.KDF.PRF");
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public boolean getLenientDatesAccepted() {
-		return wrapped.getLenientDatesAccepted();
+		return wrapped.getBooleanProp("Validator.AcceptLenientDates");
 	}
 }

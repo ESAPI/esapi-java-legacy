@@ -279,7 +279,7 @@ public class EncryptorTest extends TestCase {
 
 	    	// If we are supposed to have overwritten the plaintext, check this to see
 	    	// if origPlainText was indeed overwritten.
-			boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
+			boolean overwritePlaintext = ESAPI.securityConfiguration().getBooleanProp("Encryptor.PlainText.overwrite");
 			if ( overwritePlaintext ) {
 				assertTrue( isPlaintextOverwritten(plaintext) );
 			}
@@ -296,7 +296,7 @@ public class EncryptorTest extends TestCase {
 	    	@SuppressWarnings("deprecation")
 			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
 	    	assertTrue( previousCipherXform.equals( cipherXform ) );
-	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
+	    	String defaultCipherXform = ESAPI.securityConfiguration().getStringProp("Encryptor.CipherTransformation");
 	    	assertTrue( defaultCipherXform.equals( oldCipherXform ) );
 	    	
 	    	return ciphertext.getEncodedIVCipherText();

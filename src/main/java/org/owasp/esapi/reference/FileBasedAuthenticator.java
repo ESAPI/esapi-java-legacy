@@ -140,7 +140,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
     private void setHashedPassword(User user, String hash) {
         List<String> hashes = getAllHashedPasswords(user, true);
         hashes.add(0, hash);
-        if (hashes.size() > ESAPI.securityConfiguration().getMaxOldPasswordHashes()) {
+        if (hashes.size() > ESAPI.securityConfiguration().getIntProp("Authenticator.MaxOldPasswordHashes")) {
             hashes.remove(hashes.size() - 1);
         }
         logger.info(Logger.SECURITY_SUCCESS, "New hashed password stored for " + user.getAccountName());

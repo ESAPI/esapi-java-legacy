@@ -82,35 +82,35 @@ public final class ESAPI {
 	 * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
 	 */
 	public static AccessController accessController() {
-        return ObjFactory.make( securityConfiguration().getAccessControlImplementation(), "AccessController" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.AccessControl"), "AccessController" );
 	}
 
 	/**
 	 * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
 	 */
 	public static Authenticator authenticator() {
-        return ObjFactory.make( securityConfiguration().getAuthenticationImplementation(), "Authenticator" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Authenticator"), "Authenticator" );
 	}
 
 	/**
 	 * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
 	 */
 	public static Encoder encoder() {
-        return ObjFactory.make( securityConfiguration().getEncoderImplementation(), "Encoder" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Encoder"), "Encoder" );
 	}
 
 	/**
 	 * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
 	 */
 	public static Encryptor encryptor() {
-        return ObjFactory.make( securityConfiguration().getEncryptionImplementation(), "Encryptor" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Encryptor"), "Encryptor" );
 	}
 
 	/**
 	 * @return the current ESAPI Executor object being used to safely execute OS commands for this application. 
 	 */
 	public static Executor executor() {
-        return ObjFactory.make( securityConfiguration().getExecutorImplementation(), "Executor" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Executor"), "Executor" );
 	}
 
 	/**
@@ -118,14 +118,14 @@ public final class ESAPI {
 	 * for this application. 
 	 */
 	public static HTTPUtilities httpUtilities() {
-        return ObjFactory.make( securityConfiguration().getHTTPUtilitiesImplementation(), "HTTPUtilities" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.HTTPUtilities"), "HTTPUtilities" );
 	}
 
 	/**
 	 * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
 	 */
 	public static IntrusionDetector intrusionDetector() {
-        return ObjFactory.make( securityConfiguration().getIntrusionDetectionImplementation(), "IntrusionDetector" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.IntrusionDetector"), "IntrusionDetector" );
 	}
 
 	/**
@@ -134,7 +134,7 @@ public final class ESAPI {
 	 * @return The current LogFactory being used by ESAPI.
 	 */
 	private static LogFactory logFactory() {
-        return ObjFactory.make( securityConfiguration().getLogImplementation(), "LogFactory" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Logger"), "LogFactory" );
 	}
 	
 	/**
@@ -165,7 +165,7 @@ public final class ESAPI {
 	 * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
 	 */
 	public static Randomizer randomizer() {
-        return ObjFactory.make( securityConfiguration().getRandomizerImplementation(), "Randomizer" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Randomizer"), "Randomizer" );
 	}
 
     private static volatile SecurityConfiguration overrideConfig = null;
@@ -188,7 +188,7 @@ public final class ESAPI {
 	 * @return the current ESAPI Validator being used to validate data in this application. 
 	 */
 	public static Validator validator() {
-        return ObjFactory.make( securityConfiguration().getValidationImplementation(), "Validator" );
+        return ObjFactory.make( securityConfiguration().getStringProp("ESAPI.Validator"), "Validator" );
 	}
 
     // TODO: This should probably use the SecurityManager or some value within the current
