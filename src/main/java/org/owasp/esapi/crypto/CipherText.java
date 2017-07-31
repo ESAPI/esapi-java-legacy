@@ -573,6 +573,11 @@ public final class CipherText implements Serializable {
                                                   "Cipher mode " + getCipherMode() + " has null or empty IV");
                 }
             } else if ( iv.length != getBlockSize() ) {
+// TODO: FIXME: As per email from Jeff Walton to Kevin Wall dated 12/03/2013,
+//			  this is not always true. E.g., for CCM, the IV length is supposed
+//			  to be 7, 8,  7, 8, 9, 10, 11, 12, or 13 octets because of
+//			  it's formatting function, the restof the octets used by the
+//			  nonce/counter.
                     throw new EncryptionException("Encryption failed -- bad parameters passed to encrypt",  // DISCUSS - also log? See below.
                                                   "IV length does not match cipher block size of " + getBlockSize());
             }
@@ -604,7 +609,6 @@ public final class CipherText implements Serializable {
     }
     
     public void setKDF_PRF(int prfSelection) {
-        assert prfSelection >= 0 && prfSelection <= 15 : "kdfPrf == " + prfSelection + " must be between 0 and 15.";
         if ( prfSelection < 0 || prfSelection > 15 ) {
             throw new IllegalArgumentException("kdfPrf == " + prfSelection + " must be between 0 and 15, inclusive.");
         }
@@ -874,15 +878,25 @@ public final class CipherText implements Serializable {
      */
 	public int getKDFInfo() {
 		final int unusedBit28 = 0x8000000;  // 1000000000000000000000000000
-		
+	
 		// 		kdf version is bits 1-27, bit 28 (reserved) should be 0, and
 		//		bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
 		int kdfVers = this.getKDFVersion();
-		assert CryptoHelper.isValidKDFVersion(kdfVers, true, false);
+		// assert CryptoHelper.isValidKDFVersion(kdfVers, true, false);
+        if ( ! CryptoHelper.isValidKDFVersion(kdfVers, true, false) ) {
+            String exm = "Invalid KDF version encountered. Value as" + kdfVers;
+            throw new EnterpriseSecurityRuntimeException(exm,
+                        "Possible tampering of KDF version #? " + exm);
+        }
 		int kdfInfo = kdfVers;
 		int macAlg = kdfPRFAsInt();
-		assert macAlg >= 0 && macAlg <= 15 : "MAC algorithm indicator must be between 0 to 15 inclusion; value is: " + macAlg;
-		
+		// assert macAlg >= 0 && macAlg <= 15 : "MAC algorithm indicator must be between 0 to 15 inclusion; value is: " + macAlg;
+		if ( macAlg < 0 || macAlg > 15 ) {
+            String exm = "Invalid specifier for MAC algorithm: " + macAlg;
+            throw new EnterpriseSecurityRuntimeException(exm,
+                        "Possible tampering of macAlg specifier? " + exm +
+                        "; value should be 0 <= macAlg <= 15.");
+        }
 	    // Make sure bit28 is cleared. (Reserved for future use.)
 	    kdfInfo &= ~unusedBit28;
 
