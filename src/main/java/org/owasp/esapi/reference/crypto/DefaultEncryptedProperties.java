@@ -168,8 +168,10 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
 	 * @throws Exception
 	 *             Any exception thrown
 	 * @deprecated Use {@code EncryptedPropertiesUtils} instead, which allows creating, reading,
-	 *			   and writing encrypted properties.
+	 *			   and writing encrypted properties. {@code main} method will be removed in a
+     *			   future release.
 	 */
+    @Deprecated
 	public static void main(String[] args) throws Exception {
 		File f = new File(args[0]);
 		ESAPI.getLogger( "EncryptedProperties.main" ).debug(Logger.SECURITY_SUCCESS, "Loading encrypted properties from " + f.getAbsolutePath() );
