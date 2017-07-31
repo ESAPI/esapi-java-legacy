@@ -56,9 +56,12 @@ public class CryptoHelper {
 	public static SecretKey generateSecretKey(String alg, int keySize)
 		throws EncryptionException
 	{
-		assert alg != null : "Algorithm must not be null.";			// NPE if null and assertions disabled.
-		assert !alg.equals("") : "Algorithm must not be empty";	// NoSuchAlgorithmExeption if empty & assertions disabled.
-		assert keySize > 0 : "Key size must be positive.";	// Usually should be even multiple of 8, but not strictly required by alg.
+		if ( alg == null || alg.equals("") ) {
+			throw new IllegalArgumentException("Algorithm must not be null or empty."); // Avoid later possibly ambiguous NPE.
+		}
+		if ( keySize <= 0 ) {
+			throw new IllegalArgumentException("Key size must be positive.");	// Usually should be an even multiple of 8, but not strictly required by alg.
+		}
 		// Don't use CipherSpec here to get algorithm as this may cause assertion
 		// to fail (when enabled) if only algorithm name is passed to us.
 		String[] cipherSpec = alg.split("/");
