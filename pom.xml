@@ -523,7 +523,8 @@
                                     <goal>sign</goal>
                                 </goals>
                                 <configuration>
-                                    <keyname>9F460575</keyname>
+                                    <!-- Refers to Kevin Wall's GPG signing key. -->
+                                    <keyname>8A2A524F</keyname>
                                 </configuration>
                             </execution>
                         </executions>
