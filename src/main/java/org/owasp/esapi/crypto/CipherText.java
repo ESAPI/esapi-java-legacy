@@ -878,7 +878,7 @@ public final class CipherText implements Serializable {
      */
 	public int getKDFInfo() {
 		final int unusedBit28 = 0x8000000;  // 1000000000000000000000000000
-	
+
 		// 		kdf version is bits 1-27, bit 28 (reserved) should be 0, and
 		//		bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
 		int kdfVers = this.getKDFVersion();
