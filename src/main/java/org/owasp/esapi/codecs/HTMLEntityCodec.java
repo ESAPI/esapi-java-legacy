@@ -81,6 +81,42 @@ public class HTMLEntityCodec extends Codec
 	/**
 	 * {@inheritDoc}
 	 * 
+     * Encodes a Character for safe use in an HTML entity field.
+     * @param immune
+     */
+	public String encodeCharacter( char[] immune, int codePoint ) {
+
+		// check for immune characters
+//		if ( containsCharacter(codePoint, immune ) ) {
+//			return ""+codePoint;
+//		}
+		
+//		// check for alphanumeric characters
+		String hex = Codec.getHexForNonAlphanumeric(codePoint);
+//		if ( hex == null ) {
+//			return ""+c;
+//		}
+//		
+//		// check for illegal characters
+//		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) )
+//		{
+//			hex = REPLACEMENT_HEX;	// Let's entity encode this instead of returning it
+//			c = REPLACEMENT_CHAR;
+//		}
+//		
+//		// check if there's a defined entity
+//		String entityName = (String) characterToEntityMap.get(c);
+//		if (entityName != null) {
+//			return "&" + entityName + ";";
+//		}
+		
+		// return the hex entity as suggested in the spec
+		return "&#x" + hex + ";";
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 

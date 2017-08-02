@@ -64,9 +64,15 @@ public abstract class Codec {
 	 */
 	public String encode(char[] immune, String input) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			char c = input.charAt(i);
-			sb.append(encodeCharacter(immune, c));
+		for(int offset  = 0; offset < input.length(); ){
+			final int point = input.codePointAt(offset);
+			if(Character.isBmpCodePoint(point)){
+				//We can then safely cast this to char and maintain legacy behavior.
+				sb.append(encodeCharacter(immune, (char) point));
+			}else{
+				sb.append(encodeCharacter(immune, point));	
+			}
+			offset += Character.charCount(point);
 		}
 		return sb.toString();
 	}
@@ -82,6 +88,19 @@ public abstract class Codec {
 	 */
 	public String encodeCharacter( char[] immune, Character c ) {
 		return ""+c;
+	}
+	
+	/**
+	 * Default codepoint implementation that should be overridden in specific codecs.
+	 * 
+	 * @param immune
+	 * @param codePoint
+	 * 		the integer to encode
+	 * @return
+	 * 		the encoded Character
+	 */
+	public String encodeCharacter( char[] immune, int codePoint ) {
+		return new StringBuilder().appendCodePoint(codePoint).toString();
 	}
 
 	/**
@@ -131,6 +150,19 @@ public abstract class Codec {
 			return hex[c];
 		return toHex(c);
 	}
+	
+	/**
+	 * Lookup the hex value of any character that is not alphanumeric.
+	 * @param c The character to lookup.
+	 * @return, return null if alphanumeric or the character code
+	 * 	in hex.
+	 */
+	public static String getHexForNonAlphanumeric(int c)
+	{
+		if(c<0xFF)
+			return hex[c];
+		return toHex(c);
+	}
 
 	public static String toOctal(char c)
 	{
@@ -138,6 +170,11 @@ public abstract class Codec {
 	}
 
 	public static String toHex(char c)
+	{
+		return Integer.toHexString(c);
+	}
+	
+	public static String toHex(int c)
 	{
 		return Integer.toHexString(c);
 	}

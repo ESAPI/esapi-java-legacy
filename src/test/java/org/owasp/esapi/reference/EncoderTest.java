@@ -32,6 +32,7 @@ import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.codecs.Base64;
 import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.codecs.PushbackString;
@@ -902,7 +903,27 @@ public class EncoderTest extends TestCase {
     	URI uri = new URI(input);
     	System.out.println(uri.toString());
     	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
-    	
+    }
+    
+    public void testHtmlEncodeStrSurrogatePair()
+    {
+    	Encoder enc = ESAPI.encoder();
+        String inStr = new String (new int[]{0x2f804}, 0, 1);
+        assertEquals(false, Character.isBmpCodePoint(inStr.codePointAt(0)));
+        assertEquals(true, Character.isBmpCodePoint(new String(new int[] {0x0a}, 0, 1).codePointAt(0)));
+        String expected = "&#x2f804;";
+        String result;
+
+        result = enc.encodeForHTML(inStr);
+        assertEquals(expected, result);
+    }
+    
+    public void testHtmlDecodeHexEntititesSurrogatePair()
+    {
+    	HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+        String expected = new String (new int[]{0x2f804}, 0, 1);
+        assertEquals( expected, htmlCodec.decode("&#194564;") );
+        assertEquals( expected, htmlCodec.decode("&#x2f804;") );
     }
 }
 
