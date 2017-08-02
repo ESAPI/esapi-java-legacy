@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class MySQLCodec extends Codec {
+public class MySQLCodec extends AbstractCodec {
     /**
      * Specifies the SQL Mode the target MySQL Server is running with. For details about MySQL Server Modes
      * please see the Manual at {@link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi}
@@ -95,7 +95,7 @@ public class MySQLCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = super.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}

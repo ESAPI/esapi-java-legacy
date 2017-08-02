@@ -41,7 +41,7 @@ import org.owasp.esapi.util.CollectionsUtil;
  * of knowing about. Decoding is included for completeness but it's use
  * is not recommended. Use a XML parser instead!
  */
-public class XMLEntityCodec extends Codec
+public class XMLEntityCodec extends AbstractCodec
 {
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR + " \t";

@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
-public class CodecTest extends TestCase {
+public class AbstractCodecTest extends TestCase {
 
     private static final char[] EMPTY_CHAR_ARRAY = new char[0];
     private static final Character LESS_THAN = Character.valueOf('<');
@@ -48,7 +48,7 @@ public class CodecTest extends TestCase {
      * @param testName
      *            the test name
      */
-    public CodecTest(String testName) {
+    public AbstractCodecTest(String testName) {
         super(testName);
     }
 
@@ -74,7 +74,7 @@ public class CodecTest extends TestCase {
      * @return the test
      */
     public static Test suite() {
-        TestSuite suite = new TestSuite(CodecTest.class);
+        TestSuite suite = new TestSuite(AbstractCodecTest.class);
         return suite;
     }
 
@@ -142,7 +142,7 @@ public class CodecTest extends TestCase {
 
 	public void testHtmlEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "&#x100;";
 		String result;
@@ -156,7 +156,7 @@ public class CodecTest extends TestCase {
 
 	public void testHtmlEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "&#x100;";
 		String result;
@@ -175,7 +175,7 @@ public class CodecTest extends TestCase {
 
 	public void testPercentEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "%C4%80";
 		String result;
@@ -189,7 +189,7 @@ public class CodecTest extends TestCase {
 
 	public void testPercentEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "%C4%80";
 		String result;
@@ -208,7 +208,7 @@ public class CodecTest extends TestCase {
 
 	public void testJavaScriptEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\u0100";
 		String result;
@@ -221,7 +221,7 @@ public class CodecTest extends TestCase {
 
 	public void testJavaScriptEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\u0100";
 		String result;
@@ -239,7 +239,7 @@ public class CodecTest extends TestCase {
 
 	public void testVBScriptEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		// FIXME I don't know vb...
 		// String expected = "\\u0100";
@@ -253,7 +253,7 @@ public class CodecTest extends TestCase {
 
 	public void testVBScriptEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		// FIXME I don't know vb...
 		// String expected = "chrw(0x100)";
@@ -272,7 +272,7 @@ public class CodecTest extends TestCase {
 
 	public void testCSSEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\100 ";
 		String result;
@@ -285,7 +285,7 @@ public class CodecTest extends TestCase {
 
 	public void testCSSEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\100 ";
 		String result;
@@ -303,7 +303,7 @@ public class CodecTest extends TestCase {
 
 	public void testMySQLStandardEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\" + in;
 		String result;
@@ -316,7 +316,7 @@ public class CodecTest extends TestCase {
 
 	public void testMySQLStandardEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\" + in;
 		String result;
@@ -344,7 +344,7 @@ public class CodecTest extends TestCase {
 
 	public void testUnixEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\" + in;
 		String result;
@@ -357,7 +357,7 @@ public class CodecTest extends TestCase {
 
 	public void testUnixEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "\\" + in;
 		String result;
@@ -375,7 +375,7 @@ public class CodecTest extends TestCase {
 
 	public void testWindowsEncodeChar0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "^" + in;
 		String result;
@@ -388,7 +388,7 @@ public class CodecTest extends TestCase {
 
 	public void testWindowsEncodeStr0x100()
 	{
-		char in = 0x100;
+		Character in = 0x100;
 		String inStr = Character.toString(in);
 		String expected = "^" + in;
 		String result;

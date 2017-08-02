@@ -24,7 +24,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class UnixCodec extends Codec {
+public class UnixCodec extends AbstractCodec {
 
 	/**
 	 * {@inheritDoc}
@@ -42,7 +42,7 @@ public class UnixCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = super.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}

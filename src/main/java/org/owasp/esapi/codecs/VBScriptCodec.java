@@ -26,7 +26,7 @@ import org.owasp.esapi.EncoderConstants;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class VBScriptCodec extends Codec {
+public class VBScriptCodec extends AbstractCodec {
 
 	/**
 	 * Encode a String so that it can be safely used in a specific context.
@@ -78,7 +78,7 @@ public class VBScriptCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = super.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}

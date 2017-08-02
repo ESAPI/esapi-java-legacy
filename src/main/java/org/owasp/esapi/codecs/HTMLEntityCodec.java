@@ -27,7 +27,7 @@ import java.util.Map;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class HTMLEntityCodec extends Codec
+public class HTMLEntityCodec extends AbstractCodec
 {
 	private static final char REPLACEMENT_CHAR = '\ufffd';
 	private static final String REPLACEMENT_HEX = "fffd";
@@ -56,7 +56,7 @@ public class HTMLEntityCodec extends Codec
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric(c);
+		String hex = super.getHexForNonAlphanumeric(c);
 		if ( hex == null ) {
 			return ""+c;
 		}
@@ -92,7 +92,7 @@ public class HTMLEntityCodec extends Codec
 //		}
 		
 //		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric(codePoint);
+		String hex = super.getHexForNonAlphanumeric(codePoint);
 //		if ( hex == null ) {
 //			return ""+c;
 //		}

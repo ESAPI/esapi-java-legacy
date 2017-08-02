@@ -26,7 +26,7 @@ import junit.framework.TestSuite;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.Randomizer;
-import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.AbstractCodec;
 import org.owasp.esapi.errors.EncryptionException;
 
 /**

@@ -20,7 +20,7 @@ package org.owasp.esapi.codecs;
  * @since October 26, 2010
  * @see org.owasp.esapi.Encoder
  */
-public class DB2Codec extends Codec {
+public class DB2Codec extends AbstractCodec {
 
 	public String encodeCharacter(char[] immune, Character c) {
 
