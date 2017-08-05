@@ -126,7 +126,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
      *
      * @return
      */
-    protected String remainder() {
+    public String remainder() {
 		String output = input.substring( index );
 		if ( pushback != null ) {
 			output = pushback + output;

@@ -61,4 +61,12 @@ public interface PushbackSequence<T> {
 	 */
 	void reset();
 
+	/**
+	 * Not at all sure what this method is intended to do.  There 
+	 * is a line in HTMLEntityCodec that said calling this method 
+	 * is a "kludge around PushbackString..."
+	 * @return
+	 */
+	String remainder();
+
 }

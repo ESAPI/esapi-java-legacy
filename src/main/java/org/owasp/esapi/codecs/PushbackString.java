@@ -193,7 +193,7 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 *
 	 * @return
 	 */
-	protected String remainder() {
+	public String remainder() {
 		String output = input.substring(index);
 		if (pushback != null) {
 			output = pushback + output;

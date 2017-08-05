@@ -28,7 +28,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public interface Codec {
+public interface Codec<T> {
 	/**
 	 * Encode a String so that it can be safely used in a specific context.
 	 * 
@@ -73,14 +73,14 @@ public interface Codec {
 
 	/**
 	 * Returns the decoded version of the next character from the input string and advances the
-	 * current character in the PushbackString.  If the current character is not encoded, this 
+	 * current character in the PushbackSequence.  If the current character is not encoded, this 
 	 * method MUST reset the PushbackString.
 	 * 
 	 * @param input	the Character to decode
 	 * 
 	 * @return the decoded Character
 	 */
-	public Character decodeCharacter( PushbackString input );
+	public T decodeCharacter( PushbackSequence<T> input );
 
 	/**
 	 * Lookup the hex value of any character that is not alphanumeric.

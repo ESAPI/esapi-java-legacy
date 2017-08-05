@@ -26,7 +26,7 @@ import org.owasp.esapi.EncoderConstants;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class VBScriptCodec extends AbstractCodec {
+public class VBScriptCodec extends AbstractCharacterCodec {
 
 	/**
 	 * Encode a String so that it can be safely used in a specific context.

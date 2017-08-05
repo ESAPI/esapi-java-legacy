@@ -28,7 +28,7 @@ import org.owasp.esapi.util.CollectionsUtil;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class PercentCodec extends AbstractCodec
+public class PercentCodec extends AbstractCharacterCodec
 {
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	@SuppressWarnings("unused")

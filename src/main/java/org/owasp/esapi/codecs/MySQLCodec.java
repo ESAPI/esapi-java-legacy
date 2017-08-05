@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class MySQLCodec extends AbstractCodec {
+public class MySQLCodec extends AbstractCharacterCodec {
     /**
      * Specifies the SQL Mode the target MySQL Server is running with. For details about MySQL Server Modes
      * please see the Manual at {@link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi}

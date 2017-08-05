@@ -25,10 +25,11 @@ package org.owasp.esapi.codecs;
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @param <T>
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public abstract class AbstractCodec implements Codec {
+public abstract class AbstractCodec<T> implements Codec<T> {
 
 	/**
 	 * Initialize an array to mark which characters are to be encoded. Store the hex
@@ -89,29 +90,13 @@ public abstract class AbstractCodec implements Codec {
 		return new StringBuilder().appendCodePoint(codePoint).toString();
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.codecs.Codec#decode(java.lang.String)
-	 */
-	@Override
-	public String decode(String input) {
-		StringBuilder sb = new StringBuilder();
-		PushbackString pbs = new PushbackString(input);
-		while (pbs.hasNext()) {
-			Character c = decodeCharacter(pbs);
-			if (c != null) {
-				sb.append(c);
-			} else {
-				sb.append(pbs.next());
-			}
-		}
-		return sb.toString();
-	}
+
 
 	/* (non-Javadoc)
 	 * @see org.owasp.esapi.codecs.Codec#decodeCharacter(org.owasp.esapi.codecs.PushbackString)
 	 */
 	@Override
-	public Character decodeCharacter( PushbackString input ) {
+	public T decodeCharacter( PushbackSequence<T> input ) {
 		return input.next();
 	}
 

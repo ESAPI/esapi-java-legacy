@@ -30,7 +30,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class OracleCodec extends AbstractCodec {
+public class OracleCodec extends AbstractCharacterCodec {
 
 
 	/**

@@ -24,7 +24,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class WindowsCodec extends AbstractCodec {
+public class WindowsCodec extends AbstractCharacterCodec {
 
 	
 	/**
