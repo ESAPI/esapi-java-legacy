@@ -162,7 +162,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
 	 *   In ANSI_MODE '' decodes to '
 	 *   In MYSQL_MODE \x decodes to x (or a small list of specials)
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		switch( mode ) {
 			case ANSI: return decodeCharacterANSI( input );
 			case STANDARD: return decodeCharacterMySQL( input );

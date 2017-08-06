@@ -61,7 +61,7 @@ public class WindowsCodec extends AbstractCharacterCodec {
 	 * Formats all are legal both upper/lower case:
 	 *   ^x - all special characters
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

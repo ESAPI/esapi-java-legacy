@@ -87,7 +87,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
 	 *   \\uHHHH
 	 *   \\OOO (1, 2, or 3 digits)
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

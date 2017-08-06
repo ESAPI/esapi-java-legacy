@@ -128,7 +128,7 @@ public class PercentCodec extends AbstractCharacterCodec
 	 * @param input
 	 * 			encoded character using percent characters (such as URL encoding)
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

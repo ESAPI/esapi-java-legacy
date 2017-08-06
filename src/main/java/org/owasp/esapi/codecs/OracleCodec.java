@@ -59,7 +59,7 @@ public class OracleCodec extends AbstractCharacterCodec {
 	 * Formats all are legal
 	 *   '' decodes to '
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

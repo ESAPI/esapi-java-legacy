@@ -96,7 +96,7 @@ public class VBScriptCodec extends AbstractCharacterCodec {
 	 *   "x - all special characters
 	 *   " + chr(x) + "  - not supported yet
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {
