@@ -286,9 +286,12 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 		
 		// kludge around PushbackString....
 		len = Math.min(input.remainder().length(), entityToCharacterTrie.getMaxKeyLength());
-		for(int i=0;i<len;i++)
-			possible.append(input.next());
-
+		for(int i=0;i<len;i++){
+			Integer next = input.next();
+			if(null != next){
+				possible.appendCodePoint(next);
+			}
+		}
 		// look up the longest match
 		entry = entityToCharacterTrie.getLongestMatch(possible);
 		if(entry == null) {

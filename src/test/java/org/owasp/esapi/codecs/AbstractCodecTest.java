@@ -574,7 +574,10 @@ public class AbstractCodecTest extends TestCase {
 	
 	public void testHtmlDecodeCharLessThan()
 	{
-        	assertEquals( LESS_THAN, htmlCodec.decodeCharacter(new PushBackSequenceImpl("&lt;")) );
+		Integer value = htmlCodec.decodeCharacter(new PushBackSequenceImpl("&lt;"));
+		assertEquals(new Integer(60), value);
+		StringBuilder sb = new StringBuilder().appendCodePoint(value);
+        assertEquals( LESS_THAN.toString(), sb.toString());
 	}
 
 	public void testPercentDecodeChar()

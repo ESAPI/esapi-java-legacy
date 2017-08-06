@@ -178,7 +178,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
 	 * @return
 	 * 			A single character, decoded
 	 */
-	private Character decodeCharacterANSI( PushbackString input ) {
+	private Character decodeCharacterANSI( PushbackSequence<Character>  input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {
@@ -214,7 +214,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
 	 * @return
 	 * 			A single character from that string, decoded.
 	 */
-	private Character decodeCharacterMySQL( PushbackString input ) {
+	private Character decodeCharacterMySQL( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

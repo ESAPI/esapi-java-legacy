@@ -92,8 +92,6 @@ public class EncoderTest extends TestCase {
 	 * 
 	 * @throws EncodingException
 	 */
-    //FIXME:  Remove @Ignore
-    @Ignore
 	public void testCanonicalize() throws EncodingException {
 		System.out.println("canonicalize");
 
