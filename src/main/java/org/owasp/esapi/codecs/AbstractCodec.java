@@ -121,9 +121,11 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 	 */
 	public String getHexForNonAlphanumeric(int c)
 	{
-		if(c<0xFF)
+		if(c<0xFF){
 			return hex[c];
-		return toHex(c);
+		}else{
+			return toHex(c);
+		}
 	}
 
 	public String toOctal(char c)
