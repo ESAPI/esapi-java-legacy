@@ -20,6 +20,12 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
+ * 
+ * This class is DEPRECATED.  It did not correctly handle encoding of non-BMP
+ * unicode code points.  This class is provided solely for any fatal bugs
+ * not accounted for in the new version and will be removed entirely in
+ * a future release.  
+ * 
  * Implementation of the Codec interface for HTML entity encoding.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
@@ -27,6 +33,7 @@ import java.util.Map;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
+@Deprecated
 public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
 	
 	private static final char REPLACEMENT_CHAR = '\ufffd';
