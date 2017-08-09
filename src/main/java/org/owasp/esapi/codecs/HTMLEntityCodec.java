@@ -5,12 +5,16 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2017 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
- * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Matt Seil (mseil .at. owasp.org)
+ * @created 2017 
+ * 
+ * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
+ *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
 package org.owasp.esapi.codecs;
@@ -26,6 +30,9 @@ import java.util.Map.Entry;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
+ * 
+ * @author Matt Seil (mseil .at. owasp.org) (mseil .at. owasp.org) 
+ * 
  * @see org.owasp.esapi.Encoder
  */
 public class HTMLEntityCodec extends AbstractIntegerCodec

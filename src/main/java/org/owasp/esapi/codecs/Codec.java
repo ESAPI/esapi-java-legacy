@@ -26,6 +26,9 @@ package org.owasp.esapi.codecs;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
+ * 
+ * @author Matt Seil (mseil .at. owasp.org) 
+ * @since June 1, 2017
  * @see org.owasp.esapi.Encoder
  */
 public interface Codec<T> {

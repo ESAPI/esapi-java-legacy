@@ -5,12 +5,16 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2017 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
- * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @author Matt Seil (mseil .at. owasp.org)
+ * @updated 2017
+ * 
+ * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
+ *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
 package org.owasp.esapi.codecs;
@@ -25,7 +29,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class PushbackString extends AbstractPushbackSequence<Character>{
+public class PushbackString extends AbstractPushbackSequence<Character> {
 	/**
 	 *
 	 * @param input
@@ -49,14 +53,18 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 * @see org.owasp.esapi.codecs.PushbackSequence#hasNext()
 	 */
 	public boolean hasNext() {
-		if (pushback != null)
+		if (pushback != null){
 			return true;
-		if (input == null)
+		}
+		if (input == null){
 			return false;
-		if (input.length() == 0)
+		}
+		if (input.length() == 0){
 			return false;
-		if (index >= input.length())
+		}
+		if (index >= input.length()){
 			return false;
+		}
 		return true;
 	}
 
@@ -71,12 +79,15 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 			pushback = null;
 			return save;
 		}
-		if (input == null)
+		if (input == null){
 			return null;
-		if (input.length() == 0)
+		}
+		if (input.length() == 0){
 			return null;
-		if (index >= input.length())
+		}
+		if (index >= input.length()){
 			return null;
+		}
 		return Character.valueOf(input.charAt(index++));
 	}
 
@@ -87,10 +98,12 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 */
 	public Character nextHex() {
 		Character c = next();
-		if (c == null)
+		if (c == null){
 			return null;
-		if (isHexDigit(c))
+		}
+		if (isHexDigit(c)){
 			return c;
+		}
 		return null;
 	}
 
@@ -101,10 +114,12 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 */
 	public Character nextOctal() {
 		Character c = next();
-		if (c == null)
+		if (c == null){
 			return null;
-		if (isOctalDigit(c))
+		}
+		if (isOctalDigit(c)){
 			return c;
+		}
 		return null;
 	}
 
@@ -116,8 +131,9 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 * @return
 	 */
 	public static boolean isHexDigit(Character c) {
-		if (c == null)
+		if (c == null){
 			return false;
+		}
 		char ch = c.charValue();
 		return (ch >= '0' && ch <= '9') || (ch >= 'a' && ch <= 'f') || (ch >= 'A' && ch <= 'F');
 	}
@@ -129,8 +145,9 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 * @return
 	 */
 	public static boolean isOctalDigit(Character c) {
-		if (c == null)
+		if (c == null){
 			return false;
+		}
 		char ch = c.charValue();
 		return ch >= '0' && ch <= '7';
 	}
@@ -141,14 +158,18 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 * @see org.owasp.esapi.codecs.PushbackSequence#peek()
 	 */
 	public Character peek() {
-		if (pushback != null)
+		if (pushback != null){
 			return pushback;
-		if (input == null)
+		}
+		if (input == null){
 			return null;
-		if (input.length() == 0)
+		}
+		if (input.length() == 0){
 			return null;
-		if (index >= input.length())
+		}
+		if (index >= input.length()){
 			return null;
+		}
 		return Character.valueOf(input.charAt(index));
 	}
 
@@ -158,14 +179,18 @@ public class PushbackString extends AbstractPushbackSequence<Character>{
 	 * @see org.owasp.esapi.codecs.PushbackSequence#peek(char)
 	 */
 	public boolean peek(Character c) {
-		if (pushback != null && pushback.charValue() == c)
+		if (pushback != null && pushback.charValue() == c){
 			return true;
-		if (input == null)
+		}
+		if (input == null){
 			return false;
-		if (input.length() == 0)
+		}
+		if (input.length() == 0){
 			return false;
-		if (index >= input.length())
+		}
+		if (index >= input.length()){
 			return false;
+		}
 		return input.charAt(index) == c;
 	}
 
