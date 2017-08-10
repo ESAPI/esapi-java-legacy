@@ -39,10 +39,9 @@ public class AbstractIntegerCodec extends AbstractCodec<Integer> {
 		PushbackSequence<Integer> pbs = new PushBackSequenceImpl(input);
 		while (pbs.hasNext()) {
 			Integer c = decodeCharacter(pbs);
-			if (c != null) {
+			boolean isValid = Character.isValidCodePoint(c);
+			if (c != null && isValid) {
 				sb.appendCodePoint(c);
-			} else {
-				sb.appendCodePoint(pbs.next());
 			}
 		}
 		return sb.toString();

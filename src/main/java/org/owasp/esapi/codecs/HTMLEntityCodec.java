@@ -203,7 +203,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 			Integer c = input.peek();
 			
 			// if character is a digit then add it on and keep going
-			if ( Character.isDigit( c ) ) {
+			if ( Character.isDigit( c ) && Character.isValidCodePoint(c) ) {
 				sb.appendCodePoint( c );
 				input.next();
 				
@@ -243,6 +243,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 			Integer c = input.peek();
 			
 			// if character is a hex digit then add it on and keep going
+			//This statement implicitly tests for Character.isValidCodePoint(int)
 			if ( "0123456789ABCDEFabcdef".indexOf(c) != -1 ) {
 				sb.appendCodePoint( c );
 				input.next();
@@ -295,7 +296,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 		len = Math.min(input.remainder().length(), entityToCharacterTrie.getMaxKeyLength());
 		for(int i=0;i<len;i++){
 			Integer next = input.next();
-			if(null != next){
+			if(null != next && Character.isValidCodePoint(next)){
 				possible.appendCodePoint(next);
 			}
 		}

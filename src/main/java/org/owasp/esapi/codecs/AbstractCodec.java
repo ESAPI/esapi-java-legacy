@@ -87,7 +87,11 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 	 */
 	@Override
 	public String encodeCharacter( char[] immune, int codePoint ) {
-		return new StringBuilder().appendCodePoint(codePoint).toString();
+		String rval = "";
+		if(Character.isValidCodePoint(codePoint)){
+			rval = new StringBuilder().appendCodePoint(codePoint).toString();
+		}
+		return rval;
 	}
 
 
