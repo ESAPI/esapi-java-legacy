@@ -80,21 +80,17 @@ public class SafeFileTest extends TestCase
 		}
 
 		File sf = new File(testDir, "test^.file" );
-		if ( sf.exists() ) {
-			System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
-		} else {
-			System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
-		}
+	    assertFalse("Injection didn't work " + sf.getAbsolutePath(),
+	            sf.exists());
+	    assertTrue("  Injection allowed " + sf.getAbsolutePath(), sf.exists());
 	}
 
 	public void testEscapeCharacterInDirectoryInjection() {
 		System.out.println("testEscapeCharacterInDirectoryInjection");
 		File sf = new File(testDir, "test\\^.^.\\file");
-		if ( sf.exists() ) {
-			System.out.println( "  Injection allowed "+ sf.getAbsolutePath() );
-		} else {
-			System.out.println( "  Injection didn't work "+ sf.getAbsolutePath() );
-		}
+		assertFalse("  Injection didn't work " + sf.getAbsolutePath(),
+	            sf.exists());
+	    assertTrue("  Injection allowed " + sf.getAbsolutePath(), sf.exists());
 	}
 
 	public void testJavaFileInjectionGood() throws ValidationException
@@ -275,5 +271,4 @@ public class SafeFileTest extends TestCase
 			// expected
 		}
 	}
-
 }
