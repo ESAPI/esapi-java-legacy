@@ -137,7 +137,8 @@ public class AbstractCodecTest extends TestCase {
 	
 	public void testHtmlEncodeChar()
 	{
-        	assertEquals( "&lt;", htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
+		
+        	assertEquals( "&lt;", htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, (int) LESS_THAN) );
 	}
 
 	public void testHtmlEncodeChar0x100()
@@ -146,12 +147,13 @@ public class AbstractCodecTest extends TestCase {
 		String inStr = Character.toString(in);
 		String expected = "&#x100;";
 		String result;
-
-        	result = htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, in);
-		// this should be escaped
-        	assertFalse(inStr.equals(result));
-		// UTF-8 encoded and then percent escaped
-        	assertEquals(expected, result);
+		//The new default for HTMLEntityCodec is ints/Integers.  Use Character/char at your own risk!
+		//Characters destroy non-BMP codepoints.  This Codec is now supposed surpass that. 
+    	result = htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, (int) in);
+    	// this should be escaped
+    	assertFalse(inStr.equals(result));
+    	// UTF-8 encoded and then percent escaped
+    	assertEquals(expected, result);
 	}
 
 	public void testHtmlEncodeStr0x100()

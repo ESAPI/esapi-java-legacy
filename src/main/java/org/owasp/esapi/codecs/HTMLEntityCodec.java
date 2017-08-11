@@ -50,73 +50,59 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
     public HTMLEntityCodec() {
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-     * Encodes a Character for safe use in an HTML entity field.
-     * @param immune
+    /**
+     * Overrides the AbstractImpl to keep this code performing entirely at the {@code int}
+     * level.  
      */
-	public String encodeCharacter( char[] immune, Character c ) {
-
-		// check for immune characters
-		if ( containsCharacter(c, immune ) ) {
-			return ""+c;
+	@Override
+	public String encode(char[] immune, String input) {
+		StringBuilder sb = new StringBuilder();
+		for(int offset  = 0; offset < input.length(); ){
+			final int point = input.codePointAt(offset);
+			if(Character.isValidCodePoint(point)){
+				sb.append(encodeCharacter(immune, point));	
+			}
+			offset += Character.charCount(point);
 		}
-		
-		// check for alphanumeric characters
-		String hex = super.getHexForNonAlphanumeric(c);
-		if ( hex == null ) {
-			return ""+c;
-		}
-		
-		// check for illegal characters
-		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) )
-		{
-			hex = REPLACEMENT_HEX;	// Let's entity encode this instead of returning it
-			c = REPLACEMENT_CHAR;
-		}
-		
-		// check if there's a defined entity
-		String entityName = (String) characterToEntityMap.get(Integer.valueOf(c));
-		if (entityName != null) {
-			return "&" + entityName + ";";
-		}
-		
-		// return the hex entity as suggested in the spec
-		return "&#x" + hex + ";";
+		return sb.toString();
 	}
 	
 	/**
 	 * {@inheritDoc}
 	 * 
-     * Encodes a Character for safe use in an HTML entity field.
+     * Encodes a codePoint for safe use in an HTML entity field.
      * @param immune
      */
+	@Override
 	public String encodeCharacter( char[] immune, int codePoint ) {
 
 		// check for immune characters
-//		if ( containsCharacter(codePoint, immune ) ) {
-//			return ""+codePoint;
-//		}
+		// Cast the codePoint to a char because we want to limit immunity to the BMP field only.  
+		if ( containsCharacter( (char) codePoint, immune ) && Character.isValidCodePoint(codePoint)) {
+			return new StringBuilder().appendCodePoint(codePoint).toString();
+		}
 		
-//		// check for alphanumeric characters
+		// check for alphanumeric characters
 		String hex = super.getHexForNonAlphanumeric(codePoint);
-//		if ( hex == null ) {
-//			return ""+c;
-//		}
-//		
-//		// check for illegal characters
-//		if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) )
-//		{
-//			hex = REPLACEMENT_HEX;	// Let's entity encode this instead of returning it
-//			c = REPLACEMENT_CHAR;
-//		}
-//		
-//		// check if there's a defined entity
-//		String entityName = (String) characterToEntityMap.get(c);
-//		if (entityName != null) {
-//			return "&" + entityName + ";";
-//		}
+		if ( hex == null && Character.isValidCodePoint(codePoint)) {
+			return new StringBuilder().appendCodePoint(codePoint).toString();
+		}
+		// check for illegal characters
+		if ( ( codePoint <= 0x1f 
+				&& codePoint != '\t' 
+				&& codePoint != '\n' 
+				&& codePoint != '\r' ) 
+				|| ( codePoint >= 0x7f && codePoint <= 0x9f ) )
+		{
+			hex = REPLACEMENT_HEX;	// Let's entity encode this instead of returning it
+			codePoint = REPLACEMENT_CHAR;
+		}
+		
+		// check if there's a defined entity
+		String entityName = (String) characterToEntityMap.get(codePoint);
+		if (entityName != null) {
+			return "&" + entityName + ";";
+		}
 		
 		// return the hex entity as suggested in the spec
 		return "&#x" + hex + ";";

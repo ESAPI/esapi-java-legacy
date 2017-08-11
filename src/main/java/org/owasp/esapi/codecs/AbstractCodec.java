@@ -82,6 +82,10 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 		return ""+c;
 	}
 	
+	public String encodeCharacter(char[] immune, char c){
+		throw new IllegalArgumentException("You tried to call encodeCharacter with a char.  Nope.  Use Character instead!");
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.owasp.esapi.codecs.Codec#encodeCharacter(char[], int)
 	 */
