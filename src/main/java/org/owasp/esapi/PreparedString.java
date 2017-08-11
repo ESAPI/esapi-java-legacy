@@ -16,6 +16,7 @@
 package org.owasp.esapi;
 
 import java.util.ArrayList;
+
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 

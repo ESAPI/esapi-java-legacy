@@ -24,7 +24,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class JavaScriptCodec extends Codec {
+public class JavaScriptCodec extends AbstractCharacterCodec {
 
 
 	/**
@@ -45,7 +45,7 @@ public class JavaScriptCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric(c);
+		String hex = super.getHexForNonAlphanumeric(c);
 		if ( hex == null ) {
 			return ""+c;
 		}
@@ -87,7 +87,7 @@ public class JavaScriptCodec extends Codec {
 	 *   \\uHHHH
 	 *   \\OOO (1, 2, or 3 digits)
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

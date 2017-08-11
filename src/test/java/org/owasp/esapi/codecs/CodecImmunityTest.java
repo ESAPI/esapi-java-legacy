@@ -43,7 +43,7 @@ public class CodecImmunityTest {
 
     @Parameters(name = "{0}")
     public static Collection<Object[]> getParams() {
-        Collection<Codec> knownCodecs = new ArrayList<Codec>();
+        Collection<AbstractCodec> knownCodecs = new ArrayList<AbstractCodec>();
         knownCodecs.add(new CSSCodec());
         knownCodecs.add(new DB2Codec());
         knownCodecs.add(new HTMLEntityCodec());
@@ -99,7 +99,7 @@ public class CodecImmunityTest {
         return params;
     }
 
-    private static Collection<Object[]> fullCharacterCodecValidation(Collection<Codec> codecs) {
+    private static Collection<Object[]> fullCharacterCodecValidation(Collection<AbstractCodec> codecs) {
         char[] holyCowTesting = StringUtilities.union(EncoderConstants.CHAR_ALPHANUMERICS, EncoderConstants.CHAR_SPECIALS); 
         Collection<Object[]> params = new ArrayList<Object[]>();
         for (Codec codec: codecs) {

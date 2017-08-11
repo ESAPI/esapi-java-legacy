@@ -23,7 +23,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class CSSCodec extends Codec
+public class CSSCodec extends AbstractCharacterCodec
 {
 	private static final Character REPLACEMENT = '\ufffd';
 
@@ -42,7 +42,7 @@ public class CSSCodec extends Codec
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric(c);
+		String hex = super.getHexForNonAlphanumeric(c);
 		if ( hex == null ) {
 			return ""+c;
 		}
@@ -58,7 +58,7 @@ public class CSSCodec extends Codec
 	 * Returns the decoded version of the character starting at index,
 	 * or null if no decoding is possible.
 	 */
-	public Character decodeCharacter(PushbackString input)
+	public Character decodeCharacter(PushbackSequence<Character> input)
 	{
 		input.mark();
 		Character first = input.next();

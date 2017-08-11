@@ -24,7 +24,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class WindowsCodec extends Codec {
+public class WindowsCodec extends AbstractCharacterCodec {
 
 	
 	/**
@@ -43,7 +43,7 @@ public class WindowsCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = super.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}
@@ -61,7 +61,7 @@ public class WindowsCodec extends Codec {
 	 * Formats all are legal both upper/lower case:
 	 *   ^x - all special characters
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

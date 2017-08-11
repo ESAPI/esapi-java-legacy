@@ -15,23 +15,21 @@
  */
 package org.owasp.esapi.reference;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.junit.Ignore;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.codecs.Base64;
 import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
 import org.owasp.esapi.codecs.PushbackString;
@@ -39,6 +37,10 @@ import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The Class EncoderTest.
@@ -350,7 +352,8 @@ public class EncoderTest extends TestCase {
         assertEquals("&lt;script&gt;", instance.encodeForHTML("<script>"));
         assertEquals("&amp;lt&#x3b;script&amp;gt&#x3b;", instance.encodeForHTML("&lt;script&gt;"));
         assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTML("!@$%()=+{}[]"));
-        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTML(instance.canonicalize("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;") ) );
+        String canonicalized = instance.canonicalize("&#33;&#64;&#36;&#37;&#40;&#41;&#61;&#43;&#123;&#125;&#91;&#93;");
+        assertEquals("&#x21;&#x40;&#x24;&#x25;&#x28;&#x29;&#x3d;&#x2b;&#x7b;&#x7d;&#x5b;&#x5d;", instance.encodeForHTML( canonicalized ) );
         assertEquals(",.-_ ", instance.encodeForHTML(",.-_ "));
         assertEquals("dir&amp;", instance.encodeForHTML("dir&"));
         assertEquals("one&amp;two", instance.encodeForHTML("one&two"));
@@ -719,7 +722,7 @@ public class EncoderTest extends TestCase {
         System.out.println("WindowsCodec");
         Encoder instance = ESAPI.encoder();
 
-        Codec win = new WindowsCodec();
+        Codec<Character> win = new WindowsCodec();
         char[] immune = new char[0];
         assertEquals(null, instance.encodeForOS(win, null));
         
@@ -753,7 +756,7 @@ public class EncoderTest extends TestCase {
         System.out.println("UnixCodec");
         Encoder instance = ESAPI.encoder();
 
-        Codec unix = new UnixCodec();
+        Codec<Character> unix = new UnixCodec();
         char[] immune = new char[0];
         assertEquals(null, instance.encodeForOS(unix, null));
         
@@ -902,7 +905,27 @@ public class EncoderTest extends TestCase {
     	URI uri = new URI(input);
     	System.out.println(uri.toString());
     	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
-    	
+    }
+    
+    public void testHtmlEncodeStrSurrogatePair()
+    {
+    	Encoder enc = ESAPI.encoder();
+        String inStr = new String (new int[]{0x2f804}, 0, 1);
+        assertEquals(false, Character.isBmpCodePoint(inStr.codePointAt(0)));
+        assertEquals(true, Character.isBmpCodePoint(new String(new int[] {0x0a}, 0, 1).codePointAt(0)));
+        String expected = "&#x2f804;";
+        String result;
+
+        result = enc.encodeForHTML(inStr);
+        assertEquals(expected, result);
+    }
+    
+    public void testHtmlDecodeHexEntititesSurrogatePair()
+    {
+    	HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+        String expected = new String (new int[]{0x2f804}, 0, 1);
+        assertEquals( expected, htmlCodec.decode("&#194564;") );
+        assertEquals( expected, htmlCodec.decode("&#x2f804;") );
     }
 }
 

@@ -26,34 +26,12 @@ package org.owasp.esapi.codecs;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
+ * 
+ * @author Matt Seil (mseil .at. owasp.org) 
+ * @since June 1, 2017
  * @see org.owasp.esapi.Encoder
  */
-public abstract class Codec {
-
-	/**
-	 * Initialize an array to mark which characters are to be encoded. Store the hex
-	 * string for that character to save time later. If the character shouldn't be
-	 * encoded, then store null.
-	 */
-	private static final String[] hex = new String[256];
-
-	static {
-		for ( char c = 0; c < 0xFF; c++ ) {
-			if ( c >= 0x30 && c <= 0x39 || c >= 0x41 && c <= 0x5A || c >= 0x61 && c <= 0x7A ) {
-				hex[c] = null;
-			} else {
-				hex[c] = toHex(c).intern();
-			}
-		}
-	}
-
-
-	/**
-	 * Default constructor
-	 */
-	public Codec() {
-	}
-
+public interface Codec<T> {
 	/**
 	 * Encode a String so that it can be safely used in a specific context.
 	 * 
@@ -62,27 +40,30 @@ public abstract class Codec {
 	 * 		the String to encode
 	 * @return the encoded String
 	 */
-	public String encode(char[] immune, String input) {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			char c = input.charAt(i);
-			sb.append(encodeCharacter(immune, c));
-		}
-		return sb.toString();
-	}
+	public String encode(char[] immune, String input);
 
 	/**
 	 * Default implementation that should be overridden in specific codecs.
 	 * 
-	 * @param immune
+	 * @param immune 
+	 * 		array of chars to NOT encode.  Use with caution.
 	 * @param c
 	 * 		the Character to encode
 	 * @return
 	 * 		the encoded Character
 	 */
-	public String encodeCharacter( char[] immune, Character c ) {
-		return ""+c;
-	}
+	public String encodeCharacter( char[] immune, Character c );
+	
+	/**
+	 * Default codepoint implementation that should be overridden in specific codecs.
+	 * 
+	 * @param immune
+	 * @param codePoint
+	 * 		the integer to encode
+	 * @return
+	 * 		the encoded Character
+	 */
+	public String encodeCharacter( char[] immune, int codePoint );
 
 	/**
 	 * Decode a String that was encoded using the encode method in this Class
@@ -92,32 +73,18 @@ public abstract class Codec {
 	 * @return
 	 *		the decoded String
 	 */
-	public String decode(String input) {
-		StringBuilder sb = new StringBuilder();
-		PushbackString pbs = new PushbackString(input);
-		while (pbs.hasNext()) {
-			Character c = decodeCharacter(pbs);
-			if (c != null) {
-				sb.append(c);
-			} else {
-				sb.append(pbs.next());
-			}
-		}
-		return sb.toString();
-	}
+	public String decode(String input);
 
 	/**
 	 * Returns the decoded version of the next character from the input string and advances the
-	 * current character in the PushbackString.  If the current character is not encoded, this 
+	 * current character in the PushbackSequence.  If the current character is not encoded, this 
 	 * method MUST reset the PushbackString.
 	 * 
 	 * @param input	the Character to decode
 	 * 
 	 * @return the decoded Character
 	 */
-	public Character decodeCharacter( PushbackString input ) {
-		return input.next();
-	}
+	public T decodeCharacter( PushbackSequence<T> input );
 
 	/**
 	 * Lookup the hex value of any character that is not alphanumeric.
@@ -125,22 +92,21 @@ public abstract class Codec {
 	 * @return, return null if alphanumeric or the character code
 	 * 	in hex.
 	 */
-	public static String getHexForNonAlphanumeric(char c)
-	{
-		if(c<0xFF)
-			return hex[c];
-		return toHex(c);
-	}
+	public String getHexForNonAlphanumeric(char c);
+	
+	/**
+	 * Lookup the hex value of any character that is not alphanumeric.
+	 * @param c The character to lookup.
+	 * @return, return null if alphanumeric or the character code
+	 * 	in hex.
+	 */
+	public String getHexForNonAlphanumeric(int c);
 
-	public static String toOctal(char c)
-	{
-		return Integer.toOctalString(c);
-	}
+	public String toOctal(char c);
 
-	public static String toHex(char c)
-	{
-		return Integer.toHexString(c);
-	}
+	public String toHex(char c);
+	
+	public String toHex(int c);
 
 	/**
 	 * Utility to search a char[] for a specific char.
@@ -149,11 +115,6 @@ public abstract class Codec {
 	 * @param array
 	 * @return
 	 */
-	public static boolean containsCharacter( char c, char[] array ) {
-		for (char ch : array) {
-			if (c == ch) return true;
-		}
-		return false;
-	}
+	public boolean containsCharacter( char c, char[] array );
 
 }

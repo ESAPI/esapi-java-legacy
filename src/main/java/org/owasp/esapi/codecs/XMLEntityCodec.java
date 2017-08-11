@@ -41,7 +41,7 @@ import org.owasp.esapi.util.CollectionsUtil;
  * of knowing about. Decoding is included for completeness but it's use
  * is not recommended. Use a XML parser instead!
  */
-public class XMLEntityCodec extends Codec
+public class XMLEntityCodec extends AbstractCharacterCodec
 {
 	private static final String ALPHA_NUMERIC_STR = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 	private static final String UNENCODED_STR = ALPHA_NUMERIC_STR + " \t";
@@ -91,7 +91,7 @@ public class XMLEntityCodec extends Codec
 	 * 	<li>&amp;name;</li>
 	 * </ul>
 	 */
-	public Character decodeCharacter(PushbackString input)
+	public Character decodeCharacter(PushbackSequence<Character> input)
 	{
 		Character ret = null;
 		Character first;
@@ -137,7 +137,7 @@ public class XMLEntityCodec extends Codec
 	 * 	is positioned at the character after the &amp;#
 	 * @return The character decoded or null on failure.
 	 */
-	private static Character getNumericEntity(PushbackString input)
+	private static Character getNumericEntity(PushbackSequence<Character> input)
 	{
 		Character first = input.peek();
 
@@ -174,7 +174,7 @@ public class XMLEntityCodec extends Codec
 	 *	the next char is not a 'x' or 'X'.
 	 * @return The character decoded or null on failutre.
 	 */
-	private static Character parseNumber(PushbackString input)
+	private static Character parseNumber(PushbackSequence<Character> input)
 	{
 		StringBuilder sb = new StringBuilder();
 		Character c;
@@ -209,7 +209,7 @@ public class XMLEntityCodec extends Codec
 	 * 	is positioned at the character after the &amp;#[xX]
 	 * @return The character decoded or null on failutre.
 	 */
-	private static Character parseHex(PushbackString input)
+	private static Character parseHex(PushbackSequence<Character> input)
 	{
 		Character c;
 		StringBuilder sb = new StringBuilder();
@@ -268,7 +268,7 @@ public class XMLEntityCodec extends Codec
 	 * 	is positioned at the character after the &amp;.
 	 * @return The character decoded or null on failutre.
 	 */
-	private Character getNamedEntity(PushbackString input)
+	private Character getNamedEntity(PushbackSequence<Character> input)
 	{
 		StringBuilder possible = new StringBuilder();
 		Map.Entry<CharSequence,Character> entry;

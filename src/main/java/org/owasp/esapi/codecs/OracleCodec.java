@@ -30,7 +30,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class OracleCodec extends Codec {
+public class OracleCodec extends AbstractCharacterCodec {
 
 
 	/**
@@ -59,7 +59,7 @@ public class OracleCodec extends Codec {
 	 * Formats all are legal
 	 *   '' decodes to '
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {

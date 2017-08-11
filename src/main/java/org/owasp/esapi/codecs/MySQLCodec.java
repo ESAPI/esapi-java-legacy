@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * @since June 1, 2007
  * @see org.owasp.esapi.Encoder
  */
-public class MySQLCodec extends Codec {
+public class MySQLCodec extends AbstractCharacterCodec {
     /**
      * Specifies the SQL Mode the target MySQL Server is running with. For details about MySQL Server Modes
      * please see the Manual at {@link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi}
@@ -95,7 +95,7 @@ public class MySQLCodec extends Codec {
 		}
 		
 		// check for alphanumeric characters
-		String hex = Codec.getHexForNonAlphanumeric( ch );
+		String hex = super.getHexForNonAlphanumeric( ch );
 		if ( hex == null ) {
 			return ""+ch;
 		}
@@ -162,7 +162,7 @@ public class MySQLCodec extends Codec {
 	 *   In ANSI_MODE '' decodes to '
 	 *   In MYSQL_MODE \x decodes to x (or a small list of specials)
 	 */
-	public Character decodeCharacter( PushbackString input ) {
+	public Character decodeCharacter( PushbackSequence<Character> input ) {
 		switch( mode ) {
 			case ANSI: return decodeCharacterANSI( input );
 			case STANDARD: return decodeCharacterMySQL( input );
@@ -178,7 +178,7 @@ public class MySQLCodec extends Codec {
 	 * @return
 	 * 			A single character, decoded
 	 */
-	private Character decodeCharacterANSI( PushbackString input ) {
+	private Character decodeCharacterANSI( PushbackSequence<Character>  input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {
@@ -214,7 +214,7 @@ public class MySQLCodec extends Codec {
 	 * @return
 	 * 			A single character from that string, decoded.
 	 */
-	private Character decodeCharacterMySQL( PushbackString input ) {
+	private Character decodeCharacterMySQL( PushbackSequence<Character> input ) {
 		input.mark();
 		Character first = input.next();
 		if ( first == null ) {
