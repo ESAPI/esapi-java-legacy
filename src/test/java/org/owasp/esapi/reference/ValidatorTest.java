@@ -142,7 +142,7 @@ public class ValidatorTest extends TestCase {
     	// TODO: This test case fails due to an apparent bug in SimpleDateFormat
     	// Note: This seems to be fixed in JDK 6. Will leave it commented out since
     	//		 we only require JDK 5. -kww
-    	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(), false, errors);
+    	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.US), false, errors);
     	// assertEquals( 2, errors.size() );
     }
     
