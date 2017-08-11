@@ -51,8 +51,16 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.owasp.esapi.codecs.Codec#encode(char[], java.lang.String)
+	/**
+	 * WARNING!!  {@code Character} based Codecs will silently transform code points that are not 
+	 * legal UTF code points into garbage data as they will cast them to {@code char}s.  
+	 * </br></br>
+	 * If you are implementing an {@code Integer} based codec, these will be silently discarded
+	 * based on the return from {@code Character.isValidCodePoint( int )}.  This is the preferred
+	 * behavior moving forward.  
+	 * 
+	 * 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String encode(char[] immune, String input) {

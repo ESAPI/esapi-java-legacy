@@ -51,8 +51,13 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 	}
 
     /**
-     * Overrides the AbstractImpl to keep this code performing entirely at the {@code int}
-     * level.  
+     * Given an array of {@code char}, scan the input {@code String} and encode unsafe
+     * codePoints, except for codePoints passed into the {@code char} array.  
+     * <br/><br/>
+     * WARNING:  This method will silently discard any code point per the 
+     * call to {@code Character.isValidCodePoint( int )} method.  
+     * 
+     * {@inheritDoc}
      */
 	@Override
 	public String encode(char[] immune, String input) {

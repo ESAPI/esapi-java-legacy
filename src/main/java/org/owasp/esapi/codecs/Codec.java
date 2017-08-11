@@ -45,7 +45,8 @@ public interface Codec<T> {
 	/**
 	 * Default implementation that should be overridden in specific codecs.
 	 * 
-	 * @param immune
+	 * @param immune 
+	 * 		array of chars to NOT encode.  Use with caution.
 	 * @param c
 	 * 		the Character to encode
 	 * @return
