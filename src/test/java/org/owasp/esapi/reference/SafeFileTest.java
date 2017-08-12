@@ -16,19 +16,17 @@
 package org.owasp.esapi.reference;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URLDecoder;
 import java.util.Iterator;
 import java.util.Set;
+
+import org.owasp.esapi.SafeFile;
+import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.util.CollectionsUtil;
+import org.owasp.esapi.util.FileTestUtils;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import org.owasp.esapi.SafeFile;
-import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.util.FileTestUtils;
-import org.owasp.esapi.util.CollectionsUtil;
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
@@ -79,18 +77,21 @@ public class SafeFileTest extends TestCase
 			System.out.println( "File is there: " + tf );
 		}
 
-		File sf = new File(testDir, "test^.file" );
-	    assertFalse("Injection didn't work " + sf.getAbsolutePath(),
-	            sf.exists());
-	    assertTrue("  Injection allowed " + sf.getAbsolutePath(), sf.exists());
+		try {
+			File sf = new SafeFile(testDir, "test^.file" );
+		} catch (ValidationException e) {
+			assertEquals("Invalid directory", e.getMessage());
+		}
+	    
 	}
 
 	public void testEscapeCharacterInDirectoryInjection() {
 		System.out.println("testEscapeCharacterInDirectoryInjection");
-		File sf = new File(testDir, "test\\^.^.\\file");
-		assertFalse("  Injection didn't work " + sf.getAbsolutePath(),
-	            sf.exists());
-	    assertTrue("  Injection allowed " + sf.getAbsolutePath(), sf.exists());
+		try {
+			File sf = new SafeFile(testDir, "test\\^.^.\\file");
+		} catch (ValidationException e) {
+			assertEquals("Invalid directory", e.getMessage());
+		}
 	}
 
 	public void testJavaFileInjectionGood() throws ValidationException
@@ -270,5 +271,18 @@ public class SafeFileTest extends TestCase
 		{
 			// expected
 		}
+	}
+	
+	public final void testSafeFileShouldAcceptEmptyPath() throws ValidationException
+	{
+		String filename = "hello.txt";
+		//API dictates that NPE should be thrown.
+		try{
+			SafeFile file = new SafeFile(filename);
+		}catch(NullPointerException npe){
+			assertNotNull(npe);
+		}
+		
+
 	}
 }
