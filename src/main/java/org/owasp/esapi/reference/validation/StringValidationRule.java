@@ -44,7 +44,6 @@ public class StringValidationRule extends BaseValidationRule {
 	protected List<Pattern> blacklistPatterns = new ArrayList<Pattern>();
 	protected int minLength = 0;
 	protected int maxLength = Integer.MAX_VALUE;
-	protected boolean validateInputAndCanonical = true;
 
 	public StringValidationRule( String typeName ) {
 		super( typeName );
@@ -114,16 +113,6 @@ public class StringValidationRule extends BaseValidationRule {
 
 	public void setMaximumLength( int length ) {
 		maxLength = length;
-	}
-
-	/**
-	 * Set the flag which determines whether the in input itself is
-	 * checked as well as the canonical form of the input.
-	 * @param flag The value to set
-	 */
-	public void setValidateInputAndCanonical(boolean flag)
-	{
-		validateInputAndCanonical = flag;
 	}
 
 	/**
@@ -267,47 +256,22 @@ public class StringValidationRule extends BaseValidationRule {
 	{
 		String data = null;
 
-		// checks on input itself
-
 		// check for empty/null
 		if(checkEmpty(context, input) == null)
 			return null;
 
-		if (validateInputAndCanonical)
-		{
-			//first validate pre-canonicalized data
-			
-			// check length
-			checkLength(context, input);
-
-			// check whitelist patterns
-			checkWhitelist(context, input);
-
-			// check blacklist patterns
-			checkBlacklist(context, input);
-			
-			// canonicalize
-			data = encoder.canonicalize( input );
-			
-		} else {
-			
-			//skip canonicalization
-			data = input;			
-		}
-
-		// check for empty/null
-		if(checkEmpty(context, data, input) == null)
-			return null;
-
 		// check length
-		checkLength(context, data, input);
+		checkLength(context, input);
+		
+		// canonicalize
+		data = encoder.canonicalize( input );
 
 		// check whitelist patterns
-		checkWhitelist(context, data, input);
+		checkWhitelist(context, input);
 
 		// check blacklist patterns
-		checkBlacklist(context, data, input);
-
+		checkBlacklist(context, input);
+			
 		// validation passed
 		return data;
 	}

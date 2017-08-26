@@ -232,7 +232,7 @@ public class ValidatorTest extends TestCase {
         assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, ESAPI.securityConfiguration().getAllowedFileExtensions(), false, errors));
     }
 
-    public void testGetValidInput() {
+    public void testGetValidInput() throws Exception {
         System.out.println("getValidInput");
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
