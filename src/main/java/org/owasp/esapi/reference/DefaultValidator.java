@@ -216,7 +216,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
-		rvr.setValidateInputAndCanonical(canonicalize);
 		return rvr.getValid(context, input);
 	}
 
@@ -343,7 +342,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		HTMLValidationRule hvr = new HTMLValidationRule( "safehtml", encoder );
 		hvr.setMaximumLength(maxLength);
 		hvr.setAllowNull(allowNull);
-		hvr.setValidateInputAndCanonical(false);
 		return hvr.getValid(context, input);
 	}
 
