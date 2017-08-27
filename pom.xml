@@ -89,18 +89,18 @@
             </roles>
         </developer>
         <developer>
-            <name>Chris Schmidt</name>
-            <organization>Aspect Security</organization>
-            <roles>
-                <role>Project Co-owner</role>
-            </roles>
-        </developer>
-        <developer>
             <name>Kevin W. Wall</name>
             <organization>Wells Fargo</organization>
             <roles>
                 <role>Project Co-owner</role>
             </roles>
+        </developer>
+        <developer>
+          <name>Matt Seil</name>
+          <organization>OWASP</organization>
+          <roles>
+            <role>Project Co-owner</role>
+          </roles>
         </developer>
     </developers>
 
@@ -119,6 +119,12 @@
     </properties>
 
     <dependencies>
+		<!-- https://mvnrepository.com/artifact/joda-time/joda-time -->
+		<dependency>
+		    <groupId>joda-time</groupId>
+		    <artifactId>joda-time</artifactId>
+		    <version>2.9.9</version>
+		</dependency>
         <dependency>
             <groupId>commons-configuration</groupId>
             <artifactId>commons-configuration</artifactId>
@@ -224,29 +230,29 @@
 		    <version>1.7.0</version>
 		    <scope>test</scope>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/eu.codearte.catch-exception/catch-exception 
+		<!-- https://mvnrepository.com/artifact/eu.codearte.catch-exception/catch-exception
 		<dependency>
 		    <groupId>eu.codearte.catch-exception</groupId>
 		    <artifactId>catch-exception</artifactId>
 		    <version>1.4.6</version>
 		    <scope>test</scope>
 		</dependency>-->
-				
-		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-core 
+
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-core
 		<dependency>
 		    <groupId>org.powermock</groupId>
 		    <artifactId>powermock-core</artifactId>
 		    <version>1.7.0</version>
 		    <scope>test</scope>
 		</dependency>-->
-		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-easymock 
+		<!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-easymock
 		<dependency>
 		    <groupId>org.powermock</groupId>
 		    <artifactId>powermock-api-easymock</artifactId>
 		    <version>1.7.0</version>
 		    <scope>test</scope>
 		</dependency>-->
-		
+
     </dependencies>
 
     <build>
@@ -529,7 +535,7 @@
                             </execution>
                         </executions>
                     </plugin>
-					
+
 					<plugin>
 						<groupId>org.apache.maven.plugins</groupId>
 						<artifactId>maven-jar-plugin</artifactId>
@@ -561,7 +567,7 @@
 							</archive>
 						</configuration>
 					</plugin>
-					
+
                     <!-- Baseline for ESAPI 2.1 is JDK1.6 - Enforces that a JDK1.6 compiler is being
                          used to build this release -->
                     <plugin>
