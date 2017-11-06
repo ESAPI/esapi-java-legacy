@@ -647,31 +647,31 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 					// try resourceDirectory folder
 					if (in == null) {
 						currentClasspathSearchLocation = resourceDirectory + "/";
-						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCE_DIRECTORY + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCE_DIRECTORY.value() + fileName);
 					}
 
 					// try .esapi folder. Look here first for backward compatibility.
 					if (in == null) {
 						currentClasspathSearchLocation = ".esapi/";
-						in = currentLoader.getResourceAsStream(DefaultSearchPath.DOT_ESAPI + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.DOT_ESAPI.value() + fileName);
 					} 
 					
 					// try esapi folder (new directory)
 					if (in == null) {
 						currentClasspathSearchLocation = "esapi/";
-						in = currentLoader.getResourceAsStream(DefaultSearchPath.ESAPI + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.ESAPI.value() + fileName);
 					} 
 					
 					// try resources folder
 					if (in == null) {
 						currentClasspathSearchLocation = "resources/";
-						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCES + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCES.value() + fileName);
 					}
 					
 					// try src/main/resources folder
 					if (in == null) {
 						currentClasspathSearchLocation = "src/main/resources/";
-						in = currentLoader.getResourceAsStream(DefaultSearchPath.SRC_MAIN_RESOURCES + fileName);
+						in = currentLoader.getResourceAsStream(DefaultSearchPath.SRC_MAIN_RESOURCES.value() + fileName);
 					}
 		
 					// now load the properties
