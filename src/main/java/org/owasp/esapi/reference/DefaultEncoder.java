@@ -301,28 +301,35 @@ public class DefaultEncoder implements Encoder {
 	    }
 		// TODO: replace with LDAP codec
 	    StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < input.length(); i++) {
-			char c = input.charAt(i);
+	    for (int i = 0; i < input.length(); i++) {
+	        char c = input.charAt(i);
 
-			if (c == '\\') {
-	            sb.append("\\5c");
+	        switch (c) {
+	            case '\\':
+	                sb.append("\\5c");
+	                break;
+	            case '*': 
+	                if (encodeWildcards) {
+	                    sb.append("\\2a"); 
+	                }
+	                else {
+	                    sb.append(c);
+	                }
+	                
+	                break;
+	            case '(':
+	                sb.append("\\28");
+	                break;
+	            case ')':
+	                sb.append("\\29");
+	                break;
+	            case '\0':
+	                sb.append("\\00");
+	                break;
+	            default:
+	                sb.append(c);
 	        }
-	        else if ((c == '*') && encodeWildcards) {
-	            sb.append("\\2a");
-	        }
-	        else if (c == '(') {
-	            sb.append("\\28");
-	        }
-	        else if (c == ')') {
-	            sb.append("\\29");
-	        }
-	        else if (c == '\0') {
-	            sb.append("\\00");
-	        }
-	        else {
-	            sb.append(c);
-	        }
-		}
+	    }
 		return sb.toString();
 	}
 
