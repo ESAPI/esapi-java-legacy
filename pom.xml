@@ -102,6 +102,13 @@
             <role>Project Co-owner</role>
           </roles>
         </developer>
+        <developer>
+            <name>Chris Schmidt</name>
+            <organization>Synopsys</organization>
+            <roles>
+                <role>Former project co-owner</role>
+            </roles>
+        </developer>
     </developers>
 
     <contributors>
@@ -143,6 +150,12 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcprov-jdk15on</artifactId>
+            <version>1.58</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>3.0.1</version>
@@ -163,7 +176,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.5</version>
+            <version>2.6</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -209,7 +222,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-css</artifactId>
-            <version>1.9</version>
+            <version>1.9.1</version>
         </dependency>
 		<!--  <dependency>
 		    <groupId>org.mockito</groupId>
@@ -266,6 +279,25 @@
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>false</showDeprecation>
+                    <compilerArgs>
+                        <!-- This fails:
+                                <arg>-Xmaxwarns 2000</arg>
+                             Must be passed as two separate args, as shown
+                             below.
+                         -->
+                        <arg>-Xmaxwarns</arg>
+                        <arg>2000</arg>
+                        <arg>
+                            <!-- Eventually desire is to use just
+                                    -Xlint:all
+                                 here, but for now, this is just to cross off
+                                 another criteria for CII Badging process.
+                                 However, this is main reason we increased
+                                 maxwarns above.
+                            -->
+                            -Xlint:all,-deprecation,-rawtypes,-unchecked
+                        </arg>
+                     </compilerArgs>
                 </configuration>
             </plugin>
 
@@ -330,7 +362,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>1.4.4</version>
+                <version>2.1.0</version>
                 <configuration>
                     <failBuildOnCVSS>5.9</failBuildOnCVSS>
                     <suppressionFile>./suppressions.xml</suppressionFile>
@@ -370,7 +402,7 @@
                 <artifactId>maven-pmd-plugin</artifactId>
                 <version>3.6</version>
                 <configuration>
-                    <targetJdk>1.5</targetJdk>
+                    <targetJdk>1.7</targetJdk>
                     <sourceEncoding>utf-8</sourceEncoding>
                 </configuration>
             </plugin>
@@ -464,6 +496,7 @@
               <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <version>3.0.0-M1</version>
                 <configuration>
                   <additionalparam>-Xdoclint:none</additionalparam>
                 </configuration>
@@ -568,7 +601,7 @@
 						</configuration>
 					</plugin>
 
-                    <!-- Baseline for ESAPI 2.1 is JDK1.6 - Enforces that a JDK1.6 compiler is being
+                    <!-- Baseline for ESAPI 2.x is now JDK1.7 - Enforces that a JDK1.7 compiler is being
                          used to build this release -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -583,10 +616,10 @@
                                 <configuration>
                                     <rules>
                                         <requireJavaVersion>
-                                            <version>1.6</version>
+                                            <version>1.7</version>
                                             <message>
-                                                ESAPI 2.1 uses the JDK1.6 for it's baseline. Please make sure that your
-                                                JAVA_HOME environment variable is pointed to a JDK1.6 distribution.
+                                                ESAPI 2.x now uses the JDK1.7 for it's baseline. Please make sure that your
+                                                JAVA_HOME environment variable is pointed to a JDK1.7 distribution.
                                             </message>
                                         </requireJavaVersion>
                                     </rules>
