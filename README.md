@@ -27,7 +27,7 @@ https://github.com/ESAPI/esapi-java
 ## How can I contribute or help with fix bugs?
 Fork and submit a pull request! Simple as pi! We generally only accept bug fixes, not new features because as a legacy project, we don't intend on adding new features, although we may make exceptions. If you wish to propose a new feature, the best place to discuss it is via the ESAPI-DEV mailing list mentioned below. Note that we vet all pull requests, including coding style of any contributions; use the same coding style found in the files you are already editing.
 
-If you are new to ESAPI, a good place to start is to look for GitHub issues labled as 'FirstBug'. (E.g., https://github.com/ESAPI/esapi-java-legacy/labels/FirstBug)
+If you are new to ESAPI, a good place to start is to look for GitHub issues labled as 'good first issue'. (E.g., to find all open issues with that label, use https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22.)
 
 ### What happened to Google code?
 In mid-2014 ESAPI Migrated all code to GitHub. This migration was completed in November 2014.
