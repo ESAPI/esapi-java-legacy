@@ -513,7 +513,12 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         } catch (ValidationException e) {
             // already logged
         }
-        return clean;
+	/* GITHUB #135
+	 *  as long as the original query can be cleaned then we assume it's safe. 
+	 *  Returning the decoded 'clean' value changes how the string is interpreted,
+	 *  so we need to return the original query value.
+	 */
+	return clean == null || clean.isEmpty() ? clean : query;
     }
 
     /**

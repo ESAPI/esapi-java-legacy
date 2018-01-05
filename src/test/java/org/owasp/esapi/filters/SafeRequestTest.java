@@ -121,7 +121,7 @@ public class SafeRequestTest extends TestCase {
 
 		req.setQueryString("a=%62");
 		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=b",wrappedReq.getQueryString());
+		assertEquals("a=%62",wrappedReq.getQueryString());
 	}
 	
 	public void testGetQueryStringPercentNUL()
@@ -131,11 +131,9 @@ public class SafeRequestTest extends TestCase {
 
 		req.setQueryString("a=%00");
 		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("",wrappedReq.getQueryString());
+		assertEquals("a=%00", wrappedReq.getQueryString());
 	}
 
-	/* these tests need to be enabled&changed based on the decisions
-	 * made regarding issue 125. Currently they fail.
 	public void testGetQueryStringPercentEquals()
 	{
 		MockHttpServletRequest req = new MockHttpServletRequest();
@@ -155,7 +153,7 @@ public class SafeRequestTest extends TestCase {
 		wrappedReq = new SecurityWrapperRequest(req);
 		assertEquals("a=%26b",wrappedReq.getQueryString());
 	}
-	*/
+
 
 	// Test to ensure null-value contract defined by ServletRequest.getParameterNames(String) is met.
 	public void testGetParameterValuesReturnsNullWhenParameterDoesNotExistInRequest() {
