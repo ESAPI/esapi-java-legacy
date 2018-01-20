@@ -1,0 +1,108 @@
+package org.owasp.esapi.codecs;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runners.Parameterized.Parameters;
+import org.owasp.esapi.codecs.PercentCodec;
+import org.owasp.esapi.codecs.PushbackString;
+
+/**
+ * FIXME:  Document intent of class.  General Function, purpose of creation, intended feature, etc.
+ *  Why do people care this exists? 
+ * @author Jeremiah
+ * @since Jan 20, 2018
+ *
+ */
+public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
+    private static final char[] PERCENT_CODEC_IMMUNE;
+
+    static {
+        /*
+         * The percent codec contains a unique immune character set which include letters and numbers that will not be transformed.
+         * 
+         * It is being replicated here to allow the test to reasonably expect the correct state back.
+         */
+        List<Character> immune = new ArrayList<>();
+        // 65 - 90 (capital letters) 97 - 122 lower case 48 - 57 digits
+        //numbers
+        for (int index = 48 ; index < 58; index ++) {
+            immune.add((char)index);
+        }
+        //letters
+        for (int index = 65 ; index < 91; index ++) {
+            Character capsChar = (char)index;
+            immune.add(capsChar);
+            immune.add(Character.toLowerCase(capsChar));            
+        }
+        
+        PERCENT_CODEC_IMMUNE = new char[immune.size()];
+        for (int index = 0; index < immune.size(); index++) {
+            PERCENT_CODEC_IMMUNE[index] = immune.get(index).charValue();
+        }
+    }
+
+    @Parameters(name="{0}")
+    public static Collection<Object[]> buildTests() {
+        Collection<Object[]> tests = new ArrayList<>();
+        
+        Collection<CodecCharacterTestTuple> tuples = new ArrayList<>();
+        tuples.add(newTuple("%3C",Character.valueOf('<')));
+      
+        tuples.add(newTuple("%C4%80",Character.valueOf((char)0x100)));
+        tuples.add(newTuple("%00",Character.MIN_VALUE));
+        tuples.add(newTuple("%3D",'='));
+        tuples.add(newTuple("%26",'&'));
+        
+        for (char c : PERCENT_CODEC_IMMUNE) {
+            tuples.add(newTuple(Character.toString(c), c));
+        }
+        
+        for (CodecCharacterTestTuple tuple : tuples) {
+            tests.add(new Object[]{tuple});
+        }
+        
+        return tests;
+    }
+    
+    
+    
+    private static CodecCharacterTestTuple newTuple(String encodedInput, Character decoded) {
+        CodecCharacterTestTuple tuple = new CodecCharacterTestTuple();
+        tuple.codec = new PercentCodec();
+        tuple.encodeImmune = PERCENT_CODEC_IMMUNE;
+        tuple.decodedValue = decoded;
+        tuple.input = encodedInput;
+        
+        return tuple;
+    }
+    /**
+     * @param tuple
+     */
+    public PercentCodecCharacterTest(CodecCharacterTestTuple tuple) {
+        super(tuple);
+    }
+    
+    
+    @Override
+    @Test
+    public void testDecodePushbackSequence() {
+        //If the input is not decoded, then null should be returned and the pushback string index should be unchanged.
+        //If the input is decode then the decoded value should be returned, and the pushback string index should have progressed forward.
+        
+        PushbackString pbs = new PushbackString(input);
+        int startIndex = pbs.index();
+        boolean shouldDecode = input.startsWith("%");
+        if (shouldDecode) {
+            Assert.assertEquals(decodedValue, codec.decodeCharacter(pbs));
+            Assert.assertTrue(startIndex < pbs.index());
+        } else {
+            Assert.assertEquals(null, codec.decodeCharacter(pbs));
+            Assert.assertEquals(startIndex, pbs.index());
+        }
+    }
+
+}
