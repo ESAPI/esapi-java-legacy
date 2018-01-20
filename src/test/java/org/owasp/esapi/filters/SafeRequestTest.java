@@ -121,7 +121,7 @@ public class SafeRequestTest extends TestCase {
 
 		req.setQueryString("a=%62");
 		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=%62",wrappedReq.getQueryString());
+		assertEquals("a=b",wrappedReq.getQueryString());
 	}
 	
 	public void testGetQueryStringPercentNUL()
@@ -131,7 +131,7 @@ public class SafeRequestTest extends TestCase {
 
 		req.setQueryString("a=%00");
 		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=%00", wrappedReq.getQueryString());
+		assertEquals("a="+Character.MIN_VALUE, wrappedReq.getQueryString());
 	}
 
 	public void testGetQueryStringPercentEquals()
@@ -141,7 +141,7 @@ public class SafeRequestTest extends TestCase {
 
 		req.setQueryString("a=%3d");
 		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=%3d",wrappedReq.getQueryString());
+		assertEquals("a==",wrappedReq.getQueryString());
 	}
 
 	public void testGetQueryStringPercentAmpersand()
@@ -151,7 +151,7 @@ public class SafeRequestTest extends TestCase {
 
 		req.setQueryString("a=%26b");
 		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=%26b",wrappedReq.getQueryString());
+		assertEquals("a=&b",wrappedReq.getQueryString());
 	}
 
 
