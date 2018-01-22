@@ -1,13 +1,9 @@
 package org.owasp.esapi.codecs;
 
-import java.util.Arrays;
-
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.owasp.esapi.codecs.Codec;
-import org.owasp.esapi.codecs.AbstractCodecCharacterTest.CodecCharacterTestTuple;
 
 
 /**
