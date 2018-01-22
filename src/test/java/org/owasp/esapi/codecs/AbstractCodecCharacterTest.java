@@ -1,30 +1,36 @@
 package org.owasp.esapi.codecs;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import org.owasp.esapi.codecs.Codec;
-import org.owasp.esapi.codecs.PushbackString;
 
 
 /**
- * FIXME:  Document intent of class.  General Function, purpose of creation, intended feature, etc.
- *  Why do people care this exists? 
- * @author Jeremiah
- * @since Jan 20, 2018
- *
+ * Abstract parameterized test case meant to assist with verifying Character api of a Codec implementation.
+ * <br/>
+ * Sub-classes are expected to provide instances of {@link CodecCharacterTestTuple} to this instance.
+ * <br/>
+ * For better test naming output specify {@link CodecCharacterTestTuple#description} and use {@code} @Parameters (name="{0}")},
+ * where '0' is the index that the CodecCharacterTestTuple reference appears in the constructor.
  */
 @RunWith(Parameterized.class)
 public abstract class AbstractCodecCharacterTest {
     
+    /** Test Data Tuple.*/
     protected static class CodecCharacterTestTuple {
+        /** Codec reference to be tested.*/
         Codec codec;
+        /** Set of characters that should be considered 'immune' from decoding processes.*/
         char[] encodeImmune;
+        /** A String representing a single encoded character.*/
         String input;
+        /** The single character that input represents.*/
         Character decodedValue;
+        /** Optional field to override the toString value of this tuple. */
         String description;
         /** {@inheritDoc}*/
         
@@ -46,27 +52,34 @@ public abstract class AbstractCodecCharacterTest {
         this.decodedValue = tuple.decodedValue;
         this.encodeImmune = tuple.encodeImmune;
     }
-        
+    
+    /** Checks that the input value matches the result of the codec encoding the decoded value.  */
     @Test
     public void testEncodeCharacter() {
-        Assert.assertEquals(input, codec.encodeCharacter(encodeImmune, decodedValue));
+        assertEquals(input, codec.encodeCharacter(encodeImmune, decodedValue));
     }
     
+    /** Checks encoding the character as a String.
+     * <br/>
+     * If the decoded value is in the immunity list, the the decoded value should be returned from the encode call.
+     * Otherwise, input is expected as the return. 
+     */
     @Test
     public void testEncode() {
         String expected = Arrays.asList(encodeImmune).contains(decodedValue) ? decodedValue.toString() : input;
-        Assert.assertEquals(expected, codec.encode(encodeImmune, decodedValue.toString()));
+        assertEquals(expected, codec.encode(encodeImmune, decodedValue.toString()));
     }
     
+    /**  Checks that decoding the input value yeilds the decodedValue.*/
     @Test
     public void testDecode() {
-         Assert.assertEquals(decodedValue.toString(), codec.decode(input));
+         assertEquals(decodedValue.toString(), codec.decode(input));
     }
     
-    
+    /** Checks that the encoded input String is correctly decoded to the single decodedValue character reference.*/
     @Test
     public void testDecodePushbackSequence() {
-        Assert.assertEquals(decodedValue, codec.decodeCharacter(new PushbackString(input)));
+        assertEquals(decodedValue, codec.decodeCharacter(new PushbackString(input)));
     }
     
 }
