@@ -8,11 +8,8 @@ import org.junit.runners.Parameterized.Parameters;
 import org.owasp.esapi.codecs.PercentCodec;
 
 /**
- * FIXME: Document intent of class. General Function, purpose of creation, intended feature, etc.
- * Why do people care this exists?
- * 
- * @author Jeremiah
- * @since Jan 20, 2018
+ *  Codec validation focused on the PercentCodec String-based api.
+ *  
  */
 public class PercentCodecStringTest extends AbstractCodecStringTest {
     private static final char[] PERCENT_CODEC_IMMUNE;
@@ -23,7 +20,7 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
          * 
          * It is being replicated here to allow the test to reasonably expect the correct state back.
          */
-        List<Character> immune = new ArrayList();
+        List<Character> immune = new ArrayList<>();
         // 65 - 90 (capital letters) 97 - 122 lower case 48 - 57 digits
         //numbers
         for (int index = 48 ; index < 58; index ++) {
