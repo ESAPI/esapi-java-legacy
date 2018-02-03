@@ -1,4 +1,4 @@
-package org.owasp.esapi.codecs;
+package org.owasp.esapi.codecs.percent;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.PushbackString;
+import org.owasp.esapi.codecs.abstraction.AbstractCodecCharacterTest;
 
 /**
  *  Codec validation focused on the PercentCodec Character-based api.

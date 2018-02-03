@@ -1,4 +1,4 @@
-package org.owasp.esapi.codecs;
+package org.owasp.esapi.codecs.abstraction;
 
 import static org.junit.Assert.assertEquals;
 
@@ -7,6 +7,8 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.owasp.esapi.codecs.Codec;
+import org.owasp.esapi.codecs.PushbackString;
 
 
 /**
@@ -23,17 +25,19 @@ public abstract class AbstractCodecCharacterTest {
     /** Test Data Tuple.*/
     protected static class CodecCharacterTestTuple {
         /** Codec reference to be tested.*/
-        Codec codec;
+        public Codec codec;
         /** Set of characters that should be considered 'immune' from decoding processes.*/
-        char[] encodeImmune;
+        public char[] encodeImmune;
         /** A String representing a single encoded character.*/
-        String input;
+        public String input;
         /** The single character that input represents.*/
-        Character decodedValue;
+        public Character decodedValue;
         /** Optional field to override the toString value of this tuple. */
-        String description;
-        /** {@inheritDoc}*/
+        public String description;
         
+        /**Default public constructor.*/
+        public CodecCharacterTestTuple() { /* No Op*/ }
+        /** {@inheritDoc}*/
         @Override
         public String toString() {
             return description != null ? description : codec.getClass().getSimpleName() + "  "+input;
