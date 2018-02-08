@@ -1,4 +1,4 @@
-package org.owasp.esapi.reference;
+package org.owasp.esapi.reference.regex;
 
 import java.util.ArrayList;
 import java.util.Collection;
