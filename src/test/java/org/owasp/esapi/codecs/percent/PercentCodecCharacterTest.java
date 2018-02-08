@@ -50,7 +50,7 @@ public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
         Collection<CodecCharacterTestTuple> tuples = new ArrayList<>();
         tuples.add(newTuple("%3C", Character.valueOf('<')));
 
-        tuples.add(newTuple("%C4%80", Character.valueOf((char) 0x100)));
+        //CODEPOINT tuples.add(newTuple("%C4%80", Character.valueOf((char) 0x100)));
         tuples.add(newTuple("%00", Character.MIN_VALUE));
         tuples.add(newTuple("%3D", '='));
         tuples.add(newTuple("%26", '&'));
