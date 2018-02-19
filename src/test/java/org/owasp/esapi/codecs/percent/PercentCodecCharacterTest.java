@@ -1,8 +1,9 @@
 package org.owasp.esapi.codecs.percent;
 
+import static org.owasp.esapi.codecs.percent.PercentCodecStringTest.PERCENT_CODEC_IMMUNE;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -16,33 +17,6 @@ import org.owasp.esapi.codecs.abstraction.AbstractCodecCharacterTest;
  *  
  */
 public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
-    private static final char[] PERCENT_CODEC_IMMUNE;
-
-    static {
-        /*
-         * The percent codec contains a unique immune character set which include letters and numbers that will not be
-         * transformed.
-         * It is being replicated here to allow the test to reasonably expect the correct state back.
-         */
-        List<Character> immune = new ArrayList<>();
-        // 65 - 90 (capital letters) 97 - 122 lower case 48 - 57 digits
-        // numbers
-        for (int index = 48; index < 58; index++) {
-            immune.add((char) index);
-        }
-        // letters
-        for (int index = 65; index < 91; index++) {
-            Character capsChar = (char) index;
-            immune.add(capsChar);
-            immune.add(Character.toLowerCase(capsChar));
-        }
-
-        PERCENT_CODEC_IMMUNE = new char[immune.size()];
-        for (int index = 0; index < immune.size(); index++) {
-            PERCENT_CODEC_IMMUNE[index] = immune.get(index).charValue();
-        }
-    }
-
     @Parameters(name = "{0}")
     public static Collection<Object[]> buildTests() {
         Collection<Object[]> tests = new ArrayList<>();
@@ -50,7 +24,6 @@ public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
         Collection<CodecCharacterTestTuple> tuples = new ArrayList<>();
         tuples.add(newTuple("%3C", Character.valueOf('<')));
 
-        //CODEPOINT tuples.add(newTuple("%C4%80", Character.valueOf((char) 0x100)));
         tuples.add(newTuple("%00", Character.MIN_VALUE));
         tuples.add(newTuple("%3D", '='));
         tuples.add(newTuple("%26", '&'));

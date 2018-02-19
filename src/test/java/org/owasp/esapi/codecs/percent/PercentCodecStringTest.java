@@ -13,7 +13,7 @@ import org.owasp.esapi.codecs.abstraction.AbstractCodecStringTest;
  *  
  */
 public class PercentCodecStringTest extends AbstractCodecStringTest {
-    private static final char[] PERCENT_CODEC_IMMUNE;
+    public static final char[] PERCENT_CODEC_IMMUNE;
 
     static {
         /*
