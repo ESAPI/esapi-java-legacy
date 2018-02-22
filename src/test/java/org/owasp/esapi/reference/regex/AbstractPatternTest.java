@@ -13,9 +13,10 @@
  */
 package org.owasp.esapi.reference.regex;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.regex.Pattern;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -63,7 +64,7 @@ public abstract class AbstractPatternTest {
 
     @Test
     public void checkPatternMatches() {
-        Assert.assertEquals(shouldMatch, pattern.matcher(input).matches());
+        assertEquals(shouldMatch, pattern.matcher(input).matches());
     }
 
 }
