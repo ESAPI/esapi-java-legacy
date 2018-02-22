@@ -36,7 +36,7 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
          * It is being replicated here to allow the test to reasonably expect the correct state back.
          */
         List<Character> immune = new ArrayList<>();
-        // 65 - 90 (capital letters) 97 - 122 lower case 48 - 57 digits
+        // 65 - 90 (capital letters in ASCII) 97 - 122 lower case 48 - 57 digits
         //numbers
         for (int index = 48 ; index < 58; index ++) {
             immune.add((char)index);
@@ -57,11 +57,9 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
     @Parameters(name = "{0}")
     public static Collection<Object[]> buildTests() {
         Collection<Object[]> tests = new ArrayList<>();
-
         List<CodecStringTestTuple> tuples = new ArrayList<>();
+        
         tuples.add(newTuple("%3C", "<"));
-
-       //CODEPOINT tuples.add(newTuple("%C4%80", (char) 0x100));
         tuples.add(newTuple("%00", Character.MIN_VALUE));
         tuples.add(newTuple("%3D", '='));
         tuples.add(newTuple("%26", '&'));
