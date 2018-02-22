@@ -14,12 +14,13 @@
 
 package org.owasp.esapi.codecs.percent;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.owasp.esapi.codecs.percent.PercentCodecStringTest.PERCENT_CODEC_IMMUNE;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.Parameterized.Parameters;
 import org.owasp.esapi.codecs.PercentCodec;
@@ -34,8 +35,8 @@ public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
     @Parameters(name = "{0}")
     public static Collection<Object[]> buildTests() {
         Collection<Object[]> tests = new ArrayList<>();
-
         Collection<CodecCharacterTestTuple> tuples = new ArrayList<>();
+
         tuples.add(newTuple("%3C", Character.valueOf('<')));
 
         tuples.add(newTuple("%00", Character.MIN_VALUE));
@@ -88,8 +89,8 @@ public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
     private void assertInputIsDecodedToValue() {
         PushbackString pbs = new PushbackString(input);
         int startIndex = pbs.index();
-        Assert.assertEquals(decodedValue, codec.decodeCharacter(pbs));
-        Assert.assertTrue(startIndex < pbs.index());
+        assertEquals(decodedValue, codec.decodeCharacter(pbs));
+        assertTrue(startIndex < pbs.index());
     }
 
     /**
@@ -100,8 +101,8 @@ public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
     private void assertInputIsDecodedToNull() {
         PushbackString pbs = new PushbackString(input);
         int startIndex = pbs.index();
-        Assert.assertEquals(null, codec.decodeCharacter(pbs));
-        Assert.assertEquals(startIndex, pbs.index());
+        assertEquals(null, codec.decodeCharacter(pbs));
+        assertEquals(startIndex, pbs.index());
     }
 
 }
