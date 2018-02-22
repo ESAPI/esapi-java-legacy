@@ -94,69 +94,6 @@ public class SafeRequestTest extends TestCase {
 		assertNull(wrappedReq.getQueryString());
 	}
 
-	public void testGetQueryStringNonNull()
-	{
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		SecurityWrapperRequest wrappedReq;
-
-		req.setQueryString("a=b");
-		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=b",wrappedReq.getQueryString());
-	}
-
-	public void testGetQueryStringNUL()
-	{
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		SecurityWrapperRequest wrappedReq;
-
-		req.setQueryString("a=\u0000");
-		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("",wrappedReq.getQueryString());
-	}
-
-	public void testGetQueryStringPercent()
-	{
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		SecurityWrapperRequest wrappedReq;
-
-		req.setQueryString("a=%62");
-		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=b",wrappedReq.getQueryString());
-	}
-	
-	public void testGetQueryStringPercentNUL()
-	{
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		SecurityWrapperRequest wrappedReq;
-
-		req.setQueryString("a=%00");
-		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("",wrappedReq.getQueryString());
-	}
-
-	/* these tests need to be enabled&changed based on the decisions
-	 * made regarding issue 125. Currently they fail.
-	public void testGetQueryStringPercentEquals()
-	{
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		SecurityWrapperRequest wrappedReq;
-
-		req.setQueryString("a=%3d");
-		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=%3d",wrappedReq.getQueryString());
-	}
-
-	public void testGetQueryStringPercentAmpersand()
-	{
-		MockHttpServletRequest req = new MockHttpServletRequest();
-		SecurityWrapperRequest wrappedReq;
-
-		req.setQueryString("a=%26b");
-		wrappedReq = new SecurityWrapperRequest(req);
-		assertEquals("a=%26b",wrappedReq.getQueryString());
-	}
-	*/
-
 	// Test to ensure null-value contract defined by ServletRequest.getParameterNames(String) is met.
 	public void testGetParameterValuesReturnsNullWhenParameterDoesNotExistInRequest() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
