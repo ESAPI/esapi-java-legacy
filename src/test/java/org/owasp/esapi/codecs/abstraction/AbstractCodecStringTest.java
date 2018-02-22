@@ -14,7 +14,8 @@
 
 package org.owasp.esapi.codecs.abstraction;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -69,13 +70,13 @@ public abstract class AbstractCodecStringTest {
     /** Checks that when the input is decoded using the specified codec, that the return matches the expected decoded value.*/
     @Test
     public void testDecode() {
-        Assert.assertEquals(decodedValue, codec.decode(input));
+        assertEquals(decodedValue, codec.decode(input));
     }
   
     /** Checks that when the decoded value is encoded (using immunity), that the return matches the provided input.*/
     @Test
     public void testEncode() {
-        Assert.assertEquals(input, codec.encode(encodeImmune, decodedValue));
+        assertEquals(input, codec.encode(encodeImmune, decodedValue));
     }
     
 }
