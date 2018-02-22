@@ -30,7 +30,7 @@ import org.owasp.esapi.codecs.PushbackString;
  * <br/>
  * Sub-classes are expected to provide instances of {@link CodecCharacterTestTuple} to this instance.
  * <br/>
- * For better test naming output specify {@link CodecCharacterTestTuple#description} and use {@code} @Parameters (name="{0}")},
+ * For better test naming output specify {@link CodecCharacterTestTuple#description} and use <code> @Parameters (name="{0}")</code>,
  * where '0' is the index that the CodecCharacterTestTuple reference appears in the constructor.
  */
 @RunWith(Parameterized.class)
@@ -88,7 +88,7 @@ public abstract class AbstractCodecCharacterTest {
         assertEquals(expected, codec.encode(encodeImmune, decodedValue.toString()));
     }
     
-    /**  Checks that decoding the input value yeilds the decodedValue.*/
+    /**  Checks that decoding the input value yields the decodedValue.*/
     @Test
     public void testDecode() {
          assertEquals(decodedValue.toString(), codec.decode(input));
