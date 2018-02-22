@@ -26,7 +26,7 @@ import org.junit.runners.Parameterized;
  * <br/>
  * Sub-classes are expected to provide instances of {@link PatternTestTuple} to this instance.
  * <br/>
- * For better test naming output specify {@link PatternTestTuple#description} and use {@code} @Parameters (name="{0}")},
+ * For better test naming output specify {@link PatternTestTuple#description} and use <code> @Parameters (name="{0}")</code>,
  * where '0' is the index that the PatternTestTuple reference appears in the constructor.
  */
 @RunWith(Parameterized.class)

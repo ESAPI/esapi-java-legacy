@@ -27,7 +27,7 @@ import org.owasp.esapi.codecs.Codec;
  * <br/>
  * Sub-classes are expected to provide instances of {@link CodecStringTestTuple} to this instance.
  * <br/>
- * For better test naming output specify {@link CodecStringTestTuple#description} and use {@code} @Parameters (name="{0}")},
+ * For better test naming output specify {@link CodecStringTestTuple#description} and use <code> @Parameters (name="{0}")</code>,
  * where '0' is the index that the CodecStringTestTuple reference appears in the constructor.
  */
 @RunWith(Parameterized.class)
