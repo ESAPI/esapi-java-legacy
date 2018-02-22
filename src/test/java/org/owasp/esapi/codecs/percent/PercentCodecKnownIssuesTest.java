@@ -14,9 +14,9 @@
 
 package org.owasp.esapi.codecs.percent;
 
+import static org.junit.Assert.assertEquals;
 import static org.owasp.esapi.codecs.percent.PercentCodecStringTest.PERCENT_CODEC_IMMUNE;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.owasp.esapi.codecs.PercentCodec;
 /**
@@ -47,10 +47,10 @@ public class PercentCodecKnownIssuesTest {
         String actualDecodeChar = codec.decode(input);
         int actualChar = (int)actualDecodeChar.charAt(0);
         
-        Assert.assertEquals(incorrectDecodeExpect, actualChar);
+        assertEquals(incorrectDecodeExpect, actualChar);
         
         //This works as expected.
-        Assert.assertEquals(input, codec.encode(encodeImmune, decodedValue));
+        assertEquals(input, codec.encode(encodeImmune, decodedValue));
     }
     
 }
