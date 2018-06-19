@@ -145,7 +145,7 @@ public class ValidatorTest extends TestCase {
     	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.US), false, errors);
     	// assertEquals( 2, errors.size() );
     }
-    
+
     // FIXME: Should probably use SecurityConfigurationWrapper and force
     //		  Validator.AcceptLenientDates to be false.
     public void testLenientDate() {
@@ -312,6 +312,7 @@ public class ValidatorTest extends TestCase {
         assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
         assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
         assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
+        assertFalse("Non letter/number unicode characters are invalid", instance.isValidFileName("test", "test\u0084\u0096test.txt", false));
     }
 
     public void testIsValidDate() {
@@ -531,6 +532,8 @@ public class ValidatorTest extends TestCase {
         assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false, errors));
         assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false, errors));
         assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false, errors));
+        assertTrue("Unicode characters are allowed", instance.isValidFileName("test", "これは有効なファイルです.txt", false, errors));
+        assertTrue("Unicode numbers are allowed", instance.isValidFileName("test", "೦೧೨೩೪೫೬೭೮೯.txt", false, errors));
         assertTrue(errors.size() == 0);
     }
 
@@ -597,7 +600,7 @@ public class ValidatorTest extends TestCase {
         System.err.println(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));;
         assertFalse(instance.isValidInput("test", "jeff^WILLIAMS", "HTTPParameterValue", 100, false));
         assertFalse(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));
-        
+
         assertTrue(instance.isValidInput("test", null, "Email", 100, true));
         assertFalse(instance.isValidInput("test", null, "Email", 100, false));
 
@@ -1089,7 +1092,7 @@ public class ValidatorTest extends TestCase {
         assertFalse(safeRequest.getHeader("f2").equals(request.getHeader("f2")));
         assertNull(safeRequest.getHeader("p3"));
     }
-    
+
     public void testHeaderLengthChecks(){
     	Validator v = ESAPI.validator();
     	SecurityConfiguration sc = ESAPI.securityConfiguration();
@@ -1145,18 +1148,18 @@ public class ValidatorTest extends TestCase {
         // Fail-case - URL Splitting
         assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
     }
-    
+
     public void testGmailEmailAddress(){
     	Validator v = ESAPI.validator();
     	assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
     	assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
     }
-    
+
     public void testGetValidUri(){
     	Validator v = ESAPI.validator();
     	assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
     }
-    
+
     public void testGetValidUriNullInput(){
     	Validator v = ESAPI.validator();
     	boolean isValid = v.isValidURI("test", null, true);
