@@ -251,7 +251,7 @@ public class EncryptorTest extends TestCase {
 			} else if ( cipherAlg.equals( "DES" ) ) {
 				keySize = 64;
 			} // Else... use specified keySize.
-			assertTrue( (keySize / 8) == skey.getEncoded().length );
+			assertEquals(cipherXform + " encoded key size does not match provided key size",  (keySize / 8), skey.getEncoded().length );
 //			System.out.println("testNewEncryptDecrypt(): Skey length (bits) = " + 8 * skey.getEncoded().length);
 
 			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
@@ -271,7 +271,7 @@ public class EncryptorTest extends TestCase {
 	    	// Do the encryption with the new encrypt() method and get back the CipherText.
 	    	CipherText ciphertext = instance.encrypt(skey, plaintext);	// The new encrypt() method.
 	    	System.out.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
-	    	assertTrue( ciphertext != null );
+	    	assertNotNull( ciphertext );
 //	    	System.out.println("DEBUG: After encryption: base64-encoded IV+ciphertext: " + ciphertext.getEncodedIVCipherText());
 //	    	System.out.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getEncodedIVCipherText()) );
 //	    	System.out.println("DEBUG: After encryption: base64-encoded raw ciphertext: " + ciphertext.getBase64EncodedRawCipherText());
@@ -290,14 +290,14 @@ public class EncryptorTest extends TestCase {
 	    	// Make sure we got back the same thing we started with.
 	    	System.out.println("\tOriginal plaintext: " + origPlainText);
 	    	System.out.println("\tResult after decryption: " + decryptedPlaintext);
-			assertTrue( "Failed to decrypt properly.", origPlainText.toString().equals( decryptedPlaintext.toString() ) );
+			assertEquals( "Failed to decrypt properly.", origPlainText.toString(), decryptedPlaintext.toString() );
 	    	
 	    	// Restore the previous cipher transformation. For now, this is only way to do this.
 	    	@SuppressWarnings("deprecation")
 			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
-	    	assertTrue( previousCipherXform.equals( cipherXform ) );
+	    	assertEquals( previousCipherXform,  cipherXform  );
 	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
-	    	assertTrue( defaultCipherXform.equals( oldCipherXform ) );
+	    	assertEquals( defaultCipherXform, oldCipherXform );
 	    	
 	    	return ciphertext.getEncodedIVCipherText();
 		} catch (Exception e) {
