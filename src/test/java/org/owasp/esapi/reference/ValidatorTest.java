@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.reference;
 
+import java.util.regex.Pattern;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -29,7 +30,6 @@ import org.owasp.esapi.util.TestUtils;
 
 import javax.servlet.http.Cookie;
 import java.io.*;
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,6 +46,26 @@ public class ValidatorTest extends TestCase {
 
     public static Test suite() {
         return new TestSuite(ValidatorTest.class);
+    }
+
+    private static class Conf extends SecurityConfigurationWrapper
+    {
+        private static final List<String> UNICODE_SUPPORTED_VALIDATION_TYPES = Arrays.asList("FileName", "DirectoryName");
+
+        private final boolean unicodeEnabled;
+
+        Conf(SecurityConfiguration wrapped, boolean unicodeEnabled) {
+            super(wrapped);
+            this.unicodeEnabled = unicodeEnabled;
+        }
+
+        @Override
+        public Pattern getValidationPattern(String typeName) {
+            if (this.unicodeEnabled && UNICODE_SUPPORTED_VALIDATION_TYPES.contains(typeName)) {
+                return super.getValidationPattern("Unicode" + typeName);
+            }
+            return super.getValidationPattern(typeName);
+        }
     }
 
     /**
@@ -312,6 +332,21 @@ public class ValidatorTest extends TestCase {
         assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
         assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
         assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
+    }
+
+    public void testIsInvalidUnicodeFilename() {
+        System.out.println("testIsInvalidUnicodeFilename");
+        ESAPI.override(
+            new ValidatorTest.Conf(
+                ESAPI.securityConfiguration(),
+                true
+            )
+        );
+        //run the same tests for the unicode pattern
+        testIsInvalidFilename();
+
+        //unicode specific test
+        Validator instance = ESAPI.validator();
         assertFalse("Non letter/number unicode characters are invalid", instance.isValidFileName("test", "test\u0084\u0096test.txt", false));
     }
 
@@ -446,6 +481,18 @@ public class ValidatorTest extends TestCase {
         }
     }
 
+    public void testIsValidUnicodeDirectoryPath() throws IOException {
+        System.out.println("testIsValidUnicodeDirectoryPath");
+        ESAPI.override(
+            new ValidatorTest.Conf(
+                ESAPI.securityConfiguration(),
+                true
+            )
+        );
+        //run the same tests for the unicode pattern
+        testIsValidDirectoryPath();
+    }
+
     public void TestIsValidDirectoryPath() {
         // isValidDirectoryPath(String, String, boolean)
     }
@@ -532,6 +579,24 @@ public class ValidatorTest extends TestCase {
         assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false, errors));
         assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false, errors));
         assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false, errors));
+        assertTrue(errors.size() == 0);
+    }
+
+    public void testIsValidUnicodeFileName() {
+        System.out.println("isValidUnicodeFileName");
+        ESAPI.override(
+            new ValidatorTest.Conf(
+                ESAPI.securityConfiguration(),
+                true
+            )
+        );
+
+        //run the same tests for the unicode pattern
+        testIsValidFileName();
+
+        //unicode specific tests
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
         assertTrue("Unicode characters are allowed", instance.isValidFileName("test", "これは有効なファイルです.txt", false, errors));
         assertTrue("Unicode numbers are allowed", instance.isValidFileName("test", "೦೧೨೩೪೫೬೭೮೯.txt", false, errors));
         assertTrue(errors.size() == 0);
