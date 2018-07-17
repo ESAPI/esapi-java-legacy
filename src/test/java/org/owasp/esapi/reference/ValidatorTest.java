@@ -15,6 +15,7 @@
  */
 package org.owasp.esapi.reference;
 
+import java.util.regex.Pattern;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -29,7 +30,6 @@ import org.owasp.esapi.util.TestUtils;
 
 import javax.servlet.http.Cookie;
 import java.io.*;
-import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -46,6 +46,26 @@ public class ValidatorTest extends TestCase {
 
     public static Test suite() {
         return new TestSuite(ValidatorTest.class);
+    }
+
+    private static class Conf extends SecurityConfigurationWrapper
+    {
+        private static final List<String> UNICODE_SUPPORTED_VALIDATION_TYPES = Arrays.asList("FileName", "DirectoryName");
+
+        private final boolean unicodeEnabled;
+
+        Conf(SecurityConfiguration wrapped, boolean unicodeEnabled) {
+            super(wrapped);
+            this.unicodeEnabled = unicodeEnabled;
+        }
+
+        @Override
+        public Pattern getValidationPattern(String typeName) {
+            if (this.unicodeEnabled && UNICODE_SUPPORTED_VALIDATION_TYPES.contains(typeName)) {
+                return super.getValidationPattern("Unicode" + typeName);
+            }
+            return super.getValidationPattern(typeName);
+        }
     }
 
     /**
@@ -145,7 +165,7 @@ public class ValidatorTest extends TestCase {
     	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.US), false, errors);
     	// assertEquals( 2, errors.size() );
     }
-    
+
     // FIXME: Should probably use SecurityConfigurationWrapper and force
     //		  Validator.AcceptLenientDates to be false.
     public void testLenientDate() {
@@ -314,6 +334,22 @@ public class ValidatorTest extends TestCase {
         assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
     }
 
+    public void testIsInvalidUnicodeFilename() {
+        System.out.println("testIsInvalidUnicodeFilename");
+        ESAPI.override(
+            new ValidatorTest.Conf(
+                ESAPI.securityConfiguration(),
+                true
+            )
+        );
+        //run the same tests for the unicode pattern
+        testIsInvalidFilename();
+
+        //unicode specific test
+        Validator instance = ESAPI.validator();
+        assertFalse("Non letter/number unicode characters are invalid", instance.isValidFileName("test", "test\u0084\u0096test.txt", false));
+    }
+
     public void testIsValidDate() {
         System.out.println("isValidDate");
         Validator instance = ESAPI.validator();
@@ -445,6 +481,18 @@ public class ValidatorTest extends TestCase {
         }
     }
 
+    public void testIsValidUnicodeDirectoryPath() throws IOException {
+        System.out.println("testIsValidUnicodeDirectoryPath");
+        ESAPI.override(
+            new ValidatorTest.Conf(
+                ESAPI.securityConfiguration(),
+                true
+            )
+        );
+        //run the same tests for the unicode pattern
+        testIsValidDirectoryPath();
+    }
+
     public void TestIsValidDirectoryPath() {
         // isValidDirectoryPath(String, String, boolean)
     }
@@ -534,6 +582,26 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() == 0);
     }
 
+    public void testIsValidUnicodeFileName() {
+        System.out.println("isValidUnicodeFileName");
+        ESAPI.override(
+            new ValidatorTest.Conf(
+                ESAPI.securityConfiguration(),
+                true
+            )
+        );
+
+        //run the same tests for the unicode pattern
+        testIsValidFileName();
+
+        //unicode specific tests
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        assertTrue("Unicode characters are allowed", instance.isValidFileName("test", "これは有効なファイルです.txt", false, errors));
+        assertTrue("Unicode numbers are allowed", instance.isValidFileName("test", "೦೧೨೩೪೫೬೭೮೯.txt", false, errors));
+        assertTrue(errors.size() == 0);
+    }
+
     public void testIsValidFileUpload() throws IOException {
         System.out.println("isValidFileUpload");
         String filepath = new File(System.getProperty("user.dir")).getCanonicalPath();
@@ -597,7 +665,7 @@ public class ValidatorTest extends TestCase {
         System.err.println(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));;
         assertFalse(instance.isValidInput("test", "jeff^WILLIAMS", "HTTPParameterValue", 100, false));
         assertFalse(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));
-        
+
         assertTrue(instance.isValidInput("test", null, "Email", 100, true));
         assertFalse(instance.isValidInput("test", null, "Email", 100, false));
 
@@ -1089,7 +1157,7 @@ public class ValidatorTest extends TestCase {
         assertFalse(safeRequest.getHeader("f2").equals(request.getHeader("f2")));
         assertNull(safeRequest.getHeader("p3"));
     }
-    
+
     public void testHeaderLengthChecks(){
     	Validator v = ESAPI.validator();
     	SecurityConfiguration sc = ESAPI.securityConfiguration();
@@ -1145,18 +1213,18 @@ public class ValidatorTest extends TestCase {
         // Fail-case - URL Splitting
         assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
     }
-    
+
     public void testGmailEmailAddress(){
     	Validator v = ESAPI.validator();
     	assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
     	assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
     }
-    
+
     public void testGetValidUri(){
     	Validator v = ESAPI.validator();
     	assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
     }
-    
+
     public void testGetValidUriNullInput(){
     	Validator v = ESAPI.validator();
     	boolean isValid = v.isValidURI("test", null, true);
