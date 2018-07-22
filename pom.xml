@@ -243,6 +243,11 @@
 		    <version>1.7.0</version>
 		    <scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.25</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/eu.codearte.catch-exception/catch-exception
 		<dependency>
 		    <groupId>eu.codearte.catch-exception</groupId>
