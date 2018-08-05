@@ -19,12 +19,12 @@ import org.owasp.esapi.Logger;
 public class Slf4JLogger implements org.owasp.esapi.Logger {
     private final org.slf4j.Logger delegate;
     private final Slf4JLogBridge logBridge;
-    private int esapiLogLevel;
+    private int maxLogLevel;
     
     public Slf4JLogger(org.slf4j.Logger slf4JLogger, Slf4JLogBridge bridge, int defaultEsapiLevel) {
         delegate = slf4JLogger;
         this.logBridge = bridge;
-        esapiLogLevel = defaultEsapiLevel;
+        maxLogLevel = defaultEsapiLevel;
     }
     
     private void log(int esapiLevel, EventType type, String message) {
@@ -41,7 +41,8 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
     
 
     private boolean isEnabled(int esapiLevel) {
-        return esapiLogLevel < esapiLevel;
+        //Are Logger.OFF and Logger.ALL reversed?  This should be simply the less than or equal to check...
+        return (esapiLevel <= maxLogLevel && maxLogLevel != Logger.OFF) || maxLogLevel == Logger.ALL;
     }
     
     @Override
@@ -116,7 +117,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
     
     @Override
     public int getESAPILevel() {
-        return esapiLogLevel;
+        return maxLogLevel;
     }
     
     @Override
@@ -150,7 +151,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
 
     @Override
     public void setLevel(int level) {
-       esapiLogLevel = level;
+       maxLogLevel = level;
     }
     
 }

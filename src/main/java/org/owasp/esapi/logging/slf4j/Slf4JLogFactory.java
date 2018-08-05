@@ -14,14 +14,21 @@
  */
 package org.owasp.esapi.logging.slf4j;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
+import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
+import org.owasp.esapi.logging.cleaning.LogScrubber;
+import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 public class Slf4JLogFactory implements LogFactory {
     private static final char BACKSLASH = '\\';
@@ -29,20 +36,36 @@ public class Slf4JLogFactory implements LogFactory {
     private static final char CLOSE_SLF_FORMAT='}';
     private static final char[] IMMUNE_SLF4J_HTML = {',', '.', '-', '_', ' ',BACKSLASH, OPEN_SLF_FORMAT, CLOSE_SLF_FORMAT };
     private static final HTMLEntityCodec HTML_CODEC = new HTMLEntityCodec();
-    private static final LogScrubber SLF4J_LOG_SCRUBBER = new CodecLogScrubber(HTML_CODEC, IMMUNE_SLF4J_HTML);
+    private static LogScrubber SLF4J_LOG_SCRUBBER;
     private static Slf4JLogBridge LOG_BRIDGE;
     static {
-        Map<Integer, Level> levelLookup = new HashMap<>();
-        levelLookup.put(Logger.ALL, Level.TRACE);
-        levelLookup.put(Logger.TRACE, Level.TRACE);
-        levelLookup.put(Logger.DEBUG, Level.TRACE);
-        levelLookup.put(Logger.INFO, Level.TRACE);
-        levelLookup.put(Logger.ERROR, Level.TRACE);
-        levelLookup.put(Logger.WARNING, Level.TRACE);
-        levelLookup.put(Logger.FATAL, Level.TRACE);
+        
+        boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
+        SLF4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
+        
+        Map<Integer, Slf4JLogHandler> levelLookup = new HashMap<>();
+        levelLookup.put(Logger.ALL, Slf4JLogHandlers.TRACE);
+        levelLookup.put(Logger.TRACE, Slf4JLogHandlers.TRACE);
+        levelLookup.put(Logger.DEBUG, Slf4JLogHandlers.DEBUG);
+        levelLookup.put(Logger.INFO, Slf4JLogHandlers.INFO);
+        levelLookup.put(Logger.ERROR, Slf4JLogHandlers.ERROR);
+        levelLookup.put(Logger.WARNING, Slf4JLogHandlers.WARN);
+        levelLookup.put(Logger.FATAL, Slf4JLogHandlers.ERROR);
         //LEVEL.OFF not used.  If it's off why would we try to log it?
         
-        LOG_BRIDGE = new Slf4JLogBridge(SLF4J_LOG_SCRUBBER, levelLookup);
+        LOG_BRIDGE = new Slf4JLogBridgeImpl(SLF4J_LOG_SCRUBBER, levelLookup);
+    }
+    
+    /*package*/ static LogScrubber createLogScrubber(boolean requiresEncoding) {
+        List<LogScrubber> messageScrubber = new ArrayList<>();
+        messageScrubber.add(new NewlineLogScrubber());
+        
+        if (requiresEncoding) {
+            messageScrubber.add(new CodecLogScrubber(HTML_CODEC, IMMUNE_SLF4J_HTML));
+        }
+        
+        return new CompositeLogScrubber(messageScrubber);
+        
     }
     
     
