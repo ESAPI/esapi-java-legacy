@@ -13,11 +13,16 @@
  * @created 2018
  */
 package org.owasp.esapi.logging.cleaning;
-
+/**
+ * LogScrubber implementation which replaces newline and carriage return values.
+ *
+ */
 public class NewlineLogScrubber  implements LogScrubber {
-    /* NewLine and Carriage Return Replacement values.*/
+    /** Newline */
     private static final char NEWLINE = '\n';
+    /** Carriage Return.*/
     private static final char CARRIAGE_RETURN = '\r';
+    /** Default Replacement value.*/
     private static final char LINE_WRAP_REPLACE = '_';
     
     @Override

@@ -15,11 +15,14 @@
 
 package org.owasp.esapi.logging.cleaning;
 
+/**
+ *  Contract interface for cleaning log message output.
+ *
+ */
 public interface LogScrubber {
 
     /**
-     * Removes newline characters from the provided String then encodes it for HTML before returning the 'clean' version
-     * to the caller.
+     * Updates the given message to account for restrictions for this implementation and returns the result.
      * 
      * @param message
      *            Original message to clean.
