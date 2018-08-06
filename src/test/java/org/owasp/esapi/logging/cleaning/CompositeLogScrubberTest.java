@@ -18,11 +18,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 
 
 public class CompositeLogScrubberTest {
+    
+    @Rule
+    public ExpectedException exEx = ExpectedException.none();
+    
+    @Test
+    public void testNullListThrowsException() {
+        exEx.expect(IllegalArgumentException.class);
+        exEx.expectMessage("cannot be null");
+        
+        new CompositeLogScrubber(null);
+    }
+    
     
     @Test
     public void testPassthroughOnEmpty() {
