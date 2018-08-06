@@ -25,29 +25,31 @@ import java.util.List;
  * is passed to the second (etc). <br>
  *
  */
-public class CompositeLogScrubber  implements LogScrubber {
-    /** Delegate scrubbers.*/
+public class CompositeLogScrubber implements LogScrubber {
+    /** Delegate scrubbers. */
     private final List<LogScrubber> messageCleaners;
-    
+
     /**
      * Ctr.
-     * @param orderedCleaner Ordered List of delegate implementations.  Cannot be {@code null}
+     * 
+     * @param orderedCleaner
+     *            Ordered List of delegate implementations. Cannot be {@code null}
      */
     public CompositeLogScrubber(List<LogScrubber> orderedCleaner) {
         if (orderedCleaner == null) {
-            throw new IllegalArgumentException ("Delegate LogScrubber List cannot be null");
+            throw new IllegalArgumentException("Delegate LogScrubber List cannot be null");
         }
         this.messageCleaners = new ArrayList<>(orderedCleaner);
     }
-    
+
     @Override
     public String cleanMessage(String message) {
         String cleaned = message;
-        
-        for(LogScrubber scrubadub : messageCleaners) {
+
+        for (LogScrubber scrubadub : messageCleaners) {
             cleaned = scrubadub.cleanMessage(cleaned);
         }
-        
+
         return cleaned;
     }
 }

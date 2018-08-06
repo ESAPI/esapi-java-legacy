@@ -16,19 +16,19 @@
 package org.owasp.esapi.logging.cleaning;
 
 /**
- *  Contract interface for cleaning log message output.
+ * Contract interface for cleaning log message output.
  *
  */
 public interface LogScrubber {
 
     /**
-     * Updates the given message to account for restrictions for this implementation and returns the result.
+     * Updates the given message to account for restrictions for this implementation
+     * and returns the result.
      * 
      * @param message
      *            Original message to clean.
      * @return Cleaned message.
      */
     public String cleanMessage(String message);
-
 
 }
