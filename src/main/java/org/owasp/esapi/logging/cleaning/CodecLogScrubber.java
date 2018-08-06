@@ -16,13 +16,27 @@ package org.owasp.esapi.logging.cleaning;
 
 import org.owasp.esapi.codecs.Codec;
 
+/**
+ * Implementation of a LogScrubber which passes strings through a delegate codec with specific character immunity sets.
+ *
+ */
 public class CodecLogScrubber implements LogScrubber {
+    /** Codec implementation used to scrub messages.*/
     private final Codec<?> customizedMessageCodec;
+    /** Set of characters which will not be altered by the codec for this scrubber.*/
     private final char[] immuneMessageChars;
     
+    /**
+     * Ctr.
+     * @param messageCodec Delegate codec.  Cannot be {@code null}
+     * @param immuneChars Immune character set.
+     */
     public  CodecLogScrubber (Codec<?> messageCodec, char[] immuneChars) {
+        if (messageCodec == null) {
+            throw new IllegalArgumentException("Codec reference cannot be null");
+        }
         this.customizedMessageCodec = messageCodec;
-        this.immuneMessageChars = immuneChars;
+        this.immuneMessageChars = immuneChars == null ? new char[0] : immuneChars;
     }
     
     @Override
