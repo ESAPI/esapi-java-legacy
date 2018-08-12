@@ -228,7 +228,7 @@ public class ValidatorTest extends TestCase {
         System.out.println("getValidFileName");
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
-        String testName = "aspe%20ct.jar";
+        String testName = "aspe%20ct.txt";
         assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, ESAPI.securityConfiguration().getAllowedFileExtensions(), false, errors));
     }
 
@@ -307,7 +307,7 @@ public class ValidatorTest extends TestCase {
         char invalidChars[] = "/\\:*?\"<>|".toCharArray();
         for (int i = 0; i < invalidChars.length; i++) {
             assertFalse(invalidChars[i] + " is an invalid character for a filename",
-                    instance.isValidFileName("test", "as" + invalidChars[i] + "pect.jar", false));
+                    instance.isValidFileName("test", "as" + invalidChars[i] + "pect.txt", false));
         }
         assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
         assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
@@ -523,21 +523,21 @@ public class ValidatorTest extends TestCase {
     public void testIsValidFileName() {
         System.out.println("isValidFileName");
         Validator instance = ESAPI.validator();
-        assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false));
-        assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false));
-        assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false));
+        assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.txt", false));
+        assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.txt", false));
+        assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.txt", false));
 
         ValidationErrorList errors = new ValidationErrorList();
-        assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.jar", false, errors));
-        assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.jar", false, errors));
-        assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.jar", false, errors));
+        assertTrue("Simple valid filename with a valid extension", instance.isValidFileName("test", "aspect.txt", false, errors));
+        assertTrue("All valid filename characters are accepted", instance.isValidFileName("test", "!@#$%^&{}[]()_+-=,.~'` abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890.txt", false, errors));
+        assertTrue("Legal filenames that decode to legal filenames are accepted", instance.isValidFileName("test", "aspe%20ct.txt", false, errors));
         assertTrue(errors.size() == 0);
     }
 
     public void testIsValidFileUpload() throws IOException {
         System.out.println("isValidFileUpload");
         String filepath = new File(System.getProperty("user.dir")).getCanonicalPath();
-        String filename = "aspect.jar";
+        String filename = "aspect.txt";
         File parent = new File("/").getCanonicalFile();
         ValidationErrorList errors = new ValidationErrorList();
         byte[] content = null;
@@ -553,7 +553,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() == 0);
 
         filepath = "/ridiculous";
-        filename = "aspect.jar";
+        filename = "aspect.txt";
         try {
             content = "This is some file content".getBytes(PREFERRED_ENCODING);
         }
