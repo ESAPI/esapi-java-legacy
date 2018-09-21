@@ -53,14 +53,14 @@ public class Slf4JLogFactory implements LogFactory {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         SLF4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
         
-        Map<Integer, Slf4JLogHandler> levelLookup = new HashMap<>();
-        levelLookup.put(Logger.ALL, Slf4JLogHandlers.TRACE);
-        levelLookup.put(Logger.TRACE, Slf4JLogHandlers.TRACE);
-        levelLookup.put(Logger.DEBUG, Slf4JLogHandlers.DEBUG);
-        levelLookup.put(Logger.INFO, Slf4JLogHandlers.INFO);
-        levelLookup.put(Logger.ERROR, Slf4JLogHandlers.ERROR);
-        levelLookup.put(Logger.WARNING, Slf4JLogHandlers.WARN);
-        levelLookup.put(Logger.FATAL, Slf4JLogHandlers.ERROR);
+        Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
+        levelLookup.put(Logger.ALL, Slf4JLogLevelHandlers.TRACE);
+        levelLookup.put(Logger.TRACE, Slf4JLogLevelHandlers.TRACE);
+        levelLookup.put(Logger.DEBUG, Slf4JLogLevelHandlers.DEBUG);
+        levelLookup.put(Logger.INFO, Slf4JLogLevelHandlers.INFO);
+        levelLookup.put(Logger.ERROR, Slf4JLogLevelHandlers.ERROR);
+        levelLookup.put(Logger.WARNING, Slf4JLogLevelHandlers.WARN);
+        levelLookup.put(Logger.FATAL, Slf4JLogLevelHandlers.ERROR);
         //LEVEL.OFF not used.  If it's off why would we try to log it?
         
         LOG_BRIDGE = new Slf4JLogBridgeImpl(SLF4J_LOG_SCRUBBER, levelLookup);

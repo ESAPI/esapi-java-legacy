@@ -19,11 +19,11 @@ import org.slf4j.Marker;
 /**
  * Contract used to isolate translations for each SLF4J Logging Level.
  * 
- * @see Slf4JLogHandlers
+ * @see Slf4JLogLevelHandlers
  * @see Slf4JLogBridgeImpl
  *
  */
- interface Slf4JLogHandler {
+ interface Slf4JLogLevelHandler {
      /** Check if the logging level is enabled for the specified logger.*/
     boolean isEnabled(Logger logger);
     /**

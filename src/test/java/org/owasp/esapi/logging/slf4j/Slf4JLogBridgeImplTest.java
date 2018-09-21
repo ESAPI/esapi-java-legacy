@@ -39,14 +39,14 @@ public class Slf4JLogBridgeImplTest {
     public ExpectedException exEx = ExpectedException.none();
 
     private LogScrubber mockScrubber = Mockito.mock(LogScrubber.class);
-    private Slf4JLogHandler mockHandler = Mockito.mock(Slf4JLogHandler.class);
+    private Slf4JLogLevelHandler mockHandler = Mockito.mock(Slf4JLogLevelHandler.class);
     private org.slf4j.Logger mockSlf4JLogger = Mockito.mock(org.slf4j.Logger.class);
     private Throwable testEx = new Throwable(testName.getMethodName());
     private Slf4JLogBridge bridge;
 
     @Before
     public void setup() {
-        Map<Integer, Slf4JLogHandler> levelLookup = new HashMap<>();
+        Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, mockHandler);
 
         bridge = new Slf4JLogBridgeImpl(mockScrubber, levelLookup);
@@ -56,7 +56,7 @@ public class Slf4JLogBridgeImplTest {
     public void testLogMessageWithUnmappedEsapiLevelThrowsException() {
         exEx.expect(IllegalArgumentException.class);
         exEx.expectMessage("Unable to lookup SLF4J level mapping");
-        Map<Integer, Slf4JLogHandler> emptyMap = Collections.emptyMap();
+        Map<Integer, Slf4JLogLevelHandler> emptyMap = Collections.emptyMap();
         new Slf4JLogBridgeImpl(mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail");
     }
     
@@ -64,7 +64,7 @@ public class Slf4JLogBridgeImplTest {
     public void testLogMessageAndExceptionWithUnmappedEsapiLevelThrowsException() {
         exEx.expect(IllegalArgumentException.class);
         exEx.expectMessage("Unable to lookup SLF4J level mapping");
-        Map<Integer, Slf4JLogHandler> emptyMap = Collections.emptyMap();
+        Map<Integer, Slf4JLogLevelHandler> emptyMap = Collections.emptyMap();
         new Slf4JLogBridgeImpl(mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail", testEx);
     }
     

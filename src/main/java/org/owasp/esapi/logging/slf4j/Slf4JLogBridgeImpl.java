@@ -33,7 +33,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
     //BasicMarkerFactory uses ConcurrentHashMap to track data.  This *should be* thread safe.
     private static final IMarkerFactory MARKER_FACTORY = new BasicMarkerFactory();
     /** Configuration providing associations between esapi log levels and SLF4J levels.*/
-    private final Map<Integer,Slf4JLogHandler> esapiSlfLevelMap;
+    private final Map<Integer,Slf4JLogLevelHandler> esapiSlfLevelMap;
     /** Cleaner used for log content.*/
     private final LogScrubber scrubber;
     
@@ -42,14 +42,14 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
      * @param logScrubber  Log message cleaner.
      * @param esapiSlfHandlerMap Map identifying ESAPI -> SLF4J log level associations.
      */
-    public Slf4JLogBridgeImpl(LogScrubber logScrubber, Map<Integer, Slf4JLogHandler> esapiSlfHandlerMap) {
+    public Slf4JLogBridgeImpl(LogScrubber logScrubber, Map<Integer, Slf4JLogLevelHandler> esapiSlfHandlerMap) {
         //Defensive copy to prevent external mutations.
         this.esapiSlfLevelMap = new HashMap<>(esapiSlfHandlerMap);
         this.scrubber = logScrubber;
     }
     @Override
     public void log(Logger logger, int esapiLevel, EventType type, String message) {
-        Slf4JLogHandler handler = esapiSlfLevelMap.get(esapiLevel);
+        Slf4JLogLevelHandler handler = esapiSlfLevelMap.get(esapiLevel);
         if (handler == null) {
             throw new IllegalArgumentException("Unable to lookup SLF4J level mapping for esapi value of " + esapiLevel);
         }
@@ -61,7 +61,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
     }
     @Override
     public void log(Logger logger, int esapiLevel, EventType type, String message, Throwable throwable) {
-        Slf4JLogHandler handler = esapiSlfLevelMap.get(esapiLevel);
+        Slf4JLogLevelHandler handler = esapiSlfLevelMap.get(esapiLevel);
         if (handler == null) {
             throw new IllegalArgumentException("Unable to lookup SLF4J level mapping for esapi value of " + esapiLevel);
         }

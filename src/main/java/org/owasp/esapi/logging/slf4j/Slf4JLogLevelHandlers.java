@@ -21,7 +21,7 @@ import org.slf4j.Marker;
  * Enumeration capturing the propagation of SLF4J level events.
  *
  */
-public enum Slf4JLogHandlers implements Slf4JLogHandler {
+public enum Slf4JLogLevelHandlers implements Slf4JLogLevelHandler {
     ERROR {
         @Override
         public boolean isEnabled(Logger logger) {
