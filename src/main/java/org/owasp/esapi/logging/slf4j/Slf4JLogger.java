@@ -15,12 +15,23 @@
 package org.owasp.esapi.logging.slf4j;
 
 import org.owasp.esapi.Logger;
-
+/**
+ * ESAPI Logger implementation which relays events to an SLF4J delegate.
+ */
 public class Slf4JLogger implements org.owasp.esapi.Logger {
+    /** Delegate Logger.*/
     private final org.slf4j.Logger delegate;
+    /** Handler for translating events from ESAPI context for SLF4J processing.*/
     private final Slf4JLogBridge logBridge;
+    /** Maximum log level that will be forwarded to SLF4J from the ESAPI context.*/
     private int maxLogLevel;
     
+    /**
+     * Constructs a new instance. 
+     * @param slf4JLogger Delegate SLF4J logger.
+     * @param bridge Translator for ESAPI -> SLF4J logging events.
+     * @param defaultEsapiLevel Maximum ESAPI log level events to propagate.
+     */
     public Slf4JLogger(org.slf4j.Logger slf4JLogger, Slf4JLogBridge bridge, int defaultEsapiLevel) {
         delegate = slf4JLogger;
         this.logBridge = bridge;

@@ -17,7 +17,10 @@ package org.owasp.esapi.logging.slf4j;
 
 import org.slf4j.Logger;
 import org.slf4j.Marker;
-
+/**
+ * Enumeration capturing the propagation of SLF4J level events.
+ *
+ */
 public enum Slf4JLogHandlers implements Slf4JLogHandler {
     ERROR {
         @Override
@@ -35,10 +38,10 @@ public enum Slf4JLogHandlers implements Slf4JLogHandler {
             logger.error(marker, msg, th);
         }
     },
-       WARN {
+    WARN {
         @Override
         public boolean isEnabled(Logger logger) {
-           return logger.isWarnEnabled();
+            return logger.isWarnEnabled();
         }
 
         @Override
@@ -51,7 +54,7 @@ public enum Slf4JLogHandlers implements Slf4JLogHandler {
             logger.warn(marker, msg, th);
         }
     },
-       INFO {
+    INFO {
         @Override
         public boolean isEnabled(Logger logger) {
             return logger.isInfoEnabled();
@@ -67,7 +70,7 @@ public enum Slf4JLogHandlers implements Slf4JLogHandler {
             logger.info(marker, msg, th);
         }
     },
-       DEBUG {
+    DEBUG {
         @Override
         public boolean isEnabled(Logger logger) {
             return logger.isDebugEnabled();
@@ -83,7 +86,7 @@ public enum Slf4JLogHandlers implements Slf4JLogHandler {
             logger.debug(marker, msg, th);
         }
     },
-       TRACE{
+    TRACE{
 
         @Override
         public boolean isEnabled(Logger logger) {
@@ -99,10 +102,12 @@ public enum Slf4JLogHandlers implements Slf4JLogHandler {
         public void log(Logger logger, Marker marker, String msg, Throwable th) {
             logger.trace(marker, msg, th);
         }
-           
-       };
-       
-       public abstract boolean isEnabled(Logger logger);
-       public abstract void log(Logger logger, Marker marker, String msg);
-       public abstract void log(Logger logger, Marker marker, String msg, Throwable th);
-   }
+
+    };
+    @Override
+    public abstract boolean isEnabled(Logger logger);
+    @Override
+    public abstract void log(Logger logger, Marker marker, String msg);
+    @Override
+    public abstract void log(Logger logger, Marker marker, String msg, Throwable th);
+}

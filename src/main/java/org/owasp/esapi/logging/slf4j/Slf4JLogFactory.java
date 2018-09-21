@@ -29,17 +29,27 @@ import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.slf4j.LoggerFactory;
-
+/**
+ * LogFactory implementation which creates SLF4J supporting Loggers.
+ *
+ */
 public class Slf4JLogFactory implements LogFactory {
+    /** Html encoding backslash.*/
     private static final char BACKSLASH = '\\';
+    /** Html encoding for SLF4J open replacement marker.*/
     private static final char OPEN_SLF_FORMAT='{';
+    /** Html encoding for SLF4J close replacement marker.*/
     private static final char CLOSE_SLF_FORMAT='}';
+    /** Immune characters for the codec log scrubber for SLF4J context.*/
     private static final char[] IMMUNE_SLF4J_HTML = {',', '.', '-', '_', ' ',BACKSLASH, OPEN_SLF_FORMAT, CLOSE_SLF_FORMAT };
+    /** Codec being used to clean messages for logging.*/
     private static final HTMLEntityCodec HTML_CODEC = new HTMLEntityCodec();
+    /** Log cleaner instance.*/
     private static LogScrubber SLF4J_LOG_SCRUBBER;
+    /** Bridge class for mapping esapi -> slf4j log levels.*/
     private static Slf4JLogBridge LOG_BRIDGE;
+    
     static {
-        
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         SLF4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
         
@@ -56,6 +66,11 @@ public class Slf4JLogFactory implements LogFactory {
         LOG_BRIDGE = new Slf4JLogBridgeImpl(SLF4J_LOG_SCRUBBER, levelLookup);
     }
     
+    /**
+     * Populates the default log scrubber for use in factory-created loggers.
+     * @param requiresEncoding {@code true} if encoding is required for log content.
+     * @return LogScrubber instance.
+     */
     /*package*/ static LogScrubber createLogScrubber(boolean requiresEncoding) {
         List<LogScrubber> messageScrubber = new ArrayList<>();
         messageScrubber.add(new NewlineLogScrubber());

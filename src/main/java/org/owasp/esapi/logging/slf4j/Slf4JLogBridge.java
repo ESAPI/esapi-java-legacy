@@ -16,9 +16,27 @@ package org.owasp.esapi.logging.slf4j;
 
 import org.owasp.esapi.Logger.EventType;
 import org.slf4j.Logger;
-
+/**
+ * Contract for translating an ESAPI log event into an SLF4J log event.
+ * 
+ */
 public interface Slf4JLogBridge {
+    /**
+     * Translation for the provided ESAPI level, type, and message to the specified SLF4J Logger.
+     * @param logger Logger to receive the translated message.
+     * @param esapiLevel ESAPI level of event.
+     * @param type ESAPI event type
+     * @param message ESAPI event message content.
+     */
     void log(Logger logger, int esapiLevel, EventType type, String message) ;
+    /**
+     * Translation for the provided ESAPI level, type, message, and Throwable to the specified SLF4J Logger.
+     * @param logger Logger to receive the translated message.
+     * @param esapiLevel ESAPI level of event.
+     * @param type ESAPI event type
+     * @param message ESAPI event message content.
+     * @param throwable ESAPI event Throwable content
+     */
     void log(Logger logger, int esapiLevel, EventType type, String message, Throwable throwable) ;
       
 }

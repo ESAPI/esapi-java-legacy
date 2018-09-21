@@ -16,9 +16,29 @@ package org.owasp.esapi.logging.slf4j;
 
 import org.slf4j.Logger;
 import org.slf4j.Marker;
-
-public interface Slf4JLogHandler {
+/**
+ * Contract used to isolate translations for each SLF4J Logging Level.
+ * 
+ * @see Slf4JLogHandlers
+ * @see Slf4JLogBridgeImpl
+ *
+ */
+ interface Slf4JLogHandler {
+     /** Check if the logging level is enabled for the specified logger.*/
     boolean isEnabled(Logger logger);
+    /**
+     * Calls the appropriate log level event on the specified logger.
+     * @param logger Logger to invoke.
+     * @param marker Marker to apply to event
+     * @param msg Message to log.
+     */
     void log(Logger logger, Marker marker, String msg);
+    /**
+     * Calls the appropriate log level event on the specified logger.
+     * @param logger Logger to invoke
+     * @param marker Marker to apply to the event.
+     * @param msg Message to log
+     * @param th Throwable to log.
+     */
     void log(Logger logger, Marker marker, String msg, Throwable th);
 }
