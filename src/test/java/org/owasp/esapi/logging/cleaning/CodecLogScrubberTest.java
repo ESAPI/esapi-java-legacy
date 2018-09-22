@@ -15,11 +15,12 @@
 package org.owasp.esapi.logging.cleaning;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.owasp.esapi.codecs.Codec;
 
@@ -47,7 +48,7 @@ public class CodecLogScrubberTest {
 
         scrubber.cleanMessage(message);
 
-        Mockito.verify(mockCodec, Mockito.times(1)).encode(immuneCapture.capture(), Matchers.matches(message));
+        Mockito.verify(mockCodec, Mockito.times(1)).encode(immuneCapture.capture(), ArgumentMatchers.matches(message));
         Mockito.verifyNoMoreInteractions(mockCodec);
 
         assertEquals(0, immuneCapture.getValue().length);
@@ -64,7 +65,7 @@ public class CodecLogScrubberTest {
 
         scrubber.cleanMessage(message);
 
-        Mockito.verify(mockCodec, Mockito.times(1)).encode(Matchers.same(immune), Matchers.matches(message));
+        Mockito.verify(mockCodec, Mockito.times(1)).encode(ArgumentMatchers.same(immune), ArgumentMatchers.matches(message));
         Mockito.verifyNoMoreInteractions(mockCodec);
 
     }

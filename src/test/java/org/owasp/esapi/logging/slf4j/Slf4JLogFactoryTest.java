@@ -20,7 +20,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
 import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
@@ -29,14 +28,10 @@ import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest (Slf4JLogFactory.class)
 public class Slf4JLogFactoryTest {
-//TODO:  Test to assert the encoder is an html encoder
-//TODO:  Assert the immunity list for special slf4j characters
-//TODO: Assert the Level mapping content
     @Test
     public void testCreateLoggerByString() {
         Logger logger = new Slf4JLogFactory().getLogger("test");

@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Matchers;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
@@ -80,8 +80,8 @@ public class Slf4JLogBridgeImplTest {
         ArgumentCaptor<Marker> markerCapture = ArgumentCaptor.forClass(Marker.class);
         Mockito.verify(mockScrubber, Mockito.times(1)).cleanMessage(testName.getMethodName());
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
-        Mockito.verify(mockHandler, Mockito.times(0)).log(Matchers.any(org.slf4j.Logger.class), Matchers.any(Marker.class), Matchers.any(String.class), Matchers.any(Throwable.class));
-        Mockito.verify(mockHandler, Mockito.times(1)).log(Matchers.same(mockSlf4JLogger), markerCapture.capture(), Matchers.matches(message));
+        Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class), ArgumentMatchers.any(Throwable.class));
+        Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.matches(message));
 
         Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());
     }
@@ -98,9 +98,9 @@ public class Slf4JLogBridgeImplTest {
         ArgumentCaptor<Marker> markerCapture = ArgumentCaptor.forClass(Marker.class);
         Mockito.verify(mockScrubber, Mockito.times(1)).cleanMessage(testName.getMethodName());
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
-        Mockito.verify(mockHandler, Mockito.times(0)).log(Matchers.any(org.slf4j.Logger.class), Matchers.any(Marker.class), Matchers.any(String.class));
+        Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class));
 
-        Mockito.verify(mockHandler, Mockito.times(1)).log(Matchers.same(mockSlf4JLogger), markerCapture.capture(), Matchers.matches(message), Matchers.same(testEx));
+        Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.matches(message), ArgumentMatchers.same(testEx));
 
         Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());   
     }
@@ -113,9 +113,9 @@ public class Slf4JLogBridgeImplTest {
         bridge.log(mockSlf4JLogger, Logger.ALL, Logger.EVENT_UNSPECIFIED, testName.getMethodName());
 
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
-        Mockito.verify(mockScrubber, Mockito.times(0)).cleanMessage(Matchers.anyString());
-        Mockito.verify(mockHandler, Mockito.times(0)).log(Matchers.any(org.slf4j.Logger.class), Matchers.any(Marker.class), Matchers.any(String.class));
-        Mockito.verify(mockHandler, Mockito.times(0)).log(Matchers.any(org.slf4j.Logger.class), Matchers.any(Marker.class), Matchers.any(String.class), Matchers.any(Throwable.class));
+        Mockito.verify(mockScrubber, Mockito.times(0)).cleanMessage(ArgumentMatchers.anyString());
+        Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class));
+        Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class), ArgumentMatchers.any(Throwable.class));
     }
 
     @Test
@@ -125,9 +125,9 @@ public class Slf4JLogBridgeImplTest {
         bridge.log(mockSlf4JLogger, Logger.ALL, Logger.EVENT_UNSPECIFIED, testName.getMethodName(), testEx);
 
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
-        Mockito.verify(mockScrubber, Mockito.times(0)).cleanMessage(Matchers.anyString());
-        Mockito.verify(mockHandler, Mockito.times(0)).log(Matchers.any(org.slf4j.Logger.class), Matchers.any(Marker.class), Matchers.any(String.class));
-        Mockito.verify(mockHandler, Mockito.times(0)).log(Matchers.any(org.slf4j.Logger.class), Matchers.any(Marker.class), Matchers.any(String.class), Matchers.any(Throwable.class));
+        Mockito.verify(mockScrubber, Mockito.times(0)).cleanMessage(ArgumentMatchers.anyString());
+        Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class));
+        Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class), ArgumentMatchers.any(Throwable.class));
 
     }
 
