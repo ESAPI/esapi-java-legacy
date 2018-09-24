@@ -407,7 +407,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
 	public List<String> getAllowedFileExtensions() {
-    	String def = ".zip,.pdf,.tar,.gz,.xls,.properties,.txt,.xml";
+        String def = ".pdf,.txt,.jpg,.png";
         String[] extList = getESAPIProperty(APPROVED_UPLOAD_EXTENSIONS,def).split(",");
         return Arrays.asList(extList);
     }
