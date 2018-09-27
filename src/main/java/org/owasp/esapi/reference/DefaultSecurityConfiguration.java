@@ -262,6 +262,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public DefaultSecurityConfiguration(){
     	this(DEFAULT_RESOURCE_FILE);
     }
+    
     private void setCipherXProperties() {
 		// TODO: FUTURE: Replace by future CryptoControls class???
 		// See SecurityConfiguration.setCipherTransformation() for
@@ -710,7 +711,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @param message The message to send to the console.
      * @param e The error that occurred. (This value printed via {@code e.toString()}.)
      */
-    private void logSpecial(String message, Throwable e) {
+    protected void logSpecial(String message, Throwable e) {
     	StringBuffer msg = new StringBuffer(message);
     	if (e != null) {
     		msg.append(" Exception was: ").append( e.toString() );
@@ -726,8 +727,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      *
      * @param message The message to send to the console.
      */
-    private void logSpecial(String message) {
-		System.out.println(message);
+    protected void logSpecial(String message) {
+    	System.out.println(message);
     }
     
     /**
