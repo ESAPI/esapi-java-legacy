@@ -5,7 +5,7 @@ import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.Vector;
 
-import org.apache.commons.collections.iterators.ArrayListIterator;
+import org.apache.commons.collections4.iterators.ArrayListIterator;
 
 public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 	protected Method delegateMethod;
