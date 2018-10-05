@@ -662,60 +662,6 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of Base64.decodeToObject() method. Should really be put into a
-     * separate Base64Test.java class, but this method has been deprecated
-     * so hopefully, we can kill it off soon.
-	 */
-    public void testBase64decodToObject() {
-        try {
-            System.out.println("testBase64decodeToObject");
-
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream dout = new ObjectOutputStream(baos);
-
-            // If you don't get the joke, google John Draper. (And, BTW, you should
-            // be ashamed of yourself if you call yourself a hacker!)
-            String cerealizeThis = new String("Cap'n Crunch - every hacker's favorite cereal");
-            dout.writeObject( cerealizeThis );
-            byte[] serializedData = baos.toByteArray();
-            dout.close();
-
-            String b64serialized = Base64.encodeBytes( serializedData );
-            final String propName = Base64.ENABLE_UNSAFE_SERIALIZATION;
-
-            // Make sure the property is not set.
-            try { System.clearProperty( propName ); } catch(Throwable t) { ; }
-            String capnCrunch = null;
-
-            try {
-                capnCrunch = (String)Base64.decodeToObject( b64serialized );
-                fail("Case 1: Did not throw UnsupportedOperationException");
-            } catch(UnsupportedOperationException uoex) {
-                ; // Expected case
-            }
-
-            try {
-                System.setProperty( propName, "false" );
-                capnCrunch = (String)Base64.decodeToObject( b64serialized );
-                fail("Case 2: Did not throw UnsupportedOperationException");
-            } catch(UnsupportedOperationException uoex) {
-                ; // Expected case
-            }
-
-            try {
-                // This case should work.
-                System.setProperty( propName, "true" );
-                capnCrunch = (String)Base64.decodeToObject( b64serialized );
-                assertTrue( capnCrunch.equals( cerealizeThis ) );
-            } catch(Throwable t) {
-                fail("Case 3: Caught unexpected exception: " + t);
-            }
-        } catch(Throwable t) {
-            fail("Caught unexpected exception: " + t);
-        }
-    }
-
-    /**
 	 * Test of WindowsCodec
 	 */
     public void testWindowsCodec() {
