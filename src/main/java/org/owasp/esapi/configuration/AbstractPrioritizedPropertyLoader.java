@@ -44,13 +44,13 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
     /**
      * Initializes properties object and fills it with data from configuration file.
      */
-    protected void initProperties() {
+    private void initProperties() {
         properties = new Properties();
         File file = new File(filename);
         if (file.exists() && file.isFile()) {
             loadPropertiesFromFile(file);
         } else {
-            System.err.println("Configuration file " + filename + " does not exist");
+            logSpecial("Configuration file " + filename + " does not exist");
         }
     }
 
@@ -59,4 +59,33 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
      * @param file
      */
     protected abstract void loadPropertiesFromFile(File file);
+
+    /**
+     * Used to log errors to the console during the loading of the properties file itself. Can't use
+     * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
+     * {@code PrintStream} {@code System.out}.  Output is discarded if the {@code System} property
+     * "org.owasp.esapi.logSpecial.discard" is set to {@code true}.
+     *
+     * @param msg The message to log to the console.
+     * @param t   Associated exception that was caught.
+     */
+    protected final void logSpecial(String msg, Throwable t) {
+        // Note: It is really distasteful to tie this class to DefaultSecurityConfiguration
+        //       like this, but the alternative is to move the logSpecial() and
+        //       logToStdout() some utilities class and that is even more
+        //       distasteful because it may encourage people to use these. -kwwall
+        org.owasp.esapi.reference.DefaultSecurityConfiguration.logToStdout(msg, t);
+    }
+
+    /**
+     * Used to log errors to the console during the loading of the properties file itself. Can't use
+     * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
+     * {@code PrintStream} {@code System.out}.  Output is discarded if the {@code System} property
+     * "org.owasp.esapi.logSpecial.discard" is set to {@code true}.
+     *
+     * @param msg The message to log to the console.
+     */
+    protected final void logSpecial(String msg) {
+        logSpecial(msg, null);
+    }
 }
