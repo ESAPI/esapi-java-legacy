@@ -1,0 +1,97 @@
+                        Contributing to ESAPI
+
+Getting Started:
+    If you have not already done so, go back and read the section
+    "Contributing to ESAPI legacy" in ESAPI's README.md file. It
+    make contain updates and advice not contained herein.
+
+Finding Something Interesting to Work on:
+
+    See the section "Contributing to ESAPI legacy in
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/README.md
+    While you don't *have* to work on something labeled "good first issue"
+    or "help wanted", those are good places to start for someone not yet
+    familiar with the ESAPI code base.
+
+    You will need a account on GitHub though. Once you create one, let me know
+    what it is. Then if you want to work on a particular issue, we can assign
+    it to you so someone else won't take it.
+
+    If you have questions, email me or Matt Seil (xeno6696@gmail.com).
+
+Overview:
+    We are following the branching model described in
+        https://nvie.com/posts/a-successful-git-branching-model
+    If you are unfamiliar with it, you would be advised to give it a
+    quick perusal. The major point is that the 'master' branch is reserved for
+    official releases (which will be tagged), the 'develop' branch is used for
+    ongoing development work and is the default branch, and we generally work
+    off 'issue' branches named 'issue-#' where # is the GitHub issue number.
+    (The last is not an absolute requirement, but rather a suggested
+    approach.)
+
+    Finally, we recommend setting the git property 'core.autocrlf' to 'input'
+    in your $HOME/.gitconfig file; e.g., that file should contain something
+    like this:
+
+        [core]
+            autocrlf = input
+
+Required Software:
+    We use Maven for building. Maven 3.1 or later is required. You also need
+    JDK 7 or later. (We generally use JDK 8, but compile ESAPI only to require
+    JDK 7, which means our code can't yet use any features exclusive to Java 8
+    or later.)
+
+Building ESAPI:
+    https://www.owasp.org/index.php/ESAPI-Building briefly discusses how to
+    build ESAPI via Maven.
+
+    Also https://github.com/ESAPI/esapi-java-legacy/wiki/Using-ESAPI-for-Java-with-Eclipse
+    describes how to use ESAPI with Eclipse and
+    https://www.owasp.org/index.php/ESAPI-BuildingWithEclipse is a very old
+    overview of how to build ESAPI in Eclipse.
+
+    As always, any contributions to ESAPI's admittedly skimpy documentation
+    in this area is welcome.
+
+Steps to work with ESAPI:
+    I usually do everything from the bash command prompt in Linux Mint,
+    but other people use Windows. If you prefer an IDE, I can't help you
+    much, but I can help with at least modest problems. If you have more
+    difficult problems, I will probably refer you to my project co-leader,
+    Matt who groks git a lot better than I.
+
+    But the basic high level steps are:
+    1. Fork https://github.com/ESAPI/esapi-java-legacy to your own GitHub
+       repository.
+    2. On your local laptop, clone your own GitHub ESAPI repo (i.e, the
+       forked repo created in previous step)
+    3. Create a new branch to work on an issue. I usually name the branch
+       'issue-#' where '#' is the GitHub issue # is will be working on, but
+       you can call it whatever.
+    4. Work on the GitHub issue on this newly created issue-# branch.
+    5. Make sure everything builds correctly and all the JUnit tests pass
+       ('mvn test'). [Note: On occasion, there may be a failure in
+       AuthenticatorTest.testGetCurrentUser(). If there is, run 'mvn test'
+       again. It seems to be sporadic and it is hypothesized that it is
+       related to some sort of race condition in the JUnit tests.]
+    6. If you have added any dependencies, please also run
+            mvn org.owasp:dependency-check-maven:check
+       to run OWASP Dependency-Check and look at the generated report
+       left in 'target/dependency-check-report.html' to make sure there
+       were not any CVEs introduced. (Alternately you can run 'mvn verify'
+       which will first run the tests and then run Dependency-Check.) Note
+       if this is the first time you have run Dependency-Check for ESAPI,
+       expect it to take a while (often 30 minutes or so!).
+    7. Commit your changes locally.
+    8. Push your 'issue-#' branch to your personal, forked ESAPI GitHub repo.-
+    9. Go to your personal, forked ESAPI GitHub repo and create a
+       Pull Request from your 'issue-#' branch.
+   10. Back on your local personal laptop / desktop, merge your issue branch with
+       your local 'develop' branch.
+
+In theory, you can do all this 'git' magic from Eclipse and presumably other
+IDEs like NetBeans or IntelliJ). From Eclipse, it is right-click on the
+project and then select 'Team' to do the commits, etc. If you choose that
+route, you're pretty much on your own because none of us use that.
