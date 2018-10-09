@@ -42,6 +42,8 @@ When reporting an issue, please be clear and try to ensure that the ESAPI develo
 ### Find an Issue?
 If you have found a bug, then create an issue on the esapi-legacy-java repo: https://github.com/ESAPI/esapi-java-legacy/issues
 
+NOTE: Please do NOT use GitHub issues to ask questions about ESAPI. If you wish to do this, post to either of the 2 mailing lists found at the bottom of this page. If we find questions as GitHub issues, we simply will close them and direct you to do this anyhow.
+
 ### Find a Vulnerability?
 If you have found a vulnerability in ESAPI legacy, first search the issues list (see above) to see if it has already been reported. If it has not, then please contact both Kevin W. Wall (kevin.w.wall at gmail.com) and Matt Seil (matt.seil at owasp.org) directly. Please do not report vulnerabilities via GitHub issues or via the ESAPI mailing lists as we wish to keep our users secure while a patch is implemented and deployed. If you wish to be acknowledged for finding the vulnerability, then please follow this process. (Eventually, we would like to have BugCrowd handle this, but that's still a ways off.) Also, when you post the email describing the vulnerability, please do so from an email address that you usually monitor.
 
