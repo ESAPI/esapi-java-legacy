@@ -90,13 +90,13 @@ public class StandardEsapiPropertyLoader extends AbstractPrioritizedPropertyLoad
             input = new FileInputStream(file);
             properties.load(input);
         } catch (IOException ex) {
-            System.err.println("Loading " + file.getName() + " via file I/O failed. Exception was: " + ex);
+            logSpecial("Loading " + file.getName() + " via file I/O failed.", ex);
         } finally {
             if (input != null) {
                 try {
                     input.close();
                 } catch (IOException e) {
-                    System.err.println("Could not close stream");
+                    logSpecial("Could not close stream");
                 }
             }
         }

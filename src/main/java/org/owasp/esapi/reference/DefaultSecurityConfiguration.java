@@ -153,6 +153,18 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
     public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
 
+    /**
+     * Special {@code System} property that, if set to {@code true}, will
+     * disable logging from {@code DefaultSecurityConfiguration.logToStdout()}
+     * methods, which is called from various {@code logSpecial()} methods.
+     * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg, Throwable t)
+     * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg)
+     */
+    public static final String DISCARD_LOGSPECIAL = "org.owasp.esapi.logSpecial.discard";
+
+    // We assume that this does not change in the middle of processing the
+    // ESAPI.properties files and thus only fetch its value once.
+    private static final String logSpecialValue = System.getProperty(DISCARD_LOGSPECIAL, "false");
 
 
     /**
@@ -703,33 +715,63 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	}
 
     /**
+     * Log to standard output (i.e., {@code System.out}. This method is
+     * synchronized to reduce the possibility of interleaving the message
+     * output (since the {@code System.out} {@code PrintStream} is buffered)
+     * it invoked from multiple threads. Output is discarded if the
+     * {@code System} property "org.owasp.esapi.logSpecial.discard" is set to
+     * {@code true}.
+     *
+     * @param msg   Message to be logged.
+     * @param t     Associated exception that was caught. The class name and
+     *              exception message is also logged.
+     * @see #logToStdout(String msg)
+     */
+    public final synchronized static void logToStdout(String msg, Throwable t) {
+     // Note that this class was made final because it is called from this class'
+     // CTOR and we want to prohibit someone from <i>easily</i> doing sneaky
+     // things like subclassing this class and inserting a malicious code as a
+     // shim. Of course, really in hindsight, this entire class should have been
+     // declared 'final', but doing so at this point would likely break someone's
+     // code, including possibly some of our own test code. But since this is a
+     // new method, we can get away with it here.
+        boolean discard = logSpecialValue.trim().equalsIgnoreCase("true");
+        if ( discard ) {
+            return; // Output is discarded!
+        }
+        if ( t == null ) {
+            System.out.println("ESAPI: " + msg);
+        } else {
+            System.out.println("ESAPI: " + msg +
+                               ". Caught " + t.getClass().getName() +
+                               "; exception message was: " + t);
+        }
+    }
+    
+    /**
      * Used to log errors to the console during the loading of the properties file itself. Can't use
      * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
-     * {@code PrintStream} {@code System.out}.
+     * {@code PrintStream} {@code System.out}.  Output is discarded if the {@code System} property
+     * "org.owasp.esapi.logSpecial.discard" is set to {@code true}.
      *
      * @param message The message to send to the console.
      * @param e The error that occurred. (This value printed via {@code e.toString()}.)
      */
     private void logSpecial(String message, Throwable e) {
-    	StringBuffer msg = new StringBuffer(message);
-    	if (e != null) {
-    		msg.append(" Exception was: ").append( e.toString() );
-    	}
-		System.out.println( msg.toString() );
-		// if ( e != null) e.printStackTrace();		// TODO ??? Do we want this?
+        logToStdout(message, e);
     }
 
     /**
      * Used to log errors to the console during the loading of the properties file itself. Can't use
      * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
-     * {@code PrintStream} {@code System.out}.
+     * {@code PrintStream} {@code System.out}.  Output is discarded if the {@code System} property
+     * "org.owasp.esapi.logSpecial.discard" is set to {@code true}.
      *
      * @param message The message to send to the console.
      */
     private void logSpecial(String message) {
-		System.out.println(message);
+		logToStdout(message, null);
     }
-    
     /**
 	 * {@inheritDoc}
 	 */
