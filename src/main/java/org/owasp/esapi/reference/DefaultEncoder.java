@@ -88,7 +88,7 @@ public class DefaultEncoder implements Encoder {
 	 */
 	private final static char[]     IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
 	private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
-	private final static char[] IMMUNE_CSS = {};
+	private final static char[] IMMUNE_CSS = { '#' };
 	private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '_' };
 	private final static char[] IMMUNE_VBSCRIPT = { ',', '.', '_' };
 	private final static char[] IMMUNE_XML = { ',', '.', '-', '_', ' ' };
