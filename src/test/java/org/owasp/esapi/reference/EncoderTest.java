@@ -382,10 +382,14 @@ public class EncoderTest extends TestCase {
         assertEquals(null, instance.encodeForCSS(null));
         assertEquals("\\3c script\\3e ", instance.encodeForCSS("<script>"));
         assertEquals("\\21 \\40 \\24 \\25 \\28 \\29 \\3d \\2b \\7b \\7d \\5b \\5d ", instance.encodeForCSS("!@$%()=+{}[]"));
+        assertEquals("#f00", instance.encodeForCSS("#f00"));
+        assertEquals("#123456", instance.encodeForCSS("#123456"));
+        assertEquals("#abcdef", instance.encodeForCSS("#abcdef"));
+        assertEquals("red", instance.encodeForCSS("red"));
     }
-    
 
-    
+
+
     /**
 	 * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
 	 */
