@@ -580,9 +580,11 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
 		// if not found, then try the programmatically set resource directory
 		// (this defaults to SystemResource directory/resourceFile
-		URL fileUrl = ClassLoader.getSystemResource(resourceDirectory + "/" + filename);
+        // find in classpath,fix not found in classpath when run with jetty or tomcat
+        // (jetty or tomcat use self classloader, ClassLoader.getSystemResource use jvm classloader )
+		URL fileUrl = Thread.currentThread().getContextClassLoader().getResource(resourceDirectory + "/" + filename);
         if ( fileUrl == null ) {
-            fileUrl = ClassLoader.getSystemResource("esapi/" + filename);
+            fileUrl = Thread.currentThread().getContextClassLoader().getResource("esapi/" + filename);
         }
 
 		if (fileUrl != null) {
