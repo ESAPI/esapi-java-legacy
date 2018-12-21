@@ -41,6 +41,8 @@ public class ESAPIFilter implements Filter {
 
 	private static final String[] obfuscate = { "password" };
 
+	private String loginPage = "WEB-INF/login.jsp";
+
 	/**
 	 * Called by the web container to indicate to a filter that it is being
 	 * placed into service. The servlet container calls the init method exactly
@@ -54,6 +56,10 @@ public class ESAPIFilter implements Filter {
 		String path = filterConfig.getInitParameter("resourceDirectory");
 		if ( path != null ) {
 			ESAPI.securityConfiguration().setResourceDirectory( path );
+		}
+		String paramLoginPage = filterConfig.getInitParameter("loginPage");
+		if ( paramLoginPage != null ) {
+			loginPage = paramLoginPage;
 		}
 	}
 
@@ -85,7 +91,7 @@ public class ESAPIFilter implements Filter {
 			} catch( AuthenticationException e ) {
 				ESAPI.authenticator().logout();
 				request.setAttribute("message", "Authentication failed");
-				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/login.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher(loginPage);
 				dispatcher.forward(request, response);
 				return;
 			}

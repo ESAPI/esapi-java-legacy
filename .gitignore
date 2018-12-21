@@ -10,6 +10,7 @@
 *.iws
 *.eml
 out/
+bin/
 
 # Leftover test files
 ciphertext-portable.ser
