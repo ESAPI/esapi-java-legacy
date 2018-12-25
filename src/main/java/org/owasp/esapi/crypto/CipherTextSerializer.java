@@ -62,7 +62,6 @@ public class CipherTextSerializer {
     	if ( cipherTextObj == null ) {
     		throw new IllegalArgumentException("CipherText object must not be null.");
     	}
-        assert cipherTextObj != null : "CipherText object must not be null.";      
         cipherText_ = cipherTextObj;
     }
     
@@ -90,22 +89,30 @@ public class CipherTextSerializer {
         debug("asSerializedByteArray: kdfInfo = " + kdfInfo);
         long timestamp = cipherText_.getEncryptionTimestamp();
         String cipherXform = cipherText_.getCipherTransformation();
-        assert cipherText_.getKeySize() < Short.MAX_VALUE :
-                            "Key size too large. Max is " + Short.MAX_VALUE;
+        if ( cipherText_.getKeySize() >= Short.MAX_VALUE ) {
+        	throw new IllegalArgumentException("Key size is too large. Max is " + Short.MAX_VALUE);
+        }
         short keySize = (short) cipherText_.getKeySize();
-        assert cipherText_.getBlockSize() < Short.MAX_VALUE :
-                            "Block size too large. Max is " + Short.MAX_VALUE;
+        if ( cipherText_.getBlockSize() >= Short.MAX_VALUE ) {
+        	throw new IllegalArgumentException("Block size is too large. Max is " + Short.MAX_VALUE);
+        }
         short blockSize = (short) cipherText_.getBlockSize();
         byte[] iv = cipherText_.getIV();
-        assert iv.length < Short.MAX_VALUE :
-                            "IV size too large. Max is " + Short.MAX_VALUE;
+        if ( iv.length >= Short.MAX_VALUE ) {
+        	throw new IllegalArgumentException("IV size too large. Max is " + Short.MAX_VALUE + " bytes");
+        }
         short ivLen = (short) iv.length;
         byte[] rawCiphertext = cipherText_.getRawCipherText();
         int ciphertextLen = rawCiphertext.length;
-        assert ciphertextLen >= 1 : "Raw ciphertext length must be >= 1 byte.";
+        // Coverity issue 1352406, GitHub issue # 364 - possible NPE later if assertion disabled.
+        // Replaced assertion with explicit check.
+        if ( ciphertextLen < 1 ) {
+        	throw new IllegalArgumentException("Raw ciphertext length must be >= 1 byte.");
+        }
         byte[] mac = cipherText_.getSeparateMAC();
-        assert mac.length < Short.MAX_VALUE :
-                            "MAC length too large. Max is " + Short.MAX_VALUE;
+        if ( mac.length >= Short.MAX_VALUE ) {
+        	throw new IllegalArgumentException("MAC length too large. Max is " + Short.MAX_VALUE + " bytes");
+        }
         short macLen = (short) mac.length;
         
         byte[] serializedObj = computeSerialization(kdfInfo,
@@ -129,7 +136,9 @@ public class CipherTextSerializer {
      * @return The {@code CipherText} object that we are serializing.
      */
     public CipherText asCipherText() {
-    	assert cipherText_ != null;
+    	if ( cipherText_ == null ) {
+    		throw new IllegalArgumentException("Program error? CipherText object, cipherText_, must not be null.");
+    	}
         return cipherText_;
     }
       
@@ -179,7 +188,9 @@ public class CipherTextSerializer {
         writeInt(baos, kdfInfo);
         writeLong(baos, timestamp);
         String[] parts = cipherXform.split("/");
-        assert parts.length == 3 : "Malformed cipher transformation";
+        if ( parts.length != 3 ) {
+            throw new IllegalArgumentException("Program error? Malformed cipher tranformation: " + cipherXform);
+        }
         writeString(baos, cipherXform); // Size of string is prepended to string
         writeShort(baos, keySize);
         writeShort(baos, blockSize);
@@ -199,9 +210,14 @@ public class CipherTextSerializer {
     private void writeString(ByteArrayOutputStream baos, String str) {
         byte[] bytes;
         try {
-            assert str != null && str.length() > 0;
+            if ( str == null || str.length() == 0 ) {
+                throw new IllegalArgumentException("Program error? writeString: str is null or empty!");
+            }
             bytes = str.getBytes("UTF8");
-            assert bytes.length < Short.MAX_VALUE : "writeString: String exceeds max length";
+            if ( bytes.length >= Short.MAX_VALUE ) {
+                throw new IllegalArgumentException("Program error? writeString: String exceeds max length of " +
+                                                   Short.MAX_VALUE + " bytes");
+            }
             writeShort(baos, (short)bytes.length);
             baos.write(bytes, 0, bytes.length);
         } catch (UnsupportedEncodingException e) {
@@ -218,13 +234,18 @@ public class CipherTextSerializer {
     {
         byte[] bytes = new byte[sz];
         int ret = bais.read(bytes, 0, sz);
-        assert ret == sz : "readString: Failed to read " + sz + " bytes.";
+        if ( ret != sz ) {
+                throw new IllegalArgumentException("Program error? readString: Expected to read " +
+                                                   sz + " bytes, but only read " + ret + " bytes");
+        }
         return new String(bytes, "UTF8");
     }
     
     private void writeShort(ByteArrayOutputStream baos, short s) {
         byte[] shortAsByteArray = ByteConversionUtil.fromShort(s);
-        assert shortAsByteArray.length == 2;
+        if ( shortAsByteArray.length != 2 ) {
+                throw new IllegalArgumentException("Program error? writeShort: Excepted byte array != 2 bytes.");
+        }
         baos.write(shortAsByteArray, 0, 2);
     }
     
@@ -233,7 +254,9 @@ public class CipherTextSerializer {
     {
         byte[] shortAsByteArray = new byte[2];
         int ret = bais.read(shortAsByteArray, 0, 2);
-        assert ret == 2 : "readShort: Failed to read 2 bytes.";
+        if ( ret != 2 ) {
+                throw new IllegalArgumentException("Program error? readShort: Failed to read 2 bytes.");
+        }
         return ByteConversionUtil.toShort(shortAsByteArray);
     }
     
@@ -247,13 +270,17 @@ public class CipherTextSerializer {
     {
         byte[] intAsByteArray = new byte[4];
         int ret = bais.read(intAsByteArray, 0, 4);
-        assert ret == 4 : "readInt: Failed to read 4 bytes.";
+        if ( ret != 4 ) {
+                throw new IllegalArgumentException("Program error? readInt: Failed to read 4 bytes.");
+        }
         return ByteConversionUtil.toInt(intAsByteArray);
     }
     
     private void writeLong(ByteArrayOutputStream baos, long l) {
         byte[] longAsByteArray = ByteConversionUtil.fromLong(l);
-        assert longAsByteArray.length == 8;
+        if ( longAsByteArray.length != 8 ) {
+                throw new IllegalArgumentException("Program error? writeLong: Expected byte array != 8 bytes.");
+        }
         baos.write(longAsByteArray, 0, 8);
     }
     
@@ -262,7 +289,9 @@ public class CipherTextSerializer {
     {
         byte[] longAsByteArray = new byte[8];
         int ret = bais.read(longAsByteArray, 0, 8);
-        assert ret == 8 : "readLong: Failed to read 8 bytes.";
+        if ( ret != 8 ) {
+                throw new IllegalArgumentException("Program error? readLong: Failed to read 8 bytes.");
+        }
         return ByteConversionUtil.toLong(longAsByteArray);
     }
     
@@ -277,14 +306,21 @@ public class CipherTextSerializer {
         throws EncryptionException
     {
         try {
-        	assert cipherTextSerializedBytes != null : "cipherTextSerializedBytes cannot be null.";
-        	assert cipherTextSerializedBytes.length > 0 : "cipherTextSerializedBytes must be > 0 in length.";
+            if ( cipherTextSerializedBytes == null ) {
+                throw new IllegalArgumentException("cipherTextSerializedBytes cannot be null.");
+            }
+        	if ( cipherTextSerializedBytes.length == 0 ) {
+                throw new IllegalArgumentException("cipherTextSerializedBytes must be > 0 in length.");
+            }
             ByteArrayInputStream bais = new ByteArrayInputStream(cipherTextSerializedBytes);
             int kdfInfo = readInt(bais);
             debug("kdfInfo: " + kdfInfo);
             int kdfPrf = (kdfInfo >>> 28);
             debug("kdfPrf: " + kdfPrf);
-            assert kdfPrf >= 0 && kdfPrf <= 15 : "kdfPrf == " + kdfPrf + " must be between 0 and 15.";
+            if ( kdfPrf < 0 || kdfPrf > 16 ) {
+                throw new IllegalArgumentException("Program error? convertToCipherText: kdPrf is " + kdfPrf +
+                                                   ". Must be between 0 and 15 inclusive");
+            }
             int kdfVers = ( kdfInfo & 0x07ffffff);
 
             // First do a quick sanity check on the argument. Previously this was an assertion.
@@ -313,7 +349,10 @@ public class CipherTextSerializer {
             String cipherXform = readString(bais, strSize);
             debug("convertToCipherText: cipherXform = " + cipherXform);
             String[] parts = cipherXform.split("/");
-            assert parts.length == 3 : "Malformed cipher transformation";
+            if ( parts.length != 3 ) {
+                throw new IllegalArgumentException("Program error? Malformed cipher transformation. Expecting 3 parts to cipher transformation, " +
+                                                   "alg/mode/padding, but found " + parts.length + " parts (" + cipherXform + ").");
+            }
             String cipherMode = parts[1];
             if ( ! CryptoHelper.isAllowedCipherMode(cipherMode) ) {
                 String msg = "Cipher mode " + cipherMode + " is not an allowed cipher mode";
@@ -332,7 +371,9 @@ public class CipherTextSerializer {
             }
             int ciphertextLen = readInt(bais);
             debug("convertToCipherText: ciphertextLen = " + ciphertextLen);
-            assert ciphertextLen > 0 : "convertToCipherText: Invalid cipher text length";
+            if ( ciphertextLen <= 0 ) {
+                throw new IllegalArgumentException("convertToCipherText: Invalid cipher text length; must be > 0.");
+            }
             byte[] rawCiphertext = new byte[ciphertextLen];
             bais.read(rawCiphertext, 0, rawCiphertext.length);
             short macLen = readShort(bais);
@@ -391,8 +432,9 @@ public class CipherTextSerializer {
      *  					ciphertext.
      */
     private static boolean versionIsCompatible(int readKdfVers) {
-    	// We've checked elsewhere for this, so assertion is OK here.
-    	assert readKdfVers > 0 : "Extracted KDF version is negative!";
+        if ( readKdfVers <= 0 ) {
+            throw new IllegalArgumentException("Extracted KDF version is <= 0. Must be integer >= 1.");
+        }
     	
 		switch ( readKdfVers ) {
 		case KeyDerivationFunction.originalVersion:		// First version
