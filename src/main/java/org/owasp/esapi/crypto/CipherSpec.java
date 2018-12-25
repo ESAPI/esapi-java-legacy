@@ -350,8 +350,8 @@ public final class CipherSpec implements Serializable {
                       NullSafe.equals(this.cipher_xform_, that.cipher_xform_) &&
                       this.keySize_ == that.keySize_ &&
                       this.blockSize_ == that.blockSize_ &&
-                        // Comparison safe from timing attacks.
-                      CryptoHelper.arrayCompare(this.iv_, that.iv_) );
+                        // In all versions of JDK 7 and later, comparison safe from timing attacks.
+                      java.security.MessageDigest.isEqual(this.iv_, that.iv_) );
         }
         return result;
     }
