@@ -63,15 +63,15 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
 		// if ( ch == 0x5c ) return "\\\\";
 
 		// encode up to 256 with \\xHH
-        String temp = Integer.toHexString(c);
+        String temp = Integer.toHexString(c).toUpperCase();
 		if ( c < 256 ) {
 	        String pad = "00".substring(temp.length() );
-	        return "\\x" + pad + temp.toUpperCase();
+	        return "\\x" + pad + temp;
 		}
 
 		// otherwise encode with \\uHHHH
         String pad = "0000".substring(temp.length() );
-        return "\\u" + pad + temp.toUpperCase();
+        return "\\u" + pad + temp;
 	}
 
 	

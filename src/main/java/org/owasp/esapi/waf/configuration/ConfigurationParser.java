@@ -142,11 +142,11 @@ public class ConfigurationParser {
 					config.setSessionCookieName(DEFAULT_SESSION_COOKIE);
 				}
 
-				String mode = settingsRoot.getFirstChildElement("mode").getValue();
+				String mode = settingsRoot.getFirstChildElement("mode").getValue().toLowerCase();
 				
-				if ( "block".equals(mode.toLowerCase() ) ) {
+				if ( "block".equals(mode) ) {
 					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.BLOCK;
-				} else if ( "redirect".equals(mode.toLowerCase() ) ){
+				} else if ( "redirect".equals(mode) ){
 					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.REDIRECT;
 				} else {
 					AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.LOG;

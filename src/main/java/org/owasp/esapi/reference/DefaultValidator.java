@@ -566,9 +566,10 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
 		// verify extensions
 		Iterator<String> i = allowedExtensions.iterator();
+		String inputLowerCase = input.toLowerCase();
 		while (i.hasNext()) {
 			String ext = i.next();
-			if (input.toLowerCase().endsWith(ext.toLowerCase())) {
+			if (inputLowerCase.endsWith(ext.toLowerCase())) {
 				return canonical;
 			}
 		}
