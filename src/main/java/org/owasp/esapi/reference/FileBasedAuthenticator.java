@@ -22,26 +22,33 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Reference implementation of the Authenticator interface. This reference implementation is backed by a simple text
- * file that contains serialized information about users. Many organizations will want to create their own
- * implementation of the methods provided in the Authenticator interface backed by their own user repository. This
- * reference implementation captures information about users in a simple text file format that contains user information
- * separated by the pipe "|" character. Here's an example of a single line from the users.txt file:
+ * Reference implementation of the Authenticator interface. This reference implementation is intended to be
+ * an <b>EXAMPLE</b> only and is not really suitable for enterprise-wide applications. It is backed by a simple unsorted
+ * text file that contains serialized information about users and it uses a relative weak password hashing algorithm.
+ * (For further details, see the "See Also" section, below.)
+ * <p>
+ * Many organizations will want to create their own implementation of the methods provided in the
+ * {@code Authenticator} interface backed by their own user repository as this reference implementation
+ * is not very scalable. This reference implementation captures information about users in a simple text file
+ * format that contains user information separated by the pipe "|" character.
  * <p/>
+ * <p>Here's an example of a single line from the users.txt file:<p/>
+ * <p>
  * <PRE>
- * <p/>
  * account id | account name | hashed password | roles | lockout | status | old password hashes | last
  * hostname | last change | last login | last failed | expiration | failed
  * ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
  * 1203123710837 | mitch | 44k/NAzQUlrCq9musTGGkcMNmdzEGJ8w8qZTLzpxLuQ= | admin,user | unlocked | enabled |
  * u10dW4vTo3ZkoM5xP+blayWCz7KdPKyKUojOn9GJobg= | 192.168.1.255 | 1187201000926 | 1187200991568 | 1187200605330 |
  * 2187200605330 | 1
- * <p/>
  * </PRE>
+ * <p/>
  *
  * @author <a href="mailto:jeff.williams@aspectsecurity.com?subject=ESAPI question">Jeff Williams</a> at <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Chris Schmidt (chrisisbeef .at. gmail.com) <a href="http://www.digital-ritual.com">Digital Ritual Software</a>
  * @see org.owasp.esapi.Authenticator
+ * @see #hashPassword(String password, String accountName)
+ * @see <a href="https://github.com/ESAPI/esapi-java-legacy/issues/233" target="_blank" rel="noopener">GitHub Issue #233: Weak password storage</a>
  * @since June 1, 2007
  */
 public class FileBasedAuthenticator extends AbstractAuthenticator {
@@ -399,10 +406,32 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
     /**
      * {@inheritDoc}
      *
+     * <b>WARNING:</b> There are several weaknesses in this method:
+     * <ol>
+     * <li>The salt should really be a randomly generated salt, typically at
+     * least 64-bits, but in this method, the {@code accountName} parameter is
+     * used as the salt.</li>
+     * <li>This salt is then combined with the <b>ESAPI.properties</b> file's
+     * {@code Encryptor.MasterSalt}, meaning that if that property is changed,
+     * all previously stored passwords become invalid and need to be reset.</li>
+     * <li>Only 1024 iterations of the hash algorithm (SHA-512) are made. While that
+     * may have been fine in 2007, it is no longer considered sufficient.</li>
+     * </ol>
+     *
      * @throws EncryptionException
      */
     public String hashPassword(String password, String accountName) throws EncryptionException {
+        // Here is but one weakness: This salt should ideally be a _random_ salt,
+        // at least 64 bits in length. Unfortunately, if anyone is actually using
+        // this method in a production application (let's hope not) fixing this
+        // now will those application's previously stored passwords. See this
+        // GitHub issue comment for further details:
+        //    https://github.com/ESAPI/esapi-java-legacy/issues/233#issuecomment-450401400
         String salt = accountName.toLowerCase();
+        //
+        // Other weaknesses are that only 1024 iterations of the hash algorithm
+        // (SHA-512) is used and the final hash is tied to the Encryptor.MasterSalt
+        // so if that is ever changed, all users passwords must be reset.
         return ESAPI.encryptor().hash(password, salt);
     }
 
