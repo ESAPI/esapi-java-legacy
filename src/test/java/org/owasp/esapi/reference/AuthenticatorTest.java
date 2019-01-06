@@ -69,7 +69,7 @@ public class AuthenticatorTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();
     @Rule
-    public Timeout testTimout = new Timeout(10, TimeUnit.SECONDS);
+    public Timeout testTimout = new Timeout(5, TimeUnit.MINUTES);
     @Rule
     public TestName name = new TestName();
 
