@@ -8,7 +8,7 @@ Previous release: ESAPI 2.1.0.1, February 5, 2016
 
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
-* 100 GitHub issues closed.
+* 101 GitHub issues closed.
 * Upgraded versions of several ESAPI dependencies (i.e., 3rd party jars), including several that had unpatched CVEs. See "Appendix: Dependency Updates (as reflected in pom.xml)" below for full details.
 * Upgrade to require JDK 7 or later. JDK 6 is no longer supported by ESAPI.
 * Upgrade to require Java Servlet API 3.0.1 or later. See "Appendix: Dependency Updates (as reflected in pom.xml)" below for additional details.
@@ -23,7 +23,7 @@ Executive Summary: Important Things to Note for this Release
 
                 GitHub Issues fixed in this release
             [i.e., since 2.1.0.1 release on 2016-Feb-05]
-                          100 issues closed
+                          101 issues closed
 
 Issue #			GitHub Issue Title
 ----------------------------------------------------------------------------------------------
@@ -77,6 +77,7 @@ Issue #			GitHub Issue Title
 327		Construct &quot;&amp;amp;&quot; in Validator.URL is simple character class, not reference to ampersand
 333		logger is gettin class cast exception
 352		Possible threading issue in EnterpriseSecurityExceptionTest
+360		AuthenticatorTest.setCurrentUser() periodically fails.
 361		Update pom.xml to use latest Maven plugins
 364		Possible null deference found by Coverity (id # 1352406) in CipherTextSerializer class
 365		TLD not in Jar
@@ -140,19 +141,6 @@ Issue #			GitHub Issue Title
 * Changed many additional assertions in ESAPI crypto to explicit runtime checks that throw IllegalArgumentException instead. If you were using ESAPI crypto correctly, it shouldn't affect you, but if you were calling it incorrectly, you may now immediately get an IllegalArgumentException rather than something like a mysterious MullPointerException much later on.
 
 -----------------------------------------------------------------------------
-                    ATTENTION: Other Important Notes About Failing Tests
-
-The JUnit test AuthenticatorTest.setCurrentUser() is STILL periodically failing due to an apparent race condition either in the test itself or in FileBasedAuthenticator. See GitHub issue #360 for details, including why we don't think it is worth holding up the release for.
-
-If you run
-    mvn test
-the failure that you may occasionally see looks like:
-    testSetCurrentUser(org.owasp.esapi.reference.AuthenticatorTest): Invalid password
-
-Almost always, if you run the tests again, this failure almost always disappears.
-
-
------------------------------------------------------------------------------
 
                 Contributors for ESAPI 2.1.0.2 release
 
@@ -181,7 +169,7 @@ Special shout-outs to:
 List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
         List includes merged and rejected PRs
 
-  46 Closed PRs since 2.1.0.1 release
+  47 Closed PRs since 2.1.0.1 release
   ===================================
 #362 by artfullyContrived was merged on Feb 9, 2016 -- Update pom.xml to use latest Maven plugins
 #367 by drm2 was merged on Apr 9, 2016 -- Adding IntelliJ Tests setup documentation
@@ -230,6 +218,7 @@ List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
 #459 by simon0117 was merged on Dec 20, 2018 -- Eclipse setup updates
 #460 by simon0117 was closed on Dec 20, 2018 -- ESAPIFilter in RI should allow login page destination to be configured #30
 #464 by kwwall was merged on MMM DD, 20YY -- Misc release cleanup
+#467 by jeremiahjstacey was merged on Jan 06, 2019 -- AuthenticatorTest Stability #360
 
 List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs:
         # merged PRs    GitHub ID
@@ -238,7 +227,7 @@ List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs
               8         kwwall
               2         artfullyContrived
               2         augustd
-              2         jeremiahjstacey
+              3         jeremiahjstacey
               2         JoelRabinovitch
               1         drm2
               1         jackycct
