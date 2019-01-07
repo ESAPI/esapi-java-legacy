@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-import java.util.Date;
+import java.util.Calendar;
 import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
@@ -33,6 +33,7 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hamcrest.core.IsEqual;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -68,7 +69,7 @@ public class AuthenticatorTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();
     @Rule
-    public Timeout testTimout = new Timeout(10, TimeUnit.SECONDS);
+    public Timeout testTimout = new Timeout(5, TimeUnit.MINUTES);
     @Rule
     public TestName name = new TestName();
 
@@ -207,13 +208,12 @@ public class AuthenticatorTest {
 		assertFalse( currentUser.getAccountName().equals( user2.getAccountName() ) );
 		
 		Runnable echo = new Runnable() {
-			private int count = 1;
-            private boolean result = false;
 			public void run() {
 				User a = null;
 				try {
 					String password = instance.generateStrongPassword();
-					String accountName = "TestAccount" + count++;
+					//Create account name using random strings to guarantee uniqueness among running threads.
+                    String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
 					a = instance.getUser(accountName);
 					if ( a != null ) {
 					    instance.removeUser(accountName);
@@ -225,7 +225,7 @@ public class AuthenticatorTest {
                     collector.addError(e);
 				}
 				User b = instance.getCurrentUser();
-				result &= a.equals(b);
+				collector.checkThat("Logged in user should equal original user", a.equals(b), new IsEqual<Boolean>(Boolean.TRUE));
 			}
 		};
         ThreadGroup tg = new ThreadGroup("test");
@@ -413,10 +413,7 @@ public class AuthenticatorTest {
 	 */
 	@Test public void testSetCurrentUser() throws AuthenticationException, InterruptedException {
 		System.out.println("setCurrentUser");
-        System.err.println("AuthenticatorTest.setCurrentUser(): This test " +
-                           "occasionally fails due to some undiscovered race condition. " +
-                           "This has been reported as GitHub issue #360. Patches to fix welcome.");
-		String user1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
+        String user1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		String user2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
 		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
 		userOne.enable();
@@ -431,12 +428,13 @@ public class AuthenticatorTest {
 		assertFalse( currentUser.getAccountName().equals( userTwo.getAccountName() ) );
 		final CountDownLatch latch = new CountDownLatch(10);
 		Runnable echo = new Runnable() {
-			private int count = 1;
 			public void run() {
 				User u=null;
 				try {
-					String password = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-					u = instance.createUser("test" + count++, password, password);
+				  //Increase pwd size to guarantee greater than (not "or equal to") 16 strength.  See FileBasedAuthenticator 711-715
+                    String password = ESAPI.randomizer().getRandomString(17, EncoderConstants.CHAR_ALPHANUMERICS);
+                    String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+					u = instance.createUser(username, password, password);
 					instance.setCurrentUser(u);
 					ESAPI.getLogger("test").info( Logger.SECURITY_SUCCESS, "Got current user" );
 					//If the user isn't removed every subsequent execution will fail because we cannot create a duplicate user of the same name!
@@ -457,53 +455,110 @@ public class AuthenticatorTest {
 	}
 	
 
-	/**
-	 * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testSetCurrentUserWithRequest() throws AuthenticationException {
-		System.out.println("setCurrentUser(req,resp)");
+
+    /**
+     * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testSetCurrentUserWithRequest() throws AuthenticationException {
         instance.logout();  // in case anyone is logged in
-		String password = instance.generateStrongPassword();
-		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
-		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("username", accountName);
-		request.addParameter("password", password);
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        String password = instance.generateStrongPassword();
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", accountName);
+        request.addParameter("password", password);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
         User loggedIn = instance.login( request, response );
         User currentUser = instance.getCurrentUser();
         assertTrue(loggedIn.isLoggedIn());
         assertSame(currentUser, loggedIn);
         assertSame(user, loggedIn);
-		try {
-			user.disable();
-			instance.login( request, response );
-			fail();
-		} catch( AuthenticationException e ) {
-			// expected
-		}
-		try {
-			user.enable();
-			user.lock();
-			instance.login( request, response );
-			fail();
-		} catch( AuthenticationException e ) {
-			// expected
-		}
-		try {
-			user.unlock();
-			user.setExpirationTime( new Date() );
-			instance.login( request, response );
-			fail();
-		} catch( AuthenticationException e ) {
-			// expected
-		}
-	}
+    }
+
+    /**
+     * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testSetCurrentUserWithRequestDisabledAccount() throws AuthenticationException {
+        instance.logout();  // in case anyone is logged in
+        String password = instance.generateStrongPassword();
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", accountName);
+        request.addParameter("password", password);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        try {
+            user.disable();
+            instance.login( request, response );
+            fail("Disabled User Account should not be able to log in.");
+        } catch( AuthenticationException e ) {
+            // expected
+        }
+    }
+    
+    /**
+     * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testSetCurrentUserWithRequestLockedAccount() throws AuthenticationException {
+        instance.logout();  // in case anyone is logged in
+        String password = instance.generateStrongPassword();
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", accountName);
+        request.addParameter("password", password);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        try {
+            user.lock();
+            instance.login( request, response );
+            fail("Locked User Account should not be able to log in.");
+        } catch( AuthenticationException e ) {
+            // expected
+        }
+    }
+    /**
+     * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testSetCurrentUserWithRequestExpiredAccount() throws AuthenticationException {
+        instance.logout();  // in case anyone is logged in
+        String password = instance.generateStrongPassword();
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        DefaultUser user = (DefaultUser) instance.createUser(accountName, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", accountName);
+        request.addParameter("password", password);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE, -1);
+        try {
+            user.unlock();
+            user.setExpirationTime( calendar.getTime() );
+            instance.login( request, response );
+            fail("Expired User account should not be allowed to log in.");
+        } catch( AuthenticationException e ) {
+            // expected
+        }
+    }
 	
 	
 	
