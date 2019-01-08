@@ -331,6 +331,25 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size()==2);
 
     }
+    
+    public void testIsValidDateIssue299() {
+        Validator instance = ESAPI.validator();
+        DateFormat df=new SimpleDateFormat("dd/MM/yyyy");      
+        df.setLenient(true);
+        System.out.println("Result:" + instance.isValidDate("Pruebas-", "01/01/2aaa", df, false));
+        df=new SimpleDateFormat("yyyy/dd/MM");      
+        df.setLenient(true);
+        System.out.println("Result:"  + instance.isValidDate("Pruebas-", "2aaa/01/01", df, false));
+        df=new SimpleDateFormat("dd/yyyy/MM");      
+        df.setLenient(true);
+        System.out.println("Result:"  + instance.isValidDate("Pruebas-", "01/2012'SELECT * FROM user_table'/01", df, false));
+        df=new SimpleDateFormat("dd/MM/yyyy");      
+        df.setLenient(true);
+        System.out.println("Result:"  + instance.isValidDate("Pruebas-", "01/01/2012'SELECT * FROM user_table'", df, false));
+        df=new SimpleDateFormat("dd/yyyy/MM");      
+        df.setLenient(true);
+        System.out.println("Result:"  + instance.isValidDate("Pruebas-", "01/2aaa/01", df, false));
+    }
 
     public void testIsValidDirectoryPath() throws IOException {
         System.out.println("isValidDirectoryPath");
