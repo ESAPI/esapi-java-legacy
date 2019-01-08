@@ -91,10 +91,14 @@ public class DateValidationRule extends BaseValidationRule {
 							+ input, context);
 		}
 
-	    String canonical = encoder.canonicalize(input);
-
-		try {
-			return format.parse(canonical);
+		 String canonical = encoder.canonicalize(input);
+	        try {
+	            Date rval = format.parse(canonical);
+	            String cycled = format.format(rval);
+	            if (!cycled.equals(canonical)) {
+	                throw new Exception("Parameter date is not a clean translation between String and Date contexts.  Check input for additional characters");
+	            }
+	            return rval;
 		} catch (Exception e) {
 			throw new ValidationException(context
 					+ ": Invalid date must follow the "

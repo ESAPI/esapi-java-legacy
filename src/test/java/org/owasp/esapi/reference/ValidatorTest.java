@@ -135,7 +135,7 @@ public class ValidatorTest extends TestCase {
     	System.out.println("getValidDate");
     	Validator instance = ESAPI.validator();
     	ValidationErrorList errors = new ValidationErrorList();
-    	assertTrue(instance.getValidDate("datetest1", "June 23, 1967", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US), false) != null);
+    	assertTrue(instance.getValidDate("datetest1", "June 23, 1967", DateFormat.getDateInstance(DateFormat.LONG, Locale.US), false) != null);
     	instance.getValidDate("datetest2", "freakshow", DateFormat.getDateInstance(), false, errors);
     	assertEquals(1, errors.size());
 
@@ -317,7 +317,7 @@ public class ValidatorTest extends TestCase {
     public void testIsValidDate() {
         System.out.println("isValidDate");
         Validator instance = ESAPI.validator();
-        DateFormat format = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.US);
+        DateFormat format = SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG, Locale.US);
         assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true));
         assertFalse(instance.isValidDate("datetest2", null, format, false));
         assertFalse(instance.isValidDate("datetest3", "", format, false));
