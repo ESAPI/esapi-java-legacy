@@ -24,7 +24,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
-import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
 
@@ -36,16 +35,16 @@ public class ValidationErrorListTest {
     public ExpectedException exEx = ExpectedException.none();
     @Rule
     public TestName testName = new TestName();
-    
+
     ValidationErrorList vel = new ValidationErrorList();
     ValidationException vex = new ValidationException(testName.getMethodName(), testName.getMethodName());
     @Test
     public void testAddErrorNullContextThrows() {
         exEx.expect(RuntimeException.class);
         exEx.expectMessage("Context cannot be null");
-       vel.addError(null, vex);
+        vel.addError(null, vex);
     }
-    
+
     @Test
     public void testAddErrorNullExceptionThrows() {
         exEx.expect(RuntimeException.class);
@@ -58,37 +57,33 @@ public class ValidationErrorListTest {
         vel.addError(testName.getMethodName(), vex);
         vel.addError(testName.getMethodName(), vex);
     }
-	
-	@Test
-	public void testErrors() throws Exception {
-		System.out.println("testErrors");
-		vel.addError("context",  vex );
-		assertTrue("Validation Errors List should contain the added ValidationException Reference",vel.errors().contains( vex) );
-	}
 
-	@Test
-	public void testGetError() throws Exception {
-		System.out.println("testGetError");
-		vel.addError("context",  vex );
-		assertTrue( vel.getError( "context" ) == vex );
-		assertNull( vel.getError( "ridiculous" ) );
-	}
+    @Test
+    public void testErrors() throws Exception {
+        vel.addError("context",  vex );
+        assertTrue("Validation Errors List should contain the added ValidationException Reference",vel.errors().contains( vex) );
+    }
 
-	@Test
-	public void testIsEmpty() throws Exception {
-		System.out.println("testIsEmpty");
-		assertTrue( vel.isEmpty() );
-		vel.addError("context",  vex );
-		assertFalse( vel.isEmpty() );
-	}
+    @Test
+    public void testGetError() throws Exception {
+        vel.addError("context",  vex );
+        assertTrue( vel.getError( "context" ) == vex );
+        assertNull( vel.getError( "ridiculous" ) );
+    }
 
-	@Test
-	public void testSize() throws Exception {
-		System.out.println("testSize");
-		assertEquals(0, vel.size() );
-		vel.addError("context",  vex );
-		assertEquals(1, vel.size());
-	}
+    @Test
+    public void testIsEmpty() throws Exception {
+        assertTrue( vel.isEmpty() );
+        vel.addError("context",  vex );
+        assertFalse( vel.isEmpty() );
+    }
+
+    @Test
+    public void testSize() throws Exception {
+        assertEquals(0, vel.size() );
+        vel.addError("context",  vex );
+        assertEquals(1, vel.size());
+    }
 
 }
 
