@@ -15,56 +15,21 @@
  */
 package org.owasp.esapi;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
+import org.junit.Test;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
+
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ValidationErrorListTest extends TestCase {
+public class ValidationErrorListTest {
 
-	/**
-	 * Instantiates a new executor test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public ValidationErrorListTest(String testName) {
-		super(testName);
-	}
-
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void setUp() throws Exception {
-		// none
-	}
-
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void tearDown() throws Exception {
-		// none
-	}
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ValidationErrorListTest.class);
-		return suite;
-	}
-	
+	@Test	
 	public void testAddError() throws Exception {
 		System.out.println("testAddError");
 		ValidationErrorList vel = new ValidationErrorList();
@@ -89,7 +54,8 @@ public class ValidationErrorListTest extends TestCase {
 			// expected
 		}
 	}
-
+	
+	@Test
 	public void testErrors() throws Exception {
 		System.out.println("testErrors");
 		ValidationErrorList vel = new ValidationErrorList();
@@ -98,6 +64,7 @@ public class ValidationErrorListTest extends TestCase {
 		assertTrue( vel.errors().get(0) == vex );
 	}
 
+	@Test
 	public void testGetError() throws Exception {
 		System.out.println("testGetError");
 		ValidationErrorList vel = new ValidationErrorList();
@@ -107,6 +74,7 @@ public class ValidationErrorListTest extends TestCase {
 		assertTrue( vel.getError( "ridiculous" ) == null );
 	}
 
+	@Test
 	public void testIsEmpty() throws Exception {
 		System.out.println("testIsEmpty");
 		ValidationErrorList vel = new ValidationErrorList();
@@ -116,6 +84,7 @@ public class ValidationErrorListTest extends TestCase {
 		assertFalse( vel.isEmpty() );
 	}
 
+	@Test
 	public void testSize() throws Exception {
 		System.out.println("testSize");
 		ValidationErrorList vel = new ValidationErrorList();
