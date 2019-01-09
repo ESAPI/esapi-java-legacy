@@ -15,59 +15,21 @@
  */
 package org.owasp.esapi.reference.validation;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.fail;
 
+import org.junit.Test;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.ValidationException;
 
-public class BaseValidationRuleTest extends TestCase {
+public class BaseValidationRuleTest {
 
-	/**
-	 * Instantiates a new base validation rule test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public BaseValidationRuleTest(String testName) {
-		super(testName);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws Exception
-	 */
-	protected void setUp() throws Exception {
-		// none
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @throws Exception
-	 */
-	protected void tearDown() throws Exception {
-		// none
-	}
-
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(BaseValidationRuleTest.class);
-		return suite;
-	}
-
-	/**
+		/**
 	 * Verifies assertValid throws ValidationException on invalid input
 	 * Validates fix for Google issue #195
 	 * 
 	 * @throws ValidationException
 	 */
+    @Test
 	public void testAssertValid() throws ValidationException {
 		SampleValidationRule rule = new SampleValidationRule("UnitTest");
 		try {
