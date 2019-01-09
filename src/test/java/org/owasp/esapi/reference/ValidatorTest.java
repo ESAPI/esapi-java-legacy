@@ -349,6 +349,8 @@ public class ValidatorTest extends TestCase {
         df=new SimpleDateFormat("dd/yyyy/MM");      
         df.setLenient(true);
         assertFalse(instance.isValidDate("Pruebas-", "01/2aaa/01", df, false));
+        df = SimpleDateFormat.getDateInstance(SimpleDateFormat.LONG, Locale.US);
+        assertFalse(instance.isValidDate("datetest4", "September 11, 2001' union select * from another_table where user_id like '%", df, false));
     }
 
     public void testIsValidDirectoryPath() throws IOException {
