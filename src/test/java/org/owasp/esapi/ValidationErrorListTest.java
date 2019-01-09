@@ -62,8 +62,6 @@ public class ValidationErrorListTest {
 	@Test
 	public void testErrors() throws Exception {
 		System.out.println("testErrors");
-		ValidationErrorList vel = new ValidationErrorList();
-		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
 		assertTrue("Validation Errors List should contain the added ValidationException Reference",vel.errors().contains( vex) );
 	}
@@ -71,8 +69,6 @@ public class ValidationErrorListTest {
 	@Test
 	public void testGetError() throws Exception {
 		System.out.println("testGetError");
-		ValidationErrorList vel = new ValidationErrorList();
-		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
 		assertTrue( vel.getError( "context" ) == vex );
 		assertNull( vel.getError( "ridiculous" ) );
@@ -81,9 +77,7 @@ public class ValidationErrorListTest {
 	@Test
 	public void testIsEmpty() throws Exception {
 		System.out.println("testIsEmpty");
-		ValidationErrorList vel = new ValidationErrorList();
 		assertTrue( vel.isEmpty() );
-		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
 		assertFalse( vel.isEmpty() );
 	}
@@ -91,23 +85,11 @@ public class ValidationErrorListTest {
 	@Test
 	public void testSize() throws Exception {
 		System.out.println("testSize");
-		ValidationErrorList vel = new ValidationErrorList();
 		assertEquals(0, vel.size() );
-		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
 		assertEquals(1, vel.size());
 	}
 
-	private ValidationException createValidationException() {
-		ValidationException vex = null;
-		try {
-			vex = new ValidationException("User message", "Log Message");
-		} catch( IntrusionException e ) {
-			// expected occasionally
-		}
-		return vex;
-	}
-	
 }
 
 
