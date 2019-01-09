@@ -23,12 +23,14 @@ import org.owasp.esapi.errors.ValidationException;
 
 public class BaseValidationRuleTest {
 
-		/**
+    
+ /*   
+		*//**
 	 * Verifies assertValid throws ValidationException on invalid input
 	 * Validates fix for Google issue #195
 	 * 
 	 * @throws ValidationException
-	 */
+	 *//*
     @Test
 	public void testAssertValid() throws ValidationException {
 		SampleValidationRule rule = new SampleValidationRule("UnitTest");
@@ -59,5 +61,5 @@ public class BaseValidationRuleTest {
 			throw new ValidationException("Demonstration Exception", "Demonstration Exception");
 		}
 
-	}
+	}*/
 }
