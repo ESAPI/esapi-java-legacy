@@ -19,9 +19,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TestName;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -30,32 +32,32 @@ import org.owasp.esapi.errors.ValidationException;
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class ValidationErrorListTest {
-
-	@Test	
-	public void testAddError() throws Exception {
-		System.out.println("testAddError");
-		ValidationErrorList vel = new ValidationErrorList();
-		ValidationException vex = createValidationException();
-		vel.addError("context", vex );
-		try {
-			vel.addError(null, vex );
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-		try {
-			vel.addError("context1", null );
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-		try {
-			vel.addError("context", vex );  // add the same context again
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-	}
+    @Rule
+    public ExpectedException exEx = ExpectedException.none();
+    @Rule
+    public TestName testName = new TestName();
+    
+    ValidationErrorList vel = new ValidationErrorList();
+    ValidationException vex = new ValidationException(testName.getMethodName(), testName.getMethodName());
+    @Test
+    public void testAddErrorNullContextThrows() {
+        exEx.expect(RuntimeException.class);
+        exEx.expectMessage("Context cannot be null");
+       vel.addError(null, vex);
+    }
+    
+    @Test
+    public void testAddErrorNullExceptionThrows() {
+        exEx.expect(RuntimeException.class);
+        exEx.expectMessage("ValidationException cannot be null");
+        vel.addError(testName.getMethodName(), null);
+    }
+    public void testAddErrorDuplicateContextThrows() {
+        exEx.expect(RuntimeException.class);
+        exEx.expectMessage("already exists, must be unique");
+        vel.addError(testName.getMethodName(), vex);
+        vel.addError(testName.getMethodName(), vex);
+    }
 	
 	@Test
 	public void testErrors() throws Exception {

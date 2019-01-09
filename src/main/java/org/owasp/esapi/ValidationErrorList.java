@@ -91,8 +91,8 @@ public class ValidationErrorList {
 	 * @param vex	A {@code ValidationException}.
 	 */
 	public void addError(String context, ValidationException vex) {
-		if ( context == null ) throw new RuntimeException( "Context for cannot be null: " + vex.getLogMessage(), vex );
-		if ( vex == null ) throw new RuntimeException( "Context (" + context + ") cannot be null" );
+		if ( context == null ) throw new RuntimeException( "Context cannot be null: " + vex.getLogMessage(), vex );
+		if ( vex == null ) throw new RuntimeException( "ValidationException cannot be null for context  (" + context + ")" );
 		if (getError(context) != null) throw new RuntimeException("Context (" + context + ") already exists, must be unique");
 		errorList.put(context, vex);
 	}
