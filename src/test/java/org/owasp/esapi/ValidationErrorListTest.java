@@ -15,7 +15,9 @@
  */
 package org.owasp.esapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -61,7 +63,7 @@ public class ValidationErrorListTest {
 		ValidationErrorList vel = new ValidationErrorList();
 		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
-		assertTrue( vel.errors().get(0) == vex );
+		assertTrue("Validation Errors List should contain the added ValidationException Reference",vel.errors().contains( vex) );
 	}
 
 	@Test
@@ -71,7 +73,7 @@ public class ValidationErrorListTest {
 		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
 		assertTrue( vel.getError( "context" ) == vex );
-		assertTrue( vel.getError( "ridiculous" ) == null );
+		assertNull( vel.getError( "ridiculous" ) );
 	}
 
 	@Test
@@ -88,10 +90,10 @@ public class ValidationErrorListTest {
 	public void testSize() throws Exception {
 		System.out.println("testSize");
 		ValidationErrorList vel = new ValidationErrorList();
-		assertTrue( vel.size() == 0 );
+		assertEquals(0, vel.size() );
 		ValidationException vex = createValidationException();
 		vel.addError("context",  vex );
-		assertTrue( vel.size() == 1 );
+		assertEquals(1, vel.size());
 	}
 
 	private ValidationException createValidationException() {
