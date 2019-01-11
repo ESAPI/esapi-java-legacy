@@ -277,13 +277,8 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 */
 	public boolean isValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-		try {
-			getValidDate( context, input, format, allowNull);
-			return true;
-		} catch( ValidationException e ) {
-            errors.addError(context, e);
-			return false;
-		}
+	    getValidDate( context, input, format, allowNull, errors);
+	    return errors.isEmpty();
 	}
 
 	/**
