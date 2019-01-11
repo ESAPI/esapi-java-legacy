@@ -15,126 +15,76 @@
  */
 package org.owasp.esapi;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import org.owasp.esapi.errors.IntrusionException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.TestName;
 import org.owasp.esapi.errors.ValidationException;
+
 
 /**
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ValidationErrorListTest extends TestCase {
+public class ValidationErrorListTest {
+    @Rule
+    public ExpectedException exEx = ExpectedException.none();
+    @Rule
+    public TestName testName = new TestName();
 
-	/**
-	 * Instantiates a new executor test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
-	public ValidationErrorListTest(String testName) {
-		super(testName);
-	}
+    ValidationErrorList vel = new ValidationErrorList();
+    ValidationException vex = new ValidationException(testName.getMethodName(), testName.getMethodName());
+    @Test
+    public void testAddErrorNullContextThrows() {
+        exEx.expect(RuntimeException.class);
+        exEx.expectMessage("Context cannot be null");
+        vel.addError(null, vex);
+    }
 
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void setUp() throws Exception {
-		// none
-	}
+    @Test
+    public void testAddErrorNullExceptionThrows() {
+        exEx.expect(RuntimeException.class);
+        exEx.expectMessage("ValidationException cannot be null");
+        vel.addError(testName.getMethodName(), null);
+    }
+    public void testAddErrorDuplicateContextThrows() {
+        exEx.expect(RuntimeException.class);
+        exEx.expectMessage("already exists, must be unique");
+        vel.addError(testName.getMethodName(), vex);
+        vel.addError(testName.getMethodName(), vex);
+    }
 
-	/**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-	protected void tearDown() throws Exception {
-		// none
-	}
+    @Test
+    public void testErrors() throws Exception {
+        vel.addError("context",  vex );
+        assertTrue("Validation Errors List should contain the added ValidationException Reference",vel.errors().contains( vex) );
+    }
 
-	/**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ValidationErrorListTest.class);
-		return suite;
-	}
-	
-	public void testAddError() throws Exception {
-		System.out.println("testAddError");
-		ValidationErrorList vel = new ValidationErrorList();
-		ValidationException vex = createValidationException();
-		vel.addError("context", vex );
-		try {
-			vel.addError(null, vex );
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-		try {
-			vel.addError("context1", null );
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-		try {
-			vel.addError("context", vex );  // add the same context again
-			fail();
-		} catch( Exception e ) {
-			// expected
-		}
-	}
+    @Test
+    public void testGetError() throws Exception {
+        vel.addError("context",  vex );
+        assertTrue( vel.getError( "context" ) == vex );
+        assertNull( vel.getError( "ridiculous" ) );
+    }
 
-	public void testErrors() throws Exception {
-		System.out.println("testErrors");
-		ValidationErrorList vel = new ValidationErrorList();
-		ValidationException vex = createValidationException();
-		vel.addError("context",  vex );
-		assertTrue( vel.errors().get(0) == vex );
-	}
+    @Test
+    public void testIsEmpty() throws Exception {
+        assertTrue( vel.isEmpty() );
+        vel.addError("context",  vex );
+        assertFalse( vel.isEmpty() );
+    }
 
-	public void testGetError() throws Exception {
-		System.out.println("testGetError");
-		ValidationErrorList vel = new ValidationErrorList();
-		ValidationException vex = createValidationException();
-		vel.addError("context",  vex );
-		assertTrue( vel.getError( "context" ) == vex );
-		assertTrue( vel.getError( "ridiculous" ) == null );
-	}
+    @Test
+    public void testSize() throws Exception {
+        assertEquals(0, vel.size() );
+        vel.addError("context",  vex );
+        assertEquals(1, vel.size());
+    }
 
-	public void testIsEmpty() throws Exception {
-		System.out.println("testIsEmpty");
-		ValidationErrorList vel = new ValidationErrorList();
-		assertTrue( vel.isEmpty() );
-		ValidationException vex = createValidationException();
-		vel.addError("context",  vex );
-		assertFalse( vel.isEmpty() );
-	}
-
-	public void testSize() throws Exception {
-		System.out.println("testSize");
-		ValidationErrorList vel = new ValidationErrorList();
-		assertTrue( vel.size() == 0 );
-		ValidationException vex = createValidationException();
-		vel.addError("context",  vex );
-		assertTrue( vel.size() == 1 );
-	}
-
-	private ValidationException createValidationException() {
-		ValidationException vex = null;
-		try {
-			vex = new ValidationException("User message", "Log Message");
-		} catch( IntrusionException e ) {
-			// expected occasionally
-		}
-		return vex;
-	}
-	
 }
 
 
