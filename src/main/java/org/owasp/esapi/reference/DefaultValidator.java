@@ -301,14 +301,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
 	    Date safeDate = null;
-		    DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
-		    dvr.setAllowNull(allowNull);
-		    safeDate = dvr.sanitize(context, input, errors);
-	        if (!errors.isEmpty()) {
-	            safeDate = null;
-	        }
-		// error has been added to list, so return null
-		return safeDate;
+	    DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
+	    dvr.setAllowNull(allowNull);
+	    safeDate = dvr.sanitize(context, input, errors);
+	    if (!errors.isEmpty()) {
+	        safeDate = null;
+	    }
+	    // error has been added to list, so return null
+	    return safeDate;
 	}
 
 	/**
