@@ -20,6 +20,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
+import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.powermock.reflect.Whitebox;
@@ -174,6 +175,19 @@ public class DateValidationRuleTest {
         
         Date date =  uit.sanitize(contextStr, dateString);
         Assert.assertEquals(0, date.getTime());
+    }
+    
+    @Test
+    public void testSanitizeErrorListContainsError() throws ValidationException, ParseException {
+        ValidationErrorList vel = new ValidationErrorList();
+        Mockito.when(mockEncoder.canonicalize(dateString)).thenReturn(canonDateString);
+        Mockito.doThrow(testParseEx).when(testFormat).parse(canonDateString);
+        
+        Date date =  uit.sanitize(contextStr, dateString, vel);
+        Assert.assertEquals(0, date.getTime());
+        Assert.assertEquals(1, vel.size());
+        ValidationException wrapper = vel.errors().get(0);
+        Assert.assertEquals(testParseEx, wrapper.getCause());
     }
     
     @Test
