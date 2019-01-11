@@ -290,14 +290,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
-		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
+		
 		ValidationErrorList vel = new ValidationErrorList();
-		dvr.setAllowNull(allowNull);
-		//return dvr.getValid(context, input);
-		Date validDate = dvr.sanitize(context, input, vel);
+		Date validDate =  getValidDate(context, input, format, allowNull, vel);
+		
 		if (vel.isEmpty()) {
 		    return validDate;
 		}
+		
 		throw vel.errors().get(0);
 	}
 
@@ -305,13 +305,15 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-		try {
-			return getValidDate(context, input, format, allowNull);
-		} catch (ValidationException e) {
-			errors.addError(context, e);
-		}
+	    Date safeDate = null;
+		    DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
+		    dvr.setAllowNull(allowNull);
+		    safeDate = dvr.sanitize(context, input, errors);
+	        if (!errors.isEmpty()) {
+	            safeDate = null;
+	        }
 		// error has been added to list, so return null
-		return null;
+		return safeDate;
 	}
 
 	/**
