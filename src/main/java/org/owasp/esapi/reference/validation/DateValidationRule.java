@@ -21,6 +21,7 @@ import java.util.Date;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
+import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -70,14 +71,23 @@ public class DateValidationRule extends BaseValidationRule {
      */
 	@Override
 	public Date sanitize( String context, String input )  {
-		Date date = new Date(0);
-		try {
-			date = safelyParse(context, input, true);
-		} catch (ValidationException e) {
-			// do nothing
-	    }
-		return date;
+		return sanitize(context, input, null);
 	}
+	
+	/**
+     * {@inheritDoc}
+     */
+    public Date sanitize( String context, String input, ValidationErrorList errorList )  {
+        Date date = new Date(0);
+        try {
+            date = safelyParse(context, input, true);
+        } catch (ValidationException e) {
+            if (errorList != null) {
+                errorList.addError(context, e);
+            }
+        }
+        return date;
+    }
 	    
 	private Date safelyParse(String context, String input, boolean sanitize)
 			throws ValidationException {
