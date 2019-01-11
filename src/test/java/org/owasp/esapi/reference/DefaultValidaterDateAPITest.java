@@ -11,9 +11,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
+import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.reference.validation.DateValidationRule;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
  * This class contains a subsection of tests of the DefaultValidator class 
@@ -21,6 +26,8 @@ import org.owasp.esapi.reference.validation.DateValidationRule;
  * 
  */
 @Ignore
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(DefaultValidator.class)
 public class DefaultValidaterDateAPITest {
     @Rule
     public ExpectedException exEx = ExpectedException.none();
@@ -37,7 +44,7 @@ public class DefaultValidaterDateAPITest {
     
     
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         contextStr = testName.getMethodName();        
         
         mockEncoder = Mockito.mock(Encoder.class);
@@ -45,11 +52,18 @@ public class DefaultValidaterDateAPITest {
         
         spyDateRule = new DateValidationRule(contextStr, mockEncoder, testFormat);
         spyDateRule = Mockito.spy(spyDateRule);
-        
         //FIXME:  Argument Matchers for all to allow any ValidationErrorList
-        Mockito.doReturn(testDate).when(spyDateRule).sanitize(contextStr, dateString, null);
+      /*  Is.is(contextStr).
         
-        //FIXME:  when DateValidationRule ctr is called, return spyDateRule!
+        ArgumentMatcher<Object> contextMatch = new Equals(contextStr);
+        ArgumentMatcher<Object> dateInputMatch = new Equals(dateString);
+        ArgumentMatcher<Object> errorListTypeMatch = new InstanceOf(ValidationErrorList.class);
+        Mockito.doReturn(testDate).when(spyDateRule).sanitize(Is.is(contextStr), Is.is(dateString), Is.isA(ValidationErrorList.class));
+        Mockito.when(spyDateRule).s*/
+        
+        
+        //PowerMockito.whenNew(DateValidationRule.class).withArguments(ArgumentMatchers.anyString(), ArgumentMatchers.eq(dateString), ArgumentMatchers.eq(testFormat)).thenReturn(spyDateRule);
+        PowerMockito.whenNew(DateValidationRule.class).withArguments(ArgumentMatchers.anyString(), ArgumentMatchers.any(Encoder.class), ArgumentMatchers.any(DateFormat.class)).thenReturn(spyDateRule);
     }
     
     @Test
