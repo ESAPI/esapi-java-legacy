@@ -60,7 +60,7 @@ public class DateValidationRule extends BaseValidationRule {
      * {@inheritDoc}
      */
 	public Date getValid( String context, String input ) throws ValidationException {
-		return safelyParse(context, input);
+		return safelyParse(context, input, false);
 	}
 
     /**
@@ -72,14 +72,14 @@ public class DateValidationRule extends BaseValidationRule {
 	public Date sanitize( String context, String input )  {
 		Date date = new Date(0);
 		try {
-			date = safelyParse(context, input);
+			date = safelyParse(context, input, true);
 		} catch (ValidationException e) {
 			// do nothing
 	    }
 		return date;
 	}
 	    
-	private Date safelyParse(String context, String input)
+	private Date safelyParse(String context, String input, boolean sanitize)
 			throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
 		if (StringUtilities.isEmpty(input)) {
@@ -94,9 +94,11 @@ public class DateValidationRule extends BaseValidationRule {
 		 String canonical = encoder.canonicalize(input);
 	        try {
 	            Date rval = format.parse(canonical);
-	            String cycled = format.format(rval);
-	            if (!cycled.equals(canonical)) {
-	                throw new Exception("Parameter date is not a clean translation between String and Date contexts.  Check input for additional characters");
+	            if (sanitize) {
+	                String cycled = format.format(rval);
+	                if (!cycled.equals(canonical)) {
+	                    throw new Exception("Parameter date is not a clean translation between String and Date contexts.  Check input for additional characters");
+	                }
 	            }
 	            return rval;
 		} catch (Exception e) {
