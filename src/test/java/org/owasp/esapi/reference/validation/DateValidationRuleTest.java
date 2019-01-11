@@ -13,8 +13,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.mockito.Mockito;
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.powermock.reflect.Whitebox;
 
 
@@ -53,6 +55,7 @@ public class DateValidationRuleTest {
         DateFormat uitFormat = Whitebox.getInternalState(uit, "format");
         Assert.assertEquals(testFormat, uitFormat);
     }
+    
     @Test
     public void testsetDateFormatNullThrows() {
         exEx.expect(IllegalArgumentException.class);
@@ -62,10 +65,16 @@ public class DateValidationRuleTest {
     
     @Test
     public void testsetDateFormat() {
+        boolean acceptLenient = ESAPI.securityConfiguration().getBooleanProp( DefaultSecurityConfiguration.ACCEPT_LENIENT_DATES);
         DateFormat newFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
+        newFormat.setLenient(!acceptLenient);
+        
+        newFormat = Mockito.spy(newFormat);
+        
         uit.setDateFormat(newFormat);
         DateFormat uitFormat = Whitebox.getInternalState(uit, "format");
         Assert.assertEquals(newFormat, uitFormat);
+        Mockito.verify(newFormat).setLenient(acceptLenient);
     }
     
     @Test
