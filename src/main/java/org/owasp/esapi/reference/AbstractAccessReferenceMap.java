@@ -25,10 +25,26 @@ import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Abstract Implementation of the AccessReferenceMap that is backed by ConcurrentHashMaps to
- * provide a thread-safe implementation of the AccessReferenceMap. Implementations of this
- * abstract class should implement the #getUniqueReference() method.
- *
+ * Abstract Implementation of the AccessReferenceMap.
+ * <br>
+ * Implementation offers default synchronization on all public API 
+ * to assist with thread safety.
+ * <br>
+ * For complex interactions spanning multiple calls, it is recommended 
+ * to add a synchronized block around all invocations to maintain intended data integrity.
+ * 
+ * <pre>
+ * public MyClassUsingAARM {
+ *  private AbstractAccessReferenceMap<Object> aarm;
+ * 
+ *  public void replaceAARMDirect(Object oldDirect, Object newDirect) {
+ *     synchronized (aarm) {
+ *        aarm.removeDirectReference(oldDirect);
+ *        aarm.addDirectReference(newDirect);
+ *     }
+ *  }
+ * }
+ * </pre>
  * @author  Chris Schmidt (chrisisbeef@gmail.com)
  * @since   July 21, 2009
  */
