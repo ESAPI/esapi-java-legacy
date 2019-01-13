@@ -21,7 +21,7 @@ public class JavaLogFactoryTest {
         final CountDownLatch forceConcurrency = new CountDownLatch(1);
         for (int x = 0 ; x < 10; x ++) {
             final int requestIndex = x;
-            Runnable requestLog = new Runnable() {
+            Runnable requestLogByClass = new Runnable() {
                 @Override
                 public void run() {
                    try {
@@ -34,7 +34,24 @@ public class JavaLogFactoryTest {
                 }
             };
             
-            threads.add(new Thread(requestLog, "Request Log " + x));
+            Runnable requestLogByModule = new Runnable() {
+                @Override
+                public void run() {
+                   try {
+                    forceConcurrency.await();
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                   logCapture.put(requestIndex, JavaLogFactory.getInstance().getLogger(JavaLogFactoryTest.class.getName()));
+                }
+            };
+            
+            threads.add(new Thread(requestLogByClass, "Request Log By Class " + x));
+            
+            threads.add(new Thread(requestLogByModule, "Request Log By Name " + x));
+            
+            
         }
         
         for (Thread thread : threads) {
