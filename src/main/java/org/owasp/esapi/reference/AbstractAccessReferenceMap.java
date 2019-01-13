@@ -135,7 +135,7 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    /**
    * {@inheritDoc}
    */
-   public <T> K addDirectReference(T direct) {
+   public synchronized <T> K addDirectReference(T direct) {
       if ( dtoi.keySet().contains( direct ) ) {
          return dtoi.get( direct );
       }
@@ -148,7 +148,7 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    /**
    * {@inheritDoc}
    */
-   public <T> K removeDirectReference(T direct) throws AccessControlException
+   public synchronized <T> K removeDirectReference(T direct) throws AccessControlException
    {
       K indirect = dtoi.get(direct);
       if ( indirect != null ) {
@@ -181,14 +181,14 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    /**
    * {@inheritDoc}
    */
-   public <T> K getIndirectReference(T directReference) {
+   public synchronized <T> K getIndirectReference(T directReference) {
       return dtoi.get(directReference);
    }
 
    /**
    * {@inheritDoc}
    */
-   public <T> T getDirectReference(K indirectReference) throws AccessControlException {
+   public synchronized <T> T getDirectReference(K indirectReference) throws AccessControlException {
       if (itod.containsKey(indirectReference) ) {
          try
          {
