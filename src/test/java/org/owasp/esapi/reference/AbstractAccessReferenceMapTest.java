@@ -1,6 +1,6 @@
 package org.owasp.esapi.reference;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.HashMap;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -18,7 +18,7 @@ public class AbstractAccessReferenceMapTest {
         Object indirectObj = new Object();
         Mockito.when(map.getUniqueReference()).thenReturn(indirectObj);
 
-        final ConcurrentHashMap<?,?> itod= Whitebox.getInternalState(map, "itod");
+        final HashMap<?,?> itod= Whitebox.getInternalState(map, "itod");
 
         final Object toAdd = new Object();
 

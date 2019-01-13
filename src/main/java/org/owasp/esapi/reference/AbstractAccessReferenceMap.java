@@ -15,14 +15,14 @@
  */
 package org.owasp.esapi.reference;
 
-import org.owasp.esapi.AccessReferenceMap;
-import org.owasp.esapi.errors.AccessControlException;
-
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.owasp.esapi.AccessReferenceMap;
+import org.owasp.esapi.errors.AccessControlException;
 
 /**
  * Abstract Implementation of the AccessReferenceMap.
@@ -59,15 +59,15 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
 
    /**
     * Instantiates a new access reference map. Note that this will create the underlying Maps with an initialSize
-    * of {@link ConcurrentHashMap#DEFAULT_INITIAL_CAPACITY} and that resizing a Map is an expensive process. Consider
+    * of {@link HashMap#DEFAULT_INITIAL_CAPACITY} and that resizing a Map is an expensive process. Consider
     * using a constructor where the initialSize is passed in to maximize performance of the AccessReferenceMap.
     *
     * @see #AbstractAccessReferenceMap(java.util.Set, int)
     * @see #AbstractAccessReferenceMap(int)
     */
    public AbstractAccessReferenceMap() {
-      itod = new ConcurrentHashMap<K, Object>();
-      dtoi = new ConcurrentHashMap<Object,K>();
+      itod = new HashMap<K, Object>();
+      dtoi = new HashMap<Object,K>();
    }
 
    /**
@@ -78,8 +78,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     *          The initial size of the underlying maps
     */
    public AbstractAccessReferenceMap( int initialSize ) {
-      itod = new ConcurrentHashMap<K, Object>(initialSize);
-      dtoi = new ConcurrentHashMap<Object,K>(initialSize);
+      itod = new HashMap<K, Object>(initialSize);
+      dtoi = new HashMap<Object,K>(initialSize);
    }
 
    /**
@@ -98,8 +98,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     */
    @Deprecated
    public AbstractAccessReferenceMap( Set<Object> directReferences ) {
-      itod = new ConcurrentHashMap<K, Object>(directReferences.size());
-      dtoi = new ConcurrentHashMap<Object,K>(directReferences.size());
+      itod = new HashMap<K, Object>(directReferences.size());
+      dtoi = new HashMap<Object,K>(directReferences.size());
       update(directReferences);
    }
 
@@ -127,8 +127,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     */
    @Deprecated
    public AbstractAccessReferenceMap( Set<Object> directReferences, int initialSize ) {
-      itod = new ConcurrentHashMap<K, Object>(initialSize);
-      dtoi = new ConcurrentHashMap<Object,K>(initialSize);
+      itod = new HashMap<K, Object>(initialSize);
+      dtoi = new HashMap<Object,K>(initialSize);
       update(directReferences);
    }
 
@@ -178,8 +178,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    * {@inheritDoc}
    */
    public final synchronized void update(Set directReferences) {
-      Map<Object,K> new_dtoi = new ConcurrentHashMap<Object,K>( directReferences.size() );
-      Map<K,Object> new_itod = new ConcurrentHashMap<K,Object>( directReferences.size() );
+      Map<Object,K> new_dtoi = new HashMap<Object,K>( directReferences.size() );
+      Map<K,Object> new_itod = new HashMap<K,Object>( directReferences.size() );
 
       for ( Object o : directReferences ) {
          K indirect = dtoi.get( o );
