@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -178,20 +179,39 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    * {@inheritDoc}
    */
    public final synchronized void update(Set directReferences) {
-      Map<Object,K> new_dtoi = new HashMap<Object,K>( directReferences.size() );
-      Map<K,Object> new_itod = new HashMap<K,Object>( directReferences.size() );
+       Map<Object,K> new_dtoi = new HashMap<Object,K>( directReferences.size() );
+       Map<K,Object> new_itod = new HashMap<K,Object>( directReferences.size() );
+       
+       Set<Object> newDirect = new HashSet<>(directReferences);
+       Set<Object> dtoiCurrent = new HashSet<>(dtoi.keySet());
 
-      for ( Object o : directReferences ) {
-         K indirect = dtoi.get( o );
-
-         if ( indirect == null ) {
-            indirect = getUniqueReference();
-         }
-         new_dtoi.put( o, indirect );
-         new_itod.put( indirect, o );
-      }
-      dtoi = new_dtoi;
-      itod = new_itod;
+       //Preserve all keys that are in the new set
+       dtoiCurrent.retainAll(newDirect);
+       
+       //Transfer existing values into the new map
+       for (Object current: dtoiCurrent) {
+           K idCurrent = dtoi.get(current);
+           new_dtoi.put(current, idCurrent);
+           new_itod.put(idCurrent, current);
+       }
+       
+       //Trim the new map to only new values
+       newDirect.removeAll(dtoiCurrent);
+       
+       //Add new values with new indirect keys to the new map
+       for (Object newD : newDirect) {
+           K idCurrent;
+           do {
+               idCurrent = getUniqueReference();
+               //Unlikey, but just in case we generate the exact same key multiple times...
+           } while (dtoi.containsValue(idCurrent));
+           
+           new_dtoi.put(newD, idCurrent);
+           new_itod.put(idCurrent, newD);
+       }
+    
+       dtoi = new_dtoi;
+       itod = new_itod;
    }
 
    /**
