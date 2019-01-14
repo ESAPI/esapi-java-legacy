@@ -281,10 +281,15 @@ public class BaseValidationRuleTest {
     }
 
     @Test
-    @Ignore
+    
     public void testWhitelistSetExtendedCharacterSets() {
         String myString = "𡘾𦴩<𥻂";
-        //This was an issue wiht HTMLEntityCodec at one point, so it seems like we should be doing this test.
-        fail("I'm not sure how to make this work with : " + myString);
+        //(55365 56894) (55387 56617) 60 (55383 57026)
+        Set<Character> whitelist = new HashSet<>();
+        whitelist.add((char) 60);
+        whitelist.add((char) 55387);
+        whitelist.add((char) 56617);
+        String result = uit.whitelist(myString, whitelist);
+        assertEquals("𦴩<", result);
     }
 }
