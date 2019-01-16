@@ -49,15 +49,7 @@ public class JavaLogFactory implements LogFactory {
 	* {@inheritDoc}
 	*/
 	public Logger getLogger(Class clazz) {
-    	
-    	// If a logger for this class already exists, we return the same one, otherwise we create a new one.
-    	Logger classLogger = (Logger) loggersMap.get(clazz);
-    	
-    	if (classLogger == null) {
-    		classLogger = new JavaLogger(clazz.getName());
-    		loggersMap.put(clazz, classLogger);
-    	}
-		return classLogger;
+	    return getLogger(clazz.getName());
     }
 
     /**
@@ -65,14 +57,16 @@ public class JavaLogFactory implements LogFactory {
 	*/
     public Logger getLogger(String moduleName) {
     	
-    	// If a logger for this module already exists, we return the same one, otherwise we create a new one.
-    	Logger moduleLogger = (Logger) loggersMap.get(moduleName);
-    	
-    	if (moduleLogger == null) {
-    		moduleLogger = new JavaLogger(moduleName);
-    		loggersMap.put(moduleName, moduleLogger);    		
-    	}
-		return moduleLogger;
+        synchronized (loggersMap) {
+            // If a logger for this module already exists, we return the same one, otherwise we create a new one.
+            Logger moduleLogger = (Logger) loggersMap.get(moduleName);
+
+            if (moduleLogger == null) {
+                moduleLogger = new JavaLogger(moduleName);
+                loggersMap.put(moduleName, moduleLogger);    		
+            }
+            return moduleLogger;
+        }
     }
 
 
