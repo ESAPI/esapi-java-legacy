@@ -15,20 +15,37 @@
  */
 package org.owasp.esapi.reference;
 
-import org.owasp.esapi.AccessReferenceMap;
-import org.owasp.esapi.errors.AccessControlException;
-
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+
+import org.owasp.esapi.AccessReferenceMap;
+import org.owasp.esapi.errors.AccessControlException;
 
 /**
- * Abstract Implementation of the AccessReferenceMap that is backed by ConcurrentHashMaps to
- * provide a thread-safe implementation of the AccessReferenceMap. Implementations of this
- * abstract class should implement the #getUniqueReference() method.
- *
+ * Abstract Implementation of the AccessReferenceMap.
+ * <br>
+ * Implementation offers default synchronization on all public API 
+ * to assist with thread safety.
+ * <br>
+ * For complex interactions spanning multiple calls, it is recommended 
+ * to add a synchronized block around all invocations to maintain intended data integrity.
+ * 
+ * <pre>
+ * public MyClassUsingAARM {
+ *  private AbstractAccessReferenceMap<Object> aarm;
+ * 
+ *  public void replaceAARMDirect(Object oldDirect, Object newDirect) {
+ *     synchronized (aarm) {
+ *        aarm.removeDirectReference(oldDirect);
+ *        aarm.addDirectReference(newDirect);
+ *     }
+ *  }
+ * }
+ * </pre>
  * @author  Chris Schmidt (chrisisbeef@gmail.com)
  * @since   July 21, 2009
  */
@@ -43,15 +60,15 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
 
    /**
     * Instantiates a new access reference map. Note that this will create the underlying Maps with an initialSize
-    * of {@link ConcurrentHashMap#DEFAULT_INITIAL_CAPACITY} and that resizing a Map is an expensive process. Consider
+    * of {@link HashMap#DEFAULT_INITIAL_CAPACITY} and that resizing a Map is an expensive process. Consider
     * using a constructor where the initialSize is passed in to maximize performance of the AccessReferenceMap.
     *
     * @see #AbstractAccessReferenceMap(java.util.Set, int)
     * @see #AbstractAccessReferenceMap(int)
     */
    public AbstractAccessReferenceMap() {
-      itod = new ConcurrentHashMap<K, Object>();
-      dtoi = new ConcurrentHashMap<Object,K>();
+      itod = new HashMap<K, Object>();
+      dtoi = new HashMap<Object,K>();
    }
 
    /**
@@ -62,8 +79,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     *          The initial size of the underlying maps
     */
    public AbstractAccessReferenceMap( int initialSize ) {
-      itod = new ConcurrentHashMap<K, Object>(initialSize);
-      dtoi = new ConcurrentHashMap<Object,K>(initialSize);
+      itod = new HashMap<K, Object>(initialSize);
+      dtoi = new HashMap<Object,K>(initialSize);
    }
 
    /**
@@ -82,8 +99,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     */
    @Deprecated
    public AbstractAccessReferenceMap( Set<Object> directReferences ) {
-      itod = new ConcurrentHashMap<K, Object>(directReferences.size());
-      dtoi = new ConcurrentHashMap<Object,K>(directReferences.size());
+      itod = new HashMap<K, Object>(directReferences.size());
+      dtoi = new HashMap<Object,K>(directReferences.size());
       update(directReferences);
    }
 
@@ -111,8 +128,8 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     */
    @Deprecated
    public AbstractAccessReferenceMap( Set<Object> directReferences, int initialSize ) {
-      itod = new ConcurrentHashMap<K, Object>(initialSize);
-      dtoi = new ConcurrentHashMap<Object,K>(initialSize);
+      itod = new HashMap<K, Object>(initialSize);
+      dtoi = new HashMap<Object,K>(initialSize);
       update(directReferences);
    }
 
@@ -135,7 +152,7 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    /**
    * {@inheritDoc}
    */
-   public <T> K addDirectReference(T direct) {
+   public synchronized <T> K addDirectReference(T direct) {
       if ( dtoi.keySet().contains( direct ) ) {
          return dtoi.get( direct );
       }
@@ -148,7 +165,7 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    /**
    * {@inheritDoc}
    */
-   public <T> K removeDirectReference(T direct) throws AccessControlException
+   public synchronized <T> K removeDirectReference(T direct) throws AccessControlException
    {
       K indirect = dtoi.get(direct);
       if ( indirect != null ) {
@@ -162,33 +179,52 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    * {@inheritDoc}
    */
    public final synchronized void update(Set directReferences) {
-      Map<Object,K> new_dtoi = new ConcurrentHashMap<Object,K>( directReferences.size() );
-      Map<K,Object> new_itod = new ConcurrentHashMap<K,Object>( directReferences.size() );
+       Map<Object,K> new_dtoi = new HashMap<Object,K>( directReferences.size() );
+       Map<K,Object> new_itod = new HashMap<K,Object>( directReferences.size() );
+       
+       Set<Object> newDirect = new HashSet<>(directReferences);
+       Set<Object> dtoiCurrent = new HashSet<>(dtoi.keySet());
 
-      for ( Object o : directReferences ) {
-         K indirect = dtoi.get( o );
-
-         if ( indirect == null ) {
-            indirect = getUniqueReference();
-         }
-         new_dtoi.put( o, indirect );
-         new_itod.put( indirect, o );
-      }
-      dtoi = new_dtoi;
-      itod = new_itod;
+       //Preserve all keys that are in the new set
+       dtoiCurrent.retainAll(newDirect);
+       
+       //Transfer existing values into the new map
+       for (Object current: dtoiCurrent) {
+           K idCurrent = dtoi.get(current);
+           new_dtoi.put(current, idCurrent);
+           new_itod.put(idCurrent, current);
+       }
+       
+       //Trim the new map to only new values
+       newDirect.removeAll(dtoiCurrent);
+       
+       //Add new values with new indirect keys to the new map
+       for (Object newD : newDirect) {
+           K idCurrent;
+           do {
+               idCurrent = getUniqueReference();
+               //Unlikey, but just in case we generate the exact same key multiple times...
+           } while (dtoi.containsValue(idCurrent));
+           
+           new_dtoi.put(newD, idCurrent);
+           new_itod.put(idCurrent, newD);
+       }
+    
+       dtoi = new_dtoi;
+       itod = new_itod;
    }
 
    /**
    * {@inheritDoc}
    */
-   public <T> K getIndirectReference(T directReference) {
+   public synchronized <T> K getIndirectReference(T directReference) {
       return dtoi.get(directReference);
    }
 
    /**
    * {@inheritDoc}
    */
-   public <T> T getDirectReference(K indirectReference) throws AccessControlException {
+   public synchronized <T> T getDirectReference(K indirectReference) throws AccessControlException {
       if (itod.containsKey(indirectReference) ) {
          try
          {
