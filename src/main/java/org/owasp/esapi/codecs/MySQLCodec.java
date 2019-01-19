@@ -243,7 +243,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
 			return Character.valueOf( (char)0x0a );
 		} else if ( second.charValue() == 'r' ) {
 			return Character.valueOf( (char)0x0d );
-		} else if ( second.charValue() == 'z' ) {
+		} else if ( second.charValue() == 'Z' ) {
 			return Character.valueOf( (char)0x1a );
 		} else if ( second.charValue() == '\"' ) {
 			return Character.valueOf( (char)0x22 );
