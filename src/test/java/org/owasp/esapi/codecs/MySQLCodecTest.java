@@ -41,7 +41,7 @@ public class MySQLCodecTest {
 
 
     @BeforeClass
-    public static void createStandardCodecEscapes () {
+    public static void createCodecEscapeMaps () {
         Map<Character, String> escapesStd = new HashMap<>();
         escapesStd.put( (char)0x00,  "\\0");
         escapesStd.put( (char)0x08,  "\\b");
