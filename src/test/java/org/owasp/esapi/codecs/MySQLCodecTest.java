@@ -5,10 +5,12 @@ import java.util.Map;
 
 import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.mockito.Mockito;
 import org.owasp.esapi.codecs.MySQLCodec.Mode;
 /**
  * Tests to show {@link MySQLCodec} with {@link Mode#ANSI}
@@ -160,7 +162,89 @@ public class MySQLCodecTest {
         }
     }
 
+    /**
+     * If the first element in the {@link PushbackSequence} is null, then null is expected.
+     */
+    @Test
+    public void testAnsiDecodePushbackSequenceReturnsNull1() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn(null);
+        
+        Character decChar = uitAnsi.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(1)).next();
+        Mockito.verify(mockPushback, Mockito.times(1)).reset();
+        
+    }
+    
+    /**
+     * If the first character is a single tick, and the second character is null, null is expected
+     */
+    @Test
+    public void testAnsiDecodePushbackSequenceReturnsNull2() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn(null);
+        
+        Character decChar = uitAnsi.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(2)).next();
+        Mockito.verify(mockPushback, Mockito.times(1)).reset();
+        
+    }
+    
+    /**
+     * If the first character is a single tick and the second character is NOT a single tick (escaped tick), then null is expected.
+     */
+    @Test
+    public void testAnsiDecodePushbackSequenceReturnsNull3() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn('A');
+        
+        Character decChar = uitAnsi.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(2)).next();
+        Mockito.verify(mockPushback, Mockito.times(1)).reset();
+        
+    }
+    /**
+     * If two single ticks are read in sequence, a single tick is expected.
+     */
+    @Test
+    public void testAnsiDecodePushbackSequenceReturnsSingleTick() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn('\'');
+        
+        Character decChar = uitAnsi.decodeCharacter(mockPushback);
+        Assert.assertEquals('\'', decChar.charValue());
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(2)).next();
+        Mockito.verify(mockPushback, Mockito.times(0)).reset();
+        
+    }
 
+    /**
+     * If the first character is not a single tick, null is returned.
+     */
+    @Test
+    public void testAnsiDecodePushbackSequenceNonTickReturnsNull() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn('A');
+        
+        Character decChar = uitAnsi.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(1)).next();
+        Mockito.verify(mockPushback, Mockito.times(1)).reset();
+        
+    }
     private static class InclusiveRangePair {
         private final int upperInclusive;
         private final int lowerInclusive;
