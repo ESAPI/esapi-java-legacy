@@ -166,7 +166,7 @@ public class MySQLCodecTest {
      * If the first element in the {@link PushbackSequence} is null, then null is expected.
      */
     @Test
-    public void testAnsiDecodePushbackSequenceReturnsNull1() {
+    public void testAnsiDecodePushbackSequenceNullFirstElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn(null);
         
@@ -183,7 +183,7 @@ public class MySQLCodecTest {
      * If the first character is a single tick, and the second character is null, null is expected
      */
     @Test
-    public void testAnsiDecodePushbackSequenceReturnsNull2() {
+    public void testAnsiDecodePushbackSequenceNullSecondElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn(null);
         
@@ -200,7 +200,7 @@ public class MySQLCodecTest {
      * If the first character is a single tick and the second character is NOT a single tick (escaped tick), then null is expected.
      */
     @Test
-    public void testAnsiDecodePushbackSequenceReturnsNull3() {
+    public void testAnsiDecodePushbackSequenceNonTickSecondElmentReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn('A');
         
@@ -233,7 +233,7 @@ public class MySQLCodecTest {
      * If the first character is not a single tick, null is returned.
      */
     @Test
-    public void testAnsiDecodePushbackSequenceNonTickReturnsNull() {
+    public void testAnsiDecodePushbackSequenceNonTickFirstElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('A');
         
