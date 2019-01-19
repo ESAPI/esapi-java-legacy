@@ -89,6 +89,24 @@ public class MySQLCodecTest {
             errorCollector.checkThat(decodeMsg, uitAnsi.decode(expected), decodeExpect);
         }
     }
+    @Test
+    public void testAnsiEncodeWithImmuneSet() {
+        //The only value that is encoded is single tick. The immunity list does not impact normal capability in ANSI mode
+        char[] immuneChars = new char[] {15, 91,150, 255};
+        
+        for (char refChar : immuneChars) {
+            int ref = refChar;
+            String charAsString = "" + refChar;
+            String expected =  charAsString;
+            String encodeMsg = String.format("%s (%s) should not be escaped when in the immunity list provided to Encoded through the ANSI MySQLCodec", charAsString, refChar);
+            String decodeMsg = String.format("%s (%s) [%s] should match original value when Encoded through the ANSI MySQLCodec", charAsString, ref, expected);
+
+            Matcher<String> encodeExpect = new IsEqual<>(expected);
+            Matcher<String> decodeExpect = new IsEqual<>(charAsString);
+            errorCollector.checkThat(encodeMsg, uitAnsi.encode(immuneChars, charAsString), encodeExpect);
+            errorCollector.checkThat(decodeMsg, uitAnsi.decode(expected), decodeExpect);
+        }
+    }
     /** Upper case letters should not be mutated by the implementation.*/
     @Test
     public void testStandardEncodeUpperCaseRange() {
@@ -148,6 +166,25 @@ public class MySQLCodecTest {
         }
     }
     
+    @Test
+    public void testStandardEncodeWithImmuneSet() {
+        //These values normally fall under the encodeNonAlphaNumeric test content.
+        char[] immuneChars = new char[] {15, 91,150, 255};
+        
+        for (char refChar : immuneChars) {
+            int ref = refChar;
+            String charAsString = "" + refChar;
+          //Typically, we should expect the encode to be the original value prefixed by two backslashes.
+            String expected =  charAsString;
+            String encodeMsg = String.format("%s (%s) should not be escaped when in the immunity list provided to Encoded through the Standard MySQLCodec", charAsString, refChar);
+            String decodeMsg = String.format("%s (%s) [%s] should match original value when Encoded through the Standard MySQLCodec", charAsString, ref, expected);
+
+            Matcher<String> encodeExpect = new IsEqual<>(expected);
+            Matcher<String> decodeExpect = new IsEqual<>(charAsString);
+            errorCollector.checkThat(encodeMsg, uitMySqlStandard.encode(immuneChars, charAsString), encodeExpect);
+            errorCollector.checkThat(decodeMsg, uitMySqlStandard.decode(expected), decodeExpect);
+        }
+    }
     /**
      * Asserts that predefined specialty escape sequences are provided when encoded.
      */
