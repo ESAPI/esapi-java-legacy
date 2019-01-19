@@ -94,6 +94,11 @@ public class MySQLCodec extends AbstractCharacterCodec {
 			return ""+ch;
 		}
 		
+		// check for alphanumeric characters
+		String hex = super.getHexForNonAlphanumeric( ch );
+		if ( hex == null ) {
+			return ""+ch;
+		}
 		
 		switch( mode ) {
 			case ANSI: return encodeCharacterANSI( c );
