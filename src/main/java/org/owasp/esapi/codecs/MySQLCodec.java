@@ -47,7 +47,8 @@ public class MySQLCodec extends AbstractCharacterCodec {
                 if ( m.key == key )
                     return m;
             }
-            return null;
+            String message = String.format("No Mode for %s. Valid references are MySQLStandard: %s or ANSI: %s", key, MYSQL_MODE, ANSI_MODE);
+            throw new IllegalArgumentException(message);
         }
     }
 
@@ -101,11 +102,12 @@ public class MySQLCodec extends AbstractCharacterCodec {
 			return ""+ch;
 		}
 		
+		
 		switch( mode ) {
 			case ANSI: return encodeCharacterANSI( c );
 			case STANDARD: return encodeCharacterMySQL( c );
+			default: return null;
 		}
-		return null;
 	}
 	
 	/**
@@ -166,8 +168,8 @@ public class MySQLCodec extends AbstractCharacterCodec {
 		switch( mode ) {
 			case ANSI: return decodeCharacterANSI( input );
 			case STANDARD: return decodeCharacterMySQL( input );
+			default: return null;
 		}
-		return null;
 	}
 
 	/**

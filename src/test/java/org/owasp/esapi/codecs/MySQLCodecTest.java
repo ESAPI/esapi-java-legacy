@@ -7,10 +7,10 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mockito;
 import org.owasp.esapi.codecs.MySQLCodec.Mode;
 import org.powermock.reflect.Whitebox;
@@ -36,6 +36,8 @@ public class MySQLCodecTest {
 
     @Rule
     public ErrorCollector errorCollector = new ErrorCollector();
+    @Rule
+    public ExpectedException exEx = ExpectedException.none();
 
 
     @BeforeClass
@@ -295,22 +297,13 @@ public class MySQLCodecTest {
         Assert.assertEquals(Mode.STANDARD, configMode);
     }
     
-    @Ignore
     @Test
     public void testCreateUnsupportedModeByInt() {
-        MySQLCodec codec = new MySQLCodec(Integer.MIN_VALUE);
-        Object configMode = Whitebox.getInternalState(codec, "mode");
-        Assert.assertNull(configMode);
-        Assert.assertNull(codec.encode(EMPTY_CHAR_ARRAY, "Any String returns null"));
-        
-        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
-        
-        Character decChar = codec.decodeCharacter(mockPushback);
-        Assert.assertNull(decChar);
-        
-        Mockito.verify(mockPushback, Mockito.times(0)).mark();
-        Mockito.verify(mockPushback, Mockito.times(0)).next();
-        Mockito.verify(mockPushback, Mockito.times(0)).reset();
+        exEx.expect(IllegalArgumentException.class);
+        String message = String.format("No Mode for %s. Valid references are MySQLStandard: %s or ANSI: %s", Integer.MIN_VALUE, MySQLCodec.MYSQL_MODE, MySQLCodec.ANSI_MODE);
+        exEx.expectMessage(message);
+        new MySQLCodec(Integer.MIN_VALUE);
+       
     }
     private static class InclusiveRangePair {
         private final int upperInclusive;
