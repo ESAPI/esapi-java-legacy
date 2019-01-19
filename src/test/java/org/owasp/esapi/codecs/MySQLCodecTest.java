@@ -7,11 +7,13 @@ import org.hamcrest.Matcher;
 import org.hamcrest.core.IsEqual;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.mockito.Mockito;
 import org.owasp.esapi.codecs.MySQLCodec.Mode;
+import org.powermock.reflect.Whitebox;
 /**
  * Tests to show {@link MySQLCodec} with {@link Mode#ANSI}
  * comply with the OWASP Escaping recommendations
@@ -279,6 +281,37 @@ public class MySQLCodecTest {
         
     }
     
+    @Test
+    public void testCreateAnsiByInt() {
+        MySQLCodec codec = new MySQLCodec(MySQLCodec.ANSI_MODE);
+        Object configMode = Whitebox.getInternalState(codec, "mode");
+        Assert.assertEquals(Mode.ANSI, configMode);
+    }
+    
+    @Test
+    public void testCreateStandardByInt() {
+        MySQLCodec codec = new MySQLCodec(MySQLCodec.MYSQL_MODE);
+        Object configMode = Whitebox.getInternalState(codec, "mode");
+        Assert.assertEquals(Mode.STANDARD, configMode);
+    }
+    
+    @Ignore
+    @Test
+    public void testCreateUnsupportedModeByInt() {
+        MySQLCodec codec = new MySQLCodec(Integer.MIN_VALUE);
+        Object configMode = Whitebox.getInternalState(codec, "mode");
+        Assert.assertNull(configMode);
+        Assert.assertNull(codec.encode(EMPTY_CHAR_ARRAY, "Any String returns null"));
+        
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        
+        Character decChar = codec.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(0)).mark();
+        Mockito.verify(mockPushback, Mockito.times(0)).next();
+        Mockito.verify(mockPushback, Mockito.times(0)).reset();
+    }
     private static class InclusiveRangePair {
         private final int upperInclusive;
         private final int lowerInclusive;
