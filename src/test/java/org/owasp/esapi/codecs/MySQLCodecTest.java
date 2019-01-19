@@ -245,6 +245,40 @@ public class MySQLCodecTest {
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
         
     }
+    
+    /**
+     * If the first character is null, null is expected
+     */
+    @Test
+    public void testStandardDecodePushbackSequenceNullFirstElementReturnsNull() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn(null);
+        
+        Character decChar = uitMySqlStandard.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(1)).next();
+        Mockito.verify(mockPushback, Mockito.times(1)).reset();
+        
+    }
+    /**
+     * If the first character is a backslash, and the second character is null, null is expected
+     */
+    @Test
+    public void testStandardDecodePushbackSequenceNullSecondElementReturnsNull() {
+        PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
+        Mockito.when(mockPushback.next()).thenReturn('\\').thenReturn(null);
+        
+        Character decChar = uitMySqlStandard.decodeCharacter(mockPushback);
+        Assert.assertNull(decChar);
+        
+        Mockito.verify(mockPushback, Mockito.times(1)).mark();
+        Mockito.verify(mockPushback, Mockito.times(2)).next();
+        Mockito.verify(mockPushback, Mockito.times(1)).reset();
+        
+    }
+    
     private static class InclusiveRangePair {
         private final int upperInclusive;
         private final int lowerInclusive;
