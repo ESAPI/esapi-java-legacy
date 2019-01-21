@@ -11,7 +11,7 @@ File / Directory                                                        Descript
 |
 +---configuration/                                                      Directory of ESAPI configuration files
 |     |
-|     |---.esapi/
+|     |---esapi/
 |     |     |---waf-policies/                                           Directory containing Web Application Firewall policies
 |     |     |---ESAPI.properties                                        The main ESAPI configuration file
 |     |     `---validation.properties                                   Regular expressions used by the ESAPI validator
@@ -32,6 +32,7 @@ File / Directory                                                        Descript
 |     |---esapi4java-core-2.0-readme-crypto-changes.html                Describes why crypto was changed from what was in ESAPI 1.4
 |     |---esapi4java-core-2.0-symmetric-crypto-user-guide.html          User guide for using symmetric encryption in ESAPI 2.0
 |     |---esapi4java-core-2.1-release-notes.txt                         ESAPI 2.1 release notes
+|     |---esapi4java-core-2.2.0.0-release-notes.txt                     ESAPI 2.2.0.0 release notes
 |     `---esapi4java-waf-2.0-policy-file-spec.pdf                       Describes how to configure ESAPI 2.0's Web Application Firewall
 |
 |---libs/                                                               ESAPI dependencies
@@ -57,4 +58,4 @@ notes.
 Please address comments and questions concerning the API and this document to
 the ESAPI Users mailing list, <esapi-user@lists.owasp.org>.
 
-Copyright (C) 2009-2010 The OWASP Foundation.
+Copyright (C) 2009-2019 The OWASP Foundation.
