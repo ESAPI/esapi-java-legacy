@@ -87,7 +87,13 @@ public class MySQLCodec extends AbstractCharacterCodec {
 
     /** Target MySQL Server is running in Standard MySQL (Default) mode. */
     public static final int MYSQL_MODE = 0;
-    /** Target MySQL Server is running in ANSI Mode */
+    /**
+     * Target MySQL Server is running in ANSI_QUOTES Mode
+     * 
+     * @see <a href=
+     *      "https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sqlmode_ansi_quotes">
+     *      https://dev.mysql.com/doc/refman/8.0/en/sql-mode.html#sqlmode_ansi_quotes</a>
+     */
     public static final int ANSI_MODE = 1;
 	
 	//private int mode = 0;
