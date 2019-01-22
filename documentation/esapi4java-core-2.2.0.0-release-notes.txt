@@ -30,7 +30,7 @@ It was mainly because of these first two bullet items above that we bumped the r
 Issue #			GitHub Issue Title
 ----------------------------------------------------------------------------------------------
 30		ESAPIFilter in RI should allow login page destination to be configured
-??kww??31		MySQL CODEC : "_" character not handled properly ?
+31		MySQL CODEC : "_" character not handled properly ?
 37		RandomAccessReferenceMap.update() can randomly corrupt the map
 71		java.lang.ExceptionInInitializerError in 2.0 version
 129		Add Logging support for SLF4J
@@ -227,7 +227,7 @@ Special shout-outs to:
 List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
         List includes merged AND rejected PRs
 
-  51 Closed PRs since 2.1.0.1 release
+  52 Closed PRs since 2.1.0.1 release
   ===================================
 #362 by artfullyContrived was merged on Feb 9, 2016 -- Update pom.xml to use latest Maven plugins
 #367 by drm2 was merged on Apr 9, 2016 -- Adding IntelliJ Tests setup documentation
@@ -276,18 +276,19 @@ List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
 #456 by JasperXgwang was closed on Nov 8, 2018 -- fix bug not found in classpath when run with jetty or tomcat
 #459 by simon0117 was merged on Dec 20, 2018 -- Eclipse setup updates
 #460 by simon0117 was closed on Dec 20, 2018 -- ESAPIFilter in RI should allow login page destination to be configured #30
-#464 by kwwall was merged on MMM DD, 20YY -- Misc release cleanup
+#464 by kwwall was merged on MMM DD, 2019 -- Misc release cleanup
 #467 by jeremiahjstacey was merged on Jan 06, 2019 -- AuthenticatorTest Stability #360
 #468 by jeremiahjstacey was merged on Jan 1?, 2019 -- Date validation rule 299
 #469 by jeremiahjstacey was merged on Jan 15, 2019 -- AbstractAccessReferenceMap Issues #37 #329
 #470 by jeremiahjstacey was merged on Jan 15, 2019 -- JavaLogFactory Thread Safety #286
+#472 by jeremiahjstacey was merged on Jan DD?, 2019 -- Issue #31 MySQLCodec Updates
 
 List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs:
         # merged PRs    GitHub ID
         -------------------------
              19         xeno6696
               8         kwwall
-              6         jeremiahjstacey
+              7         jeremiahjstacey
               2         artfullyContrived
               2         augustd
               2         JoelRabinovitch
@@ -298,7 +299,7 @@ List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs
               1         simon0117
               1         sunnypav
 	========================
-	     45 merged PRs + 6 closed PRs = 51 PRs merged or closed
+	     46 merged PRs + 6 closed PRs = 52 PRs merged or closed
 
 
 Thanks you all for your time and effort to ESAPI and making it a better project.
