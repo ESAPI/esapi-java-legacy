@@ -458,13 +458,6 @@ public class EncoderTest extends TestCase {
         assertEquals("Oracle", null, instance.encodeForSQL(oracle, null));
         assertEquals("Oracle", "Jeff'' or ''1''=''1", instance.encodeForSQL(oracle, "Jeff' or '1'='1"));
     }
-
-    public void testMySQLANSIModeQuoteInjection() {
-        Encoder instance = ESAPI.encoder();
-        Codec c = new MySQLCodec(MySQLCodec.Mode.ANSI);
-        assertEquals("MySQL Ansi Quote Injection Bug", " or 1=1 -- -", instance.encodeForSQL(c, "\" or 1=1 -- -"));
-    }
-
     
     /**
 	 * Test of encodeForLDAP method, of class org.owasp.esapi.Encoder.
