@@ -15,10 +15,27 @@
  */
 package org.owasp.esapi.reference;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.owasp.esapi.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.ValidationRule;
+import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.http.MockHttpServletRequest;
@@ -27,12 +44,9 @@ import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
 import org.owasp.esapi.util.TestUtils;
 
-import javax.servlet.http.Cookie;
-import java.io.*;
-import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The Class ValidatorTest.
@@ -129,49 +143,6 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size()==3);
         assertFalse(instance.isValidCreditCard("cctest4", "4417 1234 5678 9112", false, errors));
         assertTrue(errors.size()==4);
-    }
-
-    public void testGetValidDate() throws Exception {
-    	System.out.println("getValidDate");
-    	Validator instance = ESAPI.validator();
-    	ValidationErrorList errors = new ValidationErrorList();
-    	assertTrue(instance.getValidDate("datetest1", "June 23, 1967", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US), false) != null);
-    	instance.getValidDate("datetest2", "freakshow", DateFormat.getDateInstance(), false, errors);
-    	assertEquals(1, errors.size());
-
-    	// TODO: This test case fails due to an apparent bug in SimpleDateFormat
-    	// Note: This seems to be fixed in JDK 6. Will leave it commented out since
-    	//		 we only require JDK 5. -kww
-    	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.US), false, errors);
-    	// assertEquals( 2, errors.size() );
-    }
-    
-    // FIXME: Should probably use SecurityConfigurationWrapper and force
-    //		  Validator.AcceptLenientDates to be false.
-    public void testLenientDate() {
-    	System.out.println("testLenientDate");
-    	boolean acceptLenientDates = ESAPI.securityConfiguration().getLenientDatesAccepted();
-    	if ( acceptLenientDates ) {
-    		assertTrue("Lenient date test skipped because Validator.AcceptLenientDates set to true", true);
-    		return;
-    	}
-
-    	Date lenientDateTest = null;
-    	try {
-    		// lenientDateTest will be null when Validator.AcceptLenientDates
-    		// is set to false (the default).
-    		Validator instance = ESAPI.validator();
-    		lenientDateTest = instance.getValidDate("datatest3-lenient", "15/2/2009 11:83:00",
-    				                                DateFormat.getDateInstance(DateFormat.SHORT, Locale.US),
-    				                                false);
-    		fail("Failed to throw expected ValidationException when Validator.AcceptLenientDates set to false.");
-    	} catch (ValidationException ve) {
-    		assertNull( lenientDateTest );
-    		Throwable cause = ve.getCause();
-    		assertTrue( cause.getClass().getName().equals("java.text.ParseException") );
-    	} catch (Exception e) {
-    		fail("Caught unexpected exception: " + e.getClass().getName() + "; msg: " + e);
-    	}
     }
 
     public void testGetValidDirectoryPath() throws Exception {
@@ -312,24 +283,6 @@ public class ValidatorTest extends TestCase {
         assertFalse("Files must have an extension", instance.isValidFileName("test", "", false));
         assertFalse("Files must have a valid extension", instance.isValidFileName("test.invalidExtension", "", false));
         assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
-    }
-
-    public void testIsValidDate() {
-        System.out.println("isValidDate");
-        Validator instance = ESAPI.validator();
-        DateFormat format = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.US);
-        assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true));
-        assertFalse(instance.isValidDate("datetest2", null, format, false));
-        assertFalse(instance.isValidDate("datetest3", "", format, false));
-
-        ValidationErrorList errors = new ValidationErrorList();
-        assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true, errors));
-        assertTrue(errors.size()==0);
-        assertFalse(instance.isValidDate("datetest2", null, format, false, errors));
-        assertTrue(errors.size()==1);
-        assertFalse(instance.isValidDate("datetest3", "", format, false, errors));
-        assertTrue(errors.size()==2);
-
     }
 
     public void testIsValidDirectoryPath() throws IOException {
