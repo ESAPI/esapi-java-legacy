@@ -462,7 +462,8 @@ public class EncoderTest extends TestCase {
     public void testMySQLANSIModeQuoteInjection() {
         Encoder instance = ESAPI.encoder();
         Codec c = new MySQLCodec(MySQLCodec.Mode.ANSI);
-        assertEquals("MySQL Ansi Quote Injection Bug", " or 1=1 -- -", instance.encodeForSQL(c, "\" or 1=1 -- -"));
+        //No special handling is required for double quotes in ANSI_Quotes mode
+        assertEquals("MySQL Ansi Quote Injection Bug", "\" or 1=1 -- -", instance.encodeForSQL(c, "\" or 1=1 -- -"));
     }
 
     
