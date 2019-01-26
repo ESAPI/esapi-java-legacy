@@ -15,6 +15,7 @@
 package org.owasp.esapi.filters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyBoolean;
@@ -61,10 +62,7 @@ public class SecurityWrapperRequestTest {
 
     private static final String QUERY_STRING_CANONCALIZE_TYPE_KEY = "HTTPQueryString";
     private static final String PARAMETER_STRING_CANONCALIZE_TYPE_KEY = "HTTPParameterValue";
-    
-    private class GetValidInputCaptures {
-        
-    }
+  
 
     @Mock
     private HttpServletRequest mockRequest;
@@ -220,6 +218,130 @@ public class SecurityWrapperRequestTest {
         verify(mockRequest, times(1)).getParameter(parameterName);
     }
 
+    @Test
+    public void testGetParameterStringBoolean() throws Exception{
+        String originalParam = "aParameterValue";
+        String parameterName = "SomeParameterName";
+        String cannonicalParam="safeParameterValue";
+
+        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
+
+        String context = anyString();
+        String input = inputCapture.capture();
+        String type = typeCapture.capture();
+        Integer length = lengthCapture.capture();
+        Boolean allowNull = allowNullCapture.capture();
+
+        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
+                cannonicalParam);
+        PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
+                SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        PowerMockito.when(mockRequest.getParameter(parameterName)).thenReturn(originalParam);
+
+        SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+        String rval = request.getParameter(parameterName, false);
+        assertEquals(cannonicalParam, rval);
+
+        String actualInput = inputCapture.getValue();
+        String actualType = typeCapture.getValue();
+        int actualLength = lengthCapture.getValue().intValue();
+        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
+
+        assertEquals(originalParam, actualInput);
+        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
+        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
+        assertFalse(actualAllowNull);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
+        verify(mockRequest, times(1)).getParameter(parameterName);
+    }
+    
+    @Test
+    public void testGetParameterStringBooleanInt() throws Exception{
+        String originalParam = "aParameterValue";
+        String parameterName = "SomeParameterName";
+        String cannonicalParam="safeParameterValue";
+
+        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
+
+        String context = anyString();
+        String input = inputCapture.capture();
+        String type = typeCapture.capture();
+        Integer length = lengthCapture.capture();
+        Boolean allowNull = allowNullCapture.capture();
+
+        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
+                cannonicalParam);
+        
+        PowerMockito.when(mockRequest.getParameter(parameterName)).thenReturn(originalParam);
+
+        SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+        String rval = request.getParameter(parameterName, false, 75);
+        assertEquals(cannonicalParam, rval);
+
+        String actualInput = inputCapture.getValue();
+        String actualType = typeCapture.getValue();
+        int actualLength = lengthCapture.getValue().intValue();
+        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
+
+        assertEquals(originalParam, actualInput);
+        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
+        assertTrue(75 == actualLength);
+        assertFalse(actualAllowNull);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        verify(mockRequest, times(1)).getParameter(parameterName);
+    }
+    
+    @Test
+    public void testGetParameterStringBooleanIntString() throws Exception{
+        String originalParam = "aParameterValue";
+        String parameterName = "SomeParameterName";
+        String cannonicalParam="safeParameterValue";
+
+        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
+
+        String context = anyString();
+        String input = inputCapture.capture();
+        String type = typeCapture.capture();
+        Integer length = lengthCapture.capture();
+        Boolean allowNull = allowNullCapture.capture();
+
+        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
+                cannonicalParam);
+        
+        PowerMockito.when(mockRequest.getParameter(parameterName)).thenReturn(originalParam);
+
+        SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+        String rval = request.getParameter(parameterName, false, 75, "customType");
+        assertEquals(cannonicalParam, rval);
+
+        String actualInput = inputCapture.getValue();
+        String actualType = typeCapture.getValue();
+        int actualLength = lengthCapture.getValue().intValue();
+        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
+
+        assertEquals(originalParam, actualInput);
+        assertEquals("customType", actualType);
+        assertTrue(75 == actualLength);
+        assertFalse(actualAllowNull);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        verify(mockRequest, times(1)).getParameter(parameterName);
+    }
+
+    
     @Test
     public void testGetParameterStringNullEvalPassthrough() throws Exception{
         String originalParam = "aParameterValue";
