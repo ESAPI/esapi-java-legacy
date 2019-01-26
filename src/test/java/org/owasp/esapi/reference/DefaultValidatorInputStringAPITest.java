@@ -1,14 +1,22 @@
 package org.owasp.esapi.reference;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 import java.util.regex.Pattern;
 
 import org.hamcrest.core.Is;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,7 +25,6 @@ import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.SecurityConfiguration;
@@ -61,7 +68,7 @@ public class DefaultValidatorInputStringAPITest {
     public void setup() throws Exception {
         //Is intrusion detection disabled?  A:  Yes, it is off.  
         //This logic is confusing:  True, the value is False...
-        Mockito.when(mockSecConfig.getDisableIntrusionDetection()).thenReturn(true);
+        when(mockSecConfig.getDisableIntrusionDetection()).thenReturn(true);
         
         contextStr = testName.getMethodName();
         testValidatorType = testName.getMethodName() + "_validator_type";
@@ -76,10 +83,10 @@ public class DefaultValidatorInputStringAPITest {
         //Don't care how the StringValidationRule works, we just care that we forwarded the information as expected.
         spyStringRule = new StringValidationRule(testValidatorType, mockEncoder); 
         spyStringRule = spy(spyStringRule);
-        Mockito.doNothing().when(spyStringRule).addWhitelistPattern(ArgumentMatchers.<Pattern>any());
-        Mockito.doNothing().when(spyStringRule).setAllowNull(ArgumentMatchers.anyBoolean());
-        Mockito.doNothing().when(spyStringRule).setMaximumLength(ArgumentMatchers.anyInt());
-        Mockito.doReturn(validatorResultString).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        doNothing().when(spyStringRule).addWhitelistPattern(ArgumentMatchers.<Pattern>any());
+        doNothing().when(spyStringRule).setAllowNull(ArgumentMatchers.anyBoolean());
+        doNothing().when(spyStringRule).setMaximumLength(ArgumentMatchers.anyInt());
+        doReturn(validatorResultString).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         whenNew(StringValidationRule.class).withArguments(eq(testValidatorType), eq(mockEncoder)).thenReturn(spyStringRule);
         
         errors = spy(errors);
@@ -90,37 +97,37 @@ public class DefaultValidatorInputStringAPITest {
         PowerMockito.when(ESAPI.class, ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME).thenReturn(mockSecConfig);
         
         
-        Mockito.when(mockSecConfig.getValidationPattern(testValidatorType)).thenReturn(TEST_PATTERN);
+        when(mockSecConfig.getValidationPattern(testValidatorType)).thenReturn(TEST_PATTERN);
         
     }
     
     @Test
     public void getValidInputNullAllowedPassthrough() throws Exception {
         String safeValue =  uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
-        Assert.assertEquals(validatorResultString, safeValue);
-        Mockito.verify(spyStringRule, Mockito.times(1)).addWhitelistPattern(TEST_PATTERN);
-        Mockito.verify(spyStringRule, Mockito.times(1)).setAllowNull(true);
-        Mockito.verify(spyStringRule, Mockito.times(0)).setAllowNull(false);
-        Mockito.verify(spyStringRule, Mockito.times(1)).setMaximumLength(testMaximumLength);
-        Mockito.verify(spyStringRule, Mockito.times(1)).getValid(contextStr, testName.getMethodName());
+        assertEquals(validatorResultString, safeValue);
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(1)).setAllowNull(true);
+        verify(spyStringRule, times(0)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
     @Test
     public void getValidInputNullNotAllowedPassthrough() throws Exception {
         String safeValue =  uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, false);
-        Assert.assertEquals(validatorResultString, safeValue);
-        Mockito.verify(spyStringRule, Mockito.times(1)).addWhitelistPattern(TEST_PATTERN);
-        Mockito.verify(spyStringRule, Mockito.times(0)).setAllowNull(true);
-        Mockito.verify(spyStringRule, Mockito.times(1)).setAllowNull(false);
-        Mockito.verify(spyStringRule, Mockito.times(1)).setMaximumLength(testMaximumLength);
-        Mockito.verify(spyStringRule, Mockito.times(1)).getValid(contextStr, testName.getMethodName());
+        assertEquals(validatorResultString, safeValue);
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(0)).setAllowNull(true);
+        verify(spyStringRule, times(1)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
     @Test
     public void getValidInputNullPatternThrows() throws Exception {
         exEx.expect(IllegalArgumentException.class);
         exEx.expectMessage(testValidatorType + "] was not set via the ESAPI validation configuration");
-        Mockito.when(mockSecConfig.getValidationPattern(testValidatorType)).thenReturn(null);
+        when(mockSecConfig.getValidationPattern(testValidatorType)).thenReturn(null);
     
         uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
     }
@@ -129,7 +136,7 @@ public class DefaultValidatorInputStringAPITest {
     public void getValidInputValidationExceptionPropagates() throws Exception {
         exEx.expect(Is.is(validationEx));
 
-        Mockito.doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
     }
     
@@ -137,41 +144,41 @@ public class DefaultValidatorInputStringAPITest {
     public void getValidInputValidationExceptionErrorList() throws Exception {
         ValidationErrorList errorList = new ValidationErrorList();
 
-        Mockito.doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
        String result = uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true,errorList);
-        Assert.assertTrue(result.isEmpty());
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertEquals(validationEx, errorList.getError(contextStr));
+        assertTrue(result.isEmpty());
+        assertEquals(1, errorList.size());
+        assertEquals(validationEx, errorList.getError(contextStr));
     }
     
     
     @Test
     public void isValidInputNullAllowedPassthrough() throws Exception {
         boolean isValid=  uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
-        Assert.assertTrue(isValid);
+        assertTrue(isValid);
         
-        Mockito.verify(spyStringRule, Mockito.times(1)).addWhitelistPattern(TEST_PATTERN);
-        Mockito.verify(spyStringRule, Mockito.times(1)).setAllowNull(true);
-        Mockito.verify(spyStringRule, Mockito.times(0)).setAllowNull(false);
-        Mockito.verify(spyStringRule, Mockito.times(1)).setMaximumLength(testMaximumLength);
-        Mockito.verify(spyStringRule, Mockito.times(1)).getValid(contextStr, testName.getMethodName());
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(1)).setAllowNull(true);
+        verify(spyStringRule, times(0)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
     @Test
     public void isValidInputValidationExceptionReturnsFalse() throws Exception {
-        Mockito.doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         boolean result = uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
     
     @Test
     public void isValidInputValidationExceptionErrorListReturnsFalse() throws Exception {
         ValidationErrorList errorList = new ValidationErrorList();
 
-        Mockito.doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         boolean result = uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true,errorList);
-        Assert.assertFalse(result);
-        Assert.assertEquals(1, errorList.size());
-        Assert.assertEquals(validationEx, errorList.getError(contextStr));
+        assertFalse(result);
+        assertEquals(1, errorList.size());
+        assertEquals(validationEx, errorList.getError(contextStr));
     }
 }
