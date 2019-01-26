@@ -32,8 +32,11 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.Validator;
@@ -195,19 +198,9 @@ public class SecurityWrapperRequestTest {
     }
     @Test
     public void testGetParameterString() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                testValueCanonical);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(testValueCanonical);
+        
         PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
                 SECURITY_CONFIGURATION_TEST_LENGTH);
 
@@ -216,37 +209,17 @@ public class SecurityWrapperRequestTest {
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName);
         assertEquals(testValueCanonical, rval);
-
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
-        assertTrue(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, SECURITY_CONFIGURATION_TEST_LENGTH, true);
+        
         verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
 
     @Test
     public void testGetParameterStringBoolean() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                testValueCanonical);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(testValueCanonical);
         PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
                 SECURITY_CONFIGURATION_TEST_LENGTH);
 
@@ -255,37 +228,17 @@ public class SecurityWrapperRequestTest {
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName, false);
         assertEquals(testValueCanonical, rval);
-
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, SECURITY_CONFIGURATION_TEST_LENGTH, false);
+        
         verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringBooleanInt() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                testValueCanonical);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(testValueCanonical);
         
         PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
 
@@ -293,35 +246,16 @@ public class SecurityWrapperRequestTest {
         String rval = request.getParameter(testParameterName, false, testMaximumLength);
         assertEquals(testValueCanonical, rval);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, testMaximumLength, false);
 
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(testMaximumLength == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringBooleanIntString() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                testValueCanonical);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(testValueCanonical);
+      
         
         PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
 
@@ -329,36 +263,17 @@ public class SecurityWrapperRequestTest {
         String rval = request.getParameter(testParameterName, false, testMaximumLength, testValidatorType);
         assertEquals(testValueCanonical, rval);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(testValidatorType, actualType);
-        assertTrue(testMaximumLength == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        validatorTester.verify(testParameterValue, testValidatorType, testMaximumLength, false);
+     
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
 
     
     @Test
     public void testGetParameterStringNullEvalPassthrough() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                NULL_STRING);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(null);
+        
         PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
                 SECURITY_CONFIGURATION_TEST_LENGTH);
 
@@ -367,37 +282,18 @@ public class SecurityWrapperRequestTest {
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName);
         assertNull(rval);
+        
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, SECURITY_CONFIGURATION_TEST_LENGTH, true);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
-        assertTrue(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
         verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
 
     @Test
     public void testGetParameterStringBooleanNullEvalPassthrough() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                NULL_STRING);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(null);
+        
         PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
                 SECURITY_CONFIGURATION_TEST_LENGTH);
 
@@ -406,110 +302,49 @@ public class SecurityWrapperRequestTest {
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName, false);
         assertNull(rval);
+        
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, SECURITY_CONFIGURATION_TEST_LENGTH, false);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
         verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringBooleanIntNullEvalPassthrough() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                NULL_STRING);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(null);
         
         PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
 
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName, false, testMaximumLength);
         assertNull(rval);
+        
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, testMaximumLength, false);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(testMaximumLength == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringBooleanIntStringNullEvalPassthrough() throws Exception{
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenReturn(
-                NULL_STRING);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputReturns(null);
         
         PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
 
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName, false, testMaximumLength, testValidatorType);
         assertNull(rval);
+        validatorTester.verify(testParameterValue, testValidatorType, testMaximumLength, false);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(testValidatorType, actualType);
-        assertTrue(testMaximumLength == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringNullOnException() throws Exception{
-        ValidationException ve = new ValidationException("Thrown from test Scope", "Test Exception is intentional.");
-
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenThrow(ve);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputThrows();
+        
         PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
                 SECURITY_CONFIGURATION_TEST_LENGTH);
 
@@ -519,17 +354,8 @@ public class SecurityWrapperRequestTest {
         String rval = request.getParameter(testParameterName);
         assertNull(rval);
 
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
-        assertTrue(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, SECURITY_CONFIGURATION_TEST_LENGTH, true);
+        
         verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
@@ -538,20 +364,9 @@ public class SecurityWrapperRequestTest {
 
     @Test
     public void testGetParameterStringBooleanNullOnException() throws Exception{
-        ValidationException ve = new ValidationException("Thrown from test Scope", "Test Exception is intentional.");
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputThrows();
         
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenThrow(ve);
         PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME)).thenReturn(
                 SECURITY_CONFIGURATION_TEST_LENGTH);
 
@@ -561,90 +376,106 @@ public class SecurityWrapperRequestTest {
         String rval = request.getParameter(testParameterName, false);
         assertNull(rval);
         
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(SECURITY_CONFIGURATION_TEST_LENGTH == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, SECURITY_CONFIGURATION_TEST_LENGTH, false);
+    
         verify(mockSecConfig, times(1)).getIntProp(SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringBooleanIntNullOnException() throws Exception{
-        ValidationException ve = new ValidationException("Thrown from test Scope", "Test Exception is intentional.");
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputThrows();
         
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
-
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenThrow(ve);
         PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
 
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName, false, testMaximumLength);
         assertNull(rval);
         
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(PARAMETER_STRING_CANONCALIZE_TYPE_KEY, actualType);
-        assertTrue(testMaximumLength == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        validatorTester.verify(testParameterValue, PARAMETER_STRING_CANONCALIZE_TYPE_KEY, testMaximumLength, false);
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
     
     @Test
     public void testGetParameterStringBooleanIntStringNullOnException() throws Exception{
-        ValidationException ve = new ValidationException("Thrown from test Scope", "Test Exception is intentional.");
-        
-        ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
-        ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
-        ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
+        ValidatorTestContainer validatorTester = new ValidatorTestContainer(mockValidator);
+        validatorTester.getValidInputThrows();
 
-        String context = anyString();
-        String input = inputCapture.capture();
-        String type = typeCapture.capture();
-        Integer length = lengthCapture.capture();
-        Boolean allowNull = allowNullCapture.capture();
-
-        PowerMockito.when(mockValidator.getValidInput(context, input, type, length, allowNull)).thenThrow(ve);
         PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
 
         SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
         String rval = request.getParameter(testParameterName, false, testMaximumLength, testValidatorType);
         assertNull(rval);
-
-        String actualInput = inputCapture.getValue();
-        String actualType = typeCapture.getValue();
-        int actualLength = lengthCapture.getValue().intValue();
-        boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
-
-        assertEquals(testParameterValue, actualInput);
-        assertEquals(testValidatorType, actualType);
-        assertTrue(testMaximumLength == actualLength);
-        assertFalse(actualAllowNull);
-
-        verify(mockValidator, times(1)).getValidInput(anyString(), anyString(), anyString(), anyInt(), anyBoolean());
+        
+        validatorTester.verify(testParameterValue, testValidatorType, testMaximumLength, false);
+       
         verify(mockRequest, times(1)).getParameter(testParameterName);
+    }
+
+    /**
+     * Utility test class meant to encapsulate common interactions for preparing and
+     * verifying the Validator interactions common to multiple tests.
+     *
+     */
+    private class ValidatorTestContainer {
+        private ArgumentCaptor<String> inputCapture = ArgumentCaptor.forClass(String.class);
+        private ArgumentCaptor<String> typeCapture = ArgumentCaptor.forClass(String.class);
+        private ArgumentCaptor<Integer> lengthCapture = ArgumentCaptor.forClass(Integer.class);
+        private ArgumentCaptor<Boolean> allowNullCapture = ArgumentCaptor.forClass(Boolean.class);
+        private Validator validator;
+        
+        
+        public ValidatorTestContainer(Validator validatorRef) {
+            this.validator = validatorRef;
+        }
+        public Answer<String> throwException() {
+            return new Answer<String>() {
+                @Override
+                public String answer(InvocationOnMock invocation) throws Throwable {
+                    throw new ValidationException("Thrown from test Scope", "Test Exception is intentional.");
+                }
+            };
+        }
+        
+        public Answer<String> returnResult(final String result) {
+            return new Answer<String>() {
+                @Override
+                public String answer(InvocationOnMock invocation) throws Throwable {
+                    return result;
+                }
+            };
+        }
+        public void getValidInputReturns(String response) throws Exception {
+            setupFor(returnResult(response));
+        }
+        
+        public void getValidInputThrows() throws Exception {
+            setupFor(throwException());
+        }
+        
+        public void setupFor(Answer<String> answer) throws Exception {
+            String context = anyString();
+            String input = inputCapture.capture();
+            String type = typeCapture.capture();
+            Integer length = lengthCapture.capture();
+            Boolean allowNull = allowNullCapture.capture();
+
+            PowerMockito.when(validator.getValidInput(context, input, type, length, allowNull)).thenAnswer(answer);
+        }
+        
+        public void verify(String input, String type, int maxLen, boolean allowNull) throws Exception {
+            String actualInput = inputCapture.getValue();
+            String actualType = typeCapture.getValue();
+            int actualLength = lengthCapture.getValue().intValue();
+            boolean actualAllowNull = allowNullCapture.getValue().booleanValue();
+
+            assertEquals(input, actualInput);
+            assertEquals(type, actualType);
+            assertTrue(maxLen == actualLength);
+            assertEquals(allowNull, actualAllowNull);
+            
+            Mockito.verify(validator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(input), ArgumentMatchers.eq(type), ArgumentMatchers.eq(maxLen), ArgumentMatchers.eq(allowNull));
+        }
     }
 }
