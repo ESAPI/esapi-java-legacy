@@ -143,4 +143,35 @@ public class DefaultValidatorInputStringAPITest {
         Assert.assertEquals(1, errorList.size());
         Assert.assertEquals(validationEx, errorList.getError(contextStr));
     }
+    
+    
+    @Test
+    public void isValidInputNullAllowedPassthrough() throws Exception {
+        boolean isValid=  uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
+        Assert.assertTrue(isValid);
+        
+        Mockito.verify(spyStringRule, Mockito.times(1)).addWhitelistPattern(TEST_PATTERN);
+        Mockito.verify(spyStringRule, Mockito.times(1)).setAllowNull(true);
+        Mockito.verify(spyStringRule, Mockito.times(0)).setAllowNull(false);
+        Mockito.verify(spyStringRule, Mockito.times(1)).setMaximumLength(testMaximumLength);
+        Mockito.verify(spyStringRule, Mockito.times(1)).getValid(contextStr, testName.getMethodName());
+    }
+    
+    @Test
+    public void isValidInputValidationExceptionReturnsFalse() throws Exception {
+        Mockito.doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        boolean result = uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
+        Assert.assertFalse(result);
+    }
+    
+    @Test
+    public void isValidInputValidationExceptionErrorListReturnsFalse() throws Exception {
+        ValidationErrorList errorList = new ValidationErrorList();
+
+        Mockito.doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
+        boolean result = uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true,errorList);
+        Assert.assertFalse(result);
+        Assert.assertEquals(1, errorList.size());
+        Assert.assertEquals(validationEx, errorList.getError(contextStr));
+    }
 }
