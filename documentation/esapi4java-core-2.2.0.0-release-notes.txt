@@ -23,6 +23,18 @@ Executive Summary: Important Things to Note for this Release
 It was mainly because of these first two bullet items above that we bumped the release to 2.2.0.0 rather than to 2.1.0.2. (See GitHub Issue #471 for details.)
 =================================================================================================================
 
+                Basic ESAPI facts
+
+ESAPI 2.1.0.1 release:
+    177 source files
+    1547 Junit tests
+
+ESAPI 2.2.0.0 release:
+    194 source files
+    4140 JUnit tests!!!!!
+
+That's 2593 NEW tests!!!
+
                 GitHub Issues fixed in this release
             [i.e., since 2.1.0.1 release on 2016-Feb-05]
                           106 issues closed
@@ -35,6 +47,7 @@ Issue #			GitHub Issue Title
 71		java.lang.ExceptionInInitializerError in 2.0 version
 129		Add Logging support for SLF4J
 157		minimum-config deployment fails 
+188		SecurityWrapperRequest seems to mishandle/swallow allowNull argument
 209		Build an encoding function specific to HTTP/Response Splitting (tactical remediation)
 213		Provide a taglib descriptor (.tld file)
 223		DecodeFromURL fails when the input is &quot;&amp;#37;&quot; (without quotes)
@@ -278,17 +291,18 @@ List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
 #460 by simon0117 was closed on Dec 20, 2018 -- ESAPIFilter in RI should allow login page destination to be configured #30
 #464 by kwwall was merged on MMM DD, 2019 -- Misc release cleanup
 #467 by jeremiahjstacey was merged on Jan 06, 2019 -- AuthenticatorTest Stability #360
-#468 by jeremiahjstacey was merged on Jan 1?, 2019 -- Date validation rule 299
+#468 by jeremiahjstacey was merged on Jan 22, 2019 -- Date validation rule 299
 #469 by jeremiahjstacey was merged on Jan 15, 2019 -- AbstractAccessReferenceMap Issues #37 #329
 #470 by jeremiahjstacey was merged on Jan 15, 2019 -- JavaLogFactory Thread Safety #286
-#472 by jeremiahjstacey was merged on Jan DD?, 2019 -- Issue #31 MySQLCodec Updates
+#472 by jeremiahjstacey was merged on Jan 21, 2019 -- Issue #31 MySQLCodec Updates
+#475 by jeremiahjstacey was merged on Jan 27, 2019 -- Issue #188 resolution proof: Test updates
 
 List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs:
         # merged PRs    GitHub ID
         -------------------------
              19         xeno6696
+              8         jeremiahjstacey
               8         kwwall
-              7         jeremiahjstacey
               2         artfullyContrived
               2         augustd
               2         JoelRabinovitch
@@ -299,7 +313,7 @@ List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs
               1         simon0117
               1         sunnypav
 	========================
-	     46 merged PRs + 6 closed PRs = 52 PRs merged or closed
+	     47 merged PRs + 6 closed PRs = 53 PRs merged or closed
 
 
 Thanks you all for your time and effort to ESAPI and making it a better project.
