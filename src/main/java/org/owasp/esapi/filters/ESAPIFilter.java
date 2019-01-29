@@ -41,13 +41,24 @@ public class ESAPIFilter implements Filter {
 
 	private static final String[] obfuscate = { "password" };
 
-	private String loginPage = "WEB-INF/login.jsp";
+	private String loginPage                     = "WEB-INF/login.jsp";
+    private String publicUnauthorizedLandingPage = "WEB-INF/index.jsp";
 
 	/**
 	 * Called by the web container to indicate to a filter that it is being
 	 * placed into service. The servlet container calls the init method exactly
 	 * once after instantiating the filter. The init method must complete
 	 * successfully before the filter is asked to do any filtering work.
+     * <p>
+     * Init parameters in web.xml for this filter:
+     * <ul>
+     * <li>resourceDirectory: sets ESAPI resource directory. No default.</li>
+     * <li>loginPage: login page for your application. Default is "WEB-INF/login.jsp".</li>
+     * <li>publicUnauthorizedLandingPage: page to forward unauthorized attempts
+     * to. Generally should be public, but must at least be available to all authenticated users.
+     * Default is "WEB-INF/index.jsp".</li>
+     * </ul>
+     * </p>
 	 * 
 	 * @param filterConfig
 	 *            configuration object
@@ -61,6 +72,10 @@ public class ESAPIFilter implements Filter {
 		if ( paramLoginPage != null ) {
 			loginPage = paramLoginPage;
 		}
+        String paramUnauthorizedPage = filterConfig.getInitParameter("publicUnauthorizedLandingPage");
+        if ( paramUnauthorizedPage != null ) {
+            publicUnauthorizedLandingPage = paramUnauthorizedPage;
+        }
 	}
 
 	/**
@@ -102,7 +117,7 @@ public class ESAPIFilter implements Filter {
 			// check access to this URL
 			if ( !ESAPI.accessController().isAuthorizedForURL(request.getRequestURI()) ) {
 				request.setAttribute("message", "Unauthorized" );
-				RequestDispatcher dispatcher = request.getRequestDispatcher("WEB-INF/index.jsp");
+				RequestDispatcher dispatcher = request.getRequestDispatcher(publicUnauthorizedLandingPage);
 				dispatcher.forward(request, response);
 				return;
 			}

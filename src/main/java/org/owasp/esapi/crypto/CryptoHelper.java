@@ -325,27 +325,12 @@ public class CryptoHelper {
 	 * @return     {@code true} if both byte arrays are null or if both byte
 	 *             arrays are identical or have the same value; otherwise
 	 *             {@code false} is returned.
+     * @deprecated  Use java.security.MessageDigest#isEqual(byte[], byte[]) instead.
 	 */
+    @Deprecated
 	public static boolean arrayCompare(byte[] b1, byte[] b2) {
-	    if ( b1 == b2 ) {
-	        return true;
-	    }
-	    if ( b1 == null || b2 == null ) {
-	        return (b1 == b2);
-	    }
-	    if ( b1.length != b2.length ) {
-	        return false;
-	    }
-	    
-	    int result = 0;
-	    // Make sure to go through ALL the bytes. We use the fact that if
-	    // you XOR any bit stream with itself the result will be all 0 bits,
-	    // which in turn yields 0 for the result.
-	    for(int i = 0; i < b1.length; i++) {
-	        // XOR the 2 current bytes and then OR with the outstanding result.
-	        result |= (b1[i] ^ b2[i]);
-	    }
-	    return (result == 0) ? true : false;
+        // Note: See GitHub issue #246
+        return java.security.MessageDigest.isEqual(b1, b2);
 	}
   
 	/**

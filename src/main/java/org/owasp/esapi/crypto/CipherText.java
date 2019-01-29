@@ -470,7 +470,7 @@ public final class CipherText implements Serializable {
                                 "computed MAC len: " + mac.length +
                                 ", received MAC len: " + separate_mac_.length);
             }
-	        return CryptoHelper.arrayCompare(mac, separate_mac_); // Safe compare!!!
+	        return java.security.MessageDigest.isEqual(mac, separate_mac_); // Safe compare in JDK 7 and later
 	    } else if ( ! requiresMAC ) {           // Doesn't require a MAC
 	        return true;
 	    } else {
@@ -712,8 +712,8 @@ public final class CipherText implements Serializable {
                 result = (that.canEqual(this) &&
                           this.cipherSpec_.equals(that.cipherSpec_) &&
                             // Safe comparison, resistant to timing attacks
-                          CryptoHelper.arrayCompare(this.raw_ciphertext_, that.raw_ciphertext_) &&
-                          CryptoHelper.arrayCompare(this.separate_mac_, that.separate_mac_) &&
+                          java.security.MessageDigest.isEqual(this.raw_ciphertext_, that.raw_ciphertext_) &&
+                          java.security.MessageDigest.isEqual(this.separate_mac_, that.separate_mac_) &&
                           this.encryption_timestamp_ == that.encryption_timestamp_ );
             } else {
                 logger.warning(Logger.EVENT_FAILURE, "CipherText.equals(): Cannot compare two " +
