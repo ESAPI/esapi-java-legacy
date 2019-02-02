@@ -17,6 +17,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import java.util.regex.Pattern;
 
 import org.hamcrest.core.Is;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -66,10 +67,6 @@ public class DefaultValidatorInputStringAPITest {
     
     @Before
     public void setup() throws Exception {
-        //Is intrusion detection disabled?  A:  Yes, it is off.  
-        //This logic is confusing:  True, the value is False...
-        when(mockSecConfig.getDisableIntrusionDetection()).thenReturn(true);
-        
         contextStr = testName.getMethodName();
         testValidatorType = testName.getMethodName() + "_validator_type";
         validatorResultString = testName.getMethodName() + "_validator_result";
@@ -101,6 +98,13 @@ public class DefaultValidatorInputStringAPITest {
         
     }
     
+    @After
+    public void verifyDelegateCalls() {
+        verify(mockSecConfig, times(1)).getValidationPattern(testValidatorType);
+        
+        PowerMockito.verifyNoMoreInteractions(spyStringRule, mockSecConfig, mockEncoder);
+    }
+    
     @Test
     public void getValidInputNullAllowedPassthrough() throws Exception {
         String safeValue =  uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
@@ -109,6 +113,7 @@ public class DefaultValidatorInputStringAPITest {
         verify(spyStringRule, times(1)).setAllowNull(true);
         verify(spyStringRule, times(0)).setAllowNull(false);
         verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(true);
         verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
@@ -120,6 +125,7 @@ public class DefaultValidatorInputStringAPITest {
         verify(spyStringRule, times(0)).setAllowNull(true);
         verify(spyStringRule, times(1)).setAllowNull(false);
         verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(true);
         verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
@@ -137,7 +143,16 @@ public class DefaultValidatorInputStringAPITest {
         exEx.expect(Is.is(validationEx));
 
         doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
-        uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
+        try {
+            uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
+        } finally {
+            verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+            verify(spyStringRule, times(1)).setAllowNull(true);
+            verify(spyStringRule, times(0)).setAllowNull(false);
+            verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+            verify(spyStringRule, times(1)).setCanonicalize(true);
+            verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
+        }
     }
     
     @Test
@@ -149,6 +164,12 @@ public class DefaultValidatorInputStringAPITest {
         assertTrue(result.isEmpty());
         assertEquals(1, errorList.size());
         assertEquals(validationEx, errorList.getError(contextStr));
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(1)).setAllowNull(true);
+        verify(spyStringRule, times(0)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(true);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
     
@@ -161,6 +182,7 @@ public class DefaultValidatorInputStringAPITest {
         verify(spyStringRule, times(1)).setAllowNull(true);
         verify(spyStringRule, times(0)).setAllowNull(false);
         verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(true);
         verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
@@ -169,6 +191,12 @@ public class DefaultValidatorInputStringAPITest {
         doThrow(validationEx).when(spyStringRule).getValid(ArgumentMatchers.anyString(), ArgumentMatchers.anyString());
         boolean result = uit.isValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, true);
         assertFalse(result);
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(1)).setAllowNull(true);
+        verify(spyStringRule, times(0)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(true);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
     
     @Test
@@ -180,5 +208,24 @@ public class DefaultValidatorInputStringAPITest {
         assertFalse(result);
         assertEquals(1, errorList.size());
         assertEquals(validationEx, errorList.getError(contextStr));
+        verify(errors, times(1)).addError(contextStr, validationEx);
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(1)).setAllowNull(true);
+        verify(spyStringRule, times(0)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(true);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
+    }
+    
+    @Test
+    public void canonicalizeSettingPassedThrough() throws Exception {
+        String safeValue =  uit.getValidInput(contextStr, testName.getMethodName(), testValidatorType, testMaximumLength, false,false);
+        assertEquals(validatorResultString, safeValue);
+        verify(spyStringRule, times(1)).addWhitelistPattern(TEST_PATTERN);
+        verify(spyStringRule, times(0)).setAllowNull(true);
+        verify(spyStringRule, times(1)).setAllowNull(false);
+        verify(spyStringRule, times(1)).setMaximumLength(testMaximumLength);
+        verify(spyStringRule, times(1)).setCanonicalize(false);
+        verify(spyStringRule, times(1)).getValid(contextStr, testName.getMethodName());
     }
 }
