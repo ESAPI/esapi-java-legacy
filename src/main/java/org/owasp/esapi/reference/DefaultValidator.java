@@ -216,6 +216,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
+		rvr.setCanonicalize(canonicalize);
 		return rvr.getValid(context, input);
 	}
 

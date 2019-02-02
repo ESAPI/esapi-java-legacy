@@ -44,6 +44,7 @@ public class StringValidationRule extends BaseValidationRule {
 	protected List<Pattern> blacklistPatterns = new ArrayList<Pattern>();
 	protected int minLength = 0;
 	protected int maxLength = Integer.MAX_VALUE;
+	private boolean canonicalizeInput = true;
 
 	public StringValidationRule( String typeName ) {
 		super( typeName );
@@ -113,6 +114,10 @@ public class StringValidationRule extends BaseValidationRule {
 
 	public void setMaximumLength( int length ) {
 		maxLength = length;
+	}
+
+	public void setCanonicalize(boolean canonicalize) {
+	    this.canonicalizeInput = canonicalize;
 	}
 
 	/**
@@ -264,7 +269,7 @@ public class StringValidationRule extends BaseValidationRule {
 		checkLength(context, input);
 		
 		// canonicalize
-		data = encoder.canonicalize( input );
+		data = canonicalizeInput ? encoder.canonicalize( input ) : input;
 
 		// check whitelist patterns
 		checkWhitelist(context, input);
@@ -283,6 +288,7 @@ public class StringValidationRule extends BaseValidationRule {
 		public String sanitize( String context, String input ) {
 			return whitelist( input, EncoderConstants.CHAR_ALPHANUMERICS );
 		}
+
 
 }
 

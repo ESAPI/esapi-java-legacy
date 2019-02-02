@@ -3,6 +3,9 @@ package org.owasp.esapi.reference.validation;
 import junit.framework.Assert;
 
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
+import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.ValidationException;
 
@@ -153,6 +156,25 @@ public class StringValidationRuleTest {
 		validationRule.setAllowNull(true);
 		Assert.assertTrue(validationRule.isAllowNull());
 		Assert.assertTrue(validationRule.isValid("", null));
+	}
+	
+	@Test
+	public void testSetCanonicalize() throws ValidationException {
+	    String context = "test-scope";
+	    String inputString = "SomeInputValue";
+	    String encoderReturn = "MockReturnValue";
+	    Encoder mockEncoder = Mockito.mock(Encoder.class);
+	    Mockito.when(mockEncoder.canonicalize(inputString)).thenReturn(encoderReturn);
+	    StringValidationRule testRule = new StringValidationRule(context, mockEncoder);
+	    String valid = testRule.getValid(context, inputString);
+	    Assert.assertEquals(encoderReturn, valid);
+	    Mockito.verify(mockEncoder, Mockito.times(1)).canonicalize(inputString);
+	    Mockito.reset(mockEncoder);
+	    
+	    testRule.setCanonicalize(false);
+        valid = testRule.getValid(context, inputString);
+        Assert.assertEquals(inputString, valid);
+        Mockito.verify(mockEncoder, Mockito.times(0)).canonicalize(inputString);
 	}
 	
 }
