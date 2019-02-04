@@ -433,10 +433,11 @@
                 <version>2.3</version>
                 <configuration>
                     <issueIDRegexPattern>[Ii]ssue[# ]*(\d)+</issueIDRegexPattern>
-                    <issueLinkUrl>http://code.google.com/p/owasp-esapi-java/issues/detail?id=%ISSUE%</issueLinkUrl>
+                    <issueLinkUrl>https://github.com/ESAPI/esapi-java-legacy/issues/%ISSUE%</issueLinkUrl>
                     <type>date</type>
                     <dates>
-                        <date>2013-09-02 00:00:00</date>
+                        <!-- Should be date of previous official release -->
+                        <date>2015-02-05 00:00:00</date>
                     </dates>
                 </configuration>
             </plugin>
@@ -678,7 +679,7 @@
                         <artifactId>maven-release-plugin</artifactId>
                         <version>2.5.3</version>
                         <configuration>
-                            <tagBase>https://owasp-esapi-java.googlecode.com/svn/tags/releases/</tagBase>
+                            <tagBase>https://github.com/ESAPI/esapi-java-legacy/tags</tagBase>
                         </configuration>
                     </plugin>
 
