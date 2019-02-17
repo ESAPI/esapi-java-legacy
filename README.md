@@ -29,7 +29,7 @@ Fork and submit a pull request! Simple as pi! We generally only accept bug fixes
 
 If you are new to ESAPI, a good place to start is to look for GitHub issues labled as 'good first issue'. (E.g., to find all open issues with that label, use https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22.)
 
-You can find additional details in the file 'CONTRIBUTING-TO-ESAPI.txt'.
+You can find additional details in the file '[CONTRIBUTING-TO-ESAPI.txt](https://raw.githubusercontent.com/ESAPI/esapi-java-legacy/develop/CONTRIBUTING-TO-ESAPI.txt)'.
 
 ### What happened to Google code?
 In mid-2014 ESAPI Migrated all code to GitHub. This migration was completed in November 2014.
