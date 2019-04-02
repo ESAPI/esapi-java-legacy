@@ -69,7 +69,7 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
 		}
 		
 		// check if there's a defined entity
-		String entityName = (String) characterToEntityMap.get(c);
+		String entityName = characterToEntityMap.get(c);
 		if (entityName != null) {
 			return "&" + entityName + ";";
 		}
