@@ -319,7 +319,7 @@ public class ConfigurationParser {
 
 				for (int i=0;i<enforceHttpsNodes.size();i++) {
 
-					Element e = (Element)enforceHttpsNodes.get(i);
+					Element e = enforceHttpsNodes.get(i);
 					String path = e.getAttributeValue("path");
 					String action = e.getAttributeValue("action");
 					String id = e.getAttributeValue("id");
