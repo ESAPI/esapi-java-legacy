@@ -658,14 +658,6 @@ public final class CipherText implements Serializable {
         encryption_timestamp_ = timestamp;
     }
     
-    /** Used in supporting {@code CipherText} serialization.
-     * @deprecated	Use {@code CipherText.cipherTextVersion} instead. Will
-     * 				disappear as of ESAPI 2.1.
-     */
-    public static long getSerialVersionUID() {
-        return CipherText.serialVersionUID;
-    }
-    
     /** Return the separately calculated Message Authentication Code (MAC) that
      * is computed via the {@code computeAndStoreMAC(SecretKey authKey)} method.
      * @return The copy of the computed MAC, or {@code null} if one is not used.
