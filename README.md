@@ -42,7 +42,7 @@ When reporting an issue, please be clear and try to ensure that the ESAPI develo
 ### Find an Issue?
 If you have found a bug, then create an issue on the esapi-legacy-java repo: https://github.com/ESAPI/esapi-java-legacy/issues
 
-NOTE: Please do NOT use GitHub issues to ask questions about ESAPI. If you wish to do this, post to either of the 2 mailing lists found at the bottom of this page. If we find questions as GitHub issues, we simply will close them and direct you to do this anyhow.
+NOTE: Please do NOT use GitHub issues to ask questions about ESAPI. If you wish to do this, post to either of the 2 mailing lists (now on Google Groups) found at the bottom of this page. If we find questions as GitHub issues, we simply will close them and direct you to do this anyhow.
 
 ### Find a Vulnerability?
 If you have found a vulnerability in ESAPI legacy, first search the issues list (see above) to see if it has already been reported. If it has not, then please contact both Kevin W. Wall (kevin.w.wall at gmail.com) and Matt Seil (matt.seil at owasp.org) directly. Please do not report vulnerabilities via GitHub issues or via the ESAPI mailing lists as we wish to keep our users secure while a patch is implemented and deployed. If you wish to be acknowledged for finding the vulnerability, then please follow this process. (Eventually, we would like to have BugCrowd handle this, but that's still a ways off.) Also, when you post the email describing the vulnerability, please do so from an email address that you usually monitor.
@@ -64,5 +64,12 @@ Channel: #esapi<br/>
 Webchat http://webchat.freenode.net/
 
 *Mailing lists:*
-[ESAPI-Users mailing list](https://lists.owasp.org/mailman/listinfo/esapi-user/) and
-[ESAPI-Developers mailing list](https://lists.owasp.org/mailman/listinfo/esapi-dev/)
+As of 2019-03-25, ESAPI's 2 mailing lists were officially moved OFF of their Mailman mailing lists to a new home on Google Groups.
+
+The names of the 2 Google Groups are "[esapi-project-users](mailto:esapi-project-users@owasp.org)" and "[esapi-project-dev](mailto:esapi-project-dev@owasp.org)", which you may POST to after you subscribe to them via "[Subscribe to ESAPI Users list](https://groups.google.com/forum/#!forum/esapi-project-users/join)" and "[Subscribe to ESAPI Developers list](https://groups.google.com/forum/#!forum/esapi-project-dev/join)" respectively.
+
+Old archives for the old Mailman mailing lists for ESAPI-Users and ESAPI-Dev are still available at https://lists.owasp.org/pipermail/esapi-users/ and https://lists.owasp.org/pipermail/esapi-dev/ respectively.
+
+For a general overview of Google Groups and its web interface, see https://groups.google.com/forum/#!overview
+
+For assistance subscribing and unsubscribing to Google Groups, see https://webapps.stackexchange.com/questions/13508/how-can-i-subscribe-to-a-google-mailing-list-with-a-non-google-e-mail-address/15593#15593
