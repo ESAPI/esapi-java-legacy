@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.2.0.0-RC2-SNAPSHOT</version>
+    <version>2.2.0.0-RC2</version>
     <packaging>jar</packaging>
 
     <prerequisites>
@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.sonatype.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>5</version>
+        <version>9</version>
     </parent>
 
     <licenses>
@@ -47,19 +47,19 @@
 
     <mailingLists>
         <mailingList>
-            <name>ESAPI-Users</name>
-            <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-user/</subscribe>
-            <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-user/</unsubscribe>
-            <post>mailto:esapi-users@lists.owasp.org</post>
-            <archive>https://lists.owasp.org/pipermail/esapi-users/</archive>
+            <name>ESAPI-Project-Users</name>
+            <subscribe>https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-users/join</subscribe>
+            <unsubscribe>https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-users/unsubscribe</unsubscribe>
+            <post>mailto:esapi-project-users@owasp.org</post>
+            <archive>(Pre 3/25/2019) https://lists.owasp.org/pipermail/esapi-users/</archive>
             <!--This is the OWASP ESAPI mailing list for ESAPI users, regardless of programming language. For example, ESAPI users with questions about ESAPI for Java or ESAPI for PHP would both post here.-->
         </mailingList>
         <mailingList>
-            <name>ESAPI-Developers</name>
-            <subscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</subscribe>
-            <unsubscribe>https://lists.owasp.org/mailman/listinfo/esapi-dev/</unsubscribe>
-            <post>mailto:esapi-dev@lists.owasp.org</post>
-            <archive>https://lists.owasp.org/pipermail/esapi-dev/</archive>
+            <name>ESAPI-Project-Dev</name>
+            <subscribe>https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-dev/join</subscribe>
+            <unsubscribe>https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-dev/unsubscribe</unsubscribe>
+            <post>mailto:esapi-project-dev@owasp.org</post>
+            <archive>(Pre 3/25/2019) https://lists.owasp.org/pipermail/esapi-dev/</archive>
             <!--This is the OWASP ESAPI mailing list for ESAPI for Java developers. While the list is not closed, the topics of discussion are likely to be less relevant to those only using ESAPI. Note that this is the list for ESAPI for Java. Most other language implementations, such ESAPI for PHP, have their own mailing lists.-->
         </mailingList>
         <mailingList>
@@ -166,7 +166,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.2</version>
+            <version>4.3</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -233,7 +233,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-css</artifactId>
-            <version>1.10</version>
+            <version>1.11</version>
         </dependency>
         <dependency>
             <groupId>xerces</groupId>
@@ -251,7 +251,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.60</version>
+            <version>1.61</version>
             <scope>test</scope>
         </dependency>
         <dependency>
