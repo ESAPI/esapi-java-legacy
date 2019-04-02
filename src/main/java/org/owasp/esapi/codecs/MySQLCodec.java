@@ -107,6 +107,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
      * @deprecated
      * @see #MySQLCodec(org.owasp.esapi.codecs.MySQLCodec.Mode)
 	 */
+    @Deprecated
 	public MySQLCodec( int mode ) {
 		this.mode = Mode.findByKey(mode);
 	}
