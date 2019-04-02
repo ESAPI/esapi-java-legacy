@@ -11,7 +11,7 @@ Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
 * Upgrade to require JDK 7 or later. JDK 6 is no longer supported by ESAPI.
 * Upgrade to require Java Servlet API 3.0.1 or later. See "Appendix: Dependency Updates (as reflected in pom.xml)" below for additional details.
-* 106 GitHub issues closed. (Note: Includes previously incorrectly closed issues that were reopened, fixed, and then closed again.)
+* 100+ GitHub issues closed. (Note: Includes previously incorrectly closed issues that were reopened, fixed, and then closed again.)
 * Upgraded versions of several ESAPI dependencies (i.e., 3rd party jars), including several that had unpatched CVEs. See "Appendix: Dependency Updates (as reflected in pom.xml)" below for full details.
 * Known vulnerabilities still not addressed:
     - ESAPI uses "vulnerable" version of AntiSamy (1.5.7), which is supposedly vulnerable to CVE-2018-100643. I have confirmed that AntiSamy--as currently used by ESAPI--is NOT vulnerable to this CVE as it only uses AntiSamy's CleanResults.getCleanHTML(). Furthermore, I believe that this CVE is a false positive. See my comments on this AntiSamy issue at https://github.com/nahsra/antisamy/issues/32#issuecomment-449595373.
@@ -37,7 +37,7 @@ That's 2593 NEW tests!!!
 
                 GitHub Issues fixed in this release
             [i.e., since 2.1.0.1 release on 2016-Feb-05]
-                          106 issues closed
+                          More than 100 issues closed
 
 Issue #			GitHub Issue Title
 ----------------------------------------------------------------------------------------------
@@ -148,6 +148,10 @@ Issue #			GitHub Issue Title
 462		Allow configurable init parameter in ESAPIFilter for unauthorized requests
 463		Create release notes for next ESAPI release
 465		Update both ESAPI.properties files to show comment for ESAPI logger support for SLF4J
+471     Bump ESAPI release # to 2.2.0.0
+476     DefaultValidator.getValidInput implementation ignores 'canonicalize' method parameter
+478     Remove obsolete references to Google Code in pom.xml and any other release prep
+483     More miscellaneous prep work for ESAPI 2.2.0.0 release
 
 
 -----------------------------------------------------------------------------
@@ -179,6 +183,9 @@ Issue #			GitHub Issue Title
                 public static String encodeObject( java.io.Serializable serializableObject )
                 public static String encodeObject( java.io.Serializable serializableObject, int options )
                 public static Object decodeToObject( String encodedObject )
+
+    483     More miscellaneous prep work for ESAPI 2.2.0.0 release
+        Specifically, CipherText.getSerialVersionUID() and DefaultSecurityConfiguration.MAX_FILE_NAME_LENGTH have actually been deleted from the ESAPI code base. For the former, use CipherText.cipherTextVersion() instead. For the latter, there is no replacement. (This wasn't being used, but it was set to 1000 in case you're wondering.)
         
 * Various properties in ESAPI.properties were changed in a way that might affect your application:
     439		Tighten ESAPI defaults to disallow dubious file suffixes
@@ -240,7 +247,7 @@ Special shout-outs to:
 List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
         List includes merged AND rejected PRs
 
-  52 Closed PRs since 2.1.0.1 release
+  53 Closed PRs since 2.1.0.1 release
   ===================================
 #362 by artfullyContrived was merged on Feb 9, 2016 -- Update pom.xml to use latest Maven plugins
 #367 by drm2 was merged on Apr 9, 2016 -- Adding IntelliJ Tests setup documentation
@@ -296,12 +303,13 @@ List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
 #470 by jeremiahjstacey was merged on Jan 15, 2019 -- JavaLogFactory Thread Safety #286
 #472 by jeremiahjstacey was merged on Jan 21, 2019 -- Issue #31 MySQLCodec Updates
 #475 by jeremiahjstacey was merged on Jan 27, 2019 -- Issue #188 resolution proof: Test updates
+#477 by jeremiajjstacey was merged on Feb 02, 2019 -- $476 DefaultValidator.getValidInput uses canonicalize method argument
 
 List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs:
         # merged PRs    GitHub ID
         -------------------------
              19         xeno6696
-              8         jeremiahjstacey
+              9         jeremiahjstacey
               8         kwwall
               2         artfullyContrived
               2         augustd
@@ -313,7 +321,7 @@ List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs
               1         simon0117
               1         sunnypav
 	========================
-	     47 merged PRs + 6 closed PRs = 53 PRs merged or closed
+	     48 merged PRs + 6 closed PRs = 54 PRs merged or closed
 
 
 Thanks you all for your time and effort to ESAPI and making it a better project.
@@ -334,7 +342,7 @@ New compile-time / runtime direct dependencies:
     org.slf4j:slf4j-api:1.7.25 - Not actually needed in your application's classpath unless ESAPI.Logger is configured to use org.owasp.esapi.logging.slf4j.Slf4JLogFactory.
 
 New JUnit dependencies
-    org.bouncycastle:bcprov-jdk15on:1.60
+    org.bouncycastle:bcprov-jdk15on:1.61
     org.powermock:powermock-api-mockito2:2.0.0-beta.5
     org.powermock:powermock-module-junit4:2.0.0-beta.5
 
@@ -345,12 +353,12 @@ Updated direct dependencies, by Maven scope
 
   compile:
     commons-fileupload:commons-fileupload:      1.3.1 -> 1.3.3
-    org.apache.commons:commons-collections4:    3.2.2 -> 4.2
+    org.apache.commons:commons-collections4:    3.2.2 -> 4.3
     commons-beanutils:commons-beanutils-core:   1.8.3 -> 1.9.3
     com.io7m.xom:xom:                           1.2.5 -> 1.2.10
     org.apache-extras.beanshell:bsh:            2.0b4 -> 2.0b6
     org.owasp.antisamy:antisamy:                1.5.3 -> 1.5.7
-    org.apache.xmlgraphics:batik-css:           1.8   -> 1.10
+    org.apache.xmlgraphics:batik-css:           1.8   -> 1.11
 
     Transitive runtime dependencies that ESAPI has now directly taken control off because of known vulnerabilities or other incompatibilities:
         xalan:xalan:                            2.7.0 -> 2.7.2
