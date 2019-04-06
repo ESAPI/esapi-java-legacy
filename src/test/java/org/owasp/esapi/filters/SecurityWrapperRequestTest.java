@@ -14,6 +14,13 @@
 
 package org.owasp.esapi.filters;
 
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.ValidationException;
+// A hack for now; eventually, I plan to move this into a new org.owasp.esapi.PropNames class. -kww
+import static org.owasp.esapi.reference.DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -34,10 +41,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.Validator;
-import org.owasp.esapi.errors.ValidationException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -88,7 +91,7 @@ public class SecurityWrapperRequestTest {
         PowerMockito.when(ESAPI.class, ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME).thenReturn(mockSecConfig);
         //Is intrusion detection disabled?  A:  Yes, it is off.  
         //This logic is confusing:  True, the value is False...
-        Mockito.when(mockSecConfig.getDisableIntrusionDetection()).thenReturn(true);
+        Mockito.when( mockSecConfig.getBooleanProp( DISABLE_INTRUSION_DETECTION ) ).thenReturn(true);
         
         testQueryValue = testName.getMethodName() + "_query_value";
         
