@@ -151,6 +151,7 @@ Issue #			GitHub Issue Title
 476     DefaultValidator.getValidInput implementation ignores 'canonicalize' method parameter
 478     Remove obsolete references to Google Code in pom.xml and any other release prep
 483     More miscellaneous prep work for ESAPI 2.2.0.0 release
+485     Update Maven dependency check plugin to 5.0.0-M2
 
 
 -----------------------------------------------------------------------------
