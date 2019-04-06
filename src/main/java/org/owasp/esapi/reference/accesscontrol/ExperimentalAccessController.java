@@ -82,6 +82,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForData(java.lang.String, java.lang.Object)
 	 * @deprecated
 	 */
+    @Deprecated
 	public void assertAuthorizedForData(String action, Object data)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 Data", new Object[] {action, data});
@@ -93,6 +94,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForFile(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public void assertAuthorizedForFile(String filepath)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 File", new Object[] {filepath});
@@ -104,6 +106,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForFunction(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public void assertAuthorizedForFunction(String functionName)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 Function", new Object[] {functionName});
@@ -115,6 +118,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForService(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public void assertAuthorizedForService(String serviceName)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 Service", new Object[] {serviceName});
@@ -126,6 +130,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForURL(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public void assertAuthorizedForURL(String url)
 			throws AccessControlException {
 		this.assertAuthorized("AC 1.0 URL", new Object[] {url});
@@ -138,6 +143,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForData(java.lang.String, java.lang.Object)
 	 * @deprecated
 	 */
+    @Deprecated
 	public boolean isAuthorizedForData(String action, Object data) {
 		return this.isAuthorized("AC 1.0 Data", new Object[] {action, data});
 	}
@@ -148,6 +154,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForFile(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public boolean isAuthorizedForFile(String filepath) {
 		return this.isAuthorized("AC 1.0 File", new Object[] {filepath});
 	}
@@ -158,6 +165,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForFunction(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public boolean isAuthorizedForFunction(String functionName) {
 		return this.isAuthorized("AC 1.0 Function", new Object[] {functionName});
 	}
@@ -168,6 +176,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForService(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public boolean isAuthorizedForService(String serviceName) {
 		return this.isAuthorized("AC 1.0 Service", new Object[] {serviceName});
 	}
@@ -178,6 +187,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForURL(java.lang.String)
 	 * @deprecated
 	 */
+    @Deprecated
 	public boolean isAuthorizedForURL(String url) {
 		return this.isAuthorized("AC 1.0 URL", new Object[] {url});
 	}

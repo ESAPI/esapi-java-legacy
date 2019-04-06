@@ -69,7 +69,8 @@ Steps to work with ESAPI:
        forked repo created in previous step)
     3. Create a new branch to work on an issue. I usually name the branch
        'issue-#' where '#' is the GitHub issue # is will be working on, but
-       you can call it whatever.
+       you can call it whatever. E.g.,
+            git checkout -b issue-#
     4. Work on the GitHub issue on this newly created issue-# branch.
     5. Make sure everything builds correctly and all the JUnit tests pass
        ('mvn test'). [Note: On occasion, there may be a failure in

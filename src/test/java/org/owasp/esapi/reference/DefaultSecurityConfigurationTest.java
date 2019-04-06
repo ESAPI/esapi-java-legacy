@@ -479,4 +479,16 @@ public class DefaultSecurityConfigurationTest {
 //		HttpUtilities.maxRedirectLength=512
 		assertEquals(512, sc.getIntProp("HttpUtilities.maxRedirectLength"));
 	}
+
+    // Test some of the deprecated methods to make sure I didn't screw them up
+    // given the double negatives on some these properties.
+    @Test
+    public void testDeprecatedMethods()
+    {
+        assertTrue("1: Deprecated (1st) method returns different value than new (2nd) method",
+                    ESAPI.securityConfiguration().getDisableIntrusionDetection() ==
+                      ESAPI.securityConfiguration().getBooleanProp( DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION )
+                  );
+        // TODO: add some more tests here for the deprecated replacements.
+    }
 }

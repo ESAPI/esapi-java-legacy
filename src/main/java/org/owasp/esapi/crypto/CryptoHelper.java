@@ -130,8 +130,9 @@ public class CryptoHelper {
 	 * @throws InvalidKeyException 	Likely indicates a coding error. Should not happen.
 	 * @throws EncryptionException  Throw for some precondition violations.
 	 * @deprecated Use{@code KeyDerivationFunction} instead. This method will be removed as of
-	 * 			   ESAPI release 2.1 so if you are using this, please change your code.
+	 * 			   ESAPI release 2.3 so if you are using this, please change your code.
 	 */
+    @Deprecated
 	public static SecretKey computeDerivedKey(SecretKey keyDerivationKey, int keySize, String purpose)
 			throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
 	{

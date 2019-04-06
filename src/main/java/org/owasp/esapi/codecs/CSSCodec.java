@@ -135,8 +135,8 @@ public class CSSCodec extends AbstractCharacterCodec
 				if(input.peek('\n'))
 					input.next();
 				// fall through
-			case '\n':
-			case '\f':
+			case '\n':  // Intentional fall through
+			case '\f':  // Intentional fall through
 				// bs follwed by new line replaced by nothing
 			case '\u0000':	// skip NUL for now too
 				return decodeCharacter(input);

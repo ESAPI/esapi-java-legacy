@@ -176,16 +176,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	
     protected final int MAX_REDIRECT_LOCATION = 1000;
     
-    /**
-     * @deprecated	It is not clear whether this is intended to be the max file name length for the basename(1) of
-     *				a file or the max full path name length of a canonical full path name. Since it is not used anywhere
-     *				in the ESAPI code it is being deprecated and scheduled to be removed in release 2.1.
-     */
-    protected final int MAX_FILE_NAME_LENGTH = 1000;	// DISCUSS: Is this for given directory or refer to canonicalized full path name?
-    													// Too long if the former! (Usually 255 is limit there.) Hard to tell since not used
-    													// here in this class and it's protected, so not sure what it's intent is. It's not
-    													// used anywhere in the ESAPI code base. I am going to deprecate it because of this. -kww
-
     /*
      * Implementation Keys
      */

@@ -147,6 +147,7 @@ public interface AccessController {
      * @return 
      * 		true, if is authorized for URL
      */
+    @Deprecated
     boolean isAuthorizedForURL(String url);
 
     /**
@@ -161,6 +162,7 @@ public interface AccessController {
      * @return 
      * 		true, if is authorized for function
      */
+    @Deprecated
     boolean isAuthorizedForFunction(String functionName);
 
 
@@ -180,6 +182,7 @@ public interface AccessController {
      * @return 
      * 		true, if is authorized for the data
      */
+    @Deprecated
     boolean isAuthorizedForData(String action, Object data);
     
     /**
@@ -194,6 +197,7 @@ public interface AccessController {
      * @return 
      * 		true, if is authorized for the file
      */
+    @Deprecated
     boolean isAuthorizedForFile(String filepath);
 
     /**
@@ -209,6 +213,7 @@ public interface AccessController {
      * @return 
      * 		true, if is authorized for the service
      */
+    @Deprecated
     boolean isAuthorizedForService(String serviceName);
 
     /**
@@ -237,6 +242,7 @@ public interface AccessController {
      * @throws AccessControlException 
      * 		if access is not permitted
      */
+    @Deprecated
     void assertAuthorizedForURL(String url) throws AccessControlException;
     
     /**
@@ -265,6 +271,7 @@ public interface AccessController {
      * @throws AccessControlException 
      * 		if access is not permitted
      */
+    @Deprecated
     void assertAuthorizedForFunction(String functionName) throws AccessControlException;
     
 
@@ -294,6 +301,7 @@ public interface AccessController {
      * @throws AccessControlException 
      * 		if access is not permitted
      */
+    @Deprecated
     void assertAuthorizedForData(String action, Object data) throws AccessControlException;
    
     /**
@@ -319,6 +327,7 @@ public interface AccessController {
      * 			Path to the file to be checked
      * @throws AccessControlException if access is denied
      */
+    @Deprecated
     void assertAuthorizedForFile(String filepath) throws AccessControlException;
     
     /**
@@ -346,6 +355,7 @@ public interface AccessController {
      * @throws AccessControlException
      * 		if access is not permitted
      */				
+    @Deprecated
     void assertAuthorizedForService(String serviceName) throws AccessControlException;
     
 }

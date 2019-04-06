@@ -533,9 +533,9 @@ public class DefaultEncoder implements Encoder {
 					Iterator<Entry<String, List<String>>> i = query.iterator();
 					while(i.hasNext()){
 						Entry<String, List<String>> e = i.next(); 
-						String key = (String) e.getKey();
+						String key = e.getKey();
 						String qVal = "";
-						List<String> list = (List<String>) e.getValue();
+						List<String> list = e.getValue();
 						if(!list.isEmpty()){
 							qVal = list.get(0);
 						}

@@ -766,7 +766,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		    Iterator i = request.getParameterMap().keySet().iterator();
 		    while (i.hasNext()) {
 		        String key = (String) i.next();
-		        String[] value = (String[]) request.getParameterMap().get(key);
+		        String[] value = request.getParameterMap().get(key);
 		        for (int j = 0; j < value.length; j++) {
                  params.append(key).append("=");
 		            if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
