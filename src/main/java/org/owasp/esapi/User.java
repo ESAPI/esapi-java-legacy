@@ -203,8 +203,8 @@ public interface User extends Principal, Serializable {
     void removeSession( HttpSession s );
     
     /**
-     * Returns the list of sessions associated with this User.
-     * @return
+     * Returns a Set containing the sessions associated with this User.
+     * @return The Set of sessions for this User.
      */
     Set getSessions();
     

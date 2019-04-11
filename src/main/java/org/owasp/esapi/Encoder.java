@@ -443,21 +443,18 @@ public interface Encoder {
 	 * @param input 
 	 * 		the Base64 text to decode
 	 * 
-	 * @return input 
-	 * 		decoded from Base64
+	 * @return input decoded from Base64
 	 * 
 	 * @throws IOException
 	 */
 	byte[] decodeFromBase64(String input) throws IOException;
 
 	/**
-	 * 
 	 * Get a version of the input URI that will be safe to run regex and other validations against.  
 	 * It is not recommended to persist this value as it will transform user input.  This method 
 	 * will not test to see if the URI is RFC-3986 compliant.
 	 * 
-	 * @param input
-	 * @return
+	 * @return The canonicalized URI
 	 */
 	public String getCanonicalizedURI(URI dirtyUri);
 

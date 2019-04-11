@@ -760,7 +760,8 @@ public final class CipherText implements Serializable {
      * though; this will just allow it to work in the future should we
      * decide to allow * sub-classing of this class.)
      * </p><p>
-     * See {@link http://www.artima.com/lejava/articles/equality.html}
+     * See
+     * @link http://www.artima.com/lejava/articles/equality.html
      * for full explanation.
      * </p>
      */

@@ -38,7 +38,7 @@ public class MockServletInputStream extends ServletInputStream {
 
     /**
      * read
-     * @return 
+     * @return the next char from this InputStream 
      * @throws IOException
      */
     public int read() throws IOException {

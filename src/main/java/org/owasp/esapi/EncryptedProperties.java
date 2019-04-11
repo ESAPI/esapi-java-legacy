@@ -75,7 +75,7 @@ public interface EncryptedProperties {
 	 * Returns a {@code Set} view of properties. The {@code Set} is backed by a
 	 * {@code java.util.Hashtable}, so changes to the {@code Hashtable} are
 	 * reflected in the {@code Set}, and vice-versa. The {@code Set} supports element 
-	 * removal (which removes the corresponding entry from the {@code Hashtable),
+	 * removal (which removes the corresponding entry from the {@code Hashtable},
 	 * but not element addition.
 	 * 
 	 * @return 

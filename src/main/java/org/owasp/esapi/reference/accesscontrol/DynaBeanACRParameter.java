@@ -30,7 +30,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The true/false value of the specified key. False if not found.
 	 */
 	public boolean getBoolean(String key) {
 		return ((Boolean)get(key)).booleanValue();
@@ -38,7 +38,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The byte value of the specified key.
 	 */
 	public byte getByte(String key) {
 		return ((Byte)get(key)).byteValue();
@@ -46,7 +46,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The char value of the specified key.
 	 */
 	public char getChar(String key) {
 		return ((Character)get(key)).charValue();
@@ -54,7 +54,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The int value of the specified key.
 	 */
 	public int getInt(String key) {
 		return ((Integer)get(key)).intValue();
@@ -62,7 +62,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The long value of the specified key.
 	 */
 	public long getLong(String key) {
 		return ((Long)get(key)).longValue();
@@ -70,7 +70,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The float value of the specified key.
 	 */
 	public float getFloat(String key) {
 		return ((Float)get(key)).floatValue();
@@ -78,7 +78,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The double value of the specified key.
 	 */
 	public double getDouble(String key) {
 		return ((Double)get(key)).doubleValue();
@@ -86,7 +86,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The BigDecimal value of the specified key.
 	 */
 	public BigDecimal getBigDecimal(String key) {
 		return (BigDecimal)get(key);
@@ -94,7 +94,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The BigInteger value of the specified key.
 	 */
 	public BigInteger getBigInteger(String key) {
 		return (BigInteger)get(key);
@@ -102,7 +102,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The Date value of the specified key.
 	 */
 	public Date getDate(String key) {
 		return (Date)get(key);
@@ -112,7 +112,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	 * Convenience method to avoid common casts. Note that the time object
 	 * is the same as a date object
 	 * @param key
-	 * @return
+	 * @return The Date value of the specified key.
 	 */
 	public Date getTime(String key) {
 		return (Date)get(key);
@@ -121,16 +121,26 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The String value of the specified key. null if the key is not defined.
 	 */
 	public String getString(String key) {
 		return (String)get(key);
 	}
 	
+	/**
+	 * Convenience method to avoid common casts.
+	 * @param key
+	 * @return The String value of the specified key. If the key is not defined, the default value is returned instead.
+	 */
 	public String getString(String key, String defaultValue) {
 		return (String)get(key) == null ? defaultValue : (String)get(key);
 	}
 	
+	/**
+	 * Convenience method to avoid common casts.
+	 * @param key
+	 * @return The String[] value of the specified key.
+	 */
 	public String[] getStringArray(String key) {
 		return (String[])get(key);
 	}
@@ -138,7 +148,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
 	/**
 	 * Convenience method to avoid common casts.
 	 * @param key
-	 * @return
+	 * @return The value of the specified key, returned generically as an Object. 
 	 */
 	public Object getObject(String key) {
 		return get(key);

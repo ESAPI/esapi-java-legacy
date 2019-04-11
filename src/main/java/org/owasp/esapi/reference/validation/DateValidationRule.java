@@ -66,8 +66,6 @@ public class DateValidationRule extends BaseValidationRule {
 
     /**
      * {@inheritDoc}
-     * 
-     * Calls sanitize(String, String, DateFormat) with DateFormat.getInstance()
      */
 	@Override
 	public Date sanitize( String context, String input )  {
@@ -75,7 +73,10 @@ public class DateValidationRule extends BaseValidationRule {
 	}
 	
 	/**
-     * {@inheritDoc}
+     * Same as sanitize(String, String) except it returns any ValidationException generated in the provided errorList.
+     * 
+     *   @param errorList The error list to add any ValidationException to.
+     *   @return The valid sanitized Date, or Date(0) if the supplied input was not a valid date.
      */
     public Date sanitize( String context, String input, ValidationErrorList errorList )  {
         Date date = new Date(0);

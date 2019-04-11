@@ -141,7 +141,6 @@ public final class ESAPI {
 	 * @param clazz The class to associate the logger with.
 	 * @return The current Logger associated with the specified class.
 	 */
-	@SuppressWarnings("unchecked")		// Because Eclipse wants Class<T> instead.
 	public static Logger getLogger(Class clazz) {
 		return logFactory().getLogger(clazz);
 	}
@@ -215,8 +214,7 @@ public final class ESAPI {
      * To clear an overridden Configuration, simple call this method with null for the config
      * parameter.
      *
-     * @param config
-     * @return
+     * @param config The new security configuration.
      */
     public static void override( SecurityConfiguration config ) {
         overrideConfig = config;

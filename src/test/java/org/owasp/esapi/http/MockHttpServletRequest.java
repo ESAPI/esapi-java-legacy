@@ -65,7 +65,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 	private MockHttpSession session = null;
 
 	/** The cookies. */
-	private ArrayList cookies = new ArrayList();
+	private ArrayList<Cookie> cookies = new ArrayList<Cookie>();
 
 	/** The parameters. */
 	private Map<String,String[]> parameters = new HashMap<String,String[]>();
@@ -83,25 +83,15 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	private String uri = "/test";
 
-	private String url = "https://www.example.com" + uri;
-
 	private String queryString = "pid=1&qid=test";
 
 	private String method = "POST";
 
 	private Map<String,Object> attrs = new HashMap<String,Object>();
 
-	/**
-	 *
-	 */
 	public MockHttpServletRequest() {
 	}
 
-	/**
-	 *
-	 * @param uri
-	 * @param body
-	 */
 	public MockHttpServletRequest(String uri, byte[] body) {
 		this.body = body;
 		this.uri = uri;
@@ -113,18 +103,10 @@ public class MockHttpServletRequest implements HttpServletRequest
 		uri = url.getPath();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @return
-	 */
 	public String getAuthType() {
 		return null;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * @return
-	 */
 	public String getContextPath() {
 		return null;
 	}
@@ -192,15 +174,10 @@ public class MockHttpServletRequest implements HttpServletRequest
 	 * 
 	 * @param list the new cookies
 	 */
-	public void setCookies(ArrayList list) {
+	public void setCookies(ArrayList<Cookie> list) {
 		cookies = list;
 	}
 
-	/**
-	 *
-	 * @param name
-	 * @param value
-	 */
 	public void setCookie(String name, String value ) {
 		Cookie c = new Cookie( name, value );
 		cookies.add( c );
@@ -210,27 +187,20 @@ public class MockHttpServletRequest implements HttpServletRequest
 		return cookies.remove(name);
 	}
 
-	/**
-	 * @return 
-	 *
-	 */
 	public void clearCookies() {
 		cookies.clear();
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public Cookie[] getCookies() {
 		if ( cookies.isEmpty() ) return null;
-		return (Cookie[]) cookies.toArray(new Cookie[0]);
+		return cookies.toArray(new Cookie[0]);
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @param name 
-	 * @return
 	 */
 	public long getDateHeader(String name) {
 		try {
@@ -244,7 +214,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 	/**
 	 * {@inheritDoc}
 	 * @param name 
-	 * @return
+	 * @return The requested header value.
 	 */
 	public String getHeader(String name) {
 		List<String> values;
@@ -260,26 +230,22 @@ public class MockHttpServletRequest implements HttpServletRequest
 	 * {@inheritDoc}
 	 * @return Enumeration of header names as strings
 	 */
-	public Enumeration getHeaderNames()
+	public Enumeration<String> getHeaderNames()
 	{
 		return Collections.enumeration(headers.keySet());
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @param name
-	 * @return
 	 */
-	public Enumeration getHeaders(String name) {
-		Vector v = new Vector();
+	public Enumeration<String> getHeaders(String name) {
+		Vector<String> v = new Vector<String>();
 		v.add( getHeader( name ) );
 		return v.elements();
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @param name 
-	 * @return
 	 */
 	public int getIntHeader(String name) {
 
@@ -288,23 +254,17 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getMethod() {
 		return method;
 	}
 
-	/**
-	 *
-	 * @param value
-	 */
 	public void setMethod( String value ) {
 		method = value;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getPathInfo() {
 
@@ -313,7 +273,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getPathTranslated() {
 
@@ -322,7 +281,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getQueryString() {
 		return queryString;
@@ -339,7 +297,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getRemoteUser() {
 
@@ -348,7 +305,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getRequestURI() {
 		return uri;
@@ -356,7 +312,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public StringBuffer getRequestURL() {
 		return new StringBuffer( getScheme() + "://" + this.getServerName() + getRequestURI() + "?" + getQueryString() );
@@ -364,7 +319,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getRequestedSessionId() {
 
@@ -373,7 +327,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getServletPath() {
 
@@ -382,7 +335,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public HttpSession getSession() {
 		if (session != null) {
@@ -393,8 +345,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param create 
-	 * @return
 	 */
 	public HttpSession getSession(boolean create) {
 		if (session == null && create) {
@@ -407,7 +357,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public Principal getUserPrincipal() {
 
@@ -416,7 +365,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public boolean isRequestedSessionIdFromCookie() {
 
@@ -425,7 +373,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public boolean isRequestedSessionIdFromURL() {
 
@@ -434,7 +381,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 * @deprecated
 	 */
 	@Deprecated
@@ -445,7 +391,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public boolean isRequestedSessionIdValid() {
 
@@ -454,8 +399,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param role 
-	 * @return
 	 */
 	public boolean isUserInRole(String role) {
 
@@ -464,8 +407,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param name
-	 * @return
 	 */
 	public Object getAttribute(String name) {
 		return attrs.get(name);
@@ -473,15 +414,13 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
-	public Enumeration getAttributeNames() {
+	public Enumeration<String> getAttributeNames() {
 		return Collections.enumeration(attrs.keySet());
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getCharacterEncoding() {
 
@@ -490,7 +429,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public int getContentLength() {
 		return body.length;
@@ -498,24 +436,17 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getContentType() {
 		return getHeader(HDR_CONTENT_TYPE);
 	}
 
-	/**
-	 *
-	 * @param value
-	 */
 	public void setContentType( String value ) {
 		setHeader(HDR_CONTENT_TYPE, value);
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return
-	 * @throws IOException
 	 */
 	public ServletInputStream getInputStream() throws IOException {
 		return new MockServletInputStream(body);
@@ -523,7 +454,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getLocalAddr() {
 		return "10.1.43.6";
@@ -531,7 +461,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getLocalName() {
 		return "www.domain.com";
@@ -539,7 +468,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public int getLocalPort() {
 		return 80;
@@ -547,7 +475,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public Locale getLocale() {
 		return null;
@@ -555,16 +482,13 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
-	public Enumeration getLocales() {
+	public Enumeration<Locale> getLocales() {
 		return null;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @param name
-	 * @return
 	 */
 	public String getParameter(String name) {
 		String[] values = parameters.get(name);
@@ -582,24 +506,20 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
-	public Map getParameterMap() {
+	public Map<String, String[]> getParameterMap() {
 		return parameters;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
-	public Enumeration getParameterNames() {
+	public Enumeration<String> getParameterNames() {
 		return Collections.enumeration(parameters.keySet());
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @param name
-	 * @return
 	 */
 	public String[] getParameterValues(String name) {
 		return parameters.get(name);
@@ -607,7 +527,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getProtocol() {
 		return "HTTP/1.1";
@@ -615,8 +534,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return 
-	 * @throws IOException
 	 */
 	public BufferedReader getReader() throws IOException {
 
@@ -625,8 +542,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param path
-	 * @return
 	 * @deprecated
 	 */
 	@Deprecated
@@ -637,7 +552,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getRemoteAddr() {
 		return remoteHost;
@@ -649,7 +563,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getRemoteHost() {
 		return remoteHost;
@@ -657,7 +570,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public int getRemotePort() {
 
@@ -666,8 +578,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param path
-	 * @return
 	 */
 	public RequestDispatcher getRequestDispatcher(String path) {
 		return requestDispatcher;
@@ -675,7 +585,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getScheme() {
 		return scheme;
@@ -683,7 +592,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public String getServerName() {
 		return serverHost;
@@ -691,16 +599,13 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public int getServerPort() {
-
 		return 80;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * @return
 	 */
 	public boolean isSecure() {
 		return scheme.equals( "https" );
@@ -708,7 +613,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param name
 	 */
 	public void removeAttribute(String name) {
 		attrs.remove(name);
@@ -716,8 +620,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param name 
-	 * @param o
 	 */
 	public void setAttribute(String name, Object o) {
 		attrs.put(name,o);
@@ -725,27 +627,15 @@ public class MockHttpServletRequest implements HttpServletRequest
 
 	/**
 	 * {@inheritDoc}
-	 * @param env
-	 * @throws UnsupportedEncodingException
 	 */
 	public void setCharacterEncoding(String env) throws UnsupportedEncodingException {
 
 	}
 
-	/**
-	 *
-	 * @param uri
-	 * @throws java.io.UnsupportedEncodingException
-	 */
 	public void setRequestURI(String uri) throws UnsupportedEncodingException {
 		this.uri = uri;
 	}
 
-	/**
-	 *
-	 * @param url
-	 * @throws java.io.UnsupportedEncodingException
-	 */
 	public void setRequestURL(String url) throws UnsupportedEncodingException {
 		// get the scheme
 		int p = url.indexOf( ":" );
@@ -760,7 +650,6 @@ public class MockHttpServletRequest implements HttpServletRequest
 		}
 		else
 			queryString = null;
-		this.url = url;
 	}
 
 	public void setScheme( String scheme ) {

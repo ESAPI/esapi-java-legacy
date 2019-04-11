@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * data as codePoints as opposed to a stream of {@code char}s.
  * 
  * @author Matt Seil (mseil .at. owasp.org)
- * @Created 2017 -- Adapted from Jeff Williams' original {@code Codec} class.  
+ * @since 2017 -- Adapted from Jeff Williams' original {@code Codec} class.  
  */
 public class AbstractIntegerCodec extends AbstractCodec<Integer> {
 

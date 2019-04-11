@@ -158,7 +158,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * disable logging from {@code DefaultSecurityConfiguration.logToStdout()}
      * methods, which is called from various {@code logSpecial()} methods.
      * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg, Throwable t)
-     * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg)
      */
     public static final String DISCARD_LOGSPECIAL = "org.owasp.esapi.logSpecial.discard";
 
@@ -715,7 +714,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @param msg   Message to be logged.
      * @param t     Associated exception that was caught. The class name and
      *              exception message is also logged.
-     * @see #logToStdout(String msg)
      */
     public final synchronized static void logToStdout(String msg, Throwable t) {
      // Note that this class was made final because it is called from this class'

@@ -264,7 +264,8 @@ public class EncryptorTest extends TestCase {
 			} else if ( cipherAlg.equals( "DES" ) ) {
 				keySize = 64;
 			} // Else... use specified keySize.
-            assertTrue(cipherXform + ": encoded key size shorter than requested key size",  skey.getEncoded().length >= (keySize / 8) );
+            assertTrue(cipherXform + ": encoded key size of " + skey.getEncoded().length + " shorter than requested key size of: " + (keySize / 8),
+            		skey.getEncoded().length >= (keySize / 8) );
 
 			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
 			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
@@ -291,6 +292,7 @@ public class EncryptorTest extends TestCase {
 
 	    	// If we are supposed to have overwritten the plaintext, check this to see
 	    	// if origPlainText was indeed overwritten.
+	    	@SuppressWarnings("deprecation")
 			boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
 			if ( overwritePlaintext ) {
 				assertTrue( isPlaintextOverwritten(plaintext) );
@@ -308,6 +310,7 @@ public class EncryptorTest extends TestCase {
 	    	@SuppressWarnings("deprecation")
 			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
 	    	assertEquals( previousCipherXform,  cipherXform  );
+	    	@SuppressWarnings("deprecation")
 	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
 	    	assertEquals( defaultCipherXform, oldCipherXform );
 	    	
