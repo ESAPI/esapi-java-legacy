@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +37,7 @@ public class ExtensiveEncoderURITest {
 		String fileName = url.getFile();
 		File urisForText = new File(fileName);
 		
-		inputs = Files.readAllLines(urisForText.toPath());
+		inputs = Files.readAllLines(urisForText.toPath(), StandardCharsets.UTF_8);
 		
 		return inputs;
 	}
