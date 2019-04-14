@@ -238,7 +238,7 @@ public class EncryptorTest extends TestCase {
      *         strength crypto is not available for this Java VM.
      */
     private String runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
-    	System.err.println("New encrypt / decrypt: " + cipherXform + "; requested key size: " + keySize + " bits.");
+    	// System.err.println("New encrypt / decrypt: " + cipherXform + "; requested key size: " + keySize + " bits.");
     	
     	if ( keySize > 128 && !unlimitedStrengthJurisdictionPolicyInstalled ) {
     	    System.err.println("Skipping test for cipher transformation " +
@@ -255,12 +255,23 @@ public class EncryptorTest extends TestCase {
 			assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
 			String cipherAlg = cipherXform.split("/")[0];
 
-            System.err.println("Key size of generated encoded key: " + skey.getEncoded().length * 8 + " bits.");
+            // System.err.println("Key size of generated encoded key: " + skey.getEncoded().length * 8 + " bits.");
 			
 			// Adjust key size for DES and DESede specific oddities.
 			// NOTE: Key size that encrypt() method is using is 192 bits!!!
     		//        which is 3 times 64 bits, but DES key size is only 56 bits.
     		// See 'IMPORTANT NOTE', in JavaEncryptor, near line 376. It's a "feature"!!!
+/////   This section is causing problems. BC for instance sometimes creates a
+/////   192 bit key and then subsequently creates a 128-bit key for 2-key
+/////   3DES so adjusing this is futile. THis is a holdover when we were
+/////   doing an *exact* size comparison in the following assertTrue() though.
+/////   Since we are no longer doing that, we don't need to "adjust" the size
+/////   so hopefully all will be well with the world.
+/////
+/////   Delete this comment and the following commented-out code after the
+/////   official 2.2.0.0 release.
+/////
+/*
 			if ( cipherAlg.equals( "DESede" ) ) {
                 System.err.println("Adjusting requested key size of " + keySize + " bits to 192 bits for DESede");
 				keySize = 192;
@@ -268,6 +279,7 @@ public class EncryptorTest extends TestCase {
                 System.err.println("Adjusting requested key size of " + keySize + " bits to 64 bits for DES");
 				keySize = 64;
 			} // Else... use specified keySize.
+ */
 
             assertTrue(cipherXform + ": encoded key size of " + skey.getEncoded().length + " shorter than requested key size of: " + (keySize / 8),
             		skey.getEncoded().length >= (keySize / 8) );
@@ -278,7 +290,7 @@ public class EncryptorTest extends TestCase {
 	    	@SuppressWarnings("deprecation")
 			String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
 	    	if ( ! cipherXform.equals(oldCipherXform) ) {
-	    		System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
+	    		// System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
 	    	}
 	    	
 	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
