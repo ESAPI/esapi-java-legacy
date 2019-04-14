@@ -121,7 +121,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
     public static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
     public static final String IV_TYPE = "Encryptor.ChooseIVMethod";
+
+    @Deprecated
     public static final String FIXED_IV = "Encryptor.fixedIV";
+
     public static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
     public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
     public static final String KDF_PRF_ALG = "Encryptor.KDF.PRF";
@@ -824,7 +827,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
     public String getIVType() {
     	String value = getESAPIProperty(IV_TYPE, "random");
-    	if ( value.equalsIgnoreCase("fixed") || value.equalsIgnoreCase("random") ) {
+    	if ( value.equalsIgnoreCase("random") ) {
+            return value;
+        } else if ( value.equalsIgnoreCase("fixed") ) {
+            logSpecial("WARNING: Property '" + IV_TYPE + "=fixed' is DEPRECATED. It was intended to support legacy applications, but is inherently insecure, especially with any streaming mode. Support for this will be completed dropped next ESAPI minor release (probably 2.3");
     		return value;
     	} else if ( value.equalsIgnoreCase("specified") ) {
     		// This is planned for future implementation where setting
@@ -835,18 +841,19 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     		// that for a given key, any particular IV is *NEVER* reused. For
     		// now, we will assume that generating a random IV is usually going
     		// to be sufficient to prevent this.
-    		throw new ConfigurationException("'" + IV_TYPE + "=specified' is not yet implemented. Use 'fixed' or 'random'");
+    		throw new ConfigurationException("'" + IV_TYPE + "=specified' is not yet implemented. Use 'random' for now.");
     	} else {
     		// TODO: Once 'specified' is legal, adjust exception msg, below.
     		// DISCUSS: Could just log this and then silently return "random" instead.
     		throw new ConfigurationException(value + " is illegal value for " + IV_TYPE +
-    										 ". Use 'random' (preferred) or 'fixed'.");
+    										 ". Use 'random'.");
     	}
     }
 
     /**
 	 * {@inheritDoc}
 	 */
+    @Deprecated
     public String getFixedIV() {
     	if ( getIVType().equalsIgnoreCase("fixed") ) {
     		String ivAsHex = getESAPIProperty(FIXED_IV, ""); // No default
@@ -858,7 +865,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	} else {
     		// DISCUSS: Should we just log a warning here and return null instead?
     		//			If so, may cause NullPointException somewhere later.
-    		throw new ConfigurationException("IV type not 'fixed' (set to '" +
+    		throw new ConfigurationException("IV type not 'fixed' [which is DEPRECATED!] (set to '" +
     										 getIVType() + "'), so no fixed IV applicable.");
     	}
     }
