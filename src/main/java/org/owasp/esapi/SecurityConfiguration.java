@@ -378,11 +378,19 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     /**
      * Get a string indicating how to compute an Initialization Vector (IV).
      * Currently supported modes are "random" to generate a random IV or
-     * "fixed" to use a fixed (static) IV. If a "fixed" IV is chosen, then the
+     * "fixed" to use a fixed (static) IV.
+     *
+     * <b>WARNING:</b> 'fixed' was only intended to support legacy applications with
+     * fixed IVs, but the use of non-random IVs is inherently insecure,
+     * especially for any supported cipher mode that is considered a streaming mode
+     * (which is basically anything except CBC for modes that support require an IV).
+     * For this reason, 'fixed' is considered <b>deprecated</b> and will be
+     * removed during the next ESAPI point release (tentatively, 2.3).
+     * However, note that if a "fixed" IV is chosen, then the
      * the value of this fixed IV must be specified as the property
      * {@code Encryptor.fixedIV} and be of the appropriate length.
      * 
-     * @return A string specifying the IV type. Should be "random" or "fixed".
+     * @return A string specifying the IV type. Should be "random" or "fixed" (dereprected).
      * 
      * @see #getFixedIV()
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
@@ -398,7 +406,8 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      *             instead. Longer term: There will be a more general method in JavaEncryptor
      *             to explicitly set an IV. This whole concept of a single fixed IV has
      *             always been a kludge at best, as a concession to those who have used
-     *             a single fixed IV in the past. It's time to put it to death
+     *             a single fixed IV in the past to support legacy applications. This method will be
+     *             killed off in the next ESAPI point release (likely 2.3). It's time to put it to death
      *             as it was never intended for production in the first place.
      */
 	@Deprecated
