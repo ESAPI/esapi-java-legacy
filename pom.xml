@@ -178,7 +178,8 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <version>4.3</version>
+            <!-- Using 4.2 because 4.3 requires Java 8. Trying to make sure ESAPI supports Java 7+ -->
+            <version>4.2</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
@@ -318,6 +319,21 @@
                     <version>3.1.12</version>
                   </dependency>
                 </dependencies>
+                <executions>
+                    <execution>
+                      <!-- requires Java 8. So only run it if using Java 8 or greater.
+                           This property set in a profile below. -->
+                      <phase>${PhaseIfJava8plus}</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <findbugsXmlOutput>true</findbugsXmlOutput>
+                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
+                    <xmlOutput>true</xmlOutput>
+                    <threshold>Low</threshold>
+                    <effort>Max</effort>
+                    <relaxed>false</relaxed>
+                </configuration>
             </plugin>
 
             <plugin>
@@ -332,6 +348,8 @@
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
+                    <testSource>1.7</testSource>
+                    <testTarget>1.7</testTarget>
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>false</showDeprecation>
@@ -479,12 +497,16 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <!-- ODC requires Java 8. So only run it if using Java 8 or greater.
+                             This property set in a profile below. -->
+                        <phase>${PhaseIfJava8plus}</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
                     </execution>
                 </executions>
             </plugin>
+
         </plugins>
     </build>
 
@@ -548,18 +570,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <configuration>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                    <xmlOutput>true</xmlOutput>
-                    <threshold>Low</threshold>
-                    <effort>Max</effort>
-                    <relaxed>false</relaxed>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
                 <version>2.0</version>
@@ -599,6 +609,15 @@
     </reporting>
 
     <profiles>
+        <profile>
+          <activation>
+            <jdk>[1.8,)</jdk>
+          </activation>
+          <properties>
+            <PhaseIfJava8plus>install</PhaseIfJava8plus>
+          </properties>
+        </profile>
+
         <profile>
             <!-- Activate to sign jars and build distributable download. -->
             <id>dist</id>
