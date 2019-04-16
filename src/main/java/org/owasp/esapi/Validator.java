@@ -715,6 +715,6 @@ public interface Validator {
 	 * @param input String
 	 * @return URI object representing a parsed URI, or {@code null} if the URI was non-compliant in some way.  
 	 */
-	public URI getRfcCompliantURI(String input);
+	URI getRfcCompliantURI(String input);
 	
 }

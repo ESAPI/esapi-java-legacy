@@ -59,70 +59,70 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getApplicationName();
+	String getApplicationName();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Logging implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getLogImplementation();
+	String getLogImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Authentication implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getAuthenticationImplementation();
+	String getAuthenticationImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Encoder implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getEncoderImplementation();
+	String getEncoderImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Access Control implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getAccessControlImplementation();
+	String getAccessControlImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Intrusion Detection implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getIntrusionDetectionImplementation();
+	String getIntrusionDetectionImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Randomizer implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getRandomizerImplementation();
+	String getRandomizerImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Encryption implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getEncryptionImplementation();
+	String getEncryptionImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI Validation implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getValidationImplementation();
+	String getValidationImplementation();
 	
 	/**
 	 * Returns the validation pattern for a particular type
 	 * @param typeName
 	 * @return the validation pattern
 	 */
-    public Pattern getValidationPattern( String typeName );
+    Pattern getValidationPattern( String typeName );
     
     /**
      * Determines whether ESAPI will accept "lenient" dates when attempt
@@ -135,21 +135,21 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean getLenientDatesAccepted();
+    boolean getLenientDatesAccepted();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI OS Execution implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getExecutorImplementation();
+	String getExecutorImplementation();
 	
 	/**
 	 * Returns the fully qualified classname of the ESAPI HTTPUtilities implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getHTTPUtilitiesImplementation();
+	String getHTTPUtilitiesImplementation();
 	
 	/**
 	 * Gets the master key. This password is used to encrypt/decrypt other files or types
@@ -159,19 +159,19 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getByteArrayProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public byte[] getMasterKey();
+	byte[] getMasterKey();
 
 	/**
      * Retrieves the upload directory as specified in the ESAPI.properties file.
      * @return the upload directory
      */
-    public File getUploadDirectory();
+    File getUploadDirectory();
 	
     /**
      * Retrieves the temp directory to use when uploading files, as specified in ESAPI.properties.
      * @return the temp directory
      */
-    public File getUploadTempDirectory();
+    File getUploadTempDirectory();
 
 	/**
 	 * Gets the key length to use in cryptographic operations declared in the ESAPI properties file.
@@ -180,7 +180,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-    public int getEncryptionKeyLength();
+    int getEncryptionKeyLength();
     
 	/**
 	 * Gets the master salt that is used to salt stored password hashes and any other location 
@@ -190,21 +190,21 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getByteArrayProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public byte[] getMasterSalt();
+	byte[] getMasterSalt();
 
 	/**
 	 * Gets the allowed executables to run with the Executor.
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	public List<String> getAllowedExecutables();
+	List<String> getAllowedExecutables();
 
 	/**
 	 * Gets the allowed file extensions for files that are uploaded to this application.
 	 * 
 	 * @return a list of the current allowed file extensions
 	 */
-	public List<String> getAllowedFileExtensions();
+	List<String> getAllowedFileExtensions();
 
 	/**
 	 * Gets the maximum allowed file upload size.
@@ -213,7 +213,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getAllowedFileUploadSize();
+	int getAllowedFileUploadSize();
 
 	/**
 	 * Gets the name of the password parameter used during user authentication.
@@ -222,7 +222,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getPasswordParameterName();
+	String getPasswordParameterName();
 
 	/**
 	 * Gets the name of the username parameter used during user authentication.
@@ -231,7 +231,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getUsernameParameterName();
+	String getUsernameParameterName();
 
 	/**
 	 * Gets the encryption algorithm used by ESAPI to protect data. This is
@@ -243,7 +243,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getEncryptionAlgorithm();
+	String getEncryptionAlgorithm();
 
 	/**
 	 * Retrieve the <i>cipher transformation</i>. In general, the cipher transformation
@@ -287,7 +287,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-    public String getCipherTransformation();
+    String getCipherTransformation();
     
     /**
      * Set the cipher transformation. This allows a different cipher transformation
@@ -312,11 +312,11 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * 			transformation.
      * @deprecated To be replaced by new class in ESAPI 2.1, but here if you need it
      *          until then. Details of replacement forthcoming to ESAPI-Dev
-     *          list. Most likely to be replaced by a new public CTOR for
+     *          list. Most likely to be replaced by a new CTOR for
      *          JavaEncryptor that takes a list of properties to override.
      */
     @Deprecated
-    public String setCipherTransformation(String cipherXform);
+    String setCipherTransformation(String cipherXform);
 
     /**
      * Retrieve the <i>preferred</i> JCE provider for ESAPI and your application.
@@ -336,7 +336,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public String getPreferredJCEProvider();
+    String getPreferredJCEProvider();
     
 // TODO - DISCUSS: Where should this web page (below) go? Maybe with the Javadoc? But where?
 //				   Think it makes more sense as part of the release notes, but OTOH, I
@@ -355,7 +355,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean useMACforCipherText();
+    boolean useMACforCipherText();
 
     /**
      * Indicates whether the {@code PlainText} objects may be overwritten after
@@ -373,7 +373,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean overwritePlainText();
+    boolean overwritePlainText();
     
     /**
      * Get a string indicating how to compute an Initialization Vector (IV).
@@ -396,7 +396,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public String getIVType();
+    String getIVType();
     
     /**
      * If a "fixed" (i.e., static) Initialization Vector (IV) is to be used,
@@ -411,7 +411,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      *             as it was never intended for production in the first place.
      */
 	@Deprecated
-    public String getFixedIV();
+    String getFixedIV();
     
     /**
      * Return a {@code List} of strings of combined cipher modes that support
@@ -429,7 +429,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * was specified in {@code ESAPI.properties}; otherwise the empty list is
      * returned.
      */
-    public List<String> getCombinedCipherModes();
+    List<String> getCombinedCipherModes();
 
     /**
      * Return {@code List} of strings of additional cipher modes that are
@@ -447,7 +447,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      *
      * @see #getCombinedCipherModes()
      */
-    public List<String> getAdditionalAllowedCipherModes();
+    List<String> getAdditionalAllowedCipherModes();
 
 	/**
 	 * Gets the hashing algorithm used by ESAPI to hash data.
@@ -456,7 +456,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getHashAlgorithm();
+	String getHashAlgorithm();
 
 	/**
 	 * Gets the hash iterations used by ESAPI to hash data.
@@ -465,7 +465,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getHashIterations();
+	int getHashIterations();
 
 	/**
 	 * Retrieve the Pseudo Random Function (PRF) used by the ESAPI
@@ -475,7 +475,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getKDFPseudoRandomFunction();
+	String getKDFPseudoRandomFunction();
 	
 	/**
 	 * Gets the character encoding scheme supported by this application. This is used to set the
@@ -490,7 +490,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getCharacterEncoding();
+	String getCharacterEncoding();
 
 	/**
 	 * Return true if multiple encoding is allowed
@@ -499,7 +499,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public boolean getAllowMultipleEncoding();
+	boolean getAllowMultipleEncoding();
 
 	/**
 	 * Return true if mixed encoding is allowed
@@ -508,14 +508,14 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public boolean getAllowMixedEncoding();
+	boolean getAllowMixedEncoding();
 
 	/**
 	 * Returns the List of Codecs to use when canonicalizing data
 	 * 
 	 * @return the codec list
 	 */
-	public List<String> getDefaultCanonicalizationCodecs();
+	List<String> getDefaultCanonicalizationCodecs();
 
 	/**
 	 * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
@@ -524,7 +524,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getDigitalSignatureAlgorithm();
+	String getDigitalSignatureAlgorithm();
 
 	/**
 	 * Gets the digital signature key length used by ESAPI to generate and verify signatures.
@@ -533,7 +533,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getDigitalSignatureKeyLength();
+	int getDigitalSignatureKeyLength();
 		   
 	/**
 	 * Gets the random number generation algorithm used to generate random numbers where needed.
@@ -542,7 +542,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getRandomAlgorithm();
+	String getRandomAlgorithm();
 
 	/**
 	 * Gets the number of login attempts allowed before the user's account is locked. If this 
@@ -552,7 +552,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getAllowedLoginAttempts();
+	int getAllowedLoginAttempts();
 
 	/**
 	 * Gets the maximum number of old password hashes that should be retained. These hashes can 
@@ -563,7 +563,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getMaxOldPasswordHashes();
+	int getMaxOldPasswordHashes();
 
 	/**
 	 * Allows for complete disabling of all intrusion detection mechanisms
@@ -572,7 +572,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public boolean getDisableIntrusionDetection();
+	boolean getDisableIntrusionDetection();
 	
 	/**
 	 * Gets the intrusion detection quota for the specified event.
@@ -581,7 +581,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	 * 
 	 * @return the Quota that has been configured for the specified type of event
 	 */
-	public Threshold getQuota(String eventName);
+	Threshold getQuota(String eventName);
 
 	/**
 	 * Gets a file from the resource directory
@@ -589,42 +589,42 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @param filename The file name resource.
      * @return A {@code File} object representing the specified file name or null if not found.
      */
-    public File getResourceFile( String filename );
+    File getResourceFile( String filename );
     
 	/**
 	 * Returns true if session cookies are required to have HttpOnly flag set.
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean getForceHttpOnlySession() ;
+    boolean getForceHttpOnlySession() ;
 
 	/**
 	 * Returns true if session cookies are required to have Secure flag set.
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean getForceSecureSession() ;
+    boolean getForceSecureSession() ;
 
 	/**
 	 * Returns true if new cookies are required to have HttpOnly flag set.
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean getForceHttpOnlyCookies() ;
+    boolean getForceHttpOnlyCookies() ;
 
 	/**
 	 * Returns true if new cookies are required to have Secure flag set.
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public boolean getForceSecureCookies() ;
+    boolean getForceSecureCookies() ;
 
 	/**
 	 * Returns the maximum allowable HTTP header size.
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getMaxHttpHeaderSize() ;
+	int getMaxHttpHeaderSize() ;
 
 	/**
 	 * Gets an InputStream to a file in the resource directory
@@ -633,7 +633,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @return An {@code InputStream} to the specified file name in the resource directory.
      * @throws IOException If the specified file name cannot be found or opened for reading.
      */
-    public InputStream getResourceStream( String filename ) throws IOException;
+    InputStream getResourceStream( String filename ) throws IOException;
 
     	
 	/**
@@ -641,7 +641,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	 * 
 	 * @param dir The location of the resource directory.
 	 */
-	public void setResourceDirectory(String dir);
+	void setResourceDirectory(String dir);
 	
 	/**
 	 * Gets the content type for responses used when setSafeContentType() is called.
@@ -653,7 +653,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getResponseContentType();
+	String getResponseContentType();
 
 	/**
 	 * This method returns the configured name of the session identifier, 
@@ -663,7 +663,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public String getHttpSessionIdName();
+	String getHttpSessionIdName();
 	
 	/**
 	 * Gets the length of the time to live window for remember me tokens (in milliseconds).
@@ -671,7 +671,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	 * @return The time to live length for generated "remember me" tokens.
 	 */
     // OPEN ISSUE: Can we replace w/ SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead?
-	public long getRememberTokenDuration();
+	long getRememberTokenDuration();
 
 	
 	/**
@@ -683,7 +683,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getSessionIdleTimeoutLength();
+	int getSessionIdleTimeoutLength();
 	
 	/**
 	 * Gets the absolute timeout length for sessions (in milliseconds). This is the amount of time that a session
@@ -694,7 +694,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public int getSessionAbsoluteTimeoutLength();
+	int getSessionAbsoluteTimeoutLength();
 	
 	
 	/**
@@ -704,7 +704,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public boolean getLogEncodingRequired();
+	boolean getLogEncodingRequired();
 	
 	/**
 	 * Returns whether ESAPI should log the application name. This might be clutter in some
@@ -714,7 +714,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public boolean getLogApplicationName();
+	boolean getLogApplicationName();
 
 	/**
 	 * Returns whether ESAPI should log the server IP. This might be clutter in some
@@ -724,7 +724,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-	public boolean getLogServerIP();
+	boolean getLogServerIP();
 
 	/**
 	 * Returns the current log level.
@@ -732,7 +732,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
-    public int getLogLevel();
+    int getLogLevel();
 	
     /**
      * Get the name of the log file specified in the ESAPI configuration properties file. Return a default value 
@@ -742,7 +742,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public String getLogFileName();
+    String getLogFileName();
 
     /**
      * Get the maximum size of a single log file from the ESAPI configuration properties file. Return a default value 
@@ -752,7 +752,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
 	@Deprecated
-    public int getMaxLogFileSize();
+    int getMaxLogFileSize();
 
 	/**
 	 * Models a simple threshold as a count and an interval, along with a set of actions to take if 
@@ -760,7 +760,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	 * has met a set number within the specified time period. Once a threshold value has been met, various
 	 * actions can be taken at that point.
 	 */
-	public static class Threshold {
+	class Threshold {
 		
 		/** The name of this threshold. */
 		public String name = null;
@@ -801,5 +801,5 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	/**
 	 * Returns the default working directory for executing native processes with Runtime.exec().
 	 */
-	public File getWorkingDirectory();
+	File getWorkingDirectory();
 }

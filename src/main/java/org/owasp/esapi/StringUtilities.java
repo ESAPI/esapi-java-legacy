@@ -97,7 +97,7 @@ public class StringUtilities {
      * @return The correct value
      */
     public static String replaceNull( String test, String replace ) {
-        return ( test == null || "null".equalsIgnoreCase( test.trim() ) || "".equals( test.trim() ) ) ? replace : test;
+        return test == null || "null".equalsIgnoreCase( test.trim() ) || "".equals( test.trim() ) ? replace : test;
     }
 
     /**

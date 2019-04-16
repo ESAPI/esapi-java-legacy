@@ -5,7 +5,7 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2007-2019 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
@@ -14,7 +14,6 @@
  * @created 2007
  */
 package org.owasp.esapi;
-
 
 /**
  * The Logger interface defines a set of methods that can be used to log
@@ -93,17 +92,19 @@ package org.owasp.esapi;
  */
 public interface Logger {
 
+	// All implied static final as this is an interface
+	
 	/**
      * A security type of log event that has succeeded. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
-	public static final EventType SECURITY_SUCCESS = new EventType( "SECURITY SUCCESS", true);
+	EventType SECURITY_SUCCESS = new EventType( "SECURITY SUCCESS", true);
 
 	/**
      * A security type of log event that has failed. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
-	public static final EventType SECURITY_FAILURE = new EventType( "SECURITY FAILURE", false);
+	EventType SECURITY_FAILURE = new EventType( "SECURITY FAILURE", false);
 
 	/**
 	 * A security type of log event that is associated with an audit trail of some type,
@@ -111,32 +112,32 @@ public interface Logger {
 	 * or that is irrelevant in the case of this logged message.
 	 */
 	// CHECKME: Should the Boolean for this be 'null' or 'true'? See EVENT_UNSPECIFIED.
-	public static final EventType SECURITY_AUDIT = new EventType( "SECURITY AUDIT", null);
+	EventType SECURITY_AUDIT = new EventType( "SECURITY AUDIT", null);
 
 	/**
      * A non-security type of log event that has succeeded. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
-	public static final EventType EVENT_SUCCESS = new EventType( "EVENT SUCCESS", true);
+	EventType EVENT_SUCCESS = new EventType( "EVENT SUCCESS", true);
 	
 	/**
      * A non-security type of log event that has failed. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
-	public static final EventType EVENT_FAILURE = new EventType( "EVENT FAILURE", false);
+	EventType EVENT_FAILURE = new EventType( "EVENT FAILURE", false);
 
 	/**
      * A non-security type of log event that is unspecified. This is one of 6 predefined
      * ESAPI logging events. New events can be added.
      */
-	public static final EventType EVENT_UNSPECIFIED = new EventType( "EVENT UNSPECIFIED", null);
+	EventType EVENT_UNSPECIFIED = new EventType( "EVENT UNSPECIFIED", null);
 
 	/**
 	 * Defines the type of log event that is being generated. The Logger interface defines 6 types of Log events:
 	 * SECURITY_SUCCESS, SECURITY_FAILURE, EVENT_SUCCESS, EVENT_FAILURE, EVENT_UNSPECIFIED.
      * Your implementation can extend or change this list if desired. 
 	 */
-	public class EventType {
+	class EventType {
 		
 		private String type;
 		private Boolean success = null;
@@ -167,33 +168,33 @@ public interface Logger {
      */
 	
 	/** OFF indicates that no messages should be logged. This level is initialized to Integer.MAX_VALUE. */
-	public static final int OFF = Integer.MAX_VALUE;
+	int OFF = Integer.MAX_VALUE;
 
 	/** FATAL indicates that only FATAL messages should be logged. This level is initialized to 1000. */
-	public static final int FATAL = 1000;
+	int FATAL = 1000;
 
 	/** ERROR indicates that ERROR messages and above should be logged. 
 	 * This level is initialized to 800. */
-    public static final int ERROR = 800;
+    int ERROR = 800;
 
     /** WARNING indicates that WARNING messages and above should be logged. 
      * This level is initialized to 600. */
-    public static final int WARNING = 600;
+    int WARNING = 600;
 
     /** INFO indicates that INFO messages and above should be logged. 
      * This level is initialized to 400. */
-    public static final int INFO = 400;
+    int INFO = 400;
 
     /** DEBUG indicates that DEBUG messages and above should be logged. 
      * This level is initialized to 200. */
-    public static final int DEBUG = 200;
+    int DEBUG = 200;
 
     /** TRACE indicates that TRACE messages and above should be logged. 
      * This level is initialized to 100. */
-    public static final int TRACE = 100;
+    int TRACE = 100;
 
     /** ALL indicates that all messages should be logged. This level is initialized to Integer.MIN_VALUE. */
-    public static final int ALL = Integer.MIN_VALUE;
+    int ALL = Integer.MIN_VALUE;
     
 
     /**

@@ -5,7 +5,7 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2007-2019 - The OWASP Foundation
  *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-
 /**
  * The HTTPUtilities interface is a collection of methods that provide additional security related to HTTP requests,
  * responses, sessions, cookies, headers, and logging.
@@ -37,17 +36,16 @@ import java.util.Map;
  */
 public interface HTTPUtilities
 {
+	// All implied static final as this is an interface
+    String REMEMBER_TOKEN_COOKIE_NAME = "rtoken";
+    int MAX_COOKIE_LEN = 4096;            // From RFC 2109
+	int MAX_COOKIE_PAIRS = 20;			// From RFC 2109
+	String CSRF_TOKEN_NAME = "ctoken";
+	String ESAPI_STATE = "estate";
 
-    final static String REMEMBER_TOKEN_COOKIE_NAME = "rtoken";
-    final static int MAX_COOKIE_LEN = 4096;            // From RFC 2109
-	final static int MAX_COOKIE_PAIRS = 20;			// From RFC 2109
-	final static String CSRF_TOKEN_NAME = "ctoken";
-	final static String ESAPI_STATE = "estate";
-
-	final static int PARAMETER = 0;
-	final static int HEADER = 1;
-	final static int COOKIE = 2;
-
+	int PARAMETER = 0;
+	int HEADER = 1;
+	int COOKIE = 2;
 
 	/**
      * Calls addCookie with the *current* request.

@@ -17,7 +17,6 @@ package org.owasp.esapi;
 
 import org.owasp.esapi.errors.EncryptionException;
 
-
 /**
  * The Randomizer interface defines a set of methods for creating
  * cryptographically random numbers and strings. Implementers should be sure to
@@ -34,7 +33,7 @@ public interface Randomizer {
 	/**
 	 * Gets a random string of a desired length and character set.  The use of java.security.SecureRandom
 	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the 
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
 	 * 
@@ -51,7 +50,7 @@ public interface Randomizer {
 	/**
 	 * Returns a random boolean.  The use of java.security.SecureRandom
 	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the 
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
 	 * 
@@ -63,7 +62,7 @@ public interface Randomizer {
 	/**
 	 * Gets the random integer. The use of java.security.SecureRandom
 	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the 
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
 	 * 
@@ -81,14 +80,14 @@ public interface Randomizer {
 	/**
 	 * Gets the random long. The use of java.security.SecureRandom
 	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the 
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
 	 * 
 	 * @return 
 	 * 		the random long
 	 */
-    public long getRandomLong();
+    long getRandomLong();
 	
 	
     /**
@@ -102,13 +101,13 @@ public interface Randomizer {
      * @return 
      * 		a random unguessable filename ending with the specified extension
      */
-    public String getRandomFilename( String extension );
+    String getRandomFilename( String extension );
     
     
 	/**
 	 * Gets the random real.  The use of java.security.SecureRandom
 	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the 
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
 	 * 
@@ -143,6 +142,6 @@ public interface Randomizer {
      * @param n	The requested number of random bytes.
      * @return The {@code n} random bytes are returned.
      */
-    public byte[] getRandomBytes(int n);
+    byte[] getRandomBytes(int n);
            
 }

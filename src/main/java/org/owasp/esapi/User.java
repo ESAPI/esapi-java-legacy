@@ -44,12 +44,12 @@ public interface User extends Principal, Serializable {
 	/**
 	 * @return the locale
 	 */
-	public Locale getLocale();
+	Locale getLocale();
 
 	/**
 	 * @param locale the locale to set
 	 */
-	public void setLocale(Locale locale);
+	void setLocale(Locale locale);
 
     /**
      * Adds a role to this user's account.
@@ -375,7 +375,7 @@ public interface User extends Principal, Serializable {
 	 * 
 	 * @throws EncryptionException 
 	 */
-	public boolean verifyPassword(String password) throws EncryptionException;
+	boolean verifyPassword(String password) throws EncryptionException;
 
 	/**
 	 * Set the time of the last failed login for this user.
@@ -417,12 +417,12 @@ public interface User extends Principal, Serializable {
 	 * always a real user, the ANONYMOUS user is better than using null to represent
 	 * this.
 	 */
-    public final User ANONYMOUS = new User() {
+    User ANONYMOUS = new User() {
 
 		private static final long serialVersionUID = -1850916950784965502L;
 
 		private String csrfToken = "";
-    	private Set sessions = new HashSet();
+    	private Set<Object> sessions = new HashSet<Object>();
 		private Locale locale = null;
     	
     	/**
