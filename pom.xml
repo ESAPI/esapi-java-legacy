@@ -192,6 +192,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+        <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <!-- Upgrading to 1.4 causes this test case failure: [ERROR] HTTPUtilitiesTest.testGetFileUploads:259. TODO: Figure out why, and fix. -->
@@ -306,14 +311,65 @@
             <artifactId>powermock-api-mockito2</artifactId>
             <version>2.0.0</version>
             <scope>test</scope>
-            <!-- The following exclusions and import of mockito-core 2.27.0 (or 2.23.0) result in 100% convergence in the test dependencies,
-                 but introduce a test dependency that requires Java 8. As such, we are commenting this out for now. -->
-            <!-- TODO: There are still 7 errors when running the test cases with Java 7, caused by something else that requires Java 8. Figure out what. -->
-        	<!-- These exclusions required to avoid convergence issues with import of mockito-core -->
-        	<!-- exclusions>
+            <exclusions>
+                <exclusion>
+                  <!-- A subdependency: org.powermock:powermock-core:2.0.0, results in the import of: org.javassist:javassist:3.24.0-GA
+                       which was compiled for Java 8 by accident. org.javassist:javassist:3.25.0-GA was released for Java 7.
+                       So we exclude it here, and import the version we need below. -->
+                  <groupId>org.javassist</groupId>
+                  <artifactId>javassist</artifactId>
+                </exclusion>
+                <!-- The following exclusions and import of mockito-core 2.27.0 result in 100% convergence in the test dependencies, -->
                 <exclusion>
                     <groupId>org.mockito</groupId>
                     <artifactId>mockito-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.powermock</groupId>
+                    <artifactId>powermock-reflect</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy-agent</artifactId>
+                </exclusion>
+            </exclusions>
+        	<!-- exclusions>
+            </exclusions -->
+        </dependency>
+        <!-- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with 
+             another import by a dependency of powermock-api-mockito2. -->
+        <dependency>
+          <!-- This version is compatible with Java 7, the previous version was not (by accident). -->
+          <groupId>org.javassist</groupId>
+          <artifactId>javassist</artifactId>
+          <version>3.25.0-GA</version>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>2.27.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-reflect</artifactId>
+            <version>2.0.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.objenesis</groupId>
+                    <artifactId>objenesis</artifactId>
                 </exclusion>
                 <exclusion>
                     <groupId>net.bytebuddy</groupId>
@@ -325,31 +381,16 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with 
-             another import by a dependency of powermock-api-mockito2. ->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>2.27.0</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.objenesis</groupId>
-                    <artifactId>objenesis</artifactId>
-                </exclusion>
-            </exclusions -->
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>2.0.0</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-assembly-plugin</artifactId>
+                    <version>3.1.1</version>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
@@ -397,12 +438,6 @@
                 <groupId>net.sourceforge.maven-taglib</groupId>
                 <artifactId>maven-taglib-plugin</artifactId>
                 <version>2.4</version>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
             </plugin>
 
             <plugin>
@@ -469,9 +504,49 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
+                <version>3.0.0-M2</version>
+                <dependencies>
+                  <dependency>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>extra-enforcer-rules</artifactId>
+                    <version>1.2</version>
+                  </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                      <id>enforce-bytecode-version</id>
+                      <goals>
+                        <goal>enforce</goal>
+                      </goals>
+                      <configuration>
+                        <rules>
+                          <enforceBytecodeVersion>
+                            <maxJdkVersion>1.7</maxJdkVersion>
+                          </enforceBytecodeVersion>
+                        </rules>
+                        <fail>true</fail>
+                      </configuration>
+                    </execution>
+                    <execution>
+                        <id>enforce-jdk-version</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireJavaVersion>
+                                    <version>1.7</version>
+                                    <message>
+                                        ESAPI 2.x now uses the JDK1.7 for it's baseline. Please make sure that your
+                                        JAVA_HOME environment variable is pointed to a JDK1.7 distribution.
+                                    </message>
+                                </requireJavaVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-            
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -513,6 +588,7 @@
                  <source>7</source>
                  <doclint>none</doclint>
                </configuration>
+               <!-- generate esapi-VERSION.javadoc.jar -->
                <executions>
                  <execution>
                    <id>attach-javadocs</id>
@@ -520,6 +596,12 @@
                    <goals><goal>jar</goal></goals>
                  </execution>
                </executions>
+            </plugin>
+
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jxr-plugin</artifactId>
+              <version>3.0.0</version>
             </plugin>
 
             <plugin>
@@ -644,13 +726,19 @@
                 </configuration>
             </plugin>
             <plugin>
+            	<!-- Generate /site/apidocs and /site/testapidocs -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <detectJavaApiLink>false</detectJavaApiLink>
-                    <detectLinks>false</detectLinks>
                     <doclint>none</doclint>
+                    <source>7</source>
                 </configuration>
+            </plugin>
+            <plugin>
+              <!-- This plugin required in reporting section, as other maven reporting plugins use the Source XRef this plugin generates.
+                   Without it, you get these errors when running mvn site: [WARNING] Unable to locate Source XRef to link to - DISABLED -->
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jxr-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -672,22 +760,9 @@
                  </reportSet>
                </reportSets>
                <configuration>
-                 <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                 <!-- setting this is supposed to make generating this report much faster, but didn't affect me without it, so I turned it off (DRW) -->
+                 <!-- dependencyLocationsEnabled>false</dependencyLocationsEnabled -->
                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <configuration>
-                  <reportPlugins>
-                    <plugin>
-                      <artifactId>maven-javadoc-plugin</artifactId>
-                      <configuration>
-                         <doclint>none</doclint>
-                      </configuration>
-                    </plugin>
-                  </reportPlugins>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -698,6 +773,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
+                <!--  Using this introduces these errors: Skipped "JDepend" report (jdepend-maven-plugin:2.0:generate), file "jdepend-report.html" already exists.
+                      but don't know how to eliminate them, without disabling this plugin. -->
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
             </plugin>
@@ -776,49 +853,6 @@
                                 </manifestEntries>
                             </archive>
                         </configuration>
-                    </plugin>
-
-                    <!-- Baseline for ESAPI 2.x is now JDK1.7 - Enforces that a JDK1.7 compiler is being
-                         used to build this release -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>enforce-jdk-version</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <requireJavaVersion>
-                                            <version>1.7</version>
-                                            <message>
-                                                ESAPI 2.x now uses the JDK1.7 for it's baseline. Please make sure that your
-                                                JAVA_HOME environment variable is pointed to a JDK1.7 distribution.
-                                            </message>
-                                        </requireJavaVersion>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <!-- Attached JavaDocs are required by Sonatype Nexus Repository -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <configuration>
-                          <doclint>none</doclint>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
 
                     <!-- For building the distribution zip file. -->
