@@ -106,12 +106,14 @@ public class KeyDerivationFunction {
     // Check if versions of KeyDerivationFunction, CipherText, and
     // CipherTextSerializer are all the same.
     {
-    	// Ignore error about comparing identical versions and dead code.
-    	// We expect them to be, but the point is to catch us if they aren't.
-    	assert CipherTextSerializer.cipherTextSerializerVersion == CipherText.cipherTextVersion :
-            "Versions of CipherTextSerializer and CipherText are not compatible.";
-    	assert CipherTextSerializer.cipherTextSerializerVersion == KeyDerivationFunction.kdfVersion :
-    		"Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.";
+        // Ignore error about comparing identical versions and dead code.
+        // We expect them to be, but the point is to catch us if they aren't.
+        if ( CipherTextSerializer.cipherTextSerializerVersion != CipherText.cipherTextVersion ) {
+            throw new ExceptionInInitializerError("Versions of CipherTextSerializer and CipherText are not compatible.");
+        }
+        if ( CipherTextSerializer.cipherTextSerializerVersion != KeyDerivationFunction.kdfVersion ) {
+            throw new ExceptionInInitializerError("Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.");
+        }
     }
     
 	/**
@@ -295,14 +297,30 @@ public class KeyDerivationFunction {
 		//					to section 5.1 of NIST SP 800-108 based on feedback from
 		//					Jeffrey Walton.
 		//
-        // These probably should be turned into actual runtime checks and an
-        // IllegalArgumentException should be thrown if they are violated.
-		assert keyDerivationKey != null : "Key derivation key cannot be null.";
-			// We would choose a larger minimum key size, but we want to be
-			// able to accept DES for legacy encryption needs.
-		assert keySize >= 56 : "Key has size of " + keySize + ", which is less than minimum of 56-bits.";
-		assert (keySize % 8) == 0 : "Key size (" + keySize + ") must be a even multiple of 8-bits.";
-		assert purpose != null && !purpose.equals("") : "Purpose may not be null or empty.";
+
+		// These checks used to be assertions prior to ESAPI 2.1.0.1
+		if ( keyDerivationKey == null ) {
+			throw new IllegalArgumentException("Key derivation key cannot be null.");
+		}
+			// We would choose a larger minimum key size, but we want to allow
+            // this KDF to be able to accept DES for legacy encryption needs. (Note that
+            // elsewhere there are checks that disallow *encryption* for key size
+            // less than Encryptor.EncryptionKeyLength bits, so if they want
+            // ESAPI to encrypt stuff for DES, they would have to set that up to
+            // be 56 bits. But I can't think of any valid symmetric encryption
+            // algorithm whose key size is less than 56 bits that we would ever
+            // want to allow.
+		if ( keySize < 56 ) {
+			throw new IllegalArgumentException("Key has size of " + keySize +
+											   ", which is less than minimum of 56-bits.");
+		}
+		if ( (keySize % 8) != 0 ) {
+			throw new IllegalArgumentException("Key size (" + keySize +
+											   ") must be a even multiple of 8-bits.");
+		}
+		if ( purpose == null || "".equals(purpose) ) {
+			throw new IllegalArgumentException("Purpose may not be null or empty.");
+		}
 
 		keySize = calcKeySize( keySize );	// Safely convert to whole # of bytes.
 		byte[] derivedKey = new byte[ keySize ];
@@ -451,7 +469,9 @@ public class KeyDerivationFunction {
      *              {@code ks} bits.
      */
     private static int calcKeySize(int ks) {
-        assert ks > 0 : "Key size must be > 0 bits.";
+        if ( ks <= 0 ) {
+            throw new IllegalArgumentException("Key size must be > 0 bits.");
+        }
         int numBytes = 0;
         int n = ks/8;
         int rem = ks % 8;

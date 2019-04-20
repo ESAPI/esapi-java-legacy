@@ -205,14 +205,11 @@ public class EncryptorTest extends TestCase {
     public void testNewEncryptDecrypt() {
     	System.out.println("testNewEncryptDecrypt()");
     	try {
-
     	    // Let's try it with a 2-key version of 3DES. This should work for all
     	    // installations, whereas the 3-key Triple DES will only work for those
     	    // who have the Unlimited Strength Jurisdiction Policy files installed.
 			runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
 			runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
-			
-			runNewEncryptDecryptTestCase("DES/ECB/NoPadding", 56, "test1234".getBytes("UTF-8"));
 			
 	        runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
 	        
@@ -228,6 +225,47 @@ public class EncryptorTest extends TestCase {
     	
     }
     
+    /** Special encryption case!!! Test encryption with DES, which has a key less than the
+     * min key size specified as Encryptor.EncryptionKeyLength in the file
+     * src/test/resources/esapi/ESAPI.properties.
+     */
+    public void testWithTooShortKey() {
+        boolean desTestFailed = false;
+        try {
+            // We expect this one to throw because we have:
+            //      Encryptor.EncryptionKeyLength=112
+            // set in src/test/resources/esapi/ESAPI.properties. It should throw
+            // an EncryptionException (with a cause of ConfigurationException).
+
+            // Generate an appropriate random secret key
+            SecretKey skey = CryptoHelper.generateSecretKey("DES/ECB/NoPadding", 56);
+
+            // Change to different cipher. (Default is AES.) This is kludgey at best. Am thinking about an
+            // alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
+            // Change the cipher transform from whatever it currently is to the specified cipherXform.
+            @SuppressWarnings("deprecation")
+            String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation("DES/ECB/NoPadding");
+
+            // Get an Encryptor instance with the specified, new, cipher transformation.
+            Encryptor instance = ESAPI.encryptor();
+            PlainText plaintext = new PlainText( "test1234".getBytes("UTF-8") );
+
+            // Do the encryption with the new encrypt() method and get back the CipherText.
+            // This should throw because the key is too short.
+            CipherText ciphertext = instance.encrypt(skey, plaintext);  // The new encrypt() method. Should throw!
+
+        } catch ( EncryptionException eex ) {
+            desTestFailed = true;
+        } catch ( Exception ex ) {
+            fail("testWithTooShortKey(): Caught unexpected exception; msg was: " + ex);
+        }
+
+        assertTrue(
+                    "Expected 56-key DES to throw EncryptionException; " +
+                        "check Encryptor.EncryptionKeyLength in src/test/resources/esapi/ESAPI.properties file.",
+                    desTestFailed);
+    }
+
     /**
      * Helper method to test new encryption / decryption.
      * @param cipherXform	Cipher transformation
@@ -289,9 +327,11 @@ public class EncryptorTest extends TestCase {
 			// Change the cipher transform from whatever it currently is to the specified cipherXform.
 	    	@SuppressWarnings("deprecation")
 			String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
+/*
 	    	if ( ! cipherXform.equals(oldCipherXform) ) {
-	    		// System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
+	    		System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
 	    	}
+ */
 	    	
 	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
 	    	Encryptor instance = ESAPI.encryptor();
@@ -548,12 +588,12 @@ public class EncryptorTest extends TestCase {
         System.out.println("testMain(): Encryptor Main with '-print' argument.");
         String[] args = {};
         JavaEncryptor.main( args );        
+            // TODO:
+            // It probably would be a better if System.out were changed to be
+            // a file or a byte stream so that the output could be slurped up
+            // and checked against (at least some of) the expected output.
+            // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         String[] args1 = {"-print"};
-        // TODO:
-        // It probably would be a better if System.out were changed to be
-        // a file or a byte stream so that the output could be slurped up
-        // and checked against (at least some of) the expected output.
-        // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         JavaEncryptor.main( args1 );        
     }    
 }
