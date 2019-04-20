@@ -175,8 +175,13 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
 	/**
 	 * Gets the key length to use in cryptographic operations declared in the ESAPI properties file.
+     * Note that this corresponds to the ESAPI property <b>Encryptor.EncryptionKeyLength</b> which is
+     * considered the <i>default</i> key size that ESAPI will use for symmetric
+     * ciphers supporting multiple key sizes. (Note that there is also an <b>Encryptor.MinEncryptionKeyLength</b>,
+     * which is the <i>minimum</i> key size (in bits) that ESAPI will support
+     * for encryption. (There is no miminimum for decryption.)
 	 * 
-	 * @return the key length.
+	 * @return the key length (in bits)
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
 	 */
 	@Deprecated
