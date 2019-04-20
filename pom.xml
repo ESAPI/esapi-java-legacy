@@ -693,7 +693,7 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- ODC requires Java 8. So only run it if using Java 8 or greater.
+                        <!-- This version of Dep Ck requires Java 8. So only run it if using Java 8 or greater.
                              This property set in a profile below. -->
                         <phase>${PhaseIfJava8plus}</phase>
                         <goals>
