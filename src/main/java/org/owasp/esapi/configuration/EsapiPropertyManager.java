@@ -10,8 +10,12 @@ import static org.owasp.esapi.configuration.EsapiPropertyLoaderFactory.createPro
 /**
  * Manager used for loading security configuration properties. Does all the logic to obtain the correct property from
  * correct source. Uses following system properties to find configuration files:
+ * <pre>
  * - org.owasp.esapi.devteam - lower priority dev file path
  * - org.owasp.esapi.opsteam - higher priority ops file path
+ * </pre>
+ *
+ * @since 2.2
  */
 public class EsapiPropertyManager implements EsapiPropertyLoader {
 

@@ -2,6 +2,8 @@ package org.owasp.esapi.configuration.consts;
 
 /**
  * Enum used for initialization of esapi configuration files. 
+ *
+ * @since 2.2
  */
 public enum EsapiConfiguration {
 

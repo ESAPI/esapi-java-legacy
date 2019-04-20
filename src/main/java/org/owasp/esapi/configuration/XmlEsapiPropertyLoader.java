@@ -21,6 +21,8 @@ import java.io.InputStream;
 
 /**
  * Loader capable of loading single security configuration property from xml configuration file.
+ *
+ * @since 2.2
  */
 public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
 
