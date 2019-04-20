@@ -23,7 +23,7 @@ import java.util.Properties;
  * committed to the development team's SCM repository.
  *
  * @since 2.2
- *
+ */
 public abstract class AbstractPrioritizedPropertyLoader implements EsapiPropertyLoader,
         Comparable<AbstractPrioritizedPropertyLoader> {
 
