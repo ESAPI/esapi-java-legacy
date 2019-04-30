@@ -4,6 +4,26 @@ package org.owasp.esapi.configuration;
 import java.io.File;
 import java.util.Properties;
 
+/**
+ * Abstrace class that supports two "levels" of priorities for ESAPI properties.
+ * The higher level is the property file supported by an "operations" team and
+ * the lower level is the property file intended to be supported by the
+ * "development" team. ESAPI properties defined in the lower level properties
+ * file cannot supersede properties defined in the higher level properties file.
+ *
+ * The intent os to place ESAPI properties related to enterprise-wide security
+ * policy (e.g., the minimum sized encryption key,
+ * <b>Encryptor.MinEncryptionKeyLength</b> in the higher level so the
+ * development team cannot dumb down the policy, either accidentally or
+ * intentionally. (This of course requires that the developers don't provide the
+ * operations team the properties file for them to use. :) This is also good for
+ * allowing the productions operations team to select property values for
+ * properties such as <b>Encryptor.MasterKey</b> and <b>Encryptor.MasterSalt</b>
+ * so that they are only on a "need-to-know" basis and don't accidentally get
+ * committed to the development team's SCM repository.
+ *
+ * @since 2.2
+ */
 public abstract class AbstractPrioritizedPropertyLoader implements EsapiPropertyLoader,
         Comparable<AbstractPrioritizedPropertyLoader> {
 

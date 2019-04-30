@@ -153,6 +153,9 @@ public final class CipherSpec implements Serializable {
 			throw new IllegalArgumentException("Cipher transformation may not be null or empty string (after trimming whitespace).");
 		}
 		int parts = cipherXform.split("/").length;
+
+            // Assertion should be okay here as these conditions are checked
+            // elsewhere and this method is private.
 		assert ( !fromCipher ? (parts == 3) : true ) :
 			"Malformed cipherXform (" + cipherXform + "); must have form: \"alg/mode/paddingscheme\"";
 		if ( fromCipher && (parts != 3)  ) {
@@ -165,8 +168,8 @@ public final class CipherSpec implements Serializable {
 				// Only algorithm and mode was given.
 				cipherXform += "/NoPadding";
 			} else if ( parts == 3 ) {
-				// All three parts provided. Do nothing. Could happen if not compiled with
-				// assertions enabled.
+                        // All three parts provided. Do nothing. Could happen if not compiled with
+                        // assertions enabled, but there are explicit checks elsewhere.
 				;	// Do nothing - shown only for completeness.
 			} else {
 				// Should never happen unless Cipher implementation is totally screwed up.
@@ -177,6 +180,8 @@ public final class CipherSpec implements Serializable {
 			throw new IllegalArgumentException("Malformed cipherXform (" + cipherXform +
 											   "); must have form: \"alg/mode/paddingscheme\"");
 		}
+            // Assertion should also be okay here as these conditions are checked
+            // elsewhere and this method is private.
 		assert cipherXform.split("/").length == 3 : "Implementation error setCipherTransformation()";
 		this.cipher_xform_ = cipherXform;
 		return this;
@@ -404,6 +409,8 @@ public final class CipherSpec implements Serializable {
 	private String getFromCipherXform(CipherTransformationComponent component) {
         int part = component.ordinal();
 		String[] parts = getCipherTransformation().split("/");
+            // Assertion should also be okay here as these conditions are checked
+            // elsewhere and this method is private.
 		assert parts.length == 3 : "Invalid cipher transformation: " + getCipherTransformation();	
 		return parts[part];
 	}

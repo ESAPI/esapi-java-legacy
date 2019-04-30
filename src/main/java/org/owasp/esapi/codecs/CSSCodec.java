@@ -58,7 +58,8 @@ public class CSSCodec extends AbstractCharacterCodec
 	 * Returns the decoded version of the character starting at index,
 	 * or null if no decoding is possible.
 	 */
-	public Character decodeCharacter(PushbackSequence<Character> input)
+    @SuppressWarnings("fallthrough")
+    public Character decodeCharacter(PushbackSequence<Character> input)
 	{
 		input.mark();
 		Character first = input.next();
@@ -135,9 +136,9 @@ public class CSSCodec extends AbstractCharacterCodec
 				if(input.peek('\n'))
 					input.next();
 				// fall through
-			case '\n':
-			case '\f':
-				// bs follwed by new line replaced by nothing
+			case '\n':  // Intentional fall through
+			case '\f':  // Intentional fall through
+				// bs followed by new line replaced by nothing
 			case '\u0000':	// skip NUL for now too
 				return decodeCharacter(input);
 		}

@@ -11,6 +11,8 @@ import static org.owasp.esapi.configuration.consts.EsapiConfigurationType.XML;
 /**
  * Factory class that takes care of initialization of proper instance of EsapiPropertyLoader
  * based on EsapiPropertiesStore
+ *
+ * @since 2.2
  */
 public class EsapiPropertyLoaderFactory {
 

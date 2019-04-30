@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
-	<TITLE>ESAPI 2.0 Symmetric Encryption User Guide</TITLE>
+	<TITLE>ESAPI 2.x Symmetric Encryption User Guide</TITLE>
 	<META NAME="GENERATOR" CONTENT="OpenOffice.org 3.0  (Linux)">
 	<META NAME="CREATED" CONTENT="20100214;0">
 	<META NAME="CHANGEDBY" CONTENT="Kevin W. Wall">
@@ -12,17 +12,9 @@
 <TABLE BORDER="0" BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0 STYLE="page-break-before: auto; page-break-after: auto; page-break-inside: auto">
 <TR>
 <TD>
-<OBJECT TYPE="audio/x-mpeg" data="http://www.catonmat.net/download/crypt-o.mp3"
-WIDTH="500" HEIGHT="64" AUTOPLAY="false">
-    <PARAM NAME="src" VALUE="http://www.catonmat.net/download/crypt-o.mp3" />
-    <PARAM NAME="controller" VALUE="true" />
-    <PARAM NAME="autoplay" VALUE="false" />
-    <PARAM NAME="autostart" VALUE="0" />
-</OBJECT>
-</TD>
-<TD>
 <FONT COLOR="#00a444" SIZE="+2">
-<I>Crypto song. Take a listen and enjoy! Harry Belafonte never sounded this good. ;-)</I>
+    <A HREF="http://www.catonmat.net/download/crypt-o.mp3" TARGET="_blank"i
+        REL="noopener noreferrer nofollow">Crypto song</A>: <I>Take a listen and enjoy! Harry Belafonte never sounded this good. ;-)</I>
 </FONT>
 </TD>
 </TABLE>
@@ -121,8 +113,27 @@ are ones that you would replace.</P>
 			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>128</FONT></FONT></PRE>
 		</TD>
 		<TD WIDTH=226>
-			<P><FONT SIZE=2>Key size, in bits. Required for cipher algorithms
+			<P><FONT SIZE=2>Default key size, in bits. Required for cipher algorithms
 			that support multiple key sizes.</FONT></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=249>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>Encryptor.MinEncryptionKeyLength</FONT></FONT></PRE>
+		</TD>
+		<TD WIDTH=202>
+			<PRE><FONT COLOR="#ff0000"><FONT SIZE=2>128</FONT></FONT></PRE>
+		</TD>
+		<TD WIDTH=226>
+			<P><FONT SIZE=2>Minimum key size, in bits, that ESAPI will support
+                for <I>encryption</I>. (Note that any legitimate size is
+                accepted for <I>decryption</I>.) So, for example, if you needed
+                to be able to do encryption for 2-key Triple DES (aka, 2TDEA),
+                then you would have to change this to '112'. Note that for a
+                minimum key size of <U>larger</U> than 128-bits, you will need
+                to have the JCE Unlimited Strength Jurisdiction Policy files
+                installed on your runtime system.
+			</FONT></P>
 		</TD>
 	</TR>
 	<TR VALIGN=TOP>
@@ -138,6 +149,8 @@ are ones that you would replace.</P>
 			compatibility with legacy or third party software. If set to
 			“fixed”, then the property Encryptor.fixedIV must also be
 			set to hex-encoded specific IV that you need to use.
+            <B>NOTE:</B> "fixed" is deprecated and will be removed by
+            release 2.3.
             </FONT></P><P><FONT SIZE=2>
             <B>CAUTION:</B> While it is not required that the IV be kept
             secret, encryption relying on fixed IVs can lead to a known
@@ -788,7 +801,7 @@ Key Derivation Function (KDF). Jeff's analysis convinced me to bring ESAPI's
 KDF more in line with NIST's recommendations for KDFs as described in
 NIST Special Publication 800-108 (and specifically section 5.1). You can
 read about Jeff's review at
-<a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/Analysis-of-ESAPI-2.0-KDF.pdf">
+<a href="https://github.com/ESAPI/esapi-java-legacy/blob/master/documentation/Analysis-of-ESAPI-2.0-KDF.pdf">
 Analysis of ESAPI 2.0's Key Derivation Function
 </a>
 </p>

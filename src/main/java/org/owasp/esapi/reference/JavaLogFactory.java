@@ -59,7 +59,7 @@ public class JavaLogFactory implements LogFactory {
     	
         synchronized (loggersMap) {
             // If a logger for this module already exists, we return the same one, otherwise we create a new one.
-            Logger moduleLogger = (Logger) loggersMap.get(moduleName);
+            Logger moduleLogger = loggersMap.get(moduleName);
 
             if (moduleLogger == null) {
                 moduleLogger = new JavaLogger(moduleName);

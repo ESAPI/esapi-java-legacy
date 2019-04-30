@@ -31,49 +31,50 @@ public interface PushbackSequence<T> {
 	int index();
 
 	/**
+	 * Determine if this sequence has another element.
 	 *
-	 * @return
+	 * @return True if there is another element in this sequence. False otherwise.
 	 */
 	boolean hasNext();
 
 	/**
-	 *
-	 * @return
+	 * Return the next element in the Sequence and increment the current index.
+	 * @return The next element in the Sequence.
 	 */
 	T next();
 
 	/**
-	    *
-	    * @return
-	    */
+	 * Return the next element in the Sequence in Hex format and increment the current index.
+	 * @return The next element in the Sequence in Hex format (if that makes sense for this Sequence's type).
+     */
 	T nextHex();
 
 	/**
-	   *
-	   * @return
-	   */
+	 * Return the next element in the Sequence in Octal format and increment the current index.
+	 * @return The next element in the Sequence in Octal format (if that makes sense for this Sequence's type).
+	 */
 	T nextOctal();
 
 	/**
-	 * Return the next character without affecting the current index.
-	 * @return
+	 * Return the next element in the Sequence without affecting the current index.
+	 * @return the next element in the Sequence.
 	 */
 	T peek();
 
 	/**
-	 * Test to see if the next character is a particular value without affecting the current index.
-	 * @param c
-	 * @return
+	 * Test to see if the next element in the Sequence matches the supplied value without affecting the current index.
+	 * @param c The value to match against.
+	 * @return True if the next element matches the supplied value. False otherwise.
 	 */
 	boolean peek(T c);
 
 	/**
-	 *
+	 * Mark the location of the current index.
 	 */
 	void mark();
 
 	/**
-	 *
+	 * Set the index back to the last marked location.
 	 */
 	void reset();
 
@@ -81,7 +82,7 @@ public interface PushbackSequence<T> {
 	 * Not at all sure what this method is intended to do.  There 
 	 * is a line in HTMLEntityCodec that said calling this method 
 	 * is a "kludge around PushbackString..."
-	 * @return
+	 * @return Return the remaining portion of the sequence, with any pushback appended to the front (if any).
 	 */
 	String remainder();
 

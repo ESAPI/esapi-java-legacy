@@ -89,16 +89,14 @@ public interface Codec<T> {
 	/**
 	 * Lookup the hex value of any character that is not alphanumeric.
 	 * @param c The character to lookup.
-	 * @return, return null if alphanumeric or the character code
-	 * 	in hex.
+	 * @return return null if alphanumeric or the character code in hex.
 	 */
 	public String getHexForNonAlphanumeric(char c);
 	
 	/**
 	 * Lookup the hex value of any character that is not alphanumeric.
 	 * @param c The character to lookup.
-	 * @return, return null if alphanumeric or the character code
-	 * 	in hex.
+	 * @return return null if alphanumeric or the character code in hex.
 	 */
 	public String getHexForNonAlphanumeric(int c);
 
@@ -113,7 +111,7 @@ public interface Codec<T> {
 	 * 
 	 * @param c
 	 * @param array
-	 * @return
+	 * @return True if the supplied array contains the specified character. False otherwise.
 	 */
 	public boolean containsCharacter( char c, char[] array );
 

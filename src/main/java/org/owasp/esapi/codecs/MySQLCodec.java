@@ -53,17 +53,15 @@ package org.owasp.esapi.codecs;
  *         <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * 
- * @see <a href=
- *      "https://dev.mysql.com/doc/refman/8.0/en/string-literals.html">MySQL 8.0
- *      String Literals</a>
- * @see <a href=
- *      "https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet#MySQL_Escaping">OWASP
+ * <a href= "https://dev.mysql.com/doc/refman/8.0/en/string-literals.html">MySQL 8.0 String Literals</a>
+ * <a href= "https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet#MySQL_Escaping">OWASP
  *      SQL_Injection_Prevention_Cheat_Sheet#MySQL_Escaping</a>
  */
 public class MySQLCodec extends AbstractCharacterCodec {
     /**
      * Specifies the SQL Mode the target MySQL Server is running with. For details about MySQL Server Modes
-     * please see the Manual at {@link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi}
+     * please see the Manual at
+     * @link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi
      *
      * Currently the only supported modes are:
      * ANSI
@@ -87,6 +85,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
 
     /** Target MySQL Server is running in Standard MySQL (Default) mode. */
     public static final int MYSQL_MODE = 0;
+    
     /**
      * Target MySQL Server is running in ANSI_QUOTES Mode
      * 
@@ -107,6 +106,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
      * @deprecated
      * @see #MySQLCodec(org.owasp.esapi.codecs.MySQLCodec.Mode)
 	 */
+    @Deprecated
 	public MySQLCodec( int mode ) {
 		this.mode = Mode.findByKey(mode);
 	}
@@ -122,10 +122,6 @@ public class MySQLCodec extends AbstractCharacterCodec {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * Returns quote-encoded character
-     *
-     * @param immune
      */
 	public String encodeCharacter( char[] immune, Character c ) {
 		char ch = c.charValue();

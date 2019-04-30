@@ -133,8 +133,7 @@ public final class JavaEncryptor implements Encryptor {
     // decryption fails. This is to prevent information leakage that may be
     // valuable in various forms of ciphertext attacks, such as the
 	// Padded Oracle attack described by Rizzo and Duong.
-    private static final String DECRYPTION_FAILED =
-        "Decryption failed; see logs for details.";
+    private static final String DECRYPTION_FAILED = "Decryption failed; see logs for details.";
 
     // # of seconds that all failed decryption attempts will take. Used to
     // help prevent side-channel timing attacks.
@@ -236,21 +235,34 @@ public final class JavaEncryptor implements Encryptor {
         byte[] salt = ESAPI.securityConfiguration().getMasterSalt();
         byte[] skey = ESAPI.securityConfiguration().getMasterKey();
 
-        assert salt != null : "Can't obtain master salt, Encryptor.MasterSalt";
-        assert salt.length >= 16 : "Encryptor.MasterSalt must be at least 16 bytes. " +
-                                   "Length is: " + salt.length + " bytes.";
-        assert skey != null : "Can't obtain master key, Encryptor.MasterKey";
-        assert skey.length >= 7 : "Encryptor.MasterKey must be at least 7 bytes. " +
-                                  "Length is: " + skey.length + " bytes.";
+        if ( salt == null ) {
+            throw new ConfigurationException("Can't obtain master salt, Encryptor.MasterSalt");
+        }
+
+        if ( salt.length < 16 ) {
+            throw new ConfigurationException("Encryptor.MasterSalt must be at least 16 bytes. " +
+                                             "Length is: " + salt.length + " bytes.");
+        }
+
+        if ( skey == null ) {
+            throw new ConfigurationException("Can't obtain master key, Encryptor.MasterKey");
+        }
+
+        if ( skey.length < 7 ) {
+            throw new ConfigurationException("Encryptor.MasterKey must be at least 7 bytes. " +
+                                             "Length is: " + skey.length + " bytes.");
+        }
         
         // Set up secretKeySpec for use for symmetric encryption and decryption,
         // and set up the public/private keys for asymmetric encryption /
         // decryption.
-        // TODO: Note: If we dump ESAPI 1.4 crypto backward compatibility,
-        //       then we probably will ditch the Encryptor.EncryptionAlgorithm
+        // TODO: Note: Since we've dumped ESAPI 1.4 crypto backward compatibility,
+        //       then we probably can ditch the Encryptor.EncryptionAlgorithm
         //       property. If so, encryptAlgorithm should probably use
         //       Encryptor.CipherTransformation and just pull off the cipher
-        //       algorithm name so we can use it here.
+        //       algorithm name so we can use it here. That just requires
+        //       advance notice and proper deprecation, which I'm not prepared
+        //       to do at this time.    -kevin wall
         synchronized(JavaEncryptor.class) {
             if ( ! initialized ) {
                 //
@@ -360,7 +372,10 @@ public final class JavaEncryptor implements Encryptor {
 		try {
 			 xform = ESAPI.securityConfiguration().getCipherTransformation();
              String[] parts = xform.split("/");
-             assert parts.length == 3 : "Malformed cipher transformation: " + xform;
+             if ( parts.length != 3 ) {
+                 throw new ConfigurationException("Malformed cipher transformation: " + xform +
+                                                  ". Should have format of cipher_alg/cipher_mode/padding_scheme.");
+             }
              String cipherMode = parts[1];
              
              // This way we can prevent modes like OFB and CFB where the IV should never
@@ -383,63 +398,33 @@ public final class JavaEncryptor implements Encryptor {
 			 //        and this method will just call that one.
 			 Cipher encrypter = Cipher.getInstance(xform);
 			 String cipherAlg = encrypter.getAlgorithm();
-			 int keyLen = ESAPI.securityConfiguration().getEncryptionKeyLength();
 
-			 // DISCUSS: OK, what do we want to do here if keyLen != keySize? If use keyLen, encryption
-			 //		     could fail with an exception, but perhaps that's what we want. Or we may just be
-			 //			 OK with silently using keySize as long as keySize >= keyLen, which then interprets
-			 //			 ESAPI.EncryptionKeyLength as the *minimum* key size, but as long as we have something
-			 //			 stronger it's OK to use it. For now, I am just going to log warning if different, but use
-			 //			 keySize unless keySize is SMALLER than ESAPI.EncryptionKeyLength, in which case I'm going
-			 //			 to log an error.
-			 //
-			 //			 IMPORTANT NOTE:	When we generate key sizes for both DES and DESede the result of
-			 //								SecretKey.getEncoding().length includes the TRUE key size (i.e.,
-			 //								*with* the even parity bits) rather than the EFFECTIVE key size
-			 //								(which incidentally is what KeyGenerator.init() expects for DES
-			 //								and DESede; duh! Nothing like being consistent). This leads to
-			 //								the following dilemma:
-			 //
-			 //													EFFECTIVE Key Size		TRUE Key Size
-			 //													(KeyGenerator.init())	(SecretKey.getEncoding().length)
-			 //									========================================================================
-			 //									For DES:			56 bits					64 bits
-			 //									For DESede:			112 bits / 168 bits		192 bits (always)
-			 //
-			 //								We are trying to automatically determine the key size from SecretKey
-			 //								based on 8 * SecretKey.getEncoding().length, but as you can see, the
-			 //								2 key 3DES and the 3 key 3DES both use the same key size (192 bits)
-			 //								regardless of what is passed to KeyGenerator.init(). There are no advertised
-			 //								methods to get the key size specified by the init() method so I'm not sure how
-			 //								this is actually working internally. However, it does present a problem if we
-			 //								wish to communicate the 3DES key size to a recipient for later decryption as
-			 //								they would not be able to distinguish 2 key 3DES from 3 key 3DES.
-			 //
-			 //								The only workaround I know is to pass the explicit key size down. However, if
-			 //								we are going to do that, I'd propose passing in a CipherSpec object so we could
-			 //								tell what cipher transformation to use as well instead of just the key size. Then
-			 //								we would extract keySize from the CipherSpec object of from the SecretKey object.
-			 //
-			 if ( keySize != keyLen ) {
-				 // DISCUSS: Technically this is not a security "failure" per se, but not really a "success" either.
-				 logger.warning(Logger.SECURITY_FAILURE, "Encryption key length mismatch. ESAPI.EncryptionKeyLength is " +
-						 keyLen + " bits, but length of actual encryption key is " + keySize +
-				 		" bits.  Did you remember to regenerate your master key (if that is what you are using)???");
-			 }
-			 // DISCUSS: Reconsider these warnings. If thousands of encryptions are done in tight loop, no one needs
-			 //          more than 1 warning. Should we do something more intelligent here?
-			 if ( keySize < keyLen ) {
-				 // ESAPI.EncryptionKeyLength defaults to 128, but that means that we could not use DES (as weak as it
-				 // is), even for legacy code. Therefore, this has been changed to simple log a warning rather than
-				 //	throw the following exception.
-				 //				 throw new ConfigurationException("Actual key size of " + keySize + " bits smaller than specified " +
-				 //						  "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits.");
-				 logger.warning(Logger.SECURITY_FAILURE, "Actual key size of " + keySize + " bits SMALLER THAN specified " +
-						 "encryption key length (ESAPI.EncryptionKeyLength) of " + keyLen + " bits with cipher algorithm " + cipherAlg);
+             int minKeyLen = 112;   // Use for hard-coded default to support 2TDEA
+             try {
+			    minKeyLen = ESAPI.securityConfiguration().getIntProp("Encryptor.MinEncryptionKeyLength");
+             } catch( Exception ex ) {
+                 logger.warning(Logger.EVENT_FAILURE,
+                         "Property 'Encryptor.MinEncryptionKeyLength' not properly set in ESAPI.properties file; using hard coded default of 112 for min key size for encryption.",
+                         ex);
+                 ;  // Do NOT rethrow.
+             }
+
+			 if ( keySize < minKeyLen ) {
+                 // NOTE: This used to just log a warning. It now logs an error & throws an exception.
+                 //
+				 // ESAPI.EncryptionKeyLength defaults to 128. This means that someone wants to use ESAPI to
+                 // encrypt with something like 2-key TDES, they would have to set this to that property
+                 // to 112 bits.
+				 logger.error(Logger.SECURITY_FAILURE, "Actual key size of " + keySize + " bits SMALLER THAN MINIMUM allowed " +
+						 "encryption key length (ESAPI.EncryptionKeyLength) of " + minKeyLen + " bits with cipher algorithm " + cipherAlg);
+				 throw new ConfigurationException("Actual key size of " + keySize + " bits smaller than specified " +
+				                                  "encryption key length (ESAPI.EncryptionKeyLength) of " + minKeyLen + " bits.");
 			 }
 			 if ( keySize < 112 ) {		// NIST Special Pub 800-57 considers 112-bits to be the minimally safe key size from 2010-2030.
-				 						// Note that 112 bits 'just happens' to be size of 2-key Triple DES!
-				 logger.warning(Logger.SECURITY_FAILURE, "Potentially unsecure encryption. Key size of " + keySize + "bits " +
+				 						// Note that 112 bits 'just happens' to be size of 2-key Triple DES! So for example, if they
+                                        // have configured ESAPI's Encryptor.EncryptionKeyLength to (say) 56 bits, we are going to
+                                        // nag them like their mother! :)
+				 logger.warning(Logger.SECURITY_FAILURE, "Potentially insecure encryption. Key size of " + keySize + "bits " +
 				                "not sufficiently long for " + cipherAlg + ". Should use appropriate algorithm with key size " +
 				                "of *at least* 112 bits except when required by legacy apps. See NIST Special Pub 800-57.");
 			 }
@@ -548,9 +533,9 @@ public final class JavaEncryptor implements Encryptor {
 			 // Don't overwrite anything in the case of exceptions because they may wish to retry.
 			 if ( success && overwritePlaintext ) {
 				 plain.overwrite();		// Note: Same as overwriting 'plaintext' byte array.
-		}
-	}
-	 }
+             }
+	     }
+    }
 
 	/**
 	* {@inheritDoc}
@@ -655,6 +640,8 @@ public final class JavaEncryptor implements Encryptor {
 	                // convert to from nanoseconds to milliseconds.
 	                long millis = extraSleep / 1000000L;
 	                long nanos  = (extraSleep - (millis * 1000000L));
+
+                    // N_SECS is hard-coded so assertion should be okay here.
 	                assert nanos >= 0 && nanos <= Integer.MAX_VALUE :
                             "Nanosecs out of bounds; nanos = " + nanos;
 	                try {
@@ -830,7 +817,8 @@ public final class JavaEncryptor implements Encryptor {
 		        cipherText = CipherText.fromPortableSerializedBytes(encryptedBytes);
 		    } catch( AssertionError e) {
 	            // Some of the tests in EncryptorTest.testVerifySeal() are examples of
-		        // this if assertions are enabled.
+		        // this if assertions are enabled, but otherwise it should not
+                // normally happen.
 		        throw new EncryptionException("Invalid seal",
 	                                          "Seal passed garbarge data resulting in AssertionError: " + e);
 	        }
@@ -993,11 +981,16 @@ public final class JavaEncryptor implements Encryptor {
     	// We would choose a larger minimum key size, but we want to be
     	// able to accept DES for legacy encryption needs. NIST says 112-bits is min. If less than that,
     	// we print warning.
-    	assert keySize >= 56 : "Key has size of " + keySize + ", which is less than minimum of 56-bits.";
+    	assert keySize >= 56 : "Key has size of " + keySize + ", which is less than absolute minimum of 56-bits.";
     	assert (keySize % 8) == 0 : "Key size (" + keySize + ") must be a even multiple of 8-bits.";
-    	assert purpose != null : "Purpose cannot be null. Should be 'encryption' or 'authenticity'.";
-    	assert purpose.equals("encryption") || purpose.equals("authenticity") :
-    		"Purpose must be \"encryption\" or \"authenticity\".";
+
+        // However, this one we want as a runtime check because we don't have this check
+        // in KeyDerivationFunction.computeDerivedKey() as we want that method
+        // to be more general.
+    	if ( !( purpose.equals("encryption") || purpose.equals("authenticity") ) ) {
+            String exMsg = "Programming error in ESAPI?? 'purpose' for computeDerivedKey() must be \"encryption\" or \"authenticity\".";
+    		throw new EncryptionException(exMsg, exMsg);
+        }
 
     	KeyDerivationFunction kdf = new KeyDerivationFunction(prf);
     	if ( kdfVersion != 0 ) {
@@ -1034,7 +1027,8 @@ public final class JavaEncryptor implements Encryptor {
             // in the case that SHA1withDSA or SHAwithDSA was specified. This is
             // all just to make these 2 work as expected. Sigh. (Note:
             // this was tested with JDK 1.6.0_21, but likely fails with earlier
-            // versions of the JDK as well.)
+            // versions of the JDK as well. Haven't experimented with later
+            // versions.)
             //
             sigAlg = "DSA";
         } else if ( sigAlg.endsWith("withrsa") ) {

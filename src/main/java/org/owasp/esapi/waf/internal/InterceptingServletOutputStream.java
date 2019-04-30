@@ -127,7 +127,7 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
 						amountToWrite = (int) (totalSize - currentPos);
 					}
 			
-					out.read(buff, 0, (int)amountToWrite);
+					out.read(buff, 0, amountToWrite);
 					
 					os.write(buff,0,amountToWrite);
 					

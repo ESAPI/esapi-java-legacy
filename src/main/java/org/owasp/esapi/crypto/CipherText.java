@@ -55,31 +55,31 @@ import org.owasp.esapi.errors.EnterpriseSecurityRuntimeException;
  * @see org.owasp.esapi.Encryptor
  * @since 2.0
  */
-public final class CipherText implements Serializable {	
+public final class CipherText implements Serializable {
     // NOTE: Do NOT change this in future versions, unless you are knowingly
     //       making changes to the class that will render this class incompatible
     //       with previously serialized objects from older versions of this class.
-	//		 If this is done, that you must provide for supporting earlier ESAPI versions.
+    //       If this is done, that you must provide for supporting earlier ESAPI versions.
     //       Be wary making incompatible changes as discussed at:
     //          http://java.sun.com/javase/6/docs/platform/serialization/spec/version.html#6678
     //       Any incompatible change in the serialization of CipherText *must* be
     //       reflected in the class CipherTextSerializer.
     // This should be *same* version as in CipherTextSerializer and KeyDerivationFunction.
-	// If one changes, the other should as well to accommodate any differences.
-	//		Previous versions:	20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
-	//						    20130830 - Fix to issue #306 (release 2.1.0)
-	public  static final int cipherTextVersion = 20130830; // Format: YYYYMMDD, max is 99991231.
-		// Required by Serializable classes.
-	private static final long serialVersionUID = cipherTextVersion; // Format: YYYYMMDD
-	
-	private static final Logger logger = ESAPI.getLogger("CipherText");
+    // If one changes, the other should as well to accommodate any differences.
+    //      Previous versions:  20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
+    //                          20130830 - Fix to issue #306 (release 2.1.0)
+    public  static final int cipherTextVersion = 20130830; // Format: YYYYMMDD, max is 99991231.
+        // Required by Serializable classes.
+    private static final long serialVersionUID = cipherTextVersion; // Format: YYYYMMDD
+    
+    private static final Logger logger = ESAPI.getLogger("CipherText");
     
     private CipherSpec cipherSpec_           = null;
     private byte[]     raw_ciphertext_       = null;
     private byte[]     separate_mac_         = null;
     private long       encryption_timestamp_ = 0;
-    private int		   kdfVersion_           = KeyDerivationFunction.kdfVersion;
-    private int		   kdfPrfSelection_      = KeyDerivationFunction.getDefaultPRFSelection();
+    private int        kdfVersion_           = KeyDerivationFunction.kdfVersion;
+    private int        kdfPrfSelection_      = KeyDerivationFunction.getDefaultPRFSelection();
 
     // All the various pieces that can be set, either directly or indirectly
     // via CipherSpec.
@@ -107,12 +107,14 @@ public final class CipherText implements Serializable {
     // Check if versions of KeyDerivationFunction, CipherText, and
     // CipherTextSerializer are all the same.
     {
-    	// Ignore error about comparing identical versions and dead code.
-    	// We expect them to be, but the point is to catch us if they aren't.
-    	assert CipherTextSerializer.cipherTextSerializerVersion == CipherText.cipherTextVersion :
-            "Versions of CipherTextSerializer and CipherText are not compatible.";
-    	assert CipherTextSerializer.cipherTextSerializerVersion == KeyDerivationFunction.kdfVersion :
-    		"Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.";
+        // Ignore error about comparing identical versions and dead code.
+        // We expect them to be, but the point is to catch us if they aren't.
+        if ( CipherTextSerializer.cipherTextSerializerVersion != CipherText.cipherTextVersion ) {
+            throw new ExceptionInInitializerError("Versions of CipherTextSerializer and CipherText are not compatible.");
+        }
+        if ( CipherTextSerializer.cipherTextSerializerVersion != KeyDerivationFunction.kdfVersion ) {
+            throw new ExceptionInInitializerError("Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.");
+        }
     }
 
     ///////////////////////////  C O N S T R U C T O R S  /////////////////////////
@@ -180,89 +182,89 @@ public final class CipherText implements Serializable {
 
     /////////////////////////  P U B L I C   M E T H O D S  ////////////////////
 
-	/**
-	 * Obtain the String representing the cipher transformation used to encrypt
-	 * the plaintext. The cipher transformation represents the cipher algorithm,
-	 * the cipher mode, and the padding scheme used to do the encryption. An
-	 * example would be "AES/CBC/PKCS5Padding". See Appendix A in the
-	 * <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA">
-	 * Java Cryptography Architecture Reference Guide</a>
-	 * for information about standard supported cipher transformation names.
-	 * <p>
-	 * The cipher transformation name is usually sufficient to be passed to
-	 * {@link javax.crypto.Cipher#getInstance(String)} to create a
-	 * <code>Cipher</code> object to decrypt the ciphertext.
-	 * 
-	 * @return The cipher transformation name used to encrypt the plaintext
-	 * 		   resulting in this ciphertext.
-	 */
+    /**
+     * Obtain the String representing the cipher transformation used to encrypt
+     * the plaintext. The cipher transformation represents the cipher algorithm,
+     * the cipher mode, and the padding scheme used to do the encryption. An
+     * example would be "AES/CBC/PKCS5Padding". See Appendix A in the
+     * <a href="http://java.sun.com/javase/6/docs/technotes/guides/security/crypto/CryptoSpec.html#AppA">
+     * Java Cryptography Architecture Reference Guide</a>
+     * for information about standard supported cipher transformation names.
+     * <p>
+     * The cipher transformation name is usually sufficient to be passed to
+     * {@link javax.crypto.Cipher#getInstance(String)} to create a
+     * <code>Cipher</code> object to decrypt the ciphertext.
+     * 
+     * @return The cipher transformation name used to encrypt the plaintext
+     *         resulting in this ciphertext.
+     */
     public String getCipherTransformation() {
         return cipherSpec_.getCipherTransformation();
     }
-	
-	/**
-	 * Obtain the name of the cipher algorithm used for encrypting the
-	 * plaintext.
-	 * 
-	 * @return The name as the cryptographic algorithm used to perform the
-	 * 		   encryption resulting in this ciphertext.
-	 */
+    
+    /**
+     * Obtain the name of the cipher algorithm used for encrypting the
+     * plaintext.
+     * 
+     * @return The name as the cryptographic algorithm used to perform the
+     *         encryption resulting in this ciphertext.
+     */
     public String getCipherAlgorithm() {
         return cipherSpec_.getCipherAlgorithm();
     }
-	
-	/**
-	 * Retrieve the key size used with the cipher algorithm that was used to
-	 * encrypt data to produce this ciphertext.
-	 * 
-	 * @return The key size in bits. We work in bits because that's the crypto way!
-	 */
+    
+    /**
+     * Retrieve the key size used with the cipher algorithm that was used to
+     * encrypt data to produce this ciphertext.
+     * 
+     * @return The key size in bits. We work in bits because that's the crypto way!
+     */
     public int getKeySize() {
         return cipherSpec_.getKeySize();
     }
-	
-	/**
-	 * Retrieve the block size (in bytes!) of the cipher used for encryption.
-	 * (Note: If an IV is used, this will also be the IV length.)
-	 * 
-	 * @return The block size in bytes. (Bits, bytes! It's confusing I know. Blame
-	 * 									the cryptographers; we've just following
-	 * 									convention.)
-	 */
+    
+    /**
+     * Retrieve the block size (in bytes!) of the cipher used for encryption.
+     * (Note: If an IV is used, this will also be the IV length.)
+     * 
+     * @return The block size in bytes. (Bits, bytes! It's confusing I know. Blame
+     *                                  the cryptographers; we've just following
+     *                                  convention.)
+     */
     public int getBlockSize() {
         return cipherSpec_.getBlockSize();
     }
-	
-	/**
-	 * Get the name of the cipher mode used to encrypt some plaintext.
-	 * 
-	 * @return The name of the cipher mode used to encrypt the plaintext
-	 *         resulting in this ciphertext. E.g., "CBC" for "cipher block
-	 *         chaining", "ECB" for "electronic code book", etc.
-	 */
+    
+    /**
+     * Get the name of the cipher mode used to encrypt some plaintext.
+     * 
+     * @return The name of the cipher mode used to encrypt the plaintext
+     *         resulting in this ciphertext. E.g., "CBC" for "cipher block
+     *         chaining", "ECB" for "electronic code book", etc.
+     */
     public String getCipherMode() {
         return cipherSpec_.getCipherMode();
     }
-	
-	/**
-	 * Get the name of the padding scheme used to encrypt some plaintext.
-	 * 
-	 * @return The name of the padding scheme used to encrypt the plaintext
-	 * 		   resulting in this ciphertext. Example: "PKCS5Padding". If no
-	 * 		   padding was used "None" is returned.
-	 */
+    
+    /**
+     * Get the name of the padding scheme used to encrypt some plaintext.
+     * 
+     * @return The name of the padding scheme used to encrypt the plaintext
+     *         resulting in this ciphertext. Example: "PKCS5Padding". If no
+     *         padding was used "None" is returned.
+     */
     public String getPaddingScheme() {
         return cipherSpec_.getPaddingScheme();
     }
-	
-	/**
-	 * Return the initialization vector (IV) used to encrypt the plaintext
-	 * if applicable.
-	 *  
-	 * @return	The IV is returned if the cipher mode used to encrypt the
-	 * 			plaintext was not "ECB". ECB mode does not use an IV so in
-	 * 			that case, <code>null</code> is returned.
-	 */
+    
+    /**
+     * Return the initialization vector (IV) used to encrypt the plaintext
+     * if applicable.
+     *  
+     * @return  The IV is returned if the cipher mode used to encrypt the
+     *          plaintext was not "ECB". ECB mode does not use an IV so in
+     *          that case, <code>null</code> is returned.
+     */
     public byte[] getIV() {
         if ( isCollected(CipherTextFlags.INITVECTOR) ) {
             return cipherSpec_.getIV();
@@ -271,194 +273,207 @@ public final class CipherText implements Serializable {
             return null;
         }
     }
-	
-	/** 
-	 * Return true if the cipher mode used requires an IV. Usually this will
-	 * be true unless ECB mode (which should be avoided whenever possible) is
-	 * used.
-	 */
+    
+    /** 
+     * Return true if the cipher mode used requires an IV. Usually this will
+     * be true unless ECB mode (which should be avoided whenever possible) is
+     * used.
+     */
     public boolean requiresIV() {
         return cipherSpec_.requiresIV();
     }
-	
-	/**
-	 * Get the raw ciphertext byte array resulting from encrypting some
-	 * plaintext.
-	 * 
-	 * @return A copy of the raw ciphertext as a byte array.
-	 */
-	public byte[] getRawCipherText() {
-	    if ( isCollected(CipherTextFlags.CIPHERTEXT) ) {
-	        byte[] copy = new byte[ raw_ciphertext_.length ];
-	        System.arraycopy(raw_ciphertext_, 0, copy, 0, raw_ciphertext_.length);
-	        return copy;
-	    } else {
-	        logger.error(Logger.SECURITY_FAILURE, "Raw ciphertext not set yet; unable to retrieve; returning null");
-	        return null;
-	    }
-	}
-	
-	/**
-	 * Get number of bytes in raw ciphertext. Zero is returned if ciphertext has not
-	 * yet been stored.
-	 * 
-	 * @return The number of bytes of raw ciphertext; 0 if no raw ciphertext has been stored.
-	 */
-	public int getRawCipherTextByteLength() {
-	    if ( raw_ciphertext_ != null ) {
-	        return raw_ciphertext_.length;
-	    } else {
-	        return 0;
-	    }
-	}
+    
+    /**
+     * Get the raw ciphertext byte array resulting from encrypting some
+     * plaintext.
+     * 
+     * @return A copy of the raw ciphertext as a byte array.
+     */
+    public byte[] getRawCipherText() {
+        if ( isCollected(CipherTextFlags.CIPHERTEXT) ) {
+            byte[] copy = new byte[ raw_ciphertext_.length ];
+            System.arraycopy(raw_ciphertext_, 0, copy, 0, raw_ciphertext_.length);
+            return copy;
+        } else {
+            logger.error(Logger.SECURITY_FAILURE, "Raw ciphertext not set yet; unable to retrieve; returning null");
+            return null;
+        }
+    }
+    
+    /**
+     * Get number of bytes in raw ciphertext. Zero is returned if ciphertext has not
+     * yet been stored.
+     * 
+     * @return The number of bytes of raw ciphertext; 0 if no raw ciphertext has been stored.
+     */
+    public int getRawCipherTextByteLength() {
+        if ( raw_ciphertext_ != null ) {
+            return raw_ciphertext_.length;
+        } else {
+            return 0;
+        }
+    }
 
-	/**
-	 * Return a base64-encoded representation of the raw ciphertext alone. Even
-	 * in the case where an IV is used, the IV is not prepended before the
-	 * base64-encoding is performed.
-	 * <p>
-	 * If there is a need to store an encrypted value, say in a database, this
-	 * is <i>not</i> the method you should use unless you are using a <i>fixed</i>
-	 * IV or are planning on retrieving the IV and storing it somewhere separately
-	 * (e.g., a different database column). If you are <i>not</i> using a fixed IV
-	 * (which is <strong>highly</strong> discouraged), you should normally use
-	 * {@link #getEncodedIVCipherText()} instead.
-	 * </p>
-	 * @see #getEncodedIVCipherText()
-	 */
-	public String getBase64EncodedRawCipherText() {
-	    return ESAPI.encoder().encodeForBase64(getRawCipherText(),false);
-	}
-	
-	/**
-	 * Return the ciphertext as a base64-encoded <code>String</code>. If an
-	 * IV was used, the IV if first prepended to the raw ciphertext before
-	 * base64-encoding. If an IV is not used, then this method returns the same
-	 * value as {@link #getBase64EncodedRawCipherText()}.
-	 * <p>
-	 * Generally, this is the method that you should use unless you only
-	 * are using a fixed IV and a storing that IV separately, in which case
-	 * using {@link #getBase64EncodedRawCipherText()} can reduce the storage
-	 * overhead.
-	 * </p>
-	 * @return The base64-encoded ciphertext or base64-encoded IV + ciphertext.
-	 * @see #getBase64EncodedRawCipherText()
-	 */
-	public String getEncodedIVCipherText() {
-	    if ( isCollected(CipherTextFlags.INITVECTOR) && isCollected(CipherTextFlags.CIPHERTEXT) ) {
-	        // First concatenate IV + raw ciphertext
-	        byte[] iv = getIV();
-	        byte[] raw = getRawCipherText();
-	        byte[] ivPlusCipherText = new byte[ iv.length + raw.length ];
-	        System.arraycopy(iv, 0, ivPlusCipherText, 0, iv.length);
-	        System.arraycopy(raw, 0, ivPlusCipherText, iv.length, raw.length);
-	        // Then return the base64 encoded result
-	        return ESAPI.encoder().encodeForBase64(ivPlusCipherText, false);
-	    } else {
-	        logger.error(Logger.SECURITY_FAILURE, "Raw ciphertext and/or IV not set yet; unable to retrieve; returning null");
-	        return null;
-	    }
-	}
+    /**
+     * Return a base64-encoded representation of the raw ciphertext alone. Even
+     * in the case where an IV is used, the IV is not prepended before the
+     * base64-encoding is performed.
+     * <p>
+     * If there is a need to store an encrypted value, say in a database, this
+     * is <i>not</i> the method you should use unless you are using a <i>fixed</i>
+     * IV or are planning on retrieving the IV and storing it somewhere separately
+     * (e.g., a different database column). If you are <i>not</i> using a fixed IV
+     * (which is <strong>highly</strong> discouraged), you should normally use
+     * {@link #getEncodedIVCipherText()} instead.
+     * </p>
+     * @see #getEncodedIVCipherText()
+     */
+    public String getBase64EncodedRawCipherText() {
+        return ESAPI.encoder().encodeForBase64(getRawCipherText(),false);
+    }
+    
+    /**
+     * Return the ciphertext as a base64-encoded <code>String</code>. If an
+     * IV was used, the IV if first prepended to the raw ciphertext before
+     * base64-encoding. If an IV is not used, then this method returns the same
+     * value as {@link #getBase64EncodedRawCipherText()}.
+     * <p>
+     * Generally, this is the method that you should use unless you only
+     * are using a fixed IV and a storing that IV separately, in which case
+     * using {@link #getBase64EncodedRawCipherText()} can reduce the storage
+     * overhead.
+     * </p>
+     * @return The base64-encoded ciphertext or base64-encoded IV + ciphertext.
+     * @see #getBase64EncodedRawCipherText()
+     */
+    public String getEncodedIVCipherText() {
+        if ( isCollected(CipherTextFlags.INITVECTOR) && isCollected(CipherTextFlags.CIPHERTEXT) ) {
+            // First concatenate IV + raw ciphertext
+            byte[] iv = getIV();
+            byte[] raw = getRawCipherText();
+            byte[] ivPlusCipherText = new byte[ iv.length + raw.length ];
+            System.arraycopy(iv, 0, ivPlusCipherText, 0, iv.length);
+            System.arraycopy(raw, 0, ivPlusCipherText, iv.length, raw.length);
+            // Then return the base64 encoded result
+            return ESAPI.encoder().encodeForBase64(ivPlusCipherText, false);
+        } else {
+            logger.error(Logger.SECURITY_FAILURE, "Raw ciphertext and/or IV not set yet; unable to retrieve; returning null");
+            return null;
+        }
+    }
 
-	/**
-	 * Compute and store the Message Authentication Code (MAC) if the ESAPI property
-	 * {@code Encryptor.CipherText.useMAC} is set to {@code true}. If it
-	 * is, the MAC is conceptually calculated as:
-	 * <pre>
-	 * 		authKey = DerivedKey(secret_key, "authenticate")
-	 * 		HMAC-SHA1(authKey, IV + secret_key)
-	 * </pre>
-	 * where derived key is an HMacSHA1, possibly repeated multiple times.
-	 * (See {@link org.owasp.esapi.crypto.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
-	 * for details.)
-	 * </p><p>
-	 * <b>Perceived Benefits</b>: There are certain cases where if an attacker
-	 * is able to change the IV. When one uses a authenticity key that is
-	 * derived from the "master" key, it also makes it possible to know when
-	 * the incorrect key was attempted to be used to decrypt the ciphertext.
-	 * </p><p>
-	 * <b>NOTE:</b> The purpose of this MAC (which is always computed by the
-	 * ESAPI reference model implementing {@code Encryptor}) is to ensure the
-	 * authenticity of the IV and ciphertext. Among other things, this prevents
-	 * an adversary from substituting the IV with one of their own choosing.
-	 * Because we don't know whether or not the recipient of this {@code CipherText}
-	 * object will want to validate the authenticity or not, the reference
-	 * implementation of {@code Encryptor} always computes it and includes it.
-	 * The recipient of the ciphertext can then choose whether or not to validate
-	 * it.
-	 * 
-	 * @param authKey The secret key that is used for proving authenticity of
-	 * 				the IV and ciphertext. This key should be derived from
-	 * 				the {@code SecretKey} passed to the
-	 * 				{@link Encryptor#encrypt(javax.crypto.SecretKey, PlainText)}
-	 *				and
-	 *				{@link Encryptor#decrypt(javax.crypto.SecretKey, CipherText)}
-	 *				methods or the "master" key when those corresponding
-	 *				encrypt / decrypt methods are used. This authenticity key
-	 *				should be the same length and for the same cipher algorithm
-	 *				as this {@code SecretKey}. The method
-	 *				{@link org.owasp.esapi.crypto.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
-	 *				is a secure way to produce this derived key.
-	 */		// DISCUSS - Cryptographers David Wagner, Ian Grigg, and others suggest
-			// computing authenticity using derived key and HmacSHA1 of IV + ciphertext.
-			// However they also argue that what should be returned and treated as
-			// (i.e., stored as) ciphertext would be something like this:
-			//		len_of_raw_ciphertext + IV + raw_ciphertext + MAC
-			// TODO: Need to do something like this for custom serialization and then
-	        // document order / format so it can be used by other ESAPI implementations.
-	public void computeAndStoreMAC(SecretKey authKey) {
-	    assert !macComputed() : "Programming error: Can't store message integrity code " +
-	                            "while encrypting; computeAndStoreMAC() called multiple times.";
-	    assert collectedAll() : "Have not collected all required information to compute and store MAC.";
-	    byte[] result = computeMAC(authKey);
-	    if ( result != null ) {
-	        storeSeparateMAC(result);
-	    }
-	    // If 'result' is null, we already logged this in computeMAC().
-	}
-	
-	/**
-	 * Same as {@link #computeAndStoreMAC(SecretKey)} but this is only used by
-	 * {@code CipherTextSerializeer}. (Has package level access.)
-	 */ // CHECKME: For this to be "safe", it requires ESAPI jar to be sealed.
-	void storeSeparateMAC(byte[] macValue) {
-	    if ( !macComputed() ) {
-	        separate_mac_ = new byte[ macValue.length ];
-	        CryptoHelper.copyByteArray(macValue, separate_mac_);
-	        assert macComputed();
-	    }
-	}
-	
-	/**
-	 * Validate the message authentication code (MAC) associated with the ciphertext.
-	 * This is mostly meant to ensure that an attacker has not replaced the IV
-	 * or raw ciphertext with something arbitrary. Note however that it will
-	 * <i>not</i> detect the case where an attacker simply substitutes one
-	 * valid ciphertext with another ciphertext.
-	 * 
-	 * @param authKey The secret key that is used for proving authenticity of
-	 * 				the IV and ciphertext. This key should be derived from
-	 * 				the {@code SecretKey} passed to the
-	 * 				{@link Encryptor#encrypt(javax.crypto.SecretKey, PlainText)}
-	 *				and
-	 *				{@link Encryptor#decrypt(javax.crypto.SecretKey, CipherText)}
-	 *				methods or the "master" key when those corresponding
-	 *				encrypt / decrypt methods are used. This authenticity key
-	 *				should be the same length and for the same cipher algorithm
-	 *				as this {@code SecretKey}. The method
-	 *				{@link org.owasp.esapi.crypto.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
-	 *				is a secure way to produce this derived key.
-	 * @return True if the ciphertext has not be tampered with, and false otherwise.
-	 */
-	public boolean validateMAC(SecretKey authKey) {
-	    boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
+    /**
+     * Compute and store the Message Authentication Code (MAC) if the ESAPI property
+     * {@code Encryptor.CipherText.useMAC} is set to {@code true}. If it
+     * is, the MAC is conceptually calculated as:
+     * <pre>
+     *      authKey = DerivedKey(secret_key, "authenticate")
+     *      HMAC-SHA1(authKey, IV + secret_key)
+     * </pre>
+     * where derived key is an HMacSHA1, possibly repeated multiple times.
+     * (See {@link org.owasp.esapi.crypto.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
+     * for details.)
+     * </p><p>
+     * <b>Perceived Benefits</b>: There are certain cases where if an attacker
+     * is able to change the IV. When one uses a authenticity key that is
+     * derived from the "master" key, it also makes it possible to know when
+     * the incorrect key was attempted to be used to decrypt the ciphertext.
+     * </p><p>
+     * <b>NOTE:</b> The purpose of this MAC (which is always computed by the
+     * ESAPI reference model implementing {@code Encryptor}) is to ensure the
+     * authenticity of the IV and ciphertext. Among other things, this prevents
+     * an adversary from substituting the IV with one of their own choosing.
+     * Because we don't know whether or not the recipient of this {@code CipherText}
+     * object will want to validate the authenticity or not, the reference
+     * implementation of {@code Encryptor} always computes it and includes it.
+     * The recipient of the ciphertext can then choose whether or not to validate
+     * it.
+     * 
+     * @param authKey The secret key that is used for proving authenticity of
+     *              the IV and ciphertext. This key should be derived from
+     *              the {@code SecretKey} passed to the
+     *              {@link Encryptor#encrypt(javax.crypto.SecretKey, PlainText)}
+     *              and
+     *              {@link Encryptor#decrypt(javax.crypto.SecretKey, CipherText)}
+     *              methods or the "master" key when those corresponding
+     *              encrypt / decrypt methods are used. This authenticity key
+     *              should be the same length and for the same cipher algorithm
+     *              as this {@code SecretKey}. The method
+     *              {@link org.owasp.esapi.crypto.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
+     *              is a secure way to produce this derived key.
+     */     // DISCUSS - Cryptographers David Wagner, Ian Grigg, and others suggest
+            // computing authenticity using derived key and HmacSHA1 of IV + ciphertext.
+            // However they also argue that what should be returned and treated as
+            // (i.e., stored as) ciphertext would be something like this:
+            //      len_of_raw_ciphertext + IV + raw_ciphertext + MAC
+            // However, Schneier's & Ferguson's Horton Principle would argue
+            // that whatever data that one sends needs to be authenticated, so
+            // that would minimally mean that len_of_raw_ciphertext would need
+            // to be included in the MAC calculation. Failure to heed the Horton
+            // Principle has already resulted in CVE-2013-5960.
+            //
+            // TODO: Need to do something like this for custom serialization and then
+            // document order / format so it can be used by other ESAPI implementations.
+    public void computeAndStoreMAC(SecretKey authKey) {
+        if ( macComputed() ) {
+            String exm = "Programming error: Can't store message authentication code " +
+                         "while encrypting; computeAndStoreMAC() called multiple times.";
+            throw new EnterpriseSecurityRuntimeException(exm, exm);
+        }
+        if ( ! collectedAll() ) {
+            String exm = "Have not collected all required information to compute and store MAC.";
+            throw new EnterpriseSecurityRuntimeException(exm, exm);
+        }
+        byte[] result = computeMAC(authKey);
+        if ( result != null ) {
+            storeSeparateMAC(result);
+        }
+        // If 'result' is null, we already logged this in computeMAC().
+    }
+    
+    /**
+     * Same as {@link #computeAndStoreMAC(SecretKey)} but this is only used by
+     * {@code CipherTextSerializeer}. (Has package level access.)
+     */ // CHECKME: For this to be "safe", it requires ESAPI jar to be sealed.
+    void storeSeparateMAC(byte[] macValue) {
+        if ( !macComputed() ) {
+            separate_mac_ = new byte[ macValue.length ];
+            CryptoHelper.copyByteArray(macValue, separate_mac_);
+            // This assertion should be okay as it's just a sanity check.
+            assert macComputed() : "MAC failed to compute correctly!";
+        }
+    }
+    
+    /**
+     * Validate the message authentication code (MAC) associated with the ciphertext.
+     * This is mostly meant to ensure that an attacker has not replaced the IV
+     * or raw ciphertext with something arbitrary. Note however that it will
+     * <i>not</i> detect the case where an attacker simply substitutes one
+     * valid ciphertext with another ciphertext.
+     * 
+     * @param authKey The secret key that is used for proving authenticity of
+     *              the IV and ciphertext. This key should be derived from
+     *              the {@code SecretKey} passed to the
+     *              {@link Encryptor#encrypt(javax.crypto.SecretKey, PlainText)}
+     *              and
+     *              {@link Encryptor#decrypt(javax.crypto.SecretKey, CipherText)}
+     *              methods or the "master" key when those corresponding
+     *              encrypt / decrypt methods are used. This authenticity key
+     *              should be the same length and for the same cipher algorithm
+     *              as this {@code SecretKey}. The method
+     *              {@link org.owasp.esapi.crypto.CryptoHelper#computeDerivedKey(SecretKey, int, String)}
+     *              is a secure way to produce this derived key.
+     * @return True if the ciphertext has not be tampered with, and false otherwise.
+     */
+    public boolean validateMAC(SecretKey authKey) {
+        boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
 
-	    if (  requiresMAC && macComputed() ) {  // Uses MAC and it was computed
-	        // Calculate MAC from HMAC-SHA1(nonce, IV + plaintext) and
-	        // compare to stored value (separate_mac_). If same, then return true,
-	        // else return false.
-	        byte[] mac = computeMAC(authKey);
-	        if ( mac.length != separate_mac_.length ) {
+        if (  requiresMAC && macComputed() ) {  // Uses MAC and it was computed
+            // Calculate MAC from HMAC-SHA1(nonce, IV + plaintext) and
+            // compare to stored value (separate_mac_). If same, then return true,
+            // else return false.
+            byte[] mac = computeMAC(authKey);
+            if ( mac.length != separate_mac_.length ) {
                     // Note: We want some type of unchecked exception
                     //       here so this will not require code changes.
                     //       Unfortunately, EncryptionException, which might
@@ -470,54 +485,54 @@ public final class CipherText implements Serializable {
                                 "computed MAC len: " + mac.length +
                                 ", received MAC len: " + separate_mac_.length);
             }
-	        return java.security.MessageDigest.isEqual(mac, separate_mac_); // Safe compare in JDK 7 and later
-	    } else if ( ! requiresMAC ) {           // Doesn't require a MAC
-	        return true;
-	    } else {
-	    		// This *used* to be the case (for versions 2.0 and 2.0.1) where we tried to
-	    		// accomodate the deprecated decrypt() method from ESAPI 1.4. Unfortunately,
-	    		// that was an EPIC FAIL. (See Google Issue # 306 for details.)
-	        logger.warning(Logger.SECURITY_FAILURE, "MAC may have been tampered with (e.g., length set to 0).");
-	        return false;    // Deprecated decrypt() method removed, so now return false.
-	    }
-	}
-	
-	/**
-	 * Return this {@code CipherText} object as a portable (i.e., network byte
-	 * ordered) serialized byte array. Note this is <b>not</b> the same as
-	 * returning a serialized object using Java serialization. Instead this
-	 * is a representation that all ESAPI implementations will use to pass
-	 * ciphertext between different programming language implementations.
-	 * 
-	 * @return A network byte-ordered serialized representation of this object.
-	 * @throws EncryptionException
-	 */    // DISCUSS: This method name sucks too. Suggestions???
-	public byte[] asPortableSerializedByteArray() throws EncryptionException {
+            return java.security.MessageDigest.isEqual(mac, separate_mac_); // Safe compare in JDK 7 and later
+        } else if ( ! requiresMAC ) {           // Doesn't require a MAC
+            return true;
+        } else {
+                // This *used* to be the case (for versions 2.0 and 2.0.1) where we tried to
+                // accomodate the deprecated decrypt() method from ESAPI 1.4. Unfortunately,
+                // that was an EPIC FAIL. (See Google Issue # 306 for details.)
+            logger.warning(Logger.SECURITY_FAILURE, "MAC may have been tampered with (e.g., length set to 0).");
+            return false;    // Deprecated decrypt() method removed, so now return false.
+        }
+    }
+    
+    /**
+     * Return this {@code CipherText} object as a portable (i.e., network byte
+     * ordered) serialized byte array. Note this is <b>not</b> the same as
+     * returning a serialized object using Java serialization. Instead this
+     * is a representation that all ESAPI implementations will use to pass
+     * ciphertext between different programming language implementations.
+     * 
+     * @return A network byte-ordered serialized representation of this object.
+     * @throws EncryptionException
+     */    // DISCUSS: This method name sucks too. Suggestions???
+    public byte[] asPortableSerializedByteArray() throws EncryptionException {
         // Check if this CipherText object is "complete", i.e., all
         // mandatory has been collected.
-	    if ( ! collectedAll() ) {
-	        String msg = "Can't serialize this CipherText object yet as not " +
-	                     "all mandatory information has been collected";
-	        throw new EncryptionException("Can't serialize incomplete ciphertext info", msg);
-	    }
-	    
-	    // If we are supposed to be using a (separate) MAC, also make sure
-	    // that it has been computed/stored.
-	    boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
-	    if (  requiresMAC && ! macComputed() ) {
-	        String msg = "Programming error: MAC is required for this cipher mode (" +
-	                     getCipherMode() + "), but MAC has not yet been " +
-	                     "computed and stored. Call the method " +
-	                     "computeAndStoreMAC(SecretKey) first before " +
-	                     "attempting serialization.";
-	        throw new EncryptionException("Can't serialize ciphertext info: Data integrity issue.",
-	                                      msg);
-	    }
-	    
-	    // OK, everything ready, so give it a shot.
-	    return new CipherTextSerializer(this).asSerializedByteArray();
-	}
-	
+        if ( ! collectedAll() ) {
+            String msg = "Can't serialize this CipherText object yet as not " +
+                         "all mandatory information has been collected";
+            throw new EncryptionException("Can't serialize incomplete ciphertext info", msg);
+        }
+        
+        // If we are supposed to be using a (separate) MAC, also make sure
+        // that it has been computed/stored.
+        boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
+        if (  requiresMAC && ! macComputed() ) {
+            String msg = "Programming error: MAC is required for this cipher mode (" +
+                         getCipherMode() + "), but MAC has not yet been " +
+                         "computed and stored. Call the method " +
+                         "computeAndStoreMAC(SecretKey) first before " +
+                         "attempting serialization.";
+            throw new EncryptionException("Can't serialize ciphertext info: Data integrity issue.",
+                                          msg);
+        }
+        
+        // OK, everything ready, so give it a shot.
+        return new CipherTextSerializer(this).asSerializedByteArray();
+    }
+    
     ///// Setters /////
     /**
      * Set the raw ciphertext.
@@ -574,10 +589,10 @@ public final class CipherText implements Serializable {
                 }
             } else if ( iv.length != getBlockSize() ) {
 // TODO: FIXME: As per email from Jeff Walton to Kevin Wall dated 12/03/2013,
-//			  this is not always true. E.g., for CCM, the IV length is supposed
-//			  to be 7, 8,  7, 8, 9, 10, 11, 12, or 13 octets because of
-//			  it's formatting function, the restof the octets used by the
-//			  nonce/counter.
+//            this is not always true. E.g., for CCM, the IV length is supposed
+//            to be 7, 8,  7, 8, 9, 10, 11, 12, or 13 octets because of
+//            it's formatting function, the restof the octets used by the
+//            nonce/counter.
                     throw new EncryptionException("Encryption failed -- bad parameters passed to encrypt",  // DISCUSS - also log? See below.
                                                   "IV length does not match cipher block size of " + getBlockSize());
             }
@@ -592,27 +607,27 @@ public final class CipherText implements Serializable {
     }
     
     public int getKDFVersion() {
-    	return kdfVersion_;
+        return kdfVersion_;
     }
 
     public void setKDFVersion(int vers) {
-    	CryptoHelper.isValidKDFVersion(vers, false, true);
-    	kdfVersion_ = vers;
+        CryptoHelper.isValidKDFVersion(vers, false, true);
+        kdfVersion_ = vers;
     }
     
     public KeyDerivationFunction.PRF_ALGORITHMS getKDF_PRF() {
-    	return KeyDerivationFunction.convertIntToPRF(kdfPrfSelection_);
+        return KeyDerivationFunction.convertIntToPRF(kdfPrfSelection_);
     }
 
     int kdfPRFAsInt() {
-    	return kdfPrfSelection_;
+        return kdfPrfSelection_;
     }
     
     public void setKDF_PRF(int prfSelection) {
         if ( prfSelection < 0 || prfSelection > 15 ) {
             throw new IllegalArgumentException("kdfPrf == " + prfSelection + " must be between 0 and 15, inclusive.");
         }
-    	kdfPrfSelection_ = prfSelection;
+        kdfPrfSelection_ = prfSelection;
     }
     
     /** Get stored time stamp representing when data was encrypted. */
@@ -656,14 +671,6 @@ public final class CipherText implements Serializable {
                            "CipherText encryption timestamp to " + new Date(timestamp) + "!");
         }
         encryption_timestamp_ = timestamp;
-    }
-    
-    /** Used in supporting {@code CipherText} serialization.
-     * @deprecated	Use {@code CipherText.cipherTextVersion} instead. Will
-     * 				disappear as of ESAPI 2.1.
-     */
-    public static long getSerialVersionUID() {
-        return CipherText.serialVersionUID;
     }
     
     /** Return the separately calculated Message Authentication Code (MAC) that
@@ -768,7 +775,8 @@ public final class CipherText implements Serializable {
      * though; this will just allow it to work in the future should we
      * decide to allow * sub-classing of this class.)
      * </p><p>
-     * See {@link http://www.artima.com/lejava/articles/equality.html}
+     * See
+     * @link http://www.artima.com/lejava/articles/equality.html
      * for full explanation.
      * </p>
      */
@@ -792,16 +800,23 @@ public final class CipherText implements Serializable {
         // changing the to conditional statements that throw should be all right
         // because this is private method and presumably we should have already
         // checked things in the public or protected methods where appropriate.
-        assert raw_ciphertext_ != null && raw_ciphertext_.length != 0 : "Raw ciphertext may not be null or empty.";
-        assert authKey != null && authKey.getEncoded().length != 0 : "Authenticity secret key may not be null or zero length.";
+        if ( raw_ciphertext_ == null || raw_ciphertext_.length == 0 ) {
+            String exm = "Raw ciphertext may not be null or empty.";
+            throw new EnterpriseSecurityRuntimeException(exm, exm);
+        }
+        if ( authKey == null || authKey.getEncoded().length == 0 ) {
+            String exm = "Authenticity secret key may not be null or zero length.";
+            throw new EnterpriseSecurityRuntimeException(exm, exm);
+        }
+
         try {
-        	// IMPORTANT NOTE: The NSA review was (apparently) OK with using HmacSHA1
-        	// to calculate the MAC that ensures authenticity of the IV+ciphertext.
-        	// (Not true of calculation of the use HmacSHA1 for the KDF though.) Therefore,
-        	// we did not make this configurable. Note also that choosing an improved
-        	// MAC algorithm here would cause the overall length of the serialized ciphertext
-        	// to be just that much longer, which is probably unacceptable when encrypting
-        	// short strings.
+            // IMPORTANT NOTE: The NSA review was (apparently) OK with using HmacSHA1
+            // to calculate the MAC that ensures authenticity of the IV+ciphertext.
+            // (Not true of calculation of the use HmacSHA1 for the KDF though.) Therefore,
+            // we did not make this configurable. Note also that choosing an improved
+            // MAC algorithm here would cause the overall length of the serialized ciphertext
+            // to be just that much longer, which is probably unacceptable when encrypting
+            // short strings.
             SecretKey sk = new SecretKeySpec(authKey.getEncoded(), "HmacSHA1");
             Mac mac = Mac.getInstance("HmacSHA1");
             mac.init(sk);
@@ -872,37 +887,35 @@ public final class CipherText implements Serializable {
     /**
      * Based on the KDF version and the selected MAC algorithm for the KDF PRF,
      * calculate the 32-bit quantity representing these.
-     * @return	A 4-byte (octet) quantity representing the KDF version and the
-     * 			MAC algorithm used for the KDF's Pseudo-Random Function.
+     * @return  A 4-byte (octet) quantity representing the KDF version and the
+     *          MAC algorithm used for the KDF's Pseudo-Random Function.
      * @see <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-ciphertext-serialization.pdf">Format of portable serialization of org.owasp.esapi.crypto.CipherText object (pg 2)</a>
      */
-	public int getKDFInfo() {
-		final int unusedBit28 = 0x8000000;  // 1000000000000000000000000000
+    public int getKDFInfo() {
+        final int unusedBit28 = 0x8000000;  // 1000000000000000000000000000
 
-		// 		kdf version is bits 1-27, bit 28 (reserved) should be 0, and
-		//		bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
-		int kdfVers = this.getKDFVersion();
-		// assert CryptoHelper.isValidKDFVersion(kdfVers, true, false);
+        //      kdf version is bits 1-27, bit 28 (reserved) should be 0, and
+        //      bits 29-32 are the MAC algorithm indicating which PRF to use for the KDF.
+        int kdfVers = this.getKDFVersion();
         if ( ! CryptoHelper.isValidKDFVersion(kdfVers, true, false) ) {
             String exm = "Invalid KDF version encountered. Value as" + kdfVers;
             throw new EnterpriseSecurityRuntimeException(exm,
                         "Possible tampering of KDF version #? " + exm);
         }
-		int kdfInfo = kdfVers;
-		int macAlg = kdfPRFAsInt();
-		// assert macAlg >= 0 && macAlg <= 15 : "MAC algorithm indicator must be between 0 to 15 inclusion; value is: " + macAlg;
-		if ( macAlg < 0 || macAlg > 15 ) {
+        int kdfInfo = kdfVers;
+        int macAlg = kdfPRFAsInt();
+        if ( macAlg < 0 || macAlg > 15 ) {
             String exm = "Invalid specifier for MAC algorithm: " + macAlg;
             throw new EnterpriseSecurityRuntimeException(exm,
                         "Possible tampering of macAlg specifier? " + exm +
                         "; value should be 0 <= macAlg <= 15.");
         }
-	    // Make sure bit28 is cleared. (Reserved for future use.)
-	    kdfInfo &= ~unusedBit28;
+        // Make sure bit28 is cleared. (Reserved for future use.)
+        kdfInfo &= ~unusedBit28;
 
-	    // Set MAC algorithm bits in high (MSB) nibble.
-	    kdfInfo |= (macAlg << 28);
+        // Set MAC algorithm bits in high (MSB) nibble.
+        kdfInfo |= (macAlg << 28);
 
-		return kdfInfo;
-	}
+        return kdfInfo;
+    }
 }

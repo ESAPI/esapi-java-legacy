@@ -205,14 +205,11 @@ public class EncryptorTest extends TestCase {
     public void testNewEncryptDecrypt() {
     	System.out.println("testNewEncryptDecrypt()");
     	try {
-
     	    // Let's try it with a 2-key version of 3DES. This should work for all
     	    // installations, whereas the 3-key Triple DES will only work for those
     	    // who have the Unlimited Strength Jurisdiction Policy files installed.
 			runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
 			runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
-			
-			runNewEncryptDecryptTestCase("DES/ECB/NoPadding", 56, "test1234".getBytes("UTF-8"));
 			
 	        runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
 	        
@@ -228,6 +225,47 @@ public class EncryptorTest extends TestCase {
     	
     }
     
+    /** Special encryption case!!! Test encryption with DES, which has a key less than the
+     * min key size specified as Encryptor.EncryptionKeyLength in the file
+     * src/test/resources/esapi/ESAPI.properties.
+     */
+    public void testWithTooShortKey() {
+        boolean desTestFailed = false;
+        try {
+            // We expect this one to throw because we have:
+            //      Encryptor.EncryptionKeyLength=112
+            // set in src/test/resources/esapi/ESAPI.properties. It should throw
+            // an EncryptionException (with a cause of ConfigurationException).
+
+            // Generate an appropriate random secret key
+            SecretKey skey = CryptoHelper.generateSecretKey("DES/ECB/NoPadding", 56);
+
+            // Change to different cipher. (Default is AES.) This is kludgey at best. Am thinking about an
+            // alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
+            // Change the cipher transform from whatever it currently is to the specified cipherXform.
+            @SuppressWarnings("deprecation")
+            String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation("DES/ECB/NoPadding");
+
+            // Get an Encryptor instance with the specified, new, cipher transformation.
+            Encryptor instance = ESAPI.encryptor();
+            PlainText plaintext = new PlainText( "test1234".getBytes("UTF-8") );
+
+            // Do the encryption with the new encrypt() method and get back the CipherText.
+            // This should throw because the key is too short.
+            CipherText ciphertext = instance.encrypt(skey, plaintext);  // The new encrypt() method. Should throw!
+
+        } catch ( EncryptionException eex ) {
+            desTestFailed = true;
+        } catch ( Exception ex ) {
+            fail("testWithTooShortKey(): Caught unexpected exception; msg was: " + ex);
+        }
+
+        assertTrue(
+                    "Expected 56-key DES to throw EncryptionException; " +
+                        "check Encryptor.EncryptionKeyLength in src/test/resources/esapi/ESAPI.properties file.",
+                    desTestFailed);
+    }
+
     /**
      * Helper method to test new encryption / decryption.
      * @param cipherXform	Cipher transformation
@@ -238,10 +276,10 @@ public class EncryptorTest extends TestCase {
      *         strength crypto is not available for this Java VM.
      */
     private String runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
-    	System.out.println("New encrypt / decrypt: " + cipherXform);
+    	// System.err.println("New encrypt / decrypt: " + cipherXform + "; requested key size: " + keySize + " bits.");
     	
     	if ( keySize > 128 && !unlimitedStrengthJurisdictionPolicyInstalled ) {
-    	    System.out.println("Skipping test for cipher transformation " +
+    	    System.err.println("Skipping test for cipher transformation " +
     	                       cipherXform + " with key size of " + keySize +
     	                       " bits because this requires JCE Unlimited Strength" +
     	                       " Jurisdiction Policy files to be installed and they" +
@@ -254,26 +292,46 @@ public class EncryptorTest extends TestCase {
 			SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);	
 			assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
 			String cipherAlg = cipherXform.split("/")[0];
+
+            // System.err.println("Key size of generated encoded key: " + skey.getEncoded().length * 8 + " bits.");
 			
 			// Adjust key size for DES and DESede specific oddities.
 			// NOTE: Key size that encrypt() method is using is 192 bits!!!
     		//        which is 3 times 64 bits, but DES key size is only 56 bits.
     		// See 'IMPORTANT NOTE', in JavaEncryptor, near line 376. It's a "feature"!!!
+/////   This section is causing problems. BC for instance sometimes creates a
+/////   192 bit key and then subsequently creates a 128-bit key for 2-key
+/////   3DES so adjusing this is futile. THis is a holdover when we were
+/////   doing an *exact* size comparison in the following assertTrue() though.
+/////   Since we are no longer doing that, we don't need to "adjust" the size
+/////   so hopefully all will be well with the world.
+/////
+/////   Delete this comment and the following commented-out code after the
+/////   official 2.2.0.0 release.
+/////
+/*
 			if ( cipherAlg.equals( "DESede" ) ) {
+                System.err.println("Adjusting requested key size of " + keySize + " bits to 192 bits for DESede");
 				keySize = 192;
 			} else if ( cipherAlg.equals( "DES" ) ) {
+                System.err.println("Adjusting requested key size of " + keySize + " bits to 64 bits for DES");
 				keySize = 64;
 			} // Else... use specified keySize.
-            assertTrue(cipherXform + ": encoded key size shorter than requested key size",  skey.getEncoded().length >= (keySize / 8) );
+ */
+
+            assertTrue(cipherXform + ": encoded key size of " + skey.getEncoded().length + " shorter than requested key size of: " + (keySize / 8),
+            		skey.getEncoded().length >= (keySize / 8) );
 
 			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
 			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
 			// Change the cipher transform from whatever it currently is to the specified cipherXform.
 	    	@SuppressWarnings("deprecation")
 			String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
+/*
 	    	if ( ! cipherXform.equals(oldCipherXform) ) {
-	    		System.out.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
+	    		System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
 	    	}
+ */
 	    	
 	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
 	    	Encryptor instance = ESAPI.encryptor();
@@ -282,15 +340,16 @@ public class EncryptorTest extends TestCase {
 	    	
 	    	// Do the encryption with the new encrypt() method and get back the CipherText.
 	    	CipherText ciphertext = instance.encrypt(skey, plaintext);	// The new encrypt() method.
-	    	System.out.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
+	    	System.err.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
 	    	assertNotNull( ciphertext );
-//	    	System.out.println("DEBUG: After encryption: base64-encoded IV+ciphertext: " + ciphertext.getEncodedIVCipherText());
-//	    	System.out.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getEncodedIVCipherText()) );
-//	    	System.out.println("DEBUG: After encryption: base64-encoded raw ciphertext: " + ciphertext.getBase64EncodedRawCipherText());
-//	    	System.out.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getBase64EncodedRawCipherText()) );
+//	    	System.err.println("DEBUG: After encryption: base64-encoded IV+ciphertext: " + ciphertext.getEncodedIVCipherText());
+//	    	System.err.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getEncodedIVCipherText()) );
+//	    	System.err.println("DEBUG: After encryption: base64-encoded raw ciphertext: " + ciphertext.getBase64EncodedRawCipherText());
+//	    	System.err.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getBase64EncodedRawCipherText()) );
 
 	    	// If we are supposed to have overwritten the plaintext, check this to see
 	    	// if origPlainText was indeed overwritten.
+	    	@SuppressWarnings("deprecation")
 			boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
 			if ( overwritePlaintext ) {
 				assertTrue( isPlaintextOverwritten(plaintext) );
@@ -308,6 +367,7 @@ public class EncryptorTest extends TestCase {
 	    	@SuppressWarnings("deprecation")
 			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
 	    	assertEquals( previousCipherXform,  cipherXform  );
+	    	@SuppressWarnings("deprecation")
 	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
 	    	assertEquals( defaultCipherXform, oldCipherXform );
 	    	
@@ -528,12 +588,12 @@ public class EncryptorTest extends TestCase {
         System.out.println("testMain(): Encryptor Main with '-print' argument.");
         String[] args = {};
         JavaEncryptor.main( args );        
+            // TODO:
+            // It probably would be a better if System.out were changed to be
+            // a file or a byte stream so that the output could be slurped up
+            // and checked against (at least some of) the expected output.
+            // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         String[] args1 = {"-print"};
-        // TODO:
-        // It probably would be a better if System.out were changed to be
-        // a file or a byte stream so that the output could be slurped up
-        // and checked against (at least some of) the expected output.
-        // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         JavaEncryptor.main( args1 );        
     }    
 }

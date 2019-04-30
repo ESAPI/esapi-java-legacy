@@ -77,14 +77,19 @@ public class ByteConversionUtil {
 
     /**
      * Converts a given byte array to an {@code short}. Bytes are expected in
-     * network byte
-     * order.
+     * network byte order.
      *
-     * @param input A network byte-ordered representation of an {@code short}.
+     * @param input A network byte-ordered representation of an {@code short},
+     *              so exactly 2 bytes are expected.
      * @return The {@code short} value represented by the input array.
      */
     public static short toShort(byte[] input) {
-        assert input.length == 2 : "toShort(): Byte array length must be 2.";
+        if ( input == null ) {
+            throw new IllegalArgumentException("input: parameter may not be null.");
+        }
+        if ( input.length != 2 ) {
+            throw new IllegalArgumentException("input: Byte array length must be 2.");
+        }
         short output = 0;
         output = (short)(((input[0] & 0xff) << 8) | (input[1] & 0xff));
         return output;
@@ -95,10 +100,16 @@ public class ByteConversionUtil {
      * network byte order.
      *
      * @param input A network byte-ordered representation of an {@code int}.
+     *              Must be exactly 4 bytes.
      * @return The {@code int} value represented by the input array.
      */
     public static int toInt(byte[] input) {
-        assert input.length == 4 : "toInt(): Byte array length must be 4.";
+        if ( input == null ) {
+            throw new IllegalArgumentException("input: parameter may not be null.");
+        }
+        if ( input.length != 4 ) {
+            throw new IllegalArgumentException("input: Byte array length must be 4.");
+        }
         int output = 0;
         output = ((input[0] & 0xff) << 24) | ((input[1] & 0xff) << 16) |
                  ((input[2] & 0xff) << 8) | (input[3] & 0xff);
@@ -110,10 +121,16 @@ public class ByteConversionUtil {
      * network byte
      *
      * @param input A network byte-ordered representation of a {@code long}.
+     *              Must be exactly 8 bytes.
      * @return The {@code long} value represented by the input array
      */
     public static long toLong(byte[] input) {
-        assert input.length == 8 : "toLong(): Byte array length must be 8.";
+        if ( input == null ) {
+            throw new IllegalArgumentException("input: parameter may not be null.");
+        }
+        if ( input.length != 8 ) {
+            throw new IllegalArgumentException("input: Byte array length must be 8.");
+        }
         long output = 0;
         output  = ((long)(input[0] & 0xff) << 56);
         output |= ((long)(input[1] & 0xff) << 48);

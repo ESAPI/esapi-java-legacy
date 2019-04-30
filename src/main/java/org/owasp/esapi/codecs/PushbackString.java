@@ -30,9 +30,9 @@ package org.owasp.esapi.codecs;
  * @see org.owasp.esapi.Encoder
  */
 public class PushbackString extends AbstractPushbackSequence<Character> {
+
 	/**
-	 *
-	 * @param input
+     * @param input Construct a PushbackString with the specified String.
 	 */
 	public PushbackString(String input) {
 		super(input);
@@ -128,7 +128,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 	 * 9, a through f, or A through F.
 	 * 
 	 * @param c
-	 * @return
+	  * @return true if it is a hexidecimal digit, false otherwise.
 	 */
 	public static boolean isHexDigit(Character c) {
 		if (c == null){
@@ -142,7 +142,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 	 * Returns true if the parameter character is an octal digit 0 through 7.
 	 * 
 	 * @param c
-	 * @return
+	  * @return true if it is an octal digit, false otherwise.
 	 */
 	public static boolean isOctalDigit(Character c) {
 		if (c == null){
@@ -194,20 +194,16 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 		return input.charAt(index) == c;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.codecs.PushbackSequence#mark()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void mark() {
 		temp = pushback;
 		mark = index;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.owasp.esapi.codecs.PushbackSequence#reset()
+	/**
+	 * {@inheritDoc}
 	 */
 	public void reset() {
 		pushback = temp;
@@ -215,8 +211,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 	}
 
 	/**
-	 *
-	 * @return
+	 * {@inheritDoc}
 	 */
 	public String remainder() {
 		String output = input.substring(index);
