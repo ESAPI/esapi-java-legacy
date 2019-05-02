@@ -18,12 +18,11 @@
 package org.owasp.esapi.codecs;
 
 /**
- * 
- * This Abstract class provides the generic logic for using a {@code PushbackSequence}
+ * This Abstract class provides the generic logic for using a {@link PushbackSequence}
  * in regards to iterating strings.  The final Impl is intended for the user to supply
- * a type {@code T} such that the pushback interface can be utilized for sequences
- * of type {@code T}.  Presently this generic class is limited by the fact that 
- * @{code input} is a {@code String}.  
+ * a type T such that the pushback interface can be utilized for sequences
+ * of type T.  Presently this generic class is limited by the fact that 
+ * input is a String.  
  *  
  * @author Matt Seil
  *
@@ -41,26 +40,21 @@ public abstract class AbstractPushbackSequence<T> implements PushbackSequence<T>
 	}
 
 	/**
-	 *
-	 * @param c
+	 * {@inheritDoc}
 	 */
 	public void pushback(T c) {
 		pushback = c;
 	}
 
 	/**
-	 * Get the current index of the PushbackString. Typically used in error
-	 * messages.
-	 * 
-	 * @return The current index of the PushbackString.
+	 * {@inheritDoc}
 	 */
 	public int index() {
 		return index;
 	}
 
 	/**
-	 *
-	 * @return
+	 * {@inheritDoc}
 	 */
 	public boolean hasNext() {
 		if (pushback != null)

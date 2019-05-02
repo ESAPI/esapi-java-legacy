@@ -7,6 +7,8 @@ import java.io.*;
 
 /**
  * Loader capable of loading single security configuration property from standard java properties configuration file.
+ *
+ * @since 2.2
  */
 public class StandardEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
 

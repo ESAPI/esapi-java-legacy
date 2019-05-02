@@ -18,10 +18,9 @@ import org.owasp.esapi.util.NullSafe;
  *
  * <b>NOTE:</b><br>
  * <ul>
- *	<li>{@link Map.remove(Object)} is not supported.</li>
+ *	<li>@see java.util.Map.remove(Object) is not supported.</li>
  *	<li>
- *		If deletion support is added the max key length will
- *		need work or removal.
+ *		If deletion support is added, the max key length will need work or removal.
  *	</li>
  *	<li>Null values are not supported.</li>
  * </ul>
@@ -42,7 +41,7 @@ public class HashTrie<T> implements Trie<T>
 		}
 
 		/**
-		 * Convinence instantiator.
+		 * Convenience instantiator.
 		 * @param key The key for the new instance
 		 * @param keyLength The length of the key to use
 		 * @param value The value for the new instance
@@ -60,7 +59,7 @@ public class HashTrie<T> implements Trie<T>
 		}
 
 		/**
-		 * Convinence instantiator.
+		 * Convenience instantiator.
 		 * @param key The key for the new instance
 		 * @param value The value for the new instance
 		 * @return null if key or value is null
@@ -132,7 +131,7 @@ public class HashTrie<T> implements Trie<T>
 
 		/**
 		 * Create a new Map for a node level. This is here so
-		 * that if the underlying * Map implmentation needs to
+		 * that if the underlying * Map implementation needs to
 		 * be switched it is easily done.
 		 * @return A new Map for use.
 		 */
@@ -143,9 +142,9 @@ public class HashTrie<T> implements Trie<T>
 
 		/**
 		 * Create a new Map for a node level. This is here so
-		 * that if the underlying * Map implmentation needs to
+		 * that if the underlying * Map implementation needs to
 		 * be switched it is easily done.
-		 * @param prev Pervious map to use to populate the
+		 * @param prev Previous map to use to populate the
 		 * new map.
 		 * @return A new Map for use.
 		 */
@@ -214,8 +213,7 @@ public class HashTrie<T> implements Trie<T>
 		 * @param key The key being looked up.
 		 * @param pos The position in the key that is being
 		 *	looked up at this level.
-		 * @return The value assocatied with the key or null if
-		 *	none exists.
+		 * @return The value associated with the key or null if none exists.
 		 */
 		T get(CharSequence key, int pos)
 		{
@@ -233,8 +231,7 @@ public class HashTrie<T> implements Trie<T>
 		 * @param key The key being looked up.
 		 * @param pos The position in the key that is being
 		 *	looked up at this level.
-		 * @return The Entry assocatied with the longest key
-		 *	match or null if none exists.
+		 * @return The Entry associated with the longest key match or null if none exists.
 		 */
 		Entry<T> getLongestMatch(CharSequence key, int pos)
 		{
@@ -257,7 +254,7 @@ public class HashTrie<T> implements Trie<T>
 		 * @param keyIn Where to read the key from
 		 * @param pos The position in the key that is being
 		 *	looked up at this level.
-		 * @return The Entry assocatied with the longest key
+		 * @return The Entry associated with the longest key
 		 *	match or null if none exists.
 		 */
 		Entry<T> getLongestMatch(PushbackReader keyIn, StringBuilder key) throws IOException

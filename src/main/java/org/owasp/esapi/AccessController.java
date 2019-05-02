@@ -5,7 +5,7 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2007-2019 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
@@ -16,8 +16,6 @@
 package org.owasp.esapi;
 
 import org.owasp.esapi.errors.AccessControlException;
-
-
 
 /**
  * The AccessController interface defines a set of methods that can be used in a wide variety of applications to
@@ -95,7 +93,7 @@ public interface AccessController {
 	 *        by <code>key</code> exists and returned <code>true</code>. 
 	 *        Otherwise returns <code>false</code> 
 	 */
-	public boolean isAuthorized(Object key, Object runtimeParameter);
+	boolean isAuthorized(Object key, Object runtimeParameter);
 	
 	/**
 	 * <code>assertAuthorized</code> executes the <code>AccessControlRule</code> 
@@ -121,7 +119,7 @@ public interface AccessController {
 	 * @param runtimeParameter runtimeParameter can contain anything that 
 	 *        the AccessControlRule needs from the runtime system.
 	 */
-	public void assertAuthorized(Object key, Object runtimeParameter)
+	void assertAuthorized(Object key, Object runtimeParameter)
 		throws AccessControlException;
 
 		

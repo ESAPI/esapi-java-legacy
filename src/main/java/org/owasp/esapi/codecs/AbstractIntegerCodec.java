@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * data as codePoints as opposed to a stream of {@code char}s.
  * 
  * @author Matt Seil (mseil .at. owasp.org)
- * @Created 2017 -- Adapted from Jeff Williams' original {@code Codec} class.  
+ * @since 2017 -- Adapted from Jeff Williams' original {@code Codec} class.  
  */
 public class AbstractIntegerCodec extends AbstractCodec<Integer> {
 
@@ -39,10 +39,9 @@ public class AbstractIntegerCodec extends AbstractCodec<Integer> {
 		PushbackSequence<Integer> pbs = new PushBackSequenceImpl(input);
 		while (pbs.hasNext()) {
 			Integer c = decodeCharacter(pbs);
-			boolean isValid = null == c ? false:Character.isValidCodePoint(c);
-			if (c != null && isValid) {
+			if (c != null && Character.isValidCodePoint(c)) {
 				sb.appendCodePoint(c);
-			}else{
+			} else {
 				sb.appendCodePoint(pbs.next());
 			}
 		}

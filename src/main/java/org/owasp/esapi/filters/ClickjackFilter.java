@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * The {@code ClickjackFilter} is discussed at
- * {@link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE}.
+ * @link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE
  * <pre>
  *     <filter>
  *            <filter-name>ClickjackFilterDeny</filter-name>
@@ -83,7 +83,7 @@ public class ClickjackFilter implements Filter
 	 * Add X-FRAME-OPTIONS response header to tell IE8 (and any other browsers who
 	 * decide to implement) not to display this content in a frame. For details, please
 	 * refer to
-	 * {@link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx}.
+	 * @link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx
 	 * 
 	 * @param request The request object.
 	 * @param response The response object.

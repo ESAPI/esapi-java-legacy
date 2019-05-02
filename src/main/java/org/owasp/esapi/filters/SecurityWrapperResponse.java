@@ -44,7 +44,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Construct a safe response that overrides the default response methods
-     * with safer versions. 
+     * with safer versions. Default is 'log' mode.
      * 
      * @param response
      */
@@ -53,9 +53,11 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     }
 
     /**
-     *
+     * Construct a safe response that overrides the default response methods
+     * with safer versions. 
+     * 
      * @param response
-     * @param mode
+     * @param mode The mode for this wrapper. Legal modes are "log", "skip", "sanitize", "throw".
      */
     public SecurityWrapperResponse(HttpServletResponse response, String mode) {
     	super( response );
@@ -203,7 +205,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     /**
      * Same as HttpServletResponse, no security changes required.
      * @param name
-     * @return
+     * @return True if the current response already contains a header of the supplied name.
      */
     public boolean containsHeader(String name) {
         return getHttpServletResponse().containsHeader(name);
@@ -281,7 +283,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return
+     * @return The buffer size of the current HTTP response.
      */
     public int getBufferSize() {
         return getHttpServletResponse().getBufferSize();
@@ -289,7 +291,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return
+     * @return The character encoding of the current HTTP response.
      */
     public String getCharacterEncoding() {
         return getHttpServletResponse().getCharacterEncoding();
@@ -297,7 +299,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return
+     * @return The content type of the current HTTP response.
      */
     public String getContentType() {
         return getHttpServletResponse().getContentType();
@@ -305,7 +307,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return
+     * @return The Locale of the current HTTP response.
      */
     public Locale getLocale() {
         return getHttpServletResponse().getLocale();
@@ -313,7 +315,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return 
+     * @return The ServletOutputStream of the current HTTP response.
      * @throws IOException
      */
     public ServletOutputStream getOutputStream() throws IOException {
@@ -322,7 +324,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return 
+     * @return The PrintWriter of the current HTTP response.
      * @throws IOException
      */
     public PrintWriter getWriter() throws IOException {
@@ -331,7 +333,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Same as HttpServletResponse, no security changes required.
-     * @return
+     * @return The isCommitted() status of the current HTTP response.
      */
     public boolean isCommitted() {
         return getHttpServletResponse().isCommitted();
@@ -360,12 +362,11 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void sendError(int sc) throws IOException {
     	SecurityConfiguration config = ESAPI.securityConfiguration();
-    	if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+    	if (config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")) {
     		getHttpServletResponse().sendError(HttpServletResponse.SC_OK, getHTTPMessage(sc));
-    	}else{
+    	} else {
     		getHttpServletResponse().sendError(sc, getHTTPMessage(sc));
     	}
-        
     }
 
     /**

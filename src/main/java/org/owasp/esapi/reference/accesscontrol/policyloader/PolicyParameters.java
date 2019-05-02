@@ -5,7 +5,7 @@ public interface PolicyParameters {
 	/**
 	 * Follows the contract for java.util.Map;
 	 * @param key
-	 * @return
+	 * @return The Object referred to by this key, if it exists.
 	 * @see java.util.Map
 	 */
 	public abstract Object get(String key);
@@ -25,7 +25,7 @@ public interface PolicyParameters {
 	 * This is a convenience method for developers that prefer to think of this
 	 * as a map instead of being bean-like. 
 	 * 
-	 * @see set(String, Object)
+	 * @see #set(String, Object)
 	 */
 	public abstract void put(String key, Object value)
 			throws IllegalArgumentException;

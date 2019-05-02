@@ -310,6 +310,7 @@ public class MockServletContext implements ServletContext {
      * <code>ServletContext</code> class and can perform shared business logic
      * by invoking methods on common non-servlet classes.
      */
+    @Deprecated
     public Servlet getServlet(String name) throws ServletException {
     	return null;
     }
@@ -324,6 +325,7 @@ public class MockServletContext implements ServletContext {
      * will be permanently removed in a future version of the Java
      * Servlet API.
      */
+    @Deprecated
     public Enumeration getServlets() {
     	return null;
     }
@@ -338,6 +340,7 @@ public class MockServletContext implements ServletContext {
      * remains only to preserve binary compatibility. This method will
      * be permanently removed in a future version of the Java Servlet API.
      */
+    @Deprecated
     public Enumeration getServletNames() {
     	return null;
     }
@@ -363,6 +366,7 @@ public class MockServletContext implements ServletContext {
      * exception's stack trace and an explanatory error message
      * to the servlet log file.
      */
+    @Deprecated
     public void log(Exception exception, String msg) {
     	ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, msg, exception );
     }

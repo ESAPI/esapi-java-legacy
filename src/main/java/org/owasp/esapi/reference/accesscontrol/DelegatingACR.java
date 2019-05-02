@@ -59,10 +59,10 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 	/**
 	 * Convert an array of fully qualified class names into an array of Class objects
 	 * @param parameterClassNames
-	 * @return
+	 * @return The Class objects found that match the specified class names provided.
 	 */
 	protected final Class[] getParameters(String[] parameterClassNames) {
-		if(parameterClassNames == null) {
+		if (parameterClassNames == null) {
 			return new Class[0];
 		}
 		Vector<Class> classes = new Vector<Class>();
@@ -76,7 +76,7 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 	 * Convert a single fully qualified class name into a Class object
 	 * @param className
 	 * @param purpose
-	 * @return
+	 * @return The Class matching the specified name, if it exists.
 	 */
 	protected final Class getClass(String className, String purpose) {
 		try {
