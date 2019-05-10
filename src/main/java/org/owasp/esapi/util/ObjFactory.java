@@ -13,6 +13,7 @@ import org.owasp.esapi.errors.ConfigurationException;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A generic object factory to create an object of class T. T must be a concrete
@@ -44,6 +45,11 @@ import java.lang.reflect.Modifier;
  */
 public class ObjFactory {
 
+	private static final int CACHE_INITIAL_CAPACITY = 4096;
+	private static final float CACHE_LOAD_FACTOR = 0.75F;
+	private static final ConcurrentHashMap<String,Class<?>> CLASSES_CACHE = new ConcurrentHashMap<>(CACHE_INITIAL_CAPACITY, CACHE_LOAD_FACTOR);
+	private static final ConcurrentHashMap<String,MethodWrappedInfo> METHODS_CACHE = new ConcurrentHashMap<>(CACHE_INITIAL_CAPACITY, CACHE_LOAD_FACTOR);
+
 	/**
 	 * Create an object based on the <code>className</code> parameter.
 	 * 
@@ -70,20 +76,13 @@ public class ObjFactory {
 				// No big deal...just use "[unknown?]" for this as it's only for an err msg.
 				typeName = "[unknown?]";	// CHECKME: Any better suggestions?
 			}
-			
-			Class<?> theClass = Class.forName(className);
 
-            try {
-                Method singleton = theClass.getMethod( "getInstance" );
+			Class<?> theClass = loadClassByStringName(className);
 
-                // If the implementation class contains a getInstance method that is not static, this is an invalid
-                // object configuration and a ConfigurationException will be thrown.
-                if ( !Modifier.isStatic( singleton.getModifiers() ) )
-                {
-                    throw new ConfigurationException( "Class [" + className + "] contains a non-static getInstance method." );
-                }
-                
-                obj = singleton.invoke( null );
+			try {
+				Method singleton = findSingletonCreateMethod(className, theClass);
+
+				obj = singleton.invoke( null );
             } catch (NoSuchMethodException e) {
                 // This is a no-error exception, if this is caught we will continue on assuming the implementation was
                 // not meant to be used as a singleton.
@@ -97,7 +96,7 @@ public class ObjFactory {
             }
 
 			return (T)obj;		// Eclipse warning here if @SupressWarnings omitted.
-			
+
             // Issue 66 - Removed System.out calls as we are throwing an exception in each of these cases
             // anyhow.
 		} catch( IllegalArgumentException ex ) {
@@ -130,9 +129,65 @@ public class ObjFactory {
 		}
 		// DISCUSS: Should we also catch ExceptionInInitializerError here? See Google Issue #61 comments.
 	}
-	
-	/**
+
+	private static Class<?> loadClassByStringName(String className) throws ClassNotFoundException {
+		Class<?> clazz;
+		if (CLASSES_CACHE.containsKey(className)) {
+			clazz = CLASSES_CACHE.get(className);
+		} else {
+			clazz = Class.forName(className);
+			CLASSES_CACHE.putIfAbsent(className, clazz);
+		}
+		return clazz;
+	}
+
+    private static Method findSingletonCreateMethod(String className, Class<?> theClass) throws NoSuchMethodException {
+        MethodWrappedInfo singleton = loadMethodByStringName(className,theClass);
+
+        // If the implementation class contains a getInstance method that is not static, this is an invalid
+        // object configuration and a ConfigurationException will be thrown.
+        if (!singleton.isStaticMethod()) {
+            throw new ConfigurationException("Class [" + className + "] contains a non-static getInstance method.");
+        }
+        return singleton.getMethod();
+    }
+
+    private static MethodWrappedInfo loadMethodByStringName(String className, Class<?> clazz) throws NoSuchMethodException {
+        String methodName = className + "getInstance";
+        MethodWrappedInfo methodInfo;
+        Method method;
+        boolean staticMethod;
+        if (METHODS_CACHE.containsKey(methodName)) {
+            methodInfo = METHODS_CACHE.get(methodName);
+        } else {
+            method = clazz.getMethod("getInstance");
+            staticMethod = Modifier.isStatic(method.getModifiers());
+            methodInfo = new MethodWrappedInfo(method, staticMethod);
+            METHODS_CACHE.putIfAbsent(methodName, methodInfo);
+        }
+        return methodInfo;
+    }
+
+    /**
 	 * Not instantiable
 	 */
 	private ObjFactory() { }
+
+	private static class MethodWrappedInfo {
+		private Method method;
+		private boolean staticMethod;
+
+		MethodWrappedInfo(Method method, boolean staticMethod) {
+			this.method = method;
+			this.staticMethod = staticMethod;
+		}
+
+		Method getMethod() {
+			return method;
+		}
+
+		boolean isStaticMethod() {
+			return staticMethod;
+		}
+	}
 }
