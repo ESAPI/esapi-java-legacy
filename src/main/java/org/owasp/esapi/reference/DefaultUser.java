@@ -320,7 +320,7 @@ public class DefaultUser implements User, Serializable {
 
 		// If expiration should happen automatically or based on lastPasswordChangeTime?
 		//		long from = lastPasswordChangeTime.getTime();
-		//		long to = new Date().getTime();
+		//		long to = System.currentTimeMillis();
 		//		double difference = to - from;
 		//		long days = Math.round((difference / (1000 * 60 * 60 * 24)));
 		//		return days > 60;

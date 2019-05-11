@@ -15,14 +15,12 @@
  */
 package org.owasp.esapi.http;
 
-import java.util.Date;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 /**
  * The Class MockHttpSession.
@@ -35,10 +33,10 @@ public class MockHttpSession implements HttpSession {
 	boolean invalidated = false;
 	
 	/** The creation time. */
-	private long creationTime=new Date().getTime();
+	private long creationTime=System.currentTimeMillis();
 	
 	/** The accessed time. */
-	private long accessedTime=new Date().getTime();
+	private long accessedTime=System.currentTimeMillis();
 	
 	/** The count. */
 	private static int count = 1;

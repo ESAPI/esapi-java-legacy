@@ -16,52 +16,25 @@
  */
 package org.owasp.esapi.reference.crypto;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.PublicKey;
-import java.security.SecureRandom;
-import java.security.Security;
-import java.security.Signature;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.Map.Entry;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-// import javax.crypto.Mac;			// Uncomment if computeHMAC() is included.
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import javax.crypto.spec.IvParameterSpec;
-
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.EncoderConstants;
 import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.Hex;
-import org.owasp.esapi.crypto.CipherSpec;
-import org.owasp.esapi.crypto.CipherText;
-import org.owasp.esapi.crypto.CryptoHelper;
-import org.owasp.esapi.crypto.KeyDerivationFunction;
-import org.owasp.esapi.crypto.PlainText;
-import org.owasp.esapi.crypto.SecurityProviderLoader;
+import org.owasp.esapi.crypto.*;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+
+import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.security.*;
+import java.util.*;
+import java.util.Map.Entry;
+
+// import javax.crypto.Mac;			// Uncomment if computeHMAC() is included.
 
 /**
  * Reference implementation of the {@code Encryptor} interface. This implementation
@@ -830,7 +803,7 @@ public final class JavaEncryptor implements Encryptor {
 			}
 	
 			String timestring = parts[0];
-			long now = new Date().getTime();
+			long now = System.currentTimeMillis();
 			long expiration = Long.parseLong(timestring);
 			if (now > expiration) {
 				throw new EncryptionException("Invalid seal", "Seal expiration date of " + new Date(expiration) + " has past.");
@@ -866,14 +839,14 @@ public final class JavaEncryptor implements Encryptor {
 	* {@inheritDoc}
 	*/
 	public long getTimeStamp() {
-		return new Date().getTime();
+		return System.currentTimeMillis();
 	}
 
 	/**
 	* {@inheritDoc}
 	*/
 	public long getRelativeTimeStamp( long offset ) {
-		return new Date().getTime() + offset;
+		return System.currentTimeMillis() + offset;
 	}
 
 	// DISCUSS: Why experimental? Would have to be added to Encryptor interface
