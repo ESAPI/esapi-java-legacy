@@ -130,6 +130,13 @@ public class ObjFactory {
 		// DISCUSS: Should we also catch ExceptionInInitializerError here? See Google Issue #61 comments.
 	}
 
+	/**
+	 * Load the class in cache, or load by the classloader and cache it
+	 *
+	 * @param className The name of the class to construct. Should be a fully qualified name
+	 * @return The target class
+	 * @throws ClassNotFoundException Failed to load class by the className
+	 */
 	private static Class<?> loadClassByStringName(String className) throws ClassNotFoundException {
 		Class<?> clazz;
 		if (CLASSES_CACHE.containsKey(className)) {
@@ -141,6 +148,14 @@ public class ObjFactory {
 		return clazz;
 	}
 
+	/**
+	 * Find the method to create a singleton object
+	 *
+	 * @param className The name of the class to construct. Should be a fully qualified name
+	 * @param theClass The class loaded in prior
+	 * @return The method to create a singleton object
+	 * @throws NoSuchMethodException Failed to find the target method
+	 */
     private static Method findSingletonCreateMethod(String className, Class<?> theClass) throws NoSuchMethodException {
         MethodWrappedInfo singleton = loadMethodByStringName(className,theClass);
 
@@ -152,7 +167,14 @@ public class ObjFactory {
         return singleton.getMethod();
     }
 
-    private static MethodWrappedInfo loadMethodByStringName(String className, Class<?> clazz) throws NoSuchMethodException {
+	/**
+	 *
+	 * @param className The name of the class to construct. Should be a fully qualified name
+	 * @param theClass The class loaded in prior
+	 * @return Wrapped data, contains the method object and the method is static method or not
+	 * @throws NoSuchMethodException Failed to find the target method
+	 */
+    private static MethodWrappedInfo loadMethodByStringName(String className, Class<?> theClass) throws NoSuchMethodException {
         String methodName = className + "getInstance";
         MethodWrappedInfo methodInfo;
         Method method;
@@ -160,7 +182,7 @@ public class ObjFactory {
         if (METHODS_CACHE.containsKey(methodName)) {
             methodInfo = METHODS_CACHE.get(methodName);
         } else {
-            method = clazz.getMethod("getInstance");
+            method = theClass.getMethod("getInstance");
             staticMethod = Modifier.isStatic(method.getModifiers());
             methodInfo = new MethodWrappedInfo(method, staticMethod);
             METHODS_CACHE.putIfAbsent(methodName, methodInfo);
@@ -173,6 +195,10 @@ public class ObjFactory {
 	 */
 	private ObjFactory() { }
 
+	/**
+	 * Wrapped data, contains the method object and the method is static method or not.<br>
+	 * The goal to store the boolean value in field staticMethod is reduce the check times: check once, use many times.
+	 */
 	private static class MethodWrappedInfo {
 		private Method method;
 		private boolean staticMethod;
