@@ -162,7 +162,7 @@ public class ObjFactory {
         // If the implementation class contains a getInstance method that is not static, this is an invalid
         // object configuration and a ConfigurationException will be thrown.
         if (!singleton.isStaticMethod()) {
-            throw new ConfigurationException("Class [" + className + "] contains a non-static getInstance method.");
+            throw singleton.getNonStaticEx();
         }
         return singleton.getMethod();
     }
@@ -177,14 +177,14 @@ public class ObjFactory {
     private static MethodWrappedInfo loadMethodByStringName(String className, Class<?> theClass) throws NoSuchMethodException {
         String methodName = className + "getInstance";
         MethodWrappedInfo methodInfo;
-        Method method;
-        boolean staticMethod;
         if (METHODS_CACHE.containsKey(methodName)) {
             methodInfo = METHODS_CACHE.get(methodName);
         } else {
-            method = theClass.getMethod("getInstance");
-            staticMethod = Modifier.isStatic(method.getModifiers());
-            methodInfo = new MethodWrappedInfo(method, staticMethod);
+            Method method = theClass.getMethod("getInstance");
+            boolean staticMethod = Modifier.isStatic(method.getModifiers());
+            ConfigurationException nonStaticEx = staticMethod ? null :
+                    new ConfigurationException("Class [" + className + "] contains a non-static getInstance method.");
+            methodInfo = new MethodWrappedInfo(method, staticMethod, nonStaticEx);
             METHODS_CACHE.putIfAbsent(methodName, methodInfo);
         }
         return methodInfo;
@@ -197,15 +197,18 @@ public class ObjFactory {
 
 	/**
 	 * Wrapped data, contains the method object and the method is static method or not.<br>
-	 * The goal to store the boolean value in field staticMethod is reduce the check times: check once, use many times.
+	 * The goal to store the boolean value in field staticMethod is reduce the check times: check once, use many times.<br>
+     * The goal to store the exception in field nonStaticException is reduce the cost of new Exception(): create once, use many times.
 	 */
 	private static class MethodWrappedInfo {
 		private Method method;
 		private boolean staticMethod;
+		private ConfigurationException nonStaticEx;
 
-		MethodWrappedInfo(Method method, boolean staticMethod) {
+		MethodWrappedInfo(Method method, boolean staticMethod, ConfigurationException nonStaticEx) {
 			this.method = method;
 			this.staticMethod = staticMethod;
+			this.nonStaticEx = nonStaticEx;
 		}
 
 		Method getMethod() {
@@ -215,5 +218,9 @@ public class ObjFactory {
 		boolean isStaticMethod() {
 			return staticMethod;
 		}
-	}
+
+        ConfigurationException getNonStaticEx() {
+            return nonStaticEx;
+        }
+    }
 }
