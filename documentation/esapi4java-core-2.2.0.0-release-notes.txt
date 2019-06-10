@@ -16,6 +16,7 @@ Executive Summary: Important Things to Note for this Release
 * Known vulnerabilities still not addressed:
     - There is this critical CVE in log4j 2.x before 2.8.2: CVE-2017-5645. It is a Java deserialization vulnerability that can lead to arbitrary remote code execution. Some private vulnerability databases claim that this same vulnerability is present in log4j 1.x even though the CVE itself does not claim that. However, examination of this CVE shows that the vulnerability is associated with implementations of TcpSocketServer and UdpSocketServer, which implement fully functional socket servers that can be used to listen on network connections and record log events sent to server from various client applications. For ESAPI to be vulnerable to that, first someone would have to have an implementation of wone of those servers running and secondly, they would have to change ESAPI's log4j.xml configuration file so that it uses log4j's SocketAppender rather than the default ConsoleAppender that ESAPI's default deployment uses. Thus even if this vulnerability were present in log4j 1.x, ESAPI's use of ConsoleAppender makes it a non-issue.
     - There is a known and unpatched vulnerability in the SLF4J Extensions that some vulnerability scanners may pick up and associate with ESAPI's use of slf4j-api-1.7.25.jar. (Note that OWASP Dependency Check does NOT flag this vulnerability [CVE-2018-8088], but others may.) According to NVD, this vulnerability is associated with "org.slf4j.ext.EventData in the slf4j-ext module in QOS.CH SLF4J before 1.8.0-beta2". Fortunately, I have confirmed that this Java deserialization does not impact ESAPI. First off, the default configuration of ESAPI.properties does not use SLF4J, but even if an application should choose to use it, ESAPI does not include the slf4j-ext jar and it has been confirmed that the vulnerable class (org.slf4j.ext.EventData) is not included in the slf4j-api jar that ESAPI does. Unfortunately, this CVE is not patched in the latest SLF4J packages, so even if we were to update it to latest version (currently 1.80-beta2, as of 12/31/2018), any scanners that associate ESAPI with CVE-2018-8088 would still have this false positive. But the important thing to ESAPI users is to know that if this CVE is identified for ESAPI, that it is a false positive.
+    - There is a recently discovered issue (see https://app.snyk.io/vuln/SNYK-JAVA-COMMONSBEANUTILS-30077) that is related to CVE-2014-0114 that is a Java deserialization issue in Apache Commons BeanUtils 1.9.3 that can lead to remote command execution attacks. This had been fixed in 1.9.2, but apparently they missed a place where the fix was needed. A GitHub commit (https://github.com/apache/commons-beanutils/pull/7/commits/2780a77600e6428b730e3a5197b7c5baf1c4cca0) has been made to mster branch of the BeanUtils repo, but thus far, no official patch has been released. ESAPI only uses BeanUtils in its AccessController (specifically, DynaBeanACRParameter class), where it has a dependency on org.apache.commons.beanutils.LazyDynaMap. Based on the BeanUtils commit, the fix was in org.apache.commons.beanutils2.PropertyUtilsBean. Based on a cursory examination, the ESAPI team does not believe that this vulnerability reported by Snyk is exploitable given that manner that it is used within ESAPI, or if it is, it is not externally exploitable based on the default access control rules that are provided with ESAPI. However, the ESAPI team will be watching for an official patch to Apache Commons BeanUtils and we will release a patched version of ESAPI as patch point release once a patch is officially available in Maven Central.
     - Otherwise, ESAPI 2.2.0.0 addresses all know CVEs except for CVE-2013-5960 (which I have fixed in a private BitBucket repo, but getting it to be backward compatible is proving to be more difficult than anticipated.) Besides, if you want to use encryption in Java, I'd highly recommend using Google Tink, which is much more fully featured than ESAPI. (Tink allows key rotation, storing keys in various cloud HSMs, etc.)
 
 
@@ -30,9 +31,9 @@ ESAPI 2.1.0.1 release:
 
 ESAPI 2.2.0.0 release:
     194 source files
-    4140 JUnit tests!!!!!
+    4145 JUnit tests!!!!!
 
-That's 2593 NEW tests!!!
+That's 2598 NEW tests since the 2.1.0.1 release!!!
 
                 GitHub Issues fixed in this release
             [i.e., since 2.1.0.1 release on 2016-Feb-05]
@@ -85,6 +86,7 @@ Issue #			GitHub Issue Title
 301		encodeForHTMLAttribute escapes the forward slash
 302		HTMLEntityCodec#decode incorrectly decodes upper-case accented letters as their lower-case counterparts
 303		HTMLEntityCodec destroys 32-bit CJK (Chinese, Japanese and Korean) characters
+304		encodeForCSS breaks color values
 305		ClassCastException when using ESAPI logger
 307		Issue with decodeFromURL method in the DefaultEncoder
 308		AuthenticatedUser isCredentialsNonExpired() have todo comment, but default return false;
@@ -150,9 +152,11 @@ Issue #			GitHub Issue Title
 471     Bump ESAPI release # to 2.2.0.0
 476     DefaultValidator.getValidInput implementation ignores 'canonicalize' method parameter
 478     Remove obsolete references to Google Code in pom.xml and any other release prep
+482		ESAPI 2.2.0.0 release date?
 483     More miscellaneous prep work for ESAPI 2.2.0.0 release
 485     Update Maven dependency check plugin to 5.0.0-M2
-
+492		Release candidates on maven central
+493		wrong regex validation
 
 -----------------------------------------------------------------------------
 
@@ -305,25 +309,58 @@ List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
 #472 by jeremiahjstacey was merged on Jan 21, 2019 -- Issue #31 MySQLCodec Updates
 #475 by jeremiahjstacey was merged on Jan 27, 2019 -- Issue #188 resolution proof: Test updates
 #477 by jeremiajjstacey was merged on Feb 02, 2019 -- $476 DefaultValidator.getValidInput uses canonicalize method argument
+#487 by kwwall was merged on Apr 29, 2019 -- Master branch updates for ESAPI-2.2.0.0-RC2
+#490 by hellyguo was closed on May 12, 2019 -- enhance: cache class and method to avoid reading each time
+#491 by hellyguo was merged on May 27, 2019 -- enhance: improve the performance of ObjFactory
 
-List of contributors of *merged* PRs, listed (rather naively) by # or merged PRs:
+
+List of contributors of *merged* PRs, listed (rather naively) by # of merged PRs:
         # merged PRs    GitHub ID
         -------------------------
              19         xeno6696
              10         jeremiahjstacey
-              8         kwwall
+              9         kwwall
               2         artfullyContrived
               2         augustd
               2         JoelRabinovitch
               1         drm2
+			  1         hellyguo
               1         jackycct
               1         mickilous
               1         NiklasMehner
               1         simon0117
               1         sunnypav
 
+Developer Activity Report (Changes between release 2.1.0.1 and 2.2.0.0, i.e., between 2015-02-05 and 2019-06-09 <UPDATE>)
+As created by 'mvn site', however this data was slighty edited to remove email ids replace them with GitHub ids when those were known, or with the developer name.
+Sorted first by # of commits and then by developer id / name..
 
-Thanks you all for your time and effort to ESAPI and making it a better project.
+Developer       Total commits       Total Number
+                                  of Files Changed
+=====================================================
+kwwall                  362                 351
+xeno6696                 64                  82
+jeremiahjstacey          55                  68
+davewichers               7                  49
+Anthony Musyoki           4                   2
+Kad DEMBELE               4                   2
+augustd                   3                   7
+drmyersii                 2                   2
+JoelRabinovitch           2                   4
+Ben Sleek                 1                   1
+chrisisbeef               1                   5
+hellyguo                  1                   3
+Jackycct                  1                   2
+mickilous                 1                   2
+NiklasMehner              1                   2
+Pavan Kumar               1                   1
+simon0117                 1                   3
+taringamberini            1                   1
+=====================================================
+Totals:                 512                 399 (unique files changed)
+
+
+Thanks you all for your time and effort to ESAPI and making it a better project. And if I've missed any, my apologies; let me know and I will correct it.
 
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 Appendix:   Dependency Updates (as reflected in pom.xml)
