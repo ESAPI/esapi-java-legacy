@@ -5,7 +5,7 @@ import java.math.BigInteger;
 import java.util.Date;
 import java.util.Iterator;
 
-import org.apache.commons.beanutils.*;
+import org.apache.commons.beanutils.LazyDynaMap;
 import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyParameters;
 
 /**
