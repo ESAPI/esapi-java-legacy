@@ -30,11 +30,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * 		...
  * 		// Typically these would be populated from some Java properties file
  * 		String barName = "com.example.foo.Bar";
- * 		String beerBrand = "com.example.brewery.Guiness";
+ * 		String beerBrand = "com.example.brewery.Guinness";
  * 		...
  * 		DrinkingEstablishment bar = ObjFactory.make(barName, "DrinkingEstablishment");
  * 		Beer beer = ObjFactory.make(beerBrand, "Beer");
- *		bar.drink(beer);	// Drink a Guiness beer at the foo Bar. :)
+ *		bar.drink(beer);	// Drink a Guinness beer at the foo Bar. :)
  *		...
  * </pre>
  * </p><p>
@@ -45,10 +45,11 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ObjFactory {
 
-	private static final int CACHE_INITIAL_CAPACITY = 4096;
+    private static final int CACHE_INITIAL_CAPACITY = 32;
 	private static final float CACHE_LOAD_FACTOR = 0.75F;
 	private static final ConcurrentHashMap<String,Class<?>> CLASSES_CACHE = new ConcurrentHashMap<>(CACHE_INITIAL_CAPACITY, CACHE_LOAD_FACTOR);
 	private static final ConcurrentHashMap<String,MethodWrappedInfo> METHODS_CACHE = new ConcurrentHashMap<>(CACHE_INITIAL_CAPACITY, CACHE_LOAD_FACTOR);
+    private static boolean cacheEnabled = true;
 
 	/**
 	 * Create an object based on the <code>className</code> parameter.
@@ -130,6 +131,18 @@ public class ObjFactory {
 		// DISCUSS: Should we also catch ExceptionInInitializerError here? See Google Issue #61 comments.
 	}
 
+    /**
+     * Control whether cache for classes and method names should be enabled or disabled. Initial state is enabled.
+     * Ordinally, you are not expected to want to / have to call this method.  It's major purpose is a "just-in-case"
+     * something goes wrong is some weird context where multiple ESAPI jars are loaded into a give application and something
+     * goes wrong, etc. A secondary purpose is it allows us to easily disable the cache so we can measure its time savings.
+     *
+     * @param enable    true - enable cache; false - disable cache
+     */
+    public static void setCache(boolean enable) {
+        cacheEnabled = enable;
+    }
+
 	/**
 	 * Load the class in cache, or load by the classloader and cache it
 	 *
@@ -139,11 +152,11 @@ public class ObjFactory {
 	 */
 	private static Class<?> loadClassByStringName(String className) throws ClassNotFoundException {
 		Class<?> clazz;
-		if (CLASSES_CACHE.containsKey(className)) {
+		if (cacheEnabled && CLASSES_CACHE.containsKey(className)) {
 			clazz = CLASSES_CACHE.get(className);
 		} else {
 			clazz = Class.forName(className);
-			CLASSES_CACHE.putIfAbsent(className, clazz);
+			if ( cacheEnabled ) CLASSES_CACHE.putIfAbsent(className, clazz);
 		}
 		return clazz;
 	}
@@ -177,7 +190,7 @@ public class ObjFactory {
     private static MethodWrappedInfo loadMethodByStringName(String className, Class<?> theClass) throws NoSuchMethodException {
         String methodName = className + "getInstance";
         MethodWrappedInfo methodInfo;
-        if (METHODS_CACHE.containsKey(methodName)) {
+        if (cacheEnabled && METHODS_CACHE.containsKey(methodName)) {
             methodInfo = METHODS_CACHE.get(methodName);
         } else {
             Method method = theClass.getMethod("getInstance");
@@ -185,7 +198,7 @@ public class ObjFactory {
             ConfigurationException nonStaticEx = staticMethod ? null :
                     new ConfigurationException("Class [" + className + "] contains a non-static getInstance method.");
             methodInfo = new MethodWrappedInfo(method, staticMethod, nonStaticEx);
-            METHODS_CACHE.putIfAbsent(methodName, methodInfo);
+            if ( cacheEnabled ) METHODS_CACHE.putIfAbsent(methodName, methodInfo);
         }
         return methodInfo;
     }

@@ -183,10 +183,44 @@ public class ObjFactoryTest extends TestCase {
     		String className = "javax.crypto.spec.SecretKeySpec";
     		javax.crypto.spec.SecretKeySpec skeySpec =
     			(SecretKeySpec) ObjFactory.make(className, "SecretKeySpec");
-    		assertTrue( skeySpec != null );
+            // Should not get to here. Exception is expected.
     	} catch(ConfigurationException ex) {
     		Throwable cause = ex.getCause();
     		assertTrue( cause instanceof InstantiationException);
     	}
+    }
+
+    /** Test cache. Create 100k JavaEncryptor instances with cache enabled (the
+     * default), and then create 100k instances with cache disabled. Time each.
+     * The cached version should save some time.
+     */
+    public void testObjFactoryCache() throws Exception {
+        final int reps = 100000;
+        System.out.println("testObjFactoryCache: " + reps + " iterations.");
+        org.owasp.esapi.reference.crypto.JavaEncryptor je = null;
+        String clz = "org.owasp.esapi.reference.crypto.JavaEncryptor";
+
+        long startCacheEnabled = System.nanoTime();
+        for ( int i = 0; i < reps; i++ ) {
+            je = (org.owasp.esapi.reference.crypto.JavaEncryptor) ObjFactory.make(clz, "JavaEncryptor");
+            assertNotNull( je );
+        }
+        long stopCacheEnabled = System.nanoTime();
+
+        ObjFactory.setCache( false );   // Disable cache
+
+        long startCacheDisabled = System.nanoTime();
+        for ( int i = 0; i < reps; i++ ) {
+            je = (org.owasp.esapi.reference.crypto.JavaEncryptor) ObjFactory.make(clz, "JavaEncryptor");
+            assertNotNull( je );
+        }
+        long stopCacheDisabled = System.nanoTime();
+
+        long durationEnabled  = stopCacheEnabled - startCacheEnabled;
+        long durationDisabled = stopCacheDisabled - startCacheDisabled;
+        System.out.println("testObjFactoryCache: Time with cache ENABLED (nanosec):  " + durationEnabled );
+        System.out.println("testObjFactoryCache: Time with cache DISABLED (nanosec): " + durationDisabled );
+
+        assertTrue( durationEnabled < durationDisabled );
     }
 }
