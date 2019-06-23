@@ -31,7 +31,7 @@ ESAPI 2.1.0.1 release:
 
 ESAPI 2.2.0.0 release:
     194 source files
-    4145 JUnit tests!!!!!
+    4149 JUnit tests!!!!!
 
 That's 2598 NEW tests since the 2.1.0.1 release!!!
 
@@ -149,14 +149,18 @@ Issue #			GitHub Issue Title
 462		Allow configurable init parameter in ESAPIFilter for unauthorized requests
 463		Create release notes for next ESAPI release
 465		Update both ESAPI.properties files to show comment for ESAPI logger support for SLF4J
-471     Bump ESAPI release # to 2.2.0.0
-476     DefaultValidator.getValidInput implementation ignores 'canonicalize' method parameter
-478     Remove obsolete references to Google Code in pom.xml and any other release prep
+471		Bump ESAPI release # to 2.2.0.0
+476		DefaultValidator.getValidInput implementation ignores 'canonicalize' method parameter
+478		Remove obsolete references to Google Code in pom.xml and any other release prep
 482		ESAPI 2.2.0.0 release date?
-483     More miscellaneous prep work for ESAPI 2.2.0.0 release
-485     Update Maven dependency check plugin to 5.0.0-M2
+483		More miscellaneous prep work for ESAPI 2.2.0.0 release
+485		Update Maven dependency check plugin to 5.0.0-M2
+488		Missed a legal input case in DefaultSecurityConfiguration.java
 492		Release candidates on maven central
 493		wrong regex validation
+499		ValidatorTest.isValidDirectoryPath() has tests that fail under Windows if ESAPI tests run from different drive where Windows installed
+500		Suppress noise from ESAPI searching for properties and stop ignoring important IOExceptions
+
 
 -----------------------------------------------------------------------------
 
