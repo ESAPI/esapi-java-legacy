@@ -4,8 +4,14 @@ import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.util.TreeSet;
+import java.io.IOException;
 
 import static org.owasp.esapi.configuration.EsapiPropertyLoaderFactory.createPropertyLoader;
+
+// Have dependency like this on a reference implmentation is majorly ugly, I know, but I
+// don't want to refactor code and delay the 2.2.0.0 release further and this class
+// is WAY too noisy. - kwwall
+import static org.owasp.esapi.reference.DefaultSecurityConfiguration.logToStdout;
 
 /**
  * Manager used for loading security configuration properties. Does all the logic to obtain the correct property from
@@ -21,7 +27,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
 
     protected TreeSet<AbstractPrioritizedPropertyLoader> loaders;
 
-    public EsapiPropertyManager() {
+    public EsapiPropertyManager() throws IOException {
         initLoaders();
     }
 
@@ -34,7 +40,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getIntProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                logToStdout("Integer property '" + propertyName + "' not found in " + loader.name(), e);
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -49,7 +55,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getByteArrayProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                logToStdout("Byte array property '" + propertyName + "' not found in " + loader.name(), e);
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -64,7 +70,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getBooleanProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property not found in " + loader.name());
+                logToStdout("Boolean property '" + propertyName + "' not found in " + loader.name(), e);
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
@@ -79,25 +85,37 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
             try {
                 return loader.getStringProp(propertyName);
             } catch (ConfigurationException e) {
-                System.err.println("Property : " + propertyName + " not found in " + loader.name());
+                logToStdout("Property '" + propertyName + "' not found in " + loader.name(), e);
             }
         }
         throw new ConfigurationException("Could not find property " + propertyName + " in configuration");
     }
 
-    private void initLoaders() {
+    private void initLoaders() throws IOException {
         loaders = new TreeSet<AbstractPrioritizedPropertyLoader>();
         try {
-            loaders.add(createPropertyLoader(EsapiConfiguration.OPSTEAM_ESAPI_CFG));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+            AbstractPrioritizedPropertyLoader appl = createPropertyLoader(EsapiConfiguration.OPSTEAM_ESAPI_CFG);
+            if ( appl == null ) {
+                String msg = "WARNING: System property [" + EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName() + "] is not set";
+                logToStdout(msg, null);
+            } else {
+                loaders.add( appl );
+            }
+        } catch (IOException e) {
+            logToStdout("WARNING: Exception encountered while setting up ESAPI configuration manager for OPS team", e);
+            throw e;
         }
         try {
-            loaders.add(createPropertyLoader(EsapiConfiguration.DEVTEAM_ESAPI_CFG));
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
+            AbstractPrioritizedPropertyLoader appl = createPropertyLoader(EsapiConfiguration.DEVTEAM_ESAPI_CFG);
+            if ( appl == null ) {
+                String msg = "WARNING: System property [" + EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName() + "] is not set";
+                logToStdout(msg, null);
+            } else {
+                loaders.add( appl );
+            }
+        } catch (IOException e) {
+            logToStdout("WARNING: Exception encountered while setting up ESAPI configuration manager for DEV team", e);
+            throw e;
         }
     }
-
-
 }
