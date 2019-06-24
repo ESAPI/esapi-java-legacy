@@ -26,7 +26,7 @@ import java.io.InputStream;
  */
 public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
 
-    public XmlEsapiPropertyLoader(String filename, int priority) {
+    public XmlEsapiPropertyLoader(String filename, int priority) throws IOException {
         super(filename, priority);
     }
 
@@ -80,7 +80,7 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
             return false;
         } else {
             throw new ConfigurationException("Incorrect type of : " + propertyName + ". Value " + property +
-                    "cannot be converted to boolean");
+                    "cannot be converted to boolean; legal values are: true, false, yes, no");
         }
     }
 
@@ -120,6 +120,7 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
                 }
             }
         } catch (Exception e) {
+            logSpecial("XML config file " + filename + " has invalid schema", e);
             throw new ConfigurationException("Configuration file : " + filename + " has invalid schema." + e.getMessage(), e);
         }
     }

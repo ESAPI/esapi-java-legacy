@@ -214,6 +214,14 @@ public class ObjFactoryTest extends TestCase {
             je = (org.owasp.esapi.reference.crypto.JavaEncryptor) ObjFactory.make(clz, "JavaEncryptor");
             assertNotNull( je );
         }
+/*
+ * TODO - Replace all this with the JMH benchmark harness stuff as similar to
+ * what is in ObjFactoryBenchmark. See GitHub issue #498 for further details.
+ * Unfortunately, we need to do this until then because JIT manipulations are
+ * sometimes making the cache disabled time take less than with caching enabled.
+ * In fact, when we start using JMH for this, we probably ought to move this
+ * entire test to ObjFactoryBenchmark.
+ *
         long stopCacheDisabled = System.nanoTime();
 
         long durationEnabled  = stopCacheEnabled - startCacheEnabled;
@@ -222,5 +230,6 @@ public class ObjFactoryTest extends TestCase {
         System.out.println("testObjFactoryCache: Time with cache DISABLED (nanosec): " + durationDisabled );
 
         assertTrue( durationEnabled < durationDisabled );
+ */
     }
 }

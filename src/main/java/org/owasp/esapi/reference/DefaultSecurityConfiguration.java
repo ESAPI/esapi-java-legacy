@@ -235,9 +235,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     DefaultSecurityConfiguration(String resourceFile) {
     	this.resourceFile = resourceFile;
-        this.esapiPropertyManager = new EsapiPropertyManager();
     	// load security configuration
     	try {
+            this.esapiPropertyManager = new EsapiPropertyManager();
         	loadConfiguration();
         	this.setCipherXProperties();
         } catch( IOException e ) {
@@ -646,7 +646,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				try {
 					// try root
 					String currentClasspathSearchLocation = "/ (root)";
-					in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.toString());
+                        // Note: do NOT add '/' anywhere here even though root value is empty string!
+                        // Note that since DefaultSearchPath.ROOT.value() is now "" (the empty string),
+                        // then this is logically equivalent to what we used to have, which was:
+                        //
+						//      in = loaders[i].getResourceAsStream(fileName);
+                        //
+					in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.value() + fileName);
 					
 					// try resourceDirectory folder
 					if (in == null) {
@@ -1391,7 +1397,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	
     	RESOURCE_DIRECTORY("resourceDirectory/"),
     	SRC_MAIN_RESOURCES("src/main/resources/"),
-    	ROOT("/"),
+    	ROOT(""),
     	DOT_ESAPI(".esapi/"),
     	ESAPI("esapi/"),
     	RESOURCES("resources/");

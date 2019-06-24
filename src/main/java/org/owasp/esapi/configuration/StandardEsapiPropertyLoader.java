@@ -12,7 +12,7 @@ import java.io.*;
  */
 public class StandardEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
 
-    public StandardEsapiPropertyLoader(String filename, int priority) {
+    public StandardEsapiPropertyLoader(String filename, int priority) throws IOException {
         super(filename, priority);
     }
 

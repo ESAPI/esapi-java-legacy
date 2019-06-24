@@ -17,7 +17,7 @@ Finding Something Interesting to Work on:
     what it is. Then if you want to work on a particular issue, we can assign
     it to you so someone else won't take it.
 
-    If you have questions, email me or Matt Seil (xeno6696@gmail.com).
+    If you have questions, email Kevin Wall (Kevin.W.Wall@gmail.com) or Matt Seil (xeno6696@gmail.com).
 
 Overview:
     We are following the branching model described in

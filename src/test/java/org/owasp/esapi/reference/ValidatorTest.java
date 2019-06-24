@@ -285,6 +285,22 @@ public class ValidatorTest extends TestCase {
         assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
     }
 
+    // Reset 'parent' depending on where Windows is installed so running off
+    // different drive doesn't break tests in testIsValidDirectoryPath().
+    private File resetParentForWindows(String sysRoot) throws IOException {
+        if ( sysRoot == null ) {
+            return new File("C:\\");
+        }
+        int bslash = sysRoot.indexOf('\\');
+        String winRoot = null;
+        if ( bslash == -1 || sysRoot.length() < 4 ) {
+            winRoot = "C:\\";   // Well, that's a first. Just pretend it's under C:\.
+        } else {
+            winRoot = sysRoot.substring(0, bslash + 1);
+        }
+        return new File( winRoot );
+    }
+
     public void testIsValidDirectoryPath() throws IOException {
         System.out.println("isValidDirectoryPath");
 
@@ -301,6 +317,10 @@ public class ValidatorTest extends TestCase {
 
         if (isWindows) {
             String sysRoot = new File(System.getenv("SystemRoot")).getCanonicalPath();
+
+            // Reset 'parent' in case running from drive other than where Windows installed.
+            parent = resetParentForWindows( sysRoot );
+
             // Windows paths that don't exist and thus should fail
             assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
             assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", parent, false));
