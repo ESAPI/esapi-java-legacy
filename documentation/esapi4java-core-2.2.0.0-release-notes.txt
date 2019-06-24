@@ -1,5 +1,5 @@
 Release notes for ESAPI 2.2.0.0
-    Release date: 2019-June-23
+    Release date: 2019-June-24
     Project leaders:
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Matt Seil <matt.seil@owasp.org>
