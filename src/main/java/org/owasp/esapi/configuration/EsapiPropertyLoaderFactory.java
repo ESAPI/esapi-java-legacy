@@ -3,7 +3,7 @@ package org.owasp.esapi.configuration;
 import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import static org.owasp.esapi.configuration.consts.EsapiConfigurationType.PROPERTIES;
 import static org.owasp.esapi.configuration.consts.EsapiConfigurationType.XML;
@@ -17,7 +17,7 @@ import static org.owasp.esapi.configuration.consts.EsapiConfigurationType.XML;
 public class EsapiPropertyLoaderFactory {
 
     public static AbstractPrioritizedPropertyLoader createPropertyLoader(EsapiConfiguration cfg)
-            throws ConfigurationException, FileNotFoundException {
+            throws ConfigurationException, IOException {
         String cfgPath = System.getProperty(cfg.getConfigName());
         if ( cfgPath == null || cfgPath.equals("") ) {
             // TODO / FIXME:

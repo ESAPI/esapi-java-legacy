@@ -2,6 +2,8 @@ package org.owasp.esapi.configuration;
 
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 /**
@@ -32,7 +34,7 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
 
     private final int priority;
 
-    public AbstractPrioritizedPropertyLoader(String filename, int priority) {
+    public AbstractPrioritizedPropertyLoader(String filename, int priority) throws IOException {
         this.priority = priority;
         this.filename = filename;
         initProperties();
@@ -64,13 +66,17 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
     /**
      * Initializes properties object and fills it with data from configuration file.
      */
-    private void initProperties() {
+    private void initProperties() throws IOException {
         properties = new Properties();
         File file = new File(filename);
         if (file.exists() && file.isFile()) {
-            loadPropertiesFromFile(file);
+            if ( file.canRead() ) {
+                loadPropertiesFromFile(file);
+            } else {
+                throw new IOException("Can't read specificied configuration file: " + filename);
+            }
         } else {
-            logSpecial("Configuration file " + filename + " does not exist");
+            throw new FileNotFoundException("Specified configuration file " + filename + " does not exist or not regular file");
         }
     }
 

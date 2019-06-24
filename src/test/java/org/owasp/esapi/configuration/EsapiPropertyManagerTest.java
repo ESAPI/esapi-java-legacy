@@ -8,6 +8,7 @@ import org.owasp.esapi.errors.ConfigurationException;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileNotFoundException;
 
 import static junit.framework.Assert.*;
 
@@ -17,6 +18,7 @@ public class EsapiPropertyManagerTest {
     private static String propFilename2;
     private static String xmlFilename1;
     private static String xmlFilename2;
+    private static final String noSuchFile = "/invalidDir/noSubDir/nosuchFile.xml";
 
     private EsapiPropertyManager testPropertyManager;
 
@@ -32,6 +34,7 @@ public class EsapiPropertyManagerTest {
                 "esapi" + File.separator + "ESAPI-test.xml";
         xmlFilename2 = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "esapi" + File.separator + "ESAPI-test-2.xml";
+
     }
 
     @Test
@@ -41,7 +44,11 @@ public class EsapiPropertyManagerTest {
         System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), propFilename2);
 
         // when
-         testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
 
         // then
         assertNotNull(testPropertyManager.loaders);
@@ -56,7 +63,11 @@ public class EsapiPropertyManagerTest {
         String expectedPropertyValue = "test_string_property";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         String propertyValue = testPropertyManager.getStringProp(propertyKey);
 
         // then
@@ -73,7 +84,11 @@ public class EsapiPropertyManagerTest {
         String expectedValue = "test_string_property_2";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         String propertyValue = testPropertyManager.getStringProp(propertyKey);
 
         // then
@@ -89,7 +104,11 @@ public class EsapiPropertyManagerTest {
         String expectedValue = "test_string_property_2";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         String propertyValue = testPropertyManager.getStringProp(propertyKey);
 
         // then
@@ -105,7 +124,11 @@ public class EsapiPropertyManagerTest {
         String expectedValue = "test_string_property_2";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         String propertyValue = testPropertyManager.getStringProp(propertyKey);
 
         // then
@@ -120,7 +143,11 @@ public class EsapiPropertyManagerTest {
         String propertyKey = "non.existing.property";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         testPropertyManager.getStringProp(propertyKey);
 
         // then expect exception
@@ -134,7 +161,11 @@ public class EsapiPropertyManagerTest {
         int expectedPropertyValue = 5;
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         int propertyValue = testPropertyManager.getIntProp(propertyKey);
 
         // then
@@ -150,7 +181,11 @@ public class EsapiPropertyManagerTest {
         int expectedValue = 52;
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         int propertyValue = testPropertyManager.getIntProp(propertyKey);
 
         // then
@@ -166,7 +201,11 @@ public class EsapiPropertyManagerTest {
         int expectedValue = 52;    // value from ESAPI-test-2.properties file
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         int propertyValue = testPropertyManager.getIntProp(propertyKey);
 
         // then
@@ -182,7 +221,11 @@ public class EsapiPropertyManagerTest {
         int expectedValue = 52;
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         int propertyValue = testPropertyManager.getIntProp(propertyKey);
 
         // then
@@ -196,7 +239,11 @@ public class EsapiPropertyManagerTest {
         String propertyKey = "non.existing.property";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         testPropertyManager.getIntProp(propertyKey);
 
         // then expect exception
@@ -210,7 +257,11 @@ public class EsapiPropertyManagerTest {
         boolean expectedPropertyValue = true;
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         boolean propertyValue = testPropertyManager.getBooleanProp(propertyKey);
 
         // then
@@ -223,7 +274,11 @@ public class EsapiPropertyManagerTest {
         String propertyKey = "non.existing.property";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         testPropertyManager.getBooleanProp(propertyKey);
 
         // then expect exception
@@ -242,7 +297,11 @@ public class EsapiPropertyManagerTest {
         }
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         byte[] propertyValue = testPropertyManager.getByteArrayProp(propertyKey);
 
         // then
@@ -263,7 +322,11 @@ public class EsapiPropertyManagerTest {
         }
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         byte[] propertyValue = testPropertyManager.getByteArrayProp(propertyKey);
 
         // then
@@ -284,7 +347,11 @@ public class EsapiPropertyManagerTest {
         }
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         byte[] propertyValue = testPropertyManager.getByteArrayProp(propertyKey);
 
         // then
@@ -305,7 +372,11 @@ public class EsapiPropertyManagerTest {
         }
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         byte[] propertyValue = testPropertyManager.getByteArrayProp(propertyKey);
 
         // then
@@ -318,10 +389,33 @@ public class EsapiPropertyManagerTest {
         String propertyKey = "non.existing.property";
 
         // when
-        testPropertyManager = new EsapiPropertyManager();
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         testPropertyManager.getByteArrayProp(propertyKey);
 
         // then expect exception
     }
 
+
+    @Test
+    public void testExpectFileNotFoundException() {
+        // given
+        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), noSuchFile);
+
+        // when
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            if ( e instanceof FileNotFoundException ) {
+                return;
+            } else {
+                fail("testExpectFileNotFoundException(): Was expecting FileNotFoundException for IOException. Exception:" + e);
+            }
+        }
+        
+        fail("Did not throw expected IOException for property file " + noSuchFile);
+    }
 }
