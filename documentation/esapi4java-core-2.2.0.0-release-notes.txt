@@ -1,5 +1,5 @@
 Release notes for ESAPI 2.2.0.0
-    Release date: 2019-MMM-DD
+    Release date: 2019-June-23
     Project leaders:
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Matt Seil <matt.seil@owasp.org>
@@ -26,14 +26,14 @@ It was mainly because of these first two bullet items above that we bumped the r
                 Basic ESAPI facts
 
 ESAPI 2.1.0.1 release:
-    177 source files
-    1547 Junit tests
+    177 Java source files
+    1547 Junit tests in 88 Java source files
 
 ESAPI 2.2.0.0 release:
-    194 source files
-    4149 JUnit tests!!!!!
+    194 Java source files
+    4150 JUnit tests in 118 Java source files
 
-That's 2598 NEW tests since the 2.1.0.1 release!!!
+That's 2603 NEW tests since the 2.1.0.1 release!!!
 
                 GitHub Issues fixed in this release
             [i.e., since 2.1.0.1 release on 2016-Feb-05]
@@ -168,7 +168,7 @@ Issue #			GitHub Issue Title
 
 * Various deprecated methods were _actually_ deleted! This could break existing application code.
 
-    442		Remove deprecated fields in Encoder interface
+    Issue 442		Remove deprecated fields in Encoder interface
 
         Specifically, if you are using any of these previously deprecated fields from the Encoder interface, you need to update your application code to refer insteat to the constances from org.owasp.esapi.EncoderConstants:
 
@@ -184,7 +184,7 @@ Issue #			GitHub Issue Title
                 public final static char[] CHAR_PASSWORD_SPECIALS = EncoderConstants.CHAR_PASSWORD_SPECIALS;
                 public final static char[] CHAR_PASSWORD_LETTERS = EncoderConstants.CHAR_PASSWORD_LETTERS;
 
-    444		Delete deprecated method Base64.decodeToObject() and related methods
+    Issue 444		Delete deprecated method Base64.decodeToObject() and related methods
 
         Specifically, the following methods were removed from the org.owasp.esapi.codecs.Base64 class. If you will using any of these methods, you likely already had vulnerabilities in your application code. If any of these methods were being used, you will need to rewrite your application code:
 
@@ -192,11 +192,11 @@ Issue #			GitHub Issue Title
                 public static String encodeObject( java.io.Serializable serializableObject, int options )
                 public static Object decodeToObject( String encodedObject )
 
-    483     More miscellaneous prep work for ESAPI 2.2.0.0 release
+    Issue 483     More miscellaneous prep work for ESAPI 2.2.0.0 release
         Specifically, CipherText.getSerialVersionUID() and DefaultSecurityConfiguration.MAX_FILE_NAME_LENGTH have actually been deleted from the ESAPI code base. For the former, use CipherText.cipherTextVersion() instead. For the latter, there is no replacement. (This wasn't being used, but it was set to 1000 in case you're wondering.)
         
 * Various properties in ESAPI.properties were changed in a way that might affect your application:
-    439		Tighten ESAPI defaults to disallow dubious file suffixes
+    Issue 439		Tighten ESAPI defaults to disallow dubious file suffixes
 
         Specifically, the property HttpUtilities.ApprovedUploadExtensions changed from
             HttpUtilities.ApprovedUploadExtensions=.zip,.pdf,.doc,.docx,.ppt,.pptx,.tar,.gz,.tgz,.rar,.war,.jar,.ear,.xls,.rtf,.properties,.java,.class,.txt,.xml,.jsp,.jsf,.exe,.dll
@@ -224,6 +224,18 @@ Issue #			GitHub Issue Title
                                                 to:
                                                     Validator.HTTPURI=^/([a-zA-Z0-9.\\-_]*/?)*$
             
+* Other changes:
+    Issue 500		Suppress noise from ESAPI searching for properties and stop ignoring important IOExceptions
+
+        Fixing this required changes to the CTORs of the following classes:
+
+                org.owasp.esapi.configuration.EsapiPropertyManager
+                org.owasp.esapi.configuration.AbstractPrioritizedPropertyLoader
+                org.owasp.esapi.configuration.EsapiPropertyLoaderFactory
+                org.owasp.esapi.configuration.StandardEsapiPropertyLoader
+                org.owasp.esapi.configuration.XmlEsapiPropertyLoader
+
+        These CTORs now explicitly throw IOException if the specified ESAPI property file is not found or not readable. Note that this should not affect most people as most use DefaultSecurityCOnfigurator and it still only throws ConfigurationException. (IOExceptions from these other classes are caught and rethrow as ConfigurationException.) Use of these classes directly should be very rare.
 
 -----------------------------------------------------------------------------
 
