@@ -39,6 +39,11 @@
 # Author: kevin.w.wall@gmail.com
 ############################################################################
 
+echo $0: This script is obsolete and will be replaced soon.
+echo In the meantime, read through the release instructions in:
+echo "        documentation/ESAPI-release-steps.odt"
+exit 2
+
 #
 # Tunable parameters
 #
