@@ -697,9 +697,12 @@ public final class CipherText implements Serializable {
         int n = getRawCipherTextByteLength();
         String rawCipherText = (( n > 0 ) ? "present (" + n + " bytes)" : "absent");
         String mac = (( separate_mac_ != null ) ? "present" : "absent");
-        sb.append("Creation time: ").append(creationTime);
-        sb.append(", raw ciphertext is ").append(rawCipherText);
-        sb.append(", MAC is ").append(mac).append("; ");
+
+        sb.append("KDF Version: ").append( kdfVersion_ );
+        sb.append(", KDF PRF: ").append( kdfPRFAsInt() );
+        sb.append("; Creation time: ").append(creationTime);
+        sb.append("; raw ciphertext is ").append(rawCipherText);
+        sb.append("; MAC is ").append(mac).append("; ");
         sb.append( cipherSpec_.toString() );
         return sb.toString();
     }
