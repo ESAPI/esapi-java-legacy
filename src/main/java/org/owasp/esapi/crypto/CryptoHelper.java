@@ -126,18 +126,23 @@ public class CryptoHelper {
 	 * 						this is thrown with the original {@code UnsupportedEncodingException}
 	 * 						as the cause. (NOTE: This should never happen as "UTF-8" is supposed to
 	 * 						be a common encoding supported by all Java implementations. Support
-	 * 					    for it is usually in rt.jar.)
+	 * 					    for it is usually in rt.jar.) This exception is also thrown if the
+     * 					    requested {@code keySize} parameter exceeds the length of the number of
+     * 					    bytes provded in the {@code keyDerivationKey} parameter.
 	 * @throws InvalidKeyException 	Likely indicates a coding error. Should not happen.
 	 * @throws EncryptionException  Throw for some precondition violations.
-	 * @deprecated Use{@code KeyDerivationFunction} instead. This method will be removed as of
-	 * 			   ESAPI release 2.3 so if you are using this, please change your code.
+	 * @deprecated Use same method in {@code KeyDerivationFunction} instead. This method will be <b>removed</b> as of
+	 * 			   ESAPI release 2.3 so if you are using this, please CHANGE YOUR CODE. Note that the replacement
+     * 			   is not a static method, so create your own wrapper if you wish, but this will soon disappear.
 	 */
     @Deprecated
 	public static SecretKey computeDerivedKey(SecretKey keyDerivationKey, int keySize, String purpose)
 			throws NoSuchAlgorithmException, InvalidKeyException, EncryptionException
 	{
-        // These really should be turned into actual runtime checks and an
-        // IllegalArgumentException should be thrown if they are violated.
+        // Fingers cross; maybe this will help.
+        logger.warning(Logger.SECURITY_AUDIT,
+                "Your code is using the deprecated CryptoHelper.computeDerivedKey() method which will be removed next release");
+
 		if ( keyDerivationKey == null ) {
             throw new IllegalArgumentException("Key derivation key cannot be null.");
         }
@@ -159,6 +164,9 @@ public class CryptoHelper {
 		// DISCUSS: Should we use HmacSHA1 (what we were using) or the HMAC defined by
 		//			Encryptor.KDF.PRF instead? Either way, this is not compatible with
 		//			previous ESAPI versions. JavaEncryptor doesn't use this any longer.
+        // ANSWER:  This is deprecated and will be removed in 2.3.0.0, so it really matter
+        //          that much. However, Since the property Encryptor.KDF.PRF is (and has
+        //          been) "HMacSHA256". changing this could unintentionally break code.
 		KeyDerivationFunction kdf = new KeyDerivationFunction(
 											KeyDerivationFunction.PRF_ALGORITHMS.HmacSHA1);
 		return kdf.computeDerivedKey(keyDerivationKey, keySize, purpose);
@@ -260,7 +268,8 @@ public class CryptoHelper {
     {
         if ( CryptoHelper.isMACRequired( ct ) ) {
             try {
-                SecretKey authKey = CryptoHelper.computeDerivedKey( sk, ct.getKeySize(), "authenticity");
+		        KeyDerivationFunction kdf = new KeyDerivationFunction( ct.getKDF_PRF() );
+                SecretKey authKey = kdf.computeDerivedKey(sk, ct.getKeySize(), "authenticity");
                 boolean validMAC = ct.validateMAC( authKey );
                 return validMAC;
             } catch (Exception ex) {

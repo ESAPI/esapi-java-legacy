@@ -697,9 +697,12 @@ public final class CipherText implements Serializable {
         int n = getRawCipherTextByteLength();
         String rawCipherText = (( n > 0 ) ? "present (" + n + " bytes)" : "absent");
         String mac = (( separate_mac_ != null ) ? "present" : "absent");
-        sb.append("Creation time: ").append(creationTime);
-        sb.append(", raw ciphertext is ").append(rawCipherText);
-        sb.append(", MAC is ").append(mac).append("; ");
+
+        sb.append("KDF Version: ").append( kdfVersion_ );
+        sb.append(", KDF PRF: ").append( kdfPRFAsInt() );
+        sb.append("; Creation time: ").append(creationTime);
+        sb.append("; raw ciphertext is ").append(rawCipherText);
+        sb.append("; MAC is ").append(mac).append("; ");
         sb.append( cipherSpec_.toString() );
         return sb.toString();
     }
@@ -792,6 +795,15 @@ public final class CipherText implements Serializable {
      * <pre>
      *      HMAC-SHA1(nonce, IV + plaintext)
      * </pre>
+     * Note that <i>only</i> HMAC-SHA1 is used for the MAC calcuation. Unlike
+     * the PRF used for derived key generation in the {@code KeyDerivationFunction}
+     * class, the user cannot change the algorithm used to compute the MAC itself.
+     * One reason for that is that we don't want the MAC value to be excessively
+     * long; 128 bits is already quite long when only encrypting short strings.
+     * Also while the NSA reviewed this and were okay with it, Bellare, Canetti & Krawczyk
+     * proved in 1996 [see http://pssic.free.fr/Extra%20Reading/SEC+/SEC+/hmac-cb.pdf] that
+     * HMAC security doesn’t require that the underlying hash function be collision resistant,
+     * but only that it acts as a pseudo-random function, which SHA1 satisfies.
      * @param ciphertext    The ciphertext value for which the MAC is computed.
      * @return The value for the MAC.
      */ 

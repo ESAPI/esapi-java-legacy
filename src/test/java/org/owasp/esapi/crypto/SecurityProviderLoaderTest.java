@@ -128,7 +128,7 @@ public class SecurityProviderLoaderTest {
             // validate this, so we look at the String representation of this CipherText
             // object and pick it out of there.
             String str = ct.toString();
-            assertTrue( str.matches(".*, MAC is absent;.*") );
+            assertTrue( str.matches(".*; MAC is absent;.*") );
         } catch (EncryptionException e) {
             fail("Encryption w/ Bouncy Castle failed with EncryptionException for preferred " +
                  "cipher transformation; exception was: " + e);
