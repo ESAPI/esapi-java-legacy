@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -35,18 +35,18 @@ import org.owasp.validator.html.ScanException;
 /**
  * A validator performs syntax and possibly semantic validation of a single
  * piece of data from an untrusted source.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Validator
  */
 public class HTMLValidationRule extends StringValidationRule {
-	
+
 	/** OWASP AntiSamy markup verification policy */
 	private static Policy antiSamyPolicy = null;
-	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" ); 
-	
+	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
+
 	static {
         InputStream resourceStream = null;
 		try {
@@ -66,7 +66,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	public HTMLValidationRule( String typeName ) {
 		super( typeName );
 	}
-	
+
 	public HTMLValidationRule( String typeName, Encoder encoder ) {
 		super( typeName, encoder );
 	}
@@ -74,7 +74,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	public HTMLValidationRule( String typeName, Encoder encoder, String whitelistPattern ) {
 		super( typeName, encoder, whitelistPattern );
 	}
-	
+
     /**
      * {@inheritDoc}
      */
@@ -82,7 +82,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	public String getValid( String context, String input ) throws ValidationException {
 		return invokeAntiSamy( context, input );
 	}
-		
+
     /**
      * {@inheritDoc}
      */
@@ -105,20 +105,27 @@ public class HTMLValidationRule extends StringValidationRule {
 			}
 			throw new ValidationException( context + " is required", "AntiSamy validation error: context=" + context + ", input=" + input, context );
 	    }
-	    
+
 		String canonical = super.getValid( context, input );
 
 		try {
 			AntiSamy as = new AntiSamy();
 			CleanResults test = as.scan(canonical, antiSamyPolicy);
-			
+
 			List<String> errors = test.getErrorMessages();
 			if ( !errors.isEmpty() ) {
-				LOGGER.info( Logger.SECURITY_FAILURE, "Cleaned up invalid HTML input: " + errors );
+				StringBuilder sb = new StringBuilder();
+				for ( int i = 0; i < errors.size(); i++ ) {
+					sb.append(errors.get(i));
+					if ( i != errors.size() - 1 ) {
+						sb.append(",");
+					}
+				}
+				throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + sb.toString());
 			}
-			
+
 			return test.getCleanHTML().trim();
-			
+
 		} catch (ScanException e) {
 			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
 		} catch (PolicyException e) {
