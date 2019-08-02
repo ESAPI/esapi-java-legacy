@@ -114,14 +114,7 @@ public class HTMLValidationRule extends StringValidationRule {
 
 			List<String> errors = test.getErrorMessages();
 			if ( !errors.isEmpty() ) {
-				StringBuilder sb = new StringBuilder();
-				for ( int i = 0; i < errors.size(); i++ ) {
-					sb.append(errors.get(i));
-					if ( i != errors.size() - 1 ) {
-						sb.append(",");
-					}
-				}
-				throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + sb.toString());
+				throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
 			}
 
 			return test.getCleanHTML().trim();
