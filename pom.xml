@@ -171,8 +171,8 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
-            <!-- We need to use 1.9.2 (or later) here to address CVE-2014-0114. -->
-            <version>1.9.3</version>
+            <!-- We need to use 1.9.4 (or later) here to address CVE-2014-0114 and CVE-2019-10086. -->
+            <version>1.9.4</version>
             <!-- NOTE: commons-beanutils uses commons-collections 3.2.2. We use
                  commons-collections 4.2. Package names are different so this shouldn't
                  cause any problems as long as 3.x doesn't have any CVEs. May have to
