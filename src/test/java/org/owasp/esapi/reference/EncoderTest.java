@@ -845,6 +845,20 @@ public class EncoderTest extends TestCase {
     	
     }
     
+    public void testGetCanonicalizedUriPiazza() throws Exception {
+    	Encoder e = ESAPI.encoder();
+    	
+    	String expectedUri = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft,Launched";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft%2CLaunched";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+    	
+    }
+    	
     public void testGetCanonicalizedUriWithMailto() throws Exception {
     	Encoder e = ESAPI.encoder();
     	
@@ -878,5 +892,6 @@ public class EncoderTest extends TestCase {
         assertEquals( expected, htmlCodec.decode("&#194564;") );
         assertEquals( expected, htmlCodec.decode("&#x2f804;") );
     }
+    
 }
 
