@@ -121,7 +121,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
     public static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
     public static final String IV_TYPE = "Encryptor.ChooseIVMethod";
+
+    @Deprecated
     public static final String FIXED_IV = "Encryptor.fixedIV";
+
     public static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
     public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
     public static final String KDF_PRF_ALG = "Encryptor.KDF.PRF";
@@ -158,7 +161,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * disable logging from {@code DefaultSecurityConfiguration.logToStdout()}
      * methods, which is called from various {@code logSpecial()} methods.
      * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg, Throwable t)
-     * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg)
      */
     public static final String DISCARD_LOGSPECIAL = "org.owasp.esapi.logSpecial.discard";
 
@@ -233,9 +235,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     DefaultSecurityConfiguration(String resourceFile) {
     	this.resourceFile = resourceFile;
-        this.esapiPropertyManager = new EsapiPropertyManager();
     	// load security configuration
     	try {
+            this.esapiPropertyManager = new EsapiPropertyManager();
         	loadConfiguration();
         	this.setCipherXProperties();
         } catch( IOException e ) {
@@ -644,7 +646,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 				try {
 					// try root
 					String currentClasspathSearchLocation = "/ (root)";
-					in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.toString());
+                        // Note: do NOT add '/' anywhere here even though root value is empty string!
+                        // Note that since DefaultSearchPath.ROOT.value() is now "" (the empty string),
+                        // then this is logically equivalent to what we used to have, which was:
+                        //
+						//      in = loaders[i].getResourceAsStream(fileName);
+                        //
+					in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.value() + fileName);
 					
 					// try resourceDirectory folder
 					if (in == null) {
@@ -715,7 +723,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * @param msg   Message to be logged.
      * @param t     Associated exception that was caught. The class name and
      *              exception message is also logged.
-     * @see #logToStdout(String msg)
      */
     public final synchronized static void logToStdout(String msg, Throwable t) {
      // Note that this class was made final because it is called from this class'
@@ -787,6 +794,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 * {@inheritDoc}
 	 */
     public String getCipherTransformation() {
+        // Assertion should be okay here. An NPE is likely at runtime if disabled.
     	assert cipherXformCurrent != null : "Current cipher transformation is null";
     	return cipherXformCurrent;
     }
@@ -795,16 +803,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * {@inheritDoc}
      */
     public String setCipherTransformation(String cipherXform) {
-    	String previous = getCipherTransformation();
-    	if ( cipherXform == null ) {
-    		// Special case... means set it to original value from ESAPI.properties
-    		cipherXformCurrent = cipherXformFromESAPIProp;
-    	} else {
-    		assert ! cipherXform.trim().equals("") :
-    			"Cipher transformation cannot be just white space or empty string";
-    		cipherXformCurrent = cipherXform;	// Note: No other sanity checks!!!
-    	}
-    	return previous;
+        String previous = getCipherTransformation();
+        if ( cipherXform == null ) {
+            // Special case... means set it to original value from ESAPI.properties
+            cipherXformCurrent = cipherXformFromESAPIProp;
+        } else {
+            if ( cipherXform.trim().equals("") ) {
+                throw new ConfigurationException("Cipher transformation cannot be just white space or empty string");
+            }
+            cipherXformCurrent = cipherXform;   // Note: No other sanity checks!!!
+        }
+        return previous;
     }
 
     /**
@@ -826,7 +835,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	 */
     public String getIVType() {
     	String value = getESAPIProperty(IV_TYPE, "random");
-    	if ( value.equalsIgnoreCase("fixed") || value.equalsIgnoreCase("random") ) {
+    	if ( value.equalsIgnoreCase("random") ) {
+            return value;
+        } else if ( value.equalsIgnoreCase("fixed") ) {
+            logSpecial("WARNING: Property '" + IV_TYPE + "=fixed' is DEPRECATED. It was intended to support legacy applications, but is inherently insecure, especially with any streaming mode. Support for this will be completed dropped next ESAPI minor release (probably 2.3");
     		return value;
     	} else if ( value.equalsIgnoreCase("specified") ) {
     		// This is planned for future implementation where setting
@@ -837,18 +849,19 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     		// that for a given key, any particular IV is *NEVER* reused. For
     		// now, we will assume that generating a random IV is usually going
     		// to be sufficient to prevent this.
-    		throw new ConfigurationException("'" + IV_TYPE + "=specified' is not yet implemented. Use 'fixed' or 'random'");
+    		throw new ConfigurationException("'" + IV_TYPE + "=specified' is not yet implemented. Use 'random' for now.");
     	} else {
     		// TODO: Once 'specified' is legal, adjust exception msg, below.
     		// DISCUSS: Could just log this and then silently return "random" instead.
     		throw new ConfigurationException(value + " is illegal value for " + IV_TYPE +
-    										 ". Use 'random' (preferred) or 'fixed'.");
+    										 ". Use 'random'.");
     	}
     }
 
     /**
 	 * {@inheritDoc}
 	 */
+    @Deprecated
     public String getFixedIV() {
     	if ( getIVType().equalsIgnoreCase("fixed") ) {
     		String ivAsHex = getESAPIProperty(FIXED_IV, ""); // No default
@@ -860,7 +873,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	} else {
     		// DISCUSS: Should we just log a warning here and return null instead?
     		//			If so, may cause NullPointException somewhere later.
-    		throw new ConfigurationException("IV type not 'fixed' (set to '" +
+    		throw new ConfigurationException("IV type not 'fixed' [which is DEPRECATED!] (set to '" +
     										 getIVType() + "'), so no fixed IV applicable.");
     	}
     }
@@ -1384,7 +1397,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     	
     	RESOURCE_DIRECTORY("resourceDirectory/"),
     	SRC_MAIN_RESOURCES("src/main/resources/"),
-    	ROOT("/"),
+    	ROOT(""),
     	DOT_ESAPI(".esapi/"),
     	ESAPI("esapi/"),
     	RESOURCES("resources/");

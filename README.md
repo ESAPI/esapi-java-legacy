@@ -47,6 +47,8 @@ NOTE: Please do NOT use GitHub issues to ask questions about ESAPI. If you wish 
 ### Find a Vulnerability?
 If you have found a vulnerability in ESAPI legacy, first search the issues list (see above) to see if it has already been reported. If it has not, then please contact both Kevin W. Wall (kevin.w.wall at gmail.com) and Matt Seil (matt.seil at owasp.org) directly. Please do not report vulnerabilities via GitHub issues or via the ESAPI mailing lists as we wish to keep our users secure while a patch is implemented and deployed. If you wish to be acknowledged for finding the vulnerability, then please follow this process. (Eventually, we would like to have BugCrowd handle this, but that's still a ways off.) Also, when you post the email describing the vulnerability, please do so from an email address that you usually monitor.
 
+More detail is available in the file '[SECURITY.md](https://raw.githubusercontent.com/ESAPI/esapi-java-legacy/develop/SECURITY.md)'.
+
 ## Where to Find More Information on ESAPI
 
 *Wiki:* https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
@@ -66,7 +68,7 @@ Webchat http://webchat.freenode.net/
 *Mailing lists:*
 As of 2019-03-25, ESAPI's 2 mailing lists were officially moved OFF of their Mailman mailing lists to a new home on Google Groups.
 
-The names of the 2 Google Groups are "[esapi-project-users](mailto:esapi-project-users@owasp.org)" and "[esapi-project-dev](mailto:esapi-project-dev@owasp.org)", which you may POST to after you subscribe to them via "[Subscribe to ESAPI Users list](https://groups.google.com/forum/#!forum/esapi-project-users/join)" and "[Subscribe to ESAPI Developers list](https://groups.google.com/forum/#!forum/esapi-project-dev/join)" respectively.
+The names of the 2 Google Groups are "[esapi-project-users](mailto:esapi-project-users@owasp.org)" and "[esapi-project-dev](mailto:esapi-project-dev@owasp.org)", which you may POST to _after_ you subscribe to them via "[Subscribe to ESAPI Users list](https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-dev/join)" and "[Subscribe to ESAPI Developers list](https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-users/join)" respectively.
 
 Old archives for the old Mailman mailing lists for ESAPI-Users and ESAPI-Dev are still available at https://lists.owasp.org/pipermail/esapi-users/ and https://lists.owasp.org/pipermail/esapi-dev/ respectively.
 

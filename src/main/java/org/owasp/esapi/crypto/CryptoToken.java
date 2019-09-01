@@ -33,18 +33,14 @@ import org.owasp.esapi.Encryptor;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.EncryptionException;
+import org.owasp.esapi.errors.EncryptionRuntimeException;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.ValidationException;
 
 ///// IMPORTANT NOTE: Never print / log attribute *values* as they
 /////                 may be sensitive. Also, do not log the CryptoToken
-/////				  itself as it generally is used as an authentication token.
-
-// OPEN ISSUE: Assertions vs. IllegalArgumentException must be resolved. I prefer
-//             assertions for preconditions, which is more in line with Design-by-Contract
-//             and Eiffel. There are a few places where assertions are not appropriate
-//             because if they are not disabled (they are not by default), they could cause
-//             incorrect behavior (e.g., setting the expiration time to something in the
-//             past, etc.)
+/////                 itself, because even it is encrypted, the token itself
+/////                 is often used as an authentication token.
 
 /**
  * Compute a cryptographically secure, encrypted token containing
@@ -73,16 +69,15 @@ import org.owasp.esapi.errors.ValidationException;
  * The attribute value may contain any value. However, values containing
  * either '=' or ';' will be quoted using '\'. Likewise, values containing '\'
  * will also be quoted using '\'. Hence if original name/value pair were
- *             name=ab=xy\;
- *         this would be represented as
- *             name=ab\=xy\\\;
+ * <b>name=ab=xy\;</b> * this would be represented as <b>name=ab\=xy\\\;</b>.
  * To ensure things are "safe" (from a security perspective), attribute
  * <i>names</i> must conform the the Java regular expression
  * <pre>
  *          [A-Za-z0-9_\.-]+
  * </pre>
  * The attribute <i>value</i> on the other hand, may be any valid string. (That
- * is, the value is not checked, so beware!)
+ * is, the value is not checked, so beware! When rendering these values, output
+ * encoding may be required to prevent XSS. Use ESAPI's {@code Encoder} for that.
  * <p>
  * This entire semicolon-separated string is then encrypted via one of the 
  * {@code Encryptor.encrypt()} methods and then base64-encoded, serialized
@@ -93,6 +88,11 @@ import org.owasp.esapi.errors.ValidationException;
  * The attributes are sorted by attribute name and the attribute names
  * must be unique. There are some restrictions on the attribute names.
  * (See the {@link #setAttribute(String, String)} method for details.)
+ *
+ * <b>WARNING:</b> You should never print / log attribute <b>values</b> as
+ *              they may be sensitive. Also, do not log the {@code CryptoToken}
+ *              itself, because even though it is encrypted, the token itself is
+ *              often used as an authentication token.
  *
  * @author kevin.w.wall@gmail.com
  * @since 2.0
@@ -141,7 +141,9 @@ public class CryptoToken {
      * @param skey  The specified {@code SecretKey} to use to encrypt the token.
      */
     public CryptoToken(SecretKey skey) {
-        assert skey != null : "SecretKey may not be null.";
+        if ( skey == null ) {
+            throw new IllegalArgumentException("SecretKey may not be null.");
+        }
         secretKey = skey;
         long now = System.currentTimeMillis();
         expirationTime = now + DEFAULT_EXP_TIME;
@@ -170,8 +172,12 @@ public class CryptoToken {
             throw new EncryptionException("Decryption of token failed. Token improperly encoded or encrypted with different key.",
                                           "Can't decrypt token because not correctly encoded or encrypted with different key.", e);
         }
-        assert username != null : "Programming error: Decrypted token found username null.";
-        assert expirationTime > 0 : "Programming error: Decrypted token found expirationTime <= 0.";
+        if ( username == null ) {
+            throw new IllegalArgumentException("Programming error or malformed token: Decrypted token found username null.");
+        }
+        if ( expirationTime <= 0 ) {
+            throw new IllegalArgumentException("Programming error or malformed token: Decrypted token found expirationTime <= 0.");
+        }
     }
 
     /** 
@@ -188,8 +194,12 @@ public class CryptoToken {
     // token is a previously encrypted token (i.e., CryptoToken.getToken())
     // with different SecretKey other than the one in ESAPI.properties
     public CryptoToken(SecretKey skey, String token) throws EncryptionException {
-        assert skey != null : "SecretKey may not be null.";
-        assert token != null : "Token may not be null";
+        if ( skey == null ) {
+            throw new IllegalArgumentException("SecretKey may not be null.");
+        }
+        if ( token == null ) {
+                throw new IllegalArgumentException("Token may not be null");
+        }
         secretKey = skey;
         try {
             decryptToken(secretKey, token);
@@ -197,8 +207,14 @@ public class CryptoToken {
             throw new EncryptionException("Decryption of token failed. Token improperly encoded.",
                                           "Can't decrypt token because not correctly encoded.", e);
         }
-        assert username != null : "Programming error: Decrypted token found username null.";
-        assert expirationTime > 0 : "Programming error: Decrypted token found expirationTime <= 0.";
+        if ( username == null ) {
+            String exm = "Programming error???: Decrypted token found username null.";
+            throw new EncryptionException(exm, exm);
+        }
+        if ( expirationTime <= 0 ) {
+            String exm = "Programming error???: Decrypted token found expirationTime <= 0.";
+            throw new EncryptionException(exm, exm);
+        }
     }
 
     /**
@@ -224,7 +240,9 @@ public class CryptoToken {
      *                              expression.)
      */
     public void setUserAccountName(String userAccountName) throws ValidationException {
-        assert userAccountName != null : "User account name may not be null.";
+        if ( userAccountName == null ) {
+            throw new IllegalArgumentException("User account name may not be null.");
+        }
         
         // Converting to lower case first allows a simpler regex.
         String userAcct = userAccountName.toLowerCase();
@@ -251,7 +269,7 @@ public class CryptoToken {
     /**
      * Set expiration time to expire in 'interval' seconds (NOT milliseconds).
      * @param intervalSecs  Number of seconds in the future from current date/time
-     *                  	to set expiration. Must be positive.
+     *                      to set expiration. Must be positive.
      */
     public void setExpiration(int intervalSecs) throws IllegalArgumentException
     {
@@ -296,6 +314,9 @@ public class CryptoToken {
      * @return  The current expiration time.
      */
     public long getExpiration() {
+        // Assertion here is safe as it is just a sanity check and this check is
+        // make elsewhere. Plus this is a getter, not a setting, so if it's
+        // messed up, it happened somewhere else.
         assert expirationTime > 0L : "Programming error: Expiration time <= 0";
         return expirationTime;
     }
@@ -318,16 +339,10 @@ public class CryptoToken {
      */
     public void setAttribute(String name, String value) throws ValidationException {
         if ( name == null || name.length() == 0 ) {
-            // CHECKME: Should this be an IllegalArgumentException instead? I
-            // would prefer an assertion here and state this as a precondition
-            // in the Javadoc.
             throw new ValidationException("Null or empty attribute NAME encountered",
                                           "Attribute NAMES may not be null or empty string.");
         }
         if ( value == null ) {
-            // CHECKME: Should this be an IllegalArgumentException instead? I
-            // would prefer an assertion here and state this as a precondition
-            // in the Javadoc.
             throw new ValidationException("Null attribute VALUE encountered for attr name " + name,
                                           "Attribute VALUE may not be null; attr name: " + name);            
         }
@@ -359,8 +374,9 @@ public class CryptoToken {
      * @see #setAttribute(String, String)
      */
     public void addAttributes(final Map<String, String> attrs) throws ValidationException {
-        // CHECKME: Assertion vs. IllegalArgumentException
-        assert attrs != null : "Attribute map may not be null.";
+        if ( attrs == null ) {
+            throw new IllegalArgumentException("Attribute map may not be null.");
+        }
         Set< Entry<String,String> > keyValueSet = attrs.entrySet();
         Iterator<Entry<String, String>> it = keyValueSet.iterator();
         while( it.hasNext() ) {
@@ -560,7 +576,10 @@ public class CryptoToken {
     
     // Quote any special characters in value.
     private static String quoteAttributeValue(String value) {
-        assert value != null : "Program error: Value should not be null."; // Empty is OK.
+        if ( value == null ) {
+            String exm = "Programming error???: Value should not be null."; // Empty string is OK.
+            throw new EncryptionRuntimeException(exm, exm);
+        }
         StringBuilder sb = new StringBuilder();
         char[] charArray = value.toCharArray();
         for( int i = 0; i < charArray.length; i++ ) {
@@ -608,20 +627,34 @@ public class CryptoToken {
         try {
             token = ESAPI.encoder().decodeFromBase64(b64token);
         } catch (IOException e) {
-            // CHECKME: Not clear if we should log the actual token itself. It's encrypted,
-            //          but could be arbitrarily long, especially since it is not valid
-            //          encoding. OTOH, it may help debugging as sometimes it may be a simple
-            //          case like someone failing to apply some other type of encoding
-            //          consistently (e.g., URL encoding), in which case logging this should
-            //          make this pretty obvious once a few of these are logged.
+            // Ideally, we'd like to be able to include the actual (munged) token itself.
+            // It's encrypted, but could be arbitrarily long, especially since it is not valid
+            // encoding. In theory, it may help debugging as sometimes it may be a simple
+            // case like someone failing to apply some other type of encoding
+            // consistently (e.g., URL encoding), in which case logging this should
+            // make this pretty obvious once a few of these are logged.
+            //
+            // OTOH, since tokens may be used as authentication tokens (see
+            // "WARNING" in the class Javadoc) some insider could intentionally botch
+            // a token (e.g., just remove the base64 padding characters) just to
+            // get an otherwise valid token logged somewhere they can access it.
+            // Therefore, I have decided NOT to include in in the logMessage
+            // part of the exception.
+            //
+            // Note that prior to ESAPI 2.2.0.0, the token _was_ logged, but has
+            // now been corrected.
+            //
             throw new EncodingException("Invalid base64 encoding.",
-                                          "Invalid base64 encoding. Encrypted token was: " + b64token);
+                                        "Invalid base64 encoding for token [REDACTED]");
         }
         CipherText ct = CipherText.fromPortableSerializedBytes(token);
         Encryptor encryptor = ESAPI.encryptor();
         PlainText pt = encryptor.decrypt(skey, ct);
         String str = pt.toString();
-        assert str.endsWith(DELIM) : "Programming error: Expecting decrypted token to end with delim char, " + DELIM_CHAR;
+        if ( ! str.endsWith(DELIM) ) {
+            String exm = "Programming error???: Expecting decrypted token to end with delim char, " + DELIM_CHAR;
+            throw new EncryptionException(exm, exm);
+        }
         char[] charArray = str.toCharArray();
         int prevPos = -1;                // Position of previous unquoted delimiter.
         int fieldNo = 0;
@@ -653,9 +686,15 @@ public class CryptoToken {
         }
         
         Object[] objArray = fields.toArray();
-        assert fieldNo == objArray.length : "Program error: Mismatch of delimited field count.";
+        if ( fieldNo != objArray.length ) {
+            String exm = "Programming error???: Mismatch of delimited field count.";
+            throw new EncryptionException(exm, exm);
+        }
         logger.debug(Logger.EVENT_UNSPECIFIED, "Found " + objArray.length + " fields.");
-        assert objArray.length >= 2 : "Missing mandatory fields from decrypted token (username &/or expiration time).";
+        if ( objArray.length < 2 ) {
+            String exm = "Missing mandatory fields from decrypted token (username &/or expiration time).";
+            throw new EncryptionException(exm, exm);
+        }
         username = ((String)(objArray[0])).toLowerCase();
         String expTime = (String)objArray[1];
         expirationTime = Long.parseLong(expTime);
@@ -689,12 +728,18 @@ public class CryptoToken {
     }
     
     private SecretKey getDefaultSecretKey(String encryptAlgorithm) {
-        assert encryptAlgorithm != null : "Encryption algorithm cannot be null";
+        if ( encryptAlgorithm == null ) {
+            throw new IllegalArgumentException("Encryption algorithm cannot be null");
+        }
         byte[] skey = ESAPI.securityConfiguration().getMasterKey();
-        assert skey != null : "Can't obtain master key, Encryptor.MasterKey";
-        assert skey.length >= 7 :
+        if ( skey == null ) {
+            throw new IllegalArgumentException("Can't obtain master key, Encryptor.MasterKey");
+        }
+        if ( skey.length < 7 ) {
+            throw new ConfigurationException(
                         "Encryptor.MasterKey must be at least 7 bytes. " +
-                        "Length is: " + skey.length + " bytes.";
+                        "Length is: " + skey.length + " bytes.");
+        }
         // Set up secretKeySpec for use for symmetric encryption and decryption,
         // and set up the public/private keys for asymmetric encryption /
         // decryption.

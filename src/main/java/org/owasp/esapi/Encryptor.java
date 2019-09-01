@@ -5,7 +5,7 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright &copy; 2007,2009 - The OWASP Foundation
+ * Copyright &copy; 2007-2019 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
@@ -245,7 +245,6 @@ public interface Encryptor {
 	 * 
 	 * @return 
 	 * 		true, if the signature is verified, false otherwise
-	 * 
 	 */
 	boolean verifySignature(String signature, String data);
 
@@ -259,8 +258,8 @@ public interface Encryptor {
 	 * 
 	 * @return 
      * 		the seal
-     * @throws IntegrityException
 	 * 
+     * @throws IntegrityException
 	 */
 	String seal(String data, long timestamp) throws IntegrityException;
 
@@ -303,8 +302,7 @@ public interface Encryptor {
 	 * @return 
 	 * 		the absolute timestamp
 	 */
-	public long getRelativeTimeStamp( long offset );
-	
+	long getRelativeTimeStamp( long offset );
 	
 	/**
 	 * Gets a timestamp representing the current date and time to be used by

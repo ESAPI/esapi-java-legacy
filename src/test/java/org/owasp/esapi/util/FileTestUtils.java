@@ -10,7 +10,7 @@ import java.util.Random;
  */
 public class FileTestUtils
 {
-	private static final Class CLASS = FileTestUtils.class;
+	private static final Class<FileTestUtils> CLASS = FileTestUtils.class;
 	private static final String CLASS_NAME = CLASS.getName();
 	private static final String DEFAULT_PREFIX = CLASS_NAME + '.';
 	private static final String DEFAULT_SUFFIX = ".tmp";
@@ -20,15 +20,15 @@ public class FileTestUtils
 		Rational for switching from SecureRandom to Random:
 		
 		This is used for generating filenames for temporary
-		directories. Origionally this was using SecureRandom for
+		directories. Originally this was using SecureRandom for
 		this to make /tmp races harder. This is not necessary as
 		mkdir always returns false if if the directory already
 		exists.
 		
-		Additionally, SecureRandom for some reason on linux
+		Additionally, SecureRandom for some reason on Linux
 		is appears to be reading from /dev/random instead of
 		/dev/urandom. As such, the many calls for temporary
-		directories in the unit tests quickly depleates the
+		directories in the unit tests quickly depletes the
 		entropy pool causing unit test runs to block until more
 		entropy is collected (this is why moving the mouse speeds
 		up unit tests).
@@ -46,7 +46,7 @@ public class FileTestUtils
 
 	/**
 	 * Convert a long to it's hex representation. Unlike
-	 * {@ Long#toHexString(long)} this always returns 16 digits.
+	 * {@link Long#toHexString(long)} this always returns 16 digits.
 	 * @param l The long to convert.
 	 * @return l in hex.
 	 */

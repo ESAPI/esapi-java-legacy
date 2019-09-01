@@ -65,12 +65,12 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 	@Override
 	public String encode(char[] immune, String input) {
 		StringBuilder sb = new StringBuilder();
-		for(int offset  = 0; offset < input.length(); ){
+		for(int offset  = 0; offset < input.length(); ) {
 			final int point = input.codePointAt(offset);
-			if(Character.isBmpCodePoint(point)){
+			if (Character.isBmpCodePoint(point)) {
 				//We can then safely cast this to char and maintain legacy behavior.
 				sb.append(encodeCharacter(immune, new Character((char) point)));
-			}else{
+			} else {
 				sb.append(encodeCharacter(immune, point));	
 			}
 			offset += Character.charCount(point);
@@ -80,17 +80,17 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 
 	/**
 	 * WARNING!!!!  Passing a standard char to this method will resolve to the 
-	 * @{code public String encodeCharacter( char[] immune, int codePoint )} method
-	 * instead of this one!!!  YOU HAVE BEEN WARNED!!!!
+	 * @see #encodeCharacter( char[], int )
+	 * method instead of this one!!!  YOU HAVE BEEN WARNED!!!!
 	 * 
-	 * @{Inherit}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public String encodeCharacter( char[] immune, Character c ) {
 		return ""+c;
 	}
 	
-	public String encodeCharacter(char[] immune, char c){
+	public String encodeCharacter(char[] immune, char c) {
 		throw new IllegalArgumentException("You tried to call encodeCharacter with a char.  Nope.  Use Character instead!");
 	}
 	
@@ -117,54 +117,39 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 	}
 
 	/**
-	 * Lookup the hex value of any character that is not alphanumeric.
-	 * @param c The character to lookup.
-	 * @return, return null if alphanumeric or the character code
-	 * 	in hex.
+	 * {@inheritDoc}
 	 */
-	public String getHexForNonAlphanumeric(char c)
-	{
+	public String getHexForNonAlphanumeric(char c) {
 		if(c<0xFF)
 			return hex[c];
 		return toHex(c);
 	}
 	
 	/**
-	 * Lookup the hex value of any character that is not alphanumeric.
-	 * @param c The character to lookup.
-	 * @return, return null if alphanumeric or the character code
-	 * 	in hex.
+	 * {@inheritDoc}
 	 */
-	public String getHexForNonAlphanumeric(int c)
-	{
-		if(c<0xFF){
+	public String getHexForNonAlphanumeric(int c) {
+		if (c<0xFF) {
 			return hex[c];
-		}else{
+		} else {
 			return toHex(c);
 		}
 	}
 
-	public String toOctal(char c)
-	{
+	public String toOctal(char c) {
 		return Integer.toOctalString(c);
 	}
 
-	public String toHex(char c)
-	{
+	public String toHex(char c) {
 		return Integer.toHexString(c);
 	}
 	
-	public String toHex(int c)
-	{
+	public String toHex(int c) {
 		return Integer.toHexString(c);
 	}
 
 	/**
-	 * Utility to search a char[] for a specific char.
-	 * 
-	 * @param c
-	 * @param array
-	 * @return
+	 * {@inheritDoc}
 	 */
 	public boolean containsCharacter( char c, char[] array ) {
 		for (char ch : array) {

@@ -66,11 +66,11 @@ public class IntegerAccessReferenceMap extends AbstractAccessReferenceMap<String
 	}
 
 	/**
-	 * TODO Javadoc
+     * {@inheritDoc}
 	 * Note: this is final as redefinition by subclasses
 	 * can lead to use before initialization issues as
-	 * {@link #RandomAccessReferenceMap(Set)} and
-	 * {@link #RandomAccessReferenceMap(Set,int)} both call it
+	 * {@link #IntegerAccessReferenceMap(Set)} and
+	 * {@link #IntegerAccessReferenceMap(Set,int)} both call it
 	 * internally.
 	 */
 	protected final synchronized String getUniqueReference() {

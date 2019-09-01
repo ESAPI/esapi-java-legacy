@@ -79,8 +79,6 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
 	}
 	
 	/**
-	 * {@inheritDoc}
-	 * 
 	 * Returns the decoded version of the character starting at index, or
 	 * null if no decoding is possible.
 	 * 

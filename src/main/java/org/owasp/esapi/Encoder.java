@@ -5,7 +5,7 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2007-2019 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
@@ -443,22 +443,19 @@ public interface Encoder {
 	 * @param input 
 	 * 		the Base64 text to decode
 	 * 
-	 * @return input 
-	 * 		decoded from Base64
+	 * @return input decoded from Base64
 	 * 
 	 * @throws IOException
 	 */
 	byte[] decodeFromBase64(String input) throws IOException;
 
 	/**
-	 * 
 	 * Get a version of the input URI that will be safe to run regex and other validations against.  
 	 * It is not recommended to persist this value as it will transform user input.  This method 
 	 * will not test to see if the URI is RFC-3986 compliant.
 	 * 
-	 * @param input
-	 * @return
+	 * @return The canonicalized URI
 	 */
-	public String getCanonicalizedURI(URI dirtyUri);
+	String getCanonicalizedURI(URI dirtyUri);
 
 }

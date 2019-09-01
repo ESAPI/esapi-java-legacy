@@ -134,8 +134,8 @@ public class Base64
 
      /**
       * System property name that must be set to true in order to invoke {@code Base64.decodeToObject()}.
-      * @see https://github.com/ESAPI/esapi-java-legacy/issues/354
-      * @see http://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-application-have-in-common-this-vulnerability/
+      * @link https://github.com/ESAPI/esapi-java-legacy/issues/354
+      * @link http://foxglovesecurity.com/2015/11/06/what-do-weblogic-websphere-jboss-jenkins-opennms-and-your-application-have-in-common-this-vulnerability/
       */
      public final static String ENABLE_UNSAFE_SERIALIZATION = "org.owasp.esapi.enableUnsafeSerialization"; // Do NOT change!
 

@@ -689,21 +689,21 @@ public interface Validator {
 	String safeReadLine(InputStream inputStream, int maxLength) throws ValidationException;
 
 	/**
-	 * 
 	 * Parses and ensures that the URI in question is a valid RFC-3986 URI.  This simplifies
-	 * the kind of regex required for subsequent validation to mitigate regex-based 
-	 * DoS attacks.  
+	 * the kind of regex required for subsequent validation to mitigate regex-based DoS attacks.  
 	 * 
 	 * @see <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986.</a>
 	 * 
  	 *	@param context
-	 *  		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+	 *  		A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any 
+	 *          logging or error handling that is done with respect to the value passed in.
 	 *  @param input
 	 *  		redirect location to be returned as valid, according to encoding rules set in "ESAPI.properties"
 	 *  @param allowNull
-	 *  		If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+	 *  		If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an 
+	 *          empty String will throw a ValidationException.
 	 *
-	 * @return
+	 * @return True if the URI is valid
 	 * @throws ValidationException 
 	 */
 	boolean isValidURI(String context, String input, boolean allowNull);
@@ -715,6 +715,6 @@ public interface Validator {
 	 * @param input String
 	 * @return URI object representing a parsed URI, or {@code null} if the URI was non-compliant in some way.  
 	 */
-	public URI getRfcCompliantURI(String input);
+	URI getRfcCompliantURI(String input);
 	
 }

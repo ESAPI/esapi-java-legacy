@@ -21,7 +21,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	
     /**
      *
-     * @return
+     * @return The next value in this Sequence, as an Integer.
      */
     public Integer next() {
 		if ( pushback != null ) {
@@ -39,7 +39,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	
     /**
     *
-    * @return
+    * @return The next value in this Sequence, as an Integer if it is a hex digit. Null otherwise.
     */
    public Integer nextHex() {
 		Integer c = next();
@@ -50,7 +50,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 
    /**
    *
-   * @return
+   * @return The next value in this Sequence, as an Integer if it is an octal digit. Null otherwise.
    */
   public Integer nextOctal() {
 		Integer c = next();
@@ -62,7 +62,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	  /**
 	  * Returns true if the parameter character is a hexidecimal digit 0 through 9, a through f, or A through F.
 	  * @param c
-	  * @return
+	  * @return true if it is a hexidecimal digit, false otherwise.
 	  */
 	 public static boolean isHexDigit( Integer c ) {
 		if ( c == null ) return false;
@@ -73,7 +73,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	 /**
 	 * Returns true if the parameter character is an octal digit 0 through 7.
 	 * @param c
-	 * @return
+	 * @return true if it is an octal digit, false otherwise.
 	 */
 	public static boolean isOctalDigit( Integer c ) {
 		if ( c == null ) return false;
@@ -83,7 +83,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 
     /**
      * Return the next codePoint without affecting the current index.
-     * @return
+     * @return the next codePoint
      */
     public Integer peek() {
 		if ( pushback != null ) return pushback;
@@ -96,7 +96,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
     /**
      * Test to see if the next codePoint is a particular value without affecting the current index.
      * @param c
-     * @return
+     * @return if the next value is equal to the supplied value.
      */
     public boolean peek( Integer c ) {
 		if ( pushback != null && pushback.intValue() == c ) return true;
@@ -107,7 +107,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	}	
 	
     /**
-     *
+     * {@inheritDoc}
      */
     public void mark() {
 		temp = pushback;
@@ -115,7 +115,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	}
 
     /**
-     *
+     * {@inheritDoc}
      */
     public void reset() {
 		pushback = temp;
@@ -123,8 +123,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
 	}
 	
     /**
-     *
-     * @return
+     * {@inheritDoc}
      */
     public String remainder() {
 		String output = input.substring( index );

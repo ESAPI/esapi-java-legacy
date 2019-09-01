@@ -79,7 +79,7 @@ public class ExperimentalAccessController implements AccessController {
 	 * @param action
 	 * @param data
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForData(java.lang.String, java.lang.Object)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForData(java.lang.String, java.lang.Object)
 	 * @deprecated
 	 */
     @Deprecated
@@ -91,7 +91,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param filepath
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForFile(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForFile(java.lang.String)
 	 * @deprecated
 	 */
     @Deprecated
@@ -103,7 +103,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param functionName
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForFunction(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForFunction(java.lang.String)
 	 * @deprecated
 	 */
     @Deprecated
@@ -115,7 +115,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param serviceName
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForService(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForService(java.lang.String)
 	 * @deprecated
 	 */
     @Deprecated
@@ -127,7 +127,7 @@ public class ExperimentalAccessController implements AccessController {
 	/**
 	 * @param url
 	 * @throws AccessControlException
-	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#assertAuthorizedForURL(java.lang.String)
+	 * @see org.owasp.esapi.reference.accesscontrol.FileBasedACRs#isAuthorizedForURL(java.lang.String)
 	 * @deprecated
 	 */
     @Deprecated

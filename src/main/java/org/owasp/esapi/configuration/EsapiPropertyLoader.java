@@ -4,6 +4,8 @@ import org.owasp.esapi.errors.ConfigurationException;
 
 /**
  * Generic interface for loading security configuration properties.
+ *
+ * @since 2.2
  */
 public interface EsapiPropertyLoader {
 

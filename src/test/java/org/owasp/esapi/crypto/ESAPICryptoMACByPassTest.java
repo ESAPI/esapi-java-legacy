@@ -1,5 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI) - Google issue # 306.
+ * (i.e., GitHub issue 312).
  * 
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
@@ -92,8 +93,8 @@ public class ESAPICryptoMACByPassTest {
         		// subsequent lines in the try block.
             PlainText pt = ESAPI.encryptor().decrypt(sk,modifierCtObj);
             System.out.printf("Decrypting to '%s' (probably will look like garbage!)\n", new String(pt.asBytes()));
-            System.out.println("This ESAPI version vulnerable to MAC by-pass described in Google issue # 306! Upgrade to latest version.");
-            fail("This ESAPI version is vulnerable to MAC by-pass described in Google issue # 306! Upgrade to latest version.");
+            System.out.println("This ESAPI version vulnerable to MAC by-pass described in GitHub issue # 312! Upgrade to latest version.");
+            fail("This ESAPI version is vulnerable to MAC by-pass described in GitHub issue # 312! Upgrade to latest version.");
         } catch(EncryptionException eex) {
         	String errMsg = eex.getMessage();
         		// See private String DECRYPTION_FAILED in JavaEncryptor.

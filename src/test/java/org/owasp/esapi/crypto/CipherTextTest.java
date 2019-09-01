@@ -191,9 +191,8 @@ public class CipherTextTest {
 	        encryptor.init(Cipher.ENCRYPT_MODE, key, ivSpec);
 	        byte[] raw = encryptor.doFinal("This is my secret message!!!".getBytes("UTF8"));
 	        CipherText ciphertext = new CipherText(cipherSpec, raw);
-	        	// TODO: Replace this w/ call to KeyDerivationFunction as this is
-	        	//		 deprecated! Shame on me!
-	        SecretKey authKey = CryptoHelper.computeDerivedKey(key, key.getEncoded().length * 8, "authenticity");
+		    KeyDerivationFunction kdf = new KeyDerivationFunction( KeyDerivationFunction.PRF_ALGORITHMS.HmacSHA1 );
+	        SecretKey authKey = kdf.computeDerivedKey(key, key.getEncoded().length * 8, "authenticity");
 	        ciphertext.computeAndStoreMAC( authKey );
 //          System.err.println("Original ciphertext being serialized: " + ciphertext);
 	        byte[] serializedBytes = ciphertext.asPortableSerializedByteArray();
