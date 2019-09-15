@@ -14,20 +14,18 @@
 
 package org.owasp.esapi.filters;
 
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.Validator;
-import org.owasp.esapi.errors.ValidationException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 // A hack for now; eventually, I plan to move this into a new org.owasp.esapi.PropNames class. -kww
 import static org.owasp.esapi.reference.DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
@@ -41,6 +39,12 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
+import org.owasp.esapi.Logger.EventType;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.ValidationException;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -57,15 +61,22 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ESAPI.class)
 public class SecurityWrapperRequestTest {
-    private static final String ESAPI_VALIDATOR_GETTER_METHOD_NAME = "validator";
+	private static final String ESAPI_VALIDATOR_GETTER_METHOD_NAME = "validator";
+	private static final String ESAPI_GET_LOGGER_METHOD_NAME = "getLogger";
     private static final String ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME = "securityConfiguration";
     private static final String SECURITY_CONFIGURATION_QUERY_STRING_LENGTH_KEY_NAME = "HttpUtilities.URILENGTH";
     private static final String SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME = "HttpUtilities.httpQueryParamValueLength";
+    private static final String SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME = "HttpUtilities.MaxHeaderNameSize";
+    private static final String SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME = "HttpUtilities.MaxHeaderValueSize";
     
     private static final int SECURITY_CONFIGURATION_TEST_LENGTH = 255;
 
     private static final String QUERY_STRING_CANONCALIZE_TYPE_KEY = "HTTPQueryString";
     private static final String PARAMETER_STRING_CANONCALIZE_TYPE_KEY = "HTTPParameterValue";
+    private static final String COOKIE_NAME_TYPE_KEY = "HTTPCookieName";
+    private static final String COOKIE_VALUE_TYPE_KEY = "HTTPCookieValue";
+    private static final String COOKIE_DOMAIN_TYPE_KEY = "HTTPHeaderValue";
+    private static final String COOKIE_PATH_TYPE_KEY = "HTTPHeaderValue";
   
     @Rule
     public TestName testName = new TestName();
@@ -76,6 +87,8 @@ public class SecurityWrapperRequestTest {
     private Validator mockValidator;
     @Mock
     private SecurityConfiguration mockSecConfig;
+    @Mock
+    private Logger mockLogger;
     
     private String testQueryValue;
     private String testParameterName;
@@ -88,6 +101,7 @@ public class SecurityWrapperRequestTest {
     public void setup() throws Exception {
         PowerMockito.mockStatic(ESAPI.class);
         PowerMockito.when(ESAPI.class, ESAPI_VALIDATOR_GETTER_METHOD_NAME).thenReturn(mockValidator);
+        PowerMockito.when(ESAPI.class, ESAPI_GET_LOGGER_METHOD_NAME, "SecurityWrapperRequest").thenReturn(mockLogger);
         PowerMockito.when(ESAPI.class, ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME).thenReturn(mockSecConfig);
         //Is intrusion detection disabled?  A:  Yes, it is off.  
         //This logic is confusing:  True, the value is False...
@@ -368,6 +382,224 @@ public class SecurityWrapperRequestTest {
        
         verify(mockRequest, times(1)).getParameter(testParameterName);
     }
+    
+    @Test
+    public void testGetCookie() throws Exception {
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+
+    	Cookie ck1 = new Cookie(testName.getMethodName(), testName.getMethodName()+ "-VALUE");
+    	ck1.setMaxAge(999);
+    	ck1.setDomain(testName.getMethodName() + "-DOMAIN");
+    	ck1.setPath(testName.getMethodName() + "-URI");
+
+    	Cookie[] stubCookies = new Cookie[] {ck1};
+    	PowerMockito.when(mockRequest.getCookies()).thenReturn(stubCookies);
+
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getName()), eq(COOKIE_NAME_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getName());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getValue()),eq(COOKIE_VALUE_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getValue());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getDomain()),eq(COOKIE_DOMAIN_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(false))).thenReturn(ck1.getDomain());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getPath()), eq(COOKIE_PATH_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(false))).thenReturn(ck1.getPath());
+
+    	SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+    	Cookie[] cookies = request.getCookies();
+    	assertNotEquals(stubCookies, cookies);
+    	assertEquals(1, cookies.length);
+    	Cookie resultCookie = cookies[0];
+    	assertNotEquals(ck1, resultCookie);
+    	assertEquals(ck1.getName(), resultCookie.getName());
+    	assertEquals(ck1.getValue(), resultCookie.getValue());
+    	assertEquals(ck1.getDomain(), resultCookie.getDomain());
+    	assertEquals(ck1.getPath(), resultCookie.getPath());
+    	assertEquals(ck1.getMaxAge(), resultCookie.getMaxAge());
+
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getName()), ArgumentMatchers.eq(COOKIE_NAME_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getValue()), ArgumentMatchers.eq(COOKIE_VALUE_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getDomain()), ArgumentMatchers.eq(COOKIE_DOMAIN_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getPath()), ArgumentMatchers.eq(COOKIE_PATH_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    }
+    
+    @Test
+    public void testGetCookieNullDomainPath() throws Exception {
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+
+    	Cookie ck1 = new Cookie(testName.getMethodName(), testName.getMethodName()+ "-VALUE");
+    	ck1.setMaxAge(999);
+    	//Domain and Path are left null
+
+    	Cookie[] stubCookies = new Cookie[] {ck1};
+    	PowerMockito.when(mockRequest.getCookies()).thenReturn(stubCookies);
+
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getName()), eq(COOKIE_NAME_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getName());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getValue()),eq(COOKIE_VALUE_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getValue());
+
+    	SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+    	Cookie[] cookies = request.getCookies();
+    	assertNotEquals(stubCookies, cookies);
+    	assertEquals(1, cookies.length);
+    	Cookie resultCookie1 = cookies[0];
+    	
+    	assertNotEquals(ck1, resultCookie1);
+    	assertEquals(ck1.getName(), resultCookie1.getName());
+    	assertEquals(ck1.getValue(), resultCookie1.getValue());
+    	assertEquals(ck1.getDomain(), resultCookie1.getDomain());
+    	assertEquals(ck1.getPath(), resultCookie1.getPath());
+    	assertEquals(ck1.getMaxAge(), resultCookie1.getMaxAge());
+
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getName()), ArgumentMatchers.eq(COOKIE_NAME_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getValue()), ArgumentMatchers.eq(COOKIE_VALUE_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getDomain()), ArgumentMatchers.eq(COOKIE_DOMAIN_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getPath()), ArgumentMatchers.eq(COOKIE_PATH_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    }
+    
+    @Test
+    public void testGetCookieNullRequestCookies() {
+    	          PowerMockito.when(mockRequest.getParameter(testParameterName)).thenReturn(testParameterValue);
+          PowerMockito.when(mockRequest.getCookies()).thenReturn(null);
+          SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+          Cookie[] cookies = request.getCookies();
+          assertEquals(0, cookies.length);
+    }
+    
+    @Test
+    public void testGetCookieSkipOnBadName() throws Exception {
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+
+    	Answer<String> exceptionAnswer = new ValidatorTestContainer(mockValidator).throwException();
+    
+    	Cookie ck1 = new Cookie(testName.getMethodName(), testName.getMethodName()+ "-VALUE");
+    	ck1.setMaxAge(999);
+    	ck1.setDomain(testName.getMethodName() + "-DOMAIN");
+    	ck1.setPath(testName.getMethodName() + "-URI");
+
+    	Cookie[] stubCookies = new Cookie[] {ck1};
+    	PowerMockito.when(mockRequest.getCookies()).thenReturn(stubCookies);
+    	
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getName()), eq(COOKIE_NAME_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenAnswer(exceptionAnswer);
+
+    	SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+    	Cookie[] cookies = request.getCookies();
+    	assertNotEquals(stubCookies, cookies);
+    	assertEquals(0, cookies.length);
+
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getName()), ArgumentMatchers.eq(COOKIE_NAME_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getValue()), ArgumentMatchers.eq(COOKIE_VALUE_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getDomain()), ArgumentMatchers.eq(COOKIE_DOMAIN_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getPath()), ArgumentMatchers.eq(COOKIE_PATH_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	
+    	//I would have liked to verify the logging occurred, but it's giving me trouble at this time.
+    }
+    
+    @Test
+    public void testGetCookieSkipOnBadValue() throws Exception {
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+
+    	Answer<String> exceptionAnswer = new ValidatorTestContainer(mockValidator).throwException();
+
+    	Cookie ck1 = new Cookie(testName.getMethodName(), testName.getMethodName()+ "-VALUE");
+    	ck1.setMaxAge(999);
+    	ck1.setDomain(testName.getMethodName() + "-DOMAIN");
+    	ck1.setPath(testName.getMethodName() + "-URI");
+
+    	Cookie[] stubCookies = new Cookie[] {ck1};
+    	PowerMockito.when(mockRequest.getCookies()).thenReturn(stubCookies);
+    	
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getName()), eq(COOKIE_NAME_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getName());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getValue()),eq(COOKIE_VALUE_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenAnswer(exceptionAnswer);
+
+    	SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+    	Cookie[] cookies = request.getCookies();
+    	assertNotEquals(stubCookies, cookies);
+    	assertEquals(0, cookies.length);
+
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getName()), ArgumentMatchers.eq(COOKIE_NAME_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getValue()), ArgumentMatchers.eq(COOKIE_VALUE_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getDomain()), ArgumentMatchers.eq(COOKIE_DOMAIN_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getPath()), ArgumentMatchers.eq(COOKIE_PATH_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	
+    	//I would have liked to verify the logging occurred, but it's giving me trouble at this time.
+    }
+
+    @Test
+    public void testGetCookieSkipOnBadDomain() throws Exception {
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+
+    	Answer<String> exceptionAnswer = new ValidatorTestContainer(mockValidator).throwException();
+    
+    	Cookie ck1 = new Cookie(testName.getMethodName(), testName.getMethodName()+ "-VALUE");
+    	ck1.setMaxAge(999);
+    	ck1.setDomain(testName.getMethodName() + "-DOMAIN");
+    	ck1.setPath(testName.getMethodName() + "-URI");
+
+    	Cookie[] stubCookies = new Cookie[] {ck1};
+    	PowerMockito.when(mockRequest.getCookies()).thenReturn(stubCookies);
+    	
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getName()), eq(COOKIE_NAME_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getName());
+       PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getValue()),eq(COOKIE_VALUE_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getValue());
+   	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getDomain()),eq(COOKIE_DOMAIN_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(false))).thenAnswer(exceptionAnswer);
+
+    	SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+    	Cookie[] cookies = request.getCookies();
+    	assertNotEquals(stubCookies, cookies);
+    	assertEquals(0, cookies.length);
+
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getName()), ArgumentMatchers.eq(COOKIE_NAME_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getValue()), ArgumentMatchers.eq(COOKIE_VALUE_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getDomain()), ArgumentMatchers.eq(COOKIE_DOMAIN_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	Mockito.verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getPath()), ArgumentMatchers.eq(COOKIE_PATH_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	
+    	//I would have liked to verify the logging occurred, but it's giving me trouble at this time.
+    }
+    
+
+    @Test
+    public void testGetCookieSkipOnBadPath() throws Exception {
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+    	PowerMockito.when(mockSecConfig.getIntProp(SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME)).thenReturn(
+    			SECURITY_CONFIGURATION_TEST_LENGTH);
+
+    	Answer<String> exceptionAnswer = new ValidatorTestContainer(mockValidator).throwException();
+    
+    	Cookie ck1 = new Cookie(testName.getMethodName(), testName.getMethodName()+ "-VALUE");
+    	ck1.setMaxAge(999);
+    	ck1.setDomain(testName.getMethodName() + "-DOMAIN");
+    	ck1.setPath(testName.getMethodName() + "-URI");
+
+    	Cookie[] stubCookies = new Cookie[] {ck1};
+    	PowerMockito.when(mockRequest.getCookies()).thenReturn(stubCookies);
+    	
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getName()), eq(COOKIE_NAME_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getName());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getValue()),eq(COOKIE_VALUE_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(true))).thenReturn(ck1.getValue());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getDomain()),eq(COOKIE_DOMAIN_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(false))).thenReturn(ck1.getDomain());
+    	PowerMockito.when(mockValidator.getValidInput(anyString(), eq(ck1.getPath()), eq(COOKIE_PATH_TYPE_KEY), eq(SECURITY_CONFIGURATION_TEST_LENGTH), eq(false))).thenAnswer(exceptionAnswer);
+
+    	SecurityWrapperRequest request = new SecurityWrapperRequest(mockRequest);
+    	Cookie[] cookies = request.getCookies();
+    	assertNotEquals(stubCookies, cookies);
+    	assertEquals(0, cookies.length);
+
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getName()), ArgumentMatchers.eq(COOKIE_NAME_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getValue()), ArgumentMatchers.eq(COOKIE_VALUE_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(true));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getDomain()), ArgumentMatchers.eq(COOKIE_DOMAIN_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	Mockito.verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(ck1.getPath()), ArgumentMatchers.eq(COOKIE_PATH_TYPE_KEY), ArgumentMatchers.eq(SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+    	
+    	//I would have liked to verify the logging occurred, but it's giving me trouble at this time.
+    }
 
     /**
      * Utility test class meant to encapsulate common interactions for preparing and
@@ -405,11 +637,11 @@ public class SecurityWrapperRequestTest {
         public void getValidInputReturns(String response) throws Exception {
             setupFor(returnResult(response));
         }
-        
+       
         public void getValidInputThrows() throws Exception {
             setupFor(throwException());
         }
-        
+       
         public void setupFor(Answer<String> answer) throws Exception {
             String context = anyString();
             String input = inputCapture.capture();
@@ -419,7 +651,7 @@ public class SecurityWrapperRequestTest {
 
             PowerMockito.when(validator.getValidInput(context, input, type, length, allowNull)).thenAnswer(answer);
         }
-        
+              
         public void verify(String input, String type, int maxLen, boolean allowNull) throws Exception {
             String actualInput = inputCapture.getValue();
             String actualType = typeCapture.getValue();
