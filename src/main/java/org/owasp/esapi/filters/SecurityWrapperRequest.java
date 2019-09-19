@@ -154,7 +154,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
             // build a new clean cookie
             try {
                 // get data from original cookie
-                String name = ESAPI.validator().getValidInput("Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), true);
+                String name = ESAPI.validator().getValidInput("Cookie name: " + c.getName(), c.getName(), "HTTPCookieName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
                 String value = ESAPI.validator().getValidInput("Cookie value: " + c.getValue(), c.getValue(), "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), true);
                 int maxAge = c.getMaxAge();
                 String domain = c.getDomain();
