@@ -22,6 +22,19 @@ public class EncodingPatternPreservationTest {
 	}
 	
 	@Test
+	public void testReplaceMultipleAndRestore() {
+		Pattern numberRegex = Pattern.compile("(ABC)");
+		EncodingPatternPreservation epp = new EncodingPatternPreservation(numberRegex);
+		String origStr = "12 ABC 34 ABC 56 G 7 ABC8";
+		String replacedStr = epp.captureAndReplaceMatches(origStr);
+		
+		assertEquals("12 EncodingPatternPreservation 34 EncodingPatternPreservation 56 G 7 EncodingPatternPreservation8", replacedStr);
+		
+		String restored = epp.restoreOriginalContent(replacedStr);
+		assertEquals(origStr, restored);
+	}
+	
+	@Test
 	public void testSetMarker() {
 		Pattern numberRegex = Pattern.compile("(ABC)");
 		EncodingPatternPreservation epp = new EncodingPatternPreservation(numberRegex);

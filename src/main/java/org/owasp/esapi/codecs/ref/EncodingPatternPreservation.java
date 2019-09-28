@@ -58,12 +58,11 @@ public class EncodingPatternPreservation {
 		Matcher matcher = noEncodeContent.matcher(input);
 
 		while (matcher.find()) {
-			int groups = matcher.groupCount();
-			for (int x = 0; x < groups; x++) {
-				String replaceContent = matcher.group(x);
+			String replaceContent = matcher.group(0);
+			if (replaceContent != null) {
 				replacedContentList.add(replaceContent);
 				inputCpy = inputCpy.replaceFirst(noEncodeContent.pattern(), replacementMarker);
-			}
+			}			
 		}
 
 		return inputCpy;
