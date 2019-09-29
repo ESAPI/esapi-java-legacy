@@ -80,7 +80,6 @@ public class CSSCodec extends AbstractCharacterCodec
 	{
 		input.mark();
 		Character first = input.next();
-		System.out.println("First: " + first);
 		if (first == null || first != '\\')
 		{
 			input.reset();
@@ -88,7 +87,6 @@ public class CSSCodec extends AbstractCharacterCodec
 		}
 
 		Character second = input.next();
-		System.out.println("Second: " );
 		if (second == null) {
 			input.reset();
 			return null;
