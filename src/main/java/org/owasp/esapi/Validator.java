@@ -48,8 +48,14 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public interface Validator {
 
+	/**
+	 * Add a validation rule to the registry using the "type name" of the rule as the key.
+	 */
 	void addRule( ValidationRule rule );
 
+	/**
+	 * Get a validation rule from the registry with the "type name" of the rule as the key.
+	 */
 	ValidationRule getRule( String name );
 
 	/**
