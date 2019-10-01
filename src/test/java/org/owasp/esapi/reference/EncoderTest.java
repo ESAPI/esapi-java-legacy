@@ -15,19 +15,23 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.ByteArrayOutputStream;
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.junit.Ignore;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
-import org.owasp.esapi.codecs.Base64;
+import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
@@ -376,7 +380,7 @@ public class EncoderTest extends TestCase {
     /**
      *
      */
-    public void testEncodeForCSS() {
+    public void testencodeForCSS() {
         System.out.println("encodeForCSS");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForCSS(null));
@@ -385,11 +389,32 @@ public class EncoderTest extends TestCase {
         assertEquals("#f00", instance.encodeForCSS("#f00"));
         assertEquals("#123456", instance.encodeForCSS("#123456"));
         assertEquals("#abcdef", instance.encodeForCSS("#abcdef"));
-        assertEquals("red", instance.encodeForCSS("red"));
+        assertEquals("red", instance.encodeForCSS("red"));       
     }
-
-
-
+    
+    public void testCSSTripletLeadString() {
+    	Encoder instance = ESAPI.encoder();
+    	assertEquals("rgb(255,255,255)\\21 ", instance.encodeForCSS("rgb(255,255,255)!"));
+    	assertEquals("rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("rgb(25%,25%,25%)!"));
+    }
+    public void testCSSTripletTailString() {
+		Encoder instance = ESAPI.encoder();
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
+    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
+    }
+    public void testCSSTripletStringPart() {
+		Encoder instance = ESAPI.encoder();
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
+    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
+    }
+    public void testCSSTripletStringMultiPart() {
+		Encoder instance = ESAPI.encoder();
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(255,255,255)!"));
+    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)! $field=rgb(25%,25%,25%)!"));
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(25%,25%,25%)!"));
+    }
+       
+    
     /**
 	 * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
 	 */

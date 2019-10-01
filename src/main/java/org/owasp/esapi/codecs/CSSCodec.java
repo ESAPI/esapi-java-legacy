@@ -15,6 +15,10 @@
  */
 package org.owasp.esapi.codecs;
 
+import java.util.regex.Pattern;
+
+import org.owasp.esapi.codecs.ref.EncodingPatternPreservation;
+
 /**
  * Implementation of the Codec interface for backslash encoding used in CSS.
  * 
@@ -26,8 +30,21 @@ package org.owasp.esapi.codecs;
 public class CSSCodec extends AbstractCharacterCodec
 {
 	private static final Character REPLACEMENT = '\ufffd';
-
-
+	//rgb (###,###,###) OR rgb(###%,###%,###%)
+	//([rR][gG][bB])\s*\(\s*\d{1,3}\s*(\%)?\s*,\s*\d{1,3}\s*(\%)?\s*,\s*\d{1,3}\s*(\%)?\s*\)
+	private static final String RGB_TRPLT = "([rR][gG][bB])\\s*\\(\\s*\\d{1,3}\\s*(\\%)?\\s*,\\s*\\d{1,3}\\s*(\\%)?\\s*,\\s*\\d{1,3}\\s*(\\%)?\\s*\\)";
+	private static final Pattern RGB_TRPLT_PATTERN = Pattern.compile(RGB_TRPLT); 
+	
+	@Override
+	public String encode(char[] immune, String input) {
+		 EncodingPatternPreservation tripletCheck = new EncodingPatternPreservation(RGB_TRPLT_PATTERN);
+		 
+		 String inputChk = tripletCheck.captureAndReplaceMatches(input);
+		 
+		 String result = super.encode(immune, inputChk);
+		 
+		 return tripletCheck.restoreOriginalContent(result);
+	}
     /**
 	 * {@inheritDoc}
 	 *
