@@ -49,7 +49,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param response
      */
     public SecurityWrapperResponse(HttpServletResponse response) {
-    	super( response );
+        super( response );
     }
 
     /**
@@ -60,13 +60,13 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param mode The mode for this wrapper. Legal modes are "log", "skip", "sanitize", "throw".
      */
     public SecurityWrapperResponse(HttpServletResponse response, String mode) {
-    	super( response );
+        super( response );
         this.mode = mode;
     }
 
 
     private HttpServletResponse getHttpServletResponse() {
-    	return (HttpServletResponse)super.getResponse();
+        return (HttpServletResponse)super.getResponse();
     }
 
     /**
@@ -138,10 +138,10 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
             header += "; Path=" + path;
         }
         if ( secure || ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceSecureCookies") ) {
-			header += "; Secure";
+            header += "; Secure";
         }
         if ( ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlyCookies") ) {
-			header += "; HttpOnly";
+            header += "; HttpOnly";
         }
         return header;
     }
@@ -154,7 +154,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void addDateHeader(String name, long date) {
         try {
-        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
             getHttpServletResponse().addDateHeader(safeName, date);
         } catch (ValidationException e) {
@@ -175,7 +175,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     public void addHeader(String name, String value) {
         try {
             // TODO: make stripping a global config
-        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
             String strippedName = StringUtilities.stripControls(name);
             String strippedValue = StringUtilities.stripControls(value);
             String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
@@ -185,16 +185,35 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
         }
     }
+    
+    /**
+     * Add a referer header to the response, after validating there are no illegal characters according to the 
+     * Validator.isValidURI() method, as well as ensuring there are no instances of mixed or double encoding 
+     * depending on how you have configured ESAPI defaults.  
+     * @param uri
+     */
+    public void addReferer( String uri) {
+
+        // TODO: make stripping a global config
+        String strippedValue = StringUtilities.stripControls(uri);
+        boolean isValidURI = ESAPI.validator().isValidURI("refererHeader", strippedValue, false);
+        String safeValue = "";
+        if(isValidURI) {
+            safeValue = strippedValue;
+        }
+        
+        getHttpServletResponse().addHeader("referer", safeValue);
+    }
 
     /**
      * Add an int header to the response after ensuring that there are no
-     * encoded or illegal characters in the name and value.
+     * encoded or illegal characters in the name and value. git
      * @param name 
      * @param value
      */
     public void addIntHeader(String name, int value) {
         try {
-        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
             getHttpServletResponse().addIntHeader(safeName, value);
         } catch (ValidationException e) {
@@ -361,12 +380,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @throws IOException
      */
     public void sendError(int sc) throws IOException {
-    	SecurityConfiguration config = ESAPI.securityConfiguration();
-    	if (config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")) {
-    		getHttpServletResponse().sendError(HttpServletResponse.SC_OK, getHTTPMessage(sc));
-    	} else {
-    		getHttpServletResponse().sendError(sc, getHTTPMessage(sc));
-    	}
+        SecurityConfiguration config = ESAPI.securityConfiguration();
+        if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+            getHttpServletResponse().sendError(HttpServletResponse.SC_OK, getHTTPMessage(sc));
+        }else{
+            getHttpServletResponse().sendError(sc, getHTTPMessage(sc));
+        }
     }
 
     /**
@@ -379,12 +398,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @throws IOException
      */
     public void sendError(int sc, String msg) throws IOException {
-    	SecurityConfiguration config = ESAPI.securityConfiguration();
-    	if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
-    		getHttpServletResponse().sendError(HttpServletResponse.SC_OK, ESAPI.encoder().encodeForHTML(msg));
-    	}else{
-    		getHttpServletResponse().sendError(sc, ESAPI.encoder().encodeForHTML(msg));
-    	}
+        SecurityConfiguration config = ESAPI.securityConfiguration();
+        if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+            getHttpServletResponse().sendError(HttpServletResponse.SC_OK, ESAPI.encoder().encodeForHTML(msg));
+        }else{
+            getHttpServletResponse().sendError(sc, ESAPI.encoder().encodeForHTML(msg));
+        }
     }
 
     /**
@@ -418,7 +437,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param charset
      */
     public void setCharacterEncoding(String charset) {
-    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         getHttpServletResponse().setCharacterEncoding(sc.getStringProp("HttpUtilities.CharacterEncoding"));
     }
 
@@ -446,7 +465,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void setDateHeader(String name, long date) {
         try {
-        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
             getHttpServletResponse().setDateHeader(safeName, date);
         } catch (ValidationException e) {
@@ -484,7 +503,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      */
     public void setIntHeader(String name, int value) {
         try {
-        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
             String safeName = ESAPI.validator().getValidInput("safeSetDateHeader", name, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
             getHttpServletResponse().setIntHeader(safeName, value);
         } catch (ValidationException e) {
@@ -507,12 +526,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param sc
      */
     public void setStatus(int sc) {
-    	SecurityConfiguration config = ESAPI.securityConfiguration();
-    	if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
-    		getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
-    	}else{
-    		getHttpServletResponse().setStatus(sc);
-    	}
+        SecurityConfiguration config = ESAPI.securityConfiguration();
+        if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+            getHttpServletResponse().setStatus(HttpServletResponse.SC_OK);
+        }else{
+            getHttpServletResponse().setStatus(sc);
+        }
         
     }
 
@@ -527,12 +546,12 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     @Deprecated
     public void setStatus(int sc, String sm) {
         try {
-        	SecurityConfiguration config = ESAPI.securityConfiguration();
-        	if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
-        		sendError(HttpServletResponse.SC_OK, sm);
-        	}else{
-        		sendError(sc, sm);
-        	}
+            SecurityConfiguration config = ESAPI.securityConfiguration();
+            if(config.getBooleanProp("HttpUtilities.OverwriteStatusCodes")){
+                sendError(HttpServletResponse.SC_OK, sm);
+            }else{
+                sendError(sc, sm);
+            }
         } catch (IOException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set response status failed", e);
         }

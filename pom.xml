@@ -309,7 +309,7 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.2</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -358,7 +358,7 @@
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>2.0.0</version>
+            <version>2.0.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
