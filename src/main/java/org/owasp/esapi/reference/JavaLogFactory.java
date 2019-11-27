@@ -123,6 +123,12 @@ public class JavaLogFactory implements LogFactory {
     	/** Log the server ip? */
     	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
     	
+    	/** Log the user info */
+    	private static boolean logUserInfo = ESAPI.securityConfiguration().getUserInfo();
+
+    	/** Log the app info */ 
+    	private static boolean logAppInfo = ESAPI.securityConfiguration().getAppInfo();
+    	
         /**
          * Public constructor should only ever be called via the appropriate LogFactory
          * 
@@ -298,23 +304,25 @@ public class JavaLogFactory implements LogFactory {
             }
 
 			// log server, port, app name, module name -- server:80/app/module
-			StringBuilder appInfo = new StringBuilder();
-			if ( ESAPI.currentRequest() != null && logServerIP ) {
-				appInfo.append( ESAPI.currentRequest().getLocalAddr() + ":" + ESAPI.currentRequest().getLocalPort() );
-			}
-			if ( logAppName ) {
-				appInfo.append( "/" + applicationName );
-			}
-			appInfo.append( "/"  + moduleName );
-			
 			//get the type text if it exists
 			String typeInfo = "";
 			if (type != null) {
-				typeInfo += type + " ";
+				typeInfo += type;
 			}
 			
+			String userAndappInfo = "";
+			if(logUserInfo && logAppInfo)
+				userAndappInfo = getUserInfo() + " -> " + getAppInfo();
+			else if(logUserInfo)
+				userAndappInfo = getUserInfo();
+			else if(logAppInfo)
+				userAndappInfo = getAppInfo().toString();
+			
+			if(!userAndappInfo.isEmpty())
+				typeInfo += " ";
+			
 			// log the message
-			jlogger.log(level, "[" + typeInfo + getUserInfo() + " -> " + appInfo + "] " + clean, throwable);
+			jlogger.log(level, "[" + typeInfo + userAndappInfo + "] " + clean, throwable);
         }
 
         /**
@@ -358,6 +366,18 @@ public class JavaLogFactory implements LogFactory {
         public boolean isWarningEnabled() {
     	    return jlogger.isLoggable(Level.WARNING);
         }
+        
+        private StringBuilder getAppInfo() {
+			StringBuilder appInfo = new StringBuilder();
+			if ( ESAPI.currentRequest() != null && logServerIP ) {
+				appInfo.append( ESAPI.currentRequest().getLocalAddr() + ":" + ESAPI.currentRequest().getLocalPort() );
+			}
+			if ( logAppName ) {
+				appInfo.append( "/" + applicationName );
+			}
+			appInfo.append( "/"  + moduleName );
+			return appInfo;
+		}
         
         public String getUserInfo() {
             // create a random session number for the user to represent the user's 'session', if it doesn't exist already

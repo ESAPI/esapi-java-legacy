@@ -550,6 +550,20 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 	{
 		return wrapped.getLogServerIP();
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getAppInfo() {
+		return wrapped.getAppInfo();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	public boolean getUserInfo() {
+		return wrapped.getUserInfo();
+	}
 
 	/**
 	 * {@inheritDoc}

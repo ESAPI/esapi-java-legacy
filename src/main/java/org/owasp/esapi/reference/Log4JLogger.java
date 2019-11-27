@@ -49,11 +49,11 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 	/** Log the server ip? */
 	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
 	
-	/** Log the user info */ 
-	private static boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
+	/** Log the user info */
+	private static boolean logUserInfo = ESAPI.securityConfiguration().getUserInfo();
 
 	/** Log the app info */ 
-	private static boolean logAppInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APP_INFO);
+	private static boolean logAppInfo = ESAPI.securityConfiguration().getAppInfo();
 
 	public Log4JLogger(String name) {
 		super(name);
@@ -437,28 +437,25 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 		}
 
 		// log server, port, app name, module name -- server:80/app/module
-		StringBuilder appInfo = new StringBuilder();
-		if (ESAPI.currentRequest() != null && logServerIP) {
-			appInfo.append(ESAPI.currentRequest().getLocalAddr()).append(":").append(ESAPI.currentRequest().getLocalPort());
-		}
-		if (logAppName) {
-			appInfo.append("/").append(applicationName);
-		}
-		appInfo.append("/").append(getName());
-
 		//get the type text if it exists
 		String typeInfo = "";
 		if (type != null) {
-			typeInfo += type + " ";
+			typeInfo += type;
 		}
 
 		String userAndappInfo = "";
-		if(logUserInfo || logAppInfo)
-			userAndappInfo = getUserInfo() + " -> " + appInfo;
-		else if(logUserInfo)
+		if(logUserInfo && logAppInfo) {
+			userAndappInfo = getUserInfo() + " -> " + getAppInfo();
+		}
+		else if(logUserInfo) {
 			userAndappInfo = getUserInfo();
-		else if(logAppInfo)
-			userAndappInfo = appInfo.toString();
+		}
+		else if(logAppInfo) {
+			userAndappInfo = getAppInfo().toString();
+		}
+		
+		if(!userAndappInfo.isEmpty())
+			typeInfo += " ";
 		
 		// log the message
 		// Fix for https://code.google.com/p/owasp-esapi-java/issues/detail?id=268
@@ -509,6 +506,18 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 	 */
 	public boolean isWarningEnabled() {
 		return isEnabledFor(Level.WARN);
+	}
+	
+	private StringBuilder getAppInfo() {
+		StringBuilder appInfo = new StringBuilder();
+		if (ESAPI.currentRequest() != null && logServerIP) {
+			appInfo.append(ESAPI.currentRequest().getLocalAddr()).append(":").append(ESAPI.currentRequest().getLocalPort());
+		}
+		if (logAppName) {
+			appInfo.append("/").append(applicationName);
+		}
+		appInfo.append("/").append(getName());
+		return appInfo;
 	}
 
 	public String getUserInfo() {

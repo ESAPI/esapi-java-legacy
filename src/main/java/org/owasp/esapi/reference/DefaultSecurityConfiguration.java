@@ -1077,6 +1077,20 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public boolean getLogServerIP() {
     	return getESAPIProperty( LOG_SERVER_IP, true );
 	}
+    
+    /**
+   	 * {@inheritDoc}
+   	 */
+       public boolean getUserInfo() {
+       	return getESAPIProperty( LOG_USER_INFO, true );
+   	}
+       
+       /**
+   	 * {@inheritDoc}
+   	 */
+       public boolean getAppInfo() {
+       	return getESAPIProperty( LOG_APP_INFO, true );
+   	}
 
     /**
 	 * {@inheritDoc}

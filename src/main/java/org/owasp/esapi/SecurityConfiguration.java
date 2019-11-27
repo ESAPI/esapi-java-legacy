@@ -730,6 +730,20 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	 */
 	@Deprecated
 	boolean getLogServerIP();
+	
+	/**
+	 * Returns whether ESAPI should log the user info. 
+	 * 
+	 * @return True if ESAPI should log the user info, False otherwise
+	 */
+	boolean getUserInfo();
+	
+	/**
+	 * Returns whether ESAPI should log the app info. 
+	 * 
+	 * @return True if ESAPI should log the app info, False otherwise
+	 */
+	boolean getAppInfo();
 
 	/**
 	 * Returns the current log level.
