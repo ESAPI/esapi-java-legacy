@@ -48,6 +48,12 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 	
 	/** Log the server ip? */
 	private static boolean logServerIP = ESAPI.securityConfiguration().getLogServerIP();
+	
+	/** Log the user info */ 
+	private static boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
+
+	/** Log the app info */ 
+	private static boolean logAppInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APP_INFO);
 
 	public Log4JLogger(String name) {
 		super(name);
@@ -446,10 +452,18 @@ public class Log4JLogger extends org.apache.log4j.Logger implements org.owasp.es
 			typeInfo += type + " ";
 		}
 
+		String userAndappInfo = "";
+		if(logUserInfo || logAppInfo)
+			userAndappInfo = getUserInfo() + " -> " + appInfo;
+		else if(logUserInfo)
+			userAndappInfo = getUserInfo();
+		else if(logAppInfo)
+			userAndappInfo = appInfo.toString();
+		
 		// log the message
 		// Fix for https://code.google.com/p/owasp-esapi-java/issues/detail?id=268
 		// need to pass callerFQCN so the log is not generated as if it were always generated from this wrapper class
-		log(Log4JLogger.class.getName(), level, "[" + typeInfo + getUserInfo() + " -> " + appInfo + "] " + clean, throwable);
+		log(Log4JLogger.class.getName(), level, "[" + typeInfo + userAndappInfo + "] " + clean, throwable);
 	}
 
 	/**
