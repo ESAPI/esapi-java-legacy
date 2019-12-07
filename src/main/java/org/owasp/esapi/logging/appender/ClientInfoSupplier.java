@@ -16,7 +16,7 @@ public class ClientInfoSupplier implements Supplier<String> {
 	/** Default UserName string if the Authenticated user is null.*/
 	private static final String DEFAULT_USERNAME = "#ANONYMOUS#";
 	/** Default Last Host string if the Authenticated user is null.*/
-	private static final String DEFAULT_LAST_HOST = "";
+	private static final String DEFAULT_LAST_HOST = "#UNKNOWN_HOST#";
 	/** Session Attribute containing the ESAPI Session id. */
 	private static final String ESAPI_SESSION_ATTR = "ESAPI_SESSION";
 	/**

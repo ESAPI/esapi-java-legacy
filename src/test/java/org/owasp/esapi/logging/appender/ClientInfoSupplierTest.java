@@ -102,7 +102,7 @@ public class ClientInfoSupplierTest {
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
-		assertEquals("#ANONYMOUS#:"+testName.getMethodName()+ "-SESSION@", result);
+		assertEquals("#ANONYMOUS#:"+testName.getMethodName()+ "-SESSION@#UNKNOWN_HOST#", result);
 		
 		verify(mockAuth,times(1)).getCurrentUser();
 		verify(mockRequest,times(1)).getSession(false);
