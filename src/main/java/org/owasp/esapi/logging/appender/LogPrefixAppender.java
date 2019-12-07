@@ -1,19 +1,24 @@
 package org.owasp.esapi.logging.appender;
 
-import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger.EventType;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 public class LogPrefixAppender implements LogAppender {
 	private final String RESULT_FORMAT="[%s %s -> %s] %s";
 	
+	private final boolean logClientInfo;
+	private final boolean logServerIp;
+	private final boolean logApplicationName;
+	private final String appName;
+	
+	public LogPrefixAppender(boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
+		this.logClientInfo = logClientInfo;
+		this.logServerIp = logServerIp;
+		this.logApplicationName = logApplicationName;
+		this.appName = appName;
+	}
+	
 	@Override
 	public String appendTo(String logName, EventType eventType, String message) {
-		boolean logClientInfo = true;
-		boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
-		String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
-		boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
-		
 		EventTypeLogSupplier eventTypeSupplier = new EventTypeLogSupplier(eventType);
 		
 		ClientInfoSupplier clientInfoSupplier = new ClientInfoSupplier();
