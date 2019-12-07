@@ -10,7 +10,7 @@
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
- * @created 2018
+ * @created 2019
  */
 
 package org.owasp.esapi.logging.appender;
@@ -18,11 +18,18 @@ package org.owasp.esapi.logging.appender;
 import org.owasp.esapi.Logger.EventType;
 
 /**
- * Contract interface for cleaning log message output.
+ * Contract interface for appending content to a log message.
  *
  */
 public interface LogAppender {
 
+	/**
+	 * Creates a replacement Log Message and returns it to the caller.
+	 * @param logName name of the logger.
+	 * @param eventType EventType of the log event being processed.
+	 * @param message The original message.
+	 * @return Updated replacement message.
+	 */
 	public String appendTo(String logName, EventType eventType, String message);
 
 }
