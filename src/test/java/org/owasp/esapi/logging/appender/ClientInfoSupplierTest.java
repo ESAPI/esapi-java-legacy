@@ -1,5 +1,14 @@
 package org.owasp.esapi.logging.appender;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -9,12 +18,10 @@ import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.User;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -36,28 +43,28 @@ public class ClientInfoSupplierTest {
 	
 	@Before
 	public void before() throws Exception {
-		mockAuth = PowerMockito.mock(Authenticator.class); 
-		mockRand = PowerMockito.mock(Randomizer.class); 
-		mockRequest = PowerMockito.mock(HttpServletRequest.class);
-		mockSession = PowerMockito.mock(HttpSession.class);
-		mockUser = PowerMockito.mock(User.class);
+		mockAuth =mock(Authenticator.class); 
+		mockRand =mock(Randomizer.class); 
+		mockRequest =mock(HttpServletRequest.class);
+		mockSession =mock(HttpSession.class);
+		mockUser =mock(User.class);
 		
-		PowerMockito.mockStatic(ESAPI.class);
-		PowerMockito.when(ESAPI.class, "currentRequest").thenReturn(mockRequest);
-		PowerMockito.when(ESAPI.class, "authenticator").thenReturn(mockAuth);
-		PowerMockito.when(ESAPI.class, "randomizer").thenReturn(mockRand);
+		mockStatic(ESAPI.class);
+		when(ESAPI.class, "currentRequest").thenReturn(mockRequest);
+		when(ESAPI.class, "authenticator").thenReturn(mockAuth);
+		when(ESAPI.class, "randomizer").thenReturn(mockRand);
 		
-		PowerMockito.when(mockRequest.getSession(false)).thenReturn(mockSession);
-		PowerMockito.when(mockSession.getAttribute(ESAPI_SESSION_ATTR)).thenReturn(testName.getMethodName()+ "-SESSION");
+		when(mockRequest.getSession(false)).thenReturn(mockSession);
+		when(mockSession.getAttribute(ESAPI_SESSION_ATTR)).thenReturn(testName.getMethodName()+ "-SESSION");
 		
 		//Session value generation
-		PowerMockito.when(mockRand.getRandomInteger(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())).thenReturn(55555);
+		when(mockRand.getRandomInteger(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())).thenReturn(55555);
 		 
-		Mockito.when(mockUser.getAccountName()).thenReturn(testName.getMethodName() + "-USER");
-		Mockito.when(mockUser.getLastHostAddress()).thenReturn(testName.getMethodName() + "-HOST_ADDR");
+		when(mockUser.getAccountName()).thenReturn(testName.getMethodName() + "-USER");
+		when(mockUser.getLastHostAddress()).thenReturn(testName.getMethodName() + "-HOST_ADDR");
 		
 	     
-	    Mockito.when(mockAuth.getCurrentUser()).thenReturn(mockUser);
+	    when(mockAuth.getCurrentUser()).thenReturn(mockUser);
 	}
 	
 	@Test
@@ -66,15 +73,15 @@ public class ClientInfoSupplierTest {
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
-		org.junit.Assert.assertEquals(testName.getMethodName() + "-USER:"+ testName.getMethodName() + "-SESSION@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals(testName.getMethodName() + "-USER:"+ testName.getMethodName() + "-SESSION@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
-		Mockito.verify(mockAuth,Mockito.times(1)).getCurrentUser();
-		Mockito.verify(mockRequest,Mockito.times(1)).getSession(false);
-		Mockito.verify(mockSession,Mockito.times(1)).getAttribute(ESAPI_SESSION_ATTR);
-		Mockito.verify(mockUser,Mockito.times(1)).getAccountName();
-		Mockito.verify(mockUser,Mockito.times(1)).getLastHostAddress();
+		verify(mockAuth,times(1)).getCurrentUser();
+		verify(mockRequest,times(1)).getSession(false);
+		verify(mockSession,times(1)).getAttribute(ESAPI_SESSION_ATTR);
+		verify(mockUser,times(1)).getAccountName();
+		verify(mockUser,times(1)).getLastHostAddress();
 		
-		Mockito.verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
+		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 	
 	@Test
@@ -83,84 +90,84 @@ public class ClientInfoSupplierTest {
 		cis.setLogUserInfo(false);
 		String result = cis.get();
 		
-		org.junit.Assert.assertTrue(result.isEmpty());
+		assertTrue(result.isEmpty());
 		
-		Mockito.verify(mockAuth,Mockito.times(1)).getCurrentUser();
+		verify(mockAuth,times(1)).getCurrentUser();
 		
-		Mockito.verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
+		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 	
 	@Test
 	public void testLogUserNull() {
-		Mockito.when(mockAuth.getCurrentUser()).thenReturn(null);
+		when(mockAuth.getCurrentUser()).thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
-		org.junit.Assert.assertTrue(result.isEmpty());
+		assertTrue(result.isEmpty());
 		
-		Mockito.verify(mockAuth,Mockito.times(1)).getCurrentUser();
+		verify(mockAuth,times(1)).getCurrentUser();
 		
-		Mockito.verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
+		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 	
 	@Test
 	public void testNullRequest() throws Exception {
-		PowerMockito.when(ESAPI.class, "currentRequest").thenReturn(null);
+		when(ESAPI.class, "currentRequest").thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
 		//sid is empty when request is null		
-		org.junit.Assert.assertEquals(testName.getMethodName() + "-USER:@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals(testName.getMethodName() + "-USER:@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
-		Mockito.verify(mockAuth,Mockito.times(1)).getCurrentUser();
-		Mockito.verify(mockUser,Mockito.times(1)).getAccountName();
-		Mockito.verify(mockUser,Mockito.times(1)).getLastHostAddress();
+		verify(mockAuth,times(1)).getCurrentUser();
+		verify(mockUser,times(1)).getAccountName();
+		verify(mockUser,times(1)).getLastHostAddress();
 		
-		Mockito.verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
+		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 	
 	@Test
 	public void testNullSession() throws Exception {
-		PowerMockito.when(mockRequest.getSession(false)).thenReturn(null);
+		when(mockRequest.getSession(false)).thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
 		//sid is empty when session is null		
-		org.junit.Assert.assertEquals(testName.getMethodName() + "-USER:@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals(testName.getMethodName() + "-USER:@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
 		
-		Mockito.verify(mockAuth,Mockito.times(1)).getCurrentUser();
-		Mockito.verify(mockRequest,Mockito.times(1)).getSession(false);
-		Mockito.verify(mockUser,Mockito.times(1)).getAccountName();
-		Mockito.verify(mockUser,Mockito.times(1)).getLastHostAddress();
+		verify(mockAuth,times(1)).getCurrentUser();
+		verify(mockRequest,times(1)).getSession(false);
+		verify(mockUser,times(1)).getAccountName();
+		verify(mockUser,times(1)).getLastHostAddress();
 		
 		
-		Mockito.verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
+		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 	
 	
 	
 	@Test
 	public void testNullEsapiSession() throws Exception {
-		PowerMockito.when(mockSession.getAttribute(ESAPI_SESSION_ATTR)).thenReturn(null);
+		when(mockSession.getAttribute(ESAPI_SESSION_ATTR)).thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
 		//sid is empty when session is null		
-		org.junit.Assert.assertEquals(testName.getMethodName() + "-USER:55555@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals(testName.getMethodName() + "-USER:55555@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
-		Mockito.verify(mockAuth,Mockito.times(1)).getCurrentUser();
-		Mockito.verify(mockRequest,Mockito.times(1)).getSession(false);
-		Mockito.verify(mockSession,Mockito.times(1)).getAttribute(ESAPI_SESSION_ATTR);
-		Mockito.verify(mockSession, Mockito.times(1)).setAttribute(ESAPI_SESSION_ATTR, (""+55555));
-		Mockito.verify(mockRand, Mockito.times(1)).getRandomInteger(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt());
-		Mockito.verify(mockUser,Mockito.times(1)).getAccountName();
-		Mockito.verify(mockUser,Mockito.times(1)).getLastHostAddress();
+		verify(mockAuth,times(1)).getCurrentUser();
+		verify(mockRequest,times(1)).getSession(false);
+		verify(mockSession,times(1)).getAttribute(ESAPI_SESSION_ATTR);
+		verify(mockSession, times(1)).setAttribute(ESAPI_SESSION_ATTR, (""+55555));
+		verify(mockRand, times(1)).getRandomInteger(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt());
+		verify(mockUser,times(1)).getAccountName();
+		verify(mockUser,times(1)).getLastHostAddress();
 		
-		Mockito.verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
+		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 }
