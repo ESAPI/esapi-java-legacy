@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.owasp.esapi.Logger.EventType;
+import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.slf4j.IMarkerFactory;
 import org.slf4j.Logger;
@@ -36,16 +37,19 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
     private final Map<Integer,Slf4JLogLevelHandler> esapiSlfLevelMap;
     /** Cleaner used for log content.*/
     private final LogScrubber scrubber;
+    /** Appender used for assembling default message content for all logs.*/
+    private final LogAppender appender;
     
     /**
      * Constructor.
      * @param logScrubber  Log message cleaner.
      * @param esapiSlfHandlerMap Map identifying ESAPI -> SLF4J log level associations.
      */
-    public Slf4JLogBridgeImpl(LogScrubber logScrubber, Map<Integer, Slf4JLogLevelHandler> esapiSlfHandlerMap) {
+    public Slf4JLogBridgeImpl(LogAppender messageAppender, LogScrubber logScrubber, Map<Integer, Slf4JLogLevelHandler> esapiSlfHandlerMap) {
         //Defensive copy to prevent external mutations.
         this.esapiSlfLevelMap = new HashMap<>(esapiSlfHandlerMap);
         this.scrubber = logScrubber;
+        this.appender = messageAppender;
     }
     @Override
     public void log(Logger logger, int esapiLevel, EventType type, String message) {
@@ -66,8 +70,10 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
             throw new IllegalArgumentException("Unable to lookup SLF4J level mapping for esapi value of " + esapiLevel);
         }
         if (handler.isEnabled(logger)) {
+        	String fullMessage = appender.appendTo(logger.getName(), type, message);
+            String cleanString = scrubber.cleanMessage(fullMessage);
+
             Marker typeMarker = MARKER_FACTORY.getMarker(type.toString());
-            String cleanString = scrubber.cleanMessage(message);
             handler.log(logger, typeMarker, cleanString, throwable);
         }
     }

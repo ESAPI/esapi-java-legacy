@@ -23,6 +23,8 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.logging.appender.LogAppender;
+import org.owasp.esapi.logging.appender.LogPrefixAppender;
 import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
 import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
@@ -44,6 +46,8 @@ public class Slf4JLogFactory implements LogFactory {
     private static final char[] IMMUNE_SLF4J_HTML = {',', '.', '-', '_', ' ',BACKSLASH, OPEN_SLF_FORMAT, CLOSE_SLF_FORMAT };
     /** Codec being used to clean messages for logging.*/
     private static final HTMLEntityCodec HTML_CODEC = new HTMLEntityCodec();
+    /** Log appender instance.*/
+    private static LogAppender SLF4J_LOG_APPENDER;
     /** Log cleaner instance.*/
     private static LogScrubber SLF4J_LOG_SCRUBBER;
     /** Bridge class for mapping esapi -> slf4j log levels.*/
@@ -52,6 +56,7 @@ public class Slf4JLogFactory implements LogFactory {
     static {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         SLF4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
+        SLF4J_LOG_APPENDER = createLogAppender();
         
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, Slf4JLogLevelHandlers.TRACE);
@@ -63,7 +68,7 @@ public class Slf4JLogFactory implements LogFactory {
         levelLookup.put(Logger.FATAL, Slf4JLogLevelHandlers.ERROR);
         //LEVEL.OFF not used.  If it's off why would we try to log it?
         
-        LOG_BRIDGE = new Slf4JLogBridgeImpl(SLF4J_LOG_SCRUBBER, levelLookup);
+        LOG_BRIDGE = new Slf4JLogBridgeImpl(SLF4J_LOG_APPENDER, SLF4J_LOG_SCRUBBER, levelLookup);
     }
     
     /**
@@ -81,6 +86,15 @@ public class Slf4JLogFactory implements LogFactory {
         
         return new CompositeLogScrubber(messageScrubber);
         
+    }
+    
+    /**
+     * Populates the default log appender for use in factory-created loggers.
+     * 
+     * @return LogAppender instance.
+     */
+    /*package*/ static LogAppender createLogAppender() {
+       return new LogPrefixAppender();        
     }
     
     
