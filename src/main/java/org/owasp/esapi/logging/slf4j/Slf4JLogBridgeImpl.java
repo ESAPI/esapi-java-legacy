@@ -58,8 +58,10 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
             throw new IllegalArgumentException("Unable to lookup SLF4J level mapping for esapi value of " + esapiLevel);
         }
         if (handler.isEnabled(logger)) {
+        	String fullMessage = appender.appendTo(logger.getName(), type, message);
+            String cleanString = scrubber.cleanMessage(fullMessage);
+            
             Marker typeMarker = MARKER_FACTORY.getMarker(type.toString());
-            String cleanString = scrubber.cleanMessage(message);
             handler.log(logger, typeMarker, cleanString);
         }
     }
