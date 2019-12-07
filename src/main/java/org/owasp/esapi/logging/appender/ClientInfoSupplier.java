@@ -13,6 +13,10 @@ import org.owasp.esapi.User;
  * information.
  */
 public class ClientInfoSupplier implements Supplier<String> {
+	/** Default UserName string if the Authenticated user is null.*/
+	private static final String DEFAULT_USERNAME = "#ANONYMOUS#";
+	/** Default Last Host string if the Authenticated user is null.*/
+	private static final String DEFAULT_LAST_HOST = "";
 	/** Session Attribute containing the ESAPI Session id. */
 	private static final String ESAPI_SESSION_ATTR = "ESAPI_SESSION";
 	/**
@@ -33,9 +37,8 @@ public class ClientInfoSupplier implements Supplier<String> {
 	@Override
 	public String get() {
 		String userInfo = "";
-		// log user information - username:session@ipaddr
-		User user = ESAPI.authenticator().getCurrentUser();
-		if (logUserInfo && user != null) {
+	
+		if (logUserInfo) {
 			HttpServletRequest request = ESAPI.currentRequest();
 			// create a random session number for the user to represent the user's
 			// 'session', if it doesn't exist already
@@ -52,8 +55,13 @@ public class ClientInfoSupplier implements Supplier<String> {
 					}
 				}
 			}
-
-			userInfo = String.format(USER_INFO_FORMAT, user.getAccountName(), sid, user.getLastHostAddress());
+			// log user information - username:session@ipaddr
+			User user = ESAPI.authenticator().getCurrentUser();
+			if (user == null) {
+				userInfo = String.format(USER_INFO_FORMAT, DEFAULT_USERNAME, sid, DEFAULT_LAST_HOST);
+			} else {
+				userInfo = String.format(USER_INFO_FORMAT, user.getAccountName(), sid, user.getLastHostAddress());
+			}
 		}
 		return userInfo;
 	}

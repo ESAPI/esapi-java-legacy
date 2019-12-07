@@ -92,8 +92,6 @@ public class ClientInfoSupplierTest {
 		
 		assertTrue(result.isEmpty());
 		
-		verify(mockAuth,times(1)).getCurrentUser();
-		
 		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
 	
@@ -104,9 +102,11 @@ public class ClientInfoSupplierTest {
 		cis.setLogUserInfo(true);
 		String result = cis.get();
 		
-		assertTrue(result.isEmpty());
+		assertEquals("#ANONYMOUS#:"+testName.getMethodName()+ "-SESSION@", result);
 		
 		verify(mockAuth,times(1)).getCurrentUser();
+		verify(mockRequest,times(1)).getSession(false);
+		verify(mockSession,times(1)).getAttribute(ESAPI_SESSION_ATTR);
 		
 		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
 	}
