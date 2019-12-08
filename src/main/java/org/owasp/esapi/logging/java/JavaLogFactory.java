@@ -1,4 +1,4 @@
-package org.owasp.esapi.reference;
+package org.owasp.esapi.logging.java;
 
 import java.io.Serializable;
 import java.util.HashMap;
