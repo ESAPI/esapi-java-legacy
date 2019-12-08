@@ -1,69 +1,115 @@
+/**
+ * OWASP Enterprise Security API (ESAPI)
+ * 
+ * This file is part of the Open Web Application Security Project (OWASP)
+ * Enterprise Security API (ESAPI) project. For details, please see
+ * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
+ *
+ * Copyright (c) 2007 - The OWASP Foundation
+ * 
+ * The ESAPI is published by OWASP under the BSD license. You should read and accept the
+ * LICENSE before you use, modify, and/or redistribute this software.
+ * 
+ * @created 2018
+ */
 package org.owasp.esapi.logging.java;
 
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
-
+import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.logging.appender.LogAppender;
+import org.owasp.esapi.logging.appender.LogPrefixAppender;
+import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
+import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
+import org.owasp.esapi.logging.cleaning.LogScrubber;
+import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 /**
- * Reference implementation of the LogFactory and Logger interfaces. This implementation uses the Java logging package, and marks each
- * log message with the currently logged in user and the word "SECURITY" for security related events. See the 
- * <a href="JavaLogFactory.JavaLogger.html">JavaLogFactory.JavaLogger</a> Javadocs for the details on the JavaLogger reference implementation.
- * 
- * @author Mike Fauzy (mike.fauzy@aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
- * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
- * @since June 1, 2007
- * @see org.owasp.esapi.LogFactory
- * @see org.owasp.esapi.logging.java.JavaLogFactory.JavaLogger
+ * LogFactory implementation which creates JAVA supporting Loggers.
+ *
  */
 public class JavaLogFactory implements LogFactory {
-	private static volatile LogFactory singletonInstance;
-
-    public static LogFactory getInstance() {
-        if ( singletonInstance == null ) {
-            synchronized ( JavaLogFactory.class ) {
-                if ( singletonInstance == null ) {
-                    singletonInstance = new JavaLogFactory();
-                }
-            }
-        }
-        return singletonInstance;
+    /** Immune characters for the codec log scrubber for JAVA context.*/
+    private static final char[] IMMUNE_JAVA_HTML = {',', '.', '-', '_', ' ' };
+    /** Codec being used to clean messages for logging.*/
+    private static final HTMLEntityCodec HTML_CODEC = new HTMLEntityCodec();
+    /** Log appender instance.*/
+    private static LogAppender JAVA_LOG_APPENDER;
+    /** Log cleaner instance.*/
+    private static LogScrubber JAVA_LOG_SCRUBBER;
+    /** Bridge class for mapping esapi -> java log levels.*/
+    private static JavaLogBridge LOG_BRIDGE;
+    
+    static {
+        boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
+        JAVA_LOG_SCRUBBER = createLogScrubber(encodeLog);
+        
+    	boolean logClientInfo = true;
+		boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
+		String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
+		boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
+        JAVA_LOG_APPENDER = createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
+        
+        Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
+        levelLookup.put(Logger.ALL, JavaLogLevelHandlers.ALL);
+        levelLookup.put(Logger.TRACE, JavaLogLevelHandlers.FINEST);
+        levelLookup.put(Logger.DEBUG, JavaLogLevelHandlers.FINE);
+        levelLookup.put(Logger.INFO, JavaLogLevelHandlers.INFO);
+        levelLookup.put(Logger.ERROR, JavaLogLevelHandlers.ERROR);
+        levelLookup.put(Logger.WARNING, JavaLogLevelHandlers.WARNING);
+        levelLookup.put(Logger.FATAL, JavaLogLevelHandlers.SEVERE);
+        //LEVEL.OFF not used.  If it's off why would we try to log it?
+        
+        LOG_BRIDGE = new JavaLogBridgeImpl(JAVA_LOG_APPENDER, JAVA_LOG_SCRUBBER, levelLookup);
     }
-
-	private HashMap<Serializable, Logger> loggersMap = new HashMap<Serializable, Logger>();
-	
-	/**
-	* Null argument constructor for this implementation of the LogFactory interface
-	* needed for dynamic configuration.
-	*/
-	public JavaLogFactory() {}
-	
-	/**
-	* {@inheritDoc}
-	*/
-	public Logger getLogger(Class clazz) {
-	    return getLogger(clazz.getName());
-    }
-
+    
     /**
-	* {@inheritDoc}
-	*/
-    public Logger getLogger(String moduleName) {
-    	
-        synchronized (loggersMap) {
-            // If a logger for this module already exists, we return the same one, otherwise we create a new one.
-            Logger moduleLogger = loggersMap.get(moduleName);
-
-            if (moduleLogger == null) {
-                moduleLogger = new JavaLogger(moduleName);
-                loggersMap.put(moduleName, moduleLogger);    		
-            }
-            return moduleLogger;
+     * Populates the default log scrubber for use in factory-created loggers.
+     * @param requiresEncoding {@code true} if encoding is required for log content.
+     * @return LogScrubber instance.
+     */
+    /*package*/ static LogScrubber createLogScrubber(boolean requiresEncoding) {
+        List<LogScrubber> messageScrubber = new ArrayList<>();
+        messageScrubber.add(new NewlineLogScrubber());
+        
+        if (requiresEncoding) {
+            messageScrubber.add(new CodecLogScrubber(HTML_CODEC, IMMUNE_JAVA_HTML));
         }
+        
+        return new CompositeLogScrubber(messageScrubber);
+        
+    }
+    
+    /**
+     * Populates the default log appender for use in factory-created loggers.
+     * @param appName 
+     * @param logApplicationName 
+     * @param logServerIp 
+     * @param logClientInfo 
+     * 
+     * @return LogAppender instance.
+     */
+    /*package*/ static LogAppender createLogAppender(boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
+       return new LogPrefixAppender(logClientInfo, logServerIp, logApplicationName, appName);       
+    }
+    
+    
+    @Override
+    public Logger getLogger(String moduleName) {
+    	java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(moduleName); 
+        return new JavaLogger(javaLogger, LOG_BRIDGE, Logger.ALL);
     }
 
-
-  
+    @Override
+    public Logger getLogger(@SuppressWarnings("rawtypes") Class clazz) {
+    	java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(clazz.getName());
+        return new JavaLogger(javaLogger, LOG_BRIDGE, Logger.ALL);
+    }
 
 }
