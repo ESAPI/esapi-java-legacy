@@ -21,7 +21,7 @@ import org.owasp.esapi.User;
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.LogFactory
- * @see org.owasp.esapi.reference.JavaLogFactory.JavaLogger
+ * @see org.owasp.esapi.logging.java.JavaLogFactory.JavaLogger
  */
 public class JavaLogFactory implements LogFactory {
 	private static volatile LogFactory singletonInstance;

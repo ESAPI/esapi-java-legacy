@@ -195,7 +195,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /*
      * Default Implementations
      */
-    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.JavaLogFactory";
+    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.logging.java.JavaLogFactory";
     public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
     public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
     public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultAccessController";

@@ -126,7 +126,7 @@ public class Log4JLoggerTest extends TestCase {
     
     /**
      * Test of setLevel method of the inner class org.owasp.esapi.reference.JavaLogger that is defined in 
-     * org.owasp.esapi.reference.JavaLogFactory.
+     * org.owasp.esapi.logging.java.JavaLogFactory.
      */
     public void testSetLevel() {
         System.out.println("setLevel");

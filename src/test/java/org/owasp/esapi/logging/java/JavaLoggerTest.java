@@ -13,27 +13,31 @@
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
-package org.owasp.esapi.reference;
+package org.owasp.esapi.logging.java;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.junit.Ignore;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import org.owasp.esapi.reference.UnitTestSecurityConfiguration;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The Class LoggerTest.
  * 
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
+@Ignore
 public class JavaLoggerTest extends TestCase {
 
 	private static int testCount = 0;
@@ -111,7 +115,7 @@ public class JavaLoggerTest extends TestCase {
     
     /**
      * Test of setLevel method of the inner class org.owasp.esapi.reference.JavaLogger that is defined in 
-     * org.owasp.esapi.reference.JavaLogFactory.
+     * org.owasp.esapi.logging.java.JavaLogFactory.
      */
     public void testSetLevel() {
         System.out.println("setLevel");
