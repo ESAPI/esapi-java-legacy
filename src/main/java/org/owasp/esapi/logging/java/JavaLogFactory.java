@@ -14,10 +14,15 @@
  */
 package org.owasp.esapi.logging.java;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.LogManager;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
@@ -67,6 +72,29 @@ public class JavaLogFactory implements LogFactory {
         //LEVEL.OFF not used.  If it's off why would we try to log it?
         
         LOG_BRIDGE = new JavaLogBridgeImpl(JAVA_LOG_APPENDER, JAVA_LOG_SCRUBBER, levelLookup);
+        
+        /*
+         * This will load the logging properties file to control the format of the output for Java logs.
+         */
+        try (InputStream stream = JavaLogFactory.class.getClassLoader().
+        		getResourceAsStream("esapi-java-logging.properties")) {
+        	LogManager.getLogManager().readConfiguration(stream);
+        } catch (IOException ioe) {
+        	ioe.printStackTrace();
+        }
+        
+        /*
+         * This is a convenience for me -- turns off all System.out.println cruft in the terminal so I can view the logs.
+         * FIXME:  Probably need to remove this before the end of the effort.
+         */
+        /*
+        System.setOut(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                //DO NOTHING
+            }
+        }));
+        
+        */
     }
     
     /**
