@@ -16,8 +16,6 @@ package org.owasp.esapi.logging.java;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,21 +78,8 @@ public class JavaLogFactory implements LogFactory {
         		getResourceAsStream("esapi-java-logging.properties")) {
         	LogManager.getLogManager().readConfiguration(stream);
         } catch (IOException ioe) {
-        	ioe.printStackTrace();
+        	System.err.print(new IOException("Failed to load esapi-java-logging.properties.", ioe));        	
         }
-        
-        /*
-         * This is a convenience for me -- turns off all System.out.println cruft in the terminal so I can view the logs.
-         * FIXME:  Probably need to remove this before the end of the effort.
-         */
-        /*
-        System.setOut(new PrintStream(new OutputStream() {
-            public void write(int b) {
-                //DO NOTHING
-            }
-        }));
-        
-        */
     }
     
     /**
