@@ -71,12 +71,20 @@ public class JavaLogFactory implements LogFactory {
         
         LOG_BRIDGE = new JavaLogBridgeImpl(JAVA_LOG_APPENDER, JAVA_LOG_SCRUBBER, levelLookup);
         
-        /*
+        readLoggerConfiguration(LogManager.getLogManager());
+    }
+    
+    /**
+     * Attempts to load the expected property file path into the provided LogManager reference.
+     * @param logManager LogManager which is being configured.
+     */
+    /*package*/ static void readLoggerConfiguration(LogManager logManager) {
+    	/*
          * This will load the logging properties file to control the format of the output for Java logs.
          */
         try (InputStream stream = JavaLogFactory.class.getClassLoader().
         		getResourceAsStream("esapi-java-logging.properties")) {
-        	LogManager.getLogManager().readConfiguration(stream);
+        	logManager.readConfiguration(stream);
         } catch (IOException ioe) {
         	System.err.print(new IOException("Failed to load esapi-java-logging.properties.", ioe));        	
         }

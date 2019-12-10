@@ -18,18 +18,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.LogManager;
 
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.appender.LogPrefixAppender;
@@ -46,30 +47,42 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class JavaLogFactoryTest {
 	@Rule
     public TestName testName = new TestName();
-	
-	@Test
-	@Ignore("Work In Progress")
-	public void testIOExceptionOnMissingConfiguration() throws Exception {
-		org.junit.Assert.fail("Unimplemented!");
-		
-		IOException originException = new IOException(testName.getMethodName());
-		final AtomicReference<IOException> stdErrOut = new AtomicReference<IOException>();
 
-		//FIXME Mock static so that java.util.logging.LogManager.readConfiguration(any(java.io.InputStream.class) throws IOException
+	@Test
+	public void testIOExceptionOnMissingConfiguration() throws Exception {
+		final IOException originException = new IOException(testName.getMethodName());
+
+		LogManager testLogManager = new LogManager() {
+			@Override
+			public void readConfiguration(InputStream ins) throws IOException, SecurityException {
+				throw originException;
+			}
+		};
+
+		OutputStream nullOutputStream = new OutputStream() {
+			@Override
+			public void write(int b) throws IOException {
+				//No Op
+			}
+		};
 		
+		ArgumentCaptor<Object> stdErrOut = ArgumentCaptor.forClass(Object.class);
 		
-		System.setErr(new PrintStream(new OutputStream() {
-            public void write(int b) {
-                //FIXME:  How do I capture the object here?
-            }
-        }));
-		
-		IOException actual = stdErrOut.get();
-		assertTrue(actual != null);
-		assertTrue(originException.equals(actual.getCause()));
-		assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
+		try (PrintStream errPrinter = new PrintStream(nullOutputStream)) {
+			PrintStream spyPrinter = PowerMockito.spy(errPrinter);
+			Mockito.doCallRealMethod().when(spyPrinter).print(stdErrOut.capture());
+			System.setErr(spyPrinter);
+
+			JavaLogFactory.readLoggerConfiguration(testLogManager);
+
+			Object writeData = stdErrOut.getValue();
+			assertTrue(writeData instanceof IOException);
+			IOException actual = (IOException) writeData;
+			assertEquals(originException, actual.getCause());
+			assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
+		}
 	}
-	
+
     @Test
     public void testCreateLoggerByString() {
         Logger logger = new JavaLogFactory().getLogger("test");
