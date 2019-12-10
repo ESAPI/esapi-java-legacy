@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
@@ -47,6 +48,7 @@ public class JavaLogFactoryTest {
     public TestName testName = new TestName();
 	
 	@Test
+	@Ignore("Work In Progress")
 	public void testIOExceptionOnMissingConfiguration() throws Exception {
 		org.junit.Assert.fail("Unimplemented!");
 		
