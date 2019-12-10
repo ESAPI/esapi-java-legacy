@@ -14,7 +14,14 @@
  */
 package org.owasp.esapi.logging.java;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -38,6 +45,28 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class JavaLogFactoryTest {
 	@Rule
     public TestName testName = new TestName();
+	
+	@Test
+	public void testIOExceptionOnMissingConfiguration() throws Exception {
+		org.junit.Assert.fail("Unimplemented!");
+		
+		IOException originException = new IOException(testName.getMethodName());
+		final AtomicReference<IOException> stdErrOut = new AtomicReference<IOException>();
+
+		//FIXME Mock static so that java.util.logging.LogManager.readConfiguration(any(java.io.InputStream.class) throws IOException
+		
+		
+		System.setErr(new PrintStream(new OutputStream() {
+            public void write(int b) {
+                //FIXME:  How do I capture the object here?
+            }
+        }));
+		
+		IOException actual = stdErrOut.get();
+		assertTrue(actual != null);
+		assertTrue(originException.equals(actual.getCause()));
+		assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
+	}
 	
     @Test
     public void testCreateLoggerByString() {
