@@ -39,6 +39,6 @@ public class EventTypeLogSupplier implements Supplier<String> {
 
 	@Override
 	public String get() {
-		return eventType.toString();
+		return eventType == null ? "" : eventType.toString();
 	}
 }

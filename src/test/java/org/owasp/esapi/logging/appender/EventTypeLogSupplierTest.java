@@ -15,4 +15,12 @@ public class EventTypeLogSupplierTest {
 		
 		assertEquals(eventType.toString(), supplier.get());
 	}
+	
+	@Test
+	public void testNullEventTypeLog() {
+		
+		EventTypeLogSupplier supplier = new EventTypeLogSupplier(null);
+		
+		assertEquals("", supplier.get());
+	}
 }
