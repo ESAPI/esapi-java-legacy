@@ -67,7 +67,7 @@ public class JavaLogFactoryTest {
 		};
 		
 		ArgumentCaptor<Object> stdErrOut = ArgumentCaptor.forClass(Object.class);
-		
+		PrintStream orig = System.err;
 		try (PrintStream errPrinter = new PrintStream(nullOutputStream)) {
 			PrintStream spyPrinter = PowerMockito.spy(errPrinter);
 			Mockito.doCallRealMethod().when(spyPrinter).print(stdErrOut.capture());
@@ -80,7 +80,10 @@ public class JavaLogFactoryTest {
 			IOException actual = (IOException) writeData;
 			assertEquals(originException, actual.getCause());
 			assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
+		} finally {
+			System.setErr(orig);
 		}
+		
 	}
 
     @Test
