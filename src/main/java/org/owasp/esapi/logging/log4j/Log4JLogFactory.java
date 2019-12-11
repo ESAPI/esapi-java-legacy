@@ -14,17 +14,11 @@
  */
 package org.owasp.esapi.logging.log4j;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.LogManager;
-import org.apache.log4j.PropertyConfigurator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
@@ -35,7 +29,6 @@ import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
 import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
-import org.owasp.esapi.logging.java.JavaLogFactory;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 /**
  * LogFactory implementation which creates Log4J supporting Loggers.
@@ -74,22 +67,6 @@ public class Log4JLogFactory implements LogFactory {
         //LEVEL.OFF not used.  If it's off why would we try to log it?
         
         LOG_BRIDGE = new Log4JLogBridgeImpl(Log4J_LOG_APPENDER, Log4J_LOG_SCRUBBER, levelLookup);
-        
-        try (InputStream stream = Log4JLogFactory.class.getClassLoader().
-        		getResourceAsStream("log4j.xml")) {
-        	PropertyConfigurator.configure(stream);
-        } catch (IOException ioe) {
-        	System.err.print(new IOException("Failed to load log4j.xml.", ioe));        	
-        }
-        
-        OutputStream nullOutputStream = new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-				//No Op
-			}
-		};
-        
-       System.setOut(new PrintStream(nullOutputStream));
     }
     
     /**
