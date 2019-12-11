@@ -20,6 +20,7 @@ import org.owasp.esapi.Logger.EventType;
  * Contract for translating an ESAPI log event into an Log4J log event.
  * 
  */
+@Deprecated
 public interface Log4JLogBridge {
     /**
      * Translation for the provided ESAPI level, type, and message to the specified Log4J Logger.

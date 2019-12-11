@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
  * Enumeration capturing the propagation of Log4J level events.
  *
  */
+@Deprecated
 public enum Log4JLogLevelHandlers implements Log4JLogLevelHandler {
 	FATAL(Level.FATAL),
 	ERROR(Level.ERROR),

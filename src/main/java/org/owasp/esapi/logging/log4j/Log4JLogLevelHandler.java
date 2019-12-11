@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
  * @see Log4JLogBridgeImpl
  *
  */
+@Deprecated
  interface Log4JLogLevelHandler {
      /** Check if the logging level is enabled for the specified logger.*/
     boolean isEnabled(Logger logger);

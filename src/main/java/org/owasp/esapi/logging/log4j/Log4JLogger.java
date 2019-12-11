@@ -16,8 +16,9 @@ package org.owasp.esapi.logging.log4j;
 
 import org.owasp.esapi.Logger;
 /**
- * ESAPI Logger implementation which relays events to an SLF4J delegate.
+ * ESAPI Logger implementation which relays events to an Log4j delegate.
  */
+@Deprecated
 public class Log4JLogger implements org.owasp.esapi.Logger {
     /** Delegate Logger.*/
     private final org.apache.log4j.Logger delegate;

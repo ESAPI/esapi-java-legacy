@@ -34,6 +34,7 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
  * LogFactory implementation which creates Log4J supporting Loggers.
  *
  */
+@Deprecated
 public class Log4JLogFactory implements LogFactory {
 	 /** Immune characters for the codec log scrubber for JAVA context.*/
     private static final char[] IMMUNE_LOG4J_HTML = {',', '.', '-', '_', ' ' };

@@ -27,6 +27,7 @@ import org.owasp.esapi.logging.cleaning.LogScrubber;
  * Implementation which is intended to bridge the ESAPI Logging API into LOG4J supported Object structures.
  *
  */
+@Deprecated
 public class Log4JLogBridgeImpl implements Log4JLogBridge {
     /** Configuration providing associations between esapi log levels and LOG4J levels.*/
     private final Map<Integer,Log4JLogLevelHandler> esapiSlfLevelMap;

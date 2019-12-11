@@ -32,6 +32,7 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
  * @see org.owasp.esapi.logging.log4j.Log4JLogFactory
  * @see org.owasp.esapi.reference.Log4JLogger
  */
+@Deprecated
 public class Log4JLoggerFactory implements LoggerFactory {
 	 /** Log appender instance.*/
     private static LogAppender LOG4J_LOG_APPENDER;
