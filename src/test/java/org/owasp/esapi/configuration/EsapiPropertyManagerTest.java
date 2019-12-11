@@ -1,16 +1,21 @@
 package org.owasp.esapi.configuration;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertNotSame;
+import static junit.framework.Assert.fail;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.configuration.consts.EsapiConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.FileNotFoundException;
-
-import static junit.framework.Assert.*;
 
 public class EsapiPropertyManagerTest {
 
@@ -21,7 +26,22 @@ public class EsapiPropertyManagerTest {
     private static final String noSuchFile = "/invalidDir/noSubDir/nosuchFile.xml";
 
     private EsapiPropertyManager testPropertyManager;
+    private static String DEVTEAM_CFG = "";
+    private static String OPSTEAM_CFG = "";
 
+    @BeforeClass
+    public static void captureEsapiConfigurations() {
+    	DEVTEAM_CFG = System.getProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(),"");
+    	OPSTEAM_CFG = System.getProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(),"");
+    }
+    
+    @AfterClass
+    public static void restoreEsapiConfigurations() {
+    	 System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), DEVTEAM_CFG);
+         System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), OPSTEAM_CFG);
+    }
+
+    
     @Before
     public void init() {
         System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), "");
@@ -402,20 +422,20 @@ public class EsapiPropertyManagerTest {
 
     @Test
     public void testExpectFileNotFoundException() {
-        // given
-        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), noSuchFile);
+    	// given
+    	System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), noSuchFile);
 
-        // when
-        try {
-            testPropertyManager = new EsapiPropertyManager();
-        } catch (IOException e) {
-            if ( e instanceof FileNotFoundException ) {
-                return;
-            } else {
-                fail("testExpectFileNotFoundException(): Was expecting FileNotFoundException for IOException. Exception:" + e);
-            }
-        }
-        
-        fail("Did not throw expected IOException for property file " + noSuchFile);
+    	// when
+    	try {
+    		testPropertyManager = new EsapiPropertyManager();
+    	} catch (IOException e) {
+    		if ( e instanceof FileNotFoundException ) {
+    			return;
+    		} else {
+    			fail("testExpectFileNotFoundException(): Was expecting FileNotFoundException for IOException. Exception:" + e);
+    		}
+    	}
+
+    	fail("Did not throw expected IOException for property file " + noSuchFile);
     }
 }
