@@ -10,7 +10,7 @@
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
  * 
- * @created 2018
+ * @created 2019
  */
 
 package org.owasp.esapi.logging.java;
