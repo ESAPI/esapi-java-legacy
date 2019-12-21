@@ -23,14 +23,11 @@ import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 /**
- * Implementation of the LoggerFactory interface. This implementation has been 
- * overridden to return instances of org.owasp.esapi.reference.Log4JLogger.
- *
- * @author August Detlefsen (augustd at codemagi dot com)
- *         <a href="http://www.codemagi.com">CodeMagi, Inc.</a>
- * @since October 15, 2010
- * @see org.owasp.esapi.logging.log4j.Log4JLogFactory
- * @see org.owasp.esapi.reference.Log4JLogger
+ * Service Provider Interface implementation that can be provided as the org.apache.log4j.spi.LoggerFactory reference in a Log4J configuration.
+ * <br>
+ * <code>
+ *   &ltloggerFactory class="org.owasp.esapi.logging.log4j.Log4JLoggerFactory"/&gt
+ * </code>
  */
 @Deprecated
 public class Log4JLoggerFactory implements LoggerFactory {
