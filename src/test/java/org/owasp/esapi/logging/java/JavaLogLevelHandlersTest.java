@@ -37,7 +37,7 @@ public class JavaLogLevelHandlersTest {
         JavaLogLevelHandlers.ERROR.log(mockLogger, testName.getMethodName(), testException);
 
         Level expectedJavaLevel = ESAPIErrorJavaLevel.ERROR_LEVEL;
-        
+
         Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName(), testException);
@@ -51,7 +51,7 @@ public class JavaLogLevelHandlersTest {
         JavaLogLevelHandlers.WARNING.log(mockLogger, testName.getMethodName(), testException);
 
         Level expectedJavaLevel = Level.WARNING;
-        
+
         Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName(), testException);
@@ -64,7 +64,7 @@ public class JavaLogLevelHandlersTest {
         JavaLogLevelHandlers.INFO.log(mockLogger, testName.getMethodName(), testException);
 
         Level expectedJavaLevel = Level.INFO;
-        
+
         Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName(), testException);
@@ -78,7 +78,7 @@ public class JavaLogLevelHandlersTest {
         JavaLogLevelHandlers.FINE.log(mockLogger, testName.getMethodName(), testException);
 
         Level expectedJavaLevel = Level.FINE;
-        
+
         Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName(), testException);
@@ -92,7 +92,7 @@ public class JavaLogLevelHandlersTest {
         JavaLogLevelHandlers.FINEST.log(mockLogger, testName.getMethodName(), testException);
 
         Level expectedJavaLevel = Level.FINEST;
-        
+
         Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName(), testException);

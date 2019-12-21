@@ -48,7 +48,7 @@ public class JavaLogBridgeImplTest {
     public void setup() {
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, mockHandler);
-        
+
         java.util.logging.Logger wrappedLogger = java.util.logging.Logger.getLogger(testName.getMethodName());
         javaLogSpy = Mockito.spy(wrappedLogger);
         bridge = new JavaLogBridgeImpl(mockAppender, mockScrubber, levelLookup);
@@ -61,7 +61,7 @@ public class JavaLogBridgeImplTest {
         Map<Integer, JavaLogLevelHandler> emptyMap = Collections.emptyMap();
         new JavaLogBridgeImpl(mockAppender, mockScrubber, emptyMap).log(javaLogSpy, 0, Logger.EVENT_UNSPECIFIED, "This Should fail");
     }
-    
+
     @Test
     public void testLogMessageAndExceptionWithUnmappedEsapiLevelThrowsException() {
         exEx.expect(IllegalArgumentException.class);
@@ -69,13 +69,13 @@ public class JavaLogBridgeImplTest {
         Map<Integer, JavaLogLevelHandler> emptyMap = Collections.emptyMap();
         new JavaLogBridgeImpl(mockAppender, mockScrubber, emptyMap).log(javaLogSpy, 0, Logger.EVENT_UNSPECIFIED, "This Should fail", testEx);
     }
-    
+
     @Test
     public void testLogMessage() {
-    	EventType eventType = Logger.EVENT_UNSPECIFIED;
-    	String loggerName = testName.getMethodName() + "-LOGGER";
-    	String orignMsg = testName.getMethodName();
-    	String appendMsg = "[APPEND] " + orignMsg;
+        EventType eventType = Logger.EVENT_UNSPECIFIED;
+        String loggerName = testName.getMethodName() + "-LOGGER";
+        String orignMsg = testName.getMethodName();
+        String appendMsg = "[APPEND] " + orignMsg;
         String cleanMsg = appendMsg + " [CLEANED]";
 
         //Setup for Appender
@@ -94,16 +94,16 @@ public class JavaLogBridgeImplTest {
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(javaLogSpy);
         Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(java.util.logging.Logger.class), ArgumentMatchers.any(String.class), ArgumentMatchers.any(Throwable.class));
         Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(javaLogSpy), ArgumentMatchers.eq(cleanMsg));
-     
+
         Mockito.verifyNoMoreInteractions(javaLogSpy, mockAppender, mockScrubber,mockHandler);
     }
 
     @Test
     public void testLogErrorMessageWithException() {
-    	EventType eventType = Logger.EVENT_UNSPECIFIED;
-    	String loggerName = testName.getMethodName() + "-LOGGER";
-    	String orignMsg = testName.getMethodName();
-    	String appendMsg = "[APPEND] " + orignMsg;
+        EventType eventType = Logger.EVENT_UNSPECIFIED;
+        String loggerName = testName.getMethodName() + "-LOGGER";
+        String orignMsg = testName.getMethodName();
+        String appendMsg = "[APPEND] " + orignMsg;
         String cleanMsg = appendMsg + " [CLEANED]";
 
         //Setup for Appender
@@ -123,7 +123,7 @@ public class JavaLogBridgeImplTest {
         Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(java.util.logging.Logger.class), ArgumentMatchers.any(String.class));
 
         Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(javaLogSpy), ArgumentMatchers.eq(cleanMsg), ArgumentMatchers.same(testEx));
-     
+
         Mockito.verifyNoMoreInteractions(javaLogSpy, mockAppender, mockScrubber,mockHandler);
     }
 

@@ -45,109 +45,109 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest (JavaLogFactory.class)
 public class JavaLogFactoryTest {
-	@Rule
+    @Rule
     public TestName testName = new TestName();
 
-	@Test
-	public void testIOExceptionOnMissingConfiguration() throws Exception {
-		final IOException originException = new IOException(testName.getMethodName());
+    @Test
+    public void testIOExceptionOnMissingConfiguration() throws Exception {
+        final IOException originException = new IOException(testName.getMethodName());
 
-		LogManager testLogManager = new LogManager() {
-			@Override
-			public void readConfiguration(InputStream ins) throws IOException, SecurityException {
-				throw originException;
-			}
-		};
+        LogManager testLogManager = new LogManager() {
+            @Override
+            public void readConfiguration(InputStream ins) throws IOException, SecurityException {
+                throw originException;
+            }
+        };
 
-		OutputStream nullOutputStream = new OutputStream() {
-			@Override
-			public void write(int b) throws IOException {
-				//No Op
-			}
-		};
-		
-		ArgumentCaptor<Object> stdErrOut = ArgumentCaptor.forClass(Object.class);
-		PrintStream orig = System.err;
-		try (PrintStream errPrinter = new PrintStream(nullOutputStream)) {
-			PrintStream spyPrinter = PowerMockito.spy(errPrinter);
-			Mockito.doCallRealMethod().when(spyPrinter).print(stdErrOut.capture());
-			System.setErr(spyPrinter);
+        OutputStream nullOutputStream = new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                //No Op
+            }
+        };
 
-			JavaLogFactory.readLoggerConfiguration(testLogManager);
+        ArgumentCaptor<Object> stdErrOut = ArgumentCaptor.forClass(Object.class);
+        PrintStream orig = System.err;
+        try (PrintStream errPrinter = new PrintStream(nullOutputStream)) {
+            PrintStream spyPrinter = PowerMockito.spy(errPrinter);
+            Mockito.doCallRealMethod().when(spyPrinter).print(stdErrOut.capture());
+            System.setErr(spyPrinter);
 
-			Object writeData = stdErrOut.getValue();
-			assertTrue(writeData instanceof IOException);
-			IOException actual = (IOException) writeData;
-			assertEquals(originException, actual.getCause());
-			assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
-		} finally {
-			System.setErr(orig);
-		}
-		
-	}
+            JavaLogFactory.readLoggerConfiguration(testLogManager);
+
+            Object writeData = stdErrOut.getValue();
+            assertTrue(writeData instanceof IOException);
+            IOException actual = (IOException) writeData;
+            assertEquals(originException, actual.getCause());
+            assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
+        } finally {
+            System.setErr(orig);
+        }
+
+    }
 
     @Test
     public void testCreateLoggerByString() {
         Logger logger = new JavaLogFactory().getLogger("test");
         Assert.assertTrue(logger instanceof JavaLogger);
     }
-    
+
     @Test public void testCreateLoggerByClass() {
         Logger logger = new JavaLogFactory().getLogger(JavaLogBridgeImplTest.class);
         Assert.assertTrue(logger instanceof JavaLogger);
     }
-    
+
     @Test
     public void checkScrubberWithEncoding() throws Exception {
         ArgumentCaptor<List> delegates = ArgumentCaptor.forClass(List.class);
         PowerMockito.whenNew(CompositeLogScrubber.class).withArguments(delegates.capture()).thenReturn(null);
-        
+
         //Call to invoke the constructor capture
         JavaLogFactory.createLogScrubber(true);
-        
+
         List<LogScrubber> scrubbers = delegates.getValue();
         Assert.assertEquals(2, scrubbers.size());
         Assert.assertTrue(scrubbers.get(0) instanceof NewlineLogScrubber);
         Assert.assertTrue(scrubbers.get(1) instanceof CodecLogScrubber);
     }
-    
+
     @Test
     public void checkScrubberWithoutEncoding() throws Exception {
         ArgumentCaptor<List> delegates = ArgumentCaptor.forClass(List.class);
         PowerMockito.whenNew(CompositeLogScrubber.class).withArguments(delegates.capture()).thenReturn(null);
-        
+
         //Call to invoke the constructor capture
         JavaLogFactory.createLogScrubber(false);
-        
+
         List<LogScrubber> scrubbers = delegates.getValue();
         Assert.assertEquals(1, scrubbers.size());
         Assert.assertTrue(scrubbers.get(0) instanceof NewlineLogScrubber);
     }
-    
+
     /**
-	 * At this time there are no special considerations or handling for the appender
-	 * creation in this scope. It is expected that the arguments to the internal
-	 * creation method are passed directly to the constructor of the
-	 * LogPrefixAppender with no mutation or additional validation.
-	 */
+     * At this time there are no special considerations or handling for the appender
+     * creation in this scope. It is expected that the arguments to the internal
+     * creation method are passed directly to the constructor of the
+     * LogPrefixAppender with no mutation or additional validation.
+     */
     @Test
     public void checkPassthroughAppenderConstruct() throws Exception {
-    	LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, "");
-    	ArgumentCaptor<Boolean> clientInfoCapture = ArgumentCaptor.forClass(Boolean.class);
-    	ArgumentCaptor<Boolean> serverInfoCapture = ArgumentCaptor.forClass(Boolean.class);
-    	ArgumentCaptor<Boolean> logAppNameCapture = ArgumentCaptor.forClass(Boolean.class);
-    	ArgumentCaptor<String> appNameCapture = ArgumentCaptor.forClass(String.class);
-    	
-    	PowerMockito.whenNew(LogPrefixAppender.class).withArguments(clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
-    	
-    	LogAppender appender = JavaLogFactory.createLogAppender(true, false, true, testName.getMethodName());
-    	
-    	Assert.assertEquals(stubAppender, appender);
-    	Assert.assertTrue(clientInfoCapture.getValue());
-    	Assert.assertFalse(serverInfoCapture.getValue());
-    	Assert.assertTrue(logAppNameCapture.getValue());
-    	Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());    	
+        LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, "");
+        ArgumentCaptor<Boolean> clientInfoCapture = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<Boolean> serverInfoCapture = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<Boolean> logAppNameCapture = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<String> appNameCapture = ArgumentCaptor.forClass(String.class);
+
+        PowerMockito.whenNew(LogPrefixAppender.class).withArguments(clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
+
+        LogAppender appender = JavaLogFactory.createLogAppender(true, false, true, testName.getMethodName());
+
+        Assert.assertEquals(stubAppender, appender);
+        Assert.assertTrue(clientInfoCapture.getValue());
+        Assert.assertFalse(serverInfoCapture.getValue());
+        Assert.assertTrue(logAppNameCapture.getValue());
+        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());    	
     }
-    
-   
+
+
 }
