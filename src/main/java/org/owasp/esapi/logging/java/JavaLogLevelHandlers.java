@@ -13,7 +13,7 @@ public enum JavaLogLevelHandlers implements JavaLogLevelHandler {
 	FINER(Level.FINER),
 	FINEST(Level.FINEST),
 	ALL(Level.ALL),
-	ERROR(JavaLoggerLevel.ERROR_LEVEL);
+	ERROR(ESAPIErrorJavaLevel.ERROR_LEVEL);
 
 	private final Level level;
 	

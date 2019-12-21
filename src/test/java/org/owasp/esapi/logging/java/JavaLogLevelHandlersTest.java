@@ -36,7 +36,7 @@ public class JavaLogLevelHandlersTest {
         JavaLogLevelHandlers.ERROR.log(mockLogger, testName.getMethodName());
         JavaLogLevelHandlers.ERROR.log(mockLogger, testName.getMethodName(), testException);
 
-        Level expectedJavaLevel = JavaLoggerLevel.ERROR_LEVEL;
+        Level expectedJavaLevel = ESAPIErrorJavaLevel.ERROR_LEVEL;
         
         Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
         Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
