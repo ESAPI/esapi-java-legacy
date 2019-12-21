@@ -59,7 +59,6 @@ public class Log4JLoggerFactory implements LoggerFactory {
 	 * @return org.owasp.esapi.reference.Log4JLogger
 	 */
 	public org.apache.log4j.Logger makeNewLoggerInstance(String name) {		
-		//return new org.owasp.esapi.reference.Log4JLogger(name);
 		return new EsapiLog4JWrapper(name);
 	}
 	
