@@ -39,5 +39,5 @@ public interface Log4JLogBridge {
      * @param throwable ESAPI event Throwable content
      */
     void log(Logger logger, int esapiLevel, EventType type, String message, Throwable throwable) ;
-      
+
 }

@@ -31,53 +31,53 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
  */
 @Deprecated
 public class Log4JLoggerFactory implements LoggerFactory {
-	 /** Log appender instance.*/
+    /** Log appender instance.*/
     private static LogAppender LOG4J_LOG_APPENDER;
     /** Log cleaner instance.*/
     private static LogScrubber LOG4J_LOG_SCRUBBER;
-    
+
     static {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         LOG4J_LOG_SCRUBBER = Log4JLogFactory.createLogScrubber(encodeLog);
-        
-    	boolean logClientInfo = true;
-		boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
-		String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
-		boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
-		LOG4J_LOG_APPENDER = Log4JLogFactory.createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
+
+        boolean logClientInfo = true;
+        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
+        String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
+        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
+        LOG4J_LOG_APPENDER = Log4JLogFactory.createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
     }
-    
-	/**
-	 * This constructor must be public so it can be accessed from within log4j
-	 */
-	public Log4JLoggerFactory() {}
 
-	/**
-	 * Overridden to return instances of org.owasp.esapi.reference.Log4JLogger.
-	 * 
-	 * @param name The class name to return a logger for.
-	 * @return org.owasp.esapi.reference.Log4JLogger
-	 */
-	public org.apache.log4j.Logger makeNewLoggerInstance(String name) {		
-		return new EsapiLog4JWrapper(name);
-	}
-	
-	
-	public static class EsapiLog4JWrapper extends org.apache.log4j.Logger {
+    /**
+     * This constructor must be public so it can be accessed from within log4j
+     */
+    public Log4JLoggerFactory() {}
 
-		protected EsapiLog4JWrapper(String name) {
-			super(name);			
-		}
-		
-		@Override
-		protected void forcedLog(String fqcn, Priority level, Object message, Throwable t) {
-			String toClean = message.toString();
-			
-			String fullMessage = LOG4J_LOG_APPENDER.appendTo(getName(), null, toClean);
-			String cleanMsg = LOG4J_LOG_SCRUBBER.cleanMessage(fullMessage);
-			
-			super.forcedLog(fqcn, level, cleanMsg, t);
-		}
-		
-	}
+    /**
+     * Overridden to return instances of org.owasp.esapi.reference.Log4JLogger.
+     * 
+     * @param name The class name to return a logger for.
+     * @return org.owasp.esapi.reference.Log4JLogger
+     */
+    public org.apache.log4j.Logger makeNewLoggerInstance(String name) {		
+        return new EsapiLog4JWrapper(name);
+    }
+
+
+    public static class EsapiLog4JWrapper extends org.apache.log4j.Logger {
+
+        protected EsapiLog4JWrapper(String name) {
+            super(name);			
+        }
+
+        @Override
+        protected void forcedLog(String fqcn, Priority level, Object message, Throwable t) {
+            String toClean = message.toString();
+
+            String fullMessage = LOG4J_LOG_APPENDER.appendTo(getName(), null, toClean);
+            String cleanMsg = LOG4J_LOG_SCRUBBER.cleanMessage(fullMessage);
+
+            super.forcedLog(fqcn, level, cleanMsg, t);
+        }
+
+    }
 }

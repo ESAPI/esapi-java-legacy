@@ -24,8 +24,8 @@ import org.apache.log4j.Logger;
  *
  */
 @Deprecated
- interface Log4JLogLevelHandler {
-     /** Check if the logging level is enabled for the specified logger.*/
+interface Log4JLogLevelHandler {
+    /** Check if the logging level is enabled for the specified logger.*/
     boolean isEnabled(Logger logger);
     /**
      * Calls the appropriate log level event on the specified logger.

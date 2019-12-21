@@ -36,7 +36,7 @@ import org.owasp.esapi.reference.DefaultSecurityConfiguration;
  */
 @Deprecated
 public class Log4JLogFactory implements LogFactory {
-	 /** Immune characters for the codec log scrubber for JAVA context.*/
+    /** Immune characters for the codec log scrubber for JAVA context.*/
     private static final char[] IMMUNE_LOG4J_HTML = {',', '.', '-', '_', ' ' };
     /** Codec being used to clean messages for logging.*/
     private static final HTMLEntityCodec HTML_CODEC = new HTMLEntityCodec();
@@ -46,17 +46,17 @@ public class Log4JLogFactory implements LogFactory {
     private static LogScrubber Log4J_LOG_SCRUBBER;
     /** Bridge class for mapping esapi -> log4j log levels.*/
     private static Log4JLogBridge LOG_BRIDGE;
-    
+
     static {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         Log4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
-        
-    	boolean logClientInfo = true;
-		boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
-		String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
-		boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
+
+        boolean logClientInfo = true;
+        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
+        String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
+        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
         Log4J_LOG_APPENDER = createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
-        
+
         Map<Integer, Log4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, Log4JLogLevelHandlers.TRACE);
         levelLookup.put(Logger.TRACE, Log4JLogLevelHandlers.TRACE);
@@ -66,10 +66,10 @@ public class Log4JLogFactory implements LogFactory {
         levelLookup.put(Logger.WARNING, Log4JLogLevelHandlers.WARN);
         levelLookup.put(Logger.FATAL, Log4JLogLevelHandlers.FATAL);
         //LEVEL.OFF not used.  If it's off why would we try to log it?
-        
+
         LOG_BRIDGE = new Log4JLogBridgeImpl(Log4J_LOG_APPENDER, Log4J_LOG_SCRUBBER, levelLookup);
     }
-    
+
     /**
      * Populates the default log scrubber for use in factory-created loggers.
      * @param requiresEncoding {@code true} if encoding is required for log content.
@@ -78,15 +78,15 @@ public class Log4JLogFactory implements LogFactory {
     /*package*/ static LogScrubber createLogScrubber(boolean requiresEncoding) {
         List<LogScrubber> messageScrubber = new ArrayList<>();
         messageScrubber.add(new NewlineLogScrubber());
-        
+
         if (requiresEncoding) {
             messageScrubber.add(new CodecLogScrubber(HTML_CODEC, IMMUNE_LOG4J_HTML));
         }
-        
+
         return new CompositeLogScrubber(messageScrubber);
-        
+
     }
-    
+
     /**
      * Populates the default log appender for use in factory-created loggers.
      * @param appName 
@@ -97,19 +97,19 @@ public class Log4JLogFactory implements LogFactory {
      * @return LogAppender instance.
      */
     /*package*/ static LogAppender createLogAppender(boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-       return new LogPrefixAppender(logClientInfo, logServerIp, logApplicationName, appName);       
+        return new LogPrefixAppender(logClientInfo, logServerIp, logApplicationName, appName);       
     }
-    
-    
+
+
     @Override
     public Logger getLogger(String moduleName) {
-    	org.apache.log4j.Logger log4JLogger = org.apache.log4j.Logger.getLogger(moduleName);
+        org.apache.log4j.Logger log4JLogger = org.apache.log4j.Logger.getLogger(moduleName);
         return new Log4JLogger(log4JLogger, LOG_BRIDGE, Logger.ALL);
     }
 
     @Override
     public Logger getLogger(@SuppressWarnings("rawtypes") Class clazz) {
-    	org.apache.log4j.Logger log4JLogger = org.apache.log4j.Logger.getLogger(clazz);
+        org.apache.log4j.Logger log4JLogger = org.apache.log4j.Logger.getLogger(clazz);
         return new Log4JLogger(log4JLogger, LOG_BRIDGE, Logger.ALL);
     }
 
