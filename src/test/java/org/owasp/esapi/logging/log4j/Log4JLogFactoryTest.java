@@ -38,71 +38,71 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest (Log4JLogFactory.class)
 public class Log4JLogFactoryTest {
-	@Rule
+    @Rule
     public TestName testName = new TestName();
-	
+
     @Test
     public void testCreateLoggerByString() {
         Logger logger = new Log4JLogFactory().getLogger("test");
         Assert.assertTrue(logger instanceof Log4JLogger);
     }
-    
+
     @Test public void testCreateLoggerByClass() {
         Logger logger = new Log4JLogFactory().getLogger(Log4JLogBridgeImplTest.class);
         Assert.assertTrue(logger instanceof Log4JLogger);
     }
-    
+
     @Test
     public void checkScrubberWithEncoding() throws Exception {
         ArgumentCaptor<List> delegates = ArgumentCaptor.forClass(List.class);
         PowerMockito.whenNew(CompositeLogScrubber.class).withArguments(delegates.capture()).thenReturn(null);
-        
+
         //Call to invoke the constructor capture
         Log4JLogFactory.createLogScrubber(true);
-        
+
         List<LogScrubber> scrubbers = delegates.getValue();
         Assert.assertEquals(2, scrubbers.size());
         Assert.assertTrue(scrubbers.get(0) instanceof NewlineLogScrubber);
         Assert.assertTrue(scrubbers.get(1) instanceof CodecLogScrubber);
     }
-    
+
     @Test
     public void checkScrubberWithoutEncoding() throws Exception {
         ArgumentCaptor<List> delegates = ArgumentCaptor.forClass(List.class);
         PowerMockito.whenNew(CompositeLogScrubber.class).withArguments(delegates.capture()).thenReturn(null);
-        
+
         //Call to invoke the constructor capture
         Log4JLogFactory.createLogScrubber(false);
-        
+
         List<LogScrubber> scrubbers = delegates.getValue();
         Assert.assertEquals(1, scrubbers.size());
         Assert.assertTrue(scrubbers.get(0) instanceof NewlineLogScrubber);
     }
-    
+
     /**
-	 * At this time there are no special considerations or handling for the appender
-	 * creation in this scope. It is expected that the arguments to the internal
-	 * creation method are passed directly to the constructor of the
-	 * LogPrefixAppender with no mutation or additional validation.
-	 */
+     * At this time there are no special considerations or handling for the appender
+     * creation in this scope. It is expected that the arguments to the internal
+     * creation method are passed directly to the constructor of the
+     * LogPrefixAppender with no mutation or additional validation.
+     */
     @Test
     public void checkPassthroughAppenderConstruct() throws Exception {
-    	LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, "");
-    	ArgumentCaptor<Boolean> clientInfoCapture = ArgumentCaptor.forClass(Boolean.class);
-    	ArgumentCaptor<Boolean> serverInfoCapture = ArgumentCaptor.forClass(Boolean.class);
-    	ArgumentCaptor<Boolean> logAppNameCapture = ArgumentCaptor.forClass(Boolean.class);
-    	ArgumentCaptor<String> appNameCapture = ArgumentCaptor.forClass(String.class);
-    	
-    	PowerMockito.whenNew(LogPrefixAppender.class).withArguments(clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
-    	
-    	LogAppender appender = Log4JLogFactory.createLogAppender(true, false, true, testName.getMethodName());
-    	
-    	Assert.assertEquals(stubAppender, appender);
-    	Assert.assertTrue(clientInfoCapture.getValue());
-    	Assert.assertFalse(serverInfoCapture.getValue());
-    	Assert.assertTrue(logAppNameCapture.getValue());
-    	Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());    	
+        LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, "");
+        ArgumentCaptor<Boolean> clientInfoCapture = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<Boolean> serverInfoCapture = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<Boolean> logAppNameCapture = ArgumentCaptor.forClass(Boolean.class);
+        ArgumentCaptor<String> appNameCapture = ArgumentCaptor.forClass(String.class);
+
+        PowerMockito.whenNew(LogPrefixAppender.class).withArguments(clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
+
+        LogAppender appender = Log4JLogFactory.createLogAppender(true, false, true, testName.getMethodName());
+
+        Assert.assertEquals(stubAppender, appender);
+        Assert.assertTrue(clientInfoCapture.getValue());
+        Assert.assertFalse(serverInfoCapture.getValue());
+        Assert.assertTrue(logAppNameCapture.getValue());
+        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());    	
     }
-    
-   
+
+
 }

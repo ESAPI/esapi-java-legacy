@@ -42,7 +42,7 @@ public class Log4JLogLevelHandlersTest {
         Mockito.verifyNoMoreInteractions(mockLogger);
     }
 
-    
+
     @Test
     public void testErrorDelegation() {
         Log4JLogLevelHandlers.ERROR.isEnabled(mockLogger);
