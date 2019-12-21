@@ -23,8 +23,8 @@ import java.util.logging.Logger;
  * @see JavaLogBridgeImpl
  *
  */
- interface JavaLogLevelHandler {
-     /** Check if the logging level is enabled for the specified logger.*/
+interface JavaLogLevelHandler {
+    /** Check if the logging level is enabled for the specified logger.*/
     boolean isEnabled(Logger logger);
     /**
      * Calls the appropriate log level event on the specified logger.

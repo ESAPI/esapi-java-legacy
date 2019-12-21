@@ -34,7 +34,7 @@ public class JavaLogBridgeImpl implements JavaLogBridge {
     private final LogScrubber scrubber;
     /** Appender used for assembling default message content for all logs.*/
     private final LogAppender appender;
-    
+
     /**
      * Constructor.
      * @param logScrubber  Log message cleaner.
@@ -53,9 +53,9 @@ public class JavaLogBridgeImpl implements JavaLogBridge {
             throw new IllegalArgumentException("Unable to lookup Java level mapping for esapi value of " + esapiLevel);
         }
         if (handler.isEnabled(logger)) {
-        	String fullMessage = appender.appendTo(logger.getName(), type, message);
+            String fullMessage = appender.appendTo(logger.getName(), type, message);
             String cleanString = scrubber.cleanMessage(fullMessage);
-            
+
             handler.log(logger, cleanString);
         }
     }
@@ -66,7 +66,7 @@ public class JavaLogBridgeImpl implements JavaLogBridge {
             throw new IllegalArgumentException("Unable to lookup Java level mapping for esapi value of " + esapiLevel);
         }
         if (handler.isEnabled(logger)) {
-        	String fullMessage = appender.appendTo(logger.getName(), type, message);
+            String fullMessage = appender.appendTo(logger.getName(), type, message);
             String cleanString = scrubber.cleanMessage(fullMessage);
 
             handler.log(logger, cleanString, throwable);

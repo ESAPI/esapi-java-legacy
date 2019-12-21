@@ -48,17 +48,17 @@ public class JavaLogFactory implements LogFactory {
     private static LogScrubber JAVA_LOG_SCRUBBER;
     /** Bridge class for mapping esapi -> java log levels.*/
     private static JavaLogBridge LOG_BRIDGE;
-    
+
     static {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         JAVA_LOG_SCRUBBER = createLogScrubber(encodeLog);
-        
-    	boolean logClientInfo = true;
-		boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
-		String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
-		boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
+
+        boolean logClientInfo = true;
+        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
+        String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
+        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
         JAVA_LOG_APPENDER = createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
-        
+
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, JavaLogLevelHandlers.ALL);
         levelLookup.put(Logger.TRACE, JavaLogLevelHandlers.FINEST);
@@ -68,28 +68,28 @@ public class JavaLogFactory implements LogFactory {
         levelLookup.put(Logger.WARNING, JavaLogLevelHandlers.WARNING);
         levelLookup.put(Logger.FATAL, JavaLogLevelHandlers.SEVERE);
         //LEVEL.OFF not used.  If it's off why would we try to log it?
-        
+
         LOG_BRIDGE = new JavaLogBridgeImpl(JAVA_LOG_APPENDER, JAVA_LOG_SCRUBBER, levelLookup);
-        
+
         readLoggerConfiguration(LogManager.getLogManager());
     }
-    
+
     /**
      * Attempts to load the expected property file path into the provided LogManager reference.
      * @param logManager LogManager which is being configured.
      */
     /*package*/ static void readLoggerConfiguration(LogManager logManager) {
-    	/*
+        /*
          * This will load the logging properties file to control the format of the output for Java logs.
          */
         try (InputStream stream = JavaLogFactory.class.getClassLoader().
-        		getResourceAsStream("esapi-java-logging.properties")) {
-        	logManager.readConfiguration(stream);
+                getResourceAsStream("esapi-java-logging.properties")) {
+            logManager.readConfiguration(stream);
         } catch (IOException ioe) {
-        	System.err.print(new IOException("Failed to load esapi-java-logging.properties.", ioe));        	
+            System.err.print(new IOException("Failed to load esapi-java-logging.properties.", ioe));        	
         }
     }
-    
+
     /**
      * Populates the default log scrubber for use in factory-created loggers.
      * @param requiresEncoding {@code true} if encoding is required for log content.
@@ -98,15 +98,15 @@ public class JavaLogFactory implements LogFactory {
     /*package*/ static LogScrubber createLogScrubber(boolean requiresEncoding) {
         List<LogScrubber> messageScrubber = new ArrayList<>();
         messageScrubber.add(new NewlineLogScrubber());
-        
+
         if (requiresEncoding) {
             messageScrubber.add(new CodecLogScrubber(HTML_CODEC, IMMUNE_JAVA_HTML));
         }
-        
+
         return new CompositeLogScrubber(messageScrubber);
-        
+
     }
-    
+
     /**
      * Populates the default log appender for use in factory-created loggers.
      * @param appName 
@@ -117,19 +117,19 @@ public class JavaLogFactory implements LogFactory {
      * @return LogAppender instance.
      */
     /*package*/ static LogAppender createLogAppender(boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-       return new LogPrefixAppender(logClientInfo, logServerIp, logApplicationName, appName);       
+        return new LogPrefixAppender(logClientInfo, logServerIp, logApplicationName, appName);       
     }
-    
-    
+
+
     @Override
     public Logger getLogger(String moduleName) {
-    	java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(moduleName); 
+        java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(moduleName); 
         return new JavaLogger(javaLogger, LOG_BRIDGE, Logger.ALL);
     }
 
     @Override
     public Logger getLogger(@SuppressWarnings("rawtypes") Class clazz) {
-    	java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(clazz.getName());
+        java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(clazz.getName());
         return new JavaLogger(javaLogger, LOG_BRIDGE, Logger.ALL);
     }
 
