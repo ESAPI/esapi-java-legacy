@@ -25,20 +25,20 @@ import org.owasp.esapi.Logger.EventType;
  *
  */
 public class EventTypeLogSupplier implements Supplier<String> {
-	/** EventType reference to supply log representation of. */
-	private final EventType eventType;
+    /** EventType reference to supply log representation of. */
+    private final EventType eventType;
 
-	/**
-	 * Ctr
-	 * 
-	 * @param evtyp EventType reference to supply log representation for
-	 */
-	public EventTypeLogSupplier(EventType evtyp) {
-		this.eventType = evtyp;
-	}
+    /**
+     * Ctr
+     * 
+     * @param evtyp EventType reference to supply log representation for
+     */
+    public EventTypeLogSupplier(EventType evtyp) {
+        this.eventType = evtyp;
+    }
 
-	@Override
-	public String get() {
-		return eventType == null ? "" : eventType.toString();
-	}
+    @Override
+    public String get() {
+        return eventType == null ? "" : eventType.toString();
+    }
 }

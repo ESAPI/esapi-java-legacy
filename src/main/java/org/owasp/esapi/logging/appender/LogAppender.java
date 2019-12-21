@@ -23,13 +23,13 @@ import org.owasp.esapi.Logger.EventType;
  */
 public interface LogAppender {
 
-	/**
-	 * Creates a replacement Log Message and returns it to the caller.
-	 * @param logName name of the logger.
-	 * @param eventType EventType of the log event being processed.
-	 * @param message The original message.
-	 * @return Updated replacement message.
-	 */
-	public String appendTo(String logName, EventType eventType, String message);
+    /**
+     * Creates a replacement Log Message and returns it to the caller.
+     * @param logName name of the logger.
+     * @param eventType EventType of the log event being processed.
+     * @param message The original message.
+     * @return Updated replacement message.
+     */
+    public String appendTo(String logName, EventType eventType, String message);
 
 }
