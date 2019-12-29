@@ -57,11 +57,13 @@ public class Slf4JLogFactory implements LogFactory {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         SLF4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
         
-    	boolean logClientInfo = true;
+
+        boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
+        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APP_INFO);
 		boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
 		String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
 		boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
-        SLF4J_LOG_APPENDER = createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
+        SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
         
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, Slf4JLogLevelHandlers.TRACE);
@@ -102,8 +104,8 @@ public class Slf4JLogFactory implements LogFactory {
      * 
      * @return LogAppender instance.
      */
-    /*package*/ static LogAppender createLogAppender(boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-       return new LogPrefixAppender(logClientInfo, logServerIp, logApplicationName, appName);       
+    /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);       
     }
     
     

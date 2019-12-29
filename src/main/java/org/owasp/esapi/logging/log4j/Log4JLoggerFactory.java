@@ -40,11 +40,12 @@ public class Log4JLoggerFactory implements LoggerFactory {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
         LOG4J_LOG_SCRUBBER = Log4JLogFactory.createLogScrubber(encodeLog);
 
-        boolean logClientInfo = true;
+        boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
+        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APP_INFO);
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
-        LOG4J_LOG_APPENDER = Log4JLogFactory.createLogAppender(logClientInfo, logServerIp, logApplicationName, appName);
+        LOG4J_LOG_APPENDER = Log4JLogFactory.createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
     }
 
     /**

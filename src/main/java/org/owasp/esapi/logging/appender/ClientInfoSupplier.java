@@ -28,8 +28,6 @@ import org.owasp.esapi.User;
  * information.
  */
 public class ClientInfoSupplier implements Supplier<String> {
-    /** Default UserName string if the Authenticated user is null.*/
-    private static final String DEFAULT_USERNAME = "#ANONYMOUS#";
     /** Default Last Host string if the Authenticated user is null.*/
     private static final String DEFAULT_LAST_HOST = "#UNKNOWN_HOST#";
     /** Session Attribute containing the ESAPI Session id. */
@@ -44,16 +42,16 @@ public class ClientInfoSupplier implements Supplier<String> {
     private static final int ESAPI_SESSION_RAND_MAX = 1000000;
 
     /** Format for supplier output. */
-    private static final String USER_INFO_FORMAT = "%s:%s@%s"; // USER_NAME, SID, USER_HOST_ADDRESS
+    private static final String USER_INFO_FORMAT = "%s@%s"; // SID, USER_HOST_ADDRESS
 
     /** Whether to log the user info from this instance. */
-    private boolean logUserInfo = true;
+    private boolean logClientInfo = true;
 
     @Override
     public String get() {
-        String userInfo = "";
+        String clientInfo = "";
 
-        if (logUserInfo) {
+        if (logClientInfo) {
             HttpServletRequest request = ESAPI.currentRequest();
             // create a random session number for the user to represent the user's
             // 'session', if it doesn't exist already
@@ -73,12 +71,12 @@ public class ClientInfoSupplier implements Supplier<String> {
             // log user information - username:session@ipaddr
             User user = ESAPI.authenticator().getCurrentUser();
             if (user == null) {
-                userInfo = String.format(USER_INFO_FORMAT, DEFAULT_USERNAME, sid, DEFAULT_LAST_HOST);
+                clientInfo = String.format(USER_INFO_FORMAT, sid, DEFAULT_LAST_HOST);
             } else {
-                userInfo = String.format(USER_INFO_FORMAT, user.getAccountName(), sid, user.getLastHostAddress());
+                clientInfo = String.format(USER_INFO_FORMAT, sid, user.getLastHostAddress());
             }
         }
-        return userInfo;
+        return clientInfo;
     }
 
     /**
@@ -86,8 +84,8 @@ public class ClientInfoSupplier implements Supplier<String> {
      * 
      * @param log {@code true} to record
      */
-    public void setLogUserInfo(boolean log) {
-        this.logUserInfo = log;
+    public void setLogClientInfo(boolean log) {
+        this.logClientInfo = log;
     }
 
 }

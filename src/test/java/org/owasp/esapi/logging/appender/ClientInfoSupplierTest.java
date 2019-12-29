@@ -60,7 +60,6 @@ public class ClientInfoSupplierTest {
 		//Session value generation
 		when(mockRand.getRandomInteger(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt())).thenReturn(55555);
 		 
-		when(mockUser.getAccountName()).thenReturn(testName.getMethodName() + "-USER");
 		when(mockUser.getLastHostAddress()).thenReturn(testName.getMethodName() + "-HOST_ADDR");
 		
 	     
@@ -70,15 +69,14 @@ public class ClientInfoSupplierTest {
 	@Test
 	public void testHappyPath() throws Exception {
 		ClientInfoSupplier cis = new ClientInfoSupplier();
-		cis.setLogUserInfo(true);
+		cis.setLogClientInfo(true);
 		String result = cis.get();
 		
-		assertEquals(testName.getMethodName() + "-USER:"+ testName.getMethodName() + "-SESSION@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals(testName.getMethodName() + "-SESSION@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
 		verify(mockAuth,times(1)).getCurrentUser();
 		verify(mockRequest,times(1)).getSession(false);
 		verify(mockSession,times(1)).getAttribute(ESAPI_SESSION_ATTR);
-		verify(mockUser,times(1)).getAccountName();
 		verify(mockUser,times(1)).getLastHostAddress();
 		
 		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
@@ -87,7 +85,7 @@ public class ClientInfoSupplierTest {
 	@Test
 	public void testLogUserOff() {
 		ClientInfoSupplier cis = new ClientInfoSupplier();
-		cis.setLogUserInfo(false);
+		cis.setLogClientInfo(false);
 		String result = cis.get();
 		
 		assertTrue(result.isEmpty());
@@ -99,10 +97,10 @@ public class ClientInfoSupplierTest {
 	public void testLogUserNull() {
 		when(mockAuth.getCurrentUser()).thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
-		cis.setLogUserInfo(true);
+		cis.setLogClientInfo(true);
 		String result = cis.get();
 		
-		assertEquals("#ANONYMOUS#:"+testName.getMethodName()+ "-SESSION@#UNKNOWN_HOST#", result);
+		assertEquals(testName.getMethodName()+ "-SESSION@#UNKNOWN_HOST#", result);
 		
 		verify(mockAuth,times(1)).getCurrentUser();
 		verify(mockRequest,times(1)).getSession(false);
@@ -115,14 +113,13 @@ public class ClientInfoSupplierTest {
 	public void testNullRequest() throws Exception {
 		when(ESAPI.class, "currentRequest").thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
-		cis.setLogUserInfo(true);
+		cis.setLogClientInfo(true);
 		String result = cis.get();
 		
 		//sid is empty when request is null		
-		assertEquals(testName.getMethodName() + "-USER:@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals("@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
 		verify(mockAuth,times(1)).getCurrentUser();
-		verify(mockUser,times(1)).getAccountName();
 		verify(mockUser,times(1)).getLastHostAddress();
 		
 		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);
@@ -132,16 +129,15 @@ public class ClientInfoSupplierTest {
 	public void testNullSession() throws Exception {
 		when(mockRequest.getSession(false)).thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
-		cis.setLogUserInfo(true);
+		cis.setLogClientInfo(true);
 		String result = cis.get();
 		
 		//sid is empty when session is null		
-		assertEquals(testName.getMethodName() + "-USER:@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals("@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
 		
 		verify(mockAuth,times(1)).getCurrentUser();
 		verify(mockRequest,times(1)).getSession(false);
-		verify(mockUser,times(1)).getAccountName();
 		verify(mockUser,times(1)).getLastHostAddress();
 		
 		
@@ -154,18 +150,17 @@ public class ClientInfoSupplierTest {
 	public void testNullEsapiSession() throws Exception {
 		when(mockSession.getAttribute(ESAPI_SESSION_ATTR)).thenReturn(null);
 		ClientInfoSupplier cis = new ClientInfoSupplier();
-		cis.setLogUserInfo(true);
+		cis.setLogClientInfo(true);
 		String result = cis.get();
 		
 		//sid is empty when session is null		
-		assertEquals(testName.getMethodName() + "-USER:55555@"+testName.getMethodName() + "-HOST_ADDR", result);
+		assertEquals("55555@"+testName.getMethodName() + "-HOST_ADDR", result);
 		
 		verify(mockAuth,times(1)).getCurrentUser();
 		verify(mockRequest,times(1)).getSession(false);
 		verify(mockSession,times(1)).getAttribute(ESAPI_SESSION_ATTR);
 		verify(mockSession, times(1)).setAttribute(ESAPI_SESSION_ATTR, (""+55555));
 		verify(mockRand, times(1)).getRandomInteger(ArgumentMatchers.anyInt(), ArgumentMatchers.anyInt());
-		verify(mockUser,times(1)).getAccountName();
 		verify(mockUser,times(1)).getLastHostAddress();
 		
 		verifyNoMoreInteractions(mockAuth, mockRand, mockRequest, mockSession, mockUser);

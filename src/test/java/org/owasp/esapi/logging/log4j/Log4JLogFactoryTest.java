@@ -29,8 +29,6 @@ import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
 import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
-import org.owasp.esapi.logging.log4j.Log4JLogFactory;
-import org.owasp.esapi.logging.log4j.Log4JLogger;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -87,17 +85,19 @@ public class Log4JLogFactoryTest {
      */
     @Test
     public void checkPassthroughAppenderConstruct() throws Exception {
-        LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, "");
+        LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, true, "");
+        ArgumentCaptor<Boolean> userInfoCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Boolean> clientInfoCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Boolean> serverInfoCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Boolean> logAppNameCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<String> appNameCapture = ArgumentCaptor.forClass(String.class);
 
-        PowerMockito.whenNew(LogPrefixAppender.class).withArguments(clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
+        PowerMockito.whenNew(LogPrefixAppender.class).withArguments(userInfoCapture.capture(), clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
 
-        LogAppender appender = Log4JLogFactory.createLogAppender(true, false, true, testName.getMethodName());
+        LogAppender appender = Log4JLogFactory.createLogAppender(true, true, false, true, testName.getMethodName());
 
         Assert.assertEquals(stubAppender, appender);
+        Assert.assertTrue(userInfoCapture.getValue());
         Assert.assertTrue(clientInfoCapture.getValue());
         Assert.assertFalse(serverInfoCapture.getValue());
         Assert.assertTrue(logAppNameCapture.getValue());

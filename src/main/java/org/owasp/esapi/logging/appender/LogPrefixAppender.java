@@ -23,8 +23,10 @@ import org.owasp.esapi.Logger.EventType;
  */
 public class LogPrefixAppender implements LogAppender {
     /** Output format used to assemble return values. */
-    private static final String RESULT_FORMAT = "[%s %s -> %s] %s";// EVENT_TYPE, CLIENT_INFO, SERVER_INFO, messageBody
+    private static final String RESULT_FORMAT = "[%s %s:%s -> %s] %s";// EVENT_TYPE, CLIENT_INFO, SERVER_INFO, messageBody
 
+    /** Whether or not to record user information. */
+    private final boolean logUserInfo;
     /** Whether or not to record client information. */
     private final boolean logClientInfo;
     /** Whether or not to record server ip information. */
@@ -37,12 +39,14 @@ public class LogPrefixAppender implements LogAppender {
     /**
      * Ctr.
      * 
+     * @param logUserInfo      Whether or not to record user information
      * @param logClientInfo      Whether or not to record client information
      * @param logServerIp        Whether or not to record server ip information
      * @param logApplicationName Whether or not to record application name
      * @param appName            Application Name to record.
      */
-    public LogPrefixAppender(boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
+    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
+        this.logUserInfo = logUserInfo;
         this.logClientInfo = logClientInfo;
         this.logServerIp = logServerIp;
         this.logApplicationName = logApplicationName;
@@ -53,17 +57,21 @@ public class LogPrefixAppender implements LogAppender {
     public String appendTo(String logName, EventType eventType, String message) {
         EventTypeLogSupplier eventTypeSupplier = new EventTypeLogSupplier(eventType);
 
+        UserInfoSupplier userInfoSupplier = new UserInfoSupplier();
+        userInfoSupplier.setLogUserInfo(logUserInfo);
+        
         ClientInfoSupplier clientInfoSupplier = new ClientInfoSupplier();
-        clientInfoSupplier.setLogUserInfo(logClientInfo);
-
-        ServerInfoSupplier serverInfoSupplier = new ServerInfoSupplier(logName);
+        clientInfoSupplier.setLogClientInfo(logClientInfo);
+        
+                ServerInfoSupplier serverInfoSupplier = new ServerInfoSupplier(logName);
         serverInfoSupplier.setLogServerIp(logServerIp);
         serverInfoSupplier.setLogApplicationName(logApplicationName, appName);
 
         String eventTypeMsg = eventTypeSupplier.get();
+        String userInfoMsg = userInfoSupplier.get();
         String clientInfoMsg = clientInfoSupplier.get();
         String serverInfoMsg = serverInfoSupplier.get();
 
-        return String.format(RESULT_FORMAT, eventTypeMsg, clientInfoMsg, serverInfoMsg, message);
+        return String.format(RESULT_FORMAT, eventTypeMsg, userInfoMsg, clientInfoMsg, serverInfoMsg, message);
     }
 }
