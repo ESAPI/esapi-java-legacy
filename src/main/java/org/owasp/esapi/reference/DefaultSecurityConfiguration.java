@@ -153,7 +153,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
     public static final String LOG_SERVER_IP = "Logger.LogServerIP";
     public static final String LOG_USER_INFO = "Logger.UserInfo";
-    public static final String LOG_APP_INFO = "Logger.AppInfo";
+    public static final String LOG_CLIENT_INFO = "Logger.ClientInfo";
     public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
     public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
     public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";

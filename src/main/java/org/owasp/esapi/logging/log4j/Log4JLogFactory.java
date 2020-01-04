@@ -53,7 +53,7 @@ public class Log4JLogFactory implements LogFactory {
 
         
         boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
-        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APP_INFO);
+        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_CLIENT_INFO);
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
