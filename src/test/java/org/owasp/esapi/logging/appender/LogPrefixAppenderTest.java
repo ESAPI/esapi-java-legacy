@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
@@ -22,96 +21,146 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(LogPrefixAppender.class)
 public class LogPrefixAppenderTest {
-	@Rule
-	public TestName testName = new TestName();
+    private static final String EMPTY_RESULT = "   ";
+    private static final String ETL_RESULT = "EVENT_TYPE";
+    private static final String CIS_RESULT = "CLIENT_INFO";
+    private static final String UIS_RESULT = "USER_INFO";
+    private static final String SIS_RESULT = "SERVER_INFO";
 
-	private EventTypeLogSupplier etlsSpy;
-	private String etlsSpyGet = "EVENT_TYPE";
-
-	private ClientInfoSupplier cisSpy;
-    private String cisSpyGet = "CLIENT_INFO";
+    @Rule
+    public TestName testName = new TestName();
     
+    private String testLoggerName = testName.getMethodName() + "-LOGGER";
+    private String testLogMessage =  testName.getMethodName() + "-MESSAGE";
+    private String testApplicationName = testName.getMethodName() + "-APPLICATION_NAME";
+    private EventType testEventType = Logger.EVENT_UNSPECIFIED;
+
+    private EventTypeLogSupplier etlsSpy;
+    private ClientInfoSupplier cisSpy;
     private UserInfoSupplier uisSpy;
-    private String uisSpyGet = "USER_INFO";
+    private ServerInfoSupplier sisSpy;
 
-	private ServerInfoSupplier sisSpy;
-	private String sisSpyGet = "SERVER_INFO";
+    @Before
+    public void buildSupplierSpies() {
+        etlsSpy = spy(new EventTypeLogSupplier(Logger.EVENT_UNSPECIFIED));
+        uisSpy = spy(new UserInfoSupplier());
+        cisSpy = spy(new ClientInfoSupplier());
+        sisSpy = spy(new ServerInfoSupplier(testName.getMethodName()));
+        
+        testLoggerName = testName.getMethodName() + "-LOGGER";
+        testLogMessage =  testName.getMethodName() + "-MESSAGE";
+        testApplicationName =  testName.getMethodName() + "-APPLICATION_NAME";
+    }
+    @Test
+    public void testCtrArgTruePassthroughToDelegates() throws Exception {
+        when(etlsSpy.get()).thenReturn(ETL_RESULT);
+        when(uisSpy.get()).thenReturn(UIS_RESULT);
+        when(cisSpy.get()).thenReturn(CIS_RESULT);
+        when(sisSpy.get()).thenReturn(SIS_RESULT);
 
-	@Before
-	public void buildSupplierSpies() {
-		etlsSpy = spy(new EventTypeLogSupplier(Logger.EVENT_UNSPECIFIED));
-		uisSpy = spy(new UserInfoSupplier());
-		cisSpy = spy(new ClientInfoSupplier());
-		sisSpy = spy(new ServerInfoSupplier(testName.getMethodName()));
+        whenNew(EventTypeLogSupplier.class).withArguments(testEventType).thenReturn(etlsSpy);
+        whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
+        whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
+        whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
-		when(etlsSpy.get()).thenReturn(etlsSpyGet);
-		when(uisSpy.get()).thenReturn(uisSpyGet);
-		when(cisSpy.get()).thenReturn(cisSpyGet);
-		when(sisSpy.get()).thenReturn(sisSpyGet);
-	}
+        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName);
+        lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
-	@Test
-	public void verifyDelegatePassthroughCreation() throws Exception {
-		ArgumentCaptor<EventType> eventTypeCapture = ArgumentCaptor.forClass(EventType.class);
-		ArgumentCaptor<String> logNameCapture = ArgumentCaptor.forClass(String.class);
-		whenNew(EventTypeLogSupplier.class).withArguments(eventTypeCapture.capture()).thenReturn(etlsSpy);
-		whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
-		whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
-		whenNew(ServerInfoSupplier.class).withArguments(logNameCapture.capture()).thenReturn(sisSpy);
+        verify(uisSpy, times(1)).setLogUserInfo(true);
+        verify(cisSpy, times(1)).setLogClientInfo(true);
+        verify(sisSpy, times(1)).setLogServerIp(true);
+        verify(sisSpy, times(1)).setLogApplicationName(true, testApplicationName);
+    }
+    
+    @Test
+    public void testCtrArgFalsePassthroughToDelegates() throws Exception {
+        when(etlsSpy.get()).thenReturn(ETL_RESULT);
+        when(uisSpy.get()).thenReturn(UIS_RESULT);
+        when(cisSpy.get()).thenReturn(CIS_RESULT);
+        when(sisSpy.get()).thenReturn(SIS_RESULT);
 
-		LogPrefixAppender lpa = new LogPrefixAppender(true, true, true, true, testName.getMethodName() + "-APPLICATION");
-		String result = lpa.appendTo(testName.getMethodName() + "-LOGGER", Logger.EVENT_UNSPECIFIED,
-				testName.getMethodName() + "-MESSAGE");
+        whenNew(EventTypeLogSupplier.class).withArguments(testEventType).thenReturn(etlsSpy);
+        whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
+        whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
+        whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
-		// Based on the forced returns in the before block
-		assertEquals("[EVENT_TYPE USER_INFO:CLIENT_INFO -> SERVER_INFO] " + testName.getMethodName() + "-MESSAGE", result);
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
+        lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
-		assertEquals(Logger.EVENT_UNSPECIFIED, eventTypeCapture.getValue());
-		assertEquals(testName.getMethodName() + "-LOGGER", logNameCapture.getValue());
+        verify(uisSpy, times(1)).setLogUserInfo(false);
+        verify(cisSpy, times(1)).setLogClientInfo(false);
+        verify(sisSpy, times(1)).setLogServerIp(false);
+        verify(sisSpy, times(1)).setLogApplicationName(false, null);
+    }
+    
+    @Test
+    public void testDelegateCtrArgs() throws Exception {
+        ArgumentCaptor<EventType> eventTypeCapture = ArgumentCaptor.forClass(EventType.class);
+        ArgumentCaptor<String> logNameCapture = ArgumentCaptor.forClass(String.class);
+        whenNew(EventTypeLogSupplier.class).withArguments(eventTypeCapture.capture()).thenReturn(etlsSpy);
+        whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
+        whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
+        whenNew(ServerInfoSupplier.class).withArguments(logNameCapture.capture()).thenReturn(sisSpy);
 
-		verify(etlsSpy, times(1)).get();
-		verify(uisSpy, times(1)).get();
-		verify(cisSpy, times(1)).get();
-		verify(sisSpy, times(1)).get();
+        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName);
+        lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
-		verify(uisSpy, times(1)).setLogUserInfo(true);
-		verify(cisSpy, times(1)).setLogClientInfo(true);
-		verify(sisSpy, times(1)).setLogServerIp(true);
-		verify(sisSpy, times(1)).setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
+        assertEquals(testEventType, eventTypeCapture.getValue());
+        assertEquals(testLoggerName, logNameCapture.getValue());
+    }
 
-		verifyNoMoreInteractions(etlsSpy, uisSpy, cisSpy, sisSpy);
-	}
+    @Test
+    public void testLogContentWhenClientInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,SIS_RESULT, "[EVENT_TYPE USER_INFO -> SERVER_INFO]");
+    }
 
-	@Test
-	public void verifyDelegatePassthroughCreation2() throws Exception {
-		ArgumentCaptor<EventType> eventTypeCapture = ArgumentCaptor.forClass(EventType.class);
-		ArgumentCaptor<String> logNameCapture = ArgumentCaptor.forClass(String.class);
-		whenNew(EventTypeLogSupplier.class).withArguments(eventTypeCapture.capture()).thenReturn(etlsSpy);
-		whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
-		whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
-		whenNew(ServerInfoSupplier.class).withArguments(logNameCapture.capture()).thenReturn(sisSpy);
 
-		LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
-		String result = lpa.appendTo(testName.getMethodName() + "-LOGGER", Logger.EVENT_UNSPECIFIED,
-				testName.getMethodName() + "-MESSAGE");
+    @Test
+    public void testLogContentWhenUserInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,SIS_RESULT, "[EVENT_TYPE CLIENT_INFO -> SERVER_INFO]");
+    }
+    
+    @Test
+    public void testLogContentWhenClientInfoEmptyAndServerInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,EMPTY_RESULT, "[EVENT_TYPE USER_INFO]");
+    }
 
-		// Based on the forced returns in the before block
-		assertEquals("[EVENT_TYPE USER_INFO:CLIENT_INFO -> SERVER_INFO] " + testName.getMethodName() + "-MESSAGE", result);
+    @Test
+    public void testLogContentWhenUserInfoEmptyAndServerInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,EMPTY_RESULT, "[EVENT_TYPE CLIENT_INFO]");
+    }
 
-		assertEquals(Logger.EVENT_UNSPECIFIED, eventTypeCapture.getValue());
-		assertEquals(testName.getMethodName() + "-LOGGER", logNameCapture.getValue());
+    @Test
+    public void testLogContentWhenUserInfoAndClientInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, "[EVENT_TYPE -> SERVER_INFO]");
+    }
 
-		verify(etlsSpy, times(1)).get();
-		verify(uisSpy, times(1)).get();
-		verify(cisSpy, times(1)).get();
-		verify(sisSpy, times(1)).get();
+    @Test
+    public void testLogContentWhenServerInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, "[EVENT_TYPE USER_INFO:CLIENT_INFO]");
+    }
+    
+    @Test
+    public void testLogContentWhenUserInfoEmptyAndClientInfoEmptyAndServerInfoEmpty() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, "[EVENT_TYPE]");
+    }
 
-		verify(uisSpy, times(1)).setLogUserInfo(false);
-		verify(cisSpy, times(1)).setLogClientInfo(false);
-		verify(sisSpy, times(1)).setLogServerIp(false);
-		verify(sisSpy, times(1)).setLogApplicationName(false, null);
 
-		verifyNoMoreInteractions(etlsSpy, uisSpy, cisSpy, sisSpy);
-	}
+    private void runTest(String typeResult, String userResult, String clientResult, String serverResult, String exResult) throws Exception{
+        when(etlsSpy.get()).thenReturn(typeResult);
+        when(uisSpy.get()).thenReturn(userResult);
+        when(cisSpy.get()).thenReturn(clientResult);
+        when(sisSpy.get()).thenReturn(serverResult);
 
+        whenNew(EventTypeLogSupplier.class).withArguments(testEventType).thenReturn(etlsSpy);
+        whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
+        whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
+        whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
+
+        //Since everything is mocked these booleans don't much matter aside from the later verifies
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
+        String result =   lpa.appendTo(testLoggerName, testEventType, testLogMessage);
+        
+        assertEquals(exResult + " " + testName.getMethodName() + "-MESSAGE", result);
+    }
 }

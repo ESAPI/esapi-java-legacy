@@ -23,7 +23,7 @@ import org.owasp.esapi.Logger.EventType;
  */
 public class LogPrefixAppender implements LogAppender {
     /** Output format used to assemble return values. */
-    private static final String RESULT_FORMAT = "[%s %s:%s -> %s] %s";// EVENT_TYPE, CLIENT_INFO, SERVER_INFO, messageBody
+    private static final String RESULT_FORMAT = "[%s] %s"; //Assembled Prefix, MSG
 
     /** Whether or not to record user information. */
     private final boolean logUserInfo;
@@ -63,15 +63,34 @@ public class LogPrefixAppender implements LogAppender {
         ClientInfoSupplier clientInfoSupplier = new ClientInfoSupplier();
         clientInfoSupplier.setLogClientInfo(logClientInfo);
         
-                ServerInfoSupplier serverInfoSupplier = new ServerInfoSupplier(logName);
+        ServerInfoSupplier serverInfoSupplier = new ServerInfoSupplier(logName);
         serverInfoSupplier.setLogServerIp(logServerIp);
         serverInfoSupplier.setLogApplicationName(logApplicationName, appName);
 
-        String eventTypeMsg = eventTypeSupplier.get();
-        String userInfoMsg = userInfoSupplier.get();
-        String clientInfoMsg = clientInfoSupplier.get();
-        String serverInfoMsg = serverInfoSupplier.get();
+        String eventTypeMsg = eventTypeSupplier.get().trim();
+        String userInfoMsg = userInfoSupplier.get().trim();
+        String clientInfoMsg = clientInfoSupplier.get().trim();
+        String serverInfoMsg = serverInfoSupplier.get().trim();
+        
+        //If both user and client have content, then postfix the semicolon to the userInfoMsg at this point to simplify the StringBuilder operations later.
+        userInfoMsg = (!userInfoMsg.isEmpty() && !clientInfoMsg.isEmpty()) ? userInfoMsg + ":" : userInfoMsg;
+      
+        //If both server has content, then prefix the arrow to the serverInfoMsg at this point to simplify the StringBuilder operations later.
+        serverInfoMsg = (!serverInfoMsg.isEmpty()) ? "-> " + serverInfoMsg: serverInfoMsg;
 
-        return String.format(RESULT_FORMAT, eventTypeMsg, userInfoMsg, clientInfoMsg, serverInfoMsg, message);
+        String[] optionalPrefixContent = new String[] {userInfoMsg + clientInfoMsg, serverInfoMsg};
+
+        StringBuilder logPrefix = new StringBuilder();
+        //EventType is always appended
+        logPrefix.append(eventTypeMsg);
+        
+        for (String element : optionalPrefixContent) {
+            if (!element.isEmpty()) {
+                logPrefix.append(" ");
+                logPrefix.append(element);
+            }
+        }
+      
+        return String.format(RESULT_FORMAT, logPrefix.toString(), message);
     }
 }
