@@ -17,6 +17,7 @@ package org.owasp.esapi.logging.appender;
 
 import java.util.function.Supplier;
 
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.Logger.EventType;
 
 /**
@@ -34,11 +35,11 @@ public class EventTypeLogSupplier implements Supplier<String> {
      * @param evtyp EventType reference to supply log representation for
      */
     public EventTypeLogSupplier(EventType evtyp) {
-        this.eventType = evtyp;
+        this.eventType = evtyp == null ? Logger.EVENT_UNSPECIFIED : evtyp;
     }
 
     @Override
     public String get() {
-        return eventType == null ? "" : eventType.toString();
+        return eventType.toString();
     }
 }
