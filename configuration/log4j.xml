@@ -42,6 +42,6 @@
     <appender-ref ref="console" /> 
   </root>
 
-  <loggerFactory class="org.owasp.esapi.reference.Log4JLoggerFactory"/>
+  <loggerFactory class="org.owasp.esapi.logging.log4j.Log4JLogFactory"/>
   
 </log4j:configuration>

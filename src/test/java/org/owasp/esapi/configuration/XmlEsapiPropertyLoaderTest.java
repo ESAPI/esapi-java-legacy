@@ -1,6 +1,8 @@
 package org.owasp.esapi.configuration;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.configuration.consts.EsapiConfiguration;
@@ -17,6 +19,21 @@ public class XmlEsapiPropertyLoaderTest {
     private static int priority;
 
     private XmlEsapiPropertyLoader testPropertyLoader;
+
+    private static String DEVTEAM_CFG = "";
+    private static String OPSTEAM_CFG = "";
+
+    @BeforeClass
+    public static void captureEsapiConfigurations() {
+    	DEVTEAM_CFG = System.getProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(),"");
+    	OPSTEAM_CFG = System.getProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(),"");
+    }
+    
+    @AfterClass
+    public static void restoreEsapiConfigurations() {
+    	 System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), DEVTEAM_CFG);
+         System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), OPSTEAM_CFG);
+    }
 
     @Before
     public void init() {
