@@ -155,6 +155,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
     public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
     public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
+    public static final String VALIDATOR_IGNORE509 = "Validator.ValidationRule.getValid.ignore509Fix";
 
     /**
      * Special {@code System} property that, if set to {@code true}, will
