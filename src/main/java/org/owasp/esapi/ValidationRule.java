@@ -15,14 +15,23 @@ public interface ValidationRule {
 	 *            the value to be parsed
 	 * @return a validated value
 	 * @throws ValidationException
-	 *             if any validation rules fail
+	 *             if any validation rules fail, <i>except</i> if the
+     *             <b>{@code ESAPI.properties}></b> property
+     *             "Validator.ValidationRule.getValid.ignore509Fix" is set to
+     *             {@code true}, which is the default behavior for ESAPI 2.x
+     *             releases. See
+     *             {@link https://github.com/ESAPI/esapi-java-legacy/issues/509}
+     *             and {@link https://github.com/ESAPI/esapi-java-legacy/issues/521}
+     *             for futher details.
+     *
+     * @see #getValid(String context, String input, ValidationErrorList errorList)
 	 */
 	Object getValid(String context, String input)
 			throws ValidationException;
 
 	/**
-	 * Whether or not a valid valid can be null. getValid will throw an
-	 * Exception and getSafe will return the default value if flag is set to
+	 * Whether or not a valid valid can be null. {@code getValid} will throw an
+	 * Exception and {#code getSafe} will return the default value if flag is set to
 	 * true
 	 * 
 	 * @param flag
@@ -59,7 +68,8 @@ public interface ValidationRule {
 			ValidationErrorList errorList) throws ValidationException;
 
 	/**
-	 * Try to call get valid, then call sanitize, finally return a default value
+	 * Try to call {@code getvalid}, then call a 'sanitize' method for sanitization (if one exists),
+     * finally return a default value.
 	 */
 	Object getSafe(String context, String input);
 	
