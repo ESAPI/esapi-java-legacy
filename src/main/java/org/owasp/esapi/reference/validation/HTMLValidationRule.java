@@ -97,8 +97,33 @@ public class HTMLValidationRule extends StringValidationRule {
 		return safe;
 	}
 
+    /**
+     * This admittedly is an UGLY hack to ensure that issue 509 and it's corresponding
+     * fix in PR #510 does not break existing developer's existing code. Full
+     * details are described in GitHub issue 521.
+     */
+    private boolean ignoreIssue509Fix() {
+        boolean ignore = true;
+        try {
+            // DISCUSS:
+            // Hindsight: maybe we should have getBooleanProp(), getStringProp(),
+            // getIntProp() methods that take a default arg as well?
+            // At least for ESAPI 3.x.
+            ignore = ESAPI.securityConfiguration().getBooleanProp(
+                            org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_IGNORE509 );
+        } catch( ConfigurationException cex ) {
+            // OPEN ISSUE: Should we log this? I think so. Convince me otherwise. But maybe
+            //             we should only log it once or every Nth time??
+            LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
+                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_IGNORE509 +
+                           " either unset or not set to a boolean value. Assuming 'true'.", cex);
+        }
+
+        return ignore;
+    }
+
 	private String invokeAntiSamy( String context, String input ) throws ValidationException {
-		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
 	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
 				return null;
@@ -114,7 +139,11 @@ public class HTMLValidationRule extends StringValidationRule {
 
 			List<String> errors = test.getErrorMessages();
 			if ( !errors.isEmpty() ) {
-				throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
+                if ( ignoreIssue509Fix() ) {
+                    LOGGER.info(Logger.SECURITY_FAILURE, "Cleaned up invalit HTML input: " + errors );
+                } else {
+				    throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
+                }
 			}
 
 			return test.getCleanHTML().trim();
