@@ -50,6 +50,6 @@
     <appender-ref ref="file" />
   </root>
 
-  <loggerFactory class="org.owasp.esapi.reference.Log4JLoggerFactory"/>
+  <loggerFactory class="org.owasp.esapi.logging.log4j.Log4JLoggerFactory"/>
 
 </log4j:configuration>

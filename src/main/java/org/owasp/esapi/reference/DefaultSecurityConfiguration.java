@@ -152,6 +152,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
     public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
     public static final String LOG_SERVER_IP = "Logger.LogServerIP";
+    public static final String LOG_USER_INFO = "Logger.UserInfo";
+    public static final String LOG_CLIENT_INFO = "Logger.ClientInfo";
     public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
     public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
     public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
@@ -196,7 +198,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /*
      * Default Implementations
      */
-    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.reference.JavaLogFactory";
+    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.logging.java.JavaLogFactory";
     public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
     public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
     public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultAccessController";
