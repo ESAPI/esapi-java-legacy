@@ -25,6 +25,7 @@ https://github.com/ESAPI/esapi-java
 
 # ESAPI Deprecation Policy
 Unless we unintentionally screw-up, our intent is to keep classes, methods, and/or fields whihc have been annotated as "@deprecated" for a minimum of two (2) years or until the next major release number (e.g., 3.x as of now), which ever comes first, before we remove them.
+Note that this policy does not apply to classes under the **org.owasp.esapi.reference** package. You are not expected to be using such classes directly in your code.
 
 # Contributing to ESAPI legacy
 ## How can I contribute or help with fix bugs?
