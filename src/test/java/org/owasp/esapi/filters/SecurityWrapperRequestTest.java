@@ -18,8 +18,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 // A hack for now; eventually, I plan to move this into a new org.owasp.esapi.PropNames class. -kww
@@ -41,7 +41,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.Logger.EventType;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
@@ -61,15 +60,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ESAPI.class)
 public class SecurityWrapperRequestTest {
-	private static final String ESAPI_VALIDATOR_GETTER_METHOD_NAME = "validator";
-	private static final String ESAPI_GET_LOGGER_METHOD_NAME = "getLogger";
-    private static final String ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME = "securityConfiguration";
-    private static final String SECURITY_CONFIGURATION_QUERY_STRING_LENGTH_KEY_NAME = "HttpUtilities.URILENGTH";
-    private static final String SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME = "HttpUtilities.httpQueryParamValueLength";
+    protected static final String ESAPI_VALIDATOR_GETTER_METHOD_NAME = "validator";
+	protected static final String ESAPI_GET_LOGGER_METHOD_NAME = "getLogger";
+	protected static final String ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME = "securityConfiguration";
+    protected static final String SECURITY_CONFIGURATION_QUERY_STRING_LENGTH_KEY_NAME = "HttpUtilities.URILENGTH";
+    protected static final String SECURITY_CONFIGURATION_PARAMETER_STRING_LENGTH_KEY_NAME = "HttpUtilities.httpQueryParamValueLength";
     private static final String SECURITY_CONFIGURATION_HEADER_NAME_LENGTH_KEY_NAME = "HttpUtilities.MaxHeaderNameSize";
     private static final String SECURITY_CONFIGURATION_HEADER_VALUE_LENGTH_KEY_NAME = "HttpUtilities.MaxHeaderValueSize";
     
-    private static final int SECURITY_CONFIGURATION_TEST_LENGTH = 255;
+    protected static final int SECURITY_CONFIGURATION_TEST_LENGTH = 255;
 
     private static final String QUERY_STRING_CANONCALIZE_TYPE_KEY = "HTTPQueryString";
     private static final String PARAMETER_STRING_CANONCALIZE_TYPE_KEY = "HTTPParameterValue";
