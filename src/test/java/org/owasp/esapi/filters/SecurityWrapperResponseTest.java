@@ -40,6 +40,7 @@ public class SecurityWrapperResponseTest {
     private static final String HEADER_VALUE_CONTEXT = "HTTPHeaderValue";
     private static final String SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR = "HttpUtilities.MaxHeaderNameSize";
     private static final String SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR = "HttpUtilities.MaxHeaderValueSize";
+    
             
     @Rule
     public TestName testName = new TestName();
@@ -59,7 +60,8 @@ public class SecurityWrapperResponseTest {
     @Before
     public void setup() throws Exception {
         //preconfig will impact other tests unless isolated.  Still don't want to duplicate it though.
-        if (testName.getMethodName().startsWith("testSetHeader")) {
+        if (testName.getMethodName().startsWith("testSetHeader") ||
+                testName.getMethodName().startsWith("testAddHeader")) {
             PowerMockito.mockStatic(ESAPI.class);
             PowerMockito.when(ESAPI.class, SecurityWrapperRequestTest.ESAPI_VALIDATOR_GETTER_METHOD_NAME).thenReturn(mockValidator);
             PowerMockito.when(ESAPI.class, SecurityWrapperRequestTest.ESAPI_GET_LOGGER_METHOD_NAME, "SecurityWrapperResponse").thenReturn(mockLogger);
@@ -340,13 +342,273 @@ public class SecurityWrapperResponseTest {
                 ArgumentMatchers.contains("Attempt to set invalid header denied [HEADER_VALUE]"),
                 ArgumentMatchers.any(Exception.class));
     }
+        
+    @Test
+    public void testAddHeaderHappyPath() throws Exception {
+        String validateNameResponse = goodHeaderName;
+        String validateValueResponse = goodHeaderValue;
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateNameResponse);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateValueResponse);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName), ArgumentMatchers.eq(HEADER_NAME_CONTEXT), ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue), ArgumentMatchers.eq(HEADER_VALUE_CONTEXT), ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH), ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(1)).addHeader(validateNameResponse, validateValueResponse);
+        verify(mockLogger,times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));      
+    }
     
     @Test
-    public void testAddHeader(){
-        HttpServletResponse servResp = mock(HttpServletResponse.class);
-        SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
-        resp.addHeader("Foo", "bar");
-        verify(servResp, times(1)).addHeader("Foo", "bar");
+    public void testAddHeaderNameNull() throws Exception {
+        String validateNameResponse = null;
+        String validateValueResponse = goodHeaderValue;
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateNameResponse);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateValueResponse);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(0)).addHeader(anyString(), anyString());
+        verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
+                ArgumentMatchers.any(Exception.class));
+    }
+    
+    @Test
+    public void testAddHeaderNameEmpty() throws Exception {
+        String validateNameResponse = "     ";
+        String validateValueResponse = goodHeaderValue;
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateNameResponse);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateValueResponse);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(0)).addHeader(anyString(), anyString());
+        verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
+                ArgumentMatchers.any(Exception.class));
+    }
+    
+    @Test
+    public void testAddHeaderNameThrowsValidationException() throws Exception {
+        String validateValueResponse = goodHeaderValue;
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenThrow(ValidationException.class);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateValueResponse);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(0)).addHeader(anyString(), anyString());
+
+        verify(mockLogger, times(1)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),
+                ArgumentMatchers.contains("Attempt to set invalid header denied [HEADER_NAME]"),
+                ArgumentMatchers.any(Exception.class));
+    }
+    
+    @Test
+    public void testAddHeaderValueNull() throws Exception {
+        String validateNameResponse = goodHeaderName;
+        String validateValueResponse = null;
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateNameResponse);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateValueResponse);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(0)).addHeader(anyString(), anyString());
+        verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
+                ArgumentMatchers.any(Exception.class)); 
+    }
+    
+    @Test
+    public void testAddHeaderValueEmpty() throws Exception {
+        String validateNameResponse = goodHeaderName;
+        String validateValueResponse = "     ";
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateNameResponse);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateValueResponse);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(0)).addHeader(anyString(), anyString());
+        verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
+                ArgumentMatchers.any(Exception.class));   
+    }
+    
+    @Test
+    public void testAddHeaderValueThrowsValidationException() throws Exception {
+         String validateNameResponse = goodHeaderName;
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(validateNameResponse);
+      
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenThrow(ValidationException.class);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+      
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.addHeader(goodHeaderName, goodHeaderValue);
+
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockValidator, times(1)).getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderValue),
+                ArgumentMatchers.eq(HEADER_VALUE_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false));
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
+        verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
+        verify(mockResponse, times(0)).addHeader(anyString(), anyString());
+
+        verify(mockLogger, times(1)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),
+                ArgumentMatchers.contains("Attempt to set invalid header denied [HEADER_VALUE]"),
+                ArgumentMatchers.any(Exception.class));
     }
     
     @Test
