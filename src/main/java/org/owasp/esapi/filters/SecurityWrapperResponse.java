@@ -173,16 +173,28 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param value
      */
     public void addHeader(String name, String value) {
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+        String strippedName = StringUtilities.stripControls(name);
+        String strippedValue = StringUtilities.stripControls(value);
+        String safeName = null;
+        String safeValue = null;
         try {
-            // TODO: make stripping a global config
-            SecurityConfiguration sc = ESAPI.securityConfiguration();
-            String strippedName = StringUtilities.stripControls(name);
-            String strippedValue = StringUtilities.stripControls(value);
-            String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
-            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
-            getHttpServletResponse().addHeader(safeName, safeValue);
+            safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header NAME denied: HTTPHeaderName:"+ name, e);
+        }
+        
+        try {
+            safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
+        } catch (ValidationException e) {
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header VALUE denied: HTTPHeaderName:"+ name, e);
+        }
+        
+        boolean validName = StringUtilities.notNullOrEmpty(safeName, true);
+        boolean validValue = StringUtilities.notNullOrEmpty(safeValue, true);
+        
+        if (validName && validValue) {
+            getHttpServletResponse().addHeader(safeName, safeValue);
         }
     }
     
@@ -483,15 +495,28 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * @param value
      */
     public void setHeader(String name, String value) {
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+        String strippedName = StringUtilities.stripControls(name);
+        String strippedValue = StringUtilities.stripControls(value);
+        String safeName = null;
+        String safeValue = null;
         try {
-            String strippedName = StringUtilities.stripControls(name);
-            String strippedValue = StringUtilities.stripControls(value);
-            SecurityConfiguration sc = ESAPI.securityConfiguration();
-            String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
-            String safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
-            getHttpServletResponse().setHeader(safeName, safeValue);
+            safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
         } catch (ValidationException e) {
-            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header denied", e);
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header NAME denied: HTTPHeaderName:"+ name, e);
+        }
+        
+        try {
+            safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
+        } catch (ValidationException e) {
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header VALUE denied: HTTPHeaderName:"+ name, e);
+        }
+        
+        boolean validName = StringUtilities.notNullOrEmpty(safeName, true);
+        boolean validValue = StringUtilities.notNullOrEmpty(safeValue, true);
+        
+        if (validName && validValue) {
+            getHttpServletResponse().setHeader(safeName, safeValue);
         }
     }
 
