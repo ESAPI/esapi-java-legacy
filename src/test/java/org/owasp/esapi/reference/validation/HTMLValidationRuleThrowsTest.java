@@ -41,28 +41,28 @@ import static org.junit.Assert.*;
  * that were originally part of src/test/java/org/owasp/esapi/reference/ValidatorTest.java.
  *
  * This class tests the cases where the new ESAPI.property
- *      Validator.ValidationRule.getValid.ignore509Fix
- * is set to 'false', which causes certain calls to
+ *      Validator.HtmlValidationAction
+ * is set to "throw", which causes certain calls to
  * ESAPI.validator().getValidSafeHTML() or ESAPI.validator().isValidSafeHTML()
  * to throw a ValidationException rather than simply logging a warning and returning
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
  */
 public class HTMLValidationRuleThrowsTest {
 	private static class ConfOverride extends SecurityConfigurationWrapper {
-        private boolean desiredReturn = false;
+        private String desiredReturn = "clean";
 
-		ConfOverride(SecurityConfiguration orig, boolean desiredReturn) {
+		ConfOverride(SecurityConfiguration orig, String desiredReturn) {
 			super(orig);
             this.desiredReturn = desiredReturn;
 		}
 
 		@Override
-		public Boolean getBooleanProp(String propName) {
+		public String getStringProp(String propName) {
             // Would it be better making this file a static import?
-			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_IGNORE509 ) ) {
+			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
                 return desiredReturn;
             } else {
-                return super.getBooleanProp( propName );
+                return super.getStringProp( propName );
             }
         }
     }
@@ -80,7 +80,7 @@ public class HTMLValidationRuleThrowsTest {
 	@Before
     public void setUp() throws Exception {
 		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), false )
+			new ConfOverride( ESAPI.securityConfiguration(), "throw" )
 		);
 
     }

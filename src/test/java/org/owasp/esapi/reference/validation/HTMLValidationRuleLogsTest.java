@@ -40,31 +40,30 @@ import junit.framework.TestSuite;
  * that were originally part of src/test/java/org/owasp/esapi/reference/ValidatorTest.java.
  *
  * This class tests the cases where the new ESAPI.property
- *      Validator.ValidationRule.getValid.ignore509Fix
- * is set to 'true', which causes certain calls to
+ *      Validator.HtmlValidationAction
+ * is set to "clean", which causes certain calls to
  * ESAPI.validator().getValidSafeHTML() or ESAPI.validator().isValidSafeHTML()
  * to simply log a warning and return the cleansed (sanitizied) output rather
  * than throwing a ValidationException when certain unsafe input is
  * encountered.
  */
 public class HTMLValidationRuleLogsTest extends TestCase {
-	// private SecurityConfiguration origConfig;
 
 	private static class ConfOverride extends SecurityConfigurationWrapper {
-        private boolean desiredReturn = true;
+        private String desiredReturn = "clean";
 
-		ConfOverride(SecurityConfiguration orig, boolean desiredReturn) {
+		ConfOverride(SecurityConfiguration orig, String desiredReturn) {
 			super(orig);
             this.desiredReturn = desiredReturn;
 		}
 
 		@Override
-		public Boolean getBooleanProp(String propName) {
+		public String getStringProp(String propName) {
             // Would it be better making this file a static import?
-			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_IGNORE509 ) ) {
+			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
                 return desiredReturn;
             } else {
-                return super.getBooleanProp( propName );
+                return super.getStringProp( propName );
             }
         }
     }
@@ -90,7 +89,7 @@ public class HTMLValidationRuleLogsTest extends TestCase {
 	@Override
     protected void setUp() throws Exception {
 		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), true )
+			new ConfOverride( ESAPI.securityConfiguration(), "clean" )
 		);
 
     }
@@ -113,8 +112,8 @@ public class HTMLValidationRuleLogsTest extends TestCase {
         String result2 = instance.getValidSafeHTML("test", test2, 100, false, errors);
         assertEquals(test2, result2);
 
-        String test3 = "Test. <script>alert(document.cookie)</script>";
-        assertEquals("Test.", rule.getSafe("test", test3));
+        String test3 = "Test. <script>alert(document.cookie)</script> Cookie :-)";
+        assertEquals("Test.  Cookie :-)", rule.getSafe("test", test3));
 
         assertEquals("Test. &lt;<div>load=alert()</div>", rule.getSafe("test", "Test. <<div on<script></script>load=alert()"));
         assertEquals("Test. <div>b</div>", rule.getSafe("test", "Test. <div style={xss:expression(xss)}>b</div>"));
