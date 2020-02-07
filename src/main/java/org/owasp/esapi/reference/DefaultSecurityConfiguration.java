@@ -114,7 +114,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String DIGITAL_SIGNATURE_ALGORITHM = "Encryptor.DigitalSignatureAlgorithm";
     public static final String DIGITAL_SIGNATURE_KEY_LENGTH = "Encryptor.DigitalSignatureKeyLength";
     			// ==================================//
-    			//		New in ESAPI Java 2.0		 //
+    			//		New in ESAPI Java 2.x		 //
     			// ================================= //
     public static final String PREFERRED_JCE_PROVIDER = "Encryptor.PreferredJCEProvider";
     public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
@@ -157,7 +157,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
     public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
     public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
-    public static final String VALIDATOR_IGNORE509 = "Validator.ValidationRule.getValid.ignore509Fix";
+    public static final String VALIDATOR_HTML_VALIDATION_ACTION = "Validator.HtmlValidationAction";
 
     /**
      * Special {@code System} property that, if set to {@code true}, will
