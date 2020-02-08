@@ -31,7 +31,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * The Class HTMLValidationRuleLogsTest.
+ * The Class HTMLValidationRuleCleanTest.
  *
  * Based on original test cases, testGetValidSafeHTML() and
  * testIsValidSafeHTML() from ValidatorTest by
@@ -47,7 +47,7 @@ import junit.framework.TestSuite;
  * than throwing a ValidationException when certain unsafe input is
  * encountered.
  */
-public class HTMLValidationRuleLogsTest extends TestCase {
+public class HTMLValidationRuleCleanTest extends TestCase {
 
 	private static class ConfOverride extends SecurityConfigurationWrapper {
         private String desiredReturn = "clean";
@@ -69,7 +69,7 @@ public class HTMLValidationRuleLogsTest extends TestCase {
     }
 
     public static Test suite() {
-        return new TestSuite(HTMLValidationRuleLogsTest.class);
+        return new TestSuite(HTMLValidationRuleCleanTest.class);
     }
 
     /**
@@ -77,7 +77,7 @@ public class HTMLValidationRuleLogsTest extends TestCase {
      *
      * @param testName the test name
      */
-    public HTMLValidationRuleLogsTest(String testName) {
+    public HTMLValidationRuleCleanTest(String testName) {
         super(testName);
     }
 
