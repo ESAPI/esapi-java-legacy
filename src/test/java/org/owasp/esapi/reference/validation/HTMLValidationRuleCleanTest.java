@@ -26,9 +26,12 @@ import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.reference.validation.HTMLValidationRule;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Test;
+import org.junit.Before;
+import org.junit.After;
+import org.junit.Rule;
+import org.junit.rules.ExpectedException;
+import static org.junit.Assert.*;
 
 /**
  * The Class HTMLValidationRuleCleanTest.
@@ -47,7 +50,7 @@ import junit.framework.TestSuite;
  * than throwing a ValidationException when certain unsafe input is
  * encountered.
  */
-public class HTMLValidationRuleCleanTest extends TestCase {
+public class HTMLValidationRuleCleanTest {
 
 	private static class ConfOverride extends SecurityConfigurationWrapper {
         private String desiredReturn = "clean";
@@ -68,32 +71,29 @@ public class HTMLValidationRuleCleanTest extends TestCase {
         }
     }
 
-    public static Test suite() {
-        return new TestSuite(HTMLValidationRuleCleanTest.class);
-    }
 
     /**
      * Instantiates a new HTTP utilities test.
      *
      * @param testName the test name
      */
-    public HTMLValidationRuleCleanTest(String testName) {
-        super(testName);
+    public HTMLValidationRuleCleanTest() {
     }
 
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         ESAPI.override(null);
     }
 
-	@Override
-    protected void setUp() throws Exception {
+	@Before
+    public void setUp() throws Exception {
 		ESAPI.override(
 			new ConfOverride( ESAPI.securityConfiguration(), "clean" )
 		);
 
     }
 
+    @Test
     public void testGetValidSafeHTML() throws Exception {
         System.out.println("getValidSafeHTML");
         Validator instance = ESAPI.validator();
@@ -128,6 +128,7 @@ public class HTMLValidationRuleCleanTest extends TestCase {
     }
 
 
+    @Test
     public void testIsValidSafeHTML() {
         System.out.println("isValidSafeHTML");
         Validator instance = ESAPI.validator();
