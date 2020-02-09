@@ -46,5 +46,5 @@ Eventually, we would like to have BugCrowd handle this, but that's still a ways 
 There are some ESAPI security bulletins published in the "documentation" directory on GitHub.
 For details see:
 
-* (Security Bulletin #1 - MAC Bypass in ESAPI Symmetric Encryption)[documentation/ESAPI-security-bulletin1.pdf], which covers CVE-2013-5679 and CVE-2013-5960
-* (Security Bulletin #2 - How Does CVE-2019-17571 Impact ESAPI?)[documentation/ESAPI-security-bulletin2.pdf], which covers the Log4J 1 deserialization CVE.
+* [Security Bulletin #1 - MAC Bypass in ESAPI Symmetric Encryption](documentation/ESAPI-security-bulletin1.pdf), which covers CVE-2013-5679 and CVE-2013-5960
+* [Security Bulletin #2 - How Does CVE-2019-17571 Impact ESAPI?](documentation/ESAPI-security-bulletin2.pdf), which covers the Log4J 1 deserialization CVE.
