@@ -23,6 +23,10 @@ The default branch for ESAPI legacy is now the 'develop' branch (rather than the
 # Where can I find ESAPI 3.x?
 https://github.com/ESAPI/esapi-java
 
+# ESAPI Deprecation Policy
+Unless we unintentionally screw-up, our intent is to keep classes, methods, and/or fields whihc have been annotated as "@deprecated" for a minimum of two (2) years or until the next major release number (e.g., 3.x as of now), which ever comes first, before we remove them.
+Note that this policy does not apply to classes under the **org.owasp.esapi.reference** package. You are not expected to be using such classes directly in your code.
+
 # Contributing to ESAPI legacy
 ## How can I contribute or help with fix bugs?
 Fork and submit a pull request! Simple as pi! We generally only accept bug fixes, not new features because as a legacy project, we don't intend on adding new features, although we may make exceptions. If you wish to propose a new feature, the best place to discuss it is via the ESAPI-DEV mailing list mentioned below. Note that we vet all pull requests, including coding style of any contributions; use the same coding style found in the files you are already editing.

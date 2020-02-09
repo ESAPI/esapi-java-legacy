@@ -97,8 +97,60 @@ public class HTMLValidationRule extends StringValidationRule {
 		return safe;
 	}
 
+    /**
+     * Check whether we want the legacy behavior ("clean") or the presumably intended
+     * behavior of "throw" for how to treat unsafe HTML input when AntiSamy is invoked.
+     * This admittedly is an UGLY hack to ensure that issue 509 and its corresponding
+     * fix in PR #510 does not break existing developer's existing code. Full
+     * details are described in GitHub issue 521.
+     *
+     * Checks new ESAPI property "Validator.HtmlValidationAction". A value of "clean"
+     * means to revert to legacy behavior. A value of "throw" means to use the new
+     * behavior as implemented in GitHub issue 509.
+     *
+     * @return false - If  "Validator.HtmlValidationAction" is set to "throw". Otherwise {@code true}.
+     * @since 2.2.1.0
+     */
+    private boolean legacyHtmlValidation() {
+        boolean legacy = true;          // Make legacy support the default behavior for backward compatibility.
+        String propValue = "clean";     // For legacy support.
+        try {
+            // DISCUSS:
+            // Hindsight: maybe we should have getBooleanProp(), getStringProp(),
+            // getIntProp() methods that take a default arg as well?
+            // At least for ESAPI 3.x.
+            propValue = ESAPI.securityConfiguration().getStringProp(
+                                // Future: This will be moved to a new PropNames class
+                            org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION );
+            switch ( propValue.toLowerCase() ) {
+                case "throw":
+                    legacy = false;     // New, presumably correct behavior, as addressed by GitHub issue 509
+                    break;
+                case "clean":
+                    legacy = true;      // Give the caller that legacy behavior of sanitizing.
+                    break;
+                default:
+                    LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
+                                   org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION +
+                                   " was set to \"" + propValue + "\".  Must be set to either \"clean\"" +
+                                   " (the default for legacy support) or \"throw\"; assuming \"clean\" for legacy behavior.");
+                    legacy = true;
+                    break;
+            }
+        } catch( ConfigurationException cex ) {
+            // OPEN ISSUE: Should we log this? I think so. Convince me otherwise. But maybe
+            //             we should only log it once or every Nth time??
+            LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
+                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION +
+                           " must be set to either \"clean\" (the default for legacy support) or \"throw\"; assuming \"clean\"",
+                           cex);
+        }
+
+        return legacy;
+    }
+
 	private String invokeAntiSamy( String context, String input ) throws ValidationException {
-		// CHECKME should this allow empty Strings? "   " us IsBlank instead?
+		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
 	    if ( StringUtilities.isEmpty(input) ) {
 			if (allowNull) {
 				return null;
@@ -114,7 +166,11 @@ public class HTMLValidationRule extends StringValidationRule {
 
 			List<String> errors = test.getErrorMessages();
 			if ( !errors.isEmpty() ) {
-				throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
+                if ( legacyHtmlValidation() ) {        // See GitHub issues 509 and 521
+                    LOGGER.info(Logger.SECURITY_FAILURE, "Cleaned up invalid HTML input: " + errors );
+                } else {
+				    throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
+                }
 			}
 
 			return test.getCleanHTML().trim();
