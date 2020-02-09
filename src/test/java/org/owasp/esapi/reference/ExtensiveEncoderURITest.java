@@ -2,10 +2,12 @@ package org.owasp.esapi.reference;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,14 +36,24 @@ public class ExtensiveEncoderURITest {
 	@Parameters
 	public static Collection<String> getMyUris() throws Exception{
 		URL url = ExtensiveEncoderURITest.class.getResource("/urisForTest.txt");
-		String fileName = url.getFile();
-		File urisForText = new File(fileName);
 		
-		inputs = Files.readAllLines(urisForText.toPath(), StandardCharsets.UTF_8);
-		
+		try( InputStream is = url.openStream() ) {
+			InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
+			BufferedReader br = new BufferedReader(isr);
+			inputs = readAllLines(br);
+		}
 		return inputs;
 	}
-	
+
+	private static List<String> readAllLines(BufferedReader br) throws IOException {
+		List<String> lines = new ArrayList<>();
+		String line;
+		while ((line = br.readLine()) != null) {
+			lines.add(line);
+		}
+		return lines;
+	}
+
 	@Test
 	public void testUrlsFromFile() throws Exception{
 		assertEquals(this.expected, v.isValidURI("URL", uri, false));
