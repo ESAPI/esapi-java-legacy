@@ -689,8 +689,8 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>5.0.0</version>
                 <configuration>
-                    <failBuildOnCVSS>5.9</failBuildOnCVSS>
-                    <suppressionFile>./suppressions.xml</suppressionFile>
+                    <failBuildOnCVSS>5.0</failBuildOnCVSS>
+                    <suppressionFiles>./suppressions.xml</suppressionFiles>
                 </configuration>
                 <executions>
                     <execution>
