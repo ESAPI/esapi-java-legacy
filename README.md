@@ -23,6 +23,12 @@ The default branch for ESAPI legacy is now the 'develop' branch (rather than the
 # Where can I find ESAPI 3.x?
 https://github.com/ESAPI/esapi-java
 
+# Locating ESAPI Jar files
+The latest ESAPI 2.2.0.0 default configuration jar and its GPG signature can be found at [esapi-2.2.0.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.0.0/esapi-2.2.0.0-configuration.jar) and [esapi-2.2.0.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.0.0/esapi-2.2.0.0-configuration.jar.asc) respectively.
+
+The latest regular ESAPI jars can are available from Maven Central.
+
+
 # ESAPI Deprecation Policy
 Unless we unintentionally screw-up, our intent is to keep classes, methods, and/or fields whihc have been annotated as "@deprecated" for a minimum of two (2) years or until the next major release number (e.g., 3.x as of now), which ever comes first, before we remove them.
 Note that this policy does not apply to classes under the **org.owasp.esapi.reference** package. You are not expected to be using such classes directly in your code.
