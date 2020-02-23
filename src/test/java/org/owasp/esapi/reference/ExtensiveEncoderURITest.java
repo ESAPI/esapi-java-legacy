@@ -36,10 +36,8 @@ public class ExtensiveEncoderURITest {
 	@Parameters
 	public static Collection<String> getMyUris() throws Exception{
 		URL url = ExtensiveEncoderURITest.class.getResource("/urisForTest.txt");
-		
-		try( InputStream is = url.openStream() ) {
-			InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
-			BufferedReader br = new BufferedReader(isr);
+
+		try( BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)) ) {
 			inputs = readAllLines(br);
 		}
 		return inputs;
