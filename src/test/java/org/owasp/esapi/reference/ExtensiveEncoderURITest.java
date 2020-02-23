@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -22,7 +21,7 @@ import org.owasp.esapi.Validator;
 
 @RunWith(Parameterized.class)
 public class ExtensiveEncoderURITest {
-	static List<String> inputs = new ArrayList<String>();
+	static List<String> inputs = new ArrayList<>();
 	Validator v = ESAPI.validator();
 	String uri;
 	boolean expected;
@@ -53,7 +52,7 @@ public class ExtensiveEncoderURITest {
 	}
 
 	@Test
-	public void testUrlsFromFile() throws Exception{
+	public void testUrlsFromFile() {
 		assertEquals(this.expected, v.isValidURI("URL", uri, false));
 	}
 
