@@ -391,7 +391,9 @@ public class CryptoTokenTest {
     private static void nap(int n) {
         try {
             System.out.println("Sleeping " + n + " seconds...");
-            Thread.sleep( n * 1000 );
+            // adds additional time to make sure we sleep more than n seconds
+            int additionalTimeToSleep = 100;
+            Thread.sleep( n * 1000 + additionalTimeToSleep );
         } catch (InterruptedException e) {
             ;   // Ignore
         }
