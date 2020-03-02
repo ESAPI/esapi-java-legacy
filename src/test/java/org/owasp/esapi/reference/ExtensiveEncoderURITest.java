@@ -2,10 +2,11 @@ package org.owasp.esapi.reference;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -20,7 +21,7 @@ import org.owasp.esapi.Validator;
 
 @RunWith(Parameterized.class)
 public class ExtensiveEncoderURITest {
-	static List<String> inputs = new ArrayList<String>();
+	static List<String> inputs = new ArrayList<>();
 	Validator v = ESAPI.validator();
 	String uri;
 	boolean expected;
@@ -34,16 +35,24 @@ public class ExtensiveEncoderURITest {
 	@Parameters
 	public static Collection<String> getMyUris() throws Exception{
 		URL url = ExtensiveEncoderURITest.class.getResource("/urisForTest.txt");
-		String fileName = url.getFile();
-		File urisForText = new File(fileName);
-		
-		inputs = Files.readAllLines(urisForText.toPath(), StandardCharsets.UTF_8);
-		
+
+		try( BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)) ) {
+			inputs = readAllLines(br);
+		}
 		return inputs;
 	}
-	
+
+	private static List<String> readAllLines(BufferedReader br) throws IOException {
+		List<String> lines = new ArrayList<>();
+		String line;
+		while ((line = br.readLine()) != null) {
+			lines.add(line);
+		}
+		return lines;
+	}
+
 	@Test
-	public void testUrlsFromFile() throws Exception{
+	public void testUrlsFromFile() {
 		assertEquals(this.expected, v.isValidURI("URL", uri, false));
 	}
 

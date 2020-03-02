@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -581,13 +582,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         }
 
 		if (fileUrl != null) {
-			String fileLocation = fileUrl.getFile();
-			f = new File(fileLocation);
-			if (f.exists()) {
-				logSpecial("Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath());
-				return f;
-			} else {
-				logSpecial("Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath());
+			try {
+				String fileLocation = fileUrl.toURI().getPath();
+				f = new File(fileLocation);
+				if (f.exists()) {
+					logSpecial("Found in SystemResource Directory/resourceDirectory: " + f.getAbsolutePath());
+					return f;
+				} else {
+					logSpecial("Not found in SystemResource Directory/resourceDirectory (this should never happen): " + f.getAbsolutePath());
+				}
+			} catch (URISyntaxException e) {
+				logSpecial("Error while converting URL " + fileUrl + " to file path: " + e.getMessage());
 			}
 		} else {
 			logSpecial("Not found in SystemResource Directory/resourceDirectory: " + resourceDirectory + File.separator + filename);
