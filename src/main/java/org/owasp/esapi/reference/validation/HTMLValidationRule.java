@@ -46,22 +46,39 @@ public class HTMLValidationRule extends StringValidationRule {
 	/** OWASP AntiSamy markup verification policy */
 	private static Policy antiSamyPolicy = null;
 	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
+	private static final String ANTISAMYPOLICY_FILENAME = "antisamy-esapi.xml";
 
 	static {
         InputStream resourceStream = null;
 		try {
-			resourceStream = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
+			resourceStream = ESAPI.securityConfiguration().getResourceStream(ANTISAMYPOLICY_FILENAME);
 		} catch (IOException e) {
-			throw new ConfigurationException("Couldn't find antisamy-esapi.xml", e);
-	            }
+			LOGGER.info(null,"Loading " + ANTISAMYPOLICY_FILENAME + " from classpaths");
+
+            ClassLoader[] loaders = new ClassLoader[] {
+                    Thread.currentThread().getContextClassLoader(),
+                    ClassLoader.getSystemClassLoader(),
+                    HTMLValidationRule.class.getClassLoader()
+            };
+            for(ClassLoader loader : loaders) {
+                resourceStream = loader.getResourceAsStream(ANTISAMYPOLICY_FILENAME);
+                if(resourceStream!=null) {
+                    LOGGER.info(null, "Successfully loaded " + ANTISAMYPOLICY_FILENAME + " from classpath");
+                    break;
+                }
+            }
+	    }
         if (resourceStream != null) {
         	try {
 				antiSamyPolicy = Policy.getInstance(resourceStream);
 			} catch (PolicyException e) {
-				throw new ConfigurationException("Couldn't parse antisamy policy", e);
-		        }
-			}
+				throw new ConfigurationException("Couldn't parse " + ANTISAMYPOLICY_FILENAME, e);
+	        }
 		}
+        else {
+            throw new ConfigurationException("Couldn't find " + ANTISAMYPOLICY_FILENAME);
+		}
+	}
 
 	public HTMLValidationRule( String typeName ) {
 		super( typeName );
