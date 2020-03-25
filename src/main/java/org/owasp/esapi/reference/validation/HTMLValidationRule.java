@@ -16,6 +16,7 @@
 package org.owasp.esapi.reference.validation;
 
 import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -53,21 +54,11 @@ public class HTMLValidationRule extends StringValidationRule {
 		try {
 			resourceStream = ESAPI.securityConfiguration().getResourceStream(ANTISAMYPOLICY_FILENAME);
 		} catch (IOException e) {
-			LOGGER.info(null,"Loading " + ANTISAMYPOLICY_FILENAME + " from classpaths");
+			
+			LOGGER.info(Logger.EVENT_FAILURE, "Loading " + ANTISAMYPOLICY_FILENAME + " from classpaths");
 
-            ClassLoader[] loaders = new ClassLoader[] {
-                    Thread.currentThread().getContextClassLoader(),
-                    ClassLoader.getSystemClassLoader(),
-                    HTMLValidationRule.class.getClassLoader()
-            };
-            for(ClassLoader loader : loaders) {
-                resourceStream = loader.getResourceAsStream(ANTISAMYPOLICY_FILENAME);
-                if(resourceStream!=null) {
-                    LOGGER.info(null, "Successfully loaded " + ANTISAMYPOLICY_FILENAME + " from classpath");
-                    break;
-                }
-            }
-	    }
+			resourceStream = ESAPI.securityConfiguration().getResourceStreamFromClasspath(ANTISAMYPOLICY_FILENAME);
+		}
         if (resourceStream != null) {
         	try {
 				antiSamyPolicy = Policy.getInstance(resourceStream);
