@@ -13,7 +13,7 @@
  * @author kevin.w.wall@gmail.com
  * @since 2019
  */
-package org.owasp.esapi.reference;
+package org.owasp.esapi.reference.validation;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.SecurityConfiguration;
