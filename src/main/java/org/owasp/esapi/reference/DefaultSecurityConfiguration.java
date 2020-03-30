@@ -628,64 +628,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 	}
 	
     /**
-     * Used to load antisamy-esapi.xml from a variety of different classpath locations.
-     *
-     * @param fileName The resource file filename.
-     */
-	public InputStream getResourceStreamFromClasspath(String fileName) {
-		InputStream resourceStream = null;
-		
-		ClassLoader[] loaders = new ClassLoader[] {
-				Thread.currentThread().getContextClassLoader(),
-				ClassLoader.getSystemClassLoader(),
-				getClass().getClassLoader() 
-		};
-		
-        for (ClassLoader loader : loaders) {
-			// try root
-			String currentClasspathSearchLocation = "/ (root)";
-            resourceStream = loader.getResourceAsStream(DefaultSearchPath.ROOT.value() + fileName);
-			
-			// try resourceDirectory folder
-			if (resourceStream == null){
-				currentClasspathSearchLocation = resourceDirectory + "/";
-				resourceStream = loader.getResourceAsStream(DefaultSearchPath.RESOURCE_DIRECTORY.value() + fileName);
-			}
-			
-			// try .esapi folder. Look here first for backward compatibility.
-			if (resourceStream == null){
-				currentClasspathSearchLocation = ".esapi/";
-				resourceStream = loader.getResourceAsStream(DefaultSearchPath.DOT_ESAPI.value() + fileName);
-			}
-
-			// try esapi folder (new directory)
-			if (resourceStream == null){
-				currentClasspathSearchLocation = "esapi/";
-				resourceStream = loader.getResourceAsStream(DefaultSearchPath.ESAPI.value() + fileName);
-			}
-
-			// try resources folder
-			if (resourceStream == null){
-				currentClasspathSearchLocation = "resources/";
-				resourceStream = loader.getResourceAsStream(DefaultSearchPath.RESOURCES.value() + fileName);
-			}
-
-			// try src/main/resources folder
-			if (resourceStream == null){
-				currentClasspathSearchLocation = "src/main/resources/";
-				resourceStream = loader.getResourceAsStream(DefaultSearchPath.SRC_MAIN_RESOURCES.value() + fileName);
-			}
-
-            if (resourceStream != null) {
-				logSpecial("SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + currentClasspathSearchLocation + "'!");
-                break; // Outta here since we've found and loaded it.
-            }
-        }
-		
-		return resourceStream;
-	}
-	
-    /**
      * Used to load ESAPI.properties from a variety of different classpath locations.
      *
      * @param fileName The properties file filename.
