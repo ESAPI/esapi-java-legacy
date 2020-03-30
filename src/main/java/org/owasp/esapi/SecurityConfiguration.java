@@ -640,13 +640,6 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      */
     InputStream getResourceStream( String filename ) throws IOException;
 
-    /**
-     * Used to load antisamy-esapi.xml from a variety of different classpath locations.
-     *
-     * @param fileName The resource file filename.
-     */
-	InputStream getResourceStreamFromClasspath( String fileName );
-    	
 	/**
 	 * Sets the ESAPI resource directory.
 	 * 
