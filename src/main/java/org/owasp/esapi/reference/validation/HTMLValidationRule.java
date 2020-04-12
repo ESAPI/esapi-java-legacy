@@ -122,23 +122,36 @@ public class HTMLValidationRule extends StringValidationRule {
 
 	static {
         InputStream resourceStream = null;
+		String antisamyPolicyFilename = null;
+		
 		try {
-			resourceStream = ESAPI.securityConfiguration().getResourceStream(ANTISAMYPOLICY_FILENAME);
+			antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
+                    // Future: This will be moved to a new PropNames class
+                org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
+		} catch (ConfigurationException cex) {
+			
+            LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " + 
+                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
+                           " not set, using default value: " + ANTISAMYPOLICY_FILENAME);
+			antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
+		}
+		try {
+			resourceStream = ESAPI.securityConfiguration().getResourceStream(antisamyPolicyFilename);
 		} catch (IOException e) {
 			
-			LOGGER.info(Logger.EVENT_FAILURE, "Loading " + ANTISAMYPOLICY_FILENAME + " from classpaths");
+			LOGGER.info(Logger.EVENT_FAILURE, "Loading " + antisamyPolicyFilename + " from classpaths");
 
-			resourceStream = getResourceStreamFromClasspath(ANTISAMYPOLICY_FILENAME);
+			resourceStream = getResourceStreamFromClasspath(antisamyPolicyFilename);
 		}
         if (resourceStream != null) {
         	try {
 				antiSamyPolicy = Policy.getInstance(resourceStream);
 			} catch (PolicyException e) {
-				throw new ConfigurationException("Couldn't parse " + ANTISAMYPOLICY_FILENAME, e);
+				throw new ConfigurationException("Couldn't parse " + antisamyPolicyFilename, e);
 	        }
 		}
         else {
-            throw new ConfigurationException("Couldn't find " + ANTISAMYPOLICY_FILENAME);
+            throw new ConfigurationException("Couldn't find " + antisamyPolicyFilename);
 		}
 	}
 
