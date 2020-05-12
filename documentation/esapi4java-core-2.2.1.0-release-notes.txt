@@ -1,0 +1,115 @@
+Release notes for ESAPI 2.2.1.0
+    Release date: 2020-May-12
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.2.0.0, 2019-June-24
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+
+    TBD
+
+=================================================================================================================
+
+Basic ESAPI facts
+
+ESAPI 2.2.0.0 release:
+    194 Java source files
+    4150 JUnit tests in 118 Java source files
+
+ESAPI 2.2.1.0 release:
+    TBD
+
+GitHub Issues fixed in this release
+
+Issue #			GitHub Issue Title
+----------------------------------------------------------------------------------------------
+
+143             Enchance encodeForOS to auto-detect the underling OS
+226             Javadoc Inaccuracy in getRandomInteger() and getRandomReal()
+245             KeyDerivationFunction::computeDerivedKey - possible security level mismatch
+256             White space clean up
+382             Build Fails on path with space
+494             Encoder's encodeForCSS doesn't handle RGB Triplets
+503             Bug on on referrer header when value contains `&section` like `www.asdf.com?a=1&section=2`
+509             HTMLValidationRule.getValid(String,String) does not follow documented specifications
+511             Add missing documentation to Validator.addRule() and Validator.getRule()
+512             Update Apache Commons Bean Utils to 1.9.4
+515             Adding tests for getCookies (also 516)
+519             Issue 494 CSSCodec RGB Triplets
+530             Log Bridge Tests
+536             Various fixes
+538             Addressing log4j 1.x CVE-2019-17571
+
+-----------------------------------------------------------------------------
+
+        Changes requiring special attention
+
+-----------------------------------------------------------------------------
+
+TBD
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, some of which not tracked via GitHub issues
+
+-----------------------------------------------------------------------------
+
+Documentation updates for locating Jar files
+Unneeded code removed from ExtensiveEncoder
+Inline reader added to ExtensiveEncoder
+Additional time for windows to always sleep more than given seconds in CryptoTokenTest
+Change required by tweak to CipherText.toString() method
+Removed call to deprecated CryptoHelper.computeDerivedKey() method
+New JUnit tests for org.owasp.esapi.crypto.KeyDerivationFunction class
+Use existing toString method rather than a StringBuilder
+Documentation and tests
+JavaLogger move
+Splitting user infor from Client Supplier
+
+-----------------------------------------------------------------------------
+
+Developer Activity Report (Changes between release 2.2.0.0 and 2.2.1.0, i.e., between 2019-06-25 and 2020-05-12)
+Generated manually (this time)
+
+Developer       Total commits       Total Number
+                                  of Files Changed
+=====================================================
+jeremiahjstacey 11              68
+kwwall          15              26
+wiitek          3               6
+xeno6696        8               9
+Michael-Ziluck  2               3
+=====================================================
+
+-----------------------------------------------------------------------------
+
+53 Closed PRs since 2.2.0.0 release
+===================================
+504 New scripts to suppress noise for 'mvn test'
+510 Resolve #509 - Properly throw exception when HTML fails
+513 Close issue #512 by updating to 1.9.4 of Commons Beans Util.\
+519 Issue 494 CSSCodec RGB Triplets
+520 OS Name DefaultExecutorTests #143
+540 Issue 382: Build Fails on path with space
+596 Closes Issue 245
+
+-----------------------------------------------------------------------------
+
+Notice:
+
+    Release notes written by Bill Sempf (bill.sempf@owasp.org) please direct any communication to me.
+
+Project co-leaders
+    Kevin W. Wall (kwwall)
+    Matt Seil (xeno6696)
+
+Special shout-outs to:
+    Jeremiah Stacey (jeremiahjstacey) -- All around ESAPI support and JUnit test case developer extraordinaire
+    Dave Wichers (davewichers) - for Maven Central / Sonatype help
+
+Thanks you all for your time and effort to ESAPI and making it a better project. And if I've missed any, my apologies; let me know and I will correct it.
+
