@@ -78,11 +78,6 @@ public class AppGuardianConfiguration {
 	public static final String JAVASCRIPT_REDIRECT = "<html><body><script>document.location='" + JAVASCRIPT_TARGET_TOKEN + "';</script></body></html>";
 
 	/*
-	 * The aliases declared in the beginning of the config file.
-	 */
-	private HashMap<String,Object> aliases;
-
-	/*
 	 * Fail response settings.
 	 */
 	private String defaultErrorPage;
@@ -114,8 +109,6 @@ public class AppGuardianConfiguration {
 		afterBodyRules = new ArrayList<Rule>();
 		beforeResponseRules = new ArrayList<Rule>();
 		cookieRules = new ArrayList<Rule>();
-
-		aliases = new HashMap<String,Object>();
 	}
 
 	/*
@@ -160,9 +153,6 @@ public class AppGuardianConfiguration {
 		this.defaultResponseCode = defaultResponseCode;
 	}
 
-	public void addAlias(String key, Object obj) {
-		aliases.put(key, obj);
-	}
 
 	public List<Rule> getBeforeBodyRules() {
 		return beforeBodyRules;

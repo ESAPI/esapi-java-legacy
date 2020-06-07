@@ -94,7 +94,6 @@ public class ConfigurationParser {
 			doc = parser.build(stream);
 			root = doc.getRootElement();
 
-			Element aliasesRoot = root.getFirstChildElement("aliases");
 			Element settingsRoot = root.getFirstChildElement("settings");
 			Element authNRoot = root.getFirstChildElement("authentication-rules");
 			Element authZRoot = root.getFirstChildElement("authorization-rules");
@@ -107,29 +106,10 @@ public class ConfigurationParser {
 			
 			
 			/**
-			 * Parse the 'aliases' section.
-			 */
-			if ( aliasesRoot != null ) {
-				Elements aliases = aliasesRoot.getChildElements("alias");
-	
-				for(int i=0;i<aliases.size();i++) {
-					Element e = aliases.get(i);
-					String name = e.getAttributeValue("name");
-					String type = e.getAttributeValue("type");
-					String value = e.getValue();
-					if ( REGEX.equals(type) ) {
-						config.addAlias(name, Pattern.compile(value));
-					} else {
-						config.addAlias(name, value);
-					}
-				}
-			}
-			
-			/**
 			 * Parse the 'settings' section.
 			 */
 			if ( settingsRoot == null ) {
-				throw new ConfigurationException("", "The <settings> section is required");
+                throw new ConfigurationException("", "The <settings> section is required");
 			} else if ( settingsRoot != null ) {
 				
 				
