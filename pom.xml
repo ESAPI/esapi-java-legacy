@@ -228,7 +228,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.9</version>
             <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -531,7 +531,7 @@
                       </goals>
                       <configuration>
                         <rules>
-                          <dependencyConvergence />
+                          <dependencyConvergence/>
                           <requireJavaVersion>
                             <version>1.7</version>
                               <message>
