@@ -218,7 +218,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
             <!-- Using 4.2 because 4.3 requires Java 8. Trying to make sure ESAPI supports Java 7+ -->
-            <version>4.2</version>
+            <version>4.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache-extras.beanshell</groupId>
@@ -531,7 +531,7 @@
                       </goals>
                       <configuration>
                         <rules>
-                          <dependencyConvergence />
+                          <dependencyConvergence/>
                           <requireJavaVersion>
                             <version>1.7</version>
                               <message>
