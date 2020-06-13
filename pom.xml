@@ -258,7 +258,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-css</artifactId>
-            <version>1.11</version>
+            <version>1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -531,7 +531,7 @@
                       </goals>
                       <configuration>
                         <rules>
-                          <dependencyConvergence />
+                          <dependencyConvergence/>
                           <requireJavaVersion>
                             <version>1.7</version>
                               <message>
