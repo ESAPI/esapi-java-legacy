@@ -9,7 +9,7 @@ Enterprise Security API for Java (Legacy)
 <table border=0>
 <tr>
 <td>
-OWASP ESAPI (The OWASP Enterprise Security API) is a free, open source, web application security control library that makes it easier for programmers to write lower-risk applications. The ESAPI for Java library is designed to make it easier for programmers to retrofit security into existing applications. ESAPI for Java also serves as a solid foundation for new development.
+OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web application security control library that makes it easier for programmers to write lower-risk applications. The ESAPI for Java library is designed to make it easier for programmers to retrofit security into existing applications. ESAPI for Java also serves as a solid foundation for new development.
 </td>
 </tr>
 </table>
@@ -85,3 +85,6 @@ Old archives for the old Mailman mailing lists for ESAPI-Users and ESAPI-Dev are
 For a general overview of Google Groups and its web interface, see https://groups.google.com/forum/#!overview
 
 For assistance subscribing and unsubscribing to Google Groups, see https://webapps.stackexchange.com/questions/13508/how-can-i-subscribe-to-a-google-mailing-list-with-a-non-google-e-mail-address/15593#15593
+
+----------
+OWASP is a registered trademark of The OWASP Foundation.
