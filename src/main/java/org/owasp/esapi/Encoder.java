@@ -23,28 +23,102 @@ import org.owasp.esapi.errors.EncodingException;
 
 
 /**
- * The Encoder interface contains a number of methods for decoding input and encoding output
- * so that it will be safe for a variety of interpreters. To prevent
- * double-encoding, callers should make sure input does not already contain encoded characters
- * by calling canonicalize. Validator implementations should call canonicalize on user input
- * <b>before</b> validating to prevent encoded attacks.
+ * The {@code Encoder} interface contains a number of methods for decoding input and encoding output
+ * so that it will be safe for a variety of interpreters. Its primary use is to
+ * provide <i>output</i> encoding to prevent XSS.
  * <p>
- * All of the methods must use a "whitelist" or "positive" security model.
- * For the encoding methods, this means that all characters should be encoded, except for a specific list of
- * "immune" characters that are known to be safe.
- * <p>
- * The Encoder performs two key functions, encoding and decoding. These functions rely
+ * To prevent double-encoding, callers should make sure input does not already contain encoded characters
+ * by calling one of the {@code canonicalize()} methods. Validator implementations should call
+ * {@code canonicalize()} on user input <b>before</b> validating to prevent encoded attacks.
+ * </p><p>
+ * All of the methods <b>must</b> use an "allow list" or "positive" security model rather
+ * than a "deny list" or "negative" security model.  For the encoding methods, this means that
+ * all characters should be encoded, except for a specific list of "immune" characters that are
+ * known to be safe.
+ * </p><p>
+ * The {@code Encoder} performs two key functions, encoding and decoding. These functions rely
  * on a set of codecs that can be found in the org.owasp.esapi.codecs package. These include:
- * <ul><li>CSS Escaping</li>
+ * <ul>
+ * <li>CSS Escaping</li>
  * <li>HTMLEntity Encoding</li>
  * <li>JavaScript Escaping</li>
- * <li>MySQL Escaping</li>
- * <li>Oracle Escaping</li>
+ * <li>MySQL Database Escaping</li>
+ * <li>Oracle Database Escaping</li>
  * <li>Percent Encoding (aka URL Encoding)</li>
- * <li>Unix Escaping</li>
+ * <li>Unix Shell Escaping</li>
  * <li>VBScript Escaping</li>
- * <li>Windows Encoding</li></ul>
- * <p>
+ * <li>Windows Cmd Escaping</li>
+ * <li>LDAP Escaping</li>
+ * <li>XML and XML Attribute Encoding</li>
+ * <li>XPath Escaping</li>
+ * <li>Base64 Encoding</li>
+ * </ul>
+ * </p><p>
+ * The primary use of ESAPI {@code Encoder} is to prevent XSS vulnerabilities by
+ * providing output encoding using the various "encodeFor<i>XYZ</i>()" methods,
+ * where <i>XYZ</i> is one of CSS, HTML, HTMLAttribute, JavaScript, or URL. When
+ * using the ESAPI output encoders, it is important that you use the one for the
+ * <b>appropriate context</b> where the output will be rendered. For example, it
+ * the output appears in an JavaScript context, you should use {@code encodeForJavaScript}
+ * (note this includes all of the DOM JavaScript event handler attributes such as
+ * 'onfocus', 'onclick', 'onload', etc.). If the output would be rendered in an HTML
+ * attribute context (with the exception of the aforementioned 'onevent' type event
+ * handler attributes), you would use {@code encodeForHTMLAttribute}. If you are
+ * encoding anywhere a URL is expected (e.g., a 'href' attribute for for &lt;a&gt; or
+ * a 'src' attribute on a &lt;img&gt; tag, etc.), then you should use use {@code encodeForURL}.
+ * If encoding CSS, then use {@code encodeForCSS}. Etc. This is because there are
+ * different escaping requirements for these different contexts. Developers who are
+ * new to ESAPI or to defending against XSS vulnerabilities are highly encouraged to
+ * <i>first</i> read the
+ * <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html" target="_blank" rel="noopener noreferreer">
+ * OWASP Cross-Site Scripting Prevention Cheat Sheet</a>.
+ * </p><p>
+ * Note that in addition to these encoder methods, ESAPI also provides a JSP Tag
+ * Library ({@code META-INF/esapi.tld}) in the ESAPI jar. This allows one to use
+ * the more convenient JSP tags in JSPs. These * tags are simply wrappers for the
+ * various "encodeForX<i>XYZ</i>()" methods.
+ * </p><p>
+ * <b>Some important final words:</b>
+ * <ul>
+ * <li><b>Where to output encode:</b>
+ * Knowing where to place the output encoding in your code
+ * is just as important as knowing which context (HTML, HTML attribute, CSS,
+ * JavaScript, or URL) to use for the output encoding and surprisingly the two
+ * are often related. In general, output encoding should be done just prior to the
+ * output being rendered because that is what determines what the appropriate
+ * context is for the output encoding. In fact, doing output encoding on
+ * untrusted data that is stored and to be used later--whether stored in an HTTP
+ * session or in a database--is almost always considered an anti-pattern. An
+ * example of this is one gathers and stores some untrusted data item such as an
+ * email address from a user. A developer thinks "let's output encode this and
+ * store the encoded data in the database, thus making the untrusted data safe
+ * to use, thus saving us all the encoding troubles later on". On the surface,
+ * that sounds like a reasonable approach. The problem is how to know what
+ * output encoding to use, not only for now, but for all possible <i>future</i>
+ * uses? It might be that the current application code base is only using it in
+ * an HTML contexxt that is displayed in an HTML report or shown in an HTML
+ * context in the user's profile. But what it it is later used in a mailto: URL?
+ * Then instead of HTML encoding, it would need to have URL encoding. Similarly,
+ * what if there is a later switch made to use AJAX and the untrusted email
+ * address gets used in a JavaScript context? The complication is that even if
+ * you know with certainty today all the ways that an untrusted data item is
+ * used in your application, it is genrally impossible to predict all the
+ * contexts that it may be used in the future, not only in your application, but
+ * in other applications that could access that data in the database.
+ * </li>
+ * <li><b>Avoiding multiple <i>nested</i> contexts:</b>
+ * A really tricky situation to get correct is hen there are multiple nested
+ * encoding contexts. But far, the most common place this seems to come up is
+ * untrusted URLs used in JavaScript. How should you handle that? Well, to be
+ * honest, the best way is to rewrite your code to avoid it.  An example of
+ * this that is well worth reading may be found at
+ * <a href="https://lists.owasp.org/pipermail/esapi-dev/2012-March/002090"
+ * target="_blank" rel="noopener noreferrer">ESAPI-DEV mailing list archives:
+ * URL encoding within JavaScript</a>. Be sure to read the entire thread.
+ * The question itself is too nuanced to be answered in Javadoc, but now,
+ * hopefully you are at least aware of the potential pitfalls.
+ * </li>
+ * </ul>
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
