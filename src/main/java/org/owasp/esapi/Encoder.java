@@ -149,6 +149,14 @@ public interface Encoder {
      *     String url = ESAPI.encoder().canonicalize( request.getParameter("url"), false, false);
      * </pre>
 	 *
+	 *<b>WARNING!!!</b> Please note that this method is incompatible with URLs and if there exist any HTML Entities
+	 *that correspond with parameter values in a URL such as <pre>&para;</pre> in a URL like 
+	 *<pre>https://foo.com/?bar=foo&parameter=wrong</pre> you will get a mixed encoding validation exception.
+	 *
+	 *If you wish to canonicalize a URL/URI use the method <pre>Encoder.getCanonicalizedURI(URI dirtyUri);</pre>
+	 *
+	 *<p>
+	 *
 	 * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
 	 *
 	 * @param input
