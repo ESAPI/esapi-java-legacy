@@ -94,17 +94,17 @@ import org.owasp.esapi.errors.EncodingException;
  * stores some untrusted data item such as an email address from a user. A
  * developer thinks "let's output encode this and store the encoded data in
  * the database, thus making the untrusted data safe to use all the time, thus
-* saving all of use developers all the encoding troubles later on". On the surface,
+* saving all of us developers all the encoding troubles later on". On the surface,
  * that sounds like a reasonable approach. The problem is how to know what
  * output encoding to use, not only for now, but for all possible <i>future</i>
  * uses? It might be that the current application code base is only using it in
- * an HTML contexxt that is displayed in an HTML report or shown in an HTML
+ * an HTML context that is displayed in an HTML report or shown in an HTML
  * context in the user's profile. But what if it is later used in a {@code mailto:} URL?
  * Then instead of HTML encoding, it would need to have URL encoding. Similarly,
  * what if there is a later switch made to use AJAX and the untrusted email
  * address gets used in a JavaScript context? The complication is that even if
  * you know with certainty today all the ways that an untrusted data item is
- * used in your application, it is genrally impossible to predict all the
+ * used in your application, it is generally impossible to predict all the
  * contexts that it may be used in the future, not only in your application, but
  * in other applications that could access that data in the database.
  * </li>
@@ -119,7 +119,7 @@ import org.owasp.esapi.errors.EncodingException;
  * URL encoding within JavaScript</a>. Be sure to read the entire thread.
  * The question itself is too nuanced to be answered in Javadoc, but now,
  * hopefully you are at least aware of the potential pitfalls. There is little
- * avaiable research or examples on how to do output encodeing when multiple
+ * available research or examples on how to do output encoding when multiple
  * mixed encodings are required, although one that you may find useful is
  * <a href="https://arxiv.org/pdf/1804.01862.pdf" target="_blank"
  * rel="noopener noreferrer">
@@ -132,10 +132,10 @@ import org.owasp.esapi.errors.EncodingException;
  * <pre>
  *      &lt;/script&gt;alert(1)&lt;/script&gt;
  * </pre>
- * or similiar simplistic XSS attack payloads and if that is properly encoded
+ * or similar simplistic XSS attack payloads and if that is properly encoded
  * (or, you don't see an alert box popped in your browser), you consider it
  * "problem fixed", consider the unit testing sufficient. Unfortunately, that
- * minimalist testing may not always detect places were you used the wrong decoder. You need to do better.
+ * minimalist testing may not always detect places where you used the wrong decoder. You need to do better.
  * Fortunately, the aforementioned link,
  * <a href="https://arxiv.org/pdf/1804.01862.pdf" target="_blank"
  * rel="noopener noreferrer">
@@ -143,7 +143,7 @@ import org.owasp.esapi.errors.EncodingException;
  * provides some insight. You may also wish to look at the
  * <a href="https://github.com/ESAPI/esapi-java-legacy/blob/develop/src/test/java/org/owasp/esapi/reference/EncoderTest.java"
  * target="_blank" rel="noopener noreferrer">ESAPI Encoder JUnittest cases</a>.
- * If you are really ambitious, an excellent resource for XSS attack patters is
+ * If you are really ambitious, an excellent resource for XSS attack patterns is
  * <a href="https://beefproject.com/" target="_blank" rel="noopener noreferrer">BeEF - The Browser Exploitation Framework Project</a>.
  * </li>
  * </ul>
