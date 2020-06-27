@@ -87,4 +87,4 @@ For a general overview of Google Groups and its web interface, see https://group
 For assistance subscribing and unsubscribing to Google Groups, see https://webapps.stackexchange.com/questions/13508/how-can-i-subscribe-to-a-google-mailing-list-with-a-non-google-e-mail-address/15593#15593
 
 ----------
-OWASP is a registered trademark of The OWASP Foundation.
+OWASP is a registered trademark of the OWASP Foundation, Inc.
