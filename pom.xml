@@ -228,7 +228,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.5.8</version>
+            <version>1.5.10</version>
             <exclusions>
                 <exclusion>
                     <groupId>xml-apis</groupId>
@@ -243,7 +243,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.26</version>
+            <version>1.7.30</version>
         </dependency>
 
         <!--
@@ -258,7 +258,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-css</artifactId>
-            <version>1.11</version>
+            <version>1.13</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -535,8 +535,8 @@
                           <requireJavaVersion>
                             <version>1.7</version>
                               <message>
-                                ESAPI 2.x now uses the JDK1.7 for it's baseline. Please make sure that your
-                                JAVA_HOME environment variable is pointed to a JDK1.7 distribution.
+                                ESAPI 2.x now uses the JDK1.7 for its baseline. Please make sure that your
+                                JAVA_HOME environment variable is pointed to a JDK1.7 or later distribution.
                               </message>
                           </requireJavaVersion>
                           <enforceBytecodeVersion>
