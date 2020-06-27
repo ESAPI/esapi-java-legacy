@@ -711,7 +711,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
      * on the Session ID cookie.  The 'secure' flag is also set if the property
-     * {@Code HttpUtilities.ForceSecureCookies} is set to {@Code true} in the <b>ESAPI.properties</b> file.
+     * {@code HttpUtilities.ForceSecureCookies} is set to {@code true} in the <b>ESAPI.properties</b> file.
      * @return The current session
      */
     public HttpSession getSession() {
@@ -720,10 +720,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Returns the current session associated with this request or, if there is no current session and
-     * {@Code create} is {@Code true}, returns a new session and sets the HttpOnly flag on the session ID cookie.
-     * The 'secure' flag is also set if the property {@Code HttpUtilities.ForceSecureCookies} is set to
-     * {@Code true} in the <b>ESAPI.properties</b> file.
-     * @param create If set to {@Code true}, create a new session if one doesn't exist, otherwise return {@Code null}
+     * {@code create} is {@code true}, returns a new session and sets the HttpOnly flag on the session ID cookie.
+     * The 'secure' flag is also set if the property {@code HttpUtilities.ForceSecureCookies} is set to
+     * {@code true} in the <b>ESAPI.properties</b> file.
+     * @param create If set to {@code true}, create a new session if one doesn't exist, otherwise return {@code null}
      * @return The current session
      */
     public HttpSession getSession(boolean create) {

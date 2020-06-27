@@ -8,7 +8,7 @@ import junit.framework.TestCase;
  * @author August Detlefsen (augustd at codemagi dot com)
  *         <a href="http://www.codemagi.com">CodeMagi, Inc.</a>
  * @since October 15, 2010
- * @see org.owasp.esapi.reference.Log4JLoggerTest
+ * @see org.owasp.esapi.logging.log4j.Log4JLoggerTest
  */
 public class TestInfo extends TestCase {
 
