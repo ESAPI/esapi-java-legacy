@@ -640,7 +640,6 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      */
     InputStream getResourceStream( String filename ) throws IOException;
 
-    	
 	/**
 	 * Sets the ESAPI resource directory.
 	 * 

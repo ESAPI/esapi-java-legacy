@@ -47,20 +47,24 @@ import static org.junit.Assert.*;
  * to throw a ValidationException rather than simply logging a warning and returning
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
  */
-public class HTMLValidationRuleThrowsTest {
+public class HTMLValidationRuleClasspathTest {
 	private static class ConfOverride extends SecurityConfigurationWrapper {
-        private String desiredReturn = "clean";
+        private String desiredReturnAction = "clean";
+        private String desiredReturnConfigurationFile = "antisamy-esapi.xml";
 
-		ConfOverride(SecurityConfiguration orig, String desiredReturn) {
+		ConfOverride(SecurityConfiguration orig, String desiredReturnAction, String desiredReturnConfigurationFile) {
 			super(orig);
-            this.desiredReturn = desiredReturn;
+            this.desiredReturnAction = desiredReturnAction;
+			this.desiredReturnConfigurationFile = desiredReturnConfigurationFile;
 		}
 
 		@Override
 		public String getStringProp(String propName) {
             // Would it be better making this file a static import?
 			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
-                return desiredReturn;
+                return desiredReturnAction;
+            } else if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE ) ) {
+                return desiredReturnConfigurationFile;
             } else {
                 return super.getStringProp( propName );
             }
@@ -80,22 +84,22 @@ public class HTMLValidationRuleThrowsTest {
 	@Before
     public void setUp() throws Exception {
 		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), "throw" )
+			new ConfOverride( ESAPI.securityConfiguration(), "throw", "antisamy-esapi-CP.xml" )
 		);
 
     }
 
     @Test
     public void testGetValid() throws Exception {
-        System.out.println("getValid");
+        System.out.println("getValidCP");
         Validator instance = ESAPI.validator();
-        HTMLValidationRule rule = new HTMLValidationRule("test");
+        HTMLValidationRule rule = new HTMLValidationRule("testCP");
         ESAPI.validator().addRule(rule);
 
         thrownEx.expect(ValidationException.class);
         thrownEx.expectMessage("test: Invalid HTML input");
 
-        instance.getRule("test").getValid("test", "Test. <script>alert(document.cookie)</script>");
+        instance.getRule("testCP").getValid("test", "Test. <script>alert(document.cookie)</script>");
     }
 
     @Test
