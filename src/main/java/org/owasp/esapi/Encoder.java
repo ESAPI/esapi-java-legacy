@@ -76,8 +76,9 @@ import org.owasp.esapi.errors.EncodingException;
  * </p><p>
  * Note that in addition to these encoder methods, ESAPI also provides a JSP Tag
  * Library ({@code META-INF/esapi.tld}) in the ESAPI jar. This allows one to use
- * the more convenient JSP tags in JSPs. These * tags are simply wrappers for the
- * various "encodeForX<i>XYZ</i>()" methods.
+ * the more convenient JSP tags in JSPs. These JSP tags are simply wrappers for the
+ * various these "encodeForX<i>XYZ</i>()" method docmented in this {@code Encoder}
+ * interface.
  * </p><p>
  * <b>Some important final words:</b>
  * <ul>
@@ -134,15 +135,15 @@ import org.owasp.esapi.errors.EncodingException;
  * </pre>
  * or similar simplistic XSS attack payloads and if that is properly encoded
  * (or, you don't see an alert box popped in your browser), you consider it
- * "problem fixed", consider the unit testing sufficient. Unfortunately, that
- * minimalist testing may not always detect places where you used the wrong decoder. You need to do better.
- * Fortunately, the aforementioned link,
+ * "problem fixed", and consider the unit testing sufficient. Unfortunately, that
+ * minimalist testing may not always detect places where you used the wrong output
+ * encoder. You need to do better. Fortunately, the aforementioned link,
  * <a href="https://arxiv.org/pdf/1804.01862.pdf" target="_blank"
  * rel="noopener noreferrer">
  * Automated Detecting and Repair of Cross-SiteScripting Vulnerabilities through Unit Testing</a>
- * provides some insight. You may also wish to look at the
+ * provides some insight on this. You may also wish to look at the
  * <a href="https://github.com/ESAPI/esapi-java-legacy/blob/develop/src/test/java/org/owasp/esapi/reference/EncoderTest.java"
- * target="_blank" rel="noopener noreferrer">ESAPI Encoder JUnittest cases</a>.
+ * target="_blank" rel="noopener noreferrer">ESAPI Encoder JUnittest cases</a> for ideas.
  * If you are really ambitious, an excellent resource for XSS attack patterns is
  * <a href="https://beefproject.com/" target="_blank" rel="noopener noreferrer">BeEF - The Browser Exploitation Framework Project</a>.
  * </li>
@@ -366,12 +367,12 @@ public interface Encoder {
      * The best approach is to make sure any single-quotes are double-quoted.
      * Another possible approach is to use the {escape} syntax described in the
      * JDBC specification in section 1.5.6.
-     * 
+     *
      * However, this syntax does not work with all drivers, and requires
      * modification of all queries.
      * 
-     * @see <a href="http://java.sun.com/j2se/1.4.2/docs/guide/jdbc/getstart/statement.html">JDBC Specification</a>
-     * @see java.sql.PreparedStatement
+     * @see <a href="https://download.oracle.com/otn-pub/jcp/jdbc-4_2-mrel2-spec/jdbc4.2-fr-spec.pdf">JDBC Specification</a>
+     * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html">java.sql.PreparedStatement</a>
      *  
      * @param codec 
      *      a Codec that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
@@ -462,15 +463,15 @@ public interface Encoder {
 
     /**
      * Encode data for use in an XML element. The implementation should follow the <a
-     * href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding
-     * Standard</a> from the W3C.
+     * href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
+     * from W3C.
      * <p>
      * The use of a real XML parser is strongly encouraged. However, in the
      * hopefully rare case that you need to make sure that data is safe for
      * inclusion in an XML document and cannot use a parse, this method provides
      * a safe mechanism to do so.
      * 
-     * @see <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding Standard</a>
+     * @see <a href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
      * 
      * @param input
      *          the text to encode for XML
@@ -481,16 +482,16 @@ public interface Encoder {
     String encodeForXML(String input);
 
     /**
-     * Encode data for use in an XML attribute. The implementation should follow
-     * the <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding
-     * Standard</a> from the W3C.
+     * Encode data for use in an XML attribute. The implementation should follow the <a
+     * href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
+     * from W3C.
      * <p>
      * The use of a real XML parser is highly encouraged. However, in the
      * hopefully rare case that you need to make sure that data is safe for
      * inclusion in an XML document and cannot use a parse, this method provides
      * a safe mechanism to do so.
      * 
-     * @see <a href="http://www.w3schools.com/xml/xml_encoding.asp">XML Encoding Standard</a>
+     * @see <a href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
      * 
      * @param input
      *          the text to encode for use as an XML attribute
