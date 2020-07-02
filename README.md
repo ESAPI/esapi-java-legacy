@@ -61,7 +61,7 @@ More detail is available in the file '[SECURITY.md](https://raw.githubuserconten
 
 ## Where to Find More Information on ESAPI
 
-*Wiki:* https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API
+*Wiki:* https://owasp.org/www-project-enterprise-security-api/
 
 *Nightly Build:* Travis CI - https://travis-ci.org/bkimminich/esapi-java-legacy
 
