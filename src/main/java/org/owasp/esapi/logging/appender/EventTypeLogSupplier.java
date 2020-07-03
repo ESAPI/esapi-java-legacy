@@ -15,7 +15,8 @@
 
 package org.owasp.esapi.logging.appender;
 
-import java.util.function.Supplier;
+// Uncomment and use once ESAPI supports Java 8 as the minimal baseline.
+// import java.util.function.Supplier;
 
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Logger.EventType;
@@ -25,7 +26,8 @@ import org.owasp.esapi.Logger.EventType;
  * an EventType for logging
  *
  */
-public class EventTypeLogSupplier implements Supplier<String> {
+public class EventTypeLogSupplier // implements Supplier<String>
+{
     /** EventType reference to supply log representation of. */
     private final EventType eventType;
 
@@ -38,7 +40,7 @@ public class EventTypeLogSupplier implements Supplier<String> {
         this.eventType = evtyp == null ? Logger.EVENT_UNSPECIFIED : evtyp;
     }
 
-    @Override
+    // @Override    -- Uncomment when we switch to Java 8 as minimal baseline.
     public String get() {
         return eventType.toString();
     }

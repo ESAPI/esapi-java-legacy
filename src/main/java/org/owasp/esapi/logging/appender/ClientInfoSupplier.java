@@ -15,7 +15,8 @@
 
 package org.owasp.esapi.logging.appender;
 
-import java.util.function.Supplier;
+// Uncomment and use once ESAPI supports Java 8 as the minimal baseline.
+// import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -27,7 +28,8 @@ import org.owasp.esapi.User;
  * Supplier which can provide a String representing the client-side connection
  * information.
  */
-public class ClientInfoSupplier implements Supplier<String> {
+public class ClientInfoSupplier // implements Supplier<String>
+{
     /** Default Last Host string if the Authenticated user is null.*/
     private static final String DEFAULT_LAST_HOST = "#UNKNOWN_HOST#";
     /** Session Attribute containing the ESAPI Session id. */
@@ -47,7 +49,7 @@ public class ClientInfoSupplier implements Supplier<String> {
     /** Whether to log the user info from this instance. */
     private boolean logClientInfo = true;
 
-    @Override
+    // @Override    -- Uncomment when we switch to Java 8 as minimal baseline.
     public String get() {
         String clientInfo = "";
 
