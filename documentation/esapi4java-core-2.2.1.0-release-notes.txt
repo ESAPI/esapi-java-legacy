@@ -1,5 +1,5 @@
 Release notes for ESAPI 2.2.1.0
-    Release date: 2020-TBD
+    Release date: 2020-July-??
     Project leaders:
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Matt Seil <matt.seil@owasp.org>
@@ -10,22 +10,26 @@ Previous release: ESAPI 2.2.0.0, 2019-June-24
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
 
-    TBD
+This is a minor release. It's main purpose was to update dependencies to eliminate potential vulnerabilities arising from dependencies with known CVEs. See the section "Changes requiring special attention" below for additional details.
+
+Also special props to Bill Sempf for stepping up and volunteering to prepare the initial cut of these release notes. Had he not done so, this release either would not have release notes or it would have been delayed another 6 months while I procrastinated further with various distractions. (Squirrel!)
 
 =================================================================================================================
 
 Basic ESAPI facts
+-----------------
 
 ESAPI 2.2.0.0 release:
     194 Java source files
     4150 JUnit tests in 118 Java source files
 
 ESAPI 2.2.1.0 release:
-    TBD
+    211 Java source files
+    4309 JUnit tests in 134 Java source files
 
 GitHub Issues fixed in this release
 
-Issue #			GitHub Issue Title
+Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
 
 143             Enchance encodeForOS to auto-detect the underling OS
@@ -40,17 +44,30 @@ Issue #			GitHub Issue Title
 512             Update Apache Commons Bean Utils to 1.9.4
 515             Adding tests for getCookies (also 516)
 519             Issue 494 CSSCodec RGB Triplets
+522             javadoc corrections for Encoder.canonicalize()
 530             Log Bridge Tests
 536             Various fixes
 538             Addressing log4j 1.x CVE-2019-17571
+552             Rewrite implementation of some ESAPI classes to remove Java 8 dependencies
 
 -----------------------------------------------------------------------------
 
         Changes requiring special attention
 
 -----------------------------------------------------------------------------
+The new default ESAPI logger is JUL (java.util.logging packages) and we have deprecated the use of Log4j 1.x as it is way past the end-of-life and we now support SLF4J. We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on EsAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
 
-TBD
+Related to that CVE and how it affects ESAPI, be sure to read
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
+which describes CVE-2019-17571, a deserialization vulnerability in Log4j 1.2.17. ESAPI is not affected by this (even if you chose to use Log4j 1 as you default ESAPI logger). This security bulletin describes why this CVE is not exploitable as used by ESAPI.
+
+Notable dependency updates (excludes those only used with JUnit tests):
+    antiSamy            1.5.8   ->  1.5.10
+    batik-css           1.11    ->  1.13
+    commons-beansutil   1.9.3   ->  1.9.4
+    slf4j-api           1.7.26  ->  1.7.30
+
+Finally, while ESAPI still supports JDK 7 (even though that too is way past end-of-life), the next ESAPI release will move to JDK 8 as the minimal baseline. (We already use Java 8 for development but still to Java 7 source and runtime compatiblity.)
 
 -----------------------------------------------------------------------------
 
@@ -67,28 +84,29 @@ Removed call to deprecated CryptoHelper.computeDerivedKey() method
 New JUnit tests for org.owasp.esapi.crypto.KeyDerivationFunction class
 Use existing toString method rather than a StringBuilder
 Documentation and tests
-JavaLogger move
-Splitting user infor from Client Supplier
+JavaLogger moved 
+Splitting user info from Client Supplier
 
 -----------------------------------------------------------------------------
 
 Developer Activity Report (Changes between release 2.2.0.0 and 2.2.1.0, i.e., between 2019-06-25 and 2020-05-12)
 Generated manually (this time)
 
-Developer       Total commits       Total Number
-                                  of Files Changed
+Developer       Total       Total Number
+(GitHub ID)     commits   of Files Changed
 =====================================================
 jeremiahjstacey 11              68
-kwwall          15              26
+kwwall          16              26
 wiitek          3               6
 xeno6696        8               9
 Michael-Ziluck  2               3
+sempf           1               1
 =====================================================
 
 -----------------------------------------------------------------------------
 
-53 Closed PRs since 2.2.0.0 release
-===================================
+53 Closed PRs since 2.2.0.0 release (those rejected not listed)
+===============================================================
 504 New scripts to suppress noise for 'mvn test'
 510 Resolve #509 - Properly throw exception when HTML fails
 513 Close issue #512 by updating to 1.9.4 of Commons Beans Util.\
@@ -101,7 +119,7 @@ Michael-Ziluck  2               3
 
 Notice:
 
-    Release notes written by Bill Sempf (bill.sempf@owasp.org) please direct any communication to me.
+    Release notes written by Bill Sempf (bill.sempf@owasp.org), but please direct any communication to the project leaders.
 
 Project co-leaders
     Kevin W. Wall (kwwall)
@@ -109,7 +127,7 @@ Project co-leaders
 
 Special shout-outs to:
     Jeremiah Stacey (jeremiahjstacey) -- All around ESAPI support and JUnit test case developer extraordinaire
-    Dave Wichers (davewichers) - for Maven Central / Sonatype help
+    Dave Wichers (davewichers) - for pom.xml improvements
+    Bill Sempf -- for these release notes. Awesome job, Bill. I owe you a brew.
 
 Thanks you all for your time and effort to ESAPI and making it a better project. And if I've missed any, my apologies; let me know and I will correct it.
-
