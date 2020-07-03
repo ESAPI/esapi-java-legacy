@@ -37,7 +37,7 @@
     </licenses>
 
     <name>ESAPI</name>
-    <url>https://www.owasp.org/index.php/Category:OWASP_Enterprise_Security_API</url>
+    <url>https://owasp.org/www-project-enterprise-security-api/</url>
     <description>The Enterprise Security API (ESAPI) project is an OWASP project
         to create simple strong security controls for every web platform.
         Security controls are not simple to build. You can read about the
