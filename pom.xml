@@ -49,7 +49,7 @@
 
     <organization>
         <name>The Open Web Application Security Project (OWASP)</name>
-        <url>http://www.owasp.org/index.php</url>
+        <url>https://owasp.org</url>
     </organization>
 
     <mailingLists>
@@ -90,7 +90,7 @@
     <developers>
         <developer>
             <name>Jeff Williams</name>
-            <organization>Aspect Security</organization>
+            <organization>Contrast Security</organization>
             <roles>
                 <role>Project Inventor</role>
             </roles>
@@ -121,7 +121,6 @@
     <contributors>
         <contributor>
             <name>Dave Wichers</name>
-            <organization>Aspect Security</organization>
         </contributor>
         <contributor>
             <name>Jim Manico</name>
@@ -133,12 +132,17 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.jmh>1.23</version.jmh>
+        <version.powermock>2.0.7</version.powermock>
+        <version.spotbugs>4.0.4</version.spotbugs>
+        <version.surefire>3.0.0-M5</version.surefire>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+            <!-- Note: v3.1.0+ causes compilation errors. So would have to fix to upgrade. -->
             <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
@@ -253,6 +257,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+            <!-- Note: commons-io:2.7+ require Java 8, so can't upgrade past 2.6 -->
             <version>2.6</version>
         </dependency>
         <dependency>
@@ -292,24 +297,38 @@
             <version>1.4.01</version>
         </dependency>
 
+        <!-- SpotBugs dependencies -->
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>${version.spotbugs}</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>net.jcip</groupId>
+            <artifactId>jcip-annotations</artifactId>
+            <version>1.0</version>
+            <optional>true</optional>
+        </dependency>
+
         <!-- Dependencies which are ONLY used for JUnit tests -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <version>4.13</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.61</version>
+            <version>1.65.01</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito -->
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito2</artifactId>
-            <version>2.0.2</version>
+            <version>${version.powermock}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -319,31 +338,13 @@
                   <groupId>org.javassist</groupId>
                   <artifactId>javassist</artifactId>
                 </exclusion>
-                <!-- The following exclusions and import of mockito-core 2.27.0 result in 100% convergence in the test dependencies, -->
-                <exclusion>
-                    <groupId>org.mockito</groupId>
-                    <artifactId>mockito-core</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.powermock</groupId>
-                    <artifactId>powermock-reflect</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.bytebuddy</groupId>
-                    <artifactId>byte-buddy</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>net.bytebuddy</groupId>
-                    <artifactId>byte-buddy-agent</artifactId>
-                </exclusion>
             </exclusions>
-        	<!-- exclusions>
-            </exclusions -->
         </dependency>
         <!-- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with 
              another import by a dependency of powermock-api-mockito2. -->
         <dependency>
           <!-- This version is compatible with Java 7, the previous version was not (by accident). -->
+          <!-- Versions 3.26.0-GA and later require Java 8. -->
           <groupId>org.javassist</groupId>
           <artifactId>javassist</artifactId>
           <version>3.25.0-GA</version>
@@ -352,19 +353,26 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>2.27.0</version>
+            <!-- mockito-core v3.0.0+ requires Java 8 -->
+            <version>2.28.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>2.0.2</version>
+            <version>${version.powermock}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-reflect</artifactId>
-            <version>2.0.2</version>
+            <version>${version.powermock}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -384,13 +392,13 @@
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.21</version>
+            <version>${version.jmh}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.21</version>
+            <version>${version.jmh}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -401,51 +409,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.1</version>
+                    <version>3.1.2</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>2.5.3</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
 
-        <plugins>        
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>3.1.11</version>
-                <dependencies>
-                  <!-- overwrite dependency on spotbugs if you want to specify the version of spotbugs -->
-                  <dependency>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs</artifactId>
-                    <version>3.1.12</version>
-                  </dependency>
-                </dependencies>
-                <executions>
-                    <execution>
-                      <!-- requires Java 8. So only run it if using Java 8 or greater.
-                           This property set in a profile below. -->
-                      <phase>${PhaseIfJava8plus}</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <findbugsXmlOutput>true</findbugsXmlOutput>
-                    <findbugsXmlWithMessages>true</findbugsXmlWithMessages>
-                    <xmlOutput>true</xmlOutput>
-                    <threshold>Low</threshold>
-                    <effort>Max</effort>
-                    <relaxed>false</relaxed>
-                </configuration>
-            </plugin>
-
+        <plugins>
             <plugin>
                 <groupId>net.sourceforge.maven-taglib</groupId>
                 <artifactId>maven-taglib-plugin</artifactId>
@@ -467,7 +446,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
+                <version>3.8.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
@@ -501,7 +480,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.2</version>
+                <version>3.0.0-M1</version>
             </plugin>
 
             <plugin>
@@ -516,32 +495,59 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M2</version>
+                <version>3.0.0-M3</version>
                 <dependencies>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>extra-enforcer-rules</artifactId>
                     <version>1.2</version>
                   </dependency>
+                  <dependency>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>animal-sniffer-enforcer-rule</artifactId>
+                    <!-- Apparently 1.18+ requires Java 8 to run, so this is the most recent version of this plugin we can use -->
+                    <version>1.17</version>
+                  </dependency>
                 </dependencies>
                 <executions>
                     <execution>
-                      <goals>
-                        <goal>enforce</goal>
-                      </goals>
+                      <id>check-java-versions</id>
+                      <phase>compile</phase>
+                      <goals><goal>enforce</goal></goals>
                       <configuration>
                         <rules>
                           <dependencyConvergence />
                           <requireJavaVersion>
                             <version>1.7</version>
-                              <message>
+                            <message>
                                 ESAPI 2.x now uses the JDK1.7 for its baseline. Please make sure that your
                                 JAVA_HOME environment variable is pointed to a JDK1.7 or later distribution.
-                              </message>
+                            </message>
                           </requireJavaVersion>
                           <enforceBytecodeVersion>
                             <maxJdkVersion>1.7</maxJdkVersion>
+                            <ignoreOptionals>true</ignoreOptionals>
+                            <ignoredScopes></ignoredScopes> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
+                            <message>Dependencies shouldn't require Java 8+</message>
                           </enforceBytecodeVersion>
+                        </rules>
+                        <fail>true</fail>
+                      </configuration>
+                    </execution>
+                    <execution>
+                      <id>check-java7API-signatures</id>
+                      <phase>compile</phase>
+                      <goals><goal>enforce</goal></goals>
+                      <configuration>
+                        <rules>
+                          <checkSignatureRule implementation="org.codehaus.mojo.animal_sniffer.enforcer.CheckSignatureRule">
+                            <signature>
+                              <groupId>org.codehaus.mojo.signature</groupId>
+                              <!-- Check against Java 7 API -->
+                              <artifactId>java17</artifactId>
+                              <version>1.0</version>
+                            </signature>
+                          </checkSignatureRule>
                         </rules>
                       </configuration>
                     </execution>
@@ -564,13 +570,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>3.0.0-M1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -584,7 +590,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-javadoc-plugin</artifactId>
-               <version>3.1.0</version>
+               <version>3.2.0</version>
                <configuration>
                  <source>7</source>
                  <doclint>none</doclint>
@@ -608,13 +614,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.11.0</version>            
+                <version>3.13.0</version>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.0.0</version>
+               <version>3.1.0</version>
             </plugin>
 
             <plugin>
@@ -626,13 +632,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.7.1</version>
+                <version>3.9.1</version>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-source-plugin</artifactId>
-               <version>3.0.1</version>
+               <version>3.2.1</version>
                <executions>
                  <execution>
                    <id>attach-sources</id>
@@ -644,14 +650,14 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.22.1</version>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${version.surefire}</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.1</version>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>${version.surefire}</version>
             </plugin>
 
             <plugin>
@@ -687,7 +693,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>5.0.0</version>
+                <version>5.3.2</version>
                 <configuration>
                     <failBuildOnCVSS>5.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
@@ -767,11 +773,11 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
+                <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
             </plugin>
             <plugin>
                 <!--  Using this introduces these errors: Skipped "JDepend" report (jdepend-maven-plugin:2.0:generate), file "jdepend-report.html" already exists.
@@ -779,7 +785,7 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
             </plugin>
-            <!-- Check for updates to dependencies and report on them. -->
+            <!-- Check for available updates to dependencies and report on them. -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
@@ -799,12 +805,38 @@
 
     <profiles>
         <profile>
+          <id>Java8plus</id>
           <activation>
             <jdk>[1.8,)</jdk>
           </activation>
           <properties>
             <PhaseIfJava8plus>site</PhaseIfJava8plus>
           </properties>
+
+          <reporting>
+            <plugins>
+
+            <!-- Run SpotBugs with the FindSecBugs plugin and include results in site report. 
+                 Is put in this profile as SpotBugs requires Java 8+ -->
+              <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${version.spotbugs}</version>
+                <configuration>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.h3xstream.findsecbugs</groupId>
+                            <artifactId>findsecbugs-plugin</artifactId>
+                            <version>1.10.1</version>
+                        </plugin>
+                    </plugins>
+                    <effort>Max</effort>
+                    <relaxed>false</relaxed>
+                </configuration>
+              </plugin>
+            </plugins>
+          </reporting>
+
         </profile>
 
         <profile>
