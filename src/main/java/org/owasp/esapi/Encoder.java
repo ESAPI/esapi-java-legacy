@@ -468,7 +468,7 @@ public interface Encoder {
      * <p>
      * The use of a real XML parser is strongly encouraged. However, in the
      * hopefully rare case that you need to make sure that data is safe for
-     * inclusion in an XML document and cannot use a parse, this method provides
+     * inclusion in an XML document and cannot use a parser, this method provides
      * a safe mechanism to do so.
      * 
      * @see <a href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
