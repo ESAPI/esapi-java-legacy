@@ -30,6 +30,7 @@ import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
 import org.owasp.validator.html.PolicyException;
 import org.owasp.validator.html.ScanException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 
 /**
@@ -46,22 +47,113 @@ public class HTMLValidationRule extends StringValidationRule {
 	/** OWASP AntiSamy markup verification policy */
 	private static Policy antiSamyPolicy = null;
 	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
+	private static final String ANTISAMYPOLICY_FILENAME = "antisamy-esapi.xml";
+
+    /**
+     * Used to load antisamy-esapi.xml from a variety of different classpath locations.
+	 * The classpath locations are the same classpath locations as used to load esapi.properties.
+	 * See DefaultSecurityConfiguration.DefaultSearchPath.
+     *
+     * @param fileName The resource file filename.
+     */
+	private static InputStream getResourceStreamFromClasspath(String fileName) {
+		InputStream resourceStream = null;
+		
+		ClassLoader[] loaders = new ClassLoader[] {
+				Thread.currentThread().getContextClassLoader(),
+				ClassLoader.getSystemClassLoader(),
+				ESAPI.securityConfiguration().getClass().getClassLoader()  
+						/* can't use just getClass.getClassLoader() in a static context, so using the DefaultSecurityConfiguration class. */
+		};
+		
+		String[] classLoaderNames = {
+				"current thread context class loader",
+				"system class loader",
+				"class loader for DefaultSecurityConfiguration class"
+		};
+		
+		int i = 0;
+        for (ClassLoader loader : loaders) {
+			// try root
+			String currentClasspathSearchLocation = "/ (root)";
+            resourceStream = loader.getResourceAsStream(DefaultSecurityConfiguration.DefaultSearchPath.ROOT.value() + fileName);
+			
+			// try resourceDirectory folder
+			if (resourceStream == null){
+				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.RESOURCE_DIRECTORY.value();
+				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
+			}
+			
+			// try .esapi folder. Look here first for backward compatibility.
+			if (resourceStream == null){
+				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.DOT_ESAPI.value();
+				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
+			}
+
+			// try esapi folder (new directory)
+			if (resourceStream == null){
+				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.ESAPI.value();
+				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
+			}
+
+			// try resources folder
+			if (resourceStream == null){
+				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.RESOURCES.value();
+				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
+			}
+
+			// try src/main/resources folder
+			if (resourceStream == null){
+				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.SRC_MAIN_RESOURCES.value();
+				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
+			}
+
+            if (resourceStream != null) {
+				LOGGER.info(Logger.EVENT_FAILURE, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + 
+					currentClasspathSearchLocation + "' using " + classLoaderNames[i] + "!");
+                break; // Outta here since we've found and loaded it.
+            }
+			
+			i++;
+        }
+		
+		return resourceStream;
+	}
 
 	static {
         InputStream resourceStream = null;
+		String antisamyPolicyFilename = null;
+		
 		try {
-			resourceStream = ESAPI.securityConfiguration().getResourceStream("antisamy-esapi.xml");
+			antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
+                    // Future: This will be moved to a new PropNames class
+                org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
+		} catch (ConfigurationException cex) {
+			
+            LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " + 
+                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
+                           " not set, using default value: " + ANTISAMYPOLICY_FILENAME);
+			antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
+		}
+		try {
+			resourceStream = ESAPI.securityConfiguration().getResourceStream(antisamyPolicyFilename);
 		} catch (IOException e) {
-			throw new ConfigurationException("Couldn't find antisamy-esapi.xml", e);
-	            }
+			
+			LOGGER.info(Logger.EVENT_FAILURE, "Loading " + antisamyPolicyFilename + " from classpaths");
+
+			resourceStream = getResourceStreamFromClasspath(antisamyPolicyFilename);
+		}
         if (resourceStream != null) {
         	try {
 				antiSamyPolicy = Policy.getInstance(resourceStream);
 			} catch (PolicyException e) {
-				throw new ConfigurationException("Couldn't parse antisamy policy", e);
-		        }
-			}
+				throw new ConfigurationException("Couldn't parse " + antisamyPolicyFilename, e);
+	        }
 		}
+        else {
+            throw new ConfigurationException("Couldn't find " + antisamyPolicyFilename);
+		}
+	}
 
 	public HTMLValidationRule( String typeName ) {
 		super( typeName );

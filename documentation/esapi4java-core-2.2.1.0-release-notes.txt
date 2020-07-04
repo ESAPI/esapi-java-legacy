@@ -48,6 +48,8 @@ Issue #         GitHub Issue Title
 530             Log Bridge Tests
 536             Various fixes
 538             Addressing log4j 1.x CVE-2019-17571
+552             Rewrite implementation of some ESAPI classes to remove Java 8 dependencies
+
 
 -----------------------------------------------------------------------------
 
@@ -95,7 +97,7 @@ Developer       Total       Total Number
 (GitHub ID)     commits   of Files Changed
 =====================================================
 jeremiahjstacey 11              68
-kwwall          15              26
+kwwall          16              26
 wiitek          3               6
 xeno6696        8               9
 Michael-Ziluck  2               3
@@ -104,8 +106,10 @@ sempf           1               1
 
 -----------------------------------------------------------------------------
 
-53 Closed PRs since 2.2.0.0 release
-===================================
+
+53 Closed PRs since 2.2.0.0 release (those rejected not listed)
+===============================================================
+
 504 New scripts to suppress noise for 'mvn test'
 510 Resolve #509 - Properly throw exception when HTML fails
 513 Close issue #512 by updating to 1.9.4 of Commons Beans Util.\
@@ -126,7 +130,7 @@ Project co-leaders
 
 Special shout-outs to:
     Jeremiah Stacey (jeremiahjstacey) -- All around ESAPI support and JUnit test case developer extraordinaire
-    Dave Wichers (davewichers) - for Maven Central / Sonatype help
+    Dave Wichers (davewichers) - for pom.xml improvements
     Bill Sempf -- for these release notes. Awesome job, Bill. I owe you a brew.
 
 Thanks you all for your time and effort to ESAPI and making it a better project. And if I've missed any, my apologies; let me know and I will correct it.
