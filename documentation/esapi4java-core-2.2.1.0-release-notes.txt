@@ -50,6 +50,7 @@ Issue #         GitHub Issue Title
 538             Addressing log4j 1.x CVE-2019-17571
 552             Rewrite implementation of some ESAPI classes to remove Java 8 dependencies
 
+
 -----------------------------------------------------------------------------
 
         Changes requiring special attention
@@ -105,8 +106,10 @@ sempf           1               1
 
 -----------------------------------------------------------------------------
 
+
 53 Closed PRs since 2.2.0.0 release (those rejected not listed)
 ===============================================================
+
 504 New scripts to suppress noise for 'mvn test'
 510 Resolve #509 - Properly throw exception when HTML fails
 513 Close issue #512 by updating to 1.9.4 of Commons Beans Util.\

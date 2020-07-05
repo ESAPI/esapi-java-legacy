@@ -64,11 +64,11 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @param request The {@code HttpServletRequest} we are wrapping.
      */
     public SecurityWrapperRequest(HttpServletRequest request) {
-    	super( request );
+        super( request );
     }
 
     private HttpServletRequest getHttpServletRequest() {
-    	return (HttpServletRequest)super.getRequest();
+        return (HttpServletRequest)super.getRequest();
     }
     
     /**
@@ -128,8 +128,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     public String getContextPath() {
         String path = getHttpServletRequest().getContextPath();
         SecurityConfiguration sc = ESAPI.securityConfiguration();
-		//Return empty String for the ROOT context
-		if (path == null || "".equals(path.trim())) return "";
+        //Return empty String for the ROOT context
+        if (path == null || "".equals(path.trim())) return "";
 
         String clean = "";
         try {
@@ -159,7 +159,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
                 int maxAge = c.getMaxAge();
                 String domain = c.getDomain();
                 String path = c.getPath();
-				
+                
                 Cookie n = new Cookie(name, value);
                 n.setMaxAge(maxAge);
 
@@ -347,7 +347,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * @return The "scrubbed" parameter value.
      */
     public String getParameter(String name, boolean allowNull) {
-    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         return getParameter(name, allowNull, sc.getIntProp("HttpUtilities.httpQueryParamValueLength"), "HTTPParameterValue");
     }
 
@@ -423,7 +423,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         Enumeration en = getHttpServletRequest().getParameterNames();
         while (en.hasMoreElements()) {
             try {
-            	SecurityConfiguration sc = ESAPI.securityConfiguration();
+                SecurityConfiguration sc = ESAPI.securityConfiguration();
                 String name = (String) en.nextElement();
                 String clean = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", sc.getIntProp("HttpUtilities.httpQueryParamNameLength"), true);
                 v.add(clean);
@@ -446,8 +446,8 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         String[] values = getHttpServletRequest().getParameterValues(name);
         List<String> newValues;
 
-	if(values == null)
-		return null;
+    if(values == null)
+        return null;
         newValues = new ArrayList<String>();
         SecurityConfiguration sc = ESAPI.securityConfiguration();
         for (String value : values) {
@@ -469,7 +469,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public String getPathInfo() {
         String path = getHttpServletRequest().getPathInfo();
-		if (path == null) return null;
+        if (path == null) return null;
         String clean = "";
         SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
@@ -681,15 +681,15 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * HttpServletRequest after parsing and checking the range 0-65536.
      * @return The local server port
      */
-	public int getServerPort() {
-		int port = getHttpServletRequest().getServerPort();
-		if ( port < 0 || port > 0xFFFF ) {
-			logger.warning( Logger.SECURITY_FAILURE, "HTTP server port out of range: " + port );
-			port = 0;
-		}
-		return port;
-	}
- 	
+    public int getServerPort() {
+        int port = getHttpServletRequest().getServerPort();
+        if ( port < 0 || port > 0xFFFF ) {
+            logger.warning( Logger.SECURITY_FAILURE, "HTTP server port out of range: " + port );
+            port = 0;
+        }
+        return port;
+    }
+    
 
     /**
      * Returns the server path from the HttpServletRequest after canonicalizing
@@ -710,52 +710,44 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     /**
      * Returns a session, creating it if necessary, and sets the HttpOnly flag
-     * on the Session ID cookie.
+     * on the Session ID cookie.  The 'secure' flag is also set if the property
+     * {@code HttpUtilities.ForceSecureCookies} is set to {@code true} in the <b>ESAPI.properties</b> file.
      * @return The current session
      */
     public HttpSession getSession() {
-		HttpSession session = getHttpServletRequest().getSession();
-
-		// send a new cookie header with HttpOnly on first and second responses
-	    if (ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlySession")) {
-	        if (session.getAttribute("HTTP_ONLY") == null) {
-				session.setAttribute("HTTP_ONLY", "set");
-				Cookie cookie = new Cookie(ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName"), session.getId());
-				cookie.setPath( getHttpServletRequest().getContextPath() );
-				cookie.setMaxAge(-1); // session cookie
-	            HttpServletResponse response = ESAPI.currentResponse();
-	            if (response != null) {
-	                ESAPI.currentResponse().addCookie(cookie);
-	            }
-	        }
-	    }
-        return session;
+        return getSession(true);
     }
 
     /**
-     * Returns a session, creating it if necessary, and sets the HttpOnly flag
-     * on the Session ID cookie.
-     * @param create Create a new session if one doesn't exist
+     * Returns the current session associated with this request or, if there is no current session and
+     * {@code create} is {@code true}, returns a new session and sets the HttpOnly flag on the session ID cookie.
+     * The 'secure' flag is also set if the property {@code HttpUtilities.ForceSecureCookies} is set to
+     * {@code true} in the <b>ESAPI.properties</b> file.
+     * @param create If set to {@code true}, create a new session if one doesn't exist, otherwise return {@code null}
      * @return The current session
      */
     public HttpSession getSession(boolean create) {
         HttpSession session = getHttpServletRequest().getSession(create);
+
         if (session == null) {
             return null;
         }
 
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+
         // send a new cookie header with HttpOnly on first and second responses
-        if (ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlySession")) {
-	        if (session.getAttribute("HTTP_ONLY") == null) {
-	            session.setAttribute("HTTP_ONLY", "set");
-	            Cookie cookie = new Cookie(ESAPI.securityConfiguration().getStringProp("HttpUtilities.HttpSessionIdName"), session.getId());
-	            cookie.setMaxAge(-1); // session cookie
-	            cookie.setPath( getHttpServletRequest().getContextPath() );
-	            HttpServletResponse response = ESAPI.currentResponse();
-	            if (response != null) {
-	                ESAPI.currentResponse().addCookie(cookie);
-	            }
-	        }
+        if ( sc.getBooleanProp("HttpUtilities.ForceHttpOnlySession") ) {
+            if (session.getAttribute("HTTP_ONLY") == null) {
+                session.setAttribute("HTTP_ONLY", "set");
+                Cookie cookie = new Cookie( sc.getStringProp("HttpUtilities.HttpSessionIdName"), session.getId() );
+                cookie.setMaxAge(-1); // session cookie
+                cookie.setPath( getHttpServletRequest().getContextPath() );
+                cookie.setSecure( sc.getBooleanProp("HttpUtilities.ForceSecureCookies") );
+                HttpServletResponse response = ESAPI.currentResponse();
+                if (response != null) {
+                    ESAPI.currentResponse().addCookie(cookie);
+                }
+            }
         }
         return session;
     }

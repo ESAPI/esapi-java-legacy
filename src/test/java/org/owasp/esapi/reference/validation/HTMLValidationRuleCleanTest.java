@@ -73,9 +73,7 @@ public class HTMLValidationRuleCleanTest {
 
 
     /**
-     * Instantiates a new HTTP utilities test.
-     *
-     * @param testName the test name
+     * Default construstor that instantiates a new {@code HTMLValidationRule} test.
      */
     public HTMLValidationRuleCleanTest() {
     }

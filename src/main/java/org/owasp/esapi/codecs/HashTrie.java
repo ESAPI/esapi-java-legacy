@@ -252,8 +252,7 @@ public class HashTrie<T> implements Trie<T>
 		/**
 		 * Recursively lookup the longest key match.
 		 * @param keyIn Where to read the key from
-		 * @param pos The position in the key that is being
-		 *	looked up at this level.
+		 * @param key The key that is being looked up at this level.
 		 * @return The Entry associated with the longest key
 		 *	match or null if none exists.
 		 */
