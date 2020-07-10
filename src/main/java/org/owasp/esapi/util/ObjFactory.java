@@ -92,7 +92,7 @@ public class ObjFactory {
                 // The class is meant to be singleton, however, the SecurityManager restricts us from calling the
                 // getInstance method on the class, thus this is a configuration issue and a ConfigurationException
                 // is thrown
-                throw new ConfigurationException( "The SecurityManager has restricted the object factory from getting a reference to the singleton implementation" +
+                throw new ConfigurationException( "The SecurityManager has restricted the object factory from getting a reference to the singleton implementation " +
                         "of the class [" + className + "]", e );
             }
 
