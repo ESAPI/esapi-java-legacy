@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -764,7 +765,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input, context );
+   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + Arrays.toString(input), context );
 		}
 
 		long esapiMaxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();

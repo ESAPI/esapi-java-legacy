@@ -715,7 +715,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param name
      */
 	public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
-		String path = "//";
+		String path = "/";
 		String domain="";
 		Cookie cookie = getFirstCookie(request, name);
 		if ( cookie != null ) {

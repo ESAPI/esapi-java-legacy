@@ -19,9 +19,9 @@ public interface ValidationRule {
      *             <b>{@code ESAPI.properties}></b> property
      *             "Validator.ValidationRule.getValid.ignore509Fix" is set to
      *             {@code true}, which is the default behavior for ESAPI 2.x
-     *             releases. See
-     *             {@link https://github.com/ESAPI/esapi-java-legacy/issues/509}
-     *             and {@link https://github.com/ESAPI/esapi-java-legacy/issues/521}
+     *             releases. See ESAPI GitHub Issues
+     *             <a href="https://github.com/ESAPI/esapi-java-legacy/issues/509}>509</a>
+     *             and <a href="https://github.com/ESAPI/esapi-java-legacy/issues/521">521</a>
      *             for futher details.
      *
      * @see #getValid(String context, String input, ValidationErrorList errorList)
