@@ -27,7 +27,7 @@ ESAPI 2.2.1.0 release:
     211 Java source files
     4309 JUnit tests in 134 Java source files
 
-37 GitHub Issues closed in this release
+38 GitHub Issues closed in this release
 
 Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
@@ -57,6 +57,7 @@ Issue #         GitHub Issue Title
 511 - Add missing documentation to Validator.addRule() and Validator.getRule()
 512 - Update Apache Commons Bean Utils to 1.9.4
 515 - NullPointerException can result from line 163 of SecurityWrapperRequest.java:
+521 - JUnit test ValidatorTest.testIsValidSafeHTML() now failing
 522 - javadoc corrections for Encoder.canonicalize()
 523 - Links in README to users list and dev list are reversed
 527 - Configuration flag for disabling Logger User and App Information
