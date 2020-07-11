@@ -352,7 +352,15 @@ public class CryptoHelper {
 	 */
     @Deprecated
 	public static boolean arrayCompare(byte[] b1, byte[] b2) {
-        // Note: See GitHub issue #246
+        // Note: See GitHub issue #246 and #554.
+        // If we make Java 8 the minimal ESAPI baseline before we remove this
+        // method, we can at least remove these next 6 lines. (Issue 554.)
+        if ( b1 == null && b2 == null ) {   // Must test this first!
+            return true;    // Prevent NPE; compatibility with Java 8 and later.
+        }
+        if ( b1 == null || b2 == null ) {
+            return false;    // Prevent NPE; compatibility with Java 8 and later.
+        }
         return java.security.MessageDigest.isEqual(b1, b2);
 	}
   
