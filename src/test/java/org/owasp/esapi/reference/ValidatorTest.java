@@ -350,7 +350,13 @@ public class ValidatorTest extends TestCase {
 
             // Unix specific paths should pass
             assertTrue(instance.isValidDirectoryPath("test", "/", parent, false));         // Root directory
-            assertTrue(instance.isValidDirectoryPath("test", "/etc", parent, false));      // Always exist directory
+                // Unfortunately, on MacOS both "/etc" and "/var" are symlinks
+                // to "/private/etc" and "/private/var" respectively, and "/sbin"
+                // and "/bin" sometimes are symlinks on certain *nix OSs, so we need
+                // to special case MacOS here.
+            boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
+            String testDirNotSymLink = isMac ? "/private" : "/etc";
+            assertTrue(instance.isValidDirectoryPath("test", testDirNotSymLink, parent, false));      // Always exist directory
 
             // Unix specific paths that should not exist or work
             assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", parent, false));   // Standard shell, not dir
