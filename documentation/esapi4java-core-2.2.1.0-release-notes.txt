@@ -27,7 +27,7 @@ ESAPI 2.2.1.0 release:
     211 Java source files
     4309 JUnit tests in 134 Java source files
 
-38 GitHub Issues closed in this release
+39 GitHub Issues closed in this release
 
 Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
@@ -70,6 +70,7 @@ Issue #         GitHub Issue Title
 554 - CryptoHelper.arrayCompare() fails with NPE under Java 7 when one of the arguments is null
 555 - JUnit test org.owasp.esapi.reference.AccessControllerTest.testIsAuthorizedForData fails when run against Java 7 on Linux
 556 - Major overhaul to ESAPI Encoder Javadoc based on ESAPI Encoder Usability Study
+558 - ValidatorTest.testIsValidDirectoryPath() JUnit test fails under MacOS
 
 -----------------------------------------------------------------------------
 
@@ -143,7 +144,7 @@ Developer       Total       Total Number        # Merged
 ========================================================
 HJW8472         11              8               1
 jeremiahjstacey 78             70               6
-kwwall          63             63               8
+kwwall          65             64               8
 Michael-Ziluck  3               2               2
 sempf           1               1               1
 wiitek          6               4               2
