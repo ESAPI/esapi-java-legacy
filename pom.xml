@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.2.1.0-RC1</version>
+    <version>2.2.1.0</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -136,8 +136,11 @@
         <version.powermock>2.0.7</version.powermock>
         <version.spotbugs>4.0.4</version.spotbugs>
         <!-- Upgrading to 3.0.0-M3+ causes this test case error:
-             org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
-             java.lang.OutOfMemoryError: PermGen space -->
+                org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
+                java.lang.OutOfMemoryError: PermGen space
+
+             when running tests with Java 7 on Mac OS X. No problems observed on Linux.
+        -->
         <version.surefire>3.0.0-M2</version.surefire>
     </properties>
 
