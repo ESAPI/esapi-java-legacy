@@ -142,9 +142,10 @@ Generated manually (this time) -- all errors are the fault of kwwall and his ina
 Developer       Total       Total Number        # Merged
 (GitHub ID)     commits   of Files Changed        PRs
 ========================================================
+davewichers      2              1               0
 HJW8472         11              8               1
 jeremiahjstacey 78             70               6
-kwwall          65             64               8
+kwwall          67             64               8
 Michael-Ziluck  3               2               2
 sempf           1               1               1
 wiitek          6               4               2
