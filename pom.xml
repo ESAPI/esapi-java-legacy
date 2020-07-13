@@ -135,7 +135,10 @@
         <version.jmh>1.23</version.jmh>
         <version.powermock>2.0.7</version.powermock>
         <version.spotbugs>4.0.4</version.spotbugs>
-        <version.surefire>3.0.0-M5</version.surefire>
+        <!-- Upgrading to 3.0.0-M3+ causes this test case error:
+             org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
+             java.lang.OutOfMemoryError: PermGen space -->
+        <version.surefire>3.0.0-M2</version.surefire>
     </properties>
 
     <dependencies>

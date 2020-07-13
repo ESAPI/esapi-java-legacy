@@ -226,7 +226,7 @@ public class AccessControllerTest extends TestCase {
 			userRW = Class.forName("java.lang.String");
 			anyR = Class.forName("java.io.BufferedReader");
 			userAdminR = Class.forName("java.util.Random");
-			userAdminRW = Class.forName("java.awt.event.MouseWheelEvent");
+			userAdminRW = Class.forName("javax.crypto.Cipher");
 			undefined = Class.forName("java.io.FileWriter");
 			
 		}catch(ClassNotFoundException cnf){
