@@ -134,7 +134,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jmh>1.23</version.jmh>
         <version.powermock>2.0.7</version.powermock>
-        <version.spotbugs>4.0.4</version.spotbugs>
+        <version.spotbugs>4.0.5</version.spotbugs>
         <!-- Upgrading to 3.0.0-M3+ causes this test case error:
              org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
              java.lang.OutOfMemoryError: PermGen space -->
@@ -519,7 +519,7 @@
                       <goals><goal>enforce</goal></goals>
                       <configuration>
                         <rules>
-                          <dependencyConvergence />
+                          <dependencyConvergence/>
                           <requireJavaVersion>
                             <version>1.7</version>
                             <message>
@@ -530,7 +530,7 @@
                           <enforceBytecodeVersion>
                             <maxJdkVersion>1.7</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
-                            <ignoredScopes></ignoredScopes> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
+                            <ignoredScopes/> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
                             <message>Dependencies shouldn't require Java 8+</message>
                           </enforceBytecodeVersion>
                         </rules>
