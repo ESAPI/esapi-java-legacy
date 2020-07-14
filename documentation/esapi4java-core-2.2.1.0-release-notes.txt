@@ -1,5 +1,5 @@
 Release notes for ESAPI 2.2.1.0
-    Release date: 2020-July-??
+    Release date: 2020-July-12
     Project leaders:
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Matt Seil <matt.seil@owasp.org>
@@ -32,14 +32,14 @@ ESAPI 2.2.1.0 release:
 Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
 
-143 - Enchance encodeForOS to auto-detect the underling OS
+143 - Enhance encodeForOS to auto-detect the underling OS
 173 - DOMConfigurator is being used inappropriately in the ESAPIWebApplicationFirewallFilter
 226 - Javadoc Inaccuracy in getRandomInteger() and getRandomReal()
 232 - SecurityWrapperResponse.createCookieHeader modification request  (closed; marked 'wontfix')
 235 - exception is java.lang.NoClassDefFoundError: org.owasp.esapi.codecs.Codec
 245 - KeyDerivationFunction::computeDerivedKey - possible security level mismatch
 256 - Whitespace in JavaEncryptor
-263 - I am getting validation exception while validating a paramter coming from http request
+263 - I am getting validation exception while validating a parameter coming from http request
 268 - SecurityWrapperResponse setStatus should not always set SC_OK
 269 - org.owasp.esapi.reference.DefaultValidator reports ValidationException with IE 9
 271 - Add Constructor to DefaultSecurityConfiguration to accept a properties file (1.4)
@@ -77,7 +77,7 @@ Issue #         GitHub Issue Title
         Changes Requiring Special Attention
 
 -----------------------------------------------------------------------------
-The new default ESAPI logger is JUL (java.util.logging packages) and we have deprecated the use of Log4J 1.x because we now support SLF4J and Log4J 1.x is way past its end-of-life. We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on EsAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
+The new default ESAPI logger is JUL (java.util.logging packages) and we have deprecated the use of Log4J 1.x because we now support SLF4J and Log4J 1.x is way past its end-of-life. We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on ESAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
 
 Related to that CVE and how it affects ESAPI, be sure to read
    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
@@ -89,7 +89,7 @@ Notable dependency updates (excludes those only used with JUnit tests):
     commons-beansutil   1.9.3   ->  1.9.4
     slf4j-api           1.7.26  ->  1.7.30
 
-Finally, while ESAPI still supports JDK 7 (even though that too is way past end-of-life), the next ESAPI release will move to JDK 8 as the minimal baseline. (We already use Java 8 for development but still to Java 7 source and runtime compatiblity.)
+Finally, while ESAPI still supports JDK 7 (even though that too is way past end-of-life), the next ESAPI release will move to JDK 8 as the minimal baseline. (We already use Java 8 for development but still to Java 7 source and runtime compatibility.)
 
 -----------------------------------------------------------------------------
 
@@ -116,6 +116,13 @@ and
     https://github.com/bcgit/bc-java/issues/477
 I am sure that there are ways of making Bouncy Castle work with Java 7, but since ESAPI does not rely on Bouncy Castle (it can use any compliant JCE provider), this should not be a problem. (It works fine with the default SunJCE provider.) If it is important to get the BC provider working with the ESAPI Encryptor and Java 7, then open a GitHub issue and we will take a deeper look at it and see if we can suggest something.
 
+
+
+Another problem is if you run 'mvn test' from the 'cmd' prompt (and possibly PowerShell as well), you will get intermittent failures (generally between 10-25% of the time) at arbitrary spots. If you run it again without any changes it will work fine without any failures. We have discovered that it doesn't seem to fail if you run the tests from an IDE like Eclipse or if you redirect both stdout and stderr to a file; e.g.,
+
+    C:\code\esapi-java-legacy> mvn test >testoutput.txt 2>&1
+
+We do not know the reason for these failures, but only that we have observed them on Windows 10. If you see this error, please do NOT report it as a GitHub issue unless you know a fix for it.
 
 -----------------------------------------------------------------------------
 
@@ -167,7 +174,7 @@ PR#    GitHub ID                Description
 508 -- Michael-Ziluck   -- Resolves #226 - Corrected docs for the bounded, numeric, random methods
 510 -- Michael-Ziluck   -- Resolve #509 - Properly throw exception when HTML fails
 513 -- kwwall           -- Close issue #512 by updating to 1.9.4 of Commons Beans Util. 
-514 -- xeno6696         -- Fixed issues #503 by writing a new addReferer method, also temporaril… 
+514 -- xeno6696         -- Fixed issues #503 by writing a new addReferer method, also temporarily… 
 516 -- jeremiahjstacey  -- Issue 515 
 518 -- jeremiahjstacey  -- Issue #511 Copying Docs from DefaultValidator 
 519 -- jeremiahjstacey  -- Issue 494 CSSCodec RGB Triplets 
@@ -260,7 +267,7 @@ Direct and Transitive Runtime and Test Dependencies:
 
 -----------------------------------------------------------------------------
 
-Ackknowledgements:
+Acknowledgments:
 
     Release notes written by Bill Sempf (bill.sempf@owasp.org), but please direct any communication to the project leaders.
 
