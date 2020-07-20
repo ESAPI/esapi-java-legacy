@@ -15,7 +15,7 @@ OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web ap
 </table>
 
 # What does Legacy mean?
-<p>This is the legacy branch of ESAPI which means it is an actively maintained branch of the project, however significan _new_ feature development for this branch will _not_ be done. Features that have already been scheduled for the 2.x branch will move forward.
+<p>This is the legacy branch of ESAPI which means it is an actively maintained branch of the project, however significan *new* feature development for this branch will *not* be done. Features that have already been scheduled for the 2.x branch will move forward.
 
 <b>IMPORTANT NOTES:</b>
 The default branch for ESAPI legacy is now the 'develop' branch (rather than the 'master' branch), where future development, bug fixes, etc. will now be done. The 'master' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.1.0.1 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
@@ -28,10 +28,11 @@ https://github.com/ESAPI/esapi-java
 Note however that work on ESAPI 3 has not yet become in earnest and is only in its earliest planning stages. Even the code that is presently there will likely change.
 
 # Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.0.0. The default configuration jar and its GPG signature can be found at [esapi-2.2.0.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.0.0/esapi-2.2.0.0-configuration.jar) and [esapi-2.2.0.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.0.0/esapi-2.2.0.0-configuration.jar.asc) respectively.
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.1.0. The default configuration jar and its GPG signature can be found at [esapi-2.2.1.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.1.0/esapi-2.2.1.0-configuration.jar) and [esapi-2.2.1.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.1.0/esapi-2.2.1.0-configuration.jar.asc) respectively.
 
 The latest regular ESAPI jars can are available from Maven Central.
 
+However, before you start a *new* project using ESAPI, but sure to read "[Should I use ESAPI?](https://owasp.org/www-project-enterprise-security-api/#div-shouldiuseesapi)".
 
 # ESAPI Deprecation Policy
 Unless we unintentionally screw-up, our intent is to keep classes, methods, and/or fields whihc have been annotated as "@deprecated" for a minimum of two (2) years or until the next major release number (e.g., 3.x as of now), which ever comes first, before we remove them.
@@ -82,7 +83,7 @@ Webchat http://webchat.freenode.net/
 *Mailing lists:*
 As of 2019-03-25, ESAPI's 2 mailing lists were officially moved OFF of their Mailman mailing lists to a new home on Google Groups.
 
-The names of the 2 Google Groups are "[esapi-project-users](mailto:esapi-project-users@owasp.org)" and "[esapi-project-dev](mailto:esapi-project-dev@owasp.org)", which you may POST to _after_ you subscribe to them via "[Subscribe to ESAPI Users list](https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-users/join)" and "[Subscribe to ESAPI Developers list](https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-dev/join)" respectively.
+The names of the 2 Google Groups are "[esapi-project-users](mailto:esapi-project-users@owasp.org)" and "[esapi-project-dev](mailto:esapi-project-dev@owasp.org)", which you may POST to *after* you subscribe to them via "[Subscribe to ESAPI Users list](https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-users/join)" and "[Subscribe to ESAPI Developers list](https://groups.google.com/a/owasp.org/forum/#!forum/esapi-project-dev/join)" respectively.
 
 Old archives for the old Mailman mailing lists for ESAPI-Users and ESAPI-Dev are still available at https://lists.owasp.org/pipermail/esapi-users/ and https://lists.owasp.org/pipermail/esapi-dev/ respectively.
 
