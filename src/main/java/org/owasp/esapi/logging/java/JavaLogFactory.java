@@ -26,6 +26,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.appender.LogPrefixAppender;
 import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
@@ -86,9 +87,12 @@ public class JavaLogFactory implements LogFactory {
          */
         try (InputStream stream = JavaLogFactory.class.getClassLoader().
                 getResourceAsStream("esapi-java-logging.properties")) {
+            if (stream == null) {
+                throw new ConfigurationException("Unable to locate resource: esapi-java-logging.properties");
+            }
             logManager.readConfiguration(stream);
         } catch (IOException ioe) {
-            System.err.print(new IOException("Failed to load esapi-java-logging.properties.", ioe));        	
+            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);        	
         }
     }
 
