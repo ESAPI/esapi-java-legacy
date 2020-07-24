@@ -36,6 +36,10 @@ import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 /**
  * LogFactory implementation which creates JAVA supporting Loggers.
+ * 
+ * This implementation requires that a file named 'esapi-java-logging.properties' exists on the classpath.
+ * <br>
+ * A default file implementation is available in the configuration jar on GitHub under the 'Releases'
  *
  */
 public class JavaLogFactory implements LogFactory {
