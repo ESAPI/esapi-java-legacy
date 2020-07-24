@@ -14,24 +14,21 @@
  */
 package org.owasp.esapi.logging.java;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.LogManager;
 
+import org.hamcrest.CustomMatcher;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.appender.LogPrefixAppender;
 import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
@@ -47,9 +44,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class JavaLogFactoryTest {
     @Rule
     public TestName testName = new TestName();
+    
+    @Rule
+    public ExpectedException exEx = ExpectedException.none();
 
     @Test
-    public void testIOExceptionOnMissingConfiguration() throws Exception {
+    public void testConfigurationExceptionOnMissingConfiguration() throws Exception {
         final IOException originException = new IOException(testName.getMethodName());
 
         LogManager testLogManager = new LogManager() {
@@ -59,31 +59,17 @@ public class JavaLogFactoryTest {
             }
         };
 
-        OutputStream nullOutputStream = new OutputStream() {
+        exEx.expectMessage("Failed to load esapi-java-logging.properties");
+        exEx.expect(ConfigurationException.class);
+       
+        exEx.expectCause(new CustomMatcher<Throwable>("Check for IOException") {
             @Override
-            public void write(int b) throws IOException {
-                //No Op
+            public boolean matches(Object item) {
+               return item instanceof IOException;
             }
-        };
+        });
 
-        ArgumentCaptor<Object> stdErrOut = ArgumentCaptor.forClass(Object.class);
-        PrintStream orig = System.err;
-        try (PrintStream errPrinter = new PrintStream(nullOutputStream)) {
-            PrintStream spyPrinter = PowerMockito.spy(errPrinter);
-            Mockito.doCallRealMethod().when(spyPrinter).print(stdErrOut.capture());
-            System.setErr(spyPrinter);
-
-            JavaLogFactory.readLoggerConfiguration(testLogManager);
-
-            Object writeData = stdErrOut.getValue();
-            assertTrue(writeData instanceof IOException);
-            IOException actual = (IOException) writeData;
-            assertEquals(originException, actual.getCause());
-            assertEquals("Failed to load esapi-java-logging.properties.", actual.getMessage());
-        } finally {
-            System.setErr(orig);
-        }
-
+        JavaLogFactory.readLoggerConfiguration(testLogManager);
     }
 
     @Test
