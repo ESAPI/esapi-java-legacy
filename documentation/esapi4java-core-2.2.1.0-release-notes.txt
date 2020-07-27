@@ -124,6 +124,37 @@ Another problem is if you run 'mvn test' from the 'cmd' prompt (and possibly Pow
 
 We do not know the reason for these failures, but only that we have observed them on Windows 10. If you see this error, please do NOT report it as a GitHub issue unless you know a fix for it.
 
+
+    *** IMPORTANT WORKAROUND for 2.2.1.0 ESAPI Logging ***
+
+Lastly, if you try to use the new ESAPI 2.2.1.0 logging, you will notice that you need to change ESAPI.Logger and also possibly provide some other logging properties as well. This is because the logger packages were reorganized to improve maintainability, but we failed to mention it. To use ESAPI logging in ESAPI 2.2.1.0 (and later), you MUST set the ESAPI.Logger property to one of:
+
+    org.owasp.esapi.logging.java.JavaLogFactory     - To use the new default, java.util.logging (JUL)
+    org.owasp.esapi.logging.log4j.Log4JLogFactory   - To use the end-of-life Log4J 1.x logger
+    org.owasp.esapi.logging.slf4j.Slf4JLogFactory   - To use the new (to release 2.2.0.0) SLF4J logger
+
+In addition, if you wish to use JUL for logging, you *must* supply an "esapi-java-logging.properties" file in your classpath. Unfortunately, we failed to drop add that to the ESAPI configuration jar under the GitHub 'Releases', so this file has been added explicitly to the 2.2.1.0 release 'Assets' for this release (for details, see https://github.com/ESAPI/esapi-java-legacy/releases/esapi-2.2.1.0). Even worse, there was a logic error in the static initializer of JavaLogFactory (now fixed in the 2.2.1.1 patch release) that causes a NullPointerException to be thrown so that the message about the missing "esapi-java-logging.properties" file was never seen.
+
+If you are using JavaLogFactory or Slf4JLogFactory, you will also want to ensure that you have the following ESAPI logging properties set to get the logs to appear what you are used to with Log4J 1.x logging:
+    # Set the application name if these logs are combined with other applications
+    Logger.ApplicationName=ExampleApplication
+    # If you use an HTML log viewer that does not properly HTML escape log data, you can set LogEncodingRequired to true
+    Logger.LogEncodingRequired=false
+    # Determines whether ESAPI should log the application name. This might be clutter in some single-server/single-app environments.
+    Logger.LogApplicationName=true
+    # Determines whether ESAPI should log the server IP and port. This might be clutter in some single-server environments.
+    Logger.LogServerIP=true
+    # LogFileName, the name of the logging file. Provide a full directory path (e.g., C:\\ESAPI\\ESAPI_logging_file) if you
+    # want to place it in a specific directory.
+    Logger.LogFileName=ESAPI_logging_file
+    # MaxLogFileSize, the max size (in bytes) of a single log file before it cuts over to a new one (default is 10,000,000)
+    Logger.MaxLogFileSize=10000000
+    # Determines whether ESAPI should log the user info.
+    Logger.UserInfo=true
+    # Determines whether ESAPI should log the session id and client IP.
+    Logger.ClientInfo=true
+
+See GitHub issue #560 for additional details.
 -----------------------------------------------------------------------------
 
         Other changes in this release, some of which not tracked via GitHub issues
@@ -209,7 +240,7 @@ Direct and Transitive Runtime and Test Dependencies:
         [INFO] --------------------------------[ jar ]---------------------------------
         [INFO] 
         [INFO] --- maven-dependency-plugin:3.1.2:tree (default-cli) @ esapi ---
-        [INFO] org.owasp.esapi:esapi:jar:2.2.1.0-RC1
+        [INFO] org.owasp.esapi:esapi:jar:2.2.1.0
         [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
         [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
         [INFO] +- com.io7m.xom:xom:jar:1.2.10:compile
