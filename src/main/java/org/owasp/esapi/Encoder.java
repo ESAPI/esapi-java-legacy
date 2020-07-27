@@ -149,11 +149,10 @@ import org.owasp.esapi.errors.EncodingException;
  * </li>
  * </ul>
  * 
- * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross-Site Scripting Prevention Cheat Sheet</a>.
+ * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross-Site Scripting Prevention Cheat Sheet</a>
  * @see <a href="https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data">OWASP Proactive Controls: C4: Encode and Escape Data</a>
- * @see <a href="https://www.onwebsecurity.com/security/properly-encoding-and-escaping-for-the-web.html">Properly encoding and escaping for the web.</a>
- * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
- *         href="http://www.aspectsecurity.com">Aspect Security</a>
+ * @see <a href="https://www.onwebsecurity.com/security/properly-encoding-and-escaping-for-the-web.html" target="_blank" rel="noopener noreferrer">Properly encoding and escaping for the web</a>
+ * @author Jeff Williams (jeff.williams .at. owasp.org)
  * @since June 1, 2007
  */
 public interface Encoder {
@@ -167,7 +166,7 @@ public interface Encoder {
      * Encoder.AllowMixedEncoding=false
      * </pre>
      *
-     * @see Encoder#canonicalize(String, boolean, boolean) canonicalize
+     * @see #canonicalize(String, boolean, boolean)
      * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
      * 
      * @param input the text to canonicalize
@@ -178,7 +177,7 @@ public interface Encoder {
     /**
      * This method is the equivalent to calling {@code Encoder.canonicalize(input, strict, strict);}.
      *
-     * @see Encoder#canonicalize(String, boolean, boolean) canonicalize
+     * @see #canonicalize(String, boolean, boolean)
      * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
      *  
      * @param input 
