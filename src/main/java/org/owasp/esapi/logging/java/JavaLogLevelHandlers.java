@@ -26,7 +26,7 @@ public enum JavaLogLevelHandlers implements JavaLogLevelHandler {
 	FINE(Level.FINE),
 	FINER(Level.FINER),
 	FINEST(Level.FINEST),
-	ALL(Level.ALL),
+	ALWAYS(ESAPICustomJavaLevel.ALWAYS_LEVEL),
 	ERROR(ESAPICustomJavaLevel.ERROR_LEVEL);
 
 	private final Level level;

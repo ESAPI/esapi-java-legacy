@@ -31,6 +31,11 @@ public class ESAPICustomJavaLevel extends Level {
     public static final Level ERROR_LEVEL = new ESAPICustomJavaLevel( "ERROR", Level.SEVERE.intValue() - 1);
 
     /**
+     * Defines a custom level that should result in content always being recorded, unless the Java Logging configuration is set to OFF.
+     */
+    public static final Level ALWAYS_LEVEL = new ESAPICustomJavaLevel( "ERROR", Level.OFF.intValue() - 1);
+    
+    /**
      * Constructs an instance of a JavaLoggerLevel which essentially provides a mapping between the name of
      * the defined level and its numeric value.
      * 
