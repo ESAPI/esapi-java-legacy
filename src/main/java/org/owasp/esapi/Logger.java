@@ -401,6 +401,8 @@ public interface Logger {
 
 	/**
      * Log an event regardless of what logging level is enabled.
+     * <br>
+     * Note that logging will not occur if the underlying logging implementation has logging disabled.
      * 
      * @param type 
      * 		the type of event
@@ -412,6 +414,8 @@ public interface Logger {
 	/**
      * Log an event regardless of what logging level is enabled
      * and also record the stack trace associated with the event.
+     * <br>
+     * Note that logging will not occur if the underlying logging implementation has logging disabled.
      * 
      * @param type 
      * 		the type of event 
