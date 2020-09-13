@@ -45,6 +45,20 @@ public class JavaLogLevelHandlersTest {
     }
 
     @Test
+    public void testAlwaysDelegation() {
+        JavaLogLevelHandlers.ALWAYS.isEnabled(mockLogger);
+        JavaLogLevelHandlers.ALWAYS.log(mockLogger, testName.getMethodName());
+        JavaLogLevelHandlers.ALWAYS.log(mockLogger, testName.getMethodName(), testException);
+
+        Level expectedJavaLevel = ESAPICustomJavaLevel.ALWAYS_LEVEL;
+
+        Mockito.verify(mockLogger, Mockito.times(1)).isLoggable(expectedJavaLevel);
+        Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName());
+        Mockito.verify(mockLogger, Mockito.times(1)).log(expectedJavaLevel, testName.getMethodName(), testException);
+        Mockito.verifyNoMoreInteractions(mockLogger);
+    }
+    
+    @Test
     public void testWarnDelegation() {
         JavaLogLevelHandlers.WARNING.isEnabled(mockLogger);
         JavaLogLevelHandlers.WARNING.log(mockLogger, testName.getMethodName());
