@@ -18,7 +18,7 @@ package org.owasp.esapi.logging.java;
 import java.util.logging.Level;
 
 /**
- *  A custom logging level defined between Level.SEVERE and Level.WARNING in logger.
+ *  Definitions of customized Java Logging Level options to map ESAPI behavior to the desired Java Log output behaviors.
  */
 public class ESAPICustomJavaLevel extends Level {
 
@@ -33,7 +33,7 @@ public class ESAPICustomJavaLevel extends Level {
     /**
      * Defines a custom level that should result in content always being recorded, unless the Java Logging configuration is set to OFF.
      */
-    public static final Level ALWAYS_LEVEL = new ESAPICustomJavaLevel( "ERROR", Level.OFF.intValue() - 1);
+    public static final Level ALWAYS_LEVEL = new ESAPICustomJavaLevel( "ALWAYS", Level.OFF.intValue() - 1);
     
     /**
      * Constructs an instance of a JavaLoggerLevel which essentially provides a mapping between the name of
