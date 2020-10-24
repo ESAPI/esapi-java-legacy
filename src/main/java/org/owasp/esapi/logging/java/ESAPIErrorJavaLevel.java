@@ -19,7 +19,7 @@ import java.util.logging.Level;
 
 /**
  *  A custom logging level defined between Level.SEVERE and Level.WARNING in logger.
- *  @deprecated
+ *  @deprecated 10/24/2020 : References should use ESAPICustomJavaLevel.ERROR_LEVEL
  *  @see ESAPICustomJavaLevel#ERROR_LEVEL
  */
 public class ESAPIErrorJavaLevel extends Level {
