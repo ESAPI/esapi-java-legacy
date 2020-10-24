@@ -19,6 +19,8 @@ import java.util.logging.Level;
 
 /**
  *  A custom logging level defined between Level.SEVERE and Level.WARNING in logger.
+ *  @deprecated
+ *  @see ESAPICustomJavaLevel#ERROR_LEVEL
  */
 public class ESAPIErrorJavaLevel extends Level {
 
@@ -27,8 +29,10 @@ public class ESAPIErrorJavaLevel extends Level {
     /**
      * Defines a custom error level below SEVERE but above WARNING since this level isn't defined directly
      * by java.util.Logger already.
+     * @deprecated
+     * @see ESAPICustomJavaLevel#ERROR_LEVEL
      */
-    public static final Level ERROR_LEVEL = new ESAPIErrorJavaLevel( "ERROR", Level.SEVERE.intValue() - 1);
+    public static final Level ERROR_LEVEL = new ESAPIErrorJavaLevel( ESAPICustomJavaLevel.ERROR_LEVEL.getName(),ESAPICustomJavaLevel.ERROR_LEVEL.intValue());
 
     /**
      * Constructs an instance of a JavaLoggerLevel which essentially provides a mapping between the name of
