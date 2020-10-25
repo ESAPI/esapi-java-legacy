@@ -67,7 +67,7 @@ public class JavaLogFactory implements LogFactory {
         JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
 
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
-        levelLookup.put(Logger.ALL, JavaLogLevelHandlers.ALL);
+        levelLookup.put(Logger.ALL, JavaLogLevelHandlers.ALWAYS);
         levelLookup.put(Logger.TRACE, JavaLogLevelHandlers.FINEST);
         levelLookup.put(Logger.DEBUG, JavaLogLevelHandlers.FINE);
         levelLookup.put(Logger.INFO, JavaLogLevelHandlers.INFO);
