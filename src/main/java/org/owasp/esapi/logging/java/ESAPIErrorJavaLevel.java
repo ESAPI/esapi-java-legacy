@@ -22,6 +22,7 @@ import java.util.logging.Level;
  *  @deprecated 10/24/2020 : References should use ESAPICustomJavaLevel.ERROR_LEVEL
  *  @see ESAPICustomJavaLevel#ERROR_LEVEL
  */
+@Deprecated
 public class ESAPIErrorJavaLevel extends Level {
 
     protected static final long serialVersionUID = 1L;
@@ -32,6 +33,7 @@ public class ESAPIErrorJavaLevel extends Level {
      * @deprecated
      * @see ESAPICustomJavaLevel#ERROR_LEVEL
      */
+    @Deprecated
     public static final Level ERROR_LEVEL = new ESAPIErrorJavaLevel( ESAPICustomJavaLevel.ERROR_LEVEL.getName(),ESAPICustomJavaLevel.ERROR_LEVEL.intValue());
 
     /**
