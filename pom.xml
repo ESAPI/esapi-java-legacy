@@ -347,7 +347,7 @@
                         <phase>compile</phase> <!-- Eclipse q4e plugin needs this -->
                         <goals>
                             <goal>display-dependency-updates</goal>
-                            <goal>display-plugin-updates</goal>
+<!--                             <goal>display-plugin-updates</goal> -->
                             <!--<goal>display-property-updates</goal>-->
                         </goals>
                     </execution>
