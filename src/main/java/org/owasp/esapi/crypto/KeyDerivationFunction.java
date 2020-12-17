@@ -106,12 +106,14 @@ public class KeyDerivationFunction {
     // Check if versions of KeyDerivationFunction, CipherText, and
     // CipherTextSerializer are all the same.
     {
-    	// Ignore error about comparing identical versions and dead code.
-    	// We expect them to be, but the point is to catch us if they aren't.
-    	assert CipherTextSerializer.cipherTextSerializerVersion == CipherText.cipherTextVersion :
-            "Versions of CipherTextSerializer and CipherText are not compatible.";
-    	assert CipherTextSerializer.cipherTextSerializerVersion == KeyDerivationFunction.kdfVersion :
-    		"Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.";
+        // Ignore error about comparing identical versions and dead code.
+        // We expect them to be, but the point is to catch us if they aren't.
+        if ( CipherTextSerializer.cipherTextSerializerVersion != CipherText.cipherTextVersion ) {
+            throw new ExceptionInInitializerError("Versions of CipherTextSerializer and CipherText are not compatible.");
+        }
+        if ( CipherTextSerializer.cipherTextSerializerVersion != KeyDerivationFunction.kdfVersion ) {
+            throw new ExceptionInInitializerError("Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.");
+        }
     }
     
 	/**
@@ -185,7 +187,7 @@ public class KeyDerivationFunction {
 	}
 	
 	
-	// TODO: IMPORTANT NOTE: In a future release (hopefully starting in 2.1.1),
+	// TODO: IMPORTANT NOTE: In a future release (hopefully starting in 2.3),
 	// we will be using the 'context' to mix in some additional things. At a
 	// minimum, we will be using the KDF version (version_) so that downgrade version
 	// attacks are not possible. Other candidates are the cipher xform and
@@ -265,24 +267,26 @@ public class KeyDerivationFunction {
 	 * @param keySize		The cipher's key size (in bits) for the {@code keyDerivationKey}.
 	 * 						Must have a minimum size of 56 bits and be an integral multiple of 8-bits.
 	 * 						<b>Note:</b> The derived key will have the same size as this.
-	 * @param purpose		The purpose for the derived key. For the ESAPI reference implementation,
+	 * @param purpose		The purpose for the derived key. <b>IMPORTANT:</b> For the ESAPI reference implementation,
 	 * 						{@code JavaEncryptor}, this <i>must</i> be either the string "encryption" or
 	 * 						"authenticity", where "encryption" is used for creating a derived key to use
 	 * 						for confidentiality, and "authenticity" is used for creating a derived key to
 	 * 						use with a MAC to ensure message authenticity. However, since parameter serves
 	 * 						the same purpose as the "Label" in section 5.1 of NIST SP 800-108, it really can
 	 * 						be set to anything other than {@code null} or an empty string when called outside
-	 * 						of {@code JavaEncryptor}.
+	 * 						of ESAPI's {@code JavaEncryptor} reference implementation (but you must consistent).
 	 * @return				The derived {@code SecretKey} to be used according
 	 * 						to the specified purpose. 
 	 * @throws NoSuchAlgorithmException		The {@code keyDerivationKey} has an unsupported
-	 * 						encryption algorithm or no current JCE provider supports
-	 * 						"HmacSHA1".
+	 * 						encryption algorithm or no current JCE provider supports requested
+     * 						Hmac algorithrm used for the PRF for key generation.
 	 * @throws EncryptionException		If "UTF-8" is not supported as an encoding, then
 	 * 						this is thrown with the original {@code UnsupportedEncodingException}
 	 * 						as the cause. (NOTE: This should never happen as "UTF-8" is supposed to
 	 * 						be a common encoding supported by all Java implementations. Support
-	 * 					    for it is usually in rt.jar.)
+	 * 					    for it is usually in rt.jar.) This exception is also thrown if the
+     * 					    requested {@code keySize} parameter exceeds the length of the number of
+     * 					    bytes provded in the {@code keyDerivationKey} parameter.
 	 * @throws InvalidKeyException 	Likely indicates a coding error. Should not happen.
 	 * @throws EncryptionException  Throw for some precondition violations.
 	 */
@@ -295,16 +299,54 @@ public class KeyDerivationFunction {
 		//					to section 5.1 of NIST SP 800-108 based on feedback from
 		//					Jeffrey Walton.
 		//
-        // These probably should be turned into actual runtime checks and an
-        // IllegalArgumentException should be thrown if they are violated.
-		assert keyDerivationKey != null : "Key derivation key cannot be null.";
-			// We would choose a larger minimum key size, but we want to be
-			// able to accept DES for legacy encryption needs.
-		assert keySize >= 56 : "Key has size of " + keySize + ", which is less than minimum of 56-bits.";
-		assert (keySize % 8) == 0 : "Key size (" + keySize + ") must be a even multiple of 8-bits.";
-		assert purpose != null && !purpose.equals("") : "Purpose may not be null or empty.";
 
-		keySize = calcKeySize( keySize );	// Safely convert to whole # of bytes.
+		// These checks used to be assertions prior to ESAPI 2.1.0.1
+		if ( keyDerivationKey == null ) {
+			throw new IllegalArgumentException("Key derivation key cannot be null.");
+		}
+			// We would choose a larger minimum key size, but we want to allow
+            // this KDF to be able to accept DES for legacy encryption needs. (Note that
+            // elsewhere there are checks that disallow *encryption* for key size
+            // less than Encryptor.EncryptionKeyLength bits, so if they want
+            // ESAPI to encrypt stuff for DES, they would have to set that up to
+            // be 56 bits. But I can't think of any valid symmetric encryption
+            // algorithm whose key size is less than 56 bits that we would ever
+            // want to allow.
+		if ( keySize < 56 ) {
+			throw new IllegalArgumentException("Key has size of " + keySize +
+											   ", which is less than minimum of 56-bits.");
+		}
+		if ( (keySize % 8) != 0 ) {
+			throw new IllegalArgumentException("Key size (" + keySize +
+											   ") must be a even multiple of 8-bits.");
+		}
+		if ( purpose == null || "".equals(purpose) ) {
+			throw new IllegalArgumentException("Purpose may not be null or empty.");
+		}
+
+        //
+        // No longer, since we no longer wish to restrict this to use only by JavaEncryptor, so
+        // we no longer test for this.  For details, see the javadoc for '@param purpose', above.
+        //
+        /*
+         *
+         *      if ( ! ( purpose.equals("encryption") || purpose.equals("authenticity") ) ) {
+         *          throw new IllegalArgumentException("Purpose must be \"encryption\" or \"authenticity\".");
+         *      }
+         *
+         */
+
+        int providedKeyLen = 8 * keyDerivationKey.getEncoded().length;
+        // assert providedKeyLen >= 56 : "Coding error? Length of keyDerivationKey < 56 bits!";    // Ugh. DES compatible.
+
+        if ( providedKeyLen < keySize ) {
+            throw new EncryptionException("KeyDerivationFunction.computeDerivedKey() not intended for key stretching: " +
+                                          "provided key too short (" + providedKeyLen + " bits) to provide " + keySize + " bits.",
+                        "Key stretching not supported: Provided key, keyDerivationKey, has insufficient entropy (" +
+                            providedKeyLen + " bits) to generate key of requested size of " + keySize + " bits.");
+        }
+
+		keySize = calcKeySize( keySize );	// Safely convert from bits to a whole # of bytes.
 		byte[] derivedKey = new byte[ keySize ];
 		byte[] label;				    	// Same purpose as NIST SP 800-108's "label" in section 5.1.
 		byte[] context;						// See setContext() for details.
@@ -326,20 +368,20 @@ public class KeyDerivationFunction {
             // under the hood to create 'sk' so that it is 20 bytes. I cannot vouch
             // for how secure this key-stretching is. Worse, it might not be specified
             // as to *how* it is done and left to each JCE provider.
-		SecretKey sk = new SecretKeySpec(keyDerivationKey.getEncoded(), "HmacSHA1");
+      	SecretKey sk = new SecretKeySpec(keyDerivationKey.getEncoded(), prfAlg_ );
 		Mac mac = null;
 
 		try {
-			mac = Mac.getInstance("HmacSHA1");
+    		mac = Mac.getInstance( prfAlg_ );
 			mac.init(sk);
 		} catch( InvalidKeyException ex ) {
 			logger.error(Logger.SECURITY_FAILURE,
-					"Created HmacSHA1 Mac but SecretKey sk has alg " +
+					"Created " + prfAlg_ + " Mac but SecretKey sk has alg " +
 					sk.getAlgorithm(), ex);
 			throw ex;
 		}
 		
-		// Repeatedly call of HmacSHA1 hash until we've collected enough bits
+		// Repeatedly call of PRF Hmac until we've collected enough bits
 		// for the derived key. The first time through, we calculate the HmacSHA1
 		// on the "purpose" string, but subsequent calculations are performed
 		// on the previous result.
@@ -397,6 +439,15 @@ public class KeyDerivationFunction {
 		
 		// Don't leave remnants of the partial key in memory. (Note: we could
 		// not do this if tmpKey were declared in the do-while loop.
+        // Of course, in reality, trying to stomp these bits out is probably not
+        // realistic because the JIT is likely toing to be smart enough to
+        // optimze this loop away. We probably could try to outsmart it, by
+        // (say) writing out the overwritten bits to /dev/null, but then even
+        // then we'd still probably have to overwrite with random bits rather
+        // than all null chars. How much is enough? Who knows? But it does point
+        // to a serious limitation in Java and many other languages that one
+        // cannot arbitrarily disable the optimizer either at compile time or
+        // run time because of security reasons. Sigh. At least we've tried.
 		for ( int i = 0; i < tmpKey.length; i++ ) {
 			tmpKey[i] = '\0';
 		}
@@ -451,7 +502,9 @@ public class KeyDerivationFunction {
      *              {@code ks} bits.
      */
     private static int calcKeySize(int ks) {
-        assert ks > 0 : "Key size must be > 0 bits.";
+        if ( ks <= 0 ) {
+            throw new IllegalArgumentException("Key size must be > 0 bits.");
+        }
         int numBytes = 0;
         int n = ks/8;
         int rem = ks % 8;

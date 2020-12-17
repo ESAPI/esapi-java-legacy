@@ -15,10 +15,27 @@
  */
 package org.owasp.esapi.reference;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-import org.owasp.esapi.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.servlet.http.Cookie;
+
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Encoder;
+import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.ValidationRule;
+import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.http.MockHttpServletRequest;
@@ -27,12 +44,9 @@ import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
 import org.owasp.esapi.util.TestUtils;
 
-import javax.servlet.http.Cookie;
-import java.io.*;
-import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The Class ValidatorTest.
@@ -131,49 +145,6 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size()==4);
     }
 
-    public void testGetValidDate() throws Exception {
-    	System.out.println("getValidDate");
-    	Validator instance = ESAPI.validator();
-    	ValidationErrorList errors = new ValidationErrorList();
-    	assertTrue(instance.getValidDate("datetest1", "June 23, 1967", DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US), false) != null);
-    	instance.getValidDate("datetest2", "freakshow", DateFormat.getDateInstance(), false, errors);
-    	assertEquals(1, errors.size());
-
-    	// TODO: This test case fails due to an apparent bug in SimpleDateFormat
-    	// Note: This seems to be fixed in JDK 6. Will leave it commented out since
-    	//		 we only require JDK 5. -kww
-    	instance.getValidDate("test", "June 32, 2008", DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.US), false, errors);
-    	// assertEquals( 2, errors.size() );
-    }
-    
-    // FIXME: Should probably use SecurityConfigurationWrapper and force
-    //		  Validator.AcceptLenientDates to be false.
-    public void testLenientDate() {
-    	System.out.println("testLenientDate");
-    	boolean acceptLenientDates = ESAPI.securityConfiguration().getLenientDatesAccepted();
-    	if ( acceptLenientDates ) {
-    		assertTrue("Lenient date test skipped because Validator.AcceptLenientDates set to true", true);
-    		return;
-    	}
-
-    	Date lenientDateTest = null;
-    	try {
-    		// lenientDateTest will be null when Validator.AcceptLenientDates
-    		// is set to false (the default).
-    		Validator instance = ESAPI.validator();
-    		lenientDateTest = instance.getValidDate("datatest3-lenient", "15/2/2009 11:83:00",
-    				                                DateFormat.getDateInstance(DateFormat.SHORT, Locale.US),
-    				                                false);
-    		fail("Failed to throw expected ValidationException when Validator.AcceptLenientDates set to false.");
-    	} catch (ValidationException ve) {
-    		assertNull( lenientDateTest );
-    		Throwable cause = ve.getCause();
-    		assertTrue( cause.getClass().getName().equals("java.text.ParseException") );
-    	} catch (Exception e) {
-    		fail("Caught unexpected exception: " + e.getClass().getName() + "; msg: " + e);
-    	}
-    }
-
     public void testGetValidDirectoryPath() throws Exception {
         System.out.println("getValidDirectoryPath");
         Validator instance = ESAPI.validator();
@@ -267,39 +238,8 @@ public class ValidatorTest extends TestCase {
         // instance.getValidRedirectLocation(String, String, boolean, ValidationErrorList)
     }
 
-    public void testGetValidSafeHTML() throws Exception {
-        System.out.println("getValidSafeHTML");
-        Validator instance = ESAPI.validator();
-        ValidationErrorList errors = new ValidationErrorList();
-
-        // new school test case setup
-        HTMLValidationRule rule = new HTMLValidationRule("test");
-        ESAPI.validator().addRule(rule);
-
-        assertEquals("Test.", ESAPI.validator().getRule("test").getValid("test", "Test. <script>alert(document.cookie)</script>"));
-
-        String test1 = "<b>Jeff</b>";
-        String result1 = instance.getValidSafeHTML("test", test1, 100, false, errors);
-        assertEquals(test1, result1);
-
-        String test2 = "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>";
-        String result2 = instance.getValidSafeHTML("test", test2, 100, false, errors);
-        assertEquals(test2, result2);
-
-        String test3 = "Test. <script>alert(document.cookie)</script>";
-        assertEquals("Test.", rule.getSafe("test", test3));
-
-        assertEquals("Test. &lt;<div>load=alert()</div>", rule.getSafe("test", "Test. <<div on<script></script>load=alert()"));
-        assertEquals("Test. <div>b</div>", rule.getSafe("test", "Test. <div style={xss:expression(xss)}>b</div>"));
-        assertEquals("Test. alert(document.cookie)", rule.getSafe("test", "Test. <s%00cript>alert(document.cookie)</script>"));
-        assertEquals("Test. alert(document.cookie)", rule.getSafe("test", "Test. <s\tcript>alert(document.cookie)</script>"));
-        assertEquals("Test. alert(document.cookie)", rule.getSafe("test", "Test. <s\tcript>alert(document.cookie)</script>"));
-        // TODO: ENHANCE waiting for a way to validate text headed for an attribute for scripts
-        // This would be nice to catch, but just looks like text to AntiSamy
-        // assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
-        // String result4 = instance.getValidSafeHTML("test", test4);
-        // assertEquals("", result4);
-    }
+    //      Test split out and moved to HTMLValidationRuleLogsTest.java & HTMLValidationRuleThrowsTest.java
+    // public void testGetValidSafeHTML() throws Exception {
 
     public void testIsInvalidFilename() {
         System.out.println("testIsInvalidFilename");
@@ -314,22 +254,20 @@ public class ValidatorTest extends TestCase {
         assertFalse("Filennames cannot be the empty string", instance.isValidFileName("test", "", false));
     }
 
-    public void testIsValidDate() {
-        System.out.println("isValidDate");
-        Validator instance = ESAPI.validator();
-        DateFormat format = SimpleDateFormat.getDateInstance(SimpleDateFormat.MEDIUM, Locale.US);
-        assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true));
-        assertFalse(instance.isValidDate("datetest2", null, format, false));
-        assertFalse(instance.isValidDate("datetest3", "", format, false));
-
-        ValidationErrorList errors = new ValidationErrorList();
-        assertTrue(instance.isValidDate("datetest1", "September 11, 2001", format, true, errors));
-        assertTrue(errors.size()==0);
-        assertFalse(instance.isValidDate("datetest2", null, format, false, errors));
-        assertTrue(errors.size()==1);
-        assertFalse(instance.isValidDate("datetest3", "", format, false, errors));
-        assertTrue(errors.size()==2);
-
+    // Reset 'parent' depending on where Windows is installed so running off
+    // different drive doesn't break tests in testIsValidDirectoryPath().
+    private File resetParentForWindows(String sysRoot) throws IOException {
+        if ( sysRoot == null ) {
+            return new File("C:\\");
+        }
+        int bslash = sysRoot.indexOf('\\');
+        String winRoot = null;
+        if ( bslash == -1 || sysRoot.length() < 4 ) {
+            winRoot = "C:\\";   // Well, that's a first. Just pretend it's under C:\.
+        } else {
+            winRoot = sysRoot.substring(0, bslash + 1);
+        }
+        return new File( winRoot );
     }
 
     public void testIsValidDirectoryPath() throws IOException {
@@ -348,6 +286,10 @@ public class ValidatorTest extends TestCase {
 
         if (isWindows) {
             String sysRoot = new File(System.getenv("SystemRoot")).getCanonicalPath();
+
+            // Reset 'parent' in case running from drive other than where Windows installed.
+            parent = resetParentForWindows( sysRoot );
+
             // Windows paths that don't exist and thus should fail
             assertFalse(instance.isValidDirectoryPath("test", "c:\\ridiculous", parent, false));
             assertFalse(instance.isValidDirectoryPath("test", "c:\\jeff", parent, false));
@@ -360,7 +302,7 @@ public class ValidatorTest extends TestCase {
 
             // Unix specific paths should not pass
             assertFalse(instance.isValidDirectoryPath("test", "/tmp", parent, false));      // Unix Temporary directory
-            assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", parent, false));   // Unix Standard shell
+            assertFalse(instance.isValidDirectoryPath("test", "/etc", parent, false));   // Unix Standard shell
             assertFalse(instance.isValidDirectoryPath("test", "/etc/config", parent, false));
 
             // Unix specific paths that should not exist or work
@@ -408,7 +350,13 @@ public class ValidatorTest extends TestCase {
 
             // Unix specific paths should pass
             assertTrue(instance.isValidDirectoryPath("test", "/", parent, false));         // Root directory
-            assertTrue(instance.isValidDirectoryPath("test", "/bin", parent, false));      // Always exist directory
+                // Unfortunately, on MacOS both "/etc" and "/var" are symlinks
+                // to "/private/etc" and "/private/var" respectively, and "/sbin"
+                // and "/bin" sometimes are symlinks on certain *nix OSs, so we need
+                // to special case MacOS here.
+            boolean isMac = System.getProperty("os.name").toLowerCase().contains("mac");
+            String testDirNotSymLink = isMac ? "/private" : "/etc";
+            assertTrue(instance.isValidDirectoryPath("test", testDirNotSymLink, parent, false));      // Always exist directory
 
             // Unix specific paths that should not exist or work
             assertFalse(instance.isValidDirectoryPath("test", "/bin/sh", parent, false));   // Standard shell, not dir
@@ -908,32 +856,8 @@ public class ValidatorTest extends TestCase {
         //		isValidRedirectLocation(String, String, boolean)
     }
 
-    public void testIsValidSafeHTML() {
-        System.out.println("isValidSafeHTML");
-        Validator instance = ESAPI.validator();
-
-        assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <div style={xss:expression(xss)}>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <s%00cript>alert(document.cookie)</script>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false));
-
-        // TODO: waiting for a way to validate text headed for an attribute for scripts
-        // This would be nice to catch, but just looks like text to AntiSamy
-        // assertFalse(instance.isValidSafeHTML("test", "\" onload=\"alert(document.cookie)\" "));
-        ValidationErrorList errors = new ValidationErrorList();
-        assertTrue(instance.isValidSafeHTML("test1", "<b>Jeff</b>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test2", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test3", "Test. <script>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test4", "Test. <div style={xss:expression(xss)}>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test5", "Test. <s%00cript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test6", "Test. <s\tcript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test7", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(errors.size() == 0);
-
-    }
+    //      Test split out and moved to HTMLValidationRuleLogsTest.java & HTMLValidationRuleThrowsTest.java
+    // public void testIsValidSafeHTML() {
 
     public void testSafeReadLine() {
         System.out.println("safeReadLine");

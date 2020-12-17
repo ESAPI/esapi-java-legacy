@@ -82,6 +82,10 @@ import org.owasp.esapi.errors.ValidationUploadException;
 public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     private static volatile HTTPUtilities instance = null;
 
+    // Apache Commons FileUpload property for enabling / disabling Java deserialization via file uploads.
+    // ESAPI will save current value, set it to "false", and then restore value before returning. GitHub issue #417.
+    private static String DISKFILEITEM_SERIALIZABLE = "org.apache.commons.fileupload.disk.DiskFileItem.serializable";
+
     public static HTTPUtilities getInstance() {
         if ( instance == null ) {
             synchronized ( DefaultHTTPUtilities.class ) {
@@ -539,7 +543,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		}
 
 		List<File> newFiles = new ArrayList<File>();
+		String dfiPrevValue = "false";   // Fail safely in case of Java Security Manager & weird security policy
 		try {
+			dfiPrevValue = System.getProperty(DISKFILEITEM_SERIALIZABLE);
+			System.setProperty(DISKFILEITEM_SERIALIZABLE, "false");
 			final HttpSession session = request.getSession(false);
 			if (!ServletFileUpload.isMultipartContent(request)) {
 				throw new ValidationUploadException("Upload failed", "Not a multipart request");
@@ -614,6 +621,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 				throw (ValidationException)e;
 			}
 			throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
+		}
+		finally {
+			if ( dfiPrevValue != null ) {
+				System.setProperty(DISKFILEITEM_SERIALIZABLE, dfiPrevValue);
+			}
 		}
 		return Collections.synchronizedList(newFiles);
 	}
@@ -703,7 +715,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      * @param name
      */
 	public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
-		String path = "//";
+		String path = "/";
 		String domain="";
 		Cookie cookie = getFirstCookie(request, name);
 		if ( cookie != null ) {
@@ -754,7 +766,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 		    Iterator i = request.getParameterMap().keySet().iterator();
 		    while (i.hasNext()) {
 		        String key = (String) i.next();
-		        String[] value = (String[]) request.getParameterMap().get(key);
+		        String[] value = request.getParameterMap().get(key);
 		        for (int j = 0; j < value.length; j++) {
                  params.append(key).append("=");
 		            if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {

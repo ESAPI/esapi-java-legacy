@@ -1,22 +1,21 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
 package org.owasp.esapi;
 
 import org.owasp.esapi.errors.EncryptionException;
-
 
 /**
  * The Randomizer interface defines a set of methods for creating
@@ -33,91 +32,91 @@ public interface Randomizer {
 
 	/**
 	 * Gets a random string of a desired length and character set.  The use of java.security.SecureRandom
-	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * is recommended because it provides a cryptographically strong pseudo-random number generator.
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
-	 * 
-	 * @param length 
+	 *
+	 * @param length
 	 * 		the length of the string
-	 * @param characterSet 
+	 * @param characterSet
 	 * 		the set of characters to include in the created random string
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 * 		the random string of the desired length and character set
 	 */
 	String getRandomString(int length, char[] characterSet);
 
 	/**
 	 * Returns a random boolean.  The use of java.security.SecureRandom
-	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * is recommended because it provides a cryptographically strong pseudo-random number generator.
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 * 		true or false, randomly
 	 */
 	boolean getRandomBoolean();
-	
+
 	/**
-	 * Gets the random integer. The use of java.security.SecureRandom
-	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * Gets the random integer in the range of [min, max). The use of java.security.SecureRandom
+	 * is recommended because it provides a cryptographically strong pseudo-random number generator.
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
-	 * 
-	 * @param min 
-	 * 		the minimum integer that will be returned
-	 * @param max 
-	 * 		the maximum integer that will be returned
-	 * 
-	 * @return 
+	 *
+	 * @param min
+	 * 		the minimum integer that will be returned, inclusive
+	 * @param max
+	 * 		the maximum integer that will be returned, exclusive
+	 *
+	 * @return
 	 * 		the random integer
 	 */
 	int getRandomInteger(int min, int max);
 
-	
+
 	/**
 	 * Gets the random long. The use of java.security.SecureRandom
-	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * is recommended because it provides a cryptographically strong pseudo-random number generator.
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
-	 * 
-	 * @return 
+	 *
+	 * @return
 	 * 		the random long
 	 */
-    public long getRandomLong();
-	
-	
+    long getRandomLong();
+
+
     /**
      * Returns an unguessable random filename with the specified extension.  This method could call
      * getRandomString(length, charset) from this Class with the desired length and alphanumerics as the charset 
      * then merely append "." + extension.
-     * 
-     * @param extension 
+     *
+     * @param extension
      * 		extension to add to the random filename
-     * 
-     * @return 
+     *
+     * @return
      * 		a random unguessable filename ending with the specified extension
      */
-    public String getRandomFilename( String extension );
-    
-    
+    String getRandomFilename( String extension );
+
+
 	/**
-	 * Gets the random real.  The use of java.security.SecureRandom
-	 * is recommended because it provides a cryptographically strong pseudo-random number generator. 
-	 * If SecureRandom is not used, the pseudo-random number gernerator used should comply with the 
+	 * Gets the random real in the range of [min, max].  The use of java.security.SecureRandom
+	 * is recommended because it provides a cryptographically strong pseudo-random number generator.
+	 * If SecureRandom is not used, the pseudo-random number generator used should comply with the
 	 * statistical random number generator tests specified in <a href="http://csrc.nist.gov/cryptval/140-2.htm">
 	 * FIPS 140-2, Security Requirements for Cryptographic Modules</a>, section 4.9.1.
-	 * 
-	 * @param min 
-	 * 		the minimum real number that will be returned
-	 * @param max 
-	 * 		the maximum real number that will be returned
-	 * 
-	 * @return 
+	 *
+	 * @param min
+	 * 		the minimum real number that will be returned, inclusive
+	 * @param max
+	 * 		the maximum real number that will be returned, inclusive
+	 *
+	 * @return
 	 * 		the random real
 	 */
 	float getRandomReal(float min, float max);
@@ -130,19 +129,19 @@ public interface Randomizer {
      * For more information including algorithms used to create <tt>UUID</tt>s,
      * see the Internet-Draft <a href="http://www.ietf.org/internet-drafts/draft-mealling-uuid-urn-03.txt">UUIDs and GUIDs</a>
      * or the standards body definition at <a href="http://www.iso.ch/cate/d2229.html">ISO/IEC 11578:1996</a>.
-     * @return 
+     * @return
      * 		the GUID
-     * 
-     * @throws 
-     * 		EncryptionException if hashing or encryption fails 
+     *
+     * @throws
+     * 		EncryptionException if hashing or encryption fails
      */
     String getRandomGUID() throws EncryptionException;
-           
+
     /**
      * Generates a specified number of random bytes.
      * @param n	The requested number of random bytes.
      * @return The {@code n} random bytes are returned.
      */
-    public byte[] getRandomBytes(int n);
-           
+    byte[] getRandomBytes(int n);
+
 }

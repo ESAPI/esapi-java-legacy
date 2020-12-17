@@ -1,0 +1,421 @@
+Release notes for ESAPI 2.2.0.0
+    Release date: 2019-June-24
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.1.0.1, February 5, 2016
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+* Upgrade to require JDK 7 or later. JDK 6 is no longer supported by ESAPI.
+* Upgrade to require Java Servlet API 3.0.1 or later. See "Appendix: Dependency Updates (as reflected in pom.xml)" below for additional details.
+* 100+ GitHub issues closed. (Note: Includes previously incorrectly closed issues that were reopened, fixed, and then closed again.)
+* Upgraded versions of several ESAPI dependencies (i.e., 3rd party jars), including several that had unpatched CVEs. See "Appendix: Dependency Updates (as reflected in pom.xml)" below for full details.
+* Known vulnerabilities still not addressed:
+    - There is this critical CVE in log4j 2.x before 2.8.2: CVE-2017-5645. It is a Java deserialization vulnerability that can lead to arbitrary remote code execution. Some private vulnerability databases claim that this same vulnerability is present in log4j 1.x even though the CVE itself does not claim that. However, examination of this CVE shows that the vulnerability is associated with implementations of TcpSocketServer and UdpSocketServer, which implement fully functional socket servers that can be used to listen on network connections and record log events sent to server from various client applications. For ESAPI to be vulnerable to that, first someone would have to have an implementation of wone of those servers running and secondly, they would have to change ESAPI's log4j.xml configuration file so that it uses log4j's SocketAppender rather than the default ConsoleAppender that ESAPI's default deployment uses. Thus even if this vulnerability were present in log4j 1.x, ESAPI's use of ConsoleAppender makes it a non-issue.
+    - There is a known and unpatched vulnerability in the SLF4J Extensions that some vulnerability scanners may pick up and associate with ESAPI's use of slf4j-api-1.7.25.jar. (Note that OWASP Dependency Check does NOT flag this vulnerability [CVE-2018-8088], but others may.) According to NVD, this vulnerability is associated with "org.slf4j.ext.EventData in the slf4j-ext module in QOS.CH SLF4J before 1.8.0-beta2". Fortunately, I have confirmed that this Java deserialization does not impact ESAPI. First off, the default configuration of ESAPI.properties does not use SLF4J, but even if an application should choose to use it, ESAPI does not include the slf4j-ext jar and it has been confirmed that the vulnerable class (org.slf4j.ext.EventData) is not included in the slf4j-api jar that ESAPI does. Unfortunately, this CVE is not patched in the latest SLF4J packages, so even if we were to update it to latest version (currently 1.80-beta2, as of 12/31/2018), any scanners that associate ESAPI with CVE-2018-8088 would still have this false positive. But the important thing to ESAPI users is to know that if this CVE is identified for ESAPI, that it is a false positive.
+    - There is a recently discovered issue (see https://app.snyk.io/vuln/SNYK-JAVA-COMMONSBEANUTILS-30077) that is related to CVE-2014-0114 that is a Java deserialization issue in Apache Commons BeanUtils 1.9.3 that can lead to remote command execution attacks. This had been fixed in 1.9.2, but apparently they missed a place where the fix was needed. A GitHub commit (https://github.com/apache/commons-beanutils/pull/7/commits/2780a77600e6428b730e3a5197b7c5baf1c4cca0) has been made to mster branch of the BeanUtils repo, but thus far, no official patch has been released. ESAPI only uses BeanUtils in its AccessController (specifically, DynaBeanACRParameter class), where it has a dependency on org.apache.commons.beanutils.LazyDynaMap. Based on the BeanUtils commit, the fix was in org.apache.commons.beanutils2.PropertyUtilsBean. Based on a cursory examination, the ESAPI team does not believe that this vulnerability reported by Snyk is exploitable given that manner that it is used within ESAPI, or if it is, it is not externally exploitable based on the default access control rules that are provided with ESAPI. However, the ESAPI team will be watching for an official patch to Apache Commons BeanUtils and we will release a patched version of ESAPI as patch point release once a patch is officially available in Maven Central.
+    - Otherwise, ESAPI 2.2.0.0 addresses all know CVEs except for CVE-2013-5960 (which I have fixed in a private BitBucket repo, but getting it to be backward compatible is proving to be more difficult than anticipated.) Besides, if you want to use encryption in Java, I'd highly recommend using Google Tink, which is much more fully featured than ESAPI. (Tink allows key rotation, storing keys in various cloud HSMs, etc.)
+
+
+It was mainly because of these first two bullet items above that we bumped the release to 2.2.0.0 rather than to 2.1.0.2. (See GitHub Issue #471 for details.)
+=================================================================================================================
+
+                Basic ESAPI facts
+
+ESAPI 2.1.0.1 release:
+    177 Java source files
+    1547 Junit tests in 88 Java source files
+
+ESAPI 2.2.0.0 release:
+    194 Java source files
+    4150 JUnit tests in 118 Java source files
+
+That's 2603 NEW tests since the 2.1.0.1 release!!!
+
+                GitHub Issues fixed in this release
+            [i.e., since 2.1.0.1 release on 2016-Feb-05]
+                          More than 100 issues closed
+
+Issue #			GitHub Issue Title
+----------------------------------------------------------------------------------------------
+30		ESAPIFilter in RI should allow login page destination to be configured
+31		MySQL CODEC : "_" character not handled properly ?
+37		RandomAccessReferenceMap.update() can randomly corrupt the map
+71		java.lang.ExceptionInInitializerError in 2.0 version
+129		Add Logging support for SLF4J
+157		minimum-config deployment fails 
+188		SecurityWrapperRequest seems to mishandle/swallow allowNull argument
+209		Build an encoding function specific to HTTP/Response Splitting (tactical remediation)
+213		Provide a taglib descriptor (.tld file)
+223		DecodeFromURL fails when the input is &quot;&amp;#37;&quot; (without quotes)
+228		EncodeForHTML or other Encoding methods fail if there is a windows style path being encoded.
+234		Canonicalization might not be performed
+244		Unable to use the esapi taglib as esapi.tld file is missing in the ESAPI 2.0 GA release
+246		CryptoHelper::arrayCompare - leaks info about arrays
+247		XSS Cheat sheet on safe vs unsafe CSS property value syntax is inaccurate
+253		tag library will not function without ESAPI configuration
+255		Patch for /trunk/src/main/java/org/owasp/esapi/reference/crypto/JavaEncryptor.java
+258		isValidDate fails to identify injection attack      [[Note: closed as duplicate of 299]]
+259		JavascriptCodec is removing all backslashes
+265		Canonicalize function for the DefaultEncoder class does not handle URLs properly
+267		java.lang.ClassNotFoundException: org.owasp.validator.html.PolicyException
+273		Could not initialize class org.owasp.esapi.reference.crypto.JavaEncryptor
+274		Logger.log is is slow
+277		NPE in SafeFile.doDirCheck() on empty file path, needs null check.
+278		ValidatorTest fails with German default Locale
+280		HTMLEntityCodec.getNamedEntity not case sensitive
+281		missing assertions in SafeFileTest.java
+282		Difference between encodeForHTMLAttribute and encodeForHTML
+283		nekohtml fails ESAPI.validator().getValidSafeHTML();
+284		ESAPI.validator().getValidInput() returns misleading Exception
+285		Incorrect treatement of named html entities
+286		JavaLogFactory not thread safe
+289		ClickjackFilter after doFilter
+291		DefaultEncoder.canonicalize() Bug
+292		jsessionid validator regex in esapi.properties not applicable to ids generated by tomcat
+293		Canoniclizing out of EncodeforLdap or EncodeForDN if contains specific characters like &quot;(, ) #&quot; etc. messes up the input.
+294		Config Error
+295		ESAPI validator isValidRedirectLocation does not work
+296		CSS and images not working with ESAPIWebApplicationFirewallFilter
+297		ClassNotFoundException: org.owasp.esapi.reference.accesscontrol.DefaultAccessController AccessController class
+299		isValidDate fails with patterns ending with "yyyy"
+300		non-BMP characters incorrectly encoded
+301		encodeForHTMLAttribute escapes the forward slash
+302		HTMLEntityCodec#decode incorrectly decodes upper-case accented letters as their lower-case counterparts
+303		HTMLEntityCodec destroys 32-bit CJK (Chinese, Japanese and Korean) characters
+304		encodeForCSS breaks color values
+305		ClassCastException when using ESAPI logger
+307		Issue with decodeFromURL method in the DefaultEncoder
+308		AuthenticatedUser isCredentialsNonExpired() have todo comment, but default return false;
+309		Eliminate eclipse code warnings to improve quality
+316		Deprecate current HttpUtilities.setRememberToken() and replace with one not requiring user password
+317		Resource leak: This FileReader is not closed on method exit
+325		ClassCastException on SecurityWrapperResponse
+327		Construct &quot;&amp;amp;&quot; in Validator.URL is simple character class, not reference to ampersand
+329		AbstractAccessReferenceMap.addDirectReference not invariant
+333		logger is gettin class cast exception
+352		Possible threading issue in EnterpriseSecurityExceptionTest
+360		AuthenticatorTest.setCurrentUser() periodically fails.
+361		Update pom.xml to use latest Maven plugins
+364		Possible null deference found by Coverity (id # 1352406) in CipherTextSerializer class
+365		TLD not in Jar
+366		Need instructions for building and developing ESAPI in IntelliJ
+371		Synchronize instance with GitHub issues
+372		Use of vulnerable commons-httpclient:commons-httpclient:3.1 dependency
+373		Create File Validator that checks Magic Bytes as Opposed to Extensions
+374		Email Validator does not accept + and longed domain names while it is allowed in ICANN
+375		java.lang.NoClassDefFoundError - .StrTokenizer
+376		Infinite or very long loop in URL validation URL
+379		WAF: GeneralAttackSignatureRule fails to process request with single parameter.
+381		Update ESAPI&#39;s pom.xml to address vulnerable 3rd party components
+383		SecurityWrapperResponse is overwriting http status codes that conflicts with RESTful Web Service protocols
+385		Method logSpecial in DefaultSecurityConfiguration is private and cannot be overriden by subclasses
+386		Avoid using System.err in EsapiPropertyManager
+387		&#39;mvn site&#39; fails for FindBugs report, causing &#39;site&#39; goal to fail
+389		Provide an option for the encodeForLDAP method to not encode wildcard characters
+394		Refactor Validator.getCanonicalizedUri into Encoder.  
+395		Issues when I am passing htttp://localhost:8080/user=admin&amp;prodversion=no
+396		Trust Boundary Violation - while triggering veracode
+397		Update Resource path search to maintain legacy behavior in DefaultSecurityConfiguration.java
+398		addHeader in SecurityWrapperResponse has an arbitrary limit of 20 for the length of the Header name
+399		Fix Build Error when using mvn site
+400		Create a unit test for SecurityWrapperResponse
+403		Refactor all &quot;Magic Numbers&quot; in the baseline to use ESAPI.properties configurations
+414		canonicalize falsely recognizes HTML named entities
+417		Add additional protection against CVE-2016-1000031
+422		Inconsistent dependency structure and vulnerable xml (xerces, xalan, xml-apis ...) dependencies
+424		issue with Filename encoding for executeSystemCommand
+425		Project build error: Non-resolvable parent POM for org.owasp.esapi:esapi:2.1.0.2-SNAPSHOT: Could not transfer artifact 
+427		HTTP cookie validation rules too restrictive?
+429		Miscellaneous updates to pom.xml
+432		ESAPI.properties not found.
+433		Class Cast Exception when trying to run JUnit Tests
+435		DefaultEncoder exhibits &quot;double checked locking&quot; anti-pattern
+437		CVE-2016-2510
+438		EncryptorTest.testNewEncryptDecrypt() fails for 112-bit (2-key) DESede if Bouncy Castle provider is installed as preferred provider
+439		Tighten ESAPI defaults to disallow dubious file suffixes
+442		Remove deprecated fields in Encoder interface
+444		Delete deprecated method Base64.decodeToObject() and related methods
+445		A bunch of dependencies are out of date , I will list them below with the associated vulnerability
+447		can&#39;t generate MasterKey / MasterSalt 
+448		Clean up pom.xml
+454		about code eclipse formatter template question
+455		New release for mitigation of CVEs
+457		when run jetty ,can not find  esapi\ESAPI.properties
+461		Eclipse setup issues
+462		Allow configurable init parameter in ESAPIFilter for unauthorized requests
+463		Create release notes for next ESAPI release
+465		Update both ESAPI.properties files to show comment for ESAPI logger support for SLF4J
+471		Bump ESAPI release # to 2.2.0.0
+476		DefaultValidator.getValidInput implementation ignores 'canonicalize' method parameter
+478		Remove obsolete references to Google Code in pom.xml and any other release prep
+482		ESAPI 2.2.0.0 release date?
+483		More miscellaneous prep work for ESAPI 2.2.0.0 release
+485		Update Maven dependency check plugin to 5.0.0-M2
+488		Missed a legal input case in DefaultSecurityConfiguration.java
+492		Release candidates on maven central
+493		wrong regex validation
+499		ValidatorTest.isValidDirectoryPath() has tests that fail under Windows if ESAPI tests run from different drive where Windows installed
+500		Suppress noise from ESAPI searching for properties and stop ignoring important IOExceptions
+
+
+-----------------------------------------------------------------------------
+
+        Changes requiring special attention
+
+* Various deprecated methods were _actually_ deleted! This could break existing application code.
+
+    Issue 442		Remove deprecated fields in Encoder interface
+
+        Specifically, if you are using any of these previously deprecated fields from the Encoder interface, you need to update your application code to refer insteat to the constances from org.owasp.esapi.EncoderConstants:
+
+                public final static char[] CHAR_LOWERS = EncoderConstants.CHAR_LOWERS;
+                public final static char[] CHAR_UPPERS = EncoderConstants.CHAR_UPPERS;
+                public final static char[] CHAR_DIGITS = EncoderConstants.CHAR_DIGITS;
+                public final static char[] CHAR_SPECIALS = EncoderConstants.CHAR_SPECIALS;
+                public final static char[] CHAR_LETTERS = EncoderConstants.CHAR_LETTERS;
+                public final static char[] CHAR_ALPHANUMERICS = EncoderConstants.CHAR_ALPHANUMERICS;
+                public final static char[] CHAR_PASSWORD_LOWERS = EncoderConstants.CHAR_PASSWORD_LOWERS;
+                public final static char[] CHAR_PASSWORD_UPPERS = EncoderConstants.CHAR_PASSWORD_UPPERS;
+                public final static char[] CHAR_PASSWORD_DIGITS = EncoderConstants.CHAR_PASSWORD_DIGITS;
+                public final static char[] CHAR_PASSWORD_SPECIALS = EncoderConstants.CHAR_PASSWORD_SPECIALS;
+                public final static char[] CHAR_PASSWORD_LETTERS = EncoderConstants.CHAR_PASSWORD_LETTERS;
+
+    Issue 444		Delete deprecated method Base64.decodeToObject() and related methods
+
+        Specifically, the following methods were removed from the org.owasp.esapi.codecs.Base64 class. If you will using any of these methods, you likely already had vulnerabilities in your application code. If any of these methods were being used, you will need to rewrite your application code:
+
+                public static String encodeObject( java.io.Serializable serializableObject )
+                public static String encodeObject( java.io.Serializable serializableObject, int options )
+                public static Object decodeToObject( String encodedObject )
+
+    Issue 483     More miscellaneous prep work for ESAPI 2.2.0.0 release
+        Specifically, CipherText.getSerialVersionUID() and DefaultSecurityConfiguration.MAX_FILE_NAME_LENGTH have actually been deleted from the ESAPI code base. For the former, use CipherText.cipherTextVersion() instead. For the latter, there is no replacement. (This wasn't being used, but it was set to 1000 in case you're wondering.)
+        
+* Various properties in ESAPI.properties were changed in a way that might affect your application:
+    Issue 439		Tighten ESAPI defaults to disallow dubious file suffixes
+
+        Specifically, the property HttpUtilities.ApprovedUploadExtensions changed from
+            HttpUtilities.ApprovedUploadExtensions=.zip,.pdf,.doc,.docx,.ppt,.pptx,.tar,.gz,.tgz,.rar,.war,.jar,.ear,.xls,.rtf,.properties,.java,.class,.txt,.xml,.jsp,.jsf,.exe,.dll
+        to:
+            HttpUtilities.ApprovedUploadExtensions=.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.rtf,.txt,.jpg,.png
+        so if you were relying on your application to legimately accept an of the dangerous file types that were removed, you will need to update this property in your application's ESAPI.properties file accordingly.
+
+    - Several other properties related to the ESAPI Validator interface (typically through one of the isValid() methods) have had their default values which it uses modified. This mostly affects the use ESAPI.validator().isValid() calls, use of the class org.owasp.esapi.filters.SecurityWrapperRequest (which extends HttpServletRequestWrapper and is often used separately), as well as the ESAPI servlet filter, org.owasp.esapi.filters.SecurityWrapper, that uses it SecurityWrapperRequest. The following ESAPI properties are affected. If you are relying on any of these properties, you should review your application to see if / how it might be impacted.
+
+            Validator.HTTPContextPath:      Changed so that '/' is no longer a valid character.
+            Validator.HTTPHeaderName:       Changed so that the max size of a valid HTTP header name increased from 50 to 256.
+            Validator.HTTPJSESSIONID:       Changed so that valid HTTP JSESSIONID length increased from 30 to 32 characters.
+            Validator.HTTPParameterName:    Changed so that '-' is now considered a valid character for an HTTP parameter name.
+            Validator.HTTPParameterValue:   Changed so that some additional characters are allowed and length is limited to 1000 characters; i.e., changed from:
+                                                    Validator.HTTPParameterValue=^[a-zA-Z0-9.\\-\\/+=@_ ]*$
+                                                to:
+                                                    Validator.HTTPParameterValue=^[\\p{L}\\p{N}.\\-/+=_ !$*?@]{0,1000}$
+            Validator.HTTPQueryString:      Changed lots of things. Specifically, changed from:
+                                                    Validator.HTTPQueryString=^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ %]*$
+                                                to:
+                                                    Validator.HTTPQueryString=^([a-zA-Z0-9_\\-]{1,32}=[\\p{L}\\p{N}.\\-/+=_ !$*?@%]*&?)*$
+                                                (Left as an exercise for the reader to figure out what exactly this means. ;-)
+            Validator.HTTPURI:              Changed to be much more restrictive; i.e., changed from:
+                                                    Validator.HTTPURI=^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]*$ 
+                                                to:
+                                                    Validator.HTTPURI=^/([a-zA-Z0-9.\\-_]*/?)*$
+            
+* Other changes:
+    Issue 500		Suppress noise from ESAPI searching for properties and stop ignoring important IOExceptions
+
+        Fixing this required changes to the CTORs of the following classes:
+
+                org.owasp.esapi.configuration.EsapiPropertyManager
+                org.owasp.esapi.configuration.AbstractPrioritizedPropertyLoader
+                org.owasp.esapi.configuration.EsapiPropertyLoaderFactory
+                org.owasp.esapi.configuration.StandardEsapiPropertyLoader
+                org.owasp.esapi.configuration.XmlEsapiPropertyLoader
+
+        These CTORs now explicitly throw IOException if the specified ESAPI property file is not found or not readable. Note that this should not affect most people as most use DefaultSecurityCOnfigurator and it still only throws ConfigurationException. (IOExceptions from these other classes are caught and rethrow as ConfigurationException.) Use of these classes directly should be very rare.
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, some of which not tracked via GitHub issues
+
+* Updated minimal version of Maven from 3.0 to 3.1 required to build ESAPI. 
+* Miscellaneous minor javadoc fixes and updates.
+* Added the Maven plug-in for OWASP Dependency Check so 3rd party dependencies can be kept up-to-date.
+* Updated .gitignore file with additional files to be ignored.
+* Changed many additional assertions in ESAPI crypto to explicit runtime checks that throw IllegalArgumentException instead. If you were using ESAPI crypto correctly, it shouldn't affect you, but if you were calling it incorrectly, you may now immediately get an IllegalArgumentException rather than something like a mysterious MullPointerException much later on.
+
+-----------------------------------------------------------------------------
+
+                Contributors for ESAPI 2.2.0.0 release
+
+Notice:
+    My appologies if I've missed anyone, but I have went solely by GitHub's record or *merged* PRs closed since 2.1.0.1 (i.e., > 2016-02-05).  If you submitted a patch file that was included with some other PR or worked with someone else that contributed a merged PR, drop me an email.  It is not my intention to slight anyone's contribution. If you can provide evidence of this, we will add your GitHub ID to this list.
+
+    Note that some of you may have submitted PRs that were rejected or closed for other reasons (such as being a duplicate, etc.) If you feel that you should still be mentioned here, shoot me an email and make your case and I will discuss it with my project co-lead, and you might be added to these release notes retroactively.
+                                                    - Kevin W. Wall
+
+Project co-leaders
+    Kevin W. Wall (kwwall)
+    Matt Seil (xeno6696)
+
+Special shout-outs to:
+    Jeremiah Stacey (jeremiahjstacey) -- All around ESAPI support and JUnit test case developer extraordinaire
+    Dave Wichers (davewichers) - for Maven Central / Sonatype help
+
+List of all PRs closed since 2.1.0.1 (2016-Feb-05) -
+        List includes merged AND rejected PRs
+
+  53 Closed PRs since 2.1.0.1 release
+  ===================================
+#362 by artfullyContrived was merged on Feb 9, 2016 -- Update pom.xml to use latest Maven plugins
+#367 by drm2 was merged on Apr 9, 2016 -- Adding IntelliJ Tests setup documentation
+#368 by bkimminich was closed on May 7, 2016 -- Enable Travis CI build
+#369 by artfullyContrived was merged on Apr 22, 2016 -- Packages the esapi.tld into the jar file.
+#370 by kravietz was closed on Sep 23, 2018 • Changes requested  -- Integer overflow in for loop
+#378 by sunnypav was merged on Jul 21, 2017 • Changes requested  -- #302 HTMLEntityCodec Now decodes cased accented letters properly
+#380 by mickilous was merged on Jul 16, 2017 • Approved  -- Support of Cookie without maxAge set
+#384 by matthiaslarisch was closed on Oct 5, 2018 -- this commit fixes #385 changed visibility of method 'logSpecial(...)' from private to protected and #386 to avoid System.err output
+#388 by augustd was merged on May 13, 2017 -- Suppress CVE-2016-1000031 in dependency check Build-Maven
+#390 by JoelRabinovitch was merged on Jul 3, 2017 -- Issue 389
+#391 by xeno6696 was merged on Jun 18, 2017 • Approved  -- Issue #376 -- Addressed Kevin Wall's CR comments.
+#392 by xeno6696 was merged on Jun 18, 2017 -- Issue 376 -- Added missed null check on regex pattern.
+#393 by xeno6696 was merged on Jul 16, 2017 -- Issue 316 -- updated code to account for httpOnly and Secure cookie …
+#401 by xeno6696 was merged on Jul 16, 2017 -- Updated pom.xml so the base compile version is 1.7 instead of 1.6. T…
+#402 by xeno6696 was merged on Jul 16, 2017 -- Issue #398 -- Fixed hardcoded instance of HTTP header and made it con…
+#404 by xeno6696 was merged on Jul 21, 2017 -- Added simple unit test to validate changes that made HTML entities al…
+#405 by xeno6696 was merged on Jul 24, 2017 -- Multiple issues, #403, #400, #383, #405
+#406 by xeno6696 was merged on Jul 24, 2017 -- Issue #317 -- Fixed resource leak. Special thanks to eamonn.
+#407 by augustd was merged on Jul 27, 2017 -- Update antisamy xom
+#409 by xeno6696 was merged on Jul 27, 2017 -- Issue #327 got rid of misleading HTML entity in URL regex.
+#410 by xeno6696 was merged on Jul 28, 2017 -- Issue #292 && Issue #403 -- Updated default regex size for jsessionid…
+#411 by xeno6696 was merged on Jul 30, 2017 -- Merging commits related to #403.
+#413 by xeno6696 was merged on Aug 11, 2017 • Approved  -- Issue #300 -- Fixing ESAPI's inability to handle non-BMP codepoints.
+#415 by xeno6696 was merged on Aug 11, 2017 -- Issue #281 -- Updated unit tests with missing assertions.
+#416 by xeno6696 was merged on Aug 11, 2017 -- Issue #278 -- Added default local to date test to avoid non-us unit t…
+#418 by xeno6696 was merged on Aug 11, 2017 -- Issue #281 -- added windows escape char to blacklist in SafeFile to a…
+#419 by xeno6696 was merged on Aug 21, 2017 -- Catching up ESAPI.properties prod and test version.
+#420 by xeno6696 was merged on Aug 26, 2017 -- Issue #284 -- Restored original canonicalization behavior due to issu…
+#421 by xeno6696 was merged on Aug 26, 2017 -- Adding mocking frameworks for testing. Also added joda-time in preparation for date fixes.
+                                               [Note: A later PR removed joda-time, as it was not really needed.]
+#426 by NiklasMehner was merged on Nov 6, 2017 -- Fix configuration loading: Use value instead of constants also update vulnerable dependencies
+#428 by JoelRabinovitch was merged on Nov 26, 2017 -- Fixed the encoderForLDAP method to use a "switch" statement as was suggested by the maintainer.
+#430 by kwwall was merged on Feb 22, 2018 -- Close issue #429.
+#431 by jeremiahjstacey was merged on Feb 22, 2018 • Approved  -- Jstacey 135
+#434 by xeno6696 was merged on May 13, 2018 -- Moved esapi.tld into the correct resources location. Fixes issues #2…
+#436 by tom-leahy was closed on Aug 27, 2018 -- Add unicode letter/number support for fileName validation enhancement
+#440 by kwwall was merged on Sep 23, 2018 -- Close #439 by racheting down default allowed file suffixes used with file uploads
+#441 by kwwall was merged on Sep 23, 2018 -- Close #438 by loosening JUnit test case assertion
+#443 by kwwall was merged on Sep 23, 2018 -- Issue 442
+#446 by jeremiahjstacey was merged on Sep 26, 2018 -- Issue #129 SLF4J Logging Structures
+#449 by kwwall was merged on Oct 8, 2018 -- Close issue #448
+#450 by kwwall was merged on Oct 8, 2018 -- Issue 444
+#451 by kwwall was merged on Oct 8, 2018 -- Log special
+#453 by jackycct was merged on Nov 2, 2018 -- #304 encodeForCSS breaks color values
+#456 by JasperXgwang was closed on Nov 8, 2018 -- fix bug not found in classpath when run with jetty or tomcat
+#459 by simon0117 was merged on Dec 20, 2018 -- Eclipse setup updates
+#460 by simon0117 was closed on Dec 20, 2018 -- ESAPIFilter in RI should allow login page destination to be configured #30
+#464 by kwwall was merged on MMM DD, 2019 -- Misc release cleanup
+#467 by jeremiahjstacey was merged on Jan 06, 2019 -- AuthenticatorTest Stability #360
+#468 by jeremiahjstacey was merged on Jan 22, 2019 -- Date validation rule 299
+#469 by jeremiahjstacey was merged on Jan 15, 2019 -- AbstractAccessReferenceMap Issues #37 #329
+#470 by jeremiahjstacey was merged on Jan 15, 2019 -- JavaLogFactory Thread Safety #286
+#472 by jeremiahjstacey was merged on Jan 21, 2019 -- Issue #31 MySQLCodec Updates
+#475 by jeremiahjstacey was merged on Jan 27, 2019 -- Issue #188 resolution proof: Test updates
+#477 by jeremiajjstacey was merged on Feb 02, 2019 -- $476 DefaultValidator.getValidInput uses canonicalize method argument
+#487 by kwwall was merged on Apr 29, 2019 -- Master branch updates for ESAPI-2.2.0.0-RC2
+#490 by hellyguo was closed on May 12, 2019 -- enhance: cache class and method to avoid reading each time
+#491 by hellyguo was merged on May 27, 2019 -- enhance: improve the performance of ObjFactory
+
+
+List of contributors of *merged* PRs, listed (rather naively) by # of merged PRs:
+        # merged PRs    GitHub ID
+        -------------------------
+             19         xeno6696
+             10         jeremiahjstacey
+              9         kwwall
+              2         artfullyContrived
+              2         augustd
+              2         JoelRabinovitch
+              1         drm2
+			  1         hellyguo
+              1         jackycct
+              1         mickilous
+              1         NiklasMehner
+              1         simon0117
+              1         sunnypav
+
+Developer Activity Report (Changes between release 2.1.0.1 and 2.2.0.0, i.e., between 2015-02-05 and 2019-06-09 <UPDATE>)
+As created by 'mvn site', however this data was slighty edited to remove email ids replace them with GitHub ids when those were known, or with the developer name.
+Sorted first by # of commits and then by developer id / name..
+
+Developer       Total commits       Total Number
+                                  of Files Changed
+=====================================================
+kwwall                  362                 351
+xeno6696                 64                  82
+jeremiahjstacey          55                  68
+davewichers               7                  49
+Anthony Musyoki           4                   2
+Kad DEMBELE               4                   2
+augustd                   3                   7
+drmyersii                 2                   2
+JoelRabinovitch           2                   4
+Ben Sleek                 1                   1
+chrisisbeef               1                   5
+hellyguo                  1                   3
+Jackycct                  1                   2
+mickilous                 1                   2
+NiklasMehner              1                   2
+Pavan Kumar               1                   1
+simon0117                 1                   3
+taringamberini            1                   1
+=====================================================
+Totals:                 512                 399 (unique files changed)
+
+
+Thanks you all for your time and effort to ESAPI and making it a better project. And if I've missed any, my apologies; let me know and I will correct it.
+
+:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+Appendix:   Dependency Updates (as reflected in pom.xml)
+
+
+Many 3rd party dependencies had known vulnerabilities (e.g., CVEs reported to NIST's NVD, those reported via VulnDB, BlackDuck, SourceClear, etc.). We have tried to address all those of which we were aware and have updated the dependent 3rd party libraries to (where possible) the latest patched version.
+
+Note that in many places, these 3rd party dependencies were not *direct* dependencies, but rather *transitive* and since we are not able to force a direct 3rd party dependency to update their dependencies, in several cases, we have used Maven's <exclusions> tag to exclude specific transitive dependencies andthen explictly included their latest patched versions that did not cause JUnit test failures.
+
+Because the landscape of known vulnerabilities in 3rd party components is constantly changing and the OWASP ESAPI contributors do not have access to all private vulnerability databases, we may have inevitably missed some. In other cases, we have examined reported vulnerabilities and confirmed that as ESAPI uses and deploys the code in its default configuration, the claimed vulnerabilities are not exploitable.
+
+The following lists all new and updated dependencies. If a dependency is not listed below, the version used since ESAPI release 2.1.0.1 has not changed.
+
+New compile-time / runtime direct dependencies:
+    org.slf4j:slf4j-api:1.7.25 - Not actually needed in your application's classpath unless ESAPI.Logger is configured to use org.owasp.esapi.logging.slf4j.Slf4JLogFactory.
+
+New JUnit dependencies
+    org.bouncycastle:bcprov-jdk15on:1.61
+    org.powermock:powermock-api-mockito2:2.0.0-beta.5
+    org.powermock:powermock-module-junit4:2.0.0-beta.5
+
+Updated direct dependencies, by Maven scope
+  provided:
+    javax.servlet:javax.servlet-api:            2.5   -> 3.0.1
+    javax.servlet.jsp:javax.servlet.jsp-api:    2.0   -> 2.3.3
+
+  compile:
+    commons-fileupload:commons-fileupload:      1.3.1 -> 1.3.3
+    org.apache.commons:commons-collections4:    3.2.2 -> 4.3
+    commons-beanutils:commons-beanutils-core:   1.8.3 -> 1.9.3
+    com.io7m.xom:xom:                           1.2.5 -> 1.2.10
+    org.apache-extras.beanshell:bsh:            2.0b4 -> 2.0b6
+    org.owasp.antisamy:antisamy:                1.5.3 -> 1.5.8
+    org.apache.xmlgraphics:batik-css:           1.8   -> 1.11
+
+    Transitive runtime dependencies that ESAPI has now directly taken control off because of known vulnerabilities or other incompatibilities:
+        xalan:xalan:                            2.7.0 -> 2.7.2
+        xml-apis:xml-apis:                     1.3.03 -> 1.4.01
+        xerces:xercesImpl:                      2.8.0 -> 2.12.0
+
+  test:
+    commons-io:commons-io:                      2.4   -> 2.6

@@ -111,8 +111,10 @@ public interface Authenticator {
 
 	/**
 	 * Verify that the supplied password matches the password for this user. Password should
-	 * be stored as a hash. It is recommended you use the hashPassword(password, accountName) method
-	 * in this class.
+	 * be stored as a hash. By default, this method verifies password hashes created via the
+     * {@code hashPassword(password, accountName)} method in this class, however see WARNING
+     * the {@code hashPassword} method.
+     * <p>
 	 * This method is typically used for "reauthentication" for the most sensitive functions, such
 	 * as transactions, changing email address, and changing other account information.
 	 * 
@@ -123,6 +125,8 @@ public interface Authenticator {
 	 * 
 	 * @return 
 	 * 		true, if the password is correct for the specified user
+     *
+     * @see #hashPassword(String password, String accountName)
 	 */
 	boolean verifyPassword(User user, String password);
 	
@@ -141,6 +145,13 @@ public interface Authenticator {
 	 * Two copies of the new password are required to encourage user interface designers to
 	 * include a "re-type password" field in their forms. Implementations should verify that 
 	 * both are the same. 
+     * <p>
+     * <b>WARNING:</b> The implementation of this method as defined in the
+     * default reference implementation class, {@code FileBasedAuthenticator},
+     * uses a password hash algorthim that is known to be weak. You are advised
+     * to replace the default reference implementation class with your own custom
+     * implementation that uses a stronger password hashing algorithm.
+     * See class comments in * {@code FileBasedAuthenticator} for further details.
 	 * 
 	 * @param accountName 
 	 * 		the account name of the new user
@@ -257,6 +268,13 @@ public interface Authenticator {
 	 * This method specifies the use of the user's account name as the "salt"
 	 * value. The Encryptor.hash method can be used if a different salt is
 	 * required.
+     * <p>
+     * <b>WARNING:</b> The implementation of this method as defined in the
+     * default reference implementation class, {@code FileBasedAuthenticator},
+     * is know to be extremely weak. The reference implementation class was
+     * meant to be an example implementation and generally should be avoided
+     * and replaced with your own implementation. See class comments in
+     * {@code FileBasedAuthenticator} for further details.
 	 * 
 	 * @param password
 	 *            the password to hash
@@ -266,6 +284,9 @@ public interface Authenticator {
 	 * @return 
      * 		the hashed password
      * @throws EncryptionException
+     *
+     * @see org.owasp.esapi.reference.FileBasedAuthenticator FileBasedAuthenticator,
+     *                          the default reference implementation of this interface.
 	 */
 	String hashPassword(String password, String accountName) throws EncryptionException;
 

@@ -65,20 +65,11 @@ public class PlainTextTest {
 	    try {
             byte[] bytes = null;
             PlainText pt = new PlainText(bytes);
-            assertTrue( pt != null );   // Should never get to here.
-            fail("testNullCase(): Expected NullPointerException or AssertionError");
-        } catch (NullPointerException e) {
-            // Will get this case if assertions are not enabled for PlainText.
-            // System.err.println("Caught NullPointerException; exception was: " + e);
-            // e.printStackTrace(System.err);
-            counter++;
-        } catch (AssertionError e) {
-            // Will get this case if assertions *are* enabled for PlainText.
-            // System.err.println("Caught AssertionError; exception was: " + e);
-            // e.printStackTrace(System.err);
-            counter++;
-        } finally {
-            assertTrue( counter > 0 );
+            fail("testNullCase(): Expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            ;   // Success
+        } catch (Exception e) {
+            fail("testNullCase(): Caught unexpected exception: " + e);
         }
 	}
 

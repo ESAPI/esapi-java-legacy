@@ -97,7 +97,7 @@ public class StringUtilities {
      * @return The correct value
      */
     public static String replaceNull( String test, String replace ) {
-        return ( test == null || "null".equalsIgnoreCase( test.trim() ) || "".equals( test.trim() ) ) ? replace : test;
+        return test == null || "null".equalsIgnoreCase( test.trim() ) || "".equals( test.trim() ) ? replace : test;
     }
 
     /**
@@ -174,6 +174,7 @@ public class StringUtilities {
      * 		assert StringUtils.notNullOrEmpty(cipherXform, true) :
      * 								"Cipher transformation may not be null or empty!";
      * </pre>
+     * or an equivalent runtime check that throws an {@code IllegalArgumentException}.
      *
      * @param str	The {@code String} to be checked.
      * @param trim	If {@code true}, the string is first trimmed before checking

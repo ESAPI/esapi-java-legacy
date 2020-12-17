@@ -183,13 +183,11 @@ public class CryptoTokenTest {
         try {
             ctok.setUserAccountName(null);    // Can't be null
                 // Should get one of these, depending on whether or not assertions are enabled.
-            fail("Failed to throw expected AssertionError or NullPointerException");
-        } catch (ValidationException e) {
-            fail("Wrong type of exception thrown (ValidationException): " + e);
-        } catch (NullPointerException e) {
+            fail("Failed to throw expected IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
             ;   // Success
-        } catch (AssertionError e) {
-            ;   // Success
+        } catch (Exception e) {
+            fail("Wrong type of exception thrown: " + e);
         }
         try {
             ctok.setUserAccountName("1773g4l");    // Can't start w/ numeric
@@ -290,33 +288,41 @@ public class CryptoTokenTest {
         // where attribute values contains each of the values that will
         // be quoted, namely:   '\', '=', and ';'
         try {
+            String[] attrValues = { "\\", ";", "=", "foo=", "bar\\=", "foobar=\"" };
             String complexValue = "kwwall;1291183520293;abc=x=yx;xyz=;efg=a;a;;bbb=quotes\\tuff";
-            
-            ctok.setAttribute("..--__", ""); // Ugly, but legal attr name; empty is legal value.
-            ctok.setAttribute("attr1", "\\");
-            ctok.setAttribute("attr2", ";");
-            ctok.setAttribute("attr3", "=");
+
             ctok.setAttribute("complexAttr", complexValue);
+            ctok.setAttribute("..--__", ""); // Ugly weird but legal attr name; empty is legal value.
+            
+            for ( int i = 0; i < attrValues.length; i++ ) {
+                String attrName = "attr" + i;
+                String attrVal  = attrValues[i];
+
+                ctok.setAttribute( attrName, attrVal );
+            }
+
             String tokenVal = ctok.getToken();
             assertNotNull("tokenVal should not be null", tokenVal);
             
             CryptoToken ctok2 = new CryptoToken(tokenVal);
+
             String weirdAttr = ctok2.getAttribute("..--__");
             assertTrue("Expecting empty string for value of weird attr, but got: " + weirdAttr,
                        weirdAttr.equals(""));
 
-            String attr1 = ctok2.getAttribute("attr1");
-            assertTrue("attr1 has unexpected value of " + attr1, attr1.equals("\\") );
-
-            String attr2 = ctok2.getAttribute("attr2");
-            assertTrue("attr2 has unexpected value of " + attr2, attr2.equals(";") );
-
-            String attr3 = ctok2.getAttribute("attr3");
-            assertTrue("attr3 has unexpected value of " + attr3, attr3.equals("=") );
-
             String complexAttr = ctok2.getAttribute("complexAttr");
             assertNotNull(complexAttr);
             assertTrue("complexAttr has unexpected value of " + complexAttr, complexAttr.equals(complexValue) );
+
+            for ( int i = 0; i < attrValues.length; i++ ) {
+                String attrName  = "attr" + i;
+                String attrVal   = attrValues[i];
+                String retrieved = ctok2.getAttribute( attrName );
+                String assertMsg = "Exptected attribute '" + attrName + "' to have value of '" + attrVal + "', but had value of '" + retrieved;
+
+                assertTrue( assertMsg, attrVal.equals( attrVal ) );
+                ctok.setAttribute( attrName, attrVal );
+            }
 
         } catch (ValidationException e) {
             fail("Caught unexpected ValidationException: " + e);
@@ -393,7 +399,9 @@ public class CryptoTokenTest {
     private static void nap(int n) {
         try {
             System.out.println("Sleeping " + n + " seconds...");
-            Thread.sleep( n * 1000 );
+            // adds additional time to make sure we sleep more than n seconds
+            int additionalTimeToSleep = 100;
+            Thread.sleep( n * 1000 + additionalTimeToSleep );
         } catch (InterruptedException e) {
             ;   // Ignore
         }

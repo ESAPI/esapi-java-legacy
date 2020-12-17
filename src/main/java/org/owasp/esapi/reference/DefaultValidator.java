@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -216,6 +217,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 		}
 		rvr.setMaximumLength(maxLength);
 		rvr.setAllowNull(allowNull);
+		rvr.setCanonicalize(canonicalize);
 		return rvr.getValid(context, input);
 	}
 
@@ -277,35 +279,38 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	 * {@inheritDoc}
 	 */
 	public boolean isValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-		try {
-			getValidDate( context, input, format, allowNull);
-			return true;
-		} catch( ValidationException e ) {
-            errors.addError(context, e);
-			return false;
-		}
+	    getValidDate( context, input, format, allowNull, errors);
+	    return errors.isEmpty();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
-		DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
-		dvr.setAllowNull(allowNull);
-		return dvr.getValid(context, input);
+		
+		ValidationErrorList vel = new ValidationErrorList();
+		Date validDate =  getValidDate(context, input, format, allowNull, vel);
+		
+		if (vel.isEmpty()) {
+		    return validDate;
+		}
+		
+		throw vel.errors().get(0);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-		try {
-			return getValidDate(context, input, format, allowNull);
-		} catch (ValidationException e) {
-			errors.addError(context, e);
-		}
-		// error has been added to list, so return null
-		return null;
+	    Date safeDate = null;
+	    DateValidationRule dvr = new DateValidationRule( "SimpleDate", encoder, format);
+	    dvr.setAllowNull(allowNull);
+	    safeDate = dvr.sanitize(context, input, errors);
+	    if (!errors.isEmpty()) {
+	        safeDate = null;
+	    }
+	    // error has been added to list, so return null
+	    return safeDate;
 	}
 
 	/**
@@ -760,7 +765,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 	public byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException {
 		if (isEmpty(input)) {
 			if (allowNull) return null;
-   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + input, context );
+   			throw new ValidationException( context + ": Input required", "Input required: context=" + context + ", input=" + Arrays.toString(input), context );
 		}
 
 		long esapiMaxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();

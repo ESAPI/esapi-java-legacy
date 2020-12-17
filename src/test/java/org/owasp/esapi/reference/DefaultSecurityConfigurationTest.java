@@ -394,12 +394,60 @@ public class DefaultSecurityConfigurationTest {
 		secConf = this.createWithProperty(DefaultSecurityConfiguration.MAX_LOG_FILE_SIZE, String.valueOf(maxLogSize));
 		assertEquals(maxLogSize, secConf.getMaxLogFileSize());
 	}
-	
+
+    @Test
+    public void testNoSuchPropFile(){
+        try {
+                                        // Do NOT create a file by this name!!! -----vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+            DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration("NoSuchEsapiPropFileXyzzy.properties");
+        }
+        catch( ConfigurationException cex ) {
+            assertNotNull("Caught exception with null exception msg", cex.getMessage() );
+            assertFalse("Exception msg is empty string", cex.getMessage().equals("") );
+        }
+        catch( Throwable t ) {
+            fail("testNoSuchPropFile(): Unexpected exception type: " + t.getClass().getName() + "; ex msg: " + t);
+        }
+
+    }
+    
 	private String patternOrNull(Pattern p){
 		return null==p?null:p.pattern();
 	}
 
 	@Test
+    public void testRootCPLoading(){
+        DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration("ESAPI-root-cp.properties");
+        assertEquals(patternOrNull(secConf.getValidationPattern("Test1")), "ValueFromFile1");
+        assertNull(secConf.getValidationPattern("Test2"));
+        assertNull(secConf.getValidationPattern("TestC"));
+    }
+
+    @Test
+    public void testRootCPLoadingAlt(){
+        // This should work also via the class loader.
+        DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration("esapi/ESAPI-SingleValidatorFileChecker.properties");
+        assertEquals(patternOrNull(secConf.getValidationPattern("Test1")), "ValueFromFile1");
+        assertNull(secConf.getValidationPattern("Test2"));
+        assertNull(secConf.getValidationPattern("TestC"));
+    }
+
+    @Test
+    public void testRootCPLoadingAlt2(){
+        try {
+            // This should fail, because of the '/' on the resourse.
+            DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration("/ESAPI-root-cp.properties");
+        }
+        catch( ConfigurationException cex ) {
+            assertNotNull("Caught exception with null exception msg", cex.getMessage() );
+            assertFalse("Exception msg is empty string", cex.getMessage().equals("") );
+        }
+        catch( Throwable t ) {
+            fail("testNoSuchPropFile(): Unexpected exception type: " + t.getClass().getName() + "; ex msg: " + t);
+        }
+    }
+
+    @Test
 	public void testValidationsPropertiesFileOptions(){
 		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration("ESAPI-SingleValidatorFileChecker.properties");
 		assertEquals(patternOrNull(secConf.getValidationPattern("Test1")), "ValueFromFile1");
@@ -424,7 +472,7 @@ public class DefaultSecurityConfigurationTest {
 	
 	@Test 
 	public void DefaultSearchPathTest(){
-		assertEquals("/", DefaultSearchPath.ROOT.value());
+		assertEquals("", DefaultSearchPath.ROOT.value());
 		assertEquals("resourceDirectory/", DefaultSearchPath.RESOURCE_DIRECTORY.value());
 		assertEquals(".esapi/", DefaultSearchPath.DOT_ESAPI.value());
 		assertEquals("esapi/", DefaultSearchPath.ESAPI.value());
@@ -479,4 +527,16 @@ public class DefaultSecurityConfigurationTest {
 //		HttpUtilities.maxRedirectLength=512
 		assertEquals(512, sc.getIntProp("HttpUtilities.maxRedirectLength"));
 	}
+
+    // Test some of the deprecated methods to make sure I didn't screw them up
+    // given the double negatives on some these properties.
+    @Test
+    public void testDeprecatedMethods()
+    {
+        assertTrue("1: Deprecated (1st) method returns different value than new (2nd) method",
+                    ESAPI.securityConfiguration().getDisableIntrusionDetection() ==
+                      ESAPI.securityConfiguration().getBooleanProp( DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION )
+                  );
+        // TODO: add some more tests here for the deprecated replacements.
+    }
 }

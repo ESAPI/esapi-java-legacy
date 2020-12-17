@@ -28,6 +28,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.Logger.EventType;
+import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.slf4j.Marker;
 
@@ -39,6 +41,7 @@ public class Slf4JLogBridgeImplTest {
     public ExpectedException exEx = ExpectedException.none();
 
     private LogScrubber mockScrubber = Mockito.mock(LogScrubber.class);
+    private LogAppender mockAppender = Mockito.mock(LogAppender.class);
     private Slf4JLogLevelHandler mockHandler = Mockito.mock(Slf4JLogLevelHandler.class);
     private org.slf4j.Logger mockSlf4JLogger = Mockito.mock(org.slf4j.Logger.class);
     private Throwable testEx = new Throwable(testName.getMethodName());
@@ -49,7 +52,7 @@ public class Slf4JLogBridgeImplTest {
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, mockHandler);
 
-        bridge = new Slf4JLogBridgeImpl(mockScrubber, levelLookup);
+        bridge = new Slf4JLogBridgeImpl(mockAppender, mockScrubber, levelLookup);
     }
 
     @Test
@@ -57,7 +60,7 @@ public class Slf4JLogBridgeImplTest {
         exEx.expect(IllegalArgumentException.class);
         exEx.expectMessage("Unable to lookup SLF4J level mapping");
         Map<Integer, Slf4JLogLevelHandler> emptyMap = Collections.emptyMap();
-        new Slf4JLogBridgeImpl(mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail");
+        new Slf4JLogBridgeImpl(mockAppender, mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail");
     }
     
     @Test
@@ -65,44 +68,68 @@ public class Slf4JLogBridgeImplTest {
         exEx.expect(IllegalArgumentException.class);
         exEx.expectMessage("Unable to lookup SLF4J level mapping");
         Map<Integer, Slf4JLogLevelHandler> emptyMap = Collections.emptyMap();
-        new Slf4JLogBridgeImpl(mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail", testEx);
+        new Slf4JLogBridgeImpl(mockAppender, mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail", testEx);
     }
     
     @Test
     public void testLogMessage() {
-        String message = testName.getMethodName() + " Cleaned";
+    	EventType eventType = Logger.EVENT_UNSPECIFIED;
+    	String loggerName = testName.getMethodName() + "-LOGGER";
+    	String orignMsg = testName.getMethodName();
+    	String appendMsg = "[APPEND] " + orignMsg;
+        String cleanMsg = appendMsg + " [CLEANED]";
 
-        Mockito.when(mockHandler.isEnabled(mockSlf4JLogger)).thenReturn(true);
-        Mockito.when(mockScrubber.cleanMessage(testName.getMethodName())).thenReturn(message);
-
-        bridge.log(mockSlf4JLogger, Logger.ALL, Logger.EVENT_UNSPECIFIED, testName.getMethodName());
-
+        //Setup for Appender
+        Mockito.when(mockSlf4JLogger.getName()).thenReturn(loggerName);
+        Mockito.when(mockAppender.appendTo(loggerName, eventType, orignMsg)).thenReturn(appendMsg);
+        //Setup for Scrubber
+        Mockito.when(mockScrubber.cleanMessage(appendMsg)).thenReturn(cleanMsg);
+        //Setup for Delegate Handler
         ArgumentCaptor<Marker> markerCapture = ArgumentCaptor.forClass(Marker.class);
-        Mockito.verify(mockScrubber, Mockito.times(1)).cleanMessage(testName.getMethodName());
+        Mockito.when(mockHandler.isEnabled(mockSlf4JLogger)).thenReturn(true);
+
+        bridge.log(mockSlf4JLogger, Logger.ALL, eventType, testName.getMethodName());
+
+        Mockito.verify(mockSlf4JLogger, Mockito.atLeastOnce()).getName();
+        Mockito.verify(mockAppender, Mockito.times(1)).appendTo(loggerName, eventType, testName.getMethodName());
+        Mockito.verify(mockScrubber, Mockito.times(1)).cleanMessage(appendMsg);
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
         Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class), ArgumentMatchers.any(Throwable.class));
-        Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.matches(message));
-
+        Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.eq(cleanMsg));
+     
         Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());
+        Mockito.verifyNoMoreInteractions(mockSlf4JLogger, mockAppender, mockScrubber,mockHandler);
     }
 
     @Test
     public void testLogErrorMessageWithException() {
-        String message = testName.getMethodName() + " Cleaned";
+    	EventType eventType = Logger.EVENT_UNSPECIFIED;
+    	String loggerName = testName.getMethodName() + "-LOGGER";
+    	String orignMsg = testName.getMethodName();
+    	String appendMsg = "[APPEND] " + orignMsg;
+        String cleanMsg = appendMsg + " [CLEANED]";
 
-        Mockito.when(mockHandler.isEnabled(mockSlf4JLogger)).thenReturn(true);
-        Mockito.when(mockScrubber.cleanMessage(testName.getMethodName())).thenReturn(message);
-
-        bridge.log(mockSlf4JLogger, Logger.ALL, Logger.EVENT_UNSPECIFIED, testName.getMethodName(), testEx);
-
+        //Setup for Appender
+        Mockito.when(mockSlf4JLogger.getName()).thenReturn(loggerName);
+        Mockito.when(mockAppender.appendTo(loggerName, eventType, orignMsg)).thenReturn(appendMsg);
+        //Setup for Scrubber
+        Mockito.when(mockScrubber.cleanMessage(appendMsg)).thenReturn(cleanMsg);
+        //Setup for Delegate Handler
         ArgumentCaptor<Marker> markerCapture = ArgumentCaptor.forClass(Marker.class);
-        Mockito.verify(mockScrubber, Mockito.times(1)).cleanMessage(testName.getMethodName());
+        Mockito.when(mockHandler.isEnabled(mockSlf4JLogger)).thenReturn(true);
+
+        bridge.log(mockSlf4JLogger, Logger.ALL, eventType, testName.getMethodName(), testEx);
+
+        Mockito.verify(mockSlf4JLogger, Mockito.atLeastOnce()).getName();
+        Mockito.verify(mockAppender, Mockito.times(1)).appendTo(loggerName, eventType, testName.getMethodName());
+        Mockito.verify(mockScrubber, Mockito.times(1)).cleanMessage(appendMsg);
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
         Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class));
 
-        Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.matches(message), ArgumentMatchers.same(testEx));
-
-        Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());   
+        Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.eq(cleanMsg), ArgumentMatchers.same(testEx));
+     
+        Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());
+        Mockito.verifyNoMoreInteractions(mockSlf4JLogger, mockAppender, mockScrubber,mockHandler);
     }
 
 

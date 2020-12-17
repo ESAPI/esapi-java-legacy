@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.Arrays;
 
 import org.apache.commons.collections4.iterators.ArrayListIterator;
 
@@ -25,12 +26,12 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 		} catch (SecurityException e) {
 			throw new IllegalArgumentException(e.getMessage() + 
 					" delegateClass.delegateMethod(parameterClasses): \"" +  
-					delegateClassName + "." + methodName + "(" + parameterClassNames +
+					delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
 					")\" must be public.", e);
 		} catch (NoSuchMethodException e) {
 			throw new IllegalArgumentException(e.getMessage() + 
 					" delegateClass.delegateMethod(parameterClasses): \"" +  
-					delegateClassName + "." + methodName + "(" + parameterClassNames +
+					delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
 					")\" does not exist.", e);
 		}
 	
@@ -42,14 +43,14 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 				throw new IllegalArgumentException( 
 						" Delegate class \"" + delegateClassName + 
 						"\" must be concrete, because method " +
-						delegateClassName + "." + methodName + "(" + parameterClassNames +
+					    delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
 						") is not static.", ex);
 			} catch (IllegalAccessException ex) {
 				new IllegalArgumentException( 
 						" Delegate class \"" + delegateClassName + 
 						"\" must must have a zero-argument constructor, because " +
 						"method delegateClass.delegateMethod(parameterClasses): \"" +  
-						delegateClassName + "." + methodName + "(" + parameterClassNames +
+					    delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
 						")\" is not static.", ex);
 			}	
 		} else {
@@ -59,10 +60,10 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 	/**
 	 * Convert an array of fully qualified class names into an array of Class objects
 	 * @param parameterClassNames
-	 * @return
+	 * @return The Class objects found that match the specified class names provided.
 	 */
 	protected final Class[] getParameters(String[] parameterClassNames) {
-		if(parameterClassNames == null) {
+		if (parameterClassNames == null) {
 			return new Class[0];
 		}
 		Vector<Class> classes = new Vector<Class>();
@@ -76,7 +77,7 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
 	 * Convert a single fully qualified class name into a Class object
 	 * @param className
 	 * @param purpose
-	 * @return
+	 * @return The Class matching the specified name, if it exists.
 	 */
 	protected final Class getClass(String className, String purpose) {
 		try {

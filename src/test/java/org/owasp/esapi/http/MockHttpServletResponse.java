@@ -37,13 +37,13 @@ import org.owasp.esapi.ESAPI;
 public class MockHttpServletResponse implements HttpServletResponse {
 
 	/** The cookies. */
-	List cookies = new ArrayList();
+	List<Cookie> cookies = new ArrayList<Cookie>();
 
 	/** The header names. */
-	List headerNames = new ArrayList();
+	List<String> headerNames = new ArrayList<String>();
 
 	/** The header values. */
-	List headerValues = new ArrayList();
+	List<String> headerValues = new ArrayList<String>();
 
 	/** The status. */
 	int status = 200;
@@ -58,31 +58,19 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param cookie
 	 */
 	public void addCookie(Cookie cookie) {
 		cookies.add(cookie);
 	}
 
-	/**
-	 * Gets the cookies.
-	 * 
-	 * @return the cookies
-	 */
-	public List getCookies() {
+	public List<Cookie> getCookies() {
 		return cookies;
 	}
 
-	/**
-	 * 
-	 * @param name
-	 * @return
-	 */
 	public Cookie getCookie(String name) {
-		Iterator i = cookies.iterator();
+		Iterator<Cookie> i = cookies.iterator();
 		while (i.hasNext()) {
-			Cookie c = (Cookie) i.next();
+			Cookie c = i.next();
 			if (c.getName().equals(name)) {
 				return c;
 			}
@@ -92,9 +80,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @param date
 	 */
 	public void addDateHeader(String name, long date) {
 		headerNames.add(name);
@@ -103,9 +88,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @param value
 	 */
 	public void addHeader(String name, String value) {
 		headerNames.add(name);
@@ -114,9 +96,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @param value
 	 */
 	public void addIntHeader(String name, int value) {
 		headerNames.add(name);
@@ -125,9 +104,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @return
 	 */
 	public boolean containsHeader(String name) {
 		return headerNames.contains(name);
@@ -136,18 +112,10 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	/**
 	 * {@inheritDoc}
 	 */
-	/**
-	 * Gets the header.
-	 * 
-	 * @param name
-	 *            the name
-	 * 
-	 * @return the header
-	 */
 	public String getHeader(String name) {
 		int index = headerNames.indexOf(name);
 		if (index != -1) {
-			return (String) headerValues.get(index);
+			return headerValues.get(index);
 		}
 		return null;
 	}
@@ -157,15 +125,12 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 * 
 	 * @return the header names
 	 */
-	public List getHeaderNames() {
+	public List<String> getHeaderNames() {
 		return headerNames;
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param url
-	 * @return
 	 */
 	public String encodeRedirectURL(String url) {
 		return null;
@@ -173,9 +138,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param url
-	 * @return
 	 * @deprecated
 	 */
 	@Deprecated
@@ -185,9 +147,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param url
-	 * @return
 	 */
 	public String encodeURL(String url) {
 		String enc = url;
@@ -198,9 +157,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param url
-	 * @return
 	 * @deprecated
 	 */
 	@Deprecated
@@ -210,9 +166,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param sc
-	 * @throws IOException
 	 */
 	public void sendError(int sc) throws IOException {
 		status = sc;
@@ -220,10 +173,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param sc
-	 * @param msg
-	 * @throws IOException
 	 */
 	public void sendError(int sc, String msg) throws IOException {
 		status = sc;
@@ -231,9 +180,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param location
-	 * @throws IOException
 	 */
 	public void sendRedirect(String location) throws IOException {
 		status = HttpServletResponse.SC_MOVED_PERMANENTLY;
@@ -242,9 +188,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @param date
 	 */
 	public void setDateHeader(String name, long date) {
 		headerNames.add(name);
@@ -253,9 +196,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @param value
 	 */
 	public void setHeader(String name, String value) {
 		headerNames.add(name);
@@ -264,9 +204,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param name
-	 * @param value
 	 */
 	public void setIntHeader(String name, int value) {
 		headerNames.add(name);
@@ -275,8 +212,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param sc
 	 */
 	public void setStatus(int sc) {
 		status = sc;
@@ -293,9 +228,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param sc
-	 * @param sm
 	 * @deprecated
 	 */
 	@Deprecated
@@ -305,8 +237,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @throws IOException
 	 */
 	public void flushBuffer() throws IOException {
 
@@ -314,8 +244,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
 	 */
 	public int getBufferSize() {
 		return body.length();
@@ -323,8 +251,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
 	 */
 	public String getCharacterEncoding() {
 		return "UTF-8";
@@ -332,8 +258,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
 	 */
 	public String getContentType() {
 		return contentType;
@@ -341,8 +265,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
 	 */
 	public Locale getLocale() {
 
@@ -351,9 +273,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
-	 * @throws IOException
 	 */
 	public ServletOutputStream getOutputStream() throws IOException {
 		return new ServletOutputStream() {
@@ -365,9 +284,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
-	 * @throws IOException
 	 */
 	public PrintWriter getWriter() throws IOException {
 		return new PrintWriter( getOutputStream(), true );
@@ -375,8 +291,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @return
 	 */
 	public boolean isCommitted() {
 
@@ -388,9 +302,9 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	 */
 	public void reset() {
 		body = new StringBuffer();
-		cookies = new ArrayList();
-		headerNames = new ArrayList();
-		headerValues = new ArrayList();
+		cookies = new ArrayList<Cookie>();
+		headerNames = new ArrayList<String>();
+		headerValues = new ArrayList<String>();
 		status = 200;
 	}
 
@@ -407,8 +321,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 	
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param size
 	 */
 	public void setBufferSize(int size) {
 
@@ -416,8 +328,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param charset
 	 */
 	public void setCharacterEncoding(String charset) {
 
@@ -425,8 +335,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param len
 	 */
 	public void setContentLength(int len) {
 
@@ -434,8 +342,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param type
 	 */
 	public void setContentType(String type) {
 		contentType = type;
@@ -443,8 +349,6 @@ public class MockHttpServletResponse implements HttpServletResponse {
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @param loc
 	 */
 	public void setLocale(Locale loc) {
 

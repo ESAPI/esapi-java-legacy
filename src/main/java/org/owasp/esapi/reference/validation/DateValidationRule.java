@@ -21,6 +21,7 @@ import java.util.Date;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.StringUtilities;
+import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.ValidationException;
 
 /**
@@ -60,26 +61,36 @@ public class DateValidationRule extends BaseValidationRule {
      * {@inheritDoc}
      */
 	public Date getValid( String context, String input ) throws ValidationException {
-		return safelyParse(context, input);
+		return safelyParse(context, input, false);
 	}
 
     /**
      * {@inheritDoc}
-     * 
-     * Calls sanitize(String, String, DateFormat) with DateFormat.getInstance()
      */
 	@Override
 	public Date sanitize( String context, String input )  {
-		Date date = new Date(0);
-		try {
-			date = safelyParse(context, input);
-		} catch (ValidationException e) {
-			// do nothing
-	    }
-		return date;
+		return sanitize(context, input, null);
 	}
+	
+	/**
+     * Same as sanitize(String, String) except it returns any ValidationException generated in the provided errorList.
+     * 
+     *   @param errorList The error list to add any ValidationException to.
+     *   @return The valid sanitized Date, or Date(0) if the supplied input was not a valid date.
+     */
+    public Date sanitize( String context, String input, ValidationErrorList errorList )  {
+        Date date = new Date(0);
+        try {
+            date = safelyParse(context, input, true);
+        } catch (ValidationException e) {
+            if (errorList != null) {
+                errorList.addError(context, e);
+            }
+        }
+        return date;
+    }
 	    
-	private Date safelyParse(String context, String input)
+	private Date safelyParse(String context, String input, boolean sanitize)
 			throws ValidationException {
 		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
 		if (StringUtilities.isEmpty(input)) {
@@ -91,10 +102,16 @@ public class DateValidationRule extends BaseValidationRule {
 							+ input, context);
 		}
 
-	    String canonical = encoder.canonicalize(input);
-
-		try {
-			return format.parse(canonical);
+		 String canonical = encoder.canonicalize(input);
+	        try {
+	            Date rval = format.parse(canonical);
+	            if (sanitize) {
+	                String cycled = format.format(rval);
+	                if (!cycled.equals(canonical)) {
+	                    throw new Exception("Parameter date is not a clean translation between String and Date contexts.  Check input for additional characters");
+	                }
+	            }
+	            return rval;
 		} catch (Exception e) {
 			throw new ValidationException(context
 					+ ": Invalid date must follow the "

@@ -533,9 +533,9 @@ public class DefaultEncoder implements Encoder {
 					Iterator<Entry<String, List<String>>> i = query.iterator();
 					while(i.hasNext()){
 						Entry<String, List<String>> e = i.next(); 
-						String key = (String) e.getKey();
+						String key = e.getKey();
 						String qVal = "";
-						List<String> list = (List<String>) e.getValue();
+						List<String> list = e.getValue();
 						if(!list.isEmpty()){
 							qVal = list.get(0);
 						}
@@ -567,8 +567,8 @@ public class DefaultEncoder implements Encoder {
 	/**
 	 * All the parts should be canonicalized by this point.  This is straightforward assembly.  
 	 * 
-	 * @param set
-	 * @return
+	 * @param parseMap The parts of the URL to put back together.
+	 * @return The canonicalized URL.
 	 */
 	protected String buildUrl(Map<UriSegment, String> parseMap){
 		StringBuilder sb = new StringBuilder();
@@ -595,7 +595,7 @@ public class DefaultEncoder implements Encoder {
 	 * The meat of this method was taken from StackOverflow:  http://stackoverflow.com/a/13592567/557153
 	 * It has been modified to return a canonicalized key and value pairing.  
 	 * 
-	 * @param java URI
+	 * @param uri The URI to analyze.
 	 * @return a map of canonicalized query parameters.  
 	 * @throws UnsupportedEncodingException
 	 */

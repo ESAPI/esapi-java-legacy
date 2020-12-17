@@ -47,10 +47,10 @@ public class MockHttpSession implements HttpSession {
 	private int sessionid=count++;
 	
 	/** The attributes. */
-	private Map attributes = new HashMap();
+	private Map<String, Object> attributes = new HashMap<String, Object>();
 	
 	/**
-	 * Instantiates a new test http session.
+	 * Instantiates a new test HTTP session.
 	 */
 	public MockHttpSession() {
 		// to replace synthetic accessor method
@@ -71,9 +71,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @param string
-     * @return
      */
 	public Object getAttribute(String string) {
 		return attributes.get( string );
@@ -81,18 +78,14 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     * 
-     * @return
      */
-	public Enumeration getAttributeNames() {
-		Vector v = new Vector( attributes.keySet() );
+	public Enumeration<String> getAttributeNames() {
+		Vector<String> v = new Vector<String>( attributes.keySet() );
 		return v.elements();
 	}
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
 	public long getCreationTime() {
 		return creationTime;
@@ -100,8 +93,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
 	public String getId() {
 		return ""+sessionid;
@@ -118,8 +109,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
 	public long getLastAccessedTime() {
 		return accessedTime;
@@ -127,8 +116,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
 	public int getMaxInactiveInterval() {
 		return 0;
@@ -136,8 +123,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
 	public ServletContext getServletContext() {
 		return null;
@@ -145,8 +130,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @return null
      * @deprecated
      */
         @Deprecated
@@ -158,9 +141,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @param string
-     * @return
      * @deprecated
      */
      	@Deprecated
@@ -170,8 +150,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @return
      * @deprecated
      */
      	@Deprecated
@@ -188,8 +166,6 @@ public class MockHttpSession implements HttpSession {
     
     /**
      * {@inheritDoc}
-     *
-     * @return
      */
 	public boolean isNew() {
 		return true;
@@ -197,9 +173,6 @@ public class MockHttpSession implements HttpSession {
 
 	/**
      * {@inheritDoc}
-     *
-     * @param string
-     * @param object
      * @deprecated
      */
      	@Deprecated
@@ -209,8 +182,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @param string
      */
 	public void removeAttribute(String string) {
 		attributes.remove( string );
@@ -218,8 +189,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @param string
      * @deprecated
      */
      	@Deprecated
@@ -229,9 +198,6 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @param string
-     * @param object
      */
 	public void setAttribute(String string, Object object) {
 		attributes.put(string, object);
@@ -239,9 +205,7 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * {@inheritDoc}
-     *
-     * @param i
-     */
+=     */
 	public void setMaxInactiveInterval(int i) {
 		// stub
 	}

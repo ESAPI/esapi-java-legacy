@@ -104,7 +104,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 		}
 		
 		// check if there's a defined entity
-		String entityName = (String) characterToEntityMap.get(codePoint);
+		String entityName = characterToEntityMap.get(codePoint);
 		if (entityName != null) {
 			return "&" + entityName + ";";
 		}

@@ -5,7 +5,7 @@
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
- * Copyright (c) 2007 - The OWASP Foundation
+ * Copyright (c) 2007-2019 - The OWASP Foundation
  * 
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
@@ -75,13 +75,13 @@ public interface EncryptedProperties {
 	 * Returns a {@code Set} view of properties. The {@code Set} is backed by a
 	 * {@code java.util.Hashtable}, so changes to the {@code Hashtable} are
 	 * reflected in the {@code Set}, and vice-versa. The {@code Set} supports element 
-	 * removal (which removes the corresponding entry from the {@code Hashtable),
+	 * removal (which removes the corresponding entry from the {@code Hashtable},
 	 * but not element addition.
 	 * 
 	 * @return 
 	 * 		a set view of the properties contained in this map.
 	 */
-	public Set<?> keySet();
+	Set<?> keySet();
 		
 	/**
 	 * Reads a property list (key and element pairs) from the input stream.
@@ -92,7 +92,7 @@ public interface EncryptedProperties {
 	 * @throws IOException
 	 *      Signals that an I/O exception has occurred.
 	 */
-	public void load(InputStream in) throws IOException;
+	void load(InputStream in) throws IOException;
 	
 	/**
 	 * Writes this property list (key and element pairs) in this Properties table to 
@@ -106,7 +106,7 @@ public interface EncryptedProperties {
 	 * @throws IOException
 	 *             Signals that an I/O exception has occurred.
 	 */
-	public void store(OutputStream out, String comments) throws IOException;	
+	void store(OutputStream out, String comments) throws IOException;	
 	
 	
 }

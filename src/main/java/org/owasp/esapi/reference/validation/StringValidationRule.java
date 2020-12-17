@@ -20,8 +20,10 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
+import org.owasp.esapi.Logger;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.util.NullSafe;
@@ -39,11 +41,12 @@ import org.owasp.esapi.util.NullSafe;
  * http://en.wikipedia.org/wiki/Whitelist
  */
 public class StringValidationRule extends BaseValidationRule {
-
+    private static final Logger LOGGER = ESAPI.getLogger(StringValidationRule.class);
 	protected List<Pattern> whitelistPatterns = new ArrayList<Pattern>();
 	protected List<Pattern> blacklistPatterns = new ArrayList<Pattern>();
 	protected int minLength = 0;
 	protected int maxLength = Integer.MAX_VALUE;
+	private boolean canonicalizeInput = true;
 
 	public StringValidationRule( String typeName ) {
 		super( typeName );
@@ -113,6 +116,10 @@ public class StringValidationRule extends BaseValidationRule {
 
 	public void setMaximumLength( int length ) {
 		maxLength = length;
+	}
+
+	public void setCanonicalize(boolean canonicalize) {
+	    this.canonicalizeInput = canonicalize;
 	}
 
 	/**
@@ -262,9 +269,15 @@ public class StringValidationRule extends BaseValidationRule {
 
 		// check length
 		checkLength(context, input);
-		
+
 		// canonicalize
-		data = encoder.canonicalize( input );
+		if (canonicalizeInput) {
+		    data = encoder.canonicalize(input);
+		} else {
+		    String message = String.format("Input validaiton excludes canonicalization.  Context: %s   Input: %s", context, input);
+		    LOGGER.warning(Logger.SECURITY_AUDIT, message);
+            data = input;
+		}
 
 		// check whitelist patterns
 		checkWhitelist(context, input);
@@ -283,6 +296,7 @@ public class StringValidationRule extends BaseValidationRule {
 		public String sanitize( String context, String input ) {
 			return whitelist( input, EncoderConstants.CHAR_ALPHANUMERICS );
 		}
+
 
 }
 

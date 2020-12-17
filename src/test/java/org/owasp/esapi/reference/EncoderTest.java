@@ -15,19 +15,23 @@
  */
 package org.owasp.esapi.reference;
 
-import java.io.ByteArrayOutputStream;
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.junit.Ignore;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
-import org.owasp.esapi.codecs.Base64;
+import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
@@ -376,7 +380,7 @@ public class EncoderTest extends TestCase {
     /**
      *
      */
-    public void testEncodeForCSS() {
+    public void testencodeForCSS() {
         System.out.println("encodeForCSS");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForCSS(null));
@@ -385,11 +389,32 @@ public class EncoderTest extends TestCase {
         assertEquals("#f00", instance.encodeForCSS("#f00"));
         assertEquals("#123456", instance.encodeForCSS("#123456"));
         assertEquals("#abcdef", instance.encodeForCSS("#abcdef"));
-        assertEquals("red", instance.encodeForCSS("red"));
+        assertEquals("red", instance.encodeForCSS("red"));       
     }
-
-
-
+    
+    public void testCSSTripletLeadString() {
+    	Encoder instance = ESAPI.encoder();
+    	assertEquals("rgb(255,255,255)\\21 ", instance.encodeForCSS("rgb(255,255,255)!"));
+    	assertEquals("rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("rgb(25%,25%,25%)!"));
+    }
+    public void testCSSTripletTailString() {
+		Encoder instance = ESAPI.encoder();
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
+    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
+    }
+    public void testCSSTripletStringPart() {
+		Encoder instance = ESAPI.encoder();
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
+    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
+    }
+    public void testCSSTripletStringMultiPart() {
+		Encoder instance = ESAPI.encoder();
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(255,255,255)!"));
+    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)! $field=rgb(25%,25%,25%)!"));
+    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(25%,25%,25%)!"));
+    }
+       
+    
     /**
 	 * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
 	 */
@@ -462,7 +487,8 @@ public class EncoderTest extends TestCase {
     public void testMySQLANSIModeQuoteInjection() {
         Encoder instance = ESAPI.encoder();
         Codec c = new MySQLCodec(MySQLCodec.Mode.ANSI);
-        assertEquals("MySQL Ansi Quote Injection Bug", " or 1=1 -- -", instance.encodeForSQL(c, "\" or 1=1 -- -"));
+        //No special handling is required for double quotes in ANSI_Quotes mode
+        assertEquals("MySQL Ansi Quote Injection Bug", "\" or 1=1 -- -", instance.encodeForSQL(c, "\" or 1=1 -- -"));
     }
 
     
@@ -844,6 +870,20 @@ public class EncoderTest extends TestCase {
     	
     }
     
+    public void testGetCanonicalizedUriPiazza() throws Exception {
+    	Encoder e = ESAPI.encoder();
+    	
+    	String expectedUri = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft,Launched";
+    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+    	//password information as in http://palpatine:password@foo.com, and this will
+    	//not appear in the userinfo field.  
+    	String input = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft%2CLaunched";
+    	URI uri = new URI(input);
+    	System.out.println(uri.toString());
+    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+    	
+    }
+    	
     public void testGetCanonicalizedUriWithMailto() throws Exception {
     	Encoder e = ESAPI.encoder();
     	
@@ -877,5 +917,6 @@ public class EncoderTest extends TestCase {
         assertEquals( expected, htmlCodec.decode("&#194564;") );
         assertEquals( expected, htmlCodec.decode("&#x2f804;") );
     }
+    
 }
 

@@ -17,13 +17,10 @@ package org.owasp.esapi.reference;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.ExecuteResult;
@@ -33,6 +30,10 @@ import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The Class ExecutorTest.
@@ -92,6 +93,62 @@ public class ExecutorTest extends TestCase {
 		TestSuite suite = new TestSuite(ExecutorTest.class);
 		return suite;
 	}
+	
+	private void resetSingletonField() throws Exception {
+		//Wipe the singleton field here so we can force recreation.
+		Field singletonField = DefaultExecutor.class.getDeclaredField("singletonInstance");
+		singletonField.setAccessible(true);
+		//Object ref is ignored since field is static.
+		singletonField.set(new Object(), null);
+	}
+
+	public void testPlatformResoveWindows() throws Exception {
+		String origName = System.getProperty("os.name");
+
+		try {
+			//Wipe the singleton field here so we can force recreation.
+			resetSingletonField();
+
+			System.setProperty("os.name", "a name that includes the literal 'Windows'");
+			Executor ex = DefaultExecutor.getInstance();
+
+
+			Field codecField = DefaultExecutor.class.getDeclaredField("codec");
+			codecField.setAccessible(true);
+
+			Object instCodec = codecField.get(ex);
+
+			assertTrue(instCodec instanceof WindowsCodec);
+		} finally {
+			System.setProperty("os.name", origName);
+			resetSingletonField();
+		}
+	}
+
+	public void testPlatformResolveNx() throws Exception{
+		String origName = System.getProperty("os.name");
+
+		try {
+			//Wipe the singleton field here so we can force recreation.
+			resetSingletonField();
+
+			//Unmatched Platform is anything but the literal string "Windows" - In part or in whole.
+			System.setProperty("os.name", "unmatchedPlatform");
+			Executor ex = DefaultExecutor.getInstance();
+
+
+			Field codecField = DefaultExecutor.class.getDeclaredField("codec");
+			codecField.setAccessible(true);
+
+			Object instCodec = codecField.get(ex);
+
+			assertTrue(instCodec instanceof UnixCodec);
+		} finally {
+			System.setProperty("os.name", origName);
+			resetSingletonField();
+		}
+	}
+
 
 	/**
 	 * Test of executeOSCommand method, of class org.owasp.esapi.Executor

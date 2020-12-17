@@ -17,7 +17,7 @@ Finding Something Interesting to Work on:
     what it is. Then if you want to work on a particular issue, we can assign
     it to you so someone else won't take it.
 
-    If you have questions, email me or Matt Seil (xeno6696@gmail.com).
+    If you have questions, email Kevin Wall (Kevin.W.Wall@gmail.com) or Matt Seil (xeno6696@gmail.com).
 
 Overview:
     We are following the branching model described in
@@ -41,7 +41,9 @@ Required Software:
     We use Maven for building. Maven 3.1 or later is required. You also need
     JDK 7 or later. (We generally use JDK 8, but compile ESAPI only to require
     JDK 7, which means our code can't yet use any features exclusive to Java 8
-    or later.)
+    or later.) [Note: If you use JDK 9 or later, there will be multiple
+    failures when you try to run 'mvn test' as well as some general warnings.
+    See ESAPI GitHub issue #496 for details.]
 
 Building ESAPI:
     https://www.owasp.org/index.php/ESAPI-Building briefly discusses how to
@@ -69,13 +71,17 @@ Steps to work with ESAPI:
        forked repo created in previous step)
     3. Create a new branch to work on an issue. I usually name the branch
        'issue-#' where '#' is the GitHub issue # is will be working on, but
-       you can call it whatever.
+       you can call it whatever. E.g.,
+            git checkout -b issue-#
     4. Work on the GitHub issue on this newly created issue-# branch.
     5. Make sure everything builds correctly and all the JUnit tests pass
-       ('mvn test'). [Note: On occasion, there may be a failure in
-       AuthenticatorTest.testGetCurrentUser(). If there is, run 'mvn test'
-       again. It seems to be sporadic and it is hypothesized that it is
-       related to some sort of race condition in the JUnit tests.]
+       ('mvn test'). [Note: There are some known issues with test failures if
+       your are running under Windows and your local ESAPI Git repo located
+       anywhere other than the C: drive, where the test
+       ValidatorTest.testIsValidDirectoryPath() fails. Also, if you are using
+       JDK 7 on Mac-OS, there is one know test failure in
+       SecurityProviderLoaderTest.testWithBouncyCastle(). That same test works
+       with JDK 8.]
     6. If you have added any dependencies, please also run
             mvn org.owasp:dependency-check-maven:check
        to run OWASP Dependency-Check and look at the generated report
@@ -85,13 +91,19 @@ Steps to work with ESAPI:
        if this is the first time you have run Dependency-Check for ESAPI,
        expect it to take a while (often 30 minutes or so!).
     7. Commit your changes locally.
-    8. Push your 'issue-#' branch to your personal, forked ESAPI GitHub repo.-
-    9. Go to your personal, forked ESAPI GitHub repo and create a
-       Pull Request from your 'issue-#' branch.
+    8. Push your 'issue-#' branch to your personal, forked ESAPI GitHub repo. E.g.,
+            $ git checkout issue-444
+            $ git remote -v | grep origin       # Confirm 'origin' refers to YOUR PERSONAL GitHub repo
+            $ git push origin issue-444         # Push the committed changes on the 'issue-444' branch
+    9. Go to your personal, forked ESAPI GitHub repo (web interface) and create a
+       'Pull Request' from your 'issue-#' branch.
    10. Back on your local personal laptop / desktop, merge your issue branch with
-       your local 'develop' branch.
+       your local 'develop' branch. I.e.
+            $ git checkout develop
+            $ git merge issue-444
 
 In theory, you can do all this 'git' magic from Eclipse and presumably other
-IDEs like NetBeans or IntelliJ). From Eclipse, it is right-click on the
-project and then select 'Team' to do the commits, etc. If you choose that
-route, you're pretty much on your own because none of us use that.
+IDEs like Oracle NetBeans or IntelliJ IDEA). From Eclipse, it is right-click
+on the project and then select 'Team' to do the commits, etc. If you choose that
+route, you're pretty much on your own because none of us use that for Git
+interactions.

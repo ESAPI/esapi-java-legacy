@@ -15,6 +15,10 @@
  */
 package org.owasp.esapi.codecs;
 
+import java.util.regex.Pattern;
+
+import org.owasp.esapi.codecs.ref.EncodingPatternPreservation;
+
 /**
  * Implementation of the Codec interface for backslash encoding used in CSS.
  * 
@@ -26,8 +30,21 @@ package org.owasp.esapi.codecs;
 public class CSSCodec extends AbstractCharacterCodec
 {
 	private static final Character REPLACEMENT = '\ufffd';
-
-
+	//rgb (###,###,###) OR rgb(###%,###%,###%)
+	//([rR][gG][bB])\s*\(\s*\d{1,3}\s*(\%)?\s*,\s*\d{1,3}\s*(\%)?\s*,\s*\d{1,3}\s*(\%)?\s*\)
+	private static final String RGB_TRPLT = "([rR][gG][bB])\\s*\\(\\s*\\d{1,3}\\s*(\\%)?\\s*,\\s*\\d{1,3}\\s*(\\%)?\\s*,\\s*\\d{1,3}\\s*(\\%)?\\s*\\)";
+	private static final Pattern RGB_TRPLT_PATTERN = Pattern.compile(RGB_TRPLT); 
+	
+	@Override
+	public String encode(char[] immune, String input) {
+		 EncodingPatternPreservation tripletCheck = new EncodingPatternPreservation(RGB_TRPLT_PATTERN);
+		 
+		 String inputChk = tripletCheck.captureAndReplaceMatches(input);
+		 
+		 String result = super.encode(immune, inputChk);
+		 
+		 return tripletCheck.restoreOriginalContent(result);
+	}
     /**
 	 * {@inheritDoc}
 	 *
@@ -58,7 +75,8 @@ public class CSSCodec extends AbstractCharacterCodec
 	 * Returns the decoded version of the character starting at index,
 	 * or null if no decoding is possible.
 	 */
-	public Character decodeCharacter(PushbackSequence<Character> input)
+    @SuppressWarnings("fallthrough")
+    public Character decodeCharacter(PushbackSequence<Character> input)
 	{
 		input.mark();
 		Character first = input.next();
@@ -135,9 +153,9 @@ public class CSSCodec extends AbstractCharacterCodec
 				if(input.peek('\n'))
 					input.next();
 				// fall through
-			case '\n':
-			case '\f':
-				// bs follwed by new line replaced by nothing
+			case '\n':  // Intentional fall through
+			case '\f':  // Intentional fall through
+				// bs followed by new line replaced by nothing
 			case '\u0000':	// skip NUL for now too
 				return decodeCharacter(input);
 		}

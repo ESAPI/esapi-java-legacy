@@ -131,7 +131,13 @@ public class CryptoHelperTest {
 //        stop = System.nanoTime();
 //        diff = stop - start;
 //        System.out.println("diff: " + diff + " nanosec");
-        
+ 
+//        start = System.nanoTime();
+        assertFalse(CryptoHelper.arrayCompare(null, ba1));
+//        stop = System.nanoTime();
+//        diff = stop - start;
+//        System.out.println("diff: " + diff + " nanosec");
+ 
         ba2 = ba1;
 //        start = System.nanoTime();
         assertTrue(CryptoHelper.arrayCompare(ba1, ba2));
