@@ -139,7 +139,6 @@
         <!-- Upgrading to 3.0.0-M3+ causes this test case error:
                 org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
                 java.lang.OutOfMemoryError: PermGen space
-
              when running tests with Java 7 on Mac OS X. No problems observed on Linux.
         -->
         <version.surefire>3.0.0-M2</version.surefire>
