@@ -5,6 +5,14 @@ Getting Started:
     "Contributing to ESAPI legacy" in ESAPI's README.md file. It
     make contain updates and advice not contained herein.
 
+A Special Note on GitHub Authentication:
+    GitHub has announced that they are deprecating authentiation based on
+    username / password and beginning 2021-08-13, you will no longer be able
+    to your password to authenticate to 'git' operations on GitHub.com.
+    Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/
+    for details and plan accordingly.
+
+
 Finding Something Interesting to Work on:
 
     See the section "Contributing to ESAPI legacy in
