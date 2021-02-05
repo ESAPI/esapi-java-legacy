@@ -274,16 +274,16 @@ public class StringValidationRule extends BaseValidationRule {
 		if (canonicalizeInput) {
 		    data = encoder.canonicalize(input);
 		} else {
-		    String message = String.format("Input validaiton excludes canonicalization.  Context: %s   Input: %s", context, input);
+		    String message = String.format("Input validation excludes canonicalization.  Context: %s   Input: %s", context, input);
 		    LOGGER.warning(Logger.SECURITY_AUDIT, message);
             data = input;
 		}
 
 		// check whitelist patterns
-		checkWhitelist(context, input);
+		checkWhitelist(context, data, input);
 
 		// check blacklist patterns
-		checkBlacklist(context, input);
+		checkBlacklist(context, data, input);
 			
 		// validation passed
 		return data;

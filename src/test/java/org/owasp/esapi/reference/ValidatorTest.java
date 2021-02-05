@@ -15,6 +15,13 @@
  */
 package org.owasp.esapi.reference;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -29,6 +36,7 @@ import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
+import org.junit.Test;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
@@ -36,17 +44,14 @@ import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
-import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
 import org.owasp.esapi.util.TestUtils;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * The Class ValidatorTest.
@@ -54,41 +59,11 @@ import junit.framework.TestSuite;
  * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
-public class ValidatorTest extends TestCase {
-
+public class ValidatorTest {
+	
     private static final String PREFERRED_ENCODING = "UTF-8";
 
-    public static Test suite() {
-        return new TestSuite(ValidatorTest.class);
-    }
-
-    /**
-     * Instantiates a new HTTP utilities test.
-     *
-     * @param testName the test name
-     */
-    public ValidatorTest(String testName) {
-        super(testName);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-    protected void setUp() throws Exception {
-        // none
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @throws Exception
-     */
-    protected void tearDown() throws Exception {
-        // none
-    }
-
+    @Test
     public void testAddRule() {
         Validator validator = ESAPI.validator();
         ValidationRule rule = new StringValidationRule("ridiculous");
@@ -96,18 +71,22 @@ public class ValidatorTest extends TestCase {
         assertEquals(rule, validator.getRule("ridiculous"));
     }
 
+    @Test
     public void testAssertValidFileUpload() {
         //		assertValidFileUpload(String, String, String, byte[], int, boolean, ValidationErrorList)
     }
 
+    @Test
     public void testGetPrintable1() {
         //		getValidPrintable(String, char[], int, boolean, ValidationErrorList)
     }
 
+    @Test
     public void testGetPrintable2() {
         //		getValidPrintable(String, String, int, boolean, ValidationErrorList)
     }
 
+    @Test
     public void testGetRule() {
         Validator validator = ESAPI.validator();
         ValidationRule rule = new StringValidationRule("rule");
@@ -116,6 +95,7 @@ public class ValidatorTest extends TestCase {
         assertFalse(rule == validator.getRule("ridiculous"));
     }
 
+    @Test
     public void testGetValidCreditCard() {
         System.out.println("getValidCreditCard");
         Validator instance = ESAPI.validator();
@@ -145,6 +125,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size()==4);
     }
 
+    @Test
     public void testGetValidDirectoryPath() throws Exception {
         System.out.println("getValidDirectoryPath");
         Validator instance = ESAPI.validator();
@@ -160,6 +141,7 @@ public class ValidatorTest extends TestCase {
         assertEquals(2, errors.size());
     }
 
+    @Test
     public void testGetValidDouble() {
         System.out.println("getValidDouble");
         Validator instance = ESAPI.validator();
@@ -178,6 +160,7 @@ public class ValidatorTest extends TestCase {
         assertEquals(4, errors.size());
     }
 
+    @Test
     public void testGetValidFileContent() {
         System.out.println("getValidFileContent");
         Validator instance = ESAPI.validator();
@@ -195,6 +178,7 @@ public class ValidatorTest extends TestCase {
         assertEquals(1, errors.size());
     }
 
+    @Test
     public void testGetValidFileName() throws Exception {
         System.out.println("getValidFileName");
         Validator instance = ESAPI.validator();
@@ -203,6 +187,7 @@ public class ValidatorTest extends TestCase {
         assertEquals("Percent encoding is not changed", testName, instance.getValidFileName("test", testName, ESAPI.securityConfiguration().getAllowedFileExtensions(), false, errors));
     }
 
+    @Test
     public void testGetValidInput(){
         System.out.println("getValidInput");
         Validator instance = ESAPI.validator();
@@ -210,6 +195,7 @@ public class ValidatorTest extends TestCase {
         // instance.getValidInput(String, String, String, int, boolean, ValidationErrorList)
     }
 
+    @Test
     public void testGetValidInteger() {
         System.out.println("getValidInteger");
         Validator instance = ESAPI.validator();
@@ -217,6 +203,7 @@ public class ValidatorTest extends TestCase {
         // instance.getValidInteger(String, String, int, int, boolean, ValidationErrorList)
     }
 
+    @Test
     public void testGetValidListItem() {
         System.out.println("getValidListItem");
         Validator instance = ESAPI.validator();
@@ -224,6 +211,7 @@ public class ValidatorTest extends TestCase {
         // instance.getValidListItem(String, String, List, ValidationErrorList)
     }
 
+    @Test
     public void testGetValidNumber() {
         System.out.println("getValidNumber");
         Validator instance = ESAPI.validator();
@@ -231,6 +219,7 @@ public class ValidatorTest extends TestCase {
         // instance.getValidNumber(String, String, long, long, boolean, ValidationErrorList)
     }
 
+    @Test
     public void testGetValidRedirectLocation() {
         System.out.println("getValidRedirectLocation");
         Validator instance = ESAPI.validator();
@@ -239,8 +228,10 @@ public class ValidatorTest extends TestCase {
     }
 
     //      Test split out and moved to HTMLValidationRuleLogsTest.java & HTMLValidationRuleThrowsTest.java
+    // @Test
     // public void testGetValidSafeHTML() throws Exception {
 
+    @Test
     public void testIsInvalidFilename() {
         System.out.println("testIsInvalidFilename");
         Validator instance = ESAPI.validator();
@@ -270,6 +261,7 @@ public class ValidatorTest extends TestCase {
         return new File( winRoot );
     }
 
+    @Test
     public void testIsValidDirectoryPath() throws IOException {
         System.out.println("isValidDirectoryPath");
 
@@ -393,10 +385,12 @@ public class ValidatorTest extends TestCase {
         }
     }
 
+    @Test
     public void TestIsValidDirectoryPath() {
         // isValidDirectoryPath(String, String, boolean)
     }
 
+    @Test
     public void testIsValidDouble() {
         // isValidDouble(String, String, double, double, boolean)
     	Validator instance = ESAPI.validator();
@@ -455,6 +449,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() == 13);
     }
 
+    @Test
     public void testIsValidFileContent() {
         System.out.println("isValidFileContent");
         byte[] content = null;
@@ -468,6 +463,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(instance.isValidFileContent("test", content, 100, false));
     }
 
+    @Test
     public void testIsValidFileName() {
         System.out.println("isValidFileName");
         Validator instance = ESAPI.validator();
@@ -482,6 +478,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() == 0);
     }
 
+    @Test
     public void testIsValidFileUpload() throws IOException {
         System.out.println("isValidFileUpload");
         String filepath = new File(System.getProperty("user.dir")).getCanonicalPath();
@@ -513,9 +510,11 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() == 1);
     }
 
+    @Test
     public void testIsValidHTTPRequestParameterSet() throws Exception{
     }
 
+    @Test
     public void testisValidInput() {
         System.out.println("isValidInput");
         Validator instance = ESAPI.validator();
@@ -605,6 +604,7 @@ public class ValidatorTest extends TestCase {
         assertFalse(instance.isValidInput("test", null, "Email", 100, false, errors));
     }
 
+    @Test
     public void testIsValidInteger() {
         System.out.println("isValidInteger");
         Validator instance = ESAPI.validator();
@@ -694,6 +694,7 @@ public class ValidatorTest extends TestCase {
 
     }
 
+    @Test
     public void testIsValidListItem() {
         System.out.println("isValidListItem");
         Validator instance = ESAPI.validator();
@@ -710,6 +711,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size()==1);
     }
 
+    @Test
     public void testIsValidNumber() {
         System.out.println("isValidNumber");
         Validator instance = ESAPI.validator();
@@ -798,6 +800,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size()==13);
     }
 
+    @Test
     public void testIsValidParameterSet() {
         System.out.println("isValidParameterSet");
         Set requiredNames = new HashSet();
@@ -831,6 +834,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(errors.size() ==1);
     }
 
+    @Test
     public void testIsValidPrintable() {
         System.out.println("isValidPrintable");
         Validator instance = ESAPI.validator();
@@ -852,13 +856,16 @@ public class ValidatorTest extends TestCase {
 
     }
 
+    @Test
     public void testIsValidRedirectLocation() {
         //		isValidRedirectLocation(String, String, boolean)
     }
 
     //      Test split out and moved to HTMLValidationRuleLogsTest.java & HTMLValidationRuleThrowsTest.java
-    // public void testIsValidSafeHTML() {
+    // @Test
+    //public void testIsValidSafeHTML() {
 
+    @Test
     public void testSafeReadLine() {
         System.out.println("safeReadLine");
 
@@ -914,6 +921,7 @@ public class ValidatorTest extends TestCase {
         }
     }
 
+    @Test
     public void testIssue82_SafeString_Bad_Regex() {
         Validator instance = ESAPI.validator();
         try {
@@ -924,6 +932,7 @@ public class ValidatorTest extends TestCase {
         }
     }
 
+    @Test
     public void testGetParameterMap() {
 //testing Validator.HTTPParameterName and Validator.HTTPParameterValue
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -938,6 +947,7 @@ public class ValidatorTest extends TestCase {
         assertNull(safeRequest.getParameterMap().get(TestUtils.generateStringOfLength(33)));
     }
 
+    @Test
     public void testGetParameterNames() {
 //testing Validator.HTTPParameterName
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -950,6 +960,7 @@ public class ValidatorTest extends TestCase {
         assertEquals(Collections.list(safeRequest.getParameterNames()).size(), 2);
     }
 
+    @Test
     public void testGetParameter() {
 //testing Validator.HTTPParameterValue
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -984,6 +995,7 @@ public class ValidatorTest extends TestCase {
         //assertNotNull(safeRequest.getParameter("e1", false));
     }
 
+    @Test
     public void testGetCookies() {
 //testing Validator.HTTPCookieName and Validator.HTTPCookieValue
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -999,6 +1011,7 @@ public class ValidatorTest extends TestCase {
         assertTrue(cookies.length == 2);
     }
 
+    @Test
     public void testGetHeader() {
 //testing Validator.HTTPHeaderValue
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -1014,6 +1027,7 @@ public class ValidatorTest extends TestCase {
         assertNull(safeRequest.getHeader("p3"));
     }
     
+    @Test
     public void testHeaderLengthChecks(){
     	Validator v = ESAPI.validator();
     	SecurityConfiguration sc = ESAPI.securityConfiguration();
@@ -1021,6 +1035,7 @@ public class ValidatorTest extends TestCase {
     	assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(4097), "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
     }
 
+    @Test
     public void testGetHeaderNames() {
 //testing Validator.HTTPHeaderName
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -1036,6 +1051,7 @@ public class ValidatorTest extends TestCase {
         assertEquals(2, Collections.list(safeRequest.getHeaderNames()).size());
     }
 
+    @Test
     public void testGetQueryString() {
 //testing Validator.HTTPQueryString
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -1050,6 +1066,7 @@ public class ValidatorTest extends TestCase {
         assertFalse(safeRequest.getQueryString().equals(request.getQueryString()));
     }
 
+    @Test
     public void testGetRequestURI() {
 //testing Validator.HTTPURI
         MockHttpServletRequest request = new MockHttpServletRequest();
@@ -1061,6 +1078,7 @@ public class ValidatorTest extends TestCase {
         assertEquals(safeRequest.getRequestURI(), request.getRequestURI());
     }
 
+    @Test
     public void testGetContextPath() {
         // Root Context Path ("")
         assertTrue(ESAPI.validator().isValidInput("HTTPContextPath", "", "HTTPContextPath", 512, true));
@@ -1070,21 +1088,44 @@ public class ValidatorTest extends TestCase {
         assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
     }
     
+    @Test
     public void testGmailEmailAddress(){
     	Validator v = ESAPI.validator();
     	assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
     	assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
     }
     
+    @Test
     public void testGetValidUri(){
     	Validator v = ESAPI.validator();
     	assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
     }
     
+    @Test
     public void testGetValidUriNullInput(){
     	Validator v = ESAPI.validator();
     	boolean isValid = v.isValidURI("test", null, true);
     	assertTrue(isValid);
+    }
+    
+    @Test
+    public void testRegex(){
+    	Validator v = ESAPI.validator();
+    	boolean isValid = v.isValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
+    	assertFalse(isValid);
+    }
+    
+    @Test(expected = ValidationException.class)
+    public void testRegexWithGetValid() throws IntrusionException, ValidationException {
+    	Validator v = ESAPI.validator();
+    	String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
+    }
+    
+    @Test
+    public void testavaloqLooseSafeString(){
+    	Validator v = ESAPI.validator();
+    	boolean isValid = v.isValidInput("RegexString", "&quot;test&quot;", "avaloqLooseSafeString", 2147483647, true, true);
+    	assertFalse(isValid);
     }
 }
 
