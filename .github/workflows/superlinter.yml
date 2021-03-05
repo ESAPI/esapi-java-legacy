@@ -17,9 +17,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      # Runs the Super-Linter action
+      # Runs the Super-Linter action and ignore errors
       - name: Run Super-Linter
         uses: github/super-linter@v3
         env:
           DEFAULT_BRANCH: develop
+          DISABLE_ERRORS: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
