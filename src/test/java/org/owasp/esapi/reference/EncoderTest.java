@@ -232,7 +232,7 @@ public class EncoderTest extends TestCase {
         assertEquals( "\'", instance.canonicalize("\\'"));
         assertEquals( "\"", instance.canonicalize("\\\""));
         assertEquals( "\\", instance.canonicalize("\\\\"));
-        assertEquals( "<", instance.canonicalize("\\<"));
+        assertEquals( "\\<", instance.canonicalize("\\<"));
         
         assertEquals( "<", instance.canonicalize("\\u003c"));
         assertEquals( "<", instance.canonicalize("\\U003c"));
