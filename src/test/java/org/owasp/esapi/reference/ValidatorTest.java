@@ -1124,5 +1124,6 @@ public class ValidatorTest {
     	Validator v = ESAPI.validator();
     	String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
     }
+
 }
 

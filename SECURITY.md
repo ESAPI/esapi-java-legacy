@@ -48,3 +48,4 @@ For details see:
 
 * [Security Bulletin #1 - MAC Bypass in ESAPI Symmetric Encryption](documentation/ESAPI-security-bulletin1.pdf), which covers CVE-2013-5679 and CVE-2013-5960
 * [Security Bulletin #2 - How Does CVE-2019-17571 Impact ESAPI?](documentation/ESAPI-security-bulletin2.pdf), which covers the Log4J 1 deserialization CVE.
+* [Security Bulletin #3 - How Does the Apache Xerces Vulnerability(SNYK-JAVA-XERCES-608891) Impact ESAPI?](documentation/ESAPI-security-bulletin3.pdf), which decribes a unpatched Apache Xerces vulnerability similar to [CVE-2020-14621](https://nvd.nist.gov/vuln/detail/CVE-2020-14621)

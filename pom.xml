@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.2.2.0-SNAPSHOT</version>
+    <version>2.3.0.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -134,12 +134,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jmh>1.23</version.jmh>
         <version.powermock>2.0.7</version.powermock>
-        <version.spotbugs>4.1.4</version.spotbugs>
+        <version.spotbugs>4.2.0</version.spotbugs>
 
         <!-- Upgrading to 3.0.0-M3+ causes this test case error:
                 org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
                 java.lang.OutOfMemoryError: PermGen space
-
              when running tests with Java 7 on Mac OS X. No problems observed on Linux.
         -->
         <version.surefire>3.0.0-M2</version.surefire>
@@ -239,7 +238,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.12</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -286,8 +285,7 @@
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>
-            <!-- Note: CVE-2020-14338) in xercesImpl:2.12.0 but Apache has not released an update to this library yet to eliminate it. See ESAPI-security-bulletin3.pdf for further details. -->
-            <version>2.12.0</version>
+            <version>2.12.1</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -529,7 +527,7 @@
                       <goals><goal>enforce</goal></goals>
                       <configuration>
                         <rules>
-                          <dependencyConvergence />
+                          <dependencyConvergence/>
                           <requireJavaVersion>
                             <version>1.7</version>
                             <message>
@@ -540,7 +538,7 @@
                           <enforceBytecodeVersion>
                             <maxJdkVersion>1.7</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
-                            <ignoredScopes></ignoredScopes> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
+                            <ignoredScopes/> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
                             <message>Dependencies shouldn't require Java 8+</message>
                           </enforceBytecodeVersion>
                         </rules>
