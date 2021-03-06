@@ -372,7 +372,11 @@ public class ValidatorTest {
             // Unix specific paths should pass
             assertTrue(instance.isValidDirectoryPath("test6", "/", parent, false, errors));         // Root directory
             assertTrue(errors.size()==5);
-            assertTrue(instance.isValidDirectoryPath("test7", "/bin", parent, false, errors));      // Always exist directory
+            if(isWindows) {
+            	assertTrue(instance.isValidDirectoryPath("test7", "C:\\Windows", parent, false, errors));      // Always exist directory
+            }else {
+            	 assertTrue(instance.isValidDirectoryPath("test7", "/bin", parent, false, errors));      // Always exist directory
+            }
             assertTrue(errors.size()==5);
 
             // Unix specific paths that should not exist or work
@@ -1119,13 +1123,6 @@ public class ValidatorTest {
     public void testRegexWithGetValid() throws IntrusionException, ValidationException {
     	Validator v = ESAPI.validator();
     	String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
-    }
-    
-    @Test
-    public void testavaloqLooseSafeString(){
-    	Validator v = ESAPI.validator();
-    	boolean isValid = v.isValidInput("RegexString", "&quot;test&quot;", "avaloqLooseSafeString", 2147483647, true, true);
-    	assertFalse(isValid);
     }
 }
 
