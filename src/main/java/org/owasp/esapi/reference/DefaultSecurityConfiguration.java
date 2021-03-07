@@ -147,9 +147,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String HTTP_SESSION_ID_NAME = "HttpUtilities.HttpSessionIdName";
 
     public static final String APPLICATION_NAME = "Logger.ApplicationName";
-    public static final String LOG_LEVEL = "Logger.LogLevel";
-    public static final String LOG_FILE_NAME = "Logger.LogFileName";
-    public static final String MAX_LOG_FILE_SIZE = "Logger.MaxLogFileSize";
     public static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
     public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
     public static final String LOG_SERVER_IP = "Logger.LogServerIP";
@@ -174,13 +171,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private static final String logSpecialValue = System.getProperty(DISCARD_LOGSPECIAL, "false");
 
 
-    /**
-	 * The default max log file size is set to 10,000,000 bytes (10 Meg). If the current log file exceeds the current
-	 * max log file size, the logger will move the old log data into another log file. There currently is a max of
-	 * 1000 log files of the same name. If that is exceeded it will presumably start discarding the oldest logs.
-	 */
-	public static final int DEFAULT_MAX_LOG_FILE_SIZE = 10000000;
-	
     protected final int MAX_REDIRECT_LOCATION = 1000;
     
     /*
@@ -1019,49 +1009,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         return null;
     }
 
-    /**
-	 * {@inheritDoc}
-	 */
-    public int getLogLevel() {
-        String level = getESAPIProperty(LOG_LEVEL, "WARNING" );
-
-        if (level.equalsIgnoreCase("OFF"))
-            return Logger.OFF;
-        if (level.equalsIgnoreCase("FATAL"))
-            return Logger.FATAL;
-        if (level.equalsIgnoreCase("ERROR"))
-            return Logger.ERROR ;
-        if (level.equalsIgnoreCase("WARNING"))
-            return Logger.WARNING;
-        if (level.equalsIgnoreCase("INFO"))
-            return Logger.INFO;
-        if (level.equalsIgnoreCase("DEBUG"))
-            return Logger.DEBUG;
-        if (level.equalsIgnoreCase("TRACE"))
-            return Logger.TRACE;
-        if (level.equalsIgnoreCase("ALL"))
-            return Logger.ALL;
-
-		// This error is NOT logged the normal way because the logger constructor calls getLogLevel() and if this error occurred it would cause
-		// an infinite loop.
-        logSpecial("The LOG-LEVEL property in the ESAPI properties file has the unrecognized value: " + level + ". Using default: WARNING", null);
-        return Logger.WARNING;  // Note: The default logging level is WARNING.
-    }
-
-    /**
-	 * {@inheritDoc}
-	 */
-    public String getLogFileName() {
-    	return getESAPIProperty( LOG_FILE_NAME, "ESAPI_logging_file" );
-    }
-
-	/**
-	 * {@inheritDoc}
-	 */
-    public int getMaxLogFileSize() {
-    	return getESAPIProperty( MAX_LOG_FILE_SIZE, DEFAULT_MAX_LOG_FILE_SIZE );
-    }
-    
     /**
 	 * {@inheritDoc}
 	 */

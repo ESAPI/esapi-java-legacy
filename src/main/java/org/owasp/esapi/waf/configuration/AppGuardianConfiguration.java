@@ -111,32 +111,6 @@ public class AppGuardianConfiguration {
 		cookieRules = new ArrayList<Rule>();
 	}
 
-	/*
-	 * The following methods are all deprecated because
-	 * we use ESAPI logging structures now.
-	 */
-	@Deprecated
-	public Level getLogLevel() {
-		return logLevel;
-	}
-	
-	@Deprecated
-	public void setLogLevel(Level level) {
-		LOG_LEVEL = level;
-		this.logLevel = level;
-	}
-	
-	@Deprecated
-	public void setLogDirectory(String dir) {
-		LOG_DIRECTORY = dir;
-		this.logDirectory = dir;
-	}
-	
-	@Deprecated
-	public String getLogDirectory() {
-		return logDirectory;
-	}
-	
 	public String getDefaultErrorPage() {
 		return defaultErrorPage;
 	}

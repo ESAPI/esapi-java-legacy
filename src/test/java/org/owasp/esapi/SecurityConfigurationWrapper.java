@@ -551,33 +551,6 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 		return wrapped.getLogServerIP();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	// @Override
-	public int getLogLevel()
-	{
-		return wrapped.getLogLevel();
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	// @Override
-	public String getLogFileName()
-	{
-		return wrapped.getLogFileName();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	// @Override
-	public int getMaxLogFileSize()
-	{
-	 	return wrapped.getMaxLogFileSize();
-	}
-
 	@Override
 	public int getIntProp(String propertyName) throws ConfigurationException {
 		return wrapped.getIntProp(propertyName);
