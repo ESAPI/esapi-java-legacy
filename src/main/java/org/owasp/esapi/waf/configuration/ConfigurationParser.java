@@ -30,7 +30,6 @@ import nu.xom.Elements;
 import nu.xom.ParsingException;
 import nu.xom.ValidityException;
 
-import org.apache.log4j.Level;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.waf.ConfigurationException;
 import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
@@ -141,16 +140,6 @@ public class ConfigurationParser {
 				} catch (Exception e) {
 					config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
 				}
-			}
-			
-			/*
-			 * The WAF separate logging is going to be merged in the 2.0
-			 * release, so this is deprecated.
-			 */
-			Element loggingRoot = settingsRoot.getFirstChildElement("logging");
-			if ( loggingRoot != null ) {
-				config.setLogDirectory(loggingRoot.getFirstChildElement("log-directory").getValue());
-				config.setLogLevel(Level.toLevel(loggingRoot.getFirstChildElement("log-level").getValue()));
 			}
 			
 			/**
