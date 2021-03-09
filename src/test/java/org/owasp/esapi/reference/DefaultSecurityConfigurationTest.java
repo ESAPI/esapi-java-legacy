@@ -352,49 +352,6 @@ public class DefaultSecurityConfigurationTest {
 		assertFalse(secConf.getDisableIntrusionDetection());
 	}
 	
-	@Test
-	public void testGetLogLevel() {
-		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new java.util.Properties());
-		assertEquals(Logger.WARNING, secConf.getLogLevel());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_LEVEL, "trace");
-		assertEquals(Logger.TRACE, secConf.getLogLevel());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_LEVEL, "Off");
-		assertEquals(Logger.OFF, secConf.getLogLevel());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_LEVEL, "all");
-		assertEquals(Logger.ALL, secConf.getLogLevel());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_LEVEL, "DEBUG");
-		assertEquals(Logger.DEBUG, secConf.getLogLevel());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_LEVEL, "info");
-		assertEquals(Logger.INFO, secConf.getLogLevel());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_LEVEL, "ERROR");
-		assertEquals(Logger.ERROR, secConf.getLogLevel());
-	}
-	
-	@Test
-	public void testGetLogFileName() {
-		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new java.util.Properties());
-		assertEquals("ESAPI_logging_file", secConf.getLogFileName());
-		
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_FILE_NAME, "log.txt");
-		assertEquals("log.txt", secConf.getLogFileName());
-	}
-	
-	@Test
-	public void testGetMaxLogFileSize() {
-		DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new java.util.Properties());
-		assertEquals(DefaultSecurityConfiguration.DEFAULT_MAX_LOG_FILE_SIZE, secConf.getMaxLogFileSize());
-		
-		int maxLogSize = (1024 * 1000);
-		secConf = this.createWithProperty(DefaultSecurityConfiguration.MAX_LOG_FILE_SIZE, String.valueOf(maxLogSize));
-		assertEquals(maxLogSize, secConf.getMaxLogFileSize());
-	}
-
     @Test
     public void testNoSuchPropFile(){
         try {

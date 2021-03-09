@@ -372,11 +372,10 @@ public class ValidatorTest {
             // Unix specific paths should pass
             assertTrue(instance.isValidDirectoryPath("test6", "/", parent, false, errors));         // Root directory
             assertTrue(errors.size()==5);
-            if(isWindows) {
-            	assertTrue(instance.isValidDirectoryPath("test7", "C:\\Windows", parent, false, errors));      // Always exist directory
-            }else {
-            	 assertTrue(instance.isValidDirectoryPath("test7", "/bin", parent, false, errors));      // Always exist directory
-            }
+        	// Note, we used to say that about '/bin', but Ubuntu 20.x
+            // changed '/bin' to a sym link to 'usr/bin'. We can't use '/etc'
+            // because under MacOS, that is a sym link to 'private/etc'.
+            assertTrue(instance.isValidDirectoryPath("test7", "/dev", parent, false, errors));      // Always exist directory
             assertTrue(errors.size()==5);
 
             // Unix specific paths that should not exist or work

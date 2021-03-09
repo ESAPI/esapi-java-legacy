@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.3.0.0-SNAPSHOT</version>
+    <version>2.2.3.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -169,6 +169,9 @@
                     <artifactId>xalan</artifactId>
                 </exclusion>
                 <exclusion>
+                    <!-- xom tries to pull this in, but a newer version is in Java 7 and later
+                         so we want to exclude this transitive dependency.
+                    -->
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
                 </exclusion>
@@ -238,7 +241,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.5.12</version>
+            <version>1.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -259,7 +262,7 @@
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-css</artifactId>
-            <version>1.13</version>
+            <version>1.14</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-io</groupId>
@@ -281,11 +284,6 @@
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <version>2.12.1</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -317,8 +315,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-                <!-- Tried to update this to 1.67 but that resulted in error when running 'mvn site' -->
-            <version>1.65.01</version>
+            <version>1.68</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito -->
@@ -502,8 +499,8 @@
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
-                    <!-- Updating to 1.19 causes lots of errors in 'mvn site' so leaving at 1.18 for now. -->
-                    <version>1.18</version>
+                    <!-- Updating to 1.19 causes LOTS of errors in 'mvn site' and 1.18 requires Java 8 so leaving it at 1.17. -->
+                    <version>1.17</version>
                   </dependency>
                 </dependencies>
                 <executions>
