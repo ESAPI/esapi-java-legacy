@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
 public class HTMLValidationRuleClasspathTest {
 	private static class ConfOverride extends SecurityConfigurationWrapper {
         private String desiredReturnAction = "clean";
-        private String desiredReturnConfigurationFile = "antisamy-esapi.xml";
+        private String desiredReturnConfigurationFile = "antisamy-esapi-CP.xml";
 
 		ConfOverride(SecurityConfiguration orig, String desiredReturnAction, String desiredReturnConfigurationFile) {
 			super(orig);
