@@ -30,7 +30,6 @@ import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
@@ -58,7 +57,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	//TESTING -- Mock Classloaders, verify that the classloader is called as desired with the searchpath and filename concat
 	// Verify that when no match is found, null is returned
 	// Verify that when match is found, remaining classloaders are not invoked and expected InputStream is returned.
-	private static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
+	/*package */ static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
 	    InputStream result = null;
 	    
 	    for (String searchPath: searchPaths) {
@@ -77,7 +76,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	//TESTING
 	// Harder to test... Use Junit to place files in each of the DefaultSearchPathLocations and verify that the file can be found.
 	// Not sure how to test that the classpaths are iterated.
-	private static InputStream getResourceStreamFromClasspath(String fileName) {
+	/*package */ static InputStream getResourceStreamFromClasspath(String fileName) {
 	    LOGGER.info(Logger.EVENT_FAILURE, "Loading " + fileName + " from classpaths");
 		
 	    InputStream resourceStream = null;
@@ -104,7 +103,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	// Mock SecurityConfiguration - return file check (true) - throw IOException on resource stream - Verify IOException
 	// Mock SecurityConfiguration - return file Check (true) - use Junit to place a BAD FILE - verify PolicyException
 	//  HOW TO TEST NULL RETURN.....
-	private static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
+	/*package */ static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
 	    InputStream resourceStream = null;
 	    SecurityConfiguration secCfg = ESAPI.securityConfiguration();
 	    
@@ -121,7 +120,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	//TESTING
 	// Mock SecurityConfiguration - return a valid string on property request - verify String is returned from call
 	// Mock SecurityConfiguration -- throw ConfigurationException on property request -- Verify Default Filename is returned from call
-	private static String resolveAntisamyFilename() {
+	/*package */ static String resolveAntisamyFilename() {
 	    String antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
         try {
             antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
@@ -140,7 +139,7 @@ public class HTMLValidationRule extends StringValidationRule {
 	// Mock SecurityConfiguration - return file check (true) - throw IOException on resource stream - Verify ConfigurationException from IOException
     // Mock SecurityConfiguration - return file Check (true) - use Junit to place a BAD FILE - verify ConfigurationException from PolicyException
 	// Force NULL return from loadAntisamyPolicy call -- Verify ConfigurationException from null value
-	private static void configureInstance() {
+	/*package */ static void configureInstance() {
 	    String antisamyPolicyFilename = resolveAntisamyFilename();
 
         try {

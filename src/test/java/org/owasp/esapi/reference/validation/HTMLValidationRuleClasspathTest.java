@@ -15,21 +15,23 @@
  */
 package org.owasp.esapi.reference.validation;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.reference.validation.HTMLValidationRule;
-
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.rules.ExpectedException;
-import static org.junit.Assert.*;
+import org.owasp.validator.html.PolicyException;
 
 /**
  * The Class HTMLValidationRuleThrowsTest.
@@ -48,10 +50,19 @@ import static org.junit.Assert.*;
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
  */
 public class HTMLValidationRuleClasspathTest {
+    /** The intentionally non-compliant AntiSamy policy file. We don't intend to
+     * actually <i>use</i> it for anything.
+     */
+    private static final String INVALID_ANTISAMY_POLICY_FILE = "antisamy-InvalidPolicy.xml";
+    /** The intentionally non-compliant AntiSamy policy file. We don't intend to
+     * actually <i>use</i> it for anything.
+     */
+    private static final String ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION = "antisamy-esapi-CP.xml";
+ 
 	private static class ConfOverride extends SecurityConfigurationWrapper {
-        private String desiredReturnAction = "clean";
-        private String desiredReturnConfigurationFile = "antisamy-esapi-CP.xml";
-
+	    private String desiredReturnAction = "clean";
+	    private String desiredReturnConfigurationFile = null;
+	    
 		ConfOverride(SecurityConfiguration orig, String desiredReturnAction, String desiredReturnConfigurationFile) {
 			super(orig);
             this.desiredReturnAction = desiredReturnAction;
@@ -78,16 +89,21 @@ public class HTMLValidationRuleClasspathTest {
     @After
     public void tearDown() throws Exception {
         ESAPI.override(null);
-        thrownEx = ExpectedException.none();
     }
 
 	@Before
     public void setUp() throws Exception {
 		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), "throw", "antisamy-esapi-CP.xml" )
+			new ConfOverride( ESAPI.securityConfiguration(), "throw", ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION )
 		);
-
     }
+	
+	@Test
+	public void checkPolicyExceptionWithBadConfig() throws Exception {
+	    ESAPI.override(null);
+	    thrownEx.expect(PolicyException.class);
+        HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
+	}
 
     @Test
     public void testGetValid() throws Exception {
