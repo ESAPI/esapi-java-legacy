@@ -50,6 +50,10 @@ import org.owasp.validator.html.PolicyException;
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
  */
 public class HTMLValidationRuleClasspathTest {
+    /**
+     * Property specified by the Antisamy project which may be used to disable schema validation on policy files.
+     */
+    private static final String ANTISAMY_PROJECT_PROP_SCHEMA_VALIDATION = "owasp.validator.validateschema";
     /** The intentionally non-compliant AntiSamy policy file. We don't intend to
      * actually <i>use</i> it for anything.
      */
@@ -89,6 +93,7 @@ public class HTMLValidationRuleClasspathTest {
     @After
     public void tearDown() throws Exception {
         ESAPI.override(null);
+        System.clearProperty(ANTISAMY_PROJECT_PROP_SCHEMA_VALIDATION);
     }
 
 	@Before
@@ -99,11 +104,18 @@ public class HTMLValidationRuleClasspathTest {
     }
 	
 	@Test
-	public void checkPolicyExceptionWithBadConfig() throws Exception {
-	    ESAPI.override(null);
-	    thrownEx.expect(PolicyException.class);
+    public void checkPolicyExceptionWithBadConfig() throws Exception {
+        ESAPI.override(null);
+        thrownEx.expect(PolicyException.class);
         HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
-	}
+    }
+	
+	@Test
+    public void checkAntisamySystemPropertyWorksAsAdvertised() throws Exception {
+        ESAPI.override(null);
+        System.setProperty( ANTISAMY_PROJECT_PROP_SCHEMA_VALIDATION, "false" ); 
+        HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
+    }
 
     @Test
     public void testGetValid() throws Exception {
