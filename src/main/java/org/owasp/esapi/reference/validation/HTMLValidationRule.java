@@ -22,6 +22,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.List;
 
@@ -118,21 +120,21 @@ public class HTMLValidationRule extends StringValidationRule {
         return resourceStream == null ? null : Policy.getInstance(resourceStream);
 	}
 	
-	//FIXME:  Remove this post antisamy v. 1.6.1 pending fix of issue 75
-	private static InputStream toByteArrayStream(InputStream in) throws IOException{
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int nRead;
-        byte[] data = new byte[1024];
-        while ((nRead = in.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
+   //FIXME:  Remove this post antisamy v. 1.6.1 pending fix of issue 75
+    private static InputStream toByteArrayStream(InputStream in) throws IOException {
+        byte[] byteArray;
+        try (Reader reader = new InputStreamReader(in)) {
+            char[] charArray = new char[8 * 1024];
+            StringBuilder builder = new StringBuilder();
+            int numCharsRead;
+            while ((numCharsRead = reader.read(charArray, 0, charArray.length)) != -1) {
+                builder.append(charArray, 0, numCharsRead);
+            }
+            byteArray = builder.toString().getBytes();
         }
-
-        buffer.flush();
-        byte[] byteArray = buffer.toByteArray();
-        return new ByteArrayInputStream(byteArray);
-        
+                
+        return new ByteArrayInputStream(byteArray);        
     }
-	
 	
 	//TESTING
 	// Mock SecurityConfiguration - return a valid string on property request - verify String is returned from call
