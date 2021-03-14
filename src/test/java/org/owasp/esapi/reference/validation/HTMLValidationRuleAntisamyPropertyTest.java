@@ -16,31 +16,34 @@
 package org.owasp.esapi.reference.validation;
 
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.owasp.validator.html.Policy;
 
 /**
  * Isolate scope test to assert the behavior of the HTMLValidationRule
  * when schema validation is disabled in the Antisamy Project.
  */
 public class HTMLValidationRuleAntisamyPropertyTest {
-    /**
-     * Property specified by the Antisamy project which may be used to disable schema validation on policy files.
-     */
-    private static final String ANTISAMY_PROJECT_PROP_SCHEMA_VALIDATION = "owasp.validator.validateschema";
     /** The intentionally non-compliant AntiSamy policy file. We don't intend to
      * actually <i>use</i> it for anything.
      */
     private static final String INVALID_ANTISAMY_POLICY_FILE = "antisamy-InvalidPolicy.xml";
 
-    @After
-    public void tearDown() throws Exception {
-        System.clearProperty(ANTISAMY_PROJECT_PROP_SCHEMA_VALIDATION);
+    @AfterClass
+    public static void enableAntisamySchemaValidation() {
+        Policy.setSchemaValidation(true);
     }
-
-	@Before
+    
+    @BeforeClass
+    public static void disableAntisamySchemaValidation() {
+        Policy.setSchemaValidation(false);
+        //System property is read once, so we're preferring the static method for testing.
+        //System.setProperty( "owasp.validator.validateschema", "false" ); 
+    }
     public void setUp() throws Exception {
-	    System.setProperty( ANTISAMY_PROJECT_PROP_SCHEMA_VALIDATION, "false" ); 
     }
 
 	@Test
