@@ -17,6 +17,8 @@ package org.owasp.esapi.reference.validation;
 
 
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -112,9 +114,24 @@ public class HTMLValidationRule extends StringValidationRule {
 	    File file = secCfg.getResourceFile(antisamyPolicyFilename);
     
         resourceStream = file == null ? getResourceStreamFromClasspath(antisamyPolicyFilename) : secCfg.getResourceStream(antisamyPolicyFilename);
-	    
+        resourceStream = resourceStream == null ? null : toByteArrayStream(resourceStream);
         return resourceStream == null ? null : Policy.getInstance(resourceStream);
 	}
+	
+	//FIXME:  Remove this post antisamy v. 1.6.1 pending fix of issue 75
+	private static InputStream toByteArrayStream(InputStream in) throws IOException{
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int nRead;
+        byte[] data = new byte[1024];
+        while ((nRead = in.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+
+        buffer.flush();
+        byte[] byteArray = buffer.toByteArray();
+        return new ByteArrayInputStream(byteArray);
+        
+    }
 	
 	
 	//TESTING
