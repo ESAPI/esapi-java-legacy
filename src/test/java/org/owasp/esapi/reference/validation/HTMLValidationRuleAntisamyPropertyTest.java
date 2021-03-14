@@ -43,8 +43,6 @@ public class HTMLValidationRuleAntisamyPropertyTest {
         //System property is read once, so we're preferring the static method for testing.
         //System.setProperty( "owasp.validator.validateschema", "false" ); 
     }
-    public void setUp() throws Exception {
-    }
 
 	@Test
 	public void checkAntisamySystemPropertyWorksAsAdvertised() throws Exception {
