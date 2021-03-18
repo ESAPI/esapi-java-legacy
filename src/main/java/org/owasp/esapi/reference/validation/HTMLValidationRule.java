@@ -116,26 +116,9 @@ public class HTMLValidationRule extends StringValidationRule {
 	    File file = secCfg.getResourceFile(antisamyPolicyFilename);
     
         resourceStream = file == null ? getResourceStreamFromClasspath(antisamyPolicyFilename) : secCfg.getResourceStream(antisamyPolicyFilename);
-        resourceStream = resourceStream == null ? null : toByteArrayStream(resourceStream);
         return resourceStream == null ? null : Policy.getInstance(resourceStream);
 	}
-	
-   //FIXME:  Remove this post antisamy v. 1.6.1 pending fix of issue 75
-    private static InputStream toByteArrayStream(InputStream in) throws IOException {
-        byte[] byteArray;
-        try (Reader reader = new InputStreamReader(in)) {
-            char[] charArray = new char[8 * 1024];
-            StringBuilder builder = new StringBuilder();
-            int numCharsRead;
-            while ((numCharsRead = reader.read(charArray, 0, charArray.length)) != -1) {
-                builder.append(charArray, 0, numCharsRead);
-            }
-            byteArray = builder.toString().getBytes();
-        }
-                
-        return new ByteArrayInputStream(byteArray);        
-    }
-	
+
 	//TESTING
 	// Mock SecurityConfiguration - return a valid string on property request - verify String is returned from call
 	// Mock SecurityConfiguration -- throw ConfigurationException on property request -- Verify Default Filename is returned from call
