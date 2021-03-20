@@ -15,22 +15,27 @@
  */
 package org.owasp.esapi.reference.validation;
 
+
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
-import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.ValidationException;
+import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
 import org.owasp.validator.html.PolicyException;
 import org.owasp.validator.html.ScanException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
 
 
 /**
@@ -49,110 +54,112 @@ public class HTMLValidationRule extends StringValidationRule {
 	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
 	private static final String ANTISAMYPOLICY_FILENAME = "antisamy-esapi.xml";
 
-    /**
-     * Used to load antisamy-esapi.xml from a variety of different classpath locations.
-	 * The classpath locations are the same classpath locations as used to load esapi.properties.
-	 * See DefaultSecurityConfiguration.DefaultSearchPath.
-     *
-     * @param fileName The resource file filename.
-     */
-	private static InputStream getResourceStreamFromClasspath(String fileName) {
-		InputStream resourceStream = null;
+	//TESTING -- Mock Classloaders, verify that the classloader is called as desired with the searchpath and filename concat
+	// Verify that when no match is found, null is returned
+	// Verify that when match is found, remaining classloaders are not invoked and expected InputStream is returned.
+	/*package */ static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
+	    InputStream result = null;
+	    
+	    for (String searchPath: searchPaths) {
+	        result = classLoader.getResourceAsStream(searchPath + fileName);
+	        
+	        if (result != null) {
+	            LOGGER.info(Logger.EVENT_SUCCESS, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + 
+	                    searchPath + "' using " + contextDescription + "!");
+	                break; 
+	        }
+	    }
+	    
+	    return result;
+	}
+	
+	//TESTING
+	// Harder to test... Use Junit to place files in each of the DefaultSearchPathLocations and verify that the file can be found.
+	// Not sure how to test that the classpaths are iterated.
+	/*package */ static InputStream getResourceStreamFromClasspath(String fileName) {
+	    LOGGER.info(Logger.EVENT_FAILURE, "Loading " + fileName + " from classpaths");
 		
-		ClassLoader[] loaders = new ClassLoader[] {
-				Thread.currentThread().getContextClassLoader(),
-				ClassLoader.getSystemClassLoader(),
-				ESAPI.securityConfiguration().getClass().getClassLoader()  
-						/* can't use just getClass.getClassLoader() in a static context, so using the DefaultSecurityConfiguration class. */
-		};
+	    InputStream resourceStream = null;
 		
-		String[] classLoaderNames = {
-				"current thread context class loader",
-				"system class loader",
-				"class loader for DefaultSecurityConfiguration class"
-		};
+		List<String> orderedSearchPaths = Arrays.asList(DefaultSearchPath.ROOT.value(), 
+		        DefaultSearchPath.RESOURCE_DIRECTORY.value(),
+		        DefaultSearchPath.DOT_ESAPI.value(),
+		        DefaultSearchPath.ESAPI.value(),
+		        DefaultSearchPath.RESOURCES.value(),
+		        DefaultSearchPath.SRC_MAIN_RESOURCES.value());
 		
-		int i = 0;
-        for (ClassLoader loader : loaders) {
-			// try root
-			String currentClasspathSearchLocation = "/ (root)";
-            resourceStream = loader.getResourceAsStream(DefaultSecurityConfiguration.DefaultSearchPath.ROOT.value() + fileName);
-			
-			// try resourceDirectory folder
-			if (resourceStream == null){
-				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.RESOURCE_DIRECTORY.value();
-				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
-			}
-			
-			// try .esapi folder. Look here first for backward compatibility.
-			if (resourceStream == null){
-				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.DOT_ESAPI.value();
-				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
-			}
-
-			// try esapi folder (new directory)
-			if (resourceStream == null){
-				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.ESAPI.value();
-				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
-			}
-
-			// try resources folder
-			if (resourceStream == null){
-				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.RESOURCES.value();
-				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
-			}
-
-			// try src/main/resources folder
-			if (resourceStream == null){
-				currentClasspathSearchLocation = DefaultSecurityConfiguration.DefaultSearchPath.SRC_MAIN_RESOURCES.value();
-				resourceStream = loader.getResourceAsStream(currentClasspathSearchLocation + fileName);
-			}
-
-            if (resourceStream != null) {
-				LOGGER.info(Logger.EVENT_FAILURE, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + 
-					currentClasspathSearchLocation + "' using " + classLoaderNames[i] + "!");
-                break; // Outta here since we've found and loaded it.
-            }
-			
-			i++;
-        }
+		resourceStream = getResourceStreamFromClassLoader("current thread context class loader", Thread.currentThread().getContextClassLoader(), fileName, orderedSearchPaths);
+		 
+		//I'm lazy. Using ternary for shorthand "if null then do next thing"  Harder to read, sorry
+		resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("system class loader", ClassLoader.getSystemClassLoader(), fileName, orderedSearchPaths);
+		resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("class loader for DefaultSecurityConfiguration class", ESAPI.securityConfiguration().getClass().getClassLoader(), fileName, orderedSearchPaths);
 		
 		return resourceStream;
 	}
+	
+	//TESTING
+	// Mock SecurityConfiguration - Return file check (true) - return resourceStream - expect Policy object
+	// Mock SecurityConfiguration - Return file check (false)  - use junit to place file in any of the DefaultSearchPathLocations - verify Policy Object
+	// Mock SecurityConfiguration - return file check (true) - throw IOException on resource stream - Verify IOException
+	// Mock SecurityConfiguration - return file Check (true) - use Junit to place a BAD FILE - verify PolicyException
+	//  HOW TO TEST NULL RETURN.....
+	/*package */ static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
+	    InputStream resourceStream = null;
+	    SecurityConfiguration secCfg = ESAPI.securityConfiguration();
+	    
+	    //Rather than catching the IOException from the resource stream, let's ask if the file exists to give this a best-case resolution.
+	    //This helps with the IOException handling too.  If the file is there and we get an IOException from the SecurityConfiguration, then the file is there and something else is wrong (FAIL -- don't try the other path)
+	    File file = secCfg.getResourceFile(antisamyPolicyFilename);
+    
+        resourceStream = file == null ? getResourceStreamFromClasspath(antisamyPolicyFilename) : secCfg.getResourceStream(antisamyPolicyFilename);
+        return resourceStream == null ? null : Policy.getInstance(resourceStream);
+	}
 
-	static {
-        InputStream resourceStream = null;
-		String antisamyPolicyFilename = null;
-		
-		try {
-			antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
+	//TESTING
+	// Mock SecurityConfiguration - return a valid string on property request - verify String is returned from call
+	// Mock SecurityConfiguration -- throw ConfigurationException on property request -- Verify Default Filename is returned from call
+	/*package */ static String resolveAntisamyFilename() {
+	    String antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
+        try {
+            antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
                     // Future: This will be moved to a new PropNames class
                 org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
-		} catch (ConfigurationException cex) {
-			
+        } catch (ConfigurationException cex) {
+            
             LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " + 
                            org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
                            " not set, using default value: " + ANTISAMYPOLICY_FILENAME);
-			antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
-		}
-		try {
-			resourceStream = ESAPI.securityConfiguration().getResourceStream(antisamyPolicyFilename);
-		} catch (IOException e) {
-			
-			LOGGER.info(Logger.EVENT_FAILURE, "Loading " + antisamyPolicyFilename + " from classpaths");
+        }
+        return antisamyPolicyFilename;
+	}
+	
+	//TESTING
+	// Mock SecurityConfiguration - return file check (true) - throw IOException on resource stream - Verify ConfigurationException from IOException
+    // Mock SecurityConfiguration - return file Check (true) - use Junit to place a BAD FILE - verify ConfigurationException from PolicyException
+	// Force NULL return from loadAntisamyPolicy call -- Verify ConfigurationException from null value
+	/*package */ static void configureInstance() {
+	    String antisamyPolicyFilename = resolveAntisamyFilename();
 
-			resourceStream = getResourceStreamFromClasspath(antisamyPolicyFilename);
-		}
-        if (resourceStream != null) {
-        	try {
-				antiSamyPolicy = Policy.getInstance(resourceStream);
-			} catch (PolicyException e) {
-				throw new ConfigurationException("Couldn't parse " + antisamyPolicyFilename, e);
-	        }
-		}
-        else {
+        try {
+            antiSamyPolicy = loadAntisamyPolicy(antisamyPolicyFilename);
+        } catch (IOException ioe) {
+            //Thrown if file is found by SecurityConfiguration, but a stream cannot be generated.
+            throw new ConfigurationException("Failed to load file from SecurityConfiguration context: " + antisamyPolicyFilename, ioe);
+        } catch (PolicyException e) {
+            //Thrown if the resource stream was created, but the contents of the file are not compatible with antisamy expectations.
+            throw new ConfigurationException("Couldn't parse " + antisamyPolicyFilename, e);
+        }
+        
+        if (antiSamyPolicy == null) {
             throw new ConfigurationException("Couldn't find " + antisamyPolicyFilename);
-		}
+        }
+
+	}
+	
+	//TESTING
+	// None.
+	static {		
+	    configureInstance();
 	}
 
 	public HTMLValidationRule( String typeName ) {
