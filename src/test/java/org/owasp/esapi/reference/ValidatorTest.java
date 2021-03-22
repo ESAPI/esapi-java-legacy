@@ -375,7 +375,7 @@ public class ValidatorTest {
         	// Note, we used to say that about '/bin', but Ubuntu 20.x
             // changed '/bin' to a sym link to 'usr/bin'. We can't use '/etc'
             // because under MacOS, that is a sym link to 'private/etc'.
-            assertTrue(instance.isValidDirectoryPath("test7", "/dev", parent, false, errors));      // Always exist directory
+            assertTrue(instance.isValidDirectoryPath("test7", "src/test/resources", parent, false, errors));      // Always exist directory
             assertTrue(errors.size()==5);
 
             // Unix specific paths that should not exist or work
@@ -1123,6 +1123,5 @@ public class ValidatorTest {
     	Validator v = ESAPI.validator();
     	String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
     }
-
 }
 
