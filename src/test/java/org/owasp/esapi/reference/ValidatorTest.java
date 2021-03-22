@@ -375,7 +375,7 @@ public class ValidatorTest {
         	// Note, we used to say that about '/bin', but Ubuntu 20.x
             // changed '/bin' to a sym link to 'usr/bin'. We can't use '/etc'
             // because under MacOS, that is a sym link to 'private/etc'.
-            assertTrue(instance.isValidDirectoryPath("test7", "src"+ File.separator + "test" + File.separator +  "resources", parent, false, errors));      // Always exist directory
+            assertTrue(instance.isValidDirectoryPath("test7", "/dev", parent, false, errors));      // Always exist directory
             assertTrue(errors.size()==5);
 
             // Unix specific paths that should not exist or work
