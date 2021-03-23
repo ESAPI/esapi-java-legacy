@@ -132,16 +132,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.jmh>1.23</version.jmh>
+        <version.jmh>1.28</version.jmh>
+        <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
         <version.spotbugs>4.2.0</version.spotbugs>
-
-        <!-- Upgrading to 3.0.0-M3+ causes this test case error:
-                org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
-                java.lang.OutOfMemoryError: PermGen space
-             when running tests with Java 7 on Mac OS X. No problems observed on Linux.
-        -->
-        <version.surefire>3.0.0-M2</version.surefire>
+        <version.surefire>3.0.0-M5</version.surefire>
     </properties>
 
     <dependencies>
@@ -235,8 +230,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache-extras.beanshell</groupId>
-                <artifactId>bsh</artifactId>
-                <version>2.0b6</version>
+            <artifactId>bsh</artifactId>
+            <version>2.0b6</version>
         </dependency>
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
@@ -248,48 +243,18 @@
             <artifactId>slf4j-api</artifactId>
             <version>1.7.30</version>
         </dependency>
-
-        <!--
-             FORCE SPECIFIC VERSIONS OF TRANSITIVE DEPENDENCIES EXCLUDED ABOVE.
-             This is to force patched versions of these libraries with known CVEs against them.
-        -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <!-- Note: commons-io:2.7+ require Java 8, so can't upgrade past 2.6 -->
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-css</artifactId>
-            <version>1.14</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
         </dependency>
+
+        <!--
+             FORCE SPECIFIC VERSIONS OF TRANSITIVE DEPENDENCIES EXCLUDED ABOVE.
+             This is to force patched versions of these libraries with known CVEs against them.
+        -->
+
+        <!-- No forced upgrades required currently -->
 
         <!-- SpotBugs dependencies -->
         <dependency>
@@ -298,24 +263,30 @@
             <version>${version.spotbugs}</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>net.jcip</groupId>
-            <artifactId>jcip-annotations</artifactId>
-            <version>1.0</version>
-            <optional>true</optional>
-        </dependency>
 
         <!-- Dependencies which are ONLY used for JUnit tests -->
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.68</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito -->
@@ -353,6 +324,19 @@
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>${version.powermock}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                  <!-- We exclude this here, because we import the version we need above, and this imports a newer version. -->
+                  <groupId>org.javassist</groupId>
+                  <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
             <version>${version.powermock}</version>
             <scope>test</scope>
@@ -386,12 +370,6 @@
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>${version.jmh}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
             <version>${version.jmh}</version>
             <scope>test</scope>
         </dependency>
