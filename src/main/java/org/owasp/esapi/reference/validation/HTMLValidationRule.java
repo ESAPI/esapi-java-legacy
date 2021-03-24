@@ -54,9 +54,6 @@ public class HTMLValidationRule extends StringValidationRule {
 	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
 	private static final String ANTISAMYPOLICY_FILENAME = "antisamy-esapi.xml";
 
-	//TESTING -- Mock Classloaders, verify that the classloader is called as desired with the searchpath and filename concat
-	// Verify that when no match is found, null is returned
-	// Verify that when match is found, remaining classloaders are not invoked and expected InputStream is returned.
 	/*package */ static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
 	    InputStream result = null;
 	    
@@ -73,9 +70,6 @@ public class HTMLValidationRule extends StringValidationRule {
 	    return result;
 	}
 	
-	//TESTING
-	// Harder to test... Use Junit to place files in each of the DefaultSearchPathLocations and verify that the file can be found.
-	// Not sure how to test that the classpaths are iterated.
 	/*package */ static InputStream getResourceStreamFromClasspath(String fileName) {
 	    LOGGER.info(Logger.EVENT_FAILURE, "Loading " + fileName + " from classpaths");
 		
@@ -97,12 +91,6 @@ public class HTMLValidationRule extends StringValidationRule {
 		return resourceStream;
 	}
 	
-	//TESTING
-	// Mock SecurityConfiguration - Return file check (true) - return resourceStream - expect Policy object
-	// Mock SecurityConfiguration - Return file check (false)  - use junit to place file in any of the DefaultSearchPathLocations - verify Policy Object
-	// Mock SecurityConfiguration - return file check (true) - throw IOException on resource stream - Verify IOException
-	// Mock SecurityConfiguration - return file Check (true) - use Junit to place a BAD FILE - verify PolicyException
-	//  HOW TO TEST NULL RETURN.....
 	/*package */ static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
 	    InputStream resourceStream = null;
 	    SecurityConfiguration secCfg = ESAPI.securityConfiguration();
@@ -115,9 +103,6 @@ public class HTMLValidationRule extends StringValidationRule {
         return resourceStream == null ? null : Policy.getInstance(resourceStream);
 	}
 
-	//TESTING
-	// Mock SecurityConfiguration - return a valid string on property request - verify String is returned from call
-	// Mock SecurityConfiguration -- throw ConfigurationException on property request -- Verify Default Filename is returned from call
 	/*package */ static String resolveAntisamyFilename() {
 	    String antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
         try {
@@ -133,10 +118,6 @@ public class HTMLValidationRule extends StringValidationRule {
         return antisamyPolicyFilename;
 	}
 	
-	//TESTING
-	// Mock SecurityConfiguration - return file check (true) - throw IOException on resource stream - Verify ConfigurationException from IOException
-    // Mock SecurityConfiguration - return file Check (true) - use Junit to place a BAD FILE - verify ConfigurationException from PolicyException
-	// Force NULL return from loadAntisamyPolicy call -- Verify ConfigurationException from null value
 	/*package */ static void configureInstance() {
 	    String antisamyPolicyFilename = resolveAntisamyFilename();
 
@@ -156,8 +137,6 @@ public class HTMLValidationRule extends StringValidationRule {
 
 	}
 	
-	//TESTING
-	// None.
 	static {		
 	    configureInstance();
 	}
