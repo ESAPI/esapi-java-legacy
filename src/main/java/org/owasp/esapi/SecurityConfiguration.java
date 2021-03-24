@@ -731,34 +731,6 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 	boolean getLogServerIP();
 
 	/**
-	 * Returns the current log level.
-	 * @return	An integer representing the current log level.
-     * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
-	 */
-	@Deprecated
-    int getLogLevel();
-	
-    /**
-     * Get the name of the log file specified in the ESAPI configuration properties file. Return a default value 
-     * if it is not specified.
-     * 
-     * @return the log file name defined in the properties file.
-     * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
-     */
-	@Deprecated
-    String getLogFileName();
-
-    /**
-     * Get the maximum size of a single log file from the ESAPI configuration properties file. Return a default value 
-     * if it is not specified. Once the log hits this file size, it will roll over into a new log.
-     * 
-     * @return the maximum size of a single log file (in bytes).
-     * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
-     */
-	@Deprecated
-    int getMaxLogFileSize();
-
-	/**
 	 * Models a simple threshold as a count and an interval, along with a set of actions to take if 
 	 * the threshold is exceeded. These thresholds are used to define when the accumulation of a particular event
 	 * has met a set number within the specified time period. Once a threshold value has been met, various

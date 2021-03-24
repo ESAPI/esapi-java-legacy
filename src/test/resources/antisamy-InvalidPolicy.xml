@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<anti-samy-rules xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="antisamy.xsd">
+    <!--    This AntiSamy policy file intentionally fails the AntiSamy XML
+            schema validation checks (because of 'notSupportedTag'). We don't
+            actually *do* any tests with it other than to see if we can construct
+            an HTMLValidationRule instance that uses it with both
+                owasp.validator.validateschema=false
+            to disable AntiSamy's XML schema validation (in which case, the CTOR should work)
+            and with
+                owasp.validator.validateschema=true
+            (which is the default), which leaves its XML schema validation enabled (in which
+            case the CTOR should fail with an exception).
+
+            @since: 2.2.3.0
+    -->
+	<directives></directives>
+	<common-regexps></common-regexps>
+	<common-attributes></common-attributes>
+	<global-tag-attributes></global-tag-attributes>
+	<dynamic-tag-attributes></dynamic-tag-attributes>
+	<tag-rules></tag-rules>
+	<css-rules></css-rules>
+	<notSupportedTag></notSupportedTag>
+</anti-samy-rules>

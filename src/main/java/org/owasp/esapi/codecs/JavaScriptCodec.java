@@ -211,7 +211,8 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
 		}
 		
 		// ignore the backslash and return the character
-		return second;
+		input.reset();
+		return null;
 	}
 
 }

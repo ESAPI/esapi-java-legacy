@@ -6,10 +6,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
@@ -99,12 +101,14 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
     /**
      * Methods loads configuration from .xml file. 
      * @param file
+     * @throws ConfigurationException if there is a problem loading the specified configuration file.
      */
     protected void loadPropertiesFromFile(File file) throws ConfigurationException {
-        try {
-            validateAgainstXSD(new FileInputStream(file));
+        try ( InputStream configFile = new FileInputStream(file); ) {
+            validateAgainstXSD(configFile);
 
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
+            dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.parse(file);
             doc.getDocumentElement().normalize();
@@ -119,19 +123,20 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
                     properties.put(propertyKey, propertyValue);
                 }
             }
-        } catch (Exception e) {
-            logSpecial("XML config file " + filename + " has invalid schema", e);
-            throw new ConfigurationException("Configuration file : " + filename + " has invalid schema." + e.getMessage(), e);
+        } catch (IOException | SAXException | ParserConfigurationException e) {
+            logSpecial("XML config file " + filename + " doesn't exist or has invalid schema", e);
+            throw new ConfigurationException("Configuration file : " + filename + " has invalid schema."
+                  + e.getMessage(), e);
         }
     }
 
-    private void validateAgainstXSD(InputStream xml) throws Exception {
-        InputStream xsd = getClass().getResourceAsStream("/ESAPI-properties.xsd");
-        SchemaFactory factory =
-                SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        Schema schema = factory.newSchema(new StreamSource(xsd));
-        Validator validator = schema.newValidator();
-        validator.validate(new StreamSource(xml));
+    private void validateAgainstXSD(InputStream xml) throws IOException, SAXException {
+        try ( InputStream xsd = getClass().getResourceAsStream("/ESAPI-properties.xsd"); ) {
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+	        Schema schema = factory.newSchema(new StreamSource(xsd));
+	        Validator validator = schema.newValidator();
+	        validator.validate(new StreamSource(xml));
+        }
     }
 
 }

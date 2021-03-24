@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<!--
+        #     #    #    ######  #     #   ###   #     #  #####
+        #  #  #   # #   #     # ##    #    #    ##    # #     #
+        #  #  #  #   #  #     # # #   #    #    # #   # #
+        #  #  # #     # ######  #  #  #    #    #  #  # #  ####
+        #  #  # ####### #   #   #   # #    #    #   # # #     #
+        #  #  # #     # #    #  #    ##    #    #    ## #     #
+         ## ##  #     # #     # #     #   ###   #     #  #####
+
+        WARNING:    Log4j 1.x has been deprecated in ESAPI since 2020-07-23 in
+                    release 2.2.1.0.  It will be removed in a future release.
+                    The new default for ESAPI logging is JUL.  Either switch
+                    to JUL or SLF4J (which can support log4j 2). See the latest
+                    release notes for further details.
+  -->
 <!-- main resources -->
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
   <appender name="console" class="org.apache.log4j.ConsoleAppender"> 

@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.2.2.0</version>
+    <version>2.2.3.0</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -49,7 +49,7 @@
 
     <organization>
         <name>The Open Web Application Security Project (OWASP)</name>
-        <url>https://owasp.org</url>
+        <url>https://owasp.org/</url>
     </organization>
 
     <mailingLists>
@@ -132,17 +132,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.jmh>1.23</version.jmh>
+        <version.jmh>1.28</version.jmh>
+        <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
-        <version.spotbugs>4.1.4</version.spotbugs>
-
-        <!-- Upgrading to 3.0.0-M3+ causes this test case error:
-                org.owasp.esapi.reference.DefaultValidatorInputStringAPITest.getValidInputNullAllowedPassthrough  Time elapsed: 2.057 s  <<< ERROR!
-                java.lang.OutOfMemoryError: PermGen space
-
-             when running tests with Java 7 on Mac OS X. No problems observed on Linux.
-        -->
-        <version.surefire>3.0.0-M2</version.surefire>
+        <version.spotbugs>4.2.2</version.spotbugs>
+        <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
+        <version.surefire>3.0.0-M5</version.surefire>
     </properties>
 
     <dependencies>
@@ -170,6 +165,9 @@
                     <artifactId>xalan</artifactId>
                 </exclusion>
                 <exclusion>
+                    <!-- xom tries to pull this in, but a newer version is in Java 7 and later
+                         so we want to exclude this transitive dependency.
+                    -->
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
                 </exclusion>
@@ -233,67 +231,31 @@
         </dependency>
         <dependency>
             <groupId>org.apache-extras.beanshell</groupId>
-                <artifactId>bsh</artifactId>
-                <version>2.0b6</version>
+            <artifactId>bsh</artifactId>
+            <version>2.0b6</version>
         </dependency>
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.5.11</version>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>1.7.30</version>
         </dependency>
-
-        <!--
-             FORCE SPECIFIC VERSIONS OF TRANSITIVE DEPENDENCIES EXCLUDED ABOVE.
-             This is to force patched versions of these libraries with known CVEs against them.
-        -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <!-- Note: commons-io:2.7+ require Java 8, so can't upgrade past 2.6 -->
-            <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>batik-css</artifactId>
-            <version>1.13</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <!-- Note: CVE-2020-14338) in xercesImpl:2.12.0 but Apache has not released an update to this library yet to eliminate it. See ESAPI-security-bulletin3.pdf for further details. -->
-            <version>2.12.0</version>
-        </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <version>1.4.01</version>
         </dependency>
+
+        <!--
+             FORCE SPECIFIC VERSIONS OF TRANSITIVE DEPENDENCIES EXCLUDED ABOVE.
+             This is to force patched versions of these libraries with known CVEs against them.
+        -->
+
+        <!-- No forced upgrades required currently -->
 
         <!-- SpotBugs dependencies -->
         <dependency>
@@ -302,25 +264,30 @@
             <version>${version.spotbugs}</version>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>net.jcip</groupId>
-            <artifactId>jcip-annotations</artifactId>
-            <version>1.0</version>
-            <optional>true</optional>
-        </dependency>
 
         <!-- Dependencies which are ONLY used for JUnit tests -->
         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.15</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.13.1</version>
+            <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-                <!-- Tried to update this to 1.67 but that resulted in error when running 'mvn site' -->
-            <version>1.65.01</version>
+            <version>1.68</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <version>1.3</version>
             <scope>test</scope>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.powermock/powermock-api-mockito -->
@@ -355,6 +322,19 @@
             <!-- mockito-core v3.0.0+ requires Java 8 -->
             <version>2.28.2</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-core</artifactId>
+            <version>${version.powermock}</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                  <!-- We exclude this here, because we import the version we need above, and this imports a newer version. -->
+                  <groupId>org.javassist</groupId>
+                  <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
@@ -394,12 +374,6 @@
             <version>${version.jmh}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.openjdk.jmh</groupId>
-            <artifactId>jmh-generator-annprocess</artifactId>
-            <version>${version.jmh}</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
@@ -424,6 +398,21 @@
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <version>${version.spotbugs.maven}</version>
+                <dependencies>
+                  <!-- Overwrite dependency on SpotBugs if you want to specify the version of SpotBugs.
+                       SpotBugs itself is frequently several versions ahead of the spotbugs-maven-plugin -->
+                  <dependency>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs</artifactId>
+                    <version>${version.spotbugs}</version>
+                  </dependency>
+                </dependencies>
+            </plugin>
+
             <plugin>
                 <groupId>net.sourceforge.maven-taglib</groupId>
                 <artifactId>maven-taglib-plugin</artifactId>
@@ -504,8 +493,8 @@
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
-                    <!-- Updating to 1.19 causes lots of errors in 'mvn site' so leaving at 1.18 for now. -->
-                    <version>1.18</version>
+                    <!-- Updating to 1.19 causes LOTS of errors in 'mvn site' and 1.18 requires Java 8 so leaving it at 1.17. -->
+                    <version>1.17</version>
                   </dependency>
                 </dependencies>
                 <executions>
@@ -529,7 +518,7 @@
                       <goals><goal>enforce</goal></goals>
                       <configuration>
                         <rules>
-                          <dependencyConvergence />
+                          <dependencyConvergence/>
                           <requireJavaVersion>
                             <version>1.7</version>
                             <message>
@@ -540,7 +529,7 @@
                           <enforceBytecodeVersion>
                             <maxJdkVersion>1.7</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
-                            <ignoredScopes></ignoredScopes> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
+                            <ignoredScopes/> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
                             <message>Dependencies shouldn't require Java 8+</message>
                           </enforceBytecodeVersion>
                         </rules>
@@ -627,19 +616,19 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.13.0</version>
+                <version>3.14.0</version>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.1.0</version>
+               <version>3.1.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
             </plugin>
 
             <plugin>
@@ -694,7 +683,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.7</version>
+                <version>2.8.1</version>
             </plugin>
 
             <plugin>
@@ -706,9 +695,9 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>5.3.2</version>
+                <version>6.1.3</version>
                 <configuration>
-                    <failBuildOnCVSS>5.0</failBuildOnCVSS>
+                    <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
                 </configuration>
                 <executions>
@@ -834,7 +823,6 @@
               <plugin>
                 <groupId>com.github.spotbugs</groupId>
                 <artifactId>spotbugs-maven-plugin</artifactId>
-                <version>${version.spotbugs}</version>
                 <configuration>
                     <plugins>
                         <plugin>
