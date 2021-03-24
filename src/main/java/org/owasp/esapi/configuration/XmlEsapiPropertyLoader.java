@@ -108,18 +108,8 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
             validateAgainstXSD(configFile);
 
             DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance("org.apache.xerces.jaxp.DocumentBuilderFactoryImpl", null);
-System.out.println("DRW:DocumentBuilderFactory class: " + dbFactory.getClass()); // TODO: DEBUG-Delete Me
             dbFactory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
-
-            // Rest of these aren't needed really - TODO: Delete?
-/*            dbFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
-            dbFactory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
-            dbFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-            dbFactory.setXIncludeAware(false);
-            dbFactory.setExpandEntityReferences(false);
-*/
             DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-System.out.println("DRW:DocumentBuilder class: " + dBuilder.getClass()); // TODO: DEBUG-Delete Me
             Document doc = dBuilder.parse(file);
             doc.getDocumentElement().normalize();
 
