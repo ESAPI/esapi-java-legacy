@@ -14,8 +14,12 @@ OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web ap
 </tr>
 </table>
 
+# Where is the OWASP ESAPI wiki page?
+You can find the OWASP ESAPI wiki pages at [https://owasp.org/www-project-enterprise-security-api/](https://owasp.org/www-project-enterprise-security-api/). The ESAPI legacy GitHub repo also has a few useful wiki pages.
+
 # What does Legacy mean?
 <p>This is the legacy branch of ESAPI which means it is an actively maintained branch of the project, however significan *new* feature development for this branch will *not* be done. Features that have already been scheduled for the 2.x branch will move forward.
+You will find that GitHub repository at [https://github.com/ESAPI/esapi-java-legacy](https://github.com/ESAPI/esapi-java-legacy).
 
 <b>IMPORTANT NOTES:</b>
 The default branch for ESAPI legacy is now the 'develop' branch (rather than the 'master' branch), where future development, bug fixes, etc. will now be done. The 'master' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.1.0.1 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
@@ -23,14 +27,19 @@ The default branch for ESAPI legacy is now the 'develop' branch (rather than the
 Also, the <i>minimal</i> baseline Java version to use ESAPI is Java 7. (This was changed from Java 6 during the 2.2.0.0 release.)
 
 # Where can I find ESAPI 3.x?
-https://github.com/ESAPI/esapi-java
+[https://github.com/ESAPI/esapi-java](https://github.com/ESAPI/esapi-java)
 
 Note however that work on ESAPI 3 has not yet become in earnest and is only in its earliest planning stages. Even the code that is presently there will likely change.
 
-# Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.1.0. The default configuration jar and its GPG signature can be found at [esapi-2.2.1.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.1.0/esapi-2.2.1.0-configuration.jar) and [esapi-2.2.1.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.1.0/esapi-2.2.1.0-configuration.jar.asc) respectively.
+# ESAPI release notes
+The ESAPI release notes may be found in ESAPI's "documentation" directory. They are generally named "esapi4java-core-*2.#.#.#*-release-notes.txt", where "*2.#.#.#*" refers to the ESAPI release number (which uses semantic versioning).
+## IMPORTANT
+Starting with ESAPI 2.2.3.0, ESAPI is using a version of AntiSamy that by default includes 'slf4j-simple' and does XML schema validation on the AntiSamy policy files. Please **READ** the release notes for the 2.2.3.0 release (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
 
-The latest regular ESAPI jars can are available from Maven Central.
+# Locating ESAPI Jar files
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.3.0. The default configuration jar and its GPG signature can be found at [esapi-2.2.3.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.0/esapi-2.2.3.0-configuration.jar) and [esapi-2.2.3.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.0/esapi-2.2.3.0-configuration.jar.asc) respectively.
+
+The latest *regular* ESAPI jars can are available from Maven Central.
 
 However, before you start a *new* project using ESAPI, but sure to read "[Should I use ESAPI?](https://owasp.org/www-project-enterprise-security-api/#div-shouldiuseesapi)".
 
@@ -42,7 +51,7 @@ Note that this policy does not apply to classes under the **org.owasp.esapi.refe
 ## How can I contribute or help with fix bugs?
 Fork and submit a pull request! Simple as pi! We generally only accept bug fixes, not new features because as a legacy project, we don't intend on adding new features, although we may make exceptions. If you wish to propose a new feature, the best place to discuss it is via the ESAPI-DEV mailing list mentioned below. Note that we vet all pull requests, including coding style of any contributions; use the same coding style found in the files you are already editing.
 
-If you are new to ESAPI, a good place to start is to look for GitHub issues labled as 'good first issue'. (E.g., to find all open issues with that label, use https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22.)
+If you are new to ESAPI, a good place to start is to look for GitHub issues labled as 'good first issue'. (E.g., to find all open issues with that label, use [https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22](https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).)
 
 You can find additional details in the file '[CONTRIBUTING-TO-ESAPI.txt](https://raw.githubusercontent.com/ESAPI/esapi-java-legacy/develop/CONTRIBUTING-TO-ESAPI.txt)'.
 
@@ -52,10 +61,10 @@ In mid-2014 ESAPI Migrated all code to GitHub. This migration was completed in N
 ### What about the issues still located on Google Code?
 All issues from Google Code have been migrated to GitHub issues. We have a JIRA/Confluence instance allocated to us, but it has not be configured to synchronize with the GitHub issues, and thus is should not be used. JIRA is fine, but if we can't have it synchronized with GitHub issues (which is where the majority of our users report issues), it is not usuable. As developers, we do not want to spent time having to close issues from multiple bug-tracking sites. Therefore, until this synchronization happens (see GitHub issue #371), please ONLY use GitHub for reporting bugs.
 
-When reporting an issue, please be clear and try to ensure that the ESAPI development team has sufficient information to be able to reproduce your results. If you have not already done so, this might be a good time to read Eric S. Raymond's classic "How to Ask Questions the Smart Way", at http://www.catb.org/esr/faqs/smart-questions.html before posting your issue.
+When reporting an issue, please be clear and try to ensure that the ESAPI development team has sufficient information to be able to reproduce your results. If you have not already done so, this might be a good time to read Eric S. Raymond's classic "How to Ask Questions the Smart Way", at [http://www.catb.org/esr/faqs/smart-questions.html](http://www.catb.org/esr/faqs/smart-questions.html) before posting your issue.
 
 ### Find an Issue?
-If you have found a bug, then create an issue on the esapi-legacy-java repo: https://github.com/ESAPI/esapi-java-legacy/issues
+If you have found a bug, then create an issue on the esapi-legacy-java repo: [https://github.com/ESAPI/esapi-java-legacy/issues](https://github.com/ESAPI/esapi-java-legacy/issues)
 
 NOTE: Please do NOT use GitHub issues to ask questions about ESAPI. If you wish to do this, post to either of the 2 mailing lists (now on Google Groups) found at the bottom of this page. If we find questions as GitHub issues, we simply will close them and direct you to do this anyhow.
 
@@ -75,10 +84,10 @@ More detail is available in the file '[SECURITY.md](https://raw.githubuserconten
 
 *Documentation:* https://owasp-esapi.atlassian.net/wiki/display/ESAPILEG/ESAPI+Legacy (Coming Soon), for now find general documentation under the 'documentation/' directory, and the latest Javadoc under https://www.javadoc.io/doc/org.owasp.esapi/esapi/
 
-*Realtime Support available on our IRC Channel:*<br/>
+*Realtime Support available on our IRC Channel (but if you want to do so, and want the ESAPI dev team to participate, email us a heads up first as to the date/time):*<br/>
 Server: irc.freenode.net<br/>
 Channel: #esapi<br/>
-Webchat http://webchat.freenode.net/
+Webchat: [https://webchat.freenode.net/](https://webchat.freenode.net/)
 
 *Mailing lists:*
 As of 2019-03-25, ESAPI's 2 mailing lists were officially moved OFF of their Mailman mailing lists to a new home on Google Groups.
@@ -87,9 +96,9 @@ The names of the 2 Google Groups are "[esapi-project-users](mailto:esapi-project
 
 Old archives for the old Mailman mailing lists for ESAPI-Users and ESAPI-Dev are still available at https://lists.owasp.org/pipermail/esapi-users/ and https://lists.owasp.org/pipermail/esapi-dev/ respectively.
 
-For a general overview of Google Groups and its web interface, see https://groups.google.com/forum/#!overview
+For a general overview of Google Groups and its web interface, see [https://groups.google.com/forum/#!overview](https://groups.google.com/forum/#!overview)
 
-For assistance subscribing and unsubscribing to Google Groups, see https://webapps.stackexchange.com/questions/13508/how-can-i-subscribe-to-a-google-mailing-list-with-a-non-google-e-mail-address/15593#15593
+For assistance subscribing and unsubscribing to Google Groups, see [https://webapps.stackexchange.com/questions/13508/how-can-i-subscribe-to-a-google-mailing-list-with-a-non-google-e-mail-address/15593#15593](https://webapps.stackexchange.com/questions/13508/how-can-i-subscribe-to-a-google-mailing-list-with-a-non-google-e-mail-address/15593#15593).
 
 ----------
 OWASP is a registered trademark of the OWASP Foundation, Inc.
