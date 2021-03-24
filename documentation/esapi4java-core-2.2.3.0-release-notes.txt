@@ -1,0 +1,288 @@
+Release notes for ESAPI 2.2.3.0
+    Release date: 2021-03-23
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.2.2.0, 2020-11-27
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+
+Important news for this current release
+---------------------------------------
+This is a patch release with the primary intent of updating some dependencies, some with known vulnerabilities. Main update are:
+        -- AntiSamy, from 1.5.11 to 1.6.2.
+        -- As a result of the AntiSamy upgrade, the transitive dependency xercesImpl was updated from 2.12.0 to 2.12.1 which should address CVE-2020-14338.
+        -- Apache batik-css, updated from 1.13 to 1.14.
+        
+Details follow.
+
+    * IMPORTANT: Effects of updating to AntiSamy 1.6.2
+        - AntiSamy 1.6.2 which we are now using, is not doing XML schema validation of AntiSamy policy files. It is IMPORTANT that you read through
+                https://github.com/nahsra/antisamy#note-schema-validation-behavior-change-starting-with-antisamy-160
+          to know how that affects you as an ESAPI user. In particular, changes important to ESAPI users include:
+                o AntiSamy now includes the dependency 'slf4j-simple'. This means if you are using an SLF4J library *other* than that, you should add
+                        <exclusion>
+                            <groupId>org.slf4j</groupId>
+                            <artifactId>slf4j-simple</artifactId>
+                        </exclusion>
+                  in your dependency for ESAPI in your application's pom.xml. (You Gradle, Ivy, etc. other build tool users will have to figure out how to do this yourself.)
+                  This is especially important if you are using SLF4J logging in ESAPI with some other SLF4J logger such as slf4j-log4j2, etc. If you don't do that, your logging may not come out as expected. See <https://github.com/nahsra/antisamy#note-schema-validation-behavior-change-starting-with-antisamy-160>, under its section discussing Logging for more details.
+        
+                o Previously, ESAPI shipped with a default AntiSamy policy file called 'antisamy-esapi.xml'. For 10 plus years, unbeknownst to anyone, that file contained an unused '<html-entities>' node that not only did ESAPI not directly used, but was also completely ignored by AntiSamy! However, starting with AntiSamy 1.6.0, AntiSamy does XML schema validation by default, so that causes any non-compliant AntiSamy policy file to be rejected. This may result in some rather obtuse error messages and you may want to set the AntiSamy system property 'owasp.validator.validateschema' to "false" temporarily until you have time to correct your AntiSamy policy file(s).
+
+    Old News
+    --------
+    * For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode's SourceClear, OWASP Dependency Check, etc., you will get a notice for CVE-2020-9488 (related to log4j 1.2.17) and you might get a notice that there is still a vulnerability in xerces:xercesImpl:2.12.1 that ESAPI uses (as a transitive dependency of AntiSamy) that is identical or similar to CVE-2020-14338. (A certain SCA service, which I won't mention, referred to CVE-2020-14621, but it's certainly not obvious from the description that this has anything to do with Xerces. But, on the hand, this is for Oracle products, and they are more obtuse than most when it comes to their vulnerability descriptions.) Unfortunately there is no official patch for the former CVE-2020-9488, as log4j 1.x is now well past its end-of-life. And for the latter CVE(s), it (they?) supposedly is (are?) fixed in the 2.12.1 release, but based on the CPEs in NVD for CVE-2020-14621, it's not clear if all SCA services would detect that.
+      Further details of these vulnerabilities and there potential impact on ESAPI are analyzed in ESAPI Security Advisories #2, #3 and #3, which are viewable here
+            https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf -- The Log4j 1.x CVE
+            https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf -- The XercesImpl CVE
+                https://pastebin.com/Pm6AbcF7 (A somewhat more in-depth analysis that late to security bulletin #3.)
+            *NEW* -- https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf -- Another Log4j 1.x CVE
+      and associated with this release on GitHub. Manual workarounds possible for each. See the security bulletin for further details.
+
+=================================================================================================================
+
+Basic ESAPI facts
+-----------------
+
+ESAPI 2.2.2.0 release:
+     212 Java source files
+    4313 JUnit tests in 135 Java source files
+
+ESAPI 2.2.3.0 release:
+     212 Java source files
+    4316 JUnit tests in 136 Java source files
+
+12 GitHub Issues closed in this release, including those we've decided not to fix (marked '(wontfix)').
+(Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D2020-11-27)
+
+Issue #         GitHub Issue Title
+----------------------------------------------------------------------------------------------
+408             Update Travis CI configuration
+517             Encoded input is not treated as an attack
+586             Upgrade pom.xml to use AntiSamy 1.5.12 Vulnerable Dependencies
+588             Possible bug in StringValidationRule.getValid with canonicalize
+592             Not able to turn off Java.util.Logging for ESAPI
+593             Logger.LogLevel in ESAPI.properties not working if set to ERROR/FATAL
+594             Not able to turn off ESAPI logging
+599             encodeForCSS changes '#' character after upgrading from 2.0.1 to 2.2.1.1
+602             Update failing ValidatorTest in 'Java CI with Maven' GitHub workflow
+606             Vulnerability in transitive dependency of esapi
+609             Change log4j dependency scope to provided Build-Maven Component-Docs Component-Logger Configuration
+614             Potentlial XXE Injection vulnerability in loading XML version of ESAPI properties file 
+
+-----------------------------------------------------------------------------
+
+        Changes Requiring Special Attention
+
+-----------------------------------------------------------------------------
+
+Search for 'IMPORTANT: Effects of updating to AntiSamy 1.6.2' and read that section. The details are all covered there.
+
+
+Old News -- Important Logging Changes
+-------------------------------------
+[If you have already successfully been using ESAPI 2.2.1.0 or later, you probably can skip this section, which discusses important logging changes.]
+
+Since ESAPI 2.2.1.0, the new default ESAPI logger is JUL (java.util.logging packages) and we have deprecated the use of Log4J 1.x because we now support SLF4J and Log4J 1.x is way past its end-of-life. We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on ESAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
+
+However, if you try to juse the new ESAPI 2.2.1.0 or later logging you will notice that you need to change ESAPI.Logger and also possibly provide some other properties as well to get the logging behavior that you desire.
+
+To use ESAPI logging in ESAPI 2.2.1.0 (and later), you will need to set the ESAPI.Logger property to
+
+    org.owasp.esapi.logging.java.JavaLogFactory     - To use the new default, java.util.logging (JUL)
+    org.owasp.esapi.logging.log4j.Log4JLogFactory   - To use the end-of-life Log4J 1.x logger
+    org.owasp.esapi.logging.slf4j.Slf4JLogFactory   - To use the new (to release 2.2.0.0) SLF4J logger
+
+In addition, if you wish to use JUL for logging, you *MUST* supply an "esapi-java-logging.properties" file in your classpath. This file is included in the 'esapi-2.2.2.0-configuration.jar' file provided under the 'Assets' section of the GitHub Release at
+    https://github.com/ESAPI/esapi-java-legacy/releases/esapi-2.2.2.0
+
+Unfortunately, there was a logic error in the static initializer of JavaLogFactory (now fixed in this release) that caused a NullPointerException to be thrown so that the message about the missing "esapi-java-logging.properties" file was never seen.
+
+If you are using JavaLogFactory, you will also want to ensure that you have the following ESAPI logging properties set:
+    # Set the application name if these logs are combined with other applications
+    Logger.ApplicationName=ExampleApplication
+    # If you use an HTML log viewer that does not properly HTML escape log data, you can set LogEncodingRequired to true
+    Logger.LogEncodingRequired=false
+    # Determines whether ESAPI should log the application name. This might be clutter in some single-server/single-app environments.
+    Logger.LogApplicationName=true
+    # Determines whether ESAPI should log the server IP and port. This might be clutter in some single-server environments.
+    Logger.LogServerIP=true
+    # LogFileName, the name of the logging file. Provide a full directory path (e.g., C:\ESAPI\ESAPI_logging_file) if you
+    # want to place it in a specific directory.
+    Logger.LogFileName=ESAPI_logging_file
+    # MaxLogFileSize, the max size (in bytes) of a single log file before it cuts over to a new one (default is 10,000,000)
+    Logger.MaxLogFileSize=10000000
+    # Determines whether ESAPI should log the user info.
+    Logger.UserInfo=true
+    # Determines whether ESAPI should log the session id and client IP.
+    Logger.ClientInfo=true
+
+See GitHub issue #560 for additional details.
+
+
+Related to that aforemented Log4J 1.x CVE and how it affects ESAPI, be sure to read
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
+which describes CVE-2019-17571, a deserialization vulnerability in Log4J 1.2.17. ESAPI is *NOT* affected by this (even if you chose to use Log4J 1 as you default ESAPI logger). This security bulletin describes why this CVE is not exploitable as used by ESAPI.
+
+
+Finally, while ESAPI still supports JDK 7 (even though that too is way past end-of-life), the next ESAPI release will move to JDK 8 as the minimal baseline. (We already use Java 8 for development but still to Java 7 source and runtime compatibility.) We need to do this out of necessity because some of our dependencies are no longer doing updates that support Java 7.
+
+-----------------------------------------------------------------------------
+
+        Remaining Known Issues / Problems
+
+-----------------------------------------------------------------------------
+
+New News
+--------
+See UPDATE, below, in next sub-section under Old News.
+
+
+Old News - Failing JUnit tests
+------------------------------
+    If you use Java 7 (the minimal Java baseline supported by ESAPI) and try to run 'mvn test' there is one test that fails. This test passes with Java 8. The failing test is:
+
+        [ERROR] Tests run: 5, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.203 s
+        <<< FAILURE! - in org.owasp.esapi.crypto.SecurityProviderLoaderTest
+        [ERROR] org.owasp.esapi.crypto.SecurityProviderLoaderTest.testWithBouncyCastle
+        Time elapsed: 0.116 s <<< FAILURE!
+        java.lang.AssertionError: Encryption w/ Bouncy Castle failed with
+        EncryptionException for preferred cipher transformation; exception was:
+        org.owasp.esapi.errors.EncryptionException: Encryption failure (unavailable
+        cipher requested)
+        at
+        org.owasp.esapi.crypto.SecurityProviderLoaderTest.testWithBouncyCastle(Security
+        ProviderLoaderTest.java:133)
+
+    I will spare you all the details and tell you that this has to do with Java 7 not being able to correctly parse the signed Bouncy Castle JCE provider jar. More details are available at:
+        https://www.bouncycastle.org/latest_releases.html
+    and
+        https://github.com/bcgit/bc-java/issues/477
+    I am sure that there are ways of making Bouncy Castle work with Java 7, but since ESAPI does not rely on Bouncy Castle (it can use any compliant JCE provider), this should not be a problem. (It works fine with the default SunJCE provider.) If it is important to get the BC provider working with the ESAPI Encryptor and Java 7, then open a GitHub issue and we will take a deeper look at it and see if we can suggest something.
+
+
+
+    Another problem is if you run 'mvn test' from the 'cmd' prompt (and possibly PowerShell as well), you will get intermittent failures (generally between 10-25% of the time) at arbitrary spots. If you run it again without any changes it will work fine without any failures. We have discovered that it doesn't seem to fail if you run the tests from an IDE like Eclipse or if you redirect both stdout and stderr to a file; e.g.,
+
+        C:\code\esapi-java-legacy> mvn test >testoutput.txt 2>&1
+
+    UPDATE: We now believe these at least some of these failures may be because the maven-surefire-plugin is, by default, not creating a new JVM process for each test class. We are looking into this. For now, we have only have observed this behavior on Windows 10. If you see this error, please do NOT report it as a GitHub issue unless you know a fix for it. (And yes, we are aware of '<reuseForks>false</reuseForks>' in the pom for the maven-surefire-plugin, but that causes other tests to fail that we haven't had time to fix.) See GitHub issue #604 (https://github.com/ESAPI/esapi-java-legacy/issues/604) for additional details.
+
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, most of which were not tracked via GitHub issues
+
+-----------------------------------------------------------------------------
+
+* Added GitHub CI workflow to run 'mvn package' to test if PRs pass tests.
+* Added GitHub workflow for "Super Linter".
+* Minor updates to README.md file (still trying to get 'Build Status' badge to work)
+* Updated deployment process documentation for ESAPI release steps.
+* Updated Security Advisory #3 with new links.
+* Created Security Advisory #4.
+* Updated ESAPI.properties file to reflect new OWASP wiki page.
+* Miscellaneous pom.xml changes related to plugins.
+* Updates to CONTRIBUTING-TO-ESAPI.txt to add paragraph on GitHub deprecating passwords for git operations.
+* Remove invalid <html-entities> node from antisamy-esapi.xml AntiSamy policy file used by ESAPI.
+* Add prominent warnings in log4j.xml about ESAPI's use of Log4J 1.x being deprecated.
+
+-----------------------------------------------------------------------------
+
+Closed PRs Activity Report (Changes between release 2.2.2.0 and 2.2.3.0, i.e., between 2020-11-27 and 2021-03-23)
+
+    See     https://github.com/ESAPI/esapi-java-legacy/pulls?q=type%3Apr+state%3Aclosed+closed%3A%3E2020-11-27+updated%3A%3C2021-03-24
+
+-----------------------------------------------------------------------------
+
+CHANGELOG:      Create your own. May I suggest:
+
+        git log --stat --since=2020-11-27 --until=2021-03-23 --reverse --pretty=medium
+
+    which will show all the commits since just after the previous (2.2.2.0) and until the current (2.2.3.0) release.
+
+-----------------------------------------------------------------------------
+
+Direct and Transitive Runtime and Test Dependencies:
+
+        $ mvn -B dependency:tree
+        [INFO] Scanning for projects...
+        [INFO] 
+        [INFO] -----------------------< org.owasp.esapi:esapi >------------------------
+        [INFO] Building ESAPI 2.2.3.0-SNAPSHOT
+        [INFO] --------------------------------[ jar ]---------------------------------
+        [INFO] 
+        [INFO] --- maven-dependency-plugin:3.1.2:tree (default-cli) @ esapi ---
+        [INFO] org.owasp.esapi:esapi:jar:2.2.3.0-SNAPSHOT
+        [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
+        [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
+        [INFO] +- com.io7m.xom:xom:jar:1.2.10:compile
+        [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+        [INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+        [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
+        [INFO] +- commons-configuration:commons-configuration:jar:1.10:compile
+        [INFO] +- commons-lang:commons-lang:jar:2.6:compile
+        [INFO] +- commons-fileupload:commons-fileupload:jar:1.3.3:compile
+        [INFO] +- log4j:log4j:jar:1.2.17:compile
+        [INFO] +- org.apache.commons:commons-collections4:jar:4.2:compile
+        [INFO] +- org.apache-extras.beanshell:bsh:jar:2.0b6:compile
+        [INFO] +- org.owasp.antisamy:antisamy:jar:1.6.2:compile
+        [INFO] |  +- commons-codec:commons-codec:jar:1.15:compile
+        [INFO] |  +- net.sourceforge.nekohtml:nekohtml:jar:1.9.22:compile
+        [INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+        [INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.14:compile
+        [INFO] |  +- org.slf4j:slf4j-simple:jar:1.7.30:compile
+        [INFO] |  +- xerces:xercesImpl:jar:2.12.1:compile
+        [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
+        [INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+        [INFO] +- commons-io:commons-io:jar:2.6:compile
+        [INFO] +- org.apache.xmlgraphics:batik-css:jar:1.14:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.14:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-util:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.14:compile
+        [INFO] |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.14:compile
+        [INFO] |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.6:compile
+        [INFO] +- xalan:xalan:jar:2.7.2:compile
+        [INFO] |  \- xalan:serializer:jar:2.7.2:compile
+        [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.2.0:compile (optional) 
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional) 
+        [INFO] +- net.jcip:jcip-annotations:jar:1.0:compile (optional) 
+        [INFO] +- junit:junit:jar:4.13.1:test
+        [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
+        [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.68:test
+        [INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.7:test
+        [INFO] |  \- org.powermock:powermock-api-support:jar:2.0.7:test
+        [INFO] |     \- org.powermock:powermock-core:jar:2.0.7:test
+        [INFO] +- org.javassist:javassist:jar:3.25.0-GA:test
+        [INFO] +- org.mockito:mockito-core:jar:2.28.2:test
+        [INFO] |  +- net.bytebuddy:byte-buddy:jar:1.9.10:test
+        [INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.9.10:test
+        [INFO] |  \- org.objenesis:objenesis:jar:2.6:test
+        [INFO] +- org.powermock:powermock-module-junit4:jar:2.0.7:test
+        [INFO] |  \- org.powermock:powermock-module-junit4-common:jar:2.0.7:test
+        [INFO] +- org.powermock:powermock-reflect:jar:2.0.7:test
+        [INFO] +- org.openjdk.jmh:jmh-core:jar:1.23:test
+        [INFO] |  +- net.sf.jopt-simple:jopt-simple:jar:4.6:test
+        [INFO] |  \- org.apache.commons:commons-math3:jar:3.2:test
+        [INFO] \- org.openjdk.jmh:jmh-generator-annprocess:jar:1.23:test
+        [INFO] ------------------------------------------------------------------------
+        [INFO] BUILD SUCCESS
+        [INFO] ------------------------------------------------------------------------
+        [INFO] Total time:  0.906 s
+        [INFO] Finished at: 2021-03-21T22:03:50-04:00
+[INFO] ------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
+Acknowledgments:
+    Another hat tip to Dave Wichers for promptly releasing AntiSamy 1.6.2. A special shout-out to @simon0117 for adding the Maven and Super-Linter GitHub Actions (PR #583)
+    And lastly, thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
+
+A special thanks to the ESAPI community from the ESAPI project co-leaders:
+    Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!
+    Matt Seil (xeno6696)
