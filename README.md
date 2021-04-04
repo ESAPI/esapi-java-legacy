@@ -22,7 +22,7 @@ You can find the OWASP ESAPI wiki pages at [https://owasp.org/www-project-enterp
 You will find that GitHub repository at [https://github.com/ESAPI/esapi-java-legacy](https://github.com/ESAPI/esapi-java-legacy).
 
 <b>IMPORTANT NOTES:</b>
-The default branch for ESAPI legacy is now the 'develop' branch (rather than the 'master' branch), where future development, bug fixes, etc. will now be done. The 'master' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.1.0.1 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
+The default branch for ESAPI legacy is now the 'develop' branch (rather than the 'main' (formerly 'master') branch), where future development, bug fixes, etc. will now be done. The 'main' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.1.0.1 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
 
 Also, the <i>minimal</i> baseline Java version to use ESAPI is Java 7. (This was changed from Java 6 during the 2.2.0.0 release.)
 
