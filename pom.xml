@@ -238,6 +238,13 @@
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
             <version>1.6.3</version>
+            <exclusions>
+                <!-- excluded because we pick up much newer version -->
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -695,7 +702,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.1.3</version>
+                <version>6.1.6</version>
                 <configuration>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
