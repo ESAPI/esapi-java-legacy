@@ -264,9 +264,9 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <!-- Note: commons-io:2.7 and later require Java 8, so can't upgrade past 2.6 -->
+            <!-- Note: commons-io:2.7 and later require Java 8, so can't upgrade past 2.7 -->
             <!-- This means still possible exposure to CVE-2021-29425. -->
-            <version>2.6</version>
+            <version>2.7</version>
         </dependency>
 
 
