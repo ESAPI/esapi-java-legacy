@@ -169,8 +169,8 @@ CHANGELOG:      Create your own. May I suggest:
 
 Direct and Transitive Runtime and Test Dependencies:
 
-        $ mvn dependency:tree
-@@@@ Include output from 'mvn dependency:tree' here
+        $ mvn -B dependency:tree
+@@@@ Include output from 'mvn -B dependency:tree' here
 
 -----------------------------------------------------------------------------
 
