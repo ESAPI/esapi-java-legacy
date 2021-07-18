@@ -49,11 +49,9 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
             logBridge.log(delegate, esapiLevel, type, message, throwable);
         }
     }
-    
 
     private boolean isEnabled(int esapiLevel) {
-        //Are Logger.OFF and Logger.ALL reversed?  This should be simply the less than or equal to check...
-        return (esapiLevel <= maxLogLevel && maxLogLevel != Logger.OFF) || maxLogLevel == Logger.ALL;
+        return logBridge.isEnabled(delegate, esapiLevel);
     }
     
     @Override

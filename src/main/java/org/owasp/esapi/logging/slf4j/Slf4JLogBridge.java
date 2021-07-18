@@ -21,6 +21,7 @@ import org.slf4j.Logger;
  * 
  */
 public interface Slf4JLogBridge {
+    boolean isEnabled(Logger logger, int esapiLevel);
     /**
      * Translation for the provided ESAPI level, type, and message to the specified SLF4J Logger.
      * @param logger Logger to receive the translated message.

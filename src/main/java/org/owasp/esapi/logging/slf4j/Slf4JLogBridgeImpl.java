@@ -51,6 +51,14 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
         this.scrubber = logScrubber;
         this.appender = messageAppender;
     }
+
+    @Override
+    public boolean isEnabled(Logger logger, int esapiLevel) {
+        Slf4JLogLevelHandler handler = esapiSlfLevelMap.get(esapiLevel);
+        // null check required??
+        return handler.isEnabled(logger);
+    }
+
     @Override
     public void log(Logger logger, int esapiLevel, EventType type, String message) {
         Slf4JLogLevelHandler handler = esapiSlfLevelMap.get(esapiLevel);
