@@ -237,7 +237,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.6.3</version>
+            <version>1.6.4</version>
             <exclusions>
                 <!-- excluded because we pick up much newer version -->
                 <exclusion>
@@ -249,7 +249,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <version>1.7.31</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
