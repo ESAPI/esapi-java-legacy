@@ -34,10 +34,10 @@ Note however that work on ESAPI 3 has not yet become in earnest and is only in i
 # ESAPI release notes
 The ESAPI release notes may be found in ESAPI's "documentation" directory. They are generally named "esapi4java-core-*2.#.#.#*-release-notes.txt", where "*2.#.#.#*" refers to the ESAPI release number (which uses semantic versioning).
 ## IMPORTANT
-Starting with ESAPI 2.2.3.0, ESAPI is using a version of AntiSamy that by default includes 'slf4j-simple' and does XML schema validation on the AntiSamy policy files. Please **READ** the release notes for the 2.2.3.0 release (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
+Starting with ESAPI 2.2.3.0, ESAPI is using a version of AntiSamy that by default includes 'slf4j-simple' and does XML schema validation on the AntiSamy policy files. Please **READ** the [release notes for the 2.2.3.0 release](https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt) (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
 
 # Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.3.0. The default configuration jar and its GPG signature can be found at [esapi-2.2.3.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.0/esapi-2.2.3.0-configuration.jar) and [esapi-2.2.3.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.0/esapi-2.2.3.0-configuration.jar.asc) respectively.
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.3.1. The default configuration jar and its GPG signature can be found at [esapi-2.2.3.1-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.1/esapi-2.2.3.1-configuration.jar) and [esapi-2.2.3.1-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.1/esapi-2.2.3.1-configuration.jar.asc) respectively.
 
 The latest *regular* ESAPI jars can are available from Maven Central.
 
