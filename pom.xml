@@ -136,7 +136,7 @@
         <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
         <version.spotbugs>4.2.3</version.spotbugs>
-        <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
+        <version.spotbugs.maven>4.5.2.0</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
         <project.java.target>1.8</project.java.target>
     </properties>
@@ -199,6 +199,10 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
+                 <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -248,6 +252,10 @@
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
+                </exclusion>
+                <exclusion>
+                <groupId>xml-apis</groupId>
+                <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -405,12 +413,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.2.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.0.0-M4</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -501,7 +509,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0</version>
                 <dependencies>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
@@ -512,7 +520,7 @@
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
                     <!-- Updating to 1.19 causes LOTS of errors in 'mvn site' and 1.18 requires Java 8 so leaving it at 1.17. -->
-                    <version>1.17</version>
+                    <version>1.18</version>
                   </dependency>
                 </dependencies>
                 <executions>
@@ -524,8 +532,8 @@
                         <configuration>
                           <rules>
                             <requireMavenVersion>
-                              <version>[3.2.5,)</version>
-                              <message>Building ESAPI 2.x now requires Maven 3.2.5 or later.</message>
+                              <version>[3.8.0,)</version>
+                              <message>Building ESAPI 2.x now requires Maven 3.8.0 or later.</message>
                             </requireMavenVersion>
                           </rules>
                         </configuration>
@@ -540,16 +548,16 @@
                           <requireJavaVersion>
                             <version>${project.java.target}</version>
                             <message>
-                                ESAPI 2.x now uses the JDK1.7 for its baseline. Please make sure that your
-                                JAVA_HOME environment variable is pointed to a JDK1.7 or later distribution.
+                                ESAPI 2.x now uses the JDK1.8 for its baseline. Please make sure that your
+                                JAVA_HOME environment variable is pointed to a JDK1.8 or later distribution.
                             </message>
                           </requireJavaVersion>
-                          <enforceBytecodeVersion>
+                     <!--      <enforceBytecodeVersion>
                             <maxJdkVersion>${project.java.target}</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
-                            <ignoredScopes/> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
-                            <message>Dependencies shouldn't require Java 8+</message>
-                          </enforceBytecodeVersion>
+                            <ignoredScopes/> --><!--  'test' scopes not ignored so we can actually test on Java 8. -->
+                        <!--     <message>Dependencies shouldn't require Java 9+</message>
+                          </enforceBytecodeVersion> -->                         
                         </rules>
                         <fail>true</fail>
                       </configuration>
@@ -563,7 +571,7 @@
                           <checkSignatureRule implementation="org.codehaus.mojo.animal_sniffer.enforcer.CheckSignatureRule">
                             <signature>
                               <groupId>org.codehaus.mojo.signature</groupId>
-                              <!-- Check against Java 7 API -->
+                              <!-- Check against Java 8 API -->
                               <artifactId>java18</artifactId>
                               <version>1.0</version>
                             </signature>
@@ -577,7 +585,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>3.0.1</version>
                 <executions>
                   <execution>
                     <id>sign-artifacts</id>
@@ -610,9 +618,9 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-javadoc-plugin</artifactId>
-               <version>3.2.0</version>
+               <version>3.3.1</version>
                <configuration>
-                 <source>7</source>
+                 <source>8</source>
                  <doclint>none</doclint>
                </configuration>
                <!-- generate esapi-VERSION.javadoc.jar -->
@@ -628,19 +636,19 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-jxr-plugin</artifactId>
-              <version>3.0.0</version>
+              <version>3.1.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.14.0</version>
+                <version>3.15.0</version>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.1.1</version>
+               <version>3.1.2</version>
             </plugin>
 
             <plugin>
@@ -652,7 +660,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
+                <version>3.10.1</version>
             </plugin>
 
             <plugin>
@@ -713,7 +721,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.1.6</version>
+                <version>6.5.1</version>
                 <configuration>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
