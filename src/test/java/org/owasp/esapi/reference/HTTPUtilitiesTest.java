@@ -228,12 +228,12 @@ public class HTTPUtilitiesTest extends TestCase
 			ESAPI.httpUtilities().setCurrentHTTP(request2, response);
 			try {
 				List<?> list = ESAPI.httpUtilities().getFileUploads(request2, home);
+				assertTrue( list.size() > 0 );
 				Iterator<?> i = list.iterator();
 				while ( i.hasNext() ) {
 					File f = (File)i.next();
-					System.out.println( "  " + f.getAbsolutePath() );
+					f.delete();
 				}
-				assertTrue( list.size() > 0 );
 			} catch (ValidationException e) {
 				System.out.println("ERROR in testGetFileUploads() request2: " + e.toString());
 				e.printStackTrace();
@@ -246,12 +246,12 @@ public class HTTPUtilitiesTest extends TestCase
 			System.err.println("UPLOAD DIRECTORY: " + ESAPI.securityConfiguration().getUploadDirectory());
 			try {
 				List<?> list = ESAPI.httpUtilities().getFileUploads(request4, home);
+				assertTrue( list.size() > 0 );
 				Iterator<?> i = list.iterator();
 				while ( i.hasNext() ) {
 					File f = (File)i.next();
-					System.out.println( "  " + f.getAbsolutePath() );
+					f.delete();
 				}
-				assertTrue( list.size() > 0 );
 			} catch (ValidationException e) {
 				// TODO: This test cases if failing when we upgrade to commons-fileupload;commons-fileupload:1.4 because of a duplicate file error. Need to figure out why.
 				System.out.println("ERROR in testGetFileUploads() request4: " + e.toString());

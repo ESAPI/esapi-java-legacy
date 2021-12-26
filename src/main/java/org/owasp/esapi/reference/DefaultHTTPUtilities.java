@@ -580,39 +580,40 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 			upload.setProgressListener(progressListener);
 
 			List<FileItem> items = upload.parseRequest(request);
-         for (FileItem item : items)
-         {
-            if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")))
-            {
+			for (FileItem item : items)
+			{
+				if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")))
+				{
 					String[] fparts = item.getName().split("[\\/\\\\]");
 					String filename = fparts[fparts.length - 1];
 
-               if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false))
-               {
+					if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false))
+					{
 						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + allowedExtensions, "Upload failed isValidFileName check");
 					}
 
 					logger.info(Logger.SECURITY_SUCCESS, "File upload requested: " + filename);
 					File f = new File(finalDir, filename);
-               if (f.exists())
-               {
+					if (f.exists())
+					{
 						String[] parts = filename.split("\\/.");
 						String extension = "";
-                  if (parts.length > 1)
-                  {
+						if (parts.length > 1)
+						{
 							extension = parts[parts.length - 1];
 						}
 						String filenm = filename.substring(0, filename.length() - extension.length());
 						f = File.createTempFile(filenm, "." + extension, finalDir);
 					}
+
 					item.write(f);
-               newFiles.add(f);
+					newFiles.add(f);
 					// delete temporary file
 					item.delete();
 					logger.fatal(Logger.SECURITY_SUCCESS, "File successfully uploaded: " + f);
-               if (session != null)
-               {
-					    session.setAttribute("progress", Long.toString(0));
+					if (session != null)
+					{
+						session.setAttribute("progress", Long.toString(0));
 					}
 				}
 			}

@@ -214,7 +214,7 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <!-- Upgrading to 1.4 causes this test case failure: [ERROR] HTTPUtilitiesTest.testGetFileUploads:259. TODO: Figure out why, and fix. -->
-            <version>1.3.3</version>
+            <version>1.4</version>
             <exclusions>
                 <!-- excluded because we directly import newer version. -->
                 <exclusion>
