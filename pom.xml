@@ -138,6 +138,7 @@
         <version.spotbugs>4.2.3</version.spotbugs>
         <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
+        <project.java.target>1.8</project.java.target>
     </properties>
 
     <dependencies>
@@ -453,10 +454,10 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <testSource>1.7</testSource>
-                    <testTarget>1.7</testTarget>
+                    <source>${project.java.target}</source>
+                    <target>${project.java.target}</target>
+                    <testSource>${project.java.target}</testSource>
+                    <testTarget>${project.java.target}</testTarget>
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>false</showDeprecation>
@@ -537,14 +538,14 @@
                         <rules>
                           <dependencyConvergence/>
                           <requireJavaVersion>
-                            <version>1.7</version>
+                            <version>${project.java.target}</version>
                             <message>
                                 ESAPI 2.x now uses the JDK1.7 for its baseline. Please make sure that your
                                 JAVA_HOME environment variable is pointed to a JDK1.7 or later distribution.
                             </message>
                           </requireJavaVersion>
                           <enforceBytecodeVersion>
-                            <maxJdkVersion>1.7</maxJdkVersion>
+                            <maxJdkVersion>${project.java.target}</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
                             <ignoredScopes/> <!-- 'test' scopes not ignored so we can actually test on Java 7. -->
                             <message>Dependencies shouldn't require Java 8+</message>
@@ -554,7 +555,7 @@
                       </configuration>
                     </execution>
                     <execution>
-                      <id>check-java7API-signatures</id>
+                      <id>check-java8API-signatures</id>
                       <phase>compile</phase>
                       <goals><goal>enforce</goal></goals>
                       <configuration>
@@ -563,7 +564,7 @@
                             <signature>
                               <groupId>org.codehaus.mojo.signature</groupId>
                               <!-- Check against Java 7 API -->
-                              <artifactId>java17</artifactId>
+                              <artifactId>java18</artifactId>
                               <version>1.0</version>
                             </signature>
                           </checkSignatureRule>
@@ -770,7 +771,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
                 <configuration>
-                    <targetJdk>1.7</targetJdk>
+                    <targetJdk>${project.java.target}</targetJdk>
                     <sourceEncoding>utf-8</sourceEncoding>
                     <!-- excludeFromFailureFile>exclude-pmd.properties</excludeFromFailureFile -->
                 </configuration>
