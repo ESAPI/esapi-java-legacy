@@ -134,7 +134,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jmh>1.34</version.jmh>
         <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
-        <version.powermock>2.0.7</version.powermock>
+        <version.powermock>2.0.9</version.powermock>
         <version.spotbugs>4.5.2</version.spotbugs>
         <version.spotbugs.maven>4.5.2.0</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
@@ -342,6 +342,10 @@
                   <groupId>org.javassist</groupId>
                   <artifactId>javassist</artifactId>
                 </exclusion>
+                <exclusion>
+                	<groupId>org.mockito</groupId>
+                	<artifactId>mockito-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <!-- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with 
@@ -357,8 +361,10 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <!-- mockito-core v3.0.0+ requires Java 8 -->
-            <version>2.28.2</version>
+            <!-- Cannot upgrade past 3.x due to PowerMock compatibility
+            https://github.com/powermock/powermock/issues/1109
+             -->
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -371,6 +377,14 @@
                   <!-- We exclude this here, because we import the version we need above, and this imports a newer version. -->
                   <groupId>org.javassist</groupId>
                   <artifactId>javassist</artifactId>
+                </exclusion>
+                 <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy-agent</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
