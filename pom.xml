@@ -267,6 +267,12 @@
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+            <!-- 1.4.01 is NEWER THAN 2.0.2
+            	Check the release dates in maven central
+            	https://mvnrepository.com/artifact/xml-apis/xml-apis
+            	
+            	DO NOT UPDATE THIS DEPENDENCY
+            	 -->
             <version>1.4.01</version>
         </dependency>
 
