@@ -767,7 +767,7 @@
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
                     <doclint>none</doclint>
-                    <source>7</source>
+                    <source>8</source>
                 </configuration>
             </plugin>
             <plugin>
