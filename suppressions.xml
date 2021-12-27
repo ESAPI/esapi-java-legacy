@@ -36,5 +36,20 @@
         <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
         <cpe>cpe:/a:apache:log4j</cpe>
         <cve>CVE-2020-9488</cve>
+</suppress>
+    <suppress>
+        <notes><![CDATA[
+            This suppresses CVE-2021-4104 for the log4j-1.2.17.jar dependency. ESAPI does
+            not use it in a manner that makes it exploitable and ESAPI is unable to
+            eliminate the dependency completely because our our deprecation policy. That specific
+            CVE is related to Log4J 1's JMSAppender class which ESAPI doesn't use.
+
+            For further details, please see:
+              https://access.redhat.com/security/cve/CVE-2021-4104
+        ]]></notes>
+        <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
+        <cpe>cpe:/a:apache:log4j</cpe>
+	<cve>CVE-2021-4104</cve>
     </suppress>
-</suppressions>
+
+    </suppressions>
