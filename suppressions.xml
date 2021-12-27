@@ -45,7 +45,9 @@
             CVE is related to Log4J 1's JMSAppender class which ESAPI doesn't use.
 
             For further details, please see:
-              https://access.redhat.com/security/cve/CVE-2021-4104
+		https://access.redhat.com/security/cve/CVE-2021-4104,
+		See the ESAPI security advisory #6, "documentation/ESAPI-security-bulletin6.pdf", which
+		provides a detailed analysis of this issue in ESAPI.
         ]]></notes>
         <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
         <cpe>cpe:/a:apache:log4j</cpe>
