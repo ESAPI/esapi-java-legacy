@@ -47,9 +47,8 @@ Overview:
 
 Required Software:
     We use Maven for building. Maven 3.1 or later is required. You also need
-    JDK 7 or later. (We generally use JDK 8, but compile ESAPI only to require
-    JDK 7, which means our code can't yet use any features exclusive to Java 8
-    or later.) [Note: If you use JDK 9 or later, there will be multiple
+    JDK 8 or later.
+    [Note: If you use JDK 9 or later, there will be multiple
     failures when you try to run 'mvn test' as well as some general warnings.
     See ESAPI GitHub issue #496 for details.]
 
