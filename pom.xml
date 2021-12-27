@@ -567,8 +567,8 @@
                         <configuration>
                           <rules>
                             <requireMavenVersion>
-                              <version>[3.8.0,)</version>
-                              <message>Building ESAPI 2.x now requires Maven 3.8.0 or later.</message>
+			      <version>[3.3.9,)</version>
+                              <message>Building ESAPI 2.x now requires Maven 3.3.9 or later.</message>
                             </requireMavenVersion>
                           </rules>
                         </configuration>

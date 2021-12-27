@@ -46,7 +46,7 @@ Overview:
             autocrlf = input
 
 Required Software:
-    We use Maven for building. Maven 3.1 or later is required. You also need
+    We use Maven for building. Maven 3.3.9 or later is required. You also need
     JDK 8 or later.
     [Note: If you use JDK 9 or later, there will be multiple
     failures when you try to run 'mvn test' as well as some general warnings.
