@@ -19,7 +19,7 @@ jobs:
 
       # Runs the Super-Linter action and ignore errors
       - name: Run Super-Linter
-        uses: github/super-linter@v3
+        uses: github/super-linter@v4
         env:
           DEFAULT_BRANCH: develop
           DISABLE_ERRORS: true

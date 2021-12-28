@@ -31,9 +31,9 @@ Overview:
     We are following the branching model described in
         https://nvie.com/posts/a-successful-git-branching-model
     If you are unfamiliar with it, you would be advised to give it a
-    quick perusal. The major point is that the 'master' branch is reserved for
-    official releases (which will be tagged), the 'develop' branch is used for
-    ongoing development work and is the default branch, and we generally work
+    quick perusal. The major point is that the 'main' (formerly 'master') branch
+    is reserved for official releases (which will be tagged), the 'develop' branch is
+    used for ongoing development work and is the default branch, and we generally work
     off 'issue' branches named 'issue-#' where # is the GitHub issue number.
     (The last is not an absolute requirement, but rather a suggested
     approach.)
@@ -74,7 +74,7 @@ Steps to work with ESAPI:
 
     But the basic high level steps are:
     1. Fork https://github.com/ESAPI/esapi-java-legacy to your own GitHub
-       repository.
+       repository using the GitHub web site.
     2. On your local laptop, clone your own GitHub ESAPI repo (i.e, the
        forked repo created in previous step)
     3. Create a new branch to work on an issue. I usually name the branch

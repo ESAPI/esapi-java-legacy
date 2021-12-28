@@ -135,7 +135,7 @@
         <version.jmh>1.28</version.jmh>
         <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
-        <version.spotbugs>4.2.2</version.spotbugs>
+        <version.spotbugs>4.3.0</version.spotbugs>
         <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
     </properties>
@@ -237,12 +237,23 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.6.2</version>
+            <version>1.6.4</version>
+            <exclusions>
+                <!-- excluded because we pick up much newer version -->
+                <exclusion>
+                    <groupId>commons-io</groupId>
+                    <artifactId>commons-io</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.30</version>
+            <version>1.7.32</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -254,8 +265,14 @@
              FORCE SPECIFIC VERSIONS OF TRANSITIVE DEPENDENCIES EXCLUDED ABOVE.
              This is to force patched versions of these libraries with known CVEs against them.
         -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <!-- Note: commons-io:2.7 and later require Java 8, so can't upgrade past 2.6 -->
+            <!-- This means still possible exposure to CVE-2021-29425. -->
+            <version>2.6</version>
+        </dependency>
 
-        <!-- No forced upgrades required currently -->
 
         <!-- SpotBugs dependencies -->
         <dependency>
@@ -695,7 +712,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.1.3</version>
+                <version>6.1.6</version>
                 <configuration>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>

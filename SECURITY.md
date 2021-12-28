@@ -4,8 +4,8 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.2.0.0  | :white_check_mark: |
-| 2.1.0.1  | :x:, upgrade to 2.2.0.0|
+| 2.2.3.1 (latest) | :white_check_mark: |
+| 2.1.0.1-2.2.3.0  | :x:, upgrade to latest release |
 | <= 1.4.x  | :x:, no longer supported AT ALL |
 
 ## Reporting a Vulnerability

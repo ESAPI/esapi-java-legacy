@@ -1,0 +1,165 @@
+Release notes for ESAPI 2.2.3.1
+    Release date: 2021-05-07
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.2.3.0, 2021-03-23
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+This is a very small patch release with the primary intent of updating some dependencies.
+
+Major changes:
+    * Restores Apache Commons IO from 1.3.1 (what it was in 2.2.3.0) to 2.6 (what it was in 2.2.2.0).
+    * Updates AntiSamy from 1.6.2 to 1.6.3
+
+Unless you have already updated to ESAPI 2.2.3.0 and read those release notes, you should read those release notes for additional details. You can find it at:
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt
+
+That discusses things like security bulletins and other important details that I am not going into for this release.
+
+=================================================================================================================
+
+Basic ESAPI facts
+-----------------
+
+ESAPI 2.2.3.1 release (no change since last release):
+     212 Java source files
+    4316 JUnit tests in 136 Java source files
+
+3 GitHub Issues closed in this release, including those we've decided not to fix (marked '(wontfix)').
+(Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D2021-03-23)
+
+Issue #         GitHub Issue Title
+----------------------------------------------------------------------------------------------
+614             Potentlial XXE Injection vulnerability in loading XML version of ESAPI properties file
+617             Unresolved Reference for com.ibm.uvm.tools in an OSGI Bundle
+624             Update pom.xml to use AntiSamy 1.6.3 and Apache Commons IO 2.6
+
+-----------------------------------------------------------------------------
+
+        Changes Requiring Special Attention
+
+-----------------------------------------------------------------------------
+See this section from the previous release notes at: 
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt
+
+-----------------------------------------------------------------------------
+
+        Remaining Known Issues / Problems
+
+-----------------------------------------------------------------------------
+See this section from the previous release notes at: 
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt
+
+NEW since last release (ESAPI 2.2.3.0) - CVE-2021-29425
+    https://nvd.nist.gov/vuln/detail/CVE-2021-29425
+    
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, some of which not tracked via GitHub issues
+
+None known.
+-----------------------------------------------------------------------------
+
+Developer Activity Report (Changes between release 2.2.3.0 and 2.2.3.1, i.e., between 2021-03-23 and 2021-05-07)
+Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
+
+Developer       Total       Total Number        # Merged
+(GitHub ID)     commits   of Files Changed        PRs
+========================================================
+jeremiahjstacey  8              6               1
+dependabot       1              1               1
+kwwall           7              8               0
+========================================================
+                                    Total PRs:  2
+
+There were also several snyk-bot PRs that were rejected for various reasons, mostly because 1) I was already making the proposed changes and preferred to do them in single commit or 2) there were other reasons for rejecting them (such as the dependency requiring Java 8). The proposed changes that were not outright rejected were included as part of commit a8a79bc5196653500ce664b7b063284e60bddaa0.
+
+-----------------------------------------------------------------------------
+
+CHANGELOG:      Create your own. May I suggest:
+
+        git log --stat --since=2021-03-23 --reverse --pretty=medium
+
+    which will show all the commits since just after the previous (2.2.3.0) release.
+
+-----------------------------------------------------------------------------
+
+Direct and Transitive Runtime and Test Dependencies:
+
+        $ mvn dependency:tree
+        [INFO] Scanning for projects...
+        [INFO] 
+        [INFO] -----------------------< org.owasp.esapi:esapi >------------------------
+        [INFO] Building ESAPI 2.2.3.1-SNAPSHOT
+        [INFO] --------------------------------[ jar ]---------------------------------
+        [INFO] 
+        [INFO] --- maven-dependency-plugin:3.1.2:tree (default-cli) @ esapi ---
+        [INFO] org.owasp.esapi:esapi:jar:2.2.3.1-SNAPSHOT
+        [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
+        [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
+        [INFO] +- com.io7m.xom:xom:jar:1.2.10:compile
+        [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+        [INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+        [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
+        [INFO] +- commons-configuration:commons-configuration:jar:1.10:compile
+        [INFO] +- commons-lang:commons-lang:jar:2.6:compile
+        [INFO] +- commons-fileupload:commons-fileupload:jar:1.3.3:compile
+        [INFO] +- log4j:log4j:jar:1.2.17:compile
+        [INFO] +- org.apache.commons:commons-collections4:jar:4.2:compile
+        [INFO] +- org.apache-extras.beanshell:bsh:jar:2.0b6:compile
+        [INFO] +- org.owasp.antisamy:antisamy:jar:1.6.3:compile
+        [INFO] |  +- net.sourceforge.nekohtml:nekohtml:jar:1.9.22:compile
+        [INFO] |  +- org.apache.httpcomponents:httpclient:jar:4.5.13:compile
+        [INFO] |  +- org.apache.httpcomponents:httpcore:jar:4.4.14:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-css:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-util:jar:1.14:compile
+        [INFO] |  |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.14:compile
+        [INFO] |  |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.14:compile
+        [INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.6:compile
+        [INFO] |  +- org.slf4j:slf4j-simple:jar:1.7.30:compile
+        [INFO] |  +- xerces:xercesImpl:jar:2.12.1:compile
+        [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
+        [INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
+        [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
+        [INFO] +- commons-io:commons-io:jar:2.6:compile
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.2.2:compile (optional) 
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional) 
+        [INFO] +- commons-codec:commons-codec:jar:1.15:test
+        [INFO] +- junit:junit:jar:4.13.2:test
+        [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.68:test
+        [INFO] +- org.hamcrest:hamcrest-core:jar:1.3:test
+        [INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.7:test
+        [INFO] |  \- org.powermock:powermock-api-support:jar:2.0.7:test
+        [INFO] +- org.javassist:javassist:jar:3.25.0-GA:test
+        [INFO] +- org.mockito:mockito-core:jar:2.28.2:test
+        [INFO] |  +- net.bytebuddy:byte-buddy:jar:1.9.10:test
+        [INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.9.10:test
+        [INFO] |  \- org.objenesis:objenesis:jar:2.6:test
+        [INFO] +- org.powermock:powermock-core:jar:2.0.7:test
+        [INFO] +- org.powermock:powermock-module-junit4:jar:2.0.7:test
+        [INFO] |  \- org.powermock:powermock-module-junit4-common:jar:2.0.7:test
+        [INFO] +- org.powermock:powermock-reflect:jar:2.0.7:test
+        [INFO] \- org.openjdk.jmh:jmh-core:jar:1.28:test
+        [INFO]    +- net.sf.jopt-simple:jopt-simple:jar:4.6:test
+        [INFO]    \- org.apache.commons:commons-math3:jar:3.2:test
+        [INFO] ------------------------------------------------------------------------
+        [INFO] BUILD SUCCESS
+        [INFO] ------------------------------------------------------------------------
+        [INFO] Total time:  0.759 s
+        [INFO] Finished at: 2021-05-07T01:13:27-04:00
+        [INFO] ------------------------------------------------------------------------
+
+-----------------------------------------------------------------------------
+
+Acknowledgments:
+    Another hat tip to Dave Wichers for promptly releasing AntiSamy 1.6.2 and for the PR to fix GitHub issue #614.  And thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
+
+A special thanks to the ESAPI community from the ESAPI project co-leaders:
+    Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!
+    Matt Seil (xeno6696)

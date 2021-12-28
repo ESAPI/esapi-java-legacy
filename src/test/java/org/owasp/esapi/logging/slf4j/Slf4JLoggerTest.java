@@ -34,12 +34,12 @@ public class Slf4JLoggerTest {
     public void testLevelEnablement() {
         testLogger.setLevel(Logger.INFO);
         
-        Assert.assertFalse(testLogger.isFatalEnabled());
-        Assert.assertFalse(testLogger.isErrorEnabled());
-        Assert.assertFalse(testLogger.isWarningEnabled());
+        Assert.assertTrue(testLogger.isFatalEnabled());
+        Assert.assertTrue(testLogger.isErrorEnabled());
+        Assert.assertTrue(testLogger.isWarningEnabled());
         Assert.assertTrue(testLogger.isInfoEnabled());
-        Assert.assertTrue(testLogger.isDebugEnabled());
-        Assert.assertTrue(testLogger.isTraceEnabled());
+        Assert.assertFalse(testLogger.isDebugEnabled());
+        Assert.assertFalse(testLogger.isTraceEnabled());
         
         Assert.assertEquals(Logger.INFO, testLogger.getESAPILevel());
     }
