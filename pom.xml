@@ -217,7 +217,6 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <!-- Upgrading to 1.4 causes this test case failure: [ERROR] HTTPUtilitiesTest.testGetFileUploads:259. TODO: Figure out why, and fix. -->
             <version>1.4</version>
             <exclusions>
                 <!-- excluded because we directly import newer version. -->
@@ -235,7 +234,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-collections4</artifactId>
-            <!-- Using 4.2 because 4.3 requires Java 8. Trying to make sure ESAPI supports Java 7+ -->
             <version>4.4</version>
         </dependency>
         <dependency>
@@ -287,8 +285,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <!-- Note: commons-io:2.7 and later require Java 8, so can't upgrade past 2.6 -->
-            <!-- This means still possible exposure to CVE-2021-29425. -->
             <version>2.11.0</version>
         </dependency>
 
@@ -748,13 +744,6 @@
                 <artifactId>jdepend-maven-plugin</artifactId>
                 <version>2.0</version>
             </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>versions-maven-plugin</artifactId>
-                <version>2.8.1</version>
-            </plugin>
-
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -771,9 +760,6 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <!-- This version of Dep Ck requires Java 8. So only run it if using Java 8 or greater.
-                             This property set in a profile below. -->
-                        <phase>${PhaseIfJava8plus}</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -875,41 +861,7 @@
     </reporting>
 
     <profiles>
-        <profile>
-          <id>Java8plus</id>
-          <activation>
-            <jdk>[1.8,)</jdk>
-          </activation>
-          <properties>
-            <PhaseIfJava8plus>site</PhaseIfJava8plus>
-          </properties>
-
-          <reporting>
-            <plugins>
-
-            <!-- Run SpotBugs with the FindSecBugs plugin and include results in site report. 
-                 Is put in this profile as SpotBugs requires Java 8+ -->
-              <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-                <configuration>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.h3xstream.findsecbugs</groupId>
-                            <artifactId>findsecbugs-plugin</artifactId>
-                            <version>1.10.1</version>
-                        </plugin>
-                    </plugins>
-                    <effort>Max</effort>
-                    <relaxed>false</relaxed>
-                </configuration>
-              </plugin>
-            </plugins>
-          </reporting>
-
-        </profile>
-
-        <profile>
+       <profile>
             <!-- Activate to sign jars and build distributable download. -->
             <id>dist</id>
 
