@@ -334,14 +334,7 @@
             <artifactId>powermock-api-mockito2</artifactId>
             <version>${version.powermock}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                  <!-- A subdependency: org.powermock:powermock-core:2.0.0, results in the import of: org.javassist:javassist:3.24.0-GA
-                       which was compiled for Java 8 by accident. org.javassist:javassist:3.25.0-GA was released for Java 7.
-                       So we exclude it here, and import the version we need below. -->
-                  <groupId>org.javassist</groupId>
-                  <artifactId>javassist</artifactId>
-                </exclusion>
+            <exclusions>                
                 <exclusion>
                 	<groupId>org.mockito</groupId>
                 	<artifactId>mockito-core</artifactId>
@@ -350,14 +343,6 @@
         </dependency>
         <!-- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with 
              another import by a dependency of powermock-api-mockito2. -->
-        <dependency>
-          <!-- This version is compatible with Java 7, the previous version was not (by accident). -->
-          <!-- Versions 3.26.0-GA and later require Java 8. -->
-          <groupId>org.javassist</groupId>
-          <artifactId>javassist</artifactId>
-          <version>3.28.0-GA</version>
-          <scope>test</scope>
-        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -373,11 +358,6 @@
             <version>${version.powermock}</version>
             <scope>test</scope>
             <exclusions>
-                <exclusion>
-                  <!-- We exclude this here, because we import the version we need above, and this imports a newer version. -->
-                  <groupId>org.javassist</groupId>
-                  <artifactId>javassist</artifactId>
-                </exclusion>
                  <exclusion>
                     <groupId>net.bytebuddy</groupId>
                     <artifactId>byte-buddy</artifactId>
