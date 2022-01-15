@@ -155,7 +155,7 @@
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
-                    <artifactId>javax.servlet-api</artifactId>                   
+                    <artifactId>javax.servlet-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -272,7 +272,7 @@
             <!-- 1.4.01 is NEWER THAN 2.0.2
                 Check the release dates in maven central
                 https://mvnrepository.com/artifact/xml-apis/xml-apis
-                
+
                 DO NOT UPDATE THIS DEPENDENCY
                  -->
             <version>1.4.01</version>
@@ -334,14 +334,14 @@
             <artifactId>powermock-api-mockito2</artifactId>
             <version>${version.powermock}</version>
             <scope>test</scope>
-            <exclusions>                
+            <exclusions>
                 <exclusion>
                     <groupId>org.mockito</groupId>
                     <artifactId>mockito-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
-        <!-- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with 
+        <!-- The following imported solely so we can exclude its dependency on: org.objenesis:objenesis, which conflicts with
              another import by a dependency of powermock-api-mockito2. -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -539,7 +539,7 @@
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
                     <version>1.20</version>
                   </dependency>
-                  
+
                 </dependencies>
                 <executions>
                     <execution>
@@ -575,7 +575,7 @@
                             <ignoreOptionals>true</ignoreOptionals>
                             <ignoredScopes/><!--  'test' scopes not ignored so we can actually test on Java 8. -->
                             <message>Dependencies shouldn't require Java 9+</message>
-                          </enforceBytecodeVersion>                         
+                          </enforceBytecodeVersion>
                         </rules>
                         <fail>true</fail>
                       </configuration>
