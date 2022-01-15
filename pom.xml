@@ -153,10 +153,10 @@
             <version>2.3.3</version>
             <scope>provided</scope>
             <exclusions>
-	            <exclusion>
-		            <groupId>javax.servlet</groupId>
-		            <artifactId>javax.servlet-api</artifactId>		           
-	            </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>javax.servlet-api</artifactId>                   
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -270,11 +270,11 @@
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
             <!-- 1.4.01 is NEWER THAN 2.0.2
-            	Check the release dates in maven central
-            	https://mvnrepository.com/artifact/xml-apis/xml-apis
-            	
-            	DO NOT UPDATE THIS DEPENDENCY
-            	 -->
+                Check the release dates in maven central
+                https://mvnrepository.com/artifact/xml-apis/xml-apis
+                
+                DO NOT UPDATE THIS DEPENDENCY
+                 -->
             <version>1.4.01</version>
         </dependency>
 
@@ -310,10 +310,10 @@
             <version>4.13.2</version>
             <scope>test</scope>
             <exclusions>
-        	    <exclusion>
-                	<groupId>org.hamcrest</groupId>
-                	<artifactId>hamcrest-core</artifactId>
-            	</exclusion>
+                <exclusion>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -336,8 +336,8 @@
             <scope>test</scope>
             <exclusions>                
                 <exclusion>
-                	<groupId>org.mockito</groupId>
-                	<artifactId>mockito-core</artifactId>
+                    <groupId>org.mockito</groupId>
+                    <artifactId>mockito-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -379,8 +379,8 @@
                     <artifactId>junit</artifactId>
                 </exclusion>
                 <exclusion>
-                	<groupId>org.hamcrest</groupId>
-                	<artifactId>hamcrest-core</artifactId>
+                    <groupId>org.hamcrest</groupId>
+                    <artifactId>hamcrest-core</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -432,7 +432,7 @@
                 </plugin>
                 <plugin>
                      <groupId>org.codehaus.mojo</groupId>
-  		     <artifactId>versions-maven-plugin</artifactId>
+                     <artifactId>versions-maven-plugin</artifactId>
                      <version>2.8.1</version>
                      <configuration>
                          <rulesUri>file:\\\\${project.basedir}/versionRuleset.xml</rulesUri>
@@ -550,7 +550,7 @@
                         <configuration>
                           <rules>
                             <requireMavenVersion>
-			      <version>[3.3.9,)</version>
+                              <version>[3.3.9,)</version>
                               <message>Building ESAPI 2.x now requires Maven 3.3.9 or later.</message>
                             </requireMavenVersion>
                           </rules>
