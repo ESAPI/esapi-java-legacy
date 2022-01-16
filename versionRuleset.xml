@@ -3,6 +3,12 @@
          xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 https://www.mojohaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
 <rules>
     <rule groupId="*" artifactId="*s" comparisonMethod="maven">
+      <!--
+            This regex is intended to restrict version updates to the last stable releases of dependencies and plugins.
+
+            Any version that does not contain the stable maven-plugin version naming scheme (EG "-M7"),
+                but does contain letters a-zA-Z (and optional digits after)
+       -->
        <ignoreVersions>
           <ignoreVersion type="regex">^(?!.[\s\S]*-M\d*).[\s\S]*.*[a-zA-Z]\d.*$</ignoreVersion>
        </ignoreVersions>
