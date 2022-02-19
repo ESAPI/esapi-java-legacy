@@ -244,7 +244,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.6.4</version>
+            <version>1.6.5</version>
             <exclusions>
                 <!-- excluded because we pick up much newer version -->
                 <exclusion>
@@ -264,7 +264,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.33</version>
+            <version>1.7.36</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -537,7 +537,7 @@
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
-                    <version>1.20</version>
+                    <version>1.21</version>
                   </dependency>
 
                 </dependencies>
