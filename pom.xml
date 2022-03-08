@@ -145,7 +145,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <!-- Note: v3.1.0+ causes compilation errors. So would have to fix to upgrade. -->
-            <version>3.0.1</version>
+            <version>3.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
