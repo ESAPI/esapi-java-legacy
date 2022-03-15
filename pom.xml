@@ -134,7 +134,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jmh>1.34</version.jmh>
         <version.powermock>2.0.9</version.powermock>
-        <version.spotbugs>4.5.3</version.spotbugs>
+        <version.spotbugs>4.6.0</version.spotbugs>
         <version.spotbugs.maven>4.5.2.0</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
         <project.java.target>1.8</project.java.target>
