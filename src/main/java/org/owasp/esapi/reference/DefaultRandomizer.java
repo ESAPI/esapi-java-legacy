@@ -54,13 +54,12 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     private final Logger logger = ESAPI.getLogger("Randomizer");
 
     private DefaultRandomizer() {
-        String algorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
         try {
-            secureRandom = SecureRandom.getInstance(algorithm);
+            secureRandom = SecureRandom.getInstanceStrong();
         } catch (NoSuchAlgorithmException e) {
             // Can't throw an exception from the constructor, but this will get
             // it logged and tracked
-            new EncryptionException("Error creating randomizer", "Can't find random algorithm " + algorithm, e);
+            new EncryptionException("Error creating randomizer", "Failed to generate strong SecureRandom reference", e);
         }
     }
 

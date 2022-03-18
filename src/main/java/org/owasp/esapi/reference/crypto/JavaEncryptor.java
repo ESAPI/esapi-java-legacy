@@ -205,14 +205,7 @@ public final class JavaEncryptor implements Encryptor {
             System.out.println( "\tuse '-print' to also show available crypto algorithms from all the security providers" );
         }
 
-        // setup algorithms -- Each of these have defaults if not set, although
-        //                     someone could set them to something invalid. If
-        //                     so a suitable exception will be thrown and displayed.
-        encryptAlgorithm = ESAPI.securityConfiguration().getEncryptionAlgorithm();
-        encryptionKeyLength = ESAPI.securityConfiguration().getEncryptionKeyLength();
-        randomAlgorithm = ESAPI.securityConfiguration().getRandomAlgorithm();
-
-        SecureRandom random = SecureRandom.getInstance(randomAlgorithm);
+        SecureRandom random = SecureRandom.getInstanceStrong();
         SecretKey secretKey = CryptoHelper.generateSecretKey(encryptAlgorithm, encryptionKeyLength);
         byte[] raw = secretKey.getEncoded();
         byte[] salt = new byte[20]; // Or 160-bits; big enough for SHA1, but not SHA-256 or SHA-512.
@@ -280,7 +273,7 @@ public final class JavaEncryptor implements Encryptor {
                 // For asymmetric encryption (i.e., public/private key)
                 //
                 try {
-                    SecureRandom prng = SecureRandom.getInstance(randomAlgorithm);
+                    SecureRandom prng = SecureRandom.getInstanceStrong();
 
                     // Because hash() is not static (but it could be were in not
                     // for the interface method specification in Encryptor), we
