@@ -1040,7 +1040,6 @@ public class ValidatorTest {
 
     @Test
     public void testGetHeaderNames() {
-//testing Validator.HTTPHeaderName
         MockHttpServletRequest request = new MockHttpServletRequest();
         SecurityWrapperRequest safeRequest = new SecurityWrapperRequest(request);
         request.addHeader("d-49653-p", "pass");
@@ -1048,7 +1047,6 @@ public class ValidatorTest {
             // Note: Max length in ESAPI.properties as per
             // Validator.HTTPHeaderName regex is 256, but upper
             // bound is configurable by the property HttpUtilities.MaxHeaderNameSize
-        SecurityConfiguration sc = ESAPI.securityConfiguration();
         request.addHeader(TestUtils.generateStringOfLength(255), "pass");
         request.addHeader(TestUtils.generateStringOfLength(257), "fail");
         assertEquals(2, Collections.list(safeRequest.getHeaderNames()).size());
