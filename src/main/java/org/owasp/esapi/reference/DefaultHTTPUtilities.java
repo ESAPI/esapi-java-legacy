@@ -468,7 +468,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         SecurityConfiguration sc = ESAPI.securityConfiguration();
         if ( c == null ) return null;
 		String value = c.getValue();
-		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
+		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
 	}
 
 	/**
