@@ -135,7 +135,7 @@
         <version.jmh>1.28</version.jmh>
         <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
-        <version.spotbugs>4.5.3</version.spotbugs>
+        <version.spotbugs>4.6.0</version.spotbugs>
         <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
     </properties>
