@@ -250,7 +250,7 @@
                 </exclusion>
                 <exclusion>
                     <groupId>net.sourceforge.htmlunit</groupId>
-                    <artifactId>neko-htmluni</artifactId>
+                    <artifactId>neko-htmlunit</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
