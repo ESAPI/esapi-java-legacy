@@ -1128,5 +1128,13 @@ public class ValidatorTest {
     	boolean isValid = v.isValidInput("RegexString", "&quot;test&quot;", "avaloqLooseSafeString", 2147483647, true, true);
     	assertFalse(isValid);
     }
+    
+    @Test
+    public void testStandardHeader() {
+    	Validator v = ESAPI.validator();
+    	boolean expected = false;
+    	boolean result = v.isValidInput("HTTPHeaderValue ", "mary.poppins@gmail.com", "HTTPHeaderValue", 2147483647, true, true);
+    	assertEquals(expected, result);
+    }
 }
 

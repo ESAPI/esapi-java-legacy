@@ -212,6 +212,8 @@ public class EncoderTest extends TestCase {
         assertEquals( "<", instance.canonicalize("&lT;"));
         assertEquals( "<", instance.canonicalize("&Lt;"));
         assertEquals( "<", instance.canonicalize("&LT;"));
+        assertEquals( "&", instance.canonicalize("&amp"));
+        assertEquals( "〈", instance.canonicalize("&lang"));
         
         assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript%3Ealert%28%22hello%22%29%3B%3C%2Fscript%3E") );
         assertEquals( "<script>alert(\"hello\");</script>", instance.canonicalize("%3Cscript&#x3E;alert%28%22hello&#34%29%3B%3C%2Fscript%3E", false) );

@@ -22,6 +22,7 @@ import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.reference.validation.HTMLValidationRule;
@@ -151,6 +152,20 @@ public class HTMLValidationRuleCleanTest {
         assertTrue(instance.isValidSafeHTML("test6", "Test. <s\tcript>alert(document.cookie)</script>", 100, false, errors));
         assertTrue(instance.isValidSafeHTML("test7", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false, errors));
         assertTrue(errors.size() == 0);
+
+    }
+    
+    @Test
+    public void testAntiSamyRegressions() throws IntrusionException, ValidationException {
+        System.out.println("isValidSafeHTML");
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+		assertTrue(instance.isValidSafeHTML("test7", "<style/>b<![cdata[</style><a href=javascript:alert(1)>test", 100, false, errors));
+		String input = "<style/>b<![cdata[</style><a href=javascript:alert(1)>test";
+		String expected = "b&lt;/style&gt;&lt;a href=javascript:alert(1)&gt;test";
+		String output = instance.getValidSafeHTML("javascript Link", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
 
     }
 }
