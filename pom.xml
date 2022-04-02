@@ -252,7 +252,15 @@
                     <groupId>net.sourceforge.htmlunit</groupId>
                     <artifactId>neko-htmlunit</artifactId>
                 </exclusion>
+	            <exclusion>
+	                <!-- xom tries to pull this in, but a newer version is in Java 7 and later
+	                     so we want to exclude this transitive dependency.
+	                -->
+	                <groupId>xerces</groupId>
+	                <artifactId>xercesImpl</artifactId>
+	            </exclusion>
             </exclusions>
+
         </dependency>
         <dependency>
 		    <groupId>net.sourceforge.htmlunit</groupId>
