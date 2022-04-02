@@ -156,16 +156,40 @@ public class HTMLValidationRuleCleanTest {
     }
     
     @Test
-    public void testAntiSamyRegressions() throws IntrusionException, ValidationException {
-        System.out.println("isValidSafeHTML");
+    public void testAntiSamyRegressionCDATAWithJavascriptURL() throws Exception {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
-		assertTrue(instance.isValidSafeHTML("test7", "<style/>b<![cdata[</style><a href=javascript:alert(1)>test", 100, false, errors));
-		String input = "<style/>b<![cdata[</style><a href=javascript:alert(1)>test";
+        String input = "<style/>b<![cdata[</style><a href=javascript:alert(1)>test";
+		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
 		String expected = "b&lt;/style&gt;&lt;a href=javascript:alert(1)&gt;test";
 		String output = instance.getValidSafeHTML("javascript Link", input, 250, false);
 		assertEquals(expected, output);
 		assertTrue(errors.size() == 0);
 
+    }
+    
+    @Test
+    public void testScriptTagAfterStyleClosing() throws Exception {
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        String input = "<select<style/>W<xmp<script>alert(1)</script>";
+		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		String expected = "W&lt;script&gt;alert(1)&lt;/script&gt;";
+		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
+
+    }
+    
+    @Test
+    public void testNekoDOSWithAnHTMLComment() throws Exception {
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        String input = "<!--><?a/";
+		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		String expected = "&#x3C;!--&#x3E;&#x3C;?a/";
+		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
     }
 }
