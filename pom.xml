@@ -132,11 +132,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.jmh>1.28</version.jmh>
+        <project.java.target>1.7</project.java.target>
+        <version.findsecbugs>1.11.0</version.findsecbugs>
+        <version.jmh>1.35</version.jmh>
         <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
-        <version.spotbugs>4.5.3</version.spotbugs>
-        <version.spotbugs.maven>4.2.2</version.spotbugs.maven>
+        <version.spotbugs>4.6.0</version.spotbugs>
+        <version.spotbugs.maven>4.6.0.0</version.spotbugs.maven>
         <version.surefire>3.0.0-M5</version.surefire>
     </properties>
 
@@ -237,17 +239,23 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.6.6</version>
+            <!-- TODO: needs to be 1.6.6.1 before release -->
+            <version>1.6.5</version>
             <exclusions>
-                <!-- excluded because we pick up much newer version -->
+                <!-- excluded because version from AntiSamy is too new (Requires Java 8) -->
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
+                <!-- TODO: This is only needed for AntiSamy 1.6.5, not 1.6.6.1.
+                     Remove this exclusion when AntiSamy 1.6.6.1 is included. -->
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+
+                <!-- TODO: The neko-htmlunit exclusion here and inclusion next, is needed for AntiSamy 1.6.6.1.
+                     Remove this comment when AntiSamy 1.6.6.1 is included. -->
                 <exclusion>
                     <groupId>net.sourceforge.htmlunit</groupId>
                     <artifactId>neko-htmlunit</artifactId>
@@ -260,6 +268,18 @@
 	                <artifactId>xercesImpl</artifactId>
 	            </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.sourceforge.htmlunit</groupId>
+            <artifactId>neko-htmlunit</artifactId>
+            <version>2.24</version>
+            <exclusions>
+                <!-- excluded because this conflicts with the version imported by AntiSamy -->
+                <exclusion>
+                    <groupId>xerces</groupId>
+                    <artifactId>xercesImpl</artifactId>
+                </exclusion>
+            </exclusions>
 
         </dependency>
         <dependency>
@@ -270,7 +290,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.35</version>
+            <version>1.7.36</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -289,7 +309,6 @@
             <!-- This means still possible exposure to CVE-2021-29425. -->
             <version>2.6</version>
         </dependency>
-
 
         <!-- SpotBugs dependencies -->
         <dependency>
@@ -315,7 +334,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.68</version>
+            <version>1.70</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -421,12 +440,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.1.2</version>
+                    <version>3.3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M1</version>
+                    <version>3.0.0-M5</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -468,12 +487,12 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.10.1</version>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                    <testSource>1.7</testSource>
-                    <testTarget>1.7</testTarget>
+                    <source>${project.java.target}</source>
+                    <target>${project.java.target}</target>
+                    <testSource>${project.java.target}</testSource>
+                    <testTarget>${project.java.target}</testTarget>
                     <debug>true</debug>
                     <showWarnings>true</showWarnings>
                     <showDeprecation>false</showDeprecation>
@@ -502,7 +521,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0-M1</version>
+                <version>3.0.0-M2</version>
             </plugin>
 
             <plugin>
@@ -517,18 +536,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>3.0.0</version>
                 <dependencies>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>extra-enforcer-rules</artifactId>
-                    <version>1.3</version>
+                    <version>1.5.1</version>
                   </dependency>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
-                    <!-- Updating to 1.19 causes LOTS of errors in 'mvn site' and 1.18 requires Java 8 so leaving it at 1.17. -->
-                    <version>1.17</version>
+                    <version>1.21</version>
                   </dependency>
                 </dependencies>
                 <executions>
@@ -554,7 +572,7 @@
                         <rules>
                           <dependencyConvergence/>
                           <requireJavaVersion>
-                            <version>1.7</version>
+                            <version>${project.java.target}</version>
                             <message>
                                 ESAPI 2.x now uses the JDK1.7 for its baseline. Please make sure that your
                                 JAVA_HOME environment variable is pointed to a JDK1.7 or later distribution.
@@ -593,7 +611,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>1.6</version>
+                <version>3.0.1</version>
                 <executions>
                   <execution>
                     <id>sign-artifacts</id>
@@ -612,7 +630,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.2.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -626,7 +644,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-javadoc-plugin</artifactId>
-               <version>3.2.0</version>
+               <version>3.3.2</version>
                <configuration>
                  <source>7</source>
                  <doclint>none</doclint>
@@ -642,21 +660,32 @@
             </plugin>
 
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jxr-plugin</artifactId>
-              <version>3.0.0</version>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-jxr-plugin</artifactId>
+               <version>3.1.1</version>
             </plugin>
 
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.14.0</version>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-pmd-plugin</artifactId>
+               <version>3.16.0</version>
+               <dependencies>
+                   <!-- Without this, 3.15.0+ causes lots of warning like: [WARNING] Could not find class org.owasp.validator.html.util.ErrorMessageUtil,
+               due to: java.lang.IncompatibleClassChangeError: class net.sourceforge.pmd.lang.java.typeresolution.visitors.PMDASMVisitor
+               has interface org.objectweb.asm.ClassVisitor as super class.
+               However, these warnings don't adversely affect the PMD results, so we are keeping this upgrade. -->
+                   <dependency>
+                       <groupId>org.ow2.asm</groupId>
+                       <artifactId>asm</artifactId>
+                       <version>9.2</version>
+                   </dependency>
+               </dependencies>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.1.1</version>
+               <version>3.1.2</version>
             </plugin>
 
             <plugin>
@@ -668,7 +697,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>3.9.1</version>
+                <version>3.11.0</version>
             </plugin>
 
             <plugin>
@@ -717,7 +746,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>versions-maven-plugin</artifactId>
-                <version>2.8.1</version>
+                <version>2.10.0</version>
             </plugin>
 
             <plugin>
@@ -729,7 +758,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>6.1.6</version>
+                <version>7.0.4</version>
                 <configuration>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
@@ -798,6 +827,7 @@
                <reportSets>
                  <reportSet>
                    <reports>
+                     <report>index</report>
                      <report>dependency-convergence</report>
                    </reports>
                  </reportSet>
@@ -862,7 +892,7 @@
                         <plugin>
                             <groupId>com.h3xstream.findsecbugs</groupId>
                             <artifactId>findsecbugs-plugin</artifactId>
-                            <version>1.10.1</version>
+                            <version>${version.findsecbugs}</version>
                         </plugin>
                     </plugins>
                     <effort>Max</effort>
@@ -894,7 +924,6 @@
 
                     <plugin>
                         <artifactId>maven-jar-plugin</artifactId>
-
 <!--
                         <executions>
                             <execution>
@@ -908,7 +937,7 @@
                         <configuration>
 <!--
                             <keystore>codesign.keystore</keystore>
-                            <alias>owasp foundation, inc.'s godaddy.com, inc. id</alias>
+                            <alias>OWASP Foundation, Inc.'s GoDaddy.com ID</alias>
                             <verify>true</verify>
 -->
                             <archive>
@@ -951,7 +980,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-release-plugin</artifactId>
-                        <version>2.5.3</version>
                         <configuration>
                             <tagBase>https://github.com/ESAPI/esapi-java-legacy/tags</tagBase>
                         </configuration>
