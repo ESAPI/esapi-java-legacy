@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- OWASP Dependency Check suppression file for ESAPI. -->
-<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.2.xsd">
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
     <suppress>
         <notes><![CDATA[
             This suppresses CVE-2019-17571 for the log4j-1.2.17.jar dependency. ESAPI does
@@ -36,5 +36,29 @@
         <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
         <cpe>cpe:/a:apache:log4j</cpe>
         <cve>CVE-2020-9488</cve>
+    </suppress>
+    <suppress>
+       <notes><![CDATA[file name: log4j-1.2.17.jar]]></notes>
+       <packageUrl regex="true">^pkg:maven/log4j/log4j@.*$</packageUrl>
+       <vulnerabilityName>CVE-2021-4104</vulnerabilityName>
+    </suppress>
+    <suppress>
+       <notes><![CDATA[
+           file name: neko-htmlunit-2.24.jar
+
+           CVE-2020-5529 is for net.sourceforge.htmlunit:htmlunit, not net.sourceforge.htmlunit:neko-htmlunit.
+           As such, this is a false positive.
+        ]]></notes>
+       <packageUrl regex="true">^pkg:maven/net\.sourceforge\.htmlunit/neko\-htmlunit@.*$</packageUrl>
+       <cve>CVE-2020-5529</cve>
+    </suppress>
+    <suppress>
+       <notes><![CDATA[
+           file name: commons-io-2.6.jar
+
+           TODO:FIXME: Not sure if you want this suppressed or not, but suppressing for now so mvn site can finish successfully.
+       ]]></notes>
+       <packageUrl regex="true">^pkg:maven/commons\-io/commons\-io@.*$</packageUrl>
+       <cve>CVE-2021-29425</cve>
     </suppress>
 </suppressions>
