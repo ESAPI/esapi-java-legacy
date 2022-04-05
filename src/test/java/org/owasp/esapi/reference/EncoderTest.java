@@ -914,11 +914,28 @@ public class EncoderTest extends TestCase {
     
     public void testHtmlDecodeHexEntititesSurrogatePair()
     {
-    	HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
+        HTMLEntityCodec htmlCodec = new HTMLEntityCodec();
         String expected = new String (new int[]{0x2f804}, 0, 1);
         assertEquals( expected, htmlCodec.decode("&#194564;") );
         assertEquals( expected, htmlCodec.decode("&#x2f804;") );
     }
     
+    public void testUnicodeCanonicalize() {
+        Encoder e = ESAPI.encoder();
+        String input = "测试";
+        String expected = "测试";
+        String output = e.canonicalize(input);
+        assertEquals(expected, output);
+    }
+    
+    public void testUnicodeCanonicalizePercentEncoding() {
+        //TODO:  We need to find a way to specify the encoding type for percent encoding.  
+        //I believe by default we're doing Latin-1 and we really should be doing UTF-8
+        Encoder e = ESAPI.encoder();
+        String input = "%E6%B5%8B%E8%AF%95";
+        String expected = "测试";
+        String output = e.canonicalize(input);
+        assertNotSame(expected, output);
+    }
 }
 
