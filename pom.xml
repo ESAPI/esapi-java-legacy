@@ -133,13 +133,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.java.target>1.7</project.java.target>
-        <version.findsecbugs>1.11.0</version.findsecbugs>
+        <version.findsecbugs>1.12.0</version.findsecbugs>
         <version.jmh>1.35</version.jmh>
         <!-- Note: powermock v2.0.8 doesn't exist. v2.0.9+ requires mockito-core v3+, which requires Java 8 -->
         <version.powermock>2.0.7</version.powermock>
         <version.spotbugs>4.6.0</version.spotbugs>
         <version.spotbugs.maven>4.6.0.0</version.spotbugs.maven>
-        <version.surefire>3.0.0-M5</version.surefire>
+        <version.surefire>3.0.0-M6</version.surefire>
     </properties>
 
     <dependencies>
@@ -243,22 +243,14 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <!-- TODO: needs to be 1.6.6.1 before release -->
-            <version>1.6.5</version>
+            <version>1.6.6.1</version>
             <exclusions>
-                <!-- excluded because version from AntiSamy is too new (Requires Java 8) -->
+                <!-- excluded because version imported by AntiSamy Requires Java 8. We import
+                     the last Java 7 versions of these ourselves. -->
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
                 </exclusion>
-                <!-- TODO: This is only needed for AntiSamy 1.6.5, not 1.6.6.1.
-                     Remove this exclusion when AntiSamy 1.6.6.1 is included. -->
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <!-- TODO: The neko-htmlunit exclusion here and inclusion next, is needed for AntiSamy 1.6.6.1.
-                     Remove this comment when AntiSamy 1.6.6.1 is included. -->
                 <exclusion>
                     <groupId>net.sourceforge.htmlunit</groupId>
                     <artifactId>neko-htmlunit</artifactId>
@@ -477,7 +469,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.0</version>
             </plugin>
 
             <plugin>
@@ -658,30 +650,19 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-jxr-plugin</artifactId>
-               <version>3.1.1</version>
+               <version>3.2.0</version>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-pmd-plugin</artifactId>
                <version>3.16.0</version>
-               <dependencies>
-                   <!-- Without this, 3.15.0+ causes lots of warning like: [WARNING] Could not find class org.owasp.validator.html.util.ErrorMessageUtil,
-               due to: java.lang.IncompatibleClassChangeError: class net.sourceforge.pmd.lang.java.typeresolution.visitors.PMDASMVisitor
-               has interface org.objectweb.asm.ClassVisitor as super class.
-               However, these warnings don't adversely affect the PMD results, so we are keeping this upgrade. -->
-                   <dependency>
-                       <groupId>org.ow2.asm</groupId>
-                       <artifactId>asm</artifactId>
-                       <version>9.2</version>
-                   </dependency>
-               </dependencies>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.1.2</version>
+               <version>3.2.2</version>
             </plugin>
 
             <plugin>
@@ -734,9 +715,9 @@
             </plugin>
 
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>io.github.jiangxincode</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
-                <version>2.0</version>
+                <version>2.1</version>
             </plugin>
 
             <plugin>
@@ -844,7 +825,7 @@
             <plugin>
                 <!--  Using this introduces these errors: Skipped "JDepend" report (jdepend-maven-plugin:2.0:generate), file "jdepend-report.html" already exists.
                       but don't know how to eliminate them, without disabling this plugin. -->
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>io.github.jiangxincode</groupId>
                 <artifactId>jdepend-maven-plugin</artifactId>
             </plugin>
             <!-- Check for available updates to dependencies and report on them. -->
