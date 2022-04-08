@@ -4,7 +4,7 @@ Enterprise Security API for Java (Legacy)
 [![Build Status](https://travis-ci.org/bkimminich/esapi-java-legacy.svg?branch=master)](https://travis-ci.org/bkimminich/esapi-java-legacy)
 [![Coverage Status](https://coveralls.io/repos/github/bkimminich/esapi-java-legacy/badge.svg?branch=develop)](https://coveralls.io/github/bkimminich/esapi-java-legacy?branch=develop)
 [![Coverity Status](https://scan.coverity.com/projects/8517/badge.svg)](https://scan.coverity.com/projects/bkimminich-esapi-java-legacy)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/137/badge)](https://bestpractices.coreinfrastructure.org/projects/137)
+[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/137/badge)](https://bestpractices.coreinfrastructure.org/projects/137)
 
 <table border=0>
 <tr>
@@ -13,6 +13,11 @@ OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web ap
 </td>
 </tr>
 </table>
+
+# A word about ESAPI and Log4J vulnerabilities
+This is way too detailed to litter the README file with, but several of you have
+been asking about this, so I wrote up something on it and posted it to the ESAPI
+Users Google group. You can find it at [A word about Log4J vulnerabilities in ESAPI - the TL;DR version](https://groups.google.com/a/owasp.org/g/esapi-project-users/c/_CR8d-dpvMU).
 
 # Where is the OWASP ESAPI wiki page?
 You can find the OWASP ESAPI wiki pages at [https://owasp.org/www-project-enterprise-security-api/](https://owasp.org/www-project-enterprise-security-api/). The ESAPI legacy GitHub repo also has a few useful wiki pages.

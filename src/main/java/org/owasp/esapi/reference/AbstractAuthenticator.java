@@ -114,7 +114,8 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
      */
     protected DefaultUser getUserFromRememberToken() {
         try {
-            String token = ESAPI.httpUtilities().getCookie(ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME);
+        	HTTPUtilities utils =ESAPI.httpUtilities();
+            String token = utils.getCookie(ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME);
             if (token == null) return null;
             
             // See Google Issue 144 regarding first URLDecode the token and THEN unsealing.
