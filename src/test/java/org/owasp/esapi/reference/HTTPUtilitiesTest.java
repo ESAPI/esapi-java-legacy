@@ -45,6 +45,7 @@ import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 import org.owasp.esapi.http.MockHttpSession;
 import org.owasp.esapi.util.FileTestUtils;
+import org.owasp.esapi.util.TestUtils;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -372,6 +373,27 @@ public class HTTPUtilitiesTest extends TestCase
 		instance.addCookie( response, new Cookie( "test3", "tes<t3" ) );
 		assertTrue(response.getHeaderNames().size() == 2);
 	}
+	
+	/**
+	 * Test of setCookie method, of class org.owasp.esapi.HTTPUtilities.
+	 * Validation failures should prevent cookies being added.  
+	 */
+	public void testSetCookieExceedingMaxValueAndName() {
+		HTTPUtilities instance = ESAPI.httpUtilities(); 
+		MockHttpServletResponse response = new MockHttpServletResponse();
+		assertTrue(response.getHeaderNames().isEmpty());
+		//request.addParameter(TestUtils.generateStringOfLength(32), "pass");
+		instance.addCookie( response, new Cookie( TestUtils.generateStringOfLength(32), "pass" ) );
+		assertTrue(response.getHeaderNames().size() == 1);
+
+		instance.addCookie( response, new Cookie( "pass", TestUtils.generateStringOfLength(32) ) );
+		assertTrue(response.getHeaderNames().size() == 2);
+		instance.addCookie( response, new Cookie( TestUtils.generateStringOfLength(5000), "fail" ) );
+		assertTrue(response.getHeaderNames().size() == 2);
+		instance.addCookie( response, new Cookie( "fail", TestUtils.generateStringOfLength(5001) ) );
+		assertTrue(response.getHeaderNames().size() == 2);
+	}
+
 
 	/**
 	 *

@@ -22,12 +22,14 @@ import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
+import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.reference.validation.HTMLValidationRule;
 
 import org.junit.Test;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.After;
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
@@ -152,5 +154,47 @@ public class HTMLValidationRuleCleanTest {
         assertTrue(instance.isValidSafeHTML("test7", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false, errors));
         assertTrue(errors.size() == 0);
 
+    }
+    
+    @Test
+    public void testAntiSamyRegressionCDATAWithJavascriptURL() throws Exception {
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        String input = "<style/>b<![cdata[</style><a href=javascript:alert(1)>test";
+		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		String expected = "b&lt;/style&gt;&lt;a href=javascript:alert(1)&gt;test";
+		String output = instance.getValidSafeHTML("javascript Link", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
+
+    }
+    
+    @Test
+    public void testScriptTagAfterStyleClosing() throws Exception {
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        String input = "<select<style/>W<xmp<script>alert(1)</script>";
+		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		String expected = "W&lt;script&gt;alert(1)&lt;/script&gt;";
+		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
+
+    }
+    
+    @Test
+    @Ignore
+    public void testNekoDOSWithAnHTMLComment() throws Exception {
+    	/**
+    	 * FIXME:  This unit test needs to pass before the next ESAPI release.
+    	 */
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        String input = "<!--><?a/";
+		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		String expected = "&#x3C;!--&#x3E;&#x3C;?a/";
+		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
     }
 }
