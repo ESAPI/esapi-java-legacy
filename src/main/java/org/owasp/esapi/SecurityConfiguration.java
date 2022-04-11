@@ -389,34 +389,21 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * fixed IVs, but the use of non-random IVs is inherently insecure,
      * especially for any supported cipher mode that is considered a streaming mode
      * (which is basically anything except CBC for modes that support require an IV).
-     * For this reason, 'fixed' is considered <b>deprecated</b> and will be
-     * removed during the next ESAPI point release (tentatively, 2.3).
-     * However, note that if a "fixed" IV is chosen, then the
-     * the value of this fixed IV must be specified as the property
-     * {@code Encryptor.fixedIV} and be of the appropriate length.
+     * For this reason, 'fixed' has now been removed (it was considered <b>deprecated</b>
+     * since release 2.2.0.0). An <b>ESAPI.properties</b> value of {@Code fixed} for the property
+     * {@Code Encryptor.ChooseIVMethod} will now result in a {@Code ConfigurationException}
+     * being thrown.
      * 
-     * @return A string specifying the IV type. Should be "random" or "fixed" (dereprected).
+     * @return A string specifying the IV type. Should be "random". Anything
+     * else should fail with a {@Code ConfigurationException} being thrown.
      * 
      * @see #getFixedIV()
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
+     *             This method will be removed in a future release as it is now moot since
+     *             it can only legitimately have the single value of "random".
      */
 	@Deprecated
     String getIVType();
-    
-    /**
-     * If a "fixed" (i.e., static) Initialization Vector (IV) is to be used,
-     * this will return the IV value as a hex-encoded string.
-     * @return The fixed IV as a hex-encoded string.
-     * @deprecated Short term: use SecurityConfiguration.getByteArrayProp("appropriate_esapi_prop_name")
-     *             instead. Longer term: There will be a more general method in JavaEncryptor
-     *             to explicitly set an IV. This whole concept of a single fixed IV has
-     *             always been a kludge at best, as a concession to those who have used
-     *             a single fixed IV in the past to support legacy applications. This method will be
-     *             killed off in the next ESAPI point release (likely 2.3). It's time to put it to death
-     *             as it was never intended for production in the first place.
-     */
-	@Deprecated
-    String getFixedIV();
     
     /**
      * Return a {@code List} of strings of combined cipher modes that support
