@@ -149,8 +149,9 @@ are ones that you would replace.</P>
 			compatibility with legacy or third party software. If set to
 			“fixed”, then the property Encryptor.fixedIV must also be
 			set to hex-encoded specific IV that you need to use.
-            <B>NOTE:</B> "fixed" is deprecated and will be removed by
-            release 2.3.
+            <B>NOTE:</B> "fixed" had been deprecated since 2.2.0.0 and finally
+            was removed for release 2.3.0.0. Using it in versions 2.3.0.0 or
+            later will result in a <code>ConfigurationException</code> being thrown.
             </FONT></P><P><FONT SIZE=2>
             <B>CAUTION:</B> While it is not required that the IV be kept
             secret, encryption relying on fixed IVs can lead to a known
