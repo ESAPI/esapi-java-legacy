@@ -121,10 +121,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
     public static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
     public static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
-    public static final String IV_TYPE = "Encryptor.ChooseIVMethod";
 
     @Deprecated
-    public static final String FIXED_IV = "Encryptor.fixedIV";
+    public static final String IV_TYPE = "Encryptor.ChooseIVMethod";    // Will be removed in future release.
 
     public static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
     public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
@@ -251,6 +250,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public DefaultSecurityConfiguration(Properties properties) {
     	resourceFile = DEFAULT_RESOURCE_FILE;
+    	try {
+            this.esapiPropertyManager = new EsapiPropertyManager();
+            // Do NOT call loadConfiguration() here!
+        } catch( IOException e ) {
+	        logSpecial("Failed to load security configuration", e );
+	        throw new ConfigurationException("Failed to load security configuration", e);
+        }
     	this.properties = properties; 
     	this.setCipherXProperties();
     }
@@ -265,7 +271,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 		// TODO: FUTURE: Replace by future CryptoControls class???
 		// See SecurityConfiguration.setCipherTransformation() for
 		// explanation of this.
-        // (Propose this in 2.1 via future email to ESAPI-DEV list.)
+        // (Propose this in a future 2.x release via future email to ESAPI-DEV list.)
 		cipherXformFromESAPIProp =
 			getESAPIProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION,
 							 "AES/CBC/PKCS5Padding");
@@ -832,49 +838,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
 	 * {@inheritDoc}
 	 */
+    @Deprecated
     public String getIVType() {
     	String value = getESAPIProperty(IV_TYPE, "random");
     	if ( value.equalsIgnoreCase("random") ) {
             return value;
         } else if ( value.equalsIgnoreCase("fixed") ) {
-            logSpecial("WARNING: Property '" + IV_TYPE + "=fixed' is DEPRECATED. It was intended to support legacy applications, but is inherently insecure, especially with any streaming mode. Support for this will be completed dropped next ESAPI minor release (probably 2.3");
-    		return value;
+            logSpecial("WARNING: Property '" + IV_TYPE + "=fixed' is no longer supported AT ALL!!! It had been deprecated since 2.2.0.0 and back then, was announced it would be removed in release 2.3.0.0. It was originally intended to support legacy applications, but is inherently insecure, especially with any streaming mode.");
+    		throw new ConfigurationException("'" + IV_TYPE + "=fixed' is no longer supported AT ALL. It has been deprecated since release 2.2 and has been removed since 2.3.");
     	} else if ( value.equalsIgnoreCase("specified") ) {
-    		// This is planned for future implementation where setting
-    		// Encryptor.ChooseIVMethod=specified   will require setting some
-    		// other TBD property that will specify an implementation class that
-    		// will generate appropriate IVs. The intent of this would be to use
-    		// such a class with various feedback modes where it is imperative
-    		// that for a given key, any particular IV is *NEVER* reused. For
-    		// now, we will assume that generating a random IV is usually going
-    		// to be sufficient to prevent this.
-    		throw new ConfigurationException("'" + IV_TYPE + "=specified' is not yet implemented. Use 'random' for now.");
+    		// Originally, this was planned for future implementation where setting
+    		//      Encryptor.ChooseIVMethod=specified
+            // would have allowed a dev to write their own static method to be
+            // invoked in a future TBD property, but that is a recipe for
+            // disaster. So, it's not going to happen. Ever.
+    		throw new ConfigurationException("Contrary to previous internal comments, '" + IV_TYPE + "=specified' is not going to be supported -- ever.");
     	} else {
-    		// TODO: Once 'specified' is legal, adjust exception msg, below.
-    		// DISCUSS: Could just log this and then silently return "random" instead.
-    		throw new ConfigurationException(value + " is illegal value for " + IV_TYPE +
-    										 ". Use 'random'.");
+    		logSpecial("WARNING: '" + value + "' is illegal value for " + IV_TYPE +
+    										 ". Using 'random' for the IV type.");
     	}
-    }
-
-    /**
-	 * {@inheritDoc}
-	 */
-    @Deprecated
-    public String getFixedIV() {
-    	if ( getIVType().equalsIgnoreCase("fixed") ) {
-    		String ivAsHex = getESAPIProperty(FIXED_IV, ""); // No default
-    		if ( ivAsHex == null || ivAsHex.trim().equals("") ) {
-    			throw new ConfigurationException("Fixed IV requires property " +
-    						FIXED_IV + " to be set, but it is not.");
-    		}
-    		return ivAsHex;		// We do no further checks here as we have no context.
-    	} else {
-    		// DISCUSS: Should we just log a warning here and return null instead?
-    		//			If so, may cause NullPointException somewhere later.
-    		throw new ConfigurationException("IV type not 'fixed' [which is DEPRECATED!] (set to '" +
-    										 getIVType() + "'), so no fixed IV applicable.");
-    	}
+        return "random";
     }
 
     /**

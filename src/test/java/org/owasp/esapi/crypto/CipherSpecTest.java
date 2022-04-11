@@ -29,10 +29,7 @@ public class CipherSpecTest extends TestCase {
 	private byte[] myIV = null;
 
 	@Before public void setUp() throws Exception {
-			// This will throw ConfigurationException if IV type is not set to
-			// 'fixed', which it's not. (We have it set to 'random'.)
-		// myIV = Hex.decode( ESAPI.securityConfiguration().getFixedIV() );
-		myIV = Hex.decode( "0x000102030405060708090a0b0c0d0e0f" );
+		myIV = Hex.decode( "0x000102030405060708090a0b0c0d0e0f" ); // Any IV to test w/ will do.
 
 		dfltAESCipher   = Cipher.getInstance("AES");
 		dfltECBCipher   = Cipher.getInstance("AES/ECB/NoPadding");

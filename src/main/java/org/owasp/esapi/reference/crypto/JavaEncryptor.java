@@ -464,25 +464,10 @@ public final class JavaEncryptor implements Encryptor {
                  IvParameterSpec ivSpec = null;
                  if ( ivType.equalsIgnoreCase("random") ) {
                      ivBytes = ESAPI.randomizer().getRandomBytes(encrypter.getBlockSize());
-                 } else if ( ivType.equalsIgnoreCase("fixed") ) {
-                     String fixedIVAsHex = ESAPI.securityConfiguration().getFixedIV();
-                     ivBytes = Hex.decode(fixedIVAsHex);
-                     /* FUTURE       } else if ( ivType.equalsIgnoreCase("specified")) {
-                            // FUTURE - TODO  - Create instance of specified class to use for IV generation and
-                            //                   use it to create the ivBytes. (The intent is to make sure that
-                            //                   1) IVs are never repeated for cipher modes like OFB and CFB, and
-                            //                   2) to screen for weak IVs for the particular cipher algorithm.
-                            //      In meantime, use 'random' for block cipher in feedback mode. Unlikely they will
-                            //      be repeated unless you are salting SecureRandom with same value each time. Anything
-                            //      monotonically increasing should be suitable, like a counter, but need to remember
-                            //      it across JVM restarts. Was thinking of using System.currentTimeMillis(). While
-                            //      it's not perfect it probably is good enough. Could even all (advanced) developers
-                            //      to define their own class to create a unique IV to allow them some choice, but
-                            //      definitely need to provide a safe, default implementation.
-                      */
                  } else {
-                     // TODO: Update to add 'specified' once that is supported and added above.
-                     throw new ConfigurationException("Property Encryptor.ChooseIVMethod must be set to 'random' or 'fixed'");
+                     // This really shouldn't happen here. Show catch it a few
+                     // lines above.
+                     throw new ConfigurationException("Property Encryptor.ChooseIVMethod must be set to 'random'.");
                  }
                  ivSpec = new IvParameterSpec(ivBytes);
                  cipherSpec.setIV(ivBytes);
