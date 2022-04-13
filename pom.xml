@@ -137,7 +137,7 @@
         <version.spotbugs>4.6.0</version.spotbugs>
         <version.findsecbugs>1.12.0</version.findsecbugs>
         <version.spotbugs.maven>4.6.0.0</version.spotbugs.maven>
-        <version.surefire>3.0.0-M5</version.surefire>
+        <version.surefire>3.0.0-M6</version.surefire>
         <project.java.target>1.8</project.java.target>
     </properties>
 
@@ -245,7 +245,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.6.6.1</version>
+            <version>1.6.7</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
