@@ -1132,9 +1132,8 @@ public class ValidatorTest {
     @Test
     public void testStandardHeader() {
     	Validator v = ESAPI.validator();
-    	boolean expected = false;
-    	boolean result = v.isValidInput("HTTPHeaderValue ", "mary.poppins@gmail.com", "HTTPHeaderValue", 2147483647, true, true);
-    	assertEquals(expected, result);
+    	boolean isValid = v.isValidInput("HTTPHeaderValue ", "mary.poppins@gmail.com", "HTTPHeaderValue", 2147483647, true, true);
+        assertFalse( isValid );
     }
 }
 
