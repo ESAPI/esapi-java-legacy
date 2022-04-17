@@ -127,10 +127,13 @@ public class HTMLValidationRuleCleanTest {
         // assertEquals("", result4);
     }
 
-    // FIXME: Update CVE once we have a number for this.
+    // FIXME: Change the method name to reflect the CVE once we have a number for this.
     // Test to confirm that CVE-2022-xxxxx (TBD) is fixed. The cause of this was
     // from a subtle botched regex for 'onsiteURL' in all the versions of
     // antsamy-esapi.xml that had been there as far back as ESAPI 1.4!
+    //
+    // This TBD CVE should arguably get the same CVSSv3 store as the AntiSamy
+    // CVE-2021-35043 as the are very similar.
     @Test
     public void testJavaScriptURL() throws Exception {
         System.out.println("testJavaScriptURL");
@@ -145,23 +148,23 @@ public class HTMLValidationRuleCleanTest {
 
     // To confirm fix for CVE-2021-35043 in AntiSamy 1.6.5 and later. Actually,
     // it was never really "broken" in ESAPI's "default configuration" because it is
-    // triggers an Intrusion Detection when it is checking the canonicalization.
-    // This test assumes a standard default ESAPI.properties file. In
-    // particular, the Intrusion Detector must be enabled (the default) and
-    // Validator.HtmlValidationAction should be set to "throw" rather than "clean"
-    @Test(expected=IntrusionException.class)
+    // triggers an Intrusion Detection when it is checking the canonicalization
+    // and the '&#00058' trips it up, that that's pretty much irrelevant given
+    // the (TBD) CVE mented in the previous test case.
+    //
+    // Note: This test assumes a standard default ESAPI.properties file. In
+    // particular, the normal canonicalization has to be enabled.
     public void testAntiSamyCVE_2021_35043Fixed() {
         System.out.println("testAntiSamyCVE_2021_35043Fixed");
 
         String expectedSafeText = "This is safe from XSS. Trust us!";
 
             // Translates to '<a href="javascript:x=1,alert("boom")".
-        String badVoodoo = "<a href=\"javascript&#00058alert('boom')>" + expectedSafeText + "</a>";
-        String result = null;
+        String badVoodoo = "<a href=\"javascript&#00058alert(1)>" + expectedSafeText + "</a>";
         Validator instance = ESAPI.validator();
-        ValidationErrorList errorList = new ValidationErrorList();
-        result = instance.getValidSafeHTML("test", badVoodoo, 200, false, errorList); // 
-        assertEquals( expectedSafeText, result );
+        // ValidationErrorList errorList = new ValidationErrorList();
+        boolean result = instance.isValidSafeHTML("CVE-2021-35043", badVoodoo, 200, false);
+        assertTrue( result );
     }
 
     @Test
