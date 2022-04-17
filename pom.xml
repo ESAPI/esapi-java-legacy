@@ -251,7 +251,10 @@
             <version>1.6.7</version>
             <exclusions>
                 <!-- excluded because version imported by AntiSamy Requires Java 8. We import
-                     the last Java 7 versions of these ourselves. -->
+                     the last Java 7 versions of these ourselves. Remove the suppression of
+                     CVE-2021-29425 from the 'suppressions.xml' file once we move to Java 8 as
+                     the minimal JDK and start using the latest commons-io file.
+                  -->
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
@@ -788,7 +791,7 @@
                     <dates>
                         <!-- TODO: Be sure to update. Should be date of previous official release -->
                         <!-- Exact date should be in previous release notes file under 'documentation/' directory. -->
-                        <date>2021-05-07 00:00:00</date>
+                        <date>${date.prev_release}</date>
                     </dates>
                 </configuration>
             </plugin>
