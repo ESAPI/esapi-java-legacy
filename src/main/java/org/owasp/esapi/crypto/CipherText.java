@@ -320,11 +320,10 @@ public final class CipherText implements Serializable {
      * base64-encoding is performed.
      * <p>
      * If there is a need to store an encrypted value, say in a database, this
-     * is <i>not</i> the method you should use unless you are using a <i>fixed</i>
-     * IV or are planning on retrieving the IV and storing it somewhere separately
-     * (e.g., a different database column). If you are <i>not</i> using a fixed IV
-     * (which is <strong>highly</strong> discouraged), you should normally use
-     * {@link #getEncodedIVCipherText()} instead.
+     * is <i>not</i> the method you should use unless you are using are storing the
+     * IV separately (i.e., in a separate DB column), which doesn't make a lot of sense.
+     * Normally, you should prefer the method {@link #getEncodedIVCipherText()} instead as
+     * it will return the IV prepended to the ciphertext.
      * </p>
      * @see #getEncodedIVCipherText()
      */
@@ -338,11 +337,6 @@ public final class CipherText implements Serializable {
      * base64-encoding. If an IV is not used, then this method returns the same
      * value as {@link #getBase64EncodedRawCipherText()}.
      * <p>
-     * Generally, this is the method that you should use unless you only
-     * are using a fixed IV and a storing that IV separately, in which case
-     * using {@link #getBase64EncodedRawCipherText()} can reduce the storage
-     * overhead.
-     * </p>
      * @return The base64-encoded ciphertext or base64-encoded IV + ciphertext.
      * @see #getBase64EncodedRawCipherText()
      */
@@ -591,8 +585,8 @@ public final class CipherText implements Serializable {
 // TODO: FIXME: As per email from Jeff Walton to Kevin Wall dated 12/03/2013,
 //            this is not always true. E.g., for CCM, the IV length is supposed
 //            to be 7, 8,  7, 8, 9, 10, 11, 12, or 13 octets because of
-//            it's formatting function, the restof the octets used by the
-//            nonce/counter.
+//            it's formatting function, the rest of the octets are used by the
+//            nonce/counter. E.g., see RFCs 4309, 8750, and related RFCs.
                     throw new EncryptionException("Encryption failed -- bad parameters passed to encrypt",  // DISCUSS - also log? See below.
                                                   "IV length does not match cipher block size of " + getBlockSize());
             }

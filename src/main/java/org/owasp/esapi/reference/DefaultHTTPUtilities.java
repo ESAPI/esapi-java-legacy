@@ -189,8 +189,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
         // validate the name and value
         ValidationErrorList errors = new ValidationErrorList();
-        String cookieName = ESAPI.validator().getValidInput("cookie name", name, "HTTPCookieName", 50, false, errors);
-        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", 5000, false, errors);
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+        String cookieName = ESAPI.validator().getValidInput("cookie name", name, "HTTPCookieName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false, errors);
+        String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false, errors);
 
         // if there are no errors, then set the cookie either with a header or normally
         if (errors.size() == 0) {
@@ -234,11 +235,12 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
      */
     public void addHeader(HttpServletResponse response, String name, String value) {
+    	SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
             String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
             String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
-            String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", 20, false);
-            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", 500, false);
+            String safeName = ESAPI.validator().getValidInput("addHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
+            String safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
             response.addHeader(safeName, safeValue);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header denied", e);
@@ -463,9 +465,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 */
 	public String getCookie( HttpServletRequest request, String name ) throws ValidationException {
         Cookie c = getFirstCookie( request, name );
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         if ( c == null ) return null;
 		String value = c.getValue();
-		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", 1000, false);
+		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
 	}
 
 	/**
@@ -655,8 +658,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 	 * {@inheritDoc}
 	 */
 	public String getHeader( HttpServletRequest request, String name ) throws ValidationException {
+		SecurityConfiguration sc = ESAPI.securityConfiguration();
         String value = request.getHeader(name);
-        return ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", 150, false);
+        return ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
 	}
 
 

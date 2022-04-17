@@ -1,5 +1,5 @@
 @@@@ IMPORTANT: Be sure to 1) save in DOS text format, and 2) Delete this line and others starting with @@@@
-@@@             Edit with       :set tw=0
+@@@@             Edit this file in vim with       :set tw=0
 @@@@            Meant to be used with   scripts/newReleaseNotes.sh and the 'vars.*' scripts there.
 Release notes for ESAPI ${VERSION}
     Release date: ${YYYY_MM_DD_RELEASE_DATE}
@@ -30,12 +30,12 @@ ESAPI ${PREV_VERSION} release:
     #### Java source files
     #### JUnit tests in #### Java test files
 
-ESAPI ${version} release:
+ESAPI ${VERSION} release:
 @@@@ Count them and run 'mvn test' to get the # of tests.
     #### Java source files
     #### JUnit tests in #### Java source files
 
-XXX GitHub Issues closed in this release, including those we've decided not to fix (marked '(wontfix)').
+XXX GitHub Issues closed in this release, including those we've decided not to fix (marked 'wontfix' and 'falsepositive').
 (Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D${PREV_RELEASE_DATE})
 
 Issue #         GitHub Issue Title

@@ -291,14 +291,6 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
 		return wrapped.getIVType();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	// @Override
-	public String getFixedIV()
-	{
-		return wrapped.getFixedIV();
-	}
 
 	/**
 	 * {@inheritDoc}

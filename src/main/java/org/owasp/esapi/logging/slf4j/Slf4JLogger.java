@@ -24,7 +24,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
     /** Handler for translating events from ESAPI context for SLF4J processing.*/
     private final Slf4JLogBridge logBridge;
     /** Maximum log level that will be forwarded to SLF4J from the ESAPI context.*/
-    private int maxLogLevel;
+    private int loggingLevel;
     
     /**
      * Constructs a new instance. 
@@ -35,7 +35,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
     public Slf4JLogger(org.slf4j.Logger slf4JLogger, Slf4JLogBridge bridge, int defaultEsapiLevel) {
         delegate = slf4JLogger;
         this.logBridge = bridge;
-        maxLogLevel = defaultEsapiLevel;
+        loggingLevel = defaultEsapiLevel;
     }
     
     private void log(int esapiLevel, EventType type, String message) {
@@ -52,8 +52,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
     
 
     private boolean isEnabled(int esapiLevel) {
-        //Are Logger.OFF and Logger.ALL reversed?  This should be simply the less than or equal to check...
-        return (esapiLevel <= maxLogLevel && maxLogLevel != Logger.OFF) || maxLogLevel == Logger.ALL;
+       return esapiLevel >= loggingLevel;
     }
     
     @Override
@@ -128,7 +127,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
     
     @Override
     public int getESAPILevel() {
-        return maxLogLevel;
+        return loggingLevel;
     }
     
     @Override
@@ -162,7 +161,7 @@ public class Slf4JLogger implements org.owasp.esapi.Logger {
 
     @Override
     public void setLevel(int level) {
-       maxLogLevel = level;
+       loggingLevel = level;
     }
     
 }

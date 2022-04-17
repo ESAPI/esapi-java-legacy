@@ -4,7 +4,7 @@ Enterprise Security API for Java (Legacy)
 [![Build Status](https://travis-ci.org/bkimminich/esapi-java-legacy.svg?branch=master)](https://travis-ci.org/bkimminich/esapi-java-legacy)
 [![Coverage Status](https://coveralls.io/repos/github/bkimminich/esapi-java-legacy/badge.svg?branch=develop)](https://coveralls.io/github/bkimminich/esapi-java-legacy?branch=develop)
 [![Coverity Status](https://scan.coverity.com/projects/8517/badge.svg)](https://scan.coverity.com/projects/bkimminich-esapi-java-legacy)
-[![CII Best Practices](https://bestpractices.coreinfrastructure.org/projects/137/badge)](https://bestpractices.coreinfrastructure.org/projects/137)
+[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/137/badge)](https://bestpractices.coreinfrastructure.org/projects/137)
 
 <table border=0>
 <tr>
@@ -13,6 +13,11 @@ OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web ap
 </td>
 </tr>
 </table>
+
+# A word about ESAPI and Log4J vulnerabilities
+This is way too detailed to litter the README file with, but several of you have
+been asking about this, so I wrote up something on it and posted it to the ESAPI
+Users Google group. You can find it at [A word about Log4J vulnerabilities in ESAPI - the TL;DR version](https://groups.google.com/a/owasp.org/g/esapi-project-users/c/_CR8d-dpvMU).
 
 # Where is the OWASP ESAPI wiki page?
 You can find the OWASP ESAPI wiki pages at [https://owasp.org/www-project-enterprise-security-api/](https://owasp.org/www-project-enterprise-security-api/). The ESAPI legacy GitHub repo also has a few useful wiki pages.
@@ -34,10 +39,10 @@ Note however that work on ESAPI 3 has not yet become in earnest and is only in i
 # ESAPI release notes
 The ESAPI release notes may be found in ESAPI's "documentation" directory. They are generally named "esapi4java-core-*2.#.#.#*-release-notes.txt", where "*2.#.#.#*" refers to the ESAPI release number (which uses semantic versioning).
 ## IMPORTANT
-Starting with ESAPI 2.2.3.0, ESAPI is using a version of AntiSamy that by default includes 'slf4j-simple' and does XML schema validation on the AntiSamy policy files. Please **READ** the release notes for the 2.2.3.0 release (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
+Starting with ESAPI 2.2.3.0, ESAPI is using a version of AntiSamy that by default includes 'slf4j-simple' and does XML schema validation on the AntiSamy policy files. Please **READ** the [release notes for the 2.2.3.0 release](https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt) (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
 
 # Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.3.0. The default configuration jar and its GPG signature can be found at [esapi-2.2.3.0-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.0/esapi-2.2.3.0-configuration.jar) and [esapi-2.2.3.0-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.0/esapi-2.2.3.0-configuration.jar.asc) respectively.
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.2.3.1. The default configuration jar and its GPG signature can be found at [esapi-2.2.3.1-configuration.jar](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.1/esapi-2.2.3.1-configuration.jar) and [esapi-2.2.3.1-configuration.jar.asc](https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.2.3.1/esapi-2.2.3.1-configuration.jar.asc) respectively.
 
 The latest *regular* ESAPI jars can are available from Maven Central.
 
