@@ -1,0 +1,199 @@
+Release notes for ESAPI 2.3.0.0
+    Release date: 2022-04-17
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.2.3.1, 2021-05-07
+
+Important Announcement
+----------------------
+Do NOT:  Do NOT use GitHub Issues to ask questions about this of future releases. That is what the ESAPI Google groups are for. (See our GitHub README.md for further details.) If you can't do the ESAPI Google groups, then drop and email to either one or both of the project leaders (email addresses provided above). We will NOT respond to questions posted in GitHub Issues.
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+This is a very importanT ESAPI release, as it remediates several potentially exploitable vulnerabilities. Part of the remediation may include reviewing and updating your antisamy-esapi.xml configuration file, so be sure to read through ALL the details thoroughly or you may not be fully protected even though you have installed the new ESAPI 2.3.0.0 jar. This will also certainly be the last ESAPI release to support Java 7, so you would do well to prepare to move to Java 8 or later if you have not already done so.
+
+The primary intent of this replease is to patch several potentially exploitable vulnerabilities in ESAPI. Many of these are related to AntiSamy and were introduced by vulnerable transitive dependencies. All but one them (a DoS vulnerability in an AntiSamy dependency) have been fixed with an update to use the new AntiSamy 1.6.7 release. There are also two vulnerabilities within ESAPI itself which have been remediated as part of this release, one of which dates back to at least ESAPI 1.4.
+
+In addition to these patches (discussed in a bit more detail later under the section 'Changes Requiring Special Attention'), there were other updates to dependencies made in this release done to simply to keep them as up-to-date as possible. We have also added the generation of an SBOM (Software Bill of Materials) generated via the cyclonedx:cyclonedx-maven-plugin.
+
+Lastly, support for the deprecated value of "fixed" for the ESAPI property "Encryptor.ChooseIVMethod" has been completely removed from this release. It had been deprecated since 2.2.0.0 and it's removal long scheduled for the 2.3.0.0 release. See the GitHub issue 679 for further details.
+
+=================================================================================================================
+
+Basic ESAPI facts
+-----------------
+
+ESAPI 2.2.3.1 release (previous release):
+     212 Java source files
+    4316 JUnit tests in 136 Java source files
+
+ESAPI 2.3.0.0 release (current / new release):
+     212 Java source files
+    4325 JUnit tests in 136 Java source files (1 test ignored)
+
+24 GitHub Issues closed in this release, including those we've decided not to fix (marked 'wontfix' and 'falsepositive').
+[Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D2021-05-07]
+
+Issue #         GitHub Issue Title
+----------------------------------------------------------------------------------------------
+163             Limit max size of entire cookies Component-Validator enhancement good first issue help wanted imported Priority-High 
+198             Uninitialized esapi logging assumes logging to System.out/System.err - Make configurable/extensible bug imported wontfix
+324             ClassCastException during web application redeploy due to the grift logging classes enhancement imported
+564             Create release notes for 2.2.1.1 patch release Component-Docs
+567             Release 2.2.1.1 Not Loading Properties in dependent JARs
+574             Multiple encoding issue for Google Chrome wontfix
+608             Move HTMLValidationRule static Classpath handling into DefaultSecurityConfiguration
+624             Update pom.xml to use AntiSamy 1.6.3 and Apache Commons IO 2.6 Build-Maven
+629             Define .snyk ignore content
+630             Incorrect result for isEnabled() in Slf4JLogger
+631             Create Default Logging level configuration for ESAPI library wontfix
+634             Removing \ from JSON string by ESAPI.encoder().canonicalize(value)
+640             Decouple from AntiSamy slf4j-api dependency & Update dependency
+648             Log4J CVE-2021-4104
+652             Fix code scanning alert - tracker 3 duplicate
+653             java.io.FileNotFoundException Error in Logs When ESAPI.properties and validation.properties are in resources.
+657             Need to update Xerces transitive dependency to fix CVE-2022-23437
+658             Vulnerability issue on dependency commons-io
+664             ValidationException exposing potentially sensitive user supplied input to log wontfix
+669             JavaEncryptor.java HARDCODED_CREDENTIALS
+671             Version 2.2.3.1 contains 5 vulnerabilities in ESAPI dependencies
+672             HTMLEntityCodec Bug Decoding "Left Angular Bracket" Symbol
+673             Validator.HTTPHeaderValue changed automatically
+679             Completely remove support for fixed IVs and throw a ConfigurationException if encountered
+
+-----------------------------------------------------------------------------
+
+        Changes Requiring Special Attention
+
+-----------------------------------------------------------------------------
+
+1) This likely will be the LAST ESAPI release supporting Java 7. There are just some vulnerabilities (notably a DoS one in Neko HtmlUnit that does not yet have an assigned CVE) that because they are transitive dependencies, that we simply cannot remediate without at least moving on to Java 8 as the minimally supported JDK. Please plan accordingly.  
+
+2) If you are not upgrading to ESAPI release 2.3.0.0 from 2.2.3.1 (the previous release), then you NEED to read at least the release notes in 2.2.3.1 and ideally, all the ones in all the previous ESAPI release notes from where you are updating to 2.3.0.0. In particular, if you were using ESAPI 2.2.1.0 or earlier, you need to see those ESAPI release notes in regards to changes in the ESAPI.Logger property.
+
+                                        !!!!! VULNERABILITY ALERTS !!!!!
+
+3) There is one VERY SERIOUS (as in easy to exploit) vulnerability in ESAPI's default antisamy-esapi.xml configuration file. This problem seems to date back to at least ESAPI release 1.4. If you do nothing else, you should update your antisamy-esapi.xml to the one provided in the esapi-2.3.0.0-configuration.jar that can be found on GitHub under "https://github.com/ESAPI/esapi-java-legacy/releases/tag/esapi-2.3.0.0". The ESAPI team will be submitting an official CVE for this, but the bottom line is that the default ESAPI antisamy-esapi.xml configuration file does not properly sanitize 'javascript:' URLs in most cases, but instead accepts the input as "safe". A few more details regarding the configuration is provided in the section "Important checks you take as a developer using ESAPI" given below.
+
+4) Several other vulnerabilities associated with AntiSamy have been patched via the AntiSamy 1.6.7 (or prior) release. See the AntiSamy release notes for 1.6.7, 1.6.6.1, 1.6.6, 1.6.5 and 1.6.4 at https://github.com/nahsra/antisamy/releases for further details on what has been remediated. Note that the default ESAPI.properties and ESAPI AntiSamy configuration did not really leave ESAPI vulnerable to CVE-2021-35043 which was fixed in AntiSamy 1.6.4, but that was a moot point because of #3, above.
+
+5) A vulnerability found by GitHub Security Lab that is an example of CWE-22 [Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')], was discovered by GHSL security researcher Jaroslav Lobačevski. You can find details of it under "documentation/GHSL-2022-008_The_OWASP_Enterprise_Security_API.md" or "documentation/GHSL-2022-008_The_OWASP_Enterprise_Security_API.pdf" on ESAPI's GitHub repo or from the ESAPI source zip or tarball files associated with this (or later) release. This currently does not have a CVE associated with it. We likely will leave it to GHSL to determine if they want to file a CVE for it or not.
+
+6) There remains one known unpatched, potentially exploitable vulnerability (a DoS vulnerability in the transitive dependency Neko HtmlUnit) in ESAPI 2.3.0.0. To our knowledge, that vulnerability has not yet been assigned a CVE, but it is fixed in certain versions of Neko HtmlUnit after release 2.24.0. However, release 2.24.0 is the last Neko HtmlUnit release that supports Java 7 and thus is the latest one that we can use. That vulnerability is patched only fixed in a version of Neko HtmlUnit that was compiled with Java 8. Since ESAPI (as of release 2.3.0.0) only supports Java 7, we are currently unable to patch to remediate this DoS vulnerability. (This is why we are currently committed for this 2.3.0.0 release to be last release at least to support Java 7). The ESAPI team plans to release a 2.4.0.0 release that will require Java 8 or later as the minimal JDK, and with that release, we will update to AntiSamy 1.7.0 (which requires Java 8) and which uses Neko HtmlUnit 2.60.0 (which also requires Java 8 or later) and that addresses the DoS vulnerability. For further information, see the JUnit test testNekoDOSWithAnHTMLComment in "src/test/java/org/owasp/esapi/reference/validation/HTMLValidationRuleCleanTest.java". (Note that currently, this JUnit test is annotated as '@Ignore' since it would not pass under Java 7 and using Neko HtmlUnit 2.24.0.)
+
+
+NOTE: We plan on issuing an updated README.md and updated security bulletins on #3 and #4 soon, but we wanted to focus on getting the patches out rather than getting the documentation out. This probably will not be in a separate release, but we will announce in on the ESAPI Users and ESAPI Dev Google lists once we drop them on our GitHub repo under the "documentation" folder.
+
+
+FALSE POSITIVE ALERT ==> A final word on vulnerabilities -- CVE-2020-5529 is a False Positive
+
+Dependency Check picks up a false positive CVE in ESAPI 2.3.0.0. Other SCA tools may as well. Specifically, Dependency Check flags CVE-2020-5529 in a different (the original) Neko HtmlUnit then the one that AntiSamy is using. In Dependency Check, this is a False Positive caused by a mismatch of the CPE (i.e., Common Platform Enumeration) identifier. If you follow the "Hyperlinl" section referenced on https://nvd.nist.gov/vuln/detail/CVE-2020-5529 page, you will see that it ultimately references https://github.com/HtmlUnit/htmlunit/releases/tag/2.37.0, which is the old, unmaintained version of Neko that AntiSamy had been using up until recently. Dependency Check is incorrectly matching "net.sourceforge.htmlunit:htmlunit" rather than matching "net.sourceforge.htmlunit:neko-htmlunit", which it what if should be matching. This CPE matching confusion is a common problem with Dependency Check, but it's by design. Understandably, Jeremy Long and other Dependency Check contributors have deliberately tweaked Dependency Check to fall more on the side of False Positives so as to avoid False Negatives, because False Positives are a lot easier to vet and rule out, and one can--if so desired--create a suppressions.xml entry for it to ignore them. (I've decided against suppressing it in Dependency Check--at least for the time being--because there are likely other SCA tools that will also flag this as a False Positive.) For now, it's easier to just acknowledge it in the release notes. (Especially since we'll be releasing a 2.4.0.0 version soon after the 2.3.0.0 version that will support Java 8 as the minimal SDK so this problem will disappear.) Note however that Snyk does not flag ESAPI as being vulnerable to CVE-2020-5529.
+
+----------------------------------------------------------------------------e
+
+Important security checks you SHOULD take as a developer using ESAPI
+
+Simply upgrading to the esapi-2.3.0.0.jar may not be enough. This 2.3.0.0 release patches a bypass around some AntiSamy related sanitization that has been present since at least the ESAPI 1.4 release. It is specifically fixed in the esapi-2.3.0.0-configuration.jar, which you may download from https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.3.0.0/esapi-2.3.0.0-configuration.jar. From that, you will want to extract the configuration/esapi/antisamy-esapi.xml file and use it to replace your previous stock antisamy-esapi.xml file. However, if you have customized your antisamy-esapi.xml file, then to address the vulnerability, you MUST find the vulnerable configuration line where the "onsiteURL" attribute is defined and change the regular expression.
+
+    The original (vulnerable) line will look like:
+        <regexp name="onsiteURL" value="([\w\\/\.\?=&amp;;\#-~]+|\#(\w)+)"/>
+
+    The corrected line should look like:
+        <regexp name="onsiteURL" value="^(?!//)(?![\p{L}\p{N}\\\.\#@\$%\+&amp;;\-_~,\?=/!]*(&amp;colon))[\p{L}\p{N}\\\.\#@\$%\+&amp;;\-_~,\?=/!]*"/>
+
+
+-----------------------------------------------------------------------------
+
+Developer Activity Report (Changes between release 2.2.3.1 and 2.3.0.0, i.e., between 2021-05-07 and 2022-04-17)
+
+Normally, I write up lots of other details in the release notes, especially to credit those who have contributed PRs to address ESAPI issues. I apologize for not spending time on this right now, but I will try to update this set of release notes for 2.3.0.0 in the near future to add such things.
+
+
+-----------------------------------------------------------------------------
+
+CHANGELOG:      Create your own. May I suggest:
+
+        git log --stat --since=2021-05-07 --reverse --pretty=medium
+
+    or clone the ESAPI/esapi-java-legacy repo and then run
+
+        mvn site
+
+    and finally, point your browser at
+
+        target/site/changelog.html
+
+    Both approaches should show all the commits since just after the previous (2.2.3.1) release. [Note that the both approaches may include commits after the 2.3.0.0 release, but the first allows to to easily add an end date via '--until=2022-04-17'.]
+
+-----------------------------------------------------------------------------
+
+Direct and Transitive Runtime and Test Dependencies:
+
+        $ mvn -B dependency:tree
+        ...
+        [INFO] --- maven-dependency-plugin:3.3.0:tree (default-cli) @ esapi ---
+        [INFO] org.owasp.esapi:esapi:jar:2.3.0.0
+        [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
+        [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
+        [INFO] +- com.io7m.xom:xom:jar:1.2.10:compile
+        [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+        [INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+        [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
+        [INFO] +- commons-configuration:commons-configuration:jar:1.10:compile
+        [INFO] +- commons-lang:commons-lang:jar:2.6:compile
+        [INFO] +- commons-fileupload:commons-fileupload:jar:1.3.3:compile
+        [INFO] +- log4j:log4j:jar:1.2.17:compile
+        [INFO] +- org.apache.commons:commons-collections4:jar:4.2:compile
+        [INFO] +- org.apache-extras.beanshell:bsh:jar:2.0b6:compile
+        [INFO] +- org.owasp.antisamy:antisamy:jar:1.6.7:compile
+        [INFO] |  +- org.apache.httpcomponents.client5:httpclient5:jar:5.1.3:compile
+        [INFO] |  |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.1.3:compile
+        [INFO] |  +- org.apache.httpcomponents.core5:httpcore5:jar:5.1.3:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-css:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-util:jar:1.14:compile
+        [INFO] |  |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.14:compile
+        [INFO] |  |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.14:compile
+        [INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.6:compile
+        [INFO] |  +- xerces:xercesImpl:jar:2.12.2:compile
+        [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
+        [INFO] +- net.sourceforge.htmlunit:neko-htmlunit:jar:2.24:compile
+        [INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+        [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
+        [INFO] +- commons-io:commons-io:jar:2.6:compile
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.6.0:compile
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+        [INFO] +- commons-codec:commons-codec:jar:1.15:test
+        [INFO] +- junit:junit:jar:4.13.2:test
+        [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+        [INFO] +- org.hamcrest:hamcrest-core:jar:1.3:test
+        [INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.7:test
+        [INFO] |  \- org.powermock:powermock-api-support:jar:2.0.7:test
+        [INFO] +- org.javassist:javassist:jar:3.25.0-GA:test
+        [INFO] +- org.mockito:mockito-core:jar:2.28.2:test
+        [INFO] |  +- net.bytebuddy:byte-buddy:jar:1.9.10:test
+        [INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.9.10:test
+        [INFO] |  \- org.objenesis:objenesis:jar:2.6:test
+        [INFO] +- org.powermock:powermock-core:jar:2.0.7:test
+        [INFO] +- org.powermock:powermock-module-junit4:jar:2.0.7:test
+        [INFO] |  \- org.powermock:powermock-module-junit4-common:jar:2.0.7:test
+        [INFO] +- org.powermock:powermock-reflect:jar:2.0.7:test
+        [INFO] \- org.openjdk.jmh:jmh-core:jar:1.35:test
+        [INFO]    +- net.sf.jopt-simple:jopt-simple:jar:5.0.4:test
+        [INFO]    \- org.apache.commons:commons-math3:jar:3.2:test
+        ...
+
+-----------------------------------------------------------------------------
+
+Acknowledgments:
+    * A special shout out to Jaroslav Lobačevski, a security researcher at GitHub Security Labs, who notified the ESAPI team via responsible disclosure and allowed us sufficient time to address GHSL-2022-008.
+    * A huge hat-tip to Dave Wichers and Sebastian Passaro for promptly addressing vulnerabilities in AntiSamy, many of which were caused by poorly maintained dependencies of AntiSamy.
+    * A special thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI contributors whom I've undoubtedly forgotten.
+    * Finally, to all the ESAPI users who make our efforts worthwhile. This is for you.
+
+A special thanks to the ESAPI community from the ESAPI project co-leaders:
+    Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!
+    Matt Seil (xeno6696)
