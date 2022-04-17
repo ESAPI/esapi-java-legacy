@@ -13,9 +13,9 @@ Do NOT:  Do NOT use GitHub Issues to ask questions about this of future releases
 
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
-This is a very importanT ESAPI release, as it remediates several potentially exploitable vulnerabilities. Part of the remediation may include reviewing and updating your antisamy-esapi.xml configuration file, so be sure to read through ALL the details thoroughly or you may not be fully protected even though you have installed the new ESAPI 2.3.0.0 jar. This will also certainly be the last ESAPI release to support Java 7, so you would do well to prepare to move to Java 8 or later if you have not already done so.
+This is a very important ESAPI release, as it remediates several potentially exploitable vulnerabilities. Part of the remediation may include reviewing and updating your antisamy-esapi.xml configuration file, so be sure to read through ALL the details thoroughly or you may not be fully protected even though you have installed the new ESAPI 2.3.0.0 jar. This will also certainly be the last ESAPI release to support Java 7, so you would do well to prepare to move to Java 8 or later if you have not already done so.
 
-The primary intent of this replease is to patch several potentially exploitable vulnerabilities in ESAPI. Many of these are related to AntiSamy and were introduced by vulnerable transitive dependencies. All but one them (a DoS vulnerability in an AntiSamy dependency) have been fixed with an update to use the new AntiSamy 1.6.7 release. There are also two vulnerabilities within ESAPI itself which have been remediated as part of this release, one of which dates back to at least ESAPI 1.4.
+The primary intent of this release is to patch several potentially exploitable vulnerabilities in ESAPI. Many of these are related to AntiSamy and were introduced by vulnerable transitive dependencies. All but one those (a DoS vulnerability in an AntiSamy dependency) is believed to have been fixed with an update to use the new AntiSamy 1.6.7 release. There are also two vulnerabilities within ESAPI itself which have been remediated as part of this release, one of which dates back to at least ESAPI 1.4.
 
 In addition to these patches (discussed in a bit more detail later under the section 'Changes Requiring Special Attention'), there were other updates to dependencies made in this release done to simply to keep them as up-to-date as possible. We have also added the generation of an SBOM (Software Bill of Materials) generated via the cyclonedx:cyclonedx-maven-plugin.
 
@@ -90,7 +90,7 @@ NOTE: We plan on issuing an updated README.md and updated security bulletins on 
 
 FALSE POSITIVE ALERT ==> A final word on vulnerabilities -- CVE-2020-5529 is a False Positive
 
-Dependency Check picks up a false positive CVE in ESAPI 2.3.0.0. Other SCA tools may as well. Specifically, Dependency Check flags CVE-2020-5529 in a different (the original) Neko HtmlUnit then the one that AntiSamy is using. In Dependency Check, this is a False Positive caused by a mismatch of the CPE (i.e., Common Platform Enumeration) identifier. If you follow the "Hyperlinl" section referenced on https://nvd.nist.gov/vuln/detail/CVE-2020-5529 page, you will see that it ultimately references https://github.com/HtmlUnit/htmlunit/releases/tag/2.37.0, which is the old, unmaintained version of Neko that AntiSamy had been using up until recently. Dependency Check is incorrectly matching "net.sourceforge.htmlunit:htmlunit" rather than matching "net.sourceforge.htmlunit:neko-htmlunit", which it what if should be matching. This CPE matching confusion is a common problem with Dependency Check, but it's by design. Understandably, Jeremy Long and other Dependency Check contributors have deliberately tweaked Dependency Check to fall more on the side of False Positives so as to avoid False Negatives, because False Positives are a lot easier to vet and rule out, and one can--if so desired--create a suppressions.xml entry for it to ignore them. (I've decided against suppressing it in Dependency Check--at least for the time being--because there are likely other SCA tools that will also flag this as a False Positive.) For now, it's easier to just acknowledge it in the release notes. (Especially since we'll be releasing a 2.4.0.0 version soon after the 2.3.0.0 version that will support Java 8 as the minimal SDK so this problem will disappear.) Note however that Snyk does not flag ESAPI as being vulnerable to CVE-2020-5529.
+Dependency Check picks up a false positive CVE in ESAPI 2.3.0.0. Other SCA tools may as well. Specifically, Dependency Check flags CVE-2020-5529 in a different (the original) Neko HtmlUnit then the one that AntiSamy is using. In Dependency Check, this is a False Positive caused by a mismatch of the CPE (i.e., Common Platform Enumeration) identifier. If you follow the "Hyperlink" section referenced on https://nvd.nist.gov/vuln/detail/CVE-2020-5529 page, you will see that it ultimately references https://github.com/HtmlUnit/htmlunit/releases/tag/2.37.0, which is the old, unmaintained version of Neko that AntiSamy had been using up until recently. Dependency Check is incorrectly matching "net.sourceforge.htmlunit:htmlunit" rather than matching "net.sourceforge.htmlunit:neko-htmlunit", which it what if should be matching. This CPE matching confusion is a common problem with Dependency Check, but it's by design. Understandably, Jeremy Long and other Dependency Check contributors have deliberately tweaked Dependency Check to fall more on the side of False Positives so as to avoid False Negatives, because False Positives are a lot easier to vet and rule out, and one can--if so desired--create a suppressions.xml entry for it to ignore them. (I've decided against suppressing it in Dependency Check--at least for the time being--because there are likely other SCA tools that will also flag this as a False Positive.) For now, it's easier to just acknowledge it in the release notes. (Especially since we'll be releasing a 2.4.0.0 version soon after the 2.3.0.0 version that will support Java 8 as the minimal SDK so this problem will disappear.) Note however that Snyk does not flag ESAPI as being vulnerable to CVE-2020-5529.
 
 ----------------------------------------------------------------------------e
 
@@ -104,17 +104,28 @@ Simply upgrading to the esapi-2.3.0.0.jar may not be enough. This 2.3.0.0 releas
     The corrected line should look like:
         <regexp name="onsiteURL" value="^(?!//)(?![\p{L}\p{N}\\\.\#@\$%\+&amp;;\-_~,\?=/!]*(&amp;colon))[\p{L}\p{N}\\\.\#@\$%\+&amp;;\-_~,\?=/!]*"/>
 
+We have also updated the other regular expressions in the '<common-regexps>' node for our antisamy-esapi.xml file to reflect the latest regex values from AntiSamy's antisamy.xml configuration file in their official AntiSamy 1.6.7 release. This was done as a precautionary measure only, as the regex pattern seemed to be malformed along the same lines of "onsiteURL" and thus potentially could allow unintended characters to be passed through as "safe". Note however that there are no vulnerabilities known to the ESAPI team regarding these other 2 regular expressions for "htmlTitle" and "offsiteURL". If these prove to be problematic with your applications using ESAPI, you may decide to change the probablematic ones to the original values.
+
+    The original (possibly vulnerable???) regular expression values for htmlTitle and offsiteURL:
+        <regexp name="htmlTitle" value="[a-zA-Z0-9\s-_',:\[\]!\./\\\(\)]*"/>
+        <regexp name="offsiteURL" value="(\s)*((ht|f)tp(s?)://|mailto:)[A-Za-z0-9]+[~a-zA-Z0-9-_\.@#$%&amp;;:,\?=/\+!]*(\s)*"/>
+
+    The updated regular expression values for them:
+        <regexp name="htmlTitle" value="[\p{L}\p{N}\s\-_',:\[\]!\./\\\(\)&amp;]*"/>
+        <regexp name="offsiteURL" value="(\s)*((ht|f)tp(s?)://|mailto:)[\p{L}\p{N}]+[\p{L}\p{N}\p{Zs}\.\#@\$%\+&amp;;:\-_~,\?=/!\(\)]*(\s)*"/>
+
+In future ESAPI releases, we may consider just replacing ESAPI's antisamy-esapi.xml file with AntiSamy's antisamy.xml, but we will not be doing that lightly. We tested with the latter and it broke some ESAPI JUnit tests so such a change now likely would break some client ESAPI code as well. However, the changes to the "<common-regexps>" node did not break any of our ESAPI JUnit tests so we believe they are probably okay. (If not, we apologize in advance, but we prefer to error on the side of caution here.)
 
 -----------------------------------------------------------------------------
 
 Developer Activity Report (Changes between release 2.2.3.1 and 2.3.0.0, i.e., between 2021-05-07 and 2022-04-17)
 
-Normally, I write up lots of other details in the release notes, especially to credit those who have contributed PRs to address ESAPI issues. I apologize for not spending time on this right now, but I will try to update this set of release notes for 2.3.0.0 in the near future to add such things.
+Normally, I (Kevin) write up lots of other details in the release notes, especially to credit those who have contributed PRs to address ESAPI issues. I apologize for not spending time on this right now, but I will try to update this set of release notes for 2.3.0.0 in the near future to add such things.
 
 
 -----------------------------------------------------------------------------
 
-CHANGELOG:      Create your own. May I suggest:
+CHANGELOG:      Create your own. May we suggest:
 
         git log --stat --since=2021-05-07 --reverse --pretty=medium
 
