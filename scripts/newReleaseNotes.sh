@@ -24,6 +24,7 @@ if [[ -r $template ]]
 then
         echo "#!/bin/bash"  > $tmpfile
         echo "source vars.${newVers}" >> $tmpfile
+        echo "set -o allexport" >> $tmpfile
         echo "cat >esapi4java-core-${VERSION}-release-notes.txt <<${hereDocBanner}" >> $tmpfile
         cat $template >> $tmpfile
         echo "${hereDocBanner}" >> $tmpfile

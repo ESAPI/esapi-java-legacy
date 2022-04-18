@@ -127,6 +127,45 @@ public class HTMLValidationRuleCleanTest {
         // assertEquals("", result4);
     }
 
+    // FIXME: Change the method name to reflect the CVE once we have a number for this.
+    // Test to confirm that CVE-2022-xxxxx (TBD) is fixed. The cause of this was
+    // from a subtle botched regex for 'onsiteURL' in all the versions of
+    // antsamy-esapi.xml that had been there as far back as ESAPI 1.4!
+    //
+    // This TBD CVE should arguably get the same CVSSv3 store as the AntiSamy
+    // CVE-2021-35043 as the are very similar.
+    @Test
+    public void testJavaScriptURL() throws Exception {
+        System.out.println("testJavaScriptURL");
+
+        String expectedSafeText = "This is safe from XSS. Trust us!";
+        String badVoodoo = "<a href=\"javascript:alert(1)\">" + expectedSafeText + "</a>";
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errorList = new ValidationErrorList();
+        String result = instance.getValidSafeHTML("test", badVoodoo, 100, false, errorList);
+        assertEquals( expectedSafeText, result );
+    }
+
+    // To confirm fix for CVE-2021-35043 in AntiSamy 1.6.5 and later. Actually,
+    // it was never really "broken" in ESAPI's "default configuration" because it is
+    // triggers an Intrusion Detection when it is checking the canonicalization
+    // and the '&#00058' trips it up, that that's pretty much irrelevant given
+    // the (TBD) CVE mented in the previous test case.
+    //
+    // Note: This test assumes a standard default ESAPI.properties file. In
+    // particular, the normal canonicalization has to be enabled.
+    public void testAntiSamyCVE_2021_35043Fixed() {
+        System.out.println("testAntiSamyCVE_2021_35043Fixed");
+
+        String expectedSafeText = "This is safe from XSS. Trust us!";
+
+            // Translates to '<a href="javascript:x=1,alert("boom")".
+        String badVoodoo = "<a href=\"javascript&#00058alert(1)>" + expectedSafeText + "</a>";
+        Validator instance = ESAPI.validator();
+        // ValidationErrorList errorList = new ValidationErrorList();
+        boolean result = instance.isValidSafeHTML("CVE-2021-35043", badVoodoo, 200, false);
+        assertTrue( result );
+    }
 
     @Test
     public void testIsValidSafeHTML() {
@@ -161,37 +200,52 @@ public class HTMLValidationRuleCleanTest {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<style/>b<![cdata[</style><a href=javascript:alert(1)>test";
-		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		assertTrue(instance.isValidSafeHTML("test8", input, 100, false, errors));
 		String expected = "b&lt;/style&gt;&lt;a href=javascript:alert(1)&gt;test";
 		String output = instance.getValidSafeHTML("javascript Link", input, 250, false);
 		assertEquals(expected, output);
 		assertTrue(errors.size() == 0);
-
     }
-    
+
     @Test
     public void testScriptTagAfterStyleClosing() throws Exception {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<select<style/>W<xmp<script>alert(1)</script>";
-		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		assertTrue(instance.isValidSafeHTML("test9", input, 100, false, errors));
 		String expected = "W&lt;script&gt;alert(1)&lt;/script&gt;";
-		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
+		String output = instance.getValidSafeHTML("escaping style tag attack with script tag", input, 250, false);
 		assertEquals(expected, output);
 		assertTrue(errors.size() == 0);
-
     }
-    
+
+    @Test
+    public void testOnfocusAfterStyleClosing() throws Exception {
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        String input = "<select<style/>k<input<</>input/onfocus=alert(1)>";
+		assertTrue(instance.isValidSafeHTML("test10", input, 100, false, errors));
+		String expected = "k&lt;input/onfocus=alert(1)&gt;";	// Suspicious??? Doesn't agree w/ AntiSamy test. FIXME?
+		String output = instance.getValidSafeHTML("escaping style tag attack with onfocus attribute", input, 250, false);
+		assertEquals(expected, output);
+		assertTrue(errors.size() == 0);
+    }
+
+    // FIXME: This problem is a DoS issue that lies within Neko that is only available for Java 8 and later.
+    // However, the latest version that is available for Java 7 is Neko 2.24. It is fixed in later versions
+    // that are not available for JDK 7 though. The fix will just start using the one the latest Java 8 version
+    // of AntiSamy is using and remove our <exclusion> and specific 2.24 dependency from our pom.xml and use whatever
+    // AntiSamy provides. All we should need to do is that and remove the @Ignore annotation here.
     @Test
     @Ignore
     public void testNekoDOSWithAnHTMLComment() throws Exception {
     	/**
-    	 * FIXME:  This unit test needs to pass before the next ESAPI release.
+    	 * FIXME:  This unit test needs to pass before the next ESAPI release once ESAPI starts using JDK 8 as min JDK.
     	 */
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<!--><?a/";
-		assertTrue(instance.isValidSafeHTML("test7", input, 100, false, errors));
+		assertTrue(instance.isValidSafeHTML("test11", input, 100, false, errors));
 		String expected = "&#x3C;!--&#x3E;&#x3C;?a/";
 		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
 		assertEquals(expected, output);
