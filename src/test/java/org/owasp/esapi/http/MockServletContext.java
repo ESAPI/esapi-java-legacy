@@ -693,4 +693,9 @@ public class MockServletContext implements ServletContext {
     public void declareRoles(String... strings) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+	@Override
+	public String getVirtualServerName() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

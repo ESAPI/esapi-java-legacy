@@ -33,6 +33,11 @@
           <ignoreVersion type="regex">^0{0,1}[4-9].*</ignoreVersion>
        </ignoreVersions>
     </rule>
+    <rule groupId="javax.servlet" artifactId="javax.servlet-api" comparisonMethod="maven">
+       <ignoreVersions>
+          <ignoreVersion type="regex">^0{0,1}[4-9].*</ignoreVersion>
+       </ignoreVersions>
+    </rule>
   </rules>
 </ruleset>
 <!--

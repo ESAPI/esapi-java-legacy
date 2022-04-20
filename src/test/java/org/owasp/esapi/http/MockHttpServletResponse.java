@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -279,6 +280,16 @@ public class MockHttpServletResponse implements HttpServletResponse {
 			public void write(int b) throws IOException {
 				body.append((char)b);
 			}
+
+			@Override
+			public boolean isReady() {
+				return false;
+			}
+
+			@Override
+			public void setWriteListener(WriteListener writeListener) {
+				//NO-OP
+			}
 		};
 	}
 
@@ -369,5 +380,10 @@ public class MockHttpServletResponse implements HttpServletResponse {
     public Collection<String> getHeaders(String string) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+	@Override
+	public void setContentLengthLong(long len) {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 	
 }
