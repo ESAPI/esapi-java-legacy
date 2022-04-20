@@ -15,7 +15,6 @@
  */
 package org.owasp.esapi.http;
 
-import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
 
@@ -28,8 +27,6 @@ public class MockServletInputStream extends ServletInputStream {
     private byte[] body;
 
     private int next;
-    
-    private boolean isDone = false;
 
     /**
      * constructor
@@ -48,23 +45,7 @@ public class MockServletInputStream extends ServletInputStream {
         if (next < body.length) {
             return body[next++];
         } else {
-        	isDone = true;
             return -1;
         }
     }
-
-	@Override
-	public boolean isFinished() {
-	return isDone;
-	}
-
-	@Override
-	public boolean isReady() {
-		return false;
-	}
-
-	@Override
-	public void setReadListener(ReadListener readListener) {
-		//NO OP
-	}
 }

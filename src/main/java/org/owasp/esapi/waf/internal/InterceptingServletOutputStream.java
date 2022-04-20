@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 
 import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 
 /**
  * This class was inspired by ModSecurity for Java by Ivan Ristic. We hook
@@ -162,13 +161,4 @@ public class InterceptingServletOutputStream extends ServletOutputStream {
 
     }
 
-	@Override
-	public boolean isReady() {
-		return os.isReady();
-	}
-
-	@Override
-	public void setWriteListener(WriteListener writeListener) {
-		os.setWriteListener(writeListener);
-	}
 }
