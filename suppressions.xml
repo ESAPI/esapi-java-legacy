@@ -55,18 +55,6 @@
     </suppress>
     <suppress>
         <notes><![CDATA[
-            FIXME: Once we switch to Java 8 as the minimal JDK, update commons-io to the latest and delete this.
-
-            This CVE is path traversal issue in FileNameUtils.normalize(). That class is not used directly or indirectly
-            by ESAPI. We are required to use an older version of Commons-IO because of a direct dependency on Antisamy.
-
-            file name: commons-io-2.6.jar
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/commons\-io/commons\-io@.*$</packageUrl>
-        <cve>CVE-2021-29425</cve>
-    </suppress>
-    <suppress>
-        <notes><![CDATA[
             ESAPI does not use this jar directly. It is a transitive dependency of AntiSamy and (as per Dave Wichers on
             the AntiSamy team), it does not impact AntiSamy, and therefore does not impact ESAPI.
 
