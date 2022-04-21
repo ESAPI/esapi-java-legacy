@@ -18,7 +18,6 @@ package org.owasp.esapi.reference;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -36,7 +35,9 @@ import java.util.Set;
 
 import javax.servlet.http.Cookie;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
@@ -62,6 +63,9 @@ import org.owasp.esapi.util.TestUtils;
 public class ValidatorTest {
 	
     private static final String PREFERRED_ENCODING = "UTF-8";
+
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
     @Test
     public void testAddRule() {
@@ -388,24 +392,6 @@ public class ValidatorTest {
         }
     }
 
-    private static void mkdir(String dirname) throws IOException {
-        File file = new File( dirname );
-
-        if ( file.exists() && file.isDirectory() ) {
-            return;
-        } else if ( file.exists() ) {
-            throw new IOException("Filename " + dirname + " already exists, but is not a directory.");
-        }
-
-        file.deleteOnExit();    // Mark the directory that we create below to be deleted when the JVM exits.
-
-        boolean flag = file.mkdir();
-
-        if ( !flag ) throw new IOException("Failed to create directory: " + dirname);
-
-        return;
-    }
-
     // GitHub issue # xxxx - GHSL-2022-008
     @Test
     public void testIsValidDirectoryPathGHSL_POC() throws IOException {
@@ -415,29 +401,18 @@ public class ValidatorTest {
 
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
-
-        String input = null;
-        File parent = null;
-
-        boolean isWindows = (System.getProperty("os.name").indexOf("Windows") != -1) ? true : false;
-        if (isWindows) {
-            input = "C:/temp/esapi-test2";
-            parent = new File("C:/temp/esapi-test/");   // Note the trailing '/'.
-        } else {
-            input = "/tmp/esapi-test2";
-            parent = new File("/tmp/esapi-test/");      // Note the trailing '/'.
-        }
-
-        // Create the 2 directories and set them to be deleted when the JVM exists.
-        mkdir( input );
-        mkdir( parent.getCanonicalPath() );
+        
+        String invalidPath = tempFolder.newFolder("esapi-test2").getAbsolutePath();
+        File parent = tempFolder.newFolder("sibling-of-esapi-test2");
+        String validPath = tempFolder.newFolder("sibling-of-esapi-test2", "child").getAbsolutePath();
 
         // Before the fix, this incorrectly would return 'true' even though
         // 'esapi-test2' directory clearly was not within the 'esapi-test'
         // directory.
         //
-        assertFalse( instance.isValidDirectoryPath("GHSL-2022-008", input, parent, false, errors) );
+        assertFalse( instance.isValidDirectoryPath("GHSL-2022-008", invalidPath, parent, false, errors) );
         assertEquals( 1, errors.size() );
+        assertTrue (instance.isValidDirectoryPath("GHSL-2022-008", validPath, parent, false, new ValidationErrorList()));
     }
 
 
