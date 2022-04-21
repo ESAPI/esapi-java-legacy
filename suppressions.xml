@@ -40,7 +40,7 @@
     <suppress>
         <notes><![CDATA[
             This suppresses CVE-2021-4104 for the log4j-1.2.17.jar dependency. ESAPI's
-            default configuration uses ConsoleAppender rathere than JMSAppender and
+            default configuration uses ConsoleAppender rather than JMSAppender and
             thus does not use Log4J 1 in a manner that makes it exploitable. ESAPI is unable to
             eliminate the dependency completely because our our deprecation policy.
 
@@ -52,6 +52,74 @@
         <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
         <cpe>cpe:/a:apache:log4j</cpe>
         <cve>CVE-2021-4104</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+            This suppresses CVE-2022-23305 for the log4j-1.2.17.jar dependency. ESAPI's
+            default configuration uses ConsoleAppender rather than JDBCAppender and
+            thus does not use Log4J 1 in a manner that makes it exploitable. ESAPI is unable to
+            eliminate the dependency completely because our our deprecation policy.
+
+            For further details, please see:
+                https://nvd.nist.gov/vuln/detail/CVE-2022-23305 and
+                the ESAPI security advisory #7, "documentation/ESAPI-security-bulletin7.pdf", which
+                provides a detailed analysis of this issue in ESAPI.
+        ]]></notes>
+        <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
+        <cpe>cpe:/a:apache:log4j</cpe>
+        <cve>CVE-2022-23305</cve>
+    </suppress>
+<!--
+java-8 Integration - content required for successful owasp dependency-check execution
+MISSING Security Bulletin content!
+
+    <suppress>
+        <notes><![CDATA[
+            This suppresses CVE-2022-23307 for the log4j-1.2.17.jar dependency. ESAPI's
+            default configuration uses ConsoleAppender rather than Chainsaw and
+            thus does not use Log4J 1 in a manner that makes it exploitable. ESAPI is unable to
+            eliminate the dependency completely because our our deprecation policy.
+
+            For further details, please see:
+                https://nvd.nist.gov/vuln/detail/CVE-2022-23307 and
+
+-> NEEDS BULLETIN REFERENCE
+
+        ]]></notes>
+        <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
+        <cpe>cpe:/a:apache:log4j</cpe>
+        <cve>CVE-2022-23307</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+            This suppresses CVE-2022-23302 for the log4j-1.2.17.jar dependency. ESAPI's
+            default configuration uses ConsoleAppender rather than JMSAppender and
+            thus does not use Log4J 1 in a manner that makes it exploitable. ESAPI is unable to
+            eliminate the dependency completely because our our deprecation policy.
+            By virtue of not using a JMSAppender, the exploitable nature of the JMSSink implementation
+            referenced by this CVE is also mitigated.
+
+            For further details, please see:
+                https://nvd.nist.gov/vuln/detail/CVE-2022-23302
+-> NEEDS BULLETIN REFERENCE
+
+        ]]></notes>
+        <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
+        <cpe>cpe:/a:apache:log4j</cpe>
+        <cve>CVE-2022-23302</cve>
+    </suppress>
+-->
+    <suppress>
+        <notes><![CDATA[
+            FIXME: Once we switch to Java 8 as the minimal JDK, update commons-io to the latest and delete this.
+
+            This CVE is path traversal issue in FileNameUtils.normalize(). That class is not used directly or indirectly
+            by ESAPI. We are required to use an older version of Commons-IO because of a direct dependency on Antisamy.
+
+            file name: commons-io-2.6.jar
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/commons\-io/commons\-io@.*$</packageUrl>
+        <cve>CVE-2021-29425</cve>
     </suppress>
     <suppress>
         <notes><![CDATA[
