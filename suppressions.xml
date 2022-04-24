@@ -69,21 +69,16 @@
         <cpe>cpe:/a:apache:log4j</cpe>
         <cve>CVE-2022-23305</cve>
     </suppress>
-<!--
-java-8 Integration - content required for successful owasp dependency-check execution
-MISSING Security Bulletin content!
-
     <suppress>
         <notes><![CDATA[
             This suppresses CVE-2022-23307 for the log4j-1.2.17.jar dependency. ESAPI's
-            default configuration uses ConsoleAppender rather than Chainsaw and
-            thus does not use Log4J 1 in a manner that makes it exploitable. ESAPI is unable to
-            eliminate the dependency completely because our our deprecation policy.
+            default configuration uses ConsoleAppender. It does not use Apache Chainsaw, which
+            is a GUI log viewer.  ESAPI is unable to eliminate the dependency completely because
+            our our deprecation policy.
 
             For further details, please see:
                 https://nvd.nist.gov/vuln/detail/CVE-2022-23307 and
-
--> NEEDS BULLETIN REFERENCE
+                Security Bulletin 10 (to be written).
 
         ]]></notes>
         <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
@@ -93,22 +88,21 @@ MISSING Security Bulletin content!
     <suppress>
         <notes><![CDATA[
             This suppresses CVE-2022-23302 for the log4j-1.2.17.jar dependency. ESAPI's
-            default configuration uses ConsoleAppender rather than JMSAppender and
-            thus does not use Log4J 1 in a manner that makes it exploitable. ESAPI is unable to
-            eliminate the dependency completely because our our deprecation policy.
-            By virtue of not using a JMSAppender, the exploitable nature of the JMSSink implementation
-            referenced by this CVE is also mitigated.
+            default configuration uses ConsoleAppender rather than JMSAppender. Likewise,
+            JMSSink, which is standalone Apache Log4J 1 application, is not used by ESAPI
+            at all. Thus this vulnerability isnot exploitable via the delivered default
+            configuration for ESAPI.  ESAPI is unable to eliminate the dependency completely
+            because our our deprecation policy.
 
             For further details, please see:
                 https://nvd.nist.gov/vuln/detail/CVE-2022-23302
--> NEEDS BULLETIN REFERENCE
+                https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin9.pdf
 
         ]]></notes>
         <gav regex="true">^log4j:log4j:1\.2\.17$</gav>
         <cpe>cpe:/a:apache:log4j</cpe>
         <cve>CVE-2022-23302</cve>
     </suppress>
--->
     <suppress>
         <notes><![CDATA[
             ESAPI does not use this jar directly. It is a transitive dependency of AntiSamy and (as per Dave Wichers on
