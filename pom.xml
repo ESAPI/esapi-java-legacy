@@ -253,29 +253,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.6.7</version>
-            <exclusions>
-                <!-- Exclude this so we can grab version 2.61.0, which has a
-                     new DoS CVE fixed.
-                  -->
-                <exclusion>
-                    <groupId>net.sourceforge.htmlunit</groupId>
-                    <artifactId>neko-htmlunit</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.htmlunit</groupId>
-            <artifactId>neko-htmlunit</artifactId>
-                <!-- This version fixes latest CVE in Neko-HtmlUnit. -->
-            <version>2.61.0</version>
-            <exclusions>
-                <!-- excluded because this conflicts with the version imported by AntiSamy -->
-                <exclusion>
-                    <groupId>xerces</groupId>
-                    <artifactId>xercesImpl</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>1.6.8</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
