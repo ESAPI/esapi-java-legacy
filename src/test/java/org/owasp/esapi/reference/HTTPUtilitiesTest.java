@@ -206,7 +206,7 @@ public class HTTPUtilitiesTest extends TestCase
 	 * Test of formatHttpRequestForLog method, of class org.owasp.esapi.HTTPUtilities.
 	 * @throws IOException 
 	 */
-	public void testGetFileUploads() throws IOException {
+	public void testGetFileUploads() throws Exception {
 		File home = null;
 
 		try
@@ -227,37 +227,24 @@ public class HTTPUtilitiesTest extends TestCase
 			MockHttpServletRequest request2 = new MockHttpServletRequest("/test", content.getBytes(response.getCharacterEncoding()));
 			request2.setContentType( "multipart/form-data; boundary=ridiculous");
 			ESAPI.httpUtilities().setCurrentHTTP(request2, response);
+			List<File> response2 = new ArrayList<>();
 			try {
-				List<?> list = ESAPI.httpUtilities().getFileUploads(request2, home);
-				Iterator<?> i = list.iterator();
-				while ( i.hasNext() ) {
-					File f = (File)i.next();
-					System.out.println( "  " + f.getAbsolutePath() );
-				}
-				assertTrue( list.size() > 0 );
-			} catch (ValidationException e) {
-				System.out.println("ERROR in testGetFileUploads() request2: " + e.toString());
-				e.printStackTrace();
-				fail();
+				response2 = ESAPI.httpUtilities().getFileUploads(request2, home);
+				assertTrue( response2.size() > 0 );
+			} finally {
+				response2.forEach(file -> file.delete());
 			}
 
 			MockHttpServletRequest request4 = new MockHttpServletRequest("/test", content.getBytes(response.getCharacterEncoding()));
 			request4.setContentType( "multipart/form-data; boundary=ridiculous");
 			ESAPI.httpUtilities().setCurrentHTTP(request4, response);
 			System.err.println("UPLOAD DIRECTORY: " + ESAPI.securityConfiguration().getUploadDirectory());
+			List<File> response4 = new ArrayList<>();
 			try {
-				List<?> list = ESAPI.httpUtilities().getFileUploads(request4, home);
-				Iterator<?> i = list.iterator();
-				while ( i.hasNext() ) {
-					File f = (File)i.next();
-					System.out.println( "  " + f.getAbsolutePath() );
-				}
-				assertTrue( list.size() > 0 );
-			} catch (ValidationException e) {
-				// TODO: This test cases if failing when we upgrade to commons-fileupload;commons-fileupload:1.4 because of a duplicate file error. Need to figure out why.
-				System.out.println("ERROR in testGetFileUploads() request4: " + e.toString());
-				e.printStackTrace();
-				fail();
+			    response4 = ESAPI.httpUtilities().getFileUploads(request4, home);
+			    assertTrue( response4.size() > 0 );
+			} finally {
+			    response4.forEach(file -> file.delete());
 			}
 
 			MockHttpServletRequest request3 = new MockHttpServletRequest("/test", content.replaceAll("txt", "ridiculous").getBytes(response.getCharacterEncoding()));
