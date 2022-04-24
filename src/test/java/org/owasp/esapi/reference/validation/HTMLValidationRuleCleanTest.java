@@ -134,6 +134,10 @@ public class HTMLValidationRuleCleanTest {
     //
     // This TBD CVE should arguably get the same CVSSv3 store as the AntiSamy
     // CVE-2021-35043 as the are very similar.
+    //
+    // Updated: Requested CVE from GitHub CNA on 4/23/2022. See
+    // https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-q77q-vx4q-xx6q
+    // (Which may not be published yet, but is remediated. Waiting on CVE ID to publish.)
     @Test
     public void testJavaScriptURL() throws Exception {
         System.out.println("testJavaScriptURL");
@@ -225,30 +229,31 @@ public class HTMLValidationRuleCleanTest {
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<select<style/>k<input<</>input/onfocus=alert(1)>";
 		assertTrue(instance.isValidSafeHTML("test10", input, 100, false, errors));
-		String expected = "k&lt;input/onfocus=alert(1)&gt;";	// Suspicious??? Doesn't agree w/ AntiSamy test. FIXME?
+		String expected = "k&lt;input/onfocus=alert(1)&gt;";	// Suspicious? Doesn't agree w/ AntiSamy test.
 		String output = instance.getValidSafeHTML("escaping style tag attack with onfocus attribute", input, 250, false);
 		assertEquals(expected, output);
 		assertTrue(errors.size() == 0);
     }
 
-    // FIXME: This problem is a DoS issue that lies within Neko that is only available for Java 8 and later.
-    // However, the latest version that is available for Java 7 is Neko 2.24. It is fixed in later versions
-    // that are not available for JDK 7 though. The fix will just start using the one the latest Java 8 version
-    // of AntiSamy is using and remove our <exclusion> and specific 2.24 dependency from our pom.xml and use whatever
-    // AntiSamy provides. All we should need to do is that and remove the @Ignore annotation here.
+    // This test was a DoS issue (CVE-2022-28366) within a transitive dependency (Neko-HtmlUnit) that AntiSamy uses.
+    // It is fixed only in Neko-HtmlUnit 2.27 and later, but all those releases are only available for Java 8 and later.
+    // 
+    // When the input here is called with AntiSamy.scan().getCleanHtml(), AntiSamy throws a ScanException.
+    // (For details, see the AntiSamy JUnit test case "testMalformedPIScan" in
+    // https://github.com/nahsra/antisamy/blob/main/src/test/java/org/owasp/validator/html/test/AntiSamyTest.java.)
+    // 
     @Test
-    @Ignore
     public void testNekoDOSWithAnHTMLComment() throws Exception {
-    	/**
-    	 * FIXME:  This unit test needs to pass before the next ESAPI release once ESAPI starts using JDK 8 as min JDK.
-    	 */
+        System.out.println("testNekoDOSWithAnHTMLComment");
+
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<!--><?a/";
-		assertTrue(instance.isValidSafeHTML("test11", input, 100, false, errors));
-		String expected = "&#x3C;!--&#x3E;&#x3C;?a/";
+		assertTrue(instance.isValidSafeHTML("test11", input, 100, false, errors)); // Safe bc "" gets returned!!!
+
+		String expectEmpty = "";
 		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
-		assertEquals(expected, output);
+		assertEquals(expectEmpty, output);  // Because AntiSamy's CleanResults.getCleanHTML() should throw and is caught.
 		assertTrue(errors.size() == 0);
     }
 }
