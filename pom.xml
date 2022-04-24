@@ -92,28 +92,35 @@
             <name>Jeff Williams</name>
             <organization>Contrast Security</organization>
             <roles>
-                <role>Project Inventor</role>
+                <role>Project Founder</role>
             </roles>
         </developer>
         <developer>
             <name>Kevin W. Wall</name>
-            <organization>Wells Fargo</organization>
+            <organization>Verisign</organization>
             <roles>
-                <role>Project Co-owner</role>
+                <role>Project Co-leader</role>
             </roles>
         </developer>
         <developer>
           <name>Matt Seil</name>
           <organization>OWASP</organization>
           <roles>
-            <role>Project Co-owner</role>
+            <role>Project Co-leader</role>
           </roles>
         </developer>
         <developer>
-            <name>Chris Schmidt</name>
-            <organization>Synopsys</organization>
+            <name>Jeremiah J. Stacey</name>
             <roles>
-                <role>Former project co-owner</role>
+                <role>JUnit SME</role>
+                <role>Jack of all trades, master of many</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Chris Schmidt</name>
+            <organization>Fluid Truck</organization>
+            <roles>
+                <role>Former project co-leader</role>
             </roles>
         </developer>
     </developers>
@@ -124,9 +131,6 @@
         </contributor>
         <contributor>
             <name>Jim Manico</name>
-        </contributor>
-        <contributor>
-            <name>Jeremiah J. Stacey</name>
         </contributor>
     </contributors>
 
