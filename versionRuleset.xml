@@ -1,0 +1,55 @@
+<ruleset comparisonMethod="maven"
+         xmlns="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://mojo.codehaus.org/versions-maven-plugin/rule/2.0.0 https://www.mojohaus.org/versions-maven-plugin/xsd/rule-2.0.0.xsd">
+<rules>
+    <rule groupId="*" artifactId="*" comparisonMethod="maven">
+      <!--
+            This regex is intended to restrict version updates to the last stable releases of dependencies and plugins.
+
+            Any version that does not contain the stable maven-plugin version naming scheme (EG "-M7"),
+                but does contain letters a-zA-Z (and optional digits after)
+       -->
+       <ignoreVersions>
+          <ignoreVersion type="regex">^(?!.[\s\S]*-M\d*).[\s\S]*.*[a-zA-Z]\d.*$</ignoreVersion>
+       </ignoreVersions>
+    </rule>
+    <!--
+         xml-apis has a screwy version structure where the 2.x versions are older than the 1.x versions (check the dates in maven!).
+            we are explicitly ignoring all of the 2.x version lineage of the project.
+    -->
+    <rule groupId="xml-apis" artifactId="xml-apis" comparisonMethod="maven">
+       <ignoreVersions>
+          <ignoreVersion type="regex">2.*</ignoreVersion>
+       </ignoreVersions>
+    </rule>
+    <!--
+         Mockito is bound to v.3.x until powermock gets updated
+         Prevent auto-update of mockito based on that expectation
+
+         https://github.com/powermock/powermock/issues/1109
+    -->
+    <rule groupId="org.mockito" artifactId="mockito-core" comparisonMethod="maven">
+       <ignoreVersions>
+          <ignoreVersion type="regex">^0{0,1}[4-9].*</ignoreVersion>
+       </ignoreVersions>
+    </rule>
+    <rule groupId="javax.servlet" artifactId="javax.servlet-api" comparisonMethod="maven">
+       <ignoreVersions>
+          <ignoreVersion type="regex">^0{0,1}[4-9].*</ignoreVersion>
+       </ignoreVersions>
+    </rule>
+  </rules>
+</ruleset>
+<!--
+###########################
+RE-USABLE REGEX REFERENCES
+###########################
+   Keep in mind that regexes are used as exclusions:
+   Anything that *DOES NOT MATCH IS VALID FOR UPDATE*
+
+#####  REGEX ##############
+^0{0,1}[4-9].*
+###########################
+Occassionally we need to couple to a major version of an artifact.
+  This REGEX is an example of how to tie to the latest artifact of major versions 0,1,2,or 3
+ -->

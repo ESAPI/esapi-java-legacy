@@ -24,6 +24,7 @@ import java.io.RandomAccessFile;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -171,6 +172,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 	private class RAFInputStream extends ServletInputStream {
 		
 		RandomAccessFile raf;
+		boolean isDone = false;
 		
 		public RAFInputStream(RandomAccessFile raf) throws IOException {
 			this.raf = raf;
@@ -178,11 +180,29 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 		}
 
 		public int read() throws IOException {
-			return raf.read();
+			int rval = raf.read();
+			isDone = rval == -1;
+			return rval;
 		}
 		
 		public synchronized void reset() throws IOException {
 			raf.seek(0);
+			isDone=false;
+		}
+
+		@Override
+		public boolean isFinished() {
+			return isDone;
+		}
+
+		@Override
+		public boolean isReady() {
+			return false;
+		}
+
+		@Override
+		public void setReadListener(ReadListener readListener) {
+			//NO-OP.  Unused in this scope
 		}
 	}
 	
