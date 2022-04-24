@@ -240,7 +240,7 @@ public class HTMLValidationRule extends StringValidationRule {
 
 		try {
 			AntiSamy as = new AntiSamy();
-			CleanResults test = as.scan(canonical, antiSamyPolicy);
+			CleanResults test = as.scan(canonical, antiSamyPolicy);     // Uses AntiSamy.DOM scanner.
 
 			List<String> errors = test.getErrorMessages();
 			if ( !errors.isEmpty() ) {
