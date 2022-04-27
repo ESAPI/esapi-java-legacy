@@ -16,10 +16,8 @@
 package org.owasp.esapi.waf.configuration;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Level;
 import org.owasp.esapi.waf.rules.Rule;
 
 /**
@@ -46,19 +44,6 @@ public class AppGuardianConfiguration {
 	public static final int OPERATOR_IN_LIST = 2;
 	public static final int OPERATOR_EXISTS = 3;
 
-	/*
-	 * We have static copies of the log settings so that the Rule objects
-	 * can access them, because they don't have access to the instance of
-	 * the configuration object.
-	 */
-	public static Level LOG_LEVEL = Level.INFO;	
-	public static String LOG_DIRECTORY = "/WEB-INF/logs";
-
-	/*
-	 * Logging settings.
-	 */
-	private Level logLevel = Level.INFO;
-	private String logDirectory = "/WEB-INF/logs";
 
 	/*
 	 * Default settings.

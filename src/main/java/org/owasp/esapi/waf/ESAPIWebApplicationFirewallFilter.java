@@ -16,7 +16,6 @@
 package org.owasp.esapi.waf;
 
 import java.io.File;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -32,7 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileUploadException;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.waf.actions.Action;
@@ -144,17 +142,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 * Pull logging file.
 		 */
 
-		// Demoted scope to a local since this is the only place it is
-		// referenced
-		String logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
-
-		String realLogSettingsFilename = fc.getServletContext().getRealPath(logSettingsFilename);
-
-		if (realLogSettingsFilename == null || (!new File(realLogSettingsFilename).exists())) {
-			throw new ServletException(
-					"[ESAPI WAF] Could not find log file at resolved path: " + realLogSettingsFilename);
-		}
-
 		/*
 		 * Pull main configuration file.
 		 */
@@ -192,7 +179,6 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			String webRootDir = fc.getServletContext().getRealPath("/");
 			inputStream = new FileInputStream(configurationFilename);
 			appGuardConfig = ConfigurationParser.readConfigurationFile(inputStream, webRootDir);
-			DOMConfigurator.configure(realLogSettingsFilename);
 			lastConfigReadTime = System.currentTimeMillis();
 		} catch (FileNotFoundException e) {
 			throw new ServletException(e);
