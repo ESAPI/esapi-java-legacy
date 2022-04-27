@@ -8,11 +8,11 @@ import org.owasp.esapi.http.MockFilterConfig;
 
 public class MockWafFilterConfig extends MockFilterConfig {
 
-	public MockWafFilterConfig(Map map) {
-		super(map);
-	}
+    public MockWafFilterConfig(Map map) {
+        super(map);
+    }
 
-	public ServletContext getServletContext() {
-    	return new MockWafServletContext();
+    public ServletContext getServletContext() {
+        return new MockWafServletContext();
     }
 }

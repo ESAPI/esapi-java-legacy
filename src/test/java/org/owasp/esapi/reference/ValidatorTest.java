@@ -61,7 +61,7 @@ import org.owasp.esapi.util.TestUtils;
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class ValidatorTest {
-	
+    
     private static final String PREFERRED_ENCODING = "UTF-8";
 
     @Rule
@@ -77,17 +77,17 @@ public class ValidatorTest {
 
     @Test
     public void testAssertValidFileUpload() {
-        // TODO -		assertValidFileUpload(String, String, String, byte[], int, boolean, ValidationErrorList)
+        // TODO -        assertValidFileUpload(String, String, String, byte[], int, boolean, ValidationErrorList)
     }
 
     @Test
     public void testGetPrintable1() {
-        // TODO -		getValidPrintable(String, char[], int, boolean, ValidationErrorList)
+        // TODO -        getValidPrintable(String, char[], int, boolean, ValidationErrorList)
     }
 
     @Test
     public void testGetPrintable2() {
-        //	 TODO -	getValidPrintable(String, String, int, boolean, ValidationErrorList)
+        //     TODO -    getValidPrintable(String, String, int, boolean, ValidationErrorList)
     }
 
     @Test
@@ -376,7 +376,7 @@ public class ValidatorTest {
             // Unix specific paths should pass
             assertTrue(instance.isValidDirectoryPath("test6", "/", parent, false, errors));         // Root directory
             assertEquals(5, errors.size());
-        	// Note, we used to say that about '/bin', but Ubuntu 20.x
+            // Note, we used to say that about '/bin', but Ubuntu 20.x
             // changed '/bin' to a sym link to 'usr/bin'. We can't use '/etc'
             // because under MacOS, that is a sym link to 'private/etc'.
             assertTrue(instance.isValidDirectoryPath("test7", "/dev", parent, false, errors));      // Always exist directory
@@ -424,9 +424,9 @@ public class ValidatorTest {
     @Test
     public void testIsValidDouble() {
         // isValidDouble(String, String, double, double, boolean)
-    	Validator instance = ESAPI.validator();
-    	ValidationErrorList errors = new ValidationErrorList();
-    	//testing negative range
+        Validator instance = ESAPI.validator();
+        ValidationErrorList errors = new ValidationErrorList();
+        //testing negative range
         assertFalse(instance.isValidDouble("test1", "-4", 1, 10, false, errors));
         assertEquals(1, errors.size());
         assertTrue(instance.isValidDouble("test2", "-4", -10, 10, false, errors));
@@ -889,7 +889,7 @@ public class ValidatorTest {
 
     @Test
     public void testIsValidRedirectLocation() {
-        // TODO -		isValidRedirectLocation(String, String, boolean)
+        // TODO -        isValidRedirectLocation(String, String, boolean)
     }
 
     //      Test split out and moved to HTMLValidationRuleLogsTest.java & HTMLValidationRuleThrowsTest.java
@@ -1008,14 +1008,14 @@ public class ValidatorTest {
             assertTrue(safeRequest.getParameter("p" + i).equals(request.getParameter("p" + i)));
         }
         for (int i = 1; i <= 2; i++) {
-        	boolean testResult = false;
-        	try {
-        		testResult = safeRequest.getParameter("f" + i).equals(request.getParameter("f" + i));
-        	} catch (NullPointerException npe) {
-        		//the test is this block SHOULD fail. a NPE is an acceptable failure state
-        		testResult = false; //redundant, just being descriptive here
-        	}
-        	assertFalse(testResult);
+            boolean testResult = false;
+            try {
+                testResult = safeRequest.getParameter("f" + i).equals(request.getParameter("f" + i));
+            } catch (NullPointerException npe) {
+                //the test is this block SHOULD fail. a NPE is an acceptable failure state
+                testResult = false; //redundant, just being descriptive here
+            }
+            assertFalse(testResult);
         }
         assertNull(safeRequest.getParameter("e1"));
 
@@ -1060,10 +1060,10 @@ public class ValidatorTest {
     
     @Test
     public void testHeaderLengthChecks(){
-    	Validator v = ESAPI.validator();
-    	SecurityConfiguration sc = ESAPI.securityConfiguration();
-    	assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(257), "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false));
-    	assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(4097), "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
+        Validator v = ESAPI.validator();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
+        assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(257), "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false));
+        assertFalse(v.isValidInput("addHeader", TestUtils.generateStringOfLength(4097), "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false));
     }
 
     @Test
@@ -1121,41 +1121,41 @@ public class ValidatorTest {
     
     @Test
     public void testGmailEmailAddress(){
-    	Validator v = ESAPI.validator();
-    	assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
-    	assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
+        Validator v = ESAPI.validator();
+        assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
+        assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
     }
     
     @Test
     public void testGetValidUri(){
-    	Validator v = ESAPI.validator();
-    	assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
+        Validator v = ESAPI.validator();
+        assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
     }
     
     @Test
     public void testGetValidUriNullInput(){
-    	Validator v = ESAPI.validator();
-    	boolean isValid = v.isValidURI("test", null, true);
-    	assertTrue(isValid);
+        Validator v = ESAPI.validator();
+        boolean isValid = v.isValidURI("test", null, true);
+        assertTrue(isValid);
     }
     
     @Test
     public void testRegex(){
-    	Validator v = ESAPI.validator();
-    	boolean isValid = v.isValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
-    	assertFalse(isValid);
+        Validator v = ESAPI.validator();
+        boolean isValid = v.isValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
+        assertFalse(isValid);
     }
     
     @Test(expected = ValidationException.class)
     public void testRegexWithGetValid() throws IntrusionException, ValidationException {
-    	Validator v = ESAPI.validator();
-    	String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
+        Validator v = ESAPI.validator();
+        String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
     }
     
     @Test
     public void testavaloqLooseSafeString(){
-    	Validator v = ESAPI.validator();
-    	boolean isValid = v.isValidInput("RegexString", "&quot;test&quot;", "avaloqLooseSafeString", 2147483647, true, true);
-    	assertFalse(isValid);
+        Validator v = ESAPI.validator();
+        boolean isValid = v.isValidInput("RegexString", "&quot;test&quot;", "avaloqLooseSafeString", 2147483647, true, true);
+        assertFalse(isValid);
     }
 }

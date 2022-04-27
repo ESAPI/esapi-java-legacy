@@ -19,7 +19,7 @@
  * Original class name: SignatureByPassTest.
  * 
  * NOTE: If this test fails, your version of ESAPI is vulnerable (or you have
- * 		 it configured not to require a MAC which you should NOT do).
+ *          it configured not to require a MAC which you should NOT do).
  */
 
 package org.owasp.esapi.crypto;
@@ -49,7 +49,7 @@ public class ESAPICryptoMACByPassTest {
 
     @Before
     public void setUp() throws NoSuchAlgorithmException, InvalidKeySpecException {
-    	; // Do any prerequisite setup here.
+        ; // Do any prerequisite setup here.
     }
 
     @Test
@@ -61,21 +61,21 @@ public class ESAPICryptoMACByPassTest {
         //Encryption with MAC
         String originalMessage = "Cryptography!?!?";
         System.out.printf("Encrypting the message '%s'\n", originalMessage);
-        	// Until there is a better way to do this. But this is much easier
-        	// than having to set up a custom ESAPI.properties file just for
-        	// this test.
-        	//
-        	// NOTE: Philippe Arteau's original exploit used "AES/OFB/NoPadding"
+            // Until there is a better way to do this. But this is much easier
+            // than having to set up a custom ESAPI.properties file just for
+            // this test.
+            //
+            // NOTE: Philippe Arteau's original exploit used "AES/OFB/NoPadding"
             //       so that one could see that the effect of the decryption would
-        	//		 be "Craptography!?!?". However, if you wish to do that, then
-        	//		 you must also change the ESAPI.properties file used by ESAPI
-        	//		 JUnit tests sp that "OFB" is accepted as an allowed cipher
-        	//		 mode. The easiest way to do that (if you are still not convinced)
-        	//		 is to add "OFB" mode to Encryptor.cipher_modes.additional_allowed;
-        	//		 e.g.,  Encryptor.cipher_modes.additional_allowed=CBC,OFB
-        	//
+            //         be "Craptography!?!?". However, if you wish to do that, then
+            //         you must also change the ESAPI.properties file used by ESAPI
+            //         JUnit tests sp that "OFB" is accepted as an allowed cipher
+            //         mode. The easiest way to do that (if you are still not convinced)
+            //         is to add "OFB" mode to Encryptor.cipher_modes.additional_allowed;
+            //         e.g.,  Encryptor.cipher_modes.additional_allowed=CBC,OFB
+            //
         String origCipherXform =
-        	ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/NoPadding");
+            ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/NoPadding");
         CipherText ct = ESAPI.encryptor().encrypt(sk,new PlainText(originalMessage));
 
         //Serialize the ciphertext in order to send it over the wire..
@@ -87,20 +87,20 @@ public class ESAPICryptoMACByPassTest {
         //Decrypt
         CipherText modifierCtObj = CipherText.fromPortableSerializedBytes(modifiedCt);
         try {
-        	ESAPI.securityConfiguration().setCipherTransformation(origCipherXform);
-        		// This decryption should fail by throwing an EncryptionException
-        		// if ESAPI crypto is NOT vulnerable and you never get to the
-        		// subsequent lines in the try block.
+            ESAPI.securityConfiguration().setCipherTransformation(origCipherXform);
+                // This decryption should fail by throwing an EncryptionException
+                // if ESAPI crypto is NOT vulnerable and you never get to the
+                // subsequent lines in the try block.
             PlainText pt = ESAPI.encryptor().decrypt(sk,modifierCtObj);
             System.out.printf("Decrypting to '%s' (probably will look like garbage!)\n", new String(pt.asBytes()));
             System.out.println("This ESAPI version vulnerable to MAC by-pass described in GitHub issue # 312! Upgrade to latest version.");
             fail("This ESAPI version is vulnerable to MAC by-pass described in GitHub issue # 312! Upgrade to latest version.");
         } catch(EncryptionException eex) {
-        	String errMsg = eex.getMessage();
-        		// See private String DECRYPTION_FAILED in JavaEncryptor.
-        	String expectedError = "Decryption failed; see logs for details.";
-        	assertTrue( errMsg.equals(expectedError) );
-        	System.out.println("testMacByPass(): Attempted decryption after MAC tampering failed.");
+            String errMsg = eex.getMessage();
+                // See private String DECRYPTION_FAILED in JavaEncryptor.
+            String expectedError = "Decryption failed; see logs for details.";
+            assertTrue( errMsg.equals(expectedError) );
+            System.out.println("testMacByPass(): Attempted decryption after MAC tampering failed.");
             System.out.println("Fix of issue # 306 successful. Crypto MAC by-pass test failed; exception was: [" + eex + "]");
         }
     }

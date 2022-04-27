@@ -35,82 +35,82 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class DetectOutboundContentRule extends Rule {
 
-	private Pattern contentType;
-	private Pattern pattern;
-	private Pattern uri;
-	
-	public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern, Pattern uri) {
-		this.contentType = contentType;
-		this.pattern = pattern;
-		this.uri = uri;
-		setId(id);
-	}
+    private Pattern contentType;
+    private Pattern pattern;
+    private Pattern uri;
+    
+    public DetectOutboundContentRule(String id, Pattern contentType, Pattern pattern, Pattern uri) {
+        this.contentType = contentType;
+        this.pattern = pattern;
+        this.uri = uri;
+        setId(id);
+    }
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		/*
-		 * Early fail: if URI doesn't match.
-		 */
-		if ( uri != null && ! uri.matcher(request.getRequestURI()).matches() ) {
-			return new DoNothingAction(); 
-		}
+        /*
+         * Early fail: if URI doesn't match.
+         */
+        if ( uri != null && ! uri.matcher(request.getRequestURI()).matches() ) {
+            return new DoNothingAction(); 
+        }
 
-		/*
-		 * Early fail: if the content type is one we'd like to search for output patterns.
-		 */
+        /*
+         * Early fail: if the content type is one we'd like to search for output patterns.
+         */
 
-		String inboundContentType;
-		String charEnc;
-		
-		if ( response != null ) {
-			if ( response.getContentType() == null ) {
-				response.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
-			}
-			inboundContentType = response.getContentType();
-			charEnc = response.getCharacterEncoding();
-			
-		} else {
-			if ( httpResponse.getContentType() == null ) {
-				httpResponse.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
-			}
-			inboundContentType = httpResponse.getContentType();
-			charEnc = httpResponse.getCharacterEncoding();
-		}
-	
-		if ( contentType.matcher(inboundContentType).matches() ) {
-			/*
-			 * Depending on the encoding, search through the bytes
-			 * for the pattern.
-			 */
-			try {
+        String inboundContentType;
+        String charEnc;
+        
+        if ( response != null ) {
+            if ( response.getContentType() == null ) {
+                response.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+            }
+            inboundContentType = response.getContentType();
+            charEnc = response.getCharacterEncoding();
+            
+        } else {
+            if ( httpResponse.getContentType() == null ) {
+                httpResponse.setContentType(AppGuardianConfiguration.DEFAULT_CONTENT_TYPE);
+            }
+            inboundContentType = httpResponse.getContentType();
+            charEnc = httpResponse.getCharacterEncoding();
+        }
+    
+        if ( contentType.matcher(inboundContentType).matches() ) {
+            /*
+             * Depending on the encoding, search through the bytes
+             * for the pattern.
+             */
+            try {
 
-				byte[] bytes = null;
-				
-				try {
-					bytes = response.getInterceptingServletOutputStream().getResponseBytes();
-				} catch (IOException ioe) {
-					log(request,"Error matching pattern '" + pattern.pattern() + "', IOException encountered (possibly too large?): " + ioe.getMessage() + " (in response to URL: '" + request.getRequestURL() + "')");
-					return new DoNothingAction(); // yes this is a fail open!
-				}
+                byte[] bytes = null;
+                
+                try {
+                    bytes = response.getInterceptingServletOutputStream().getResponseBytes();
+                } catch (IOException ioe) {
+                    log(request,"Error matching pattern '" + pattern.pattern() + "', IOException encountered (possibly too large?): " + ioe.getMessage() + " (in response to URL: '" + request.getRequestURL() + "')");
+                    return new DoNothingAction(); // yes this is a fail open!
+                }
 
-				String s = new String(bytes,charEnc);
+                String s = new String(bytes,charEnc);
 
-				if ( pattern.matcher(s).matches() ) {
+                if ( pattern.matcher(s).matches() ) {
 
-					log(request,"Content pattern '" + pattern.pattern() + "' was found in response to URL: '" + request.getRequestURL() + "'");
-					return new DefaultAction();
+                    log(request,"Content pattern '" + pattern.pattern() + "' was found in response to URL: '" + request.getRequestURL() + "'");
+                    return new DefaultAction();
 
-				}
+                }
 
-			} catch (UnsupportedEncodingException uee) {
-				log(request,"Content pattern '" + pattern.pattern() + "' could not be found due to encoding error: " + uee.getMessage());
-			}
-		}
+            } catch (UnsupportedEncodingException uee) {
+                log(request,"Content pattern '" + pattern.pattern() + "' could not be found due to encoding error: " + uee.getMessage());
+            }
+        }
 
-		return new DoNothingAction();
+        return new DoNothingAction();
 
-	}
+    }
 
 }

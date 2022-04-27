@@ -29,74 +29,74 @@ import org.owasp.esapi.Logger;
  */
 public final class PlainText implements Serializable {
 
-	private static final long serialVersionUID = 20090921;
-	private static Logger logger = ESAPI.getLogger("PlainText");
-	
-	private byte[] rawBytes = null;
-	
-	/**
-	 * Construct a {@code PlainText} object from a {@code String}.
-	 * @param str	The {@code String} that is converted to a UTF-8 encoded
-	 * 				byte array to create the {@code PlainText} object.
-	 * @throws IllegalArgumentException	If {@code str} argument is null.
-	 */
-	public PlainText(String str) {
-		try {
-		    if ( str == null ) {
-		    	throw new IllegalArgumentException("String for plaintext may not be null!");
-		    }
-			rawBytes = str.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// Should never happen.
-			logger.error(Logger.EVENT_FAILURE, "PlainText(String) CTOR failed: Can't find UTF-8 byte-encoding!", e);
-			throw new RuntimeException("Can't find UTF-8 byte-encoding!", e);
-		}
-	}
+    private static final long serialVersionUID = 20090921;
+    private static Logger logger = ESAPI.getLogger("PlainText");
+    
+    private byte[] rawBytes = null;
+    
+    /**
+     * Construct a {@code PlainText} object from a {@code String}.
+     * @param str    The {@code String} that is converted to a UTF-8 encoded
+     *                 byte array to create the {@code PlainText} object.
+     * @throws IllegalArgumentException    If {@code str} argument is null.
+     */
+    public PlainText(String str) {
+        try {
+            if ( str == null ) {
+                throw new IllegalArgumentException("String for plaintext may not be null!");
+            }
+            rawBytes = str.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Should never happen.
+            logger.error(Logger.EVENT_FAILURE, "PlainText(String) CTOR failed: Can't find UTF-8 byte-encoding!", e);
+            throw new RuntimeException("Can't find UTF-8 byte-encoding!", e);
+        }
+    }
 
-	/**
-	 * Construct a {@code PlainText} object from a {@code byte} array.
-	 * @param b	The {@code byte} array used to create the {@code PlainText}
-	 * 			object.
-	 */
-	public PlainText(byte[] b) {
-		// Must allow 0 length arrays though, to represent empty strings.
-		if ( b == null ) {
+    /**
+     * Construct a {@code PlainText} object from a {@code byte} array.
+     * @param b    The {@code byte} array used to create the {@code PlainText}
+     *             object.
+     */
+    public PlainText(byte[] b) {
+        // Must allow 0 length arrays though, to represent empty strings.
+        if ( b == null ) {
             throw new IllegalArgumentException("Byte array representing plaintext cannot be null.");
         }
 
         // Make copy so mutable byte array b can't change PlainText.
-		rawBytes = new byte[ b.length ];
-		System.arraycopy(b, 0, rawBytes, 0, b.length);
-	}
-	
-	/**
-	 * Convert the {@code PlainText} object to a UTF-8 encoded {@code String}.
-	 * @return	A {@code String} representing the {@code PlainText} object.
-	 */
-	public String toString() {
-		try {
-			return new String(rawBytes, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			// Should never happen.
-			logger.error(Logger.EVENT_FAILURE, "PlainText.toString() failed: Can't find UTF-8 byte-encoding!", e);
-			throw new RuntimeException("Can't find UTF-8 byte-encoding!", e);
-		}
-	}
-	
-	/**
-	 * Convert the {@code PlainText} object to a byte array.
-	 * @return	A byte array representing the {@code PlainText} object.
-	 */
-	public byte[] asBytes() {
-	    byte[] bytes = new byte[ rawBytes.length ];
-	    System.arraycopy(rawBytes, 0, bytes, 0, rawBytes.length);
-		return bytes;
-	}
-	
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override public boolean equals(Object anObject) {
+        rawBytes = new byte[ b.length ];
+        System.arraycopy(b, 0, rawBytes, 0, b.length);
+    }
+    
+    /**
+     * Convert the {@code PlainText} object to a UTF-8 encoded {@code String}.
+     * @return    A {@code String} representing the {@code PlainText} object.
+     */
+    public String toString() {
+        try {
+            return new String(rawBytes, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            // Should never happen.
+            logger.error(Logger.EVENT_FAILURE, "PlainText.toString() failed: Can't find UTF-8 byte-encoding!", e);
+            throw new RuntimeException("Can't find UTF-8 byte-encoding!", e);
+        }
+    }
+    
+    /**
+     * Convert the {@code PlainText} object to a byte array.
+     * @return    A byte array representing the {@code PlainText} object.
+     */
+    public byte[] asBytes() {
+        byte[] bytes = new byte[ rawBytes.length ];
+        System.arraycopy(rawBytes, 0, bytes, 0, rawBytes.length);
+        return bytes;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override public boolean equals(Object anObject) {
 
         if ( this == anObject ) return true;
         if ( anObject == null ) return false;
@@ -108,42 +108,42 @@ public final class PlainText implements Serializable {
                   );
         }
         return result;
-	}
-	
-	/**
-	 * Same as {@code this.toString().hashCode()}.
-	 * @return	{@code this.toString().hashCode()}.
-	 */
-	@Override public int hashCode() {
-		return this.toString().hashCode();
-	}
-	
-	/**
-	 * Return the length of the UTF-8 encoded byte array representing this
-	 * object. Note that if this object was constructed with the constructor
-	 * {@code PlainText(String str)}, then this length might not necessarily
-	 * agree with {@code str.length()}.
-	 * 
-	 * @return	The length of the UTF-8 encoded byte array representing this
-	 * 			object.
-	 */
-	public int length() {
-		return rawBytes.length;
-	}
-	
-	// DISCUSS: Should we set 'rawBytes' to null??? Won't make it eligible for
-	//			GC unless this PlainText object is set to null which can't do
-	//			from here. If we set it to null, most methods will cause
-	//			NullPointerException to be thrown. Also will have to change a
-	//			lot of JUnit tests.
-	/**
-	 * First overwrite the bytes of plaintext with the character '*'.
-	 */
-	public void overwrite() {
-		CryptoHelper.overwrite( rawBytes );
-		// rawBytes = null;					// See above comment re: discussion.
-	}
-	
+    }
+    
+    /**
+     * Same as {@code this.toString().hashCode()}.
+     * @return    {@code this.toString().hashCode()}.
+     */
+    @Override public int hashCode() {
+        return this.toString().hashCode();
+    }
+    
+    /**
+     * Return the length of the UTF-8 encoded byte array representing this
+     * object. Note that if this object was constructed with the constructor
+     * {@code PlainText(String str)}, then this length might not necessarily
+     * agree with {@code str.length()}.
+     * 
+     * @return    The length of the UTF-8 encoded byte array representing this
+     *             object.
+     */
+    public int length() {
+        return rawBytes.length;
+    }
+    
+    // DISCUSS: Should we set 'rawBytes' to null??? Won't make it eligible for
+    //            GC unless this PlainText object is set to null which can't do
+    //            from here. If we set it to null, most methods will cause
+    //            NullPointerException to be thrown. Also will have to change a
+    //            lot of JUnit tests.
+    /**
+     * First overwrite the bytes of plaintext with the character '*'.
+     */
+    public void overwrite() {
+        CryptoHelper.overwrite( rawBytes );
+        // rawBytes = null;                    // See above comment re: discussion.
+    }
+    
     /**
      * Needed for correct definition of equals for general classes.
      * (Technically not needed for 'final' classes though like this class

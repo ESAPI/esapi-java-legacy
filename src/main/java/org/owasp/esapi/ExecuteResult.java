@@ -26,50 +26,50 @@ package org.owasp.esapi;
  */
 public class ExecuteResult {
     
-	private final int exitValue;
-	private final String output;
-	private final String errors;
+    private final int exitValue;
+    private final String output;
+    private final String errors;
 
-	/**
-	 * Constructs an ExecuteResult from the given values.
-	 *
-	 * @param exitValue
-	 *            the code from java.lang.Process.exitValue()
-	 * @param output
-	 *            the contents read from java.lang.Process.getInputStream()
-	 * @param errors
-	 *            the contents read from java.lang.Process.getErrorStream()
-	 */
-	public ExecuteResult(int exitValue, String output, String errors) {
-		this.exitValue = exitValue;
-		this.output = output;
-		this.errors = errors;
-	}
+    /**
+     * Constructs an ExecuteResult from the given values.
+     *
+     * @param exitValue
+     *            the code from java.lang.Process.exitValue()
+     * @param output
+     *            the contents read from java.lang.Process.getInputStream()
+     * @param errors
+     *            the contents read from java.lang.Process.getErrorStream()
+     */
+    public ExecuteResult(int exitValue, String output, String errors) {
+        this.exitValue = exitValue;
+        this.output = output;
+        this.errors = errors;
+    }
 
-	/**
-	 * @return the code from java.lang.Process.exitValue()
-	 */
-	public int getExitValue() {
-		return exitValue;
-	}
+    /**
+     * @return the code from java.lang.Process.exitValue()
+     */
+    public int getExitValue() {
+        return exitValue;
+    }
 
-	/**
-	 * @return the contents read from java.lang.Process.getInputStream()
-	 */
-	public String getOutput() {
-		return output;
-	}
+    /**
+     * @return the contents read from java.lang.Process.getInputStream()
+     */
+    public String getOutput() {
+        return output;
+    }
 
-	/**
-	 * @return the contents read from java.lang.Process.getErrorStream()
-	 */
-	public String getErrors() {
-		return errors;
-	}
-	
-	@Override
-	public String toString() {
-		return "ExecuteResult[exitValue="+exitValue+",output="+output+",errors="+errors+"]";
-	}
+    /**
+     * @return the contents read from java.lang.Process.getErrorStream()
+     */
+    public String getErrors() {
+        return errors;
+    }
+    
+    @Override
+    public String toString() {
+        return "ExecuteResult[exitValue="+exitValue+",output="+output+",errors="+errors+"]";
+    }
 
 }

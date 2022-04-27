@@ -66,23 +66,23 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * Instantiate a new Executor
      */
     private DefaultExecutor() {
-		if ( System.getProperty("os.name").indexOf("Windows") != -1 ) {
-			logger.warning( Logger.SECURITY_SUCCESS, "Using WindowsCodec for Executor. If this is not running on Windows this could allow injection" );
-			codec = new WindowsCodec();
-		} else {
-			logger.warning( Logger.SECURITY_SUCCESS, "Using UnixCodec for Executor. If this is not running on Unix this could allow injection" );
-			codec = new UnixCodec();
-		}
+        if ( System.getProperty("os.name").indexOf("Windows") != -1 ) {
+            logger.warning( Logger.SECURITY_SUCCESS, "Using WindowsCodec for Executor. If this is not running on Windows this could allow injection" );
+            codec = new WindowsCodec();
+        } else {
+            logger.warning( Logger.SECURITY_SUCCESS, "Using UnixCodec for Executor. If this is not running on Unix this could allow injection" );
+            codec = new UnixCodec();
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     public ExecuteResult executeSystemCommand(File executable, List params) throws ExecutorException {
-    	File workdir = ESAPI.securityConfiguration().getWorkingDirectory();
-    	boolean logParams = false;
-    	boolean redirectErrorStream = false;
-    	return executeSystemCommand( executable, params, workdir, codec, logParams, redirectErrorStream );
+        File workdir = ESAPI.securityConfiguration().getWorkingDirectory();
+        boolean logParams = false;
+        boolean redirectErrorStream = false;
+        return executeSystemCommand( executable, params, workdir, codec, logParams, redirectErrorStream );
     }
 
     /**
@@ -108,8 +108,8 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             
             // executable must use canonical path
             if ( !executable.getPath().equals( executable.getCanonicalPath() ) ) {
-            	throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-canonical path: " + executable);
-        	}
+                throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-canonical path: " + executable);
+            }
             
             // exact, absolute, canonical path to executable must be listed in ESAPI configuration 
             List approved = ESAPI.securityConfiguration().getAllowedExecutables();
@@ -119,8 +119,8 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
 
             // escape any special characters in the parameters
             for ( int i = 0; i < params.size(); i++ ) {
-            	String param = (String)params.get(i);
-            	params.set( i, ESAPI.encoder().encodeForOS(codec, param));
+                String param = (String)params.get(i);
+                params.set( i, ESAPI.encoder().encodeForOS(codec, param));
             }
             
             // working directory must exist
@@ -143,9 +143,9 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             pb.redirectErrorStream(redirectErrorStream);
 
             if ( logParams ) {
-            	logger.debug(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
+                logger.debug(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " " + params + " in " + workdir);
             } else {
-            	logger.debug(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " [sensitive parameters obscured] in " + workdir);
+                logger.debug(Logger.SECURITY_SUCCESS, "Initiating executable: " + executable + " [sensitive parameters obscured] in " + workdir);
             }
 
             final StringBuilder outputBuffer = new StringBuilder();
@@ -154,37 +154,37 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             try {
                 ReadThread errorReader;
                 if (!redirectErrorStream) {
-                	errorReader = new ReadThread(process.getErrorStream(), errorsBuffer);
-                	errorReader.start();
+                    errorReader = new ReadThread(process.getErrorStream(), errorsBuffer);
+                    errorReader.start();
                 } else {
-                	errorReader = null;
+                    errorReader = null;
                 }
-            	readStream( process.getInputStream(), outputBuffer );
-            	if (errorReader != null) {
-            		errorReader.join();
-            		if (errorReader.exception != null) {
-            			throw errorReader.exception;
-            		}
-            	}
-            	process.waitFor();
+                readStream( process.getInputStream(), outputBuffer );
+                if (errorReader != null) {
+                    errorReader.join();
+                    if (errorReader.exception != null) {
+                        throw errorReader.exception;
+                    }
+                }
+                process.waitFor();
             } catch (Throwable e) {
-            	process.destroy();
-            	throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
+                process.destroy();
+                throw new ExecutorException("Execution failure", "Exception thrown during execution of system command: " + e.getMessage(), e);
             }
 
             String output = outputBuffer.toString();
             String errors = errorsBuffer.toString();
             int exitValue = process.exitValue();
             if ( errors != null && errors.length() > 0 ) {
-            	String logErrors = errors;
-            	final int MAX_LEN = 256;
-            	if (logErrors.length() > MAX_LEN) {
-            		logErrors = logErrors.substring(0, MAX_LEN) + "(truncated at "+MAX_LEN+" characters)";
-            	}
-            	logger.warning( Logger.SECURITY_SUCCESS, "Error during system command: " + logErrors );
+                String logErrors = errors;
+                final int MAX_LEN = 256;
+                if (logErrors.length() > MAX_LEN) {
+                    logErrors = logErrors.substring(0, MAX_LEN) + "(truncated at "+MAX_LEN+" characters)";
+                }
+                logger.warning( Logger.SECURITY_SUCCESS, "Error during system command: " + logErrors );
             }
             if ( exitValue != 0 ) {
-            	logger.warning( Logger.EVENT_FAILURE, "System command exited with non-zero status: " + exitValue );
+                logger.warning( Logger.EVENT_FAILURE, "System command exited with non-zero status: " + exitValue );
             }
 
             logger.debug(Logger.SECURITY_SUCCESS, "System command complete");
@@ -198,36 +198,36 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
      * readStream reads lines from an input stream and returns all of them in a single string
      * 
      * @param is
-     * 			input stream to read from
+     *             input stream to read from
      * @throws IOException
      */
     private static void readStream( InputStream is, StringBuilder sb ) throws IOException {
-	    InputStreamReader isr = new InputStreamReader(is);
-	    BufferedReader br = new BufferedReader(isr);
-	    String line;
-	    while ((line = br.readLine()) != null) {
-	        sb.append(line).append('\n');
-	    }
+        InputStreamReader isr = new InputStreamReader(is);
+        BufferedReader br = new BufferedReader(isr);
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line).append('\n');
+        }
     }
     
     private static class ReadThread extends Thread {
-    	volatile IOException exception;
-    	private final InputStream stream;
-    	private final StringBuilder buffer;
+        volatile IOException exception;
+        private final InputStream stream;
+        private final StringBuilder buffer;
 
-    	ReadThread(InputStream stream, StringBuilder buffer) {
-    		this.stream = stream;
-    		this.buffer = buffer;
-    	}
+        ReadThread(InputStream stream, StringBuilder buffer) {
+            this.stream = stream;
+            this.buffer = buffer;
+        }
 
-    	@Override
-		public void run() {
-    		try {
-    			readStream(stream, buffer);
-    		} catch (IOException e) {
-    			exception = e;
-    		}
-    	}
+        @Override
+        public void run() {
+            try {
+                readStream(stream, buffer);
+            } catch (IOException e) {
+                exception = e;
+            }
+        }
 
     }
 

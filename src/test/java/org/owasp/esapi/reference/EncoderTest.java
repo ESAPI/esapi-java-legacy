@@ -53,14 +53,14 @@ import junit.framework.TestSuite;
  */
 public class EncoderTest extends TestCase {
     
-	private static final String PREFERRED_ENCODING = "UTF-8";
-	
+    private static final String PREFERRED_ENCODING = "UTF-8";
+    
     /**
-	 * Instantiates a new encoder test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new encoder test.
+     * 
+     * @param testName
+     *            the test name
+     */
     public EncoderTest(String testName) {
         super(testName);
     }
@@ -70,7 +70,7 @@ public class EncoderTest extends TestCase {
      * @throws Exception 
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
     
     /**
@@ -78,44 +78,44 @@ public class EncoderTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
     
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(EncoderTest.class);        
         return suite;
     }
     
-	/**
-	 * Test of canonicalize method, of class org.owasp.esapi.Encoder.
-	 * 
-	 * @throws EncodingException
-	 */
-	public void testCanonicalize() throws EncodingException {
-		System.out.println("canonicalize");
+    /**
+     * Test of canonicalize method, of class org.owasp.esapi.Encoder.
+     * 
+     * @throws EncodingException
+     */
+    public void testCanonicalize() throws EncodingException {
+        System.out.println("canonicalize");
 
         ArrayList<String> list = new ArrayList<String>();
         list.add( "HTMLEntityCodec" );
-	    list.add( "PercentCodec" );
-		Encoder instance = new DefaultEncoder( list );
-		
-		// Test null paths
-		assertEquals( null, instance.canonicalize(null));
-		assertEquals( null, instance.canonicalize(null, true));
-		assertEquals( null, instance.canonicalize(null, false));
-		assertEquals( null, instance.canonicalize(null, true, true));
-		assertEquals( null, instance.canonicalize(null, true, false));
-		assertEquals( null, instance.canonicalize(null, false, true));
-		assertEquals( null, instance.canonicalize(null, false, false));
-		
-		// test exception paths
-		assertEquals( "%", instance.canonicalize("%25", true));
-		assertEquals( "%", instance.canonicalize("%25", false));
+        list.add( "PercentCodec" );
+        Encoder instance = new DefaultEncoder( list );
+        
+        // Test null paths
+        assertEquals( null, instance.canonicalize(null));
+        assertEquals( null, instance.canonicalize(null, true));
+        assertEquals( null, instance.canonicalize(null, false));
+        assertEquals( null, instance.canonicalize(null, true, true));
+        assertEquals( null, instance.canonicalize(null, true, false));
+        assertEquals( null, instance.canonicalize(null, false, true));
+        assertEquals( null, instance.canonicalize(null, false, false));
+        
+        // test exception paths
+        assertEquals( "%", instance.canonicalize("%25", true));
+        assertEquals( "%", instance.canonicalize("%25", false));
 
         assertEquals( "%", instance.canonicalize("%25"));
         assertEquals( "%F", instance.canonicalize("%25F"));
@@ -261,9 +261,9 @@ public class EncoderTest extends TestCase {
         assertEquals( "<", instance.canonicalize("\\003C"));
         assertEquals( "<", instance.canonicalize("\\0003C"));
         assertEquals( "<", instance.canonicalize("\\00003C"));
-	}
+    }
 
-	
+    
     /**
      * Test of canonicalize method, of class org.owasp.esapi.Encoder.
      * 
@@ -286,27 +286,27 @@ public class EncoderTest extends TestCase {
         assertEquals( "<", instance.canonicalize("%26lt%3b", false)); //first entity, then percent
         assertEquals( "&", instance.canonicalize("&#x25;26", false)); //first percent, then entity
 
-		//enforce multiple and mixed encoding detection
-		try {
-			instance.canonicalize("%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", true, true);
-			fail("Multiple and mixed encoding not detected");
-		} catch (IntrusionException ie) {}
+        //enforce multiple and mixed encoding detection
+        try {
+            instance.canonicalize("%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", true, true);
+            fail("Multiple and mixed encoding not detected");
+        } catch (IntrusionException ie) {}
 
-		//enforce multiple but not mixed encoding detection
-		try {
-			instance.canonicalize("%252525253C", true, false); 
-			fail("Multiple encoding not detected");
-		} catch (IntrusionException ie) {}
+        //enforce multiple but not mixed encoding detection
+        try {
+            instance.canonicalize("%252525253C", true, false); 
+            fail("Multiple encoding not detected");
+        } catch (IntrusionException ie) {}
 
-		//enforce mixed but not multiple encoding detection
-		try {
-			instance.canonicalize("%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false, true); 
-			fail("Mixed encoding not detected");
-		} catch (IntrusionException ie) {}
+        //enforce mixed but not multiple encoding detection
+        try {
+            instance.canonicalize("%25 %2526 %26#X3c;script&#x3e; &#37;3Cscript%25252525253e", false, true); 
+            fail("Mixed encoding not detected");
+        } catch (IntrusionException ie) {}
 
-		//enforce niether mixed nor multiple encoding detection -should canonicalize but not throw an error
-		assertEquals( "< < < < < < <", instance.canonicalize("%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", 
-															 false, false)); 
+        //enforce niether mixed nor multiple encoding detection -should canonicalize but not throw an error
+        assertEquals( "< < < < < < <", instance.canonicalize("%26lt; %26lt; &#X25;3c &#x25;3c %2526lt%253B %2526lt%253B %2526lt%253B", 
+                                                             false, false)); 
 
         // nested encoding examples
         assertEquals( "<", instance.canonicalize("%253c", false)); //nested encode % with percent
@@ -344,7 +344,7 @@ public class EncoderTest extends TestCase {
     }
 
     /**
-	 * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
+     * Test of encodeForHTML method, of class org.owasp.esapi.Encoder.
      *
      * @throws Exception
      */
@@ -367,8 +367,8 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of encodeForHTMLAttribute method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForHTMLAttribute method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForHTMLAttribute() {
         System.out.println("encodeForHTMLAttribute");
         Encoder instance = ESAPI.encoder();
@@ -395,31 +395,31 @@ public class EncoderTest extends TestCase {
     }
     
     public void testCSSTripletLeadString() {
-    	Encoder instance = ESAPI.encoder();
-    	assertEquals("rgb(255,255,255)\\21 ", instance.encodeForCSS("rgb(255,255,255)!"));
-    	assertEquals("rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("rgb(25%,25%,25%)!"));
+        Encoder instance = ESAPI.encoder();
+        assertEquals("rgb(255,255,255)\\21 ", instance.encodeForCSS("rgb(255,255,255)!"));
+        assertEquals("rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("rgb(25%,25%,25%)!"));
     }
     public void testCSSTripletTailString() {
-		Encoder instance = ESAPI.encoder();
-    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
-    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
+        Encoder instance = ESAPI.encoder();
+        assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
+        assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
     }
     public void testCSSTripletStringPart() {
-		Encoder instance = ESAPI.encoder();
-    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
-    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
+        Encoder instance = ESAPI.encoder();
+        assertEquals("\\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)!"));
+        assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)!"));
     }
     public void testCSSTripletStringMultiPart() {
-		Encoder instance = ESAPI.encoder();
-    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(255,255,255)!"));
-    	assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)! $field=rgb(25%,25%,25%)!"));
-    	assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(25%,25%,25%)!"));
+        Encoder instance = ESAPI.encoder();
+        assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(255,255,255)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(255,255,255)!"));
+        assertEquals("\\24 field\\3d rgb(25%,25%,25%)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(25%,25%,25%)! $field=rgb(25%,25%,25%)!"));
+        assertEquals("\\24 field\\3d rgb(255,255,255)\\21 \\20 \\24 field\\3d rgb(25%,25%,25%)\\21 ", instance.encodeForCSS("$field=rgb(255,255,255)! $field=rgb(25%,25%,25%)!"));
     }
        
     
     /**
-	 * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForJavaScript method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForJavascript() {
         System.out.println("encodeForJavascript");
         Encoder instance = ESAPI.encoder();
@@ -455,8 +455,8 @@ public class EncoderTest extends TestCase {
 
         
     /**
-	 * Test of encodeForXPath method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForXPath method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForXPath() {
         System.out.println("encodeForXPath");
         Encoder instance = ESAPI.encoder();
@@ -467,8 +467,8 @@ public class EncoderTest extends TestCase {
 
     
     /**
-	 * Test of encodeForSQL method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForSQL method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForSQL() {
         System.out.println("encodeForSQL");
         Encoder instance = ESAPI.encoder();
@@ -495,8 +495,8 @@ public class EncoderTest extends TestCase {
 
     
     /**
-	 * Test of encodeForLDAP method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForLDAP method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForLDAP() {
         System.out.println("encodeForLDAP");
         Encoder instance = ESAPI.encoder();
@@ -508,8 +508,8 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of encodeForLDAP method with without encoding wildcard characters, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForLDAP method with without encoding wildcard characters, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForLDAPWithoutEncodingWildcards() {
         System.out.println("encodeForLDAPWithoutEncodingWildcards");
         Encoder instance = ESAPI.encoder();
@@ -520,8 +520,8 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of encodeForDN method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForDN method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForDN() {
         System.out.println("encodeForDN");
         Encoder instance = ESAPI.encoder();
@@ -539,9 +539,9 @@ public class EncoderTest extends TestCase {
      * Longstanding issue of always lowercasing named HTML entities.  This will be set right now. 
      */
     public void testNamedUpperCaseDecoding(){
-    	String input = "&Uuml;";
-    	String expected = "Ü";
-    	assertEquals(expected, ESAPI.encoder().decodeForHTML(input));
+        String input = "&Uuml;";
+        String expected = "Ü";
+        assertEquals(expected, ESAPI.encoder().decodeForHTML(input));
     }
     
     public void testEncodeForXMLNull() {
@@ -607,7 +607,7 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of encodeForURL method, of class org.owasp.esapi.Encoder.
+     * Test of encodeForURL method, of class org.owasp.esapi.Encoder.
      *
      * @throws Exception
      */
@@ -619,7 +619,7 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of decodeFromURL method, of class org.owasp.esapi.Encoder.
+     * Test of decodeFromURL method, of class org.owasp.esapi.Encoder.
      *
      * @throws Exception
      */
@@ -627,29 +627,29 @@ public class EncoderTest extends TestCase {
         System.out.println("decodeFromURL");
         Encoder instance = ESAPI.encoder();
         try {
-        	assertEquals(null, instance.decodeFromURL(null));
+            assertEquals(null, instance.decodeFromURL(null));
             assertEquals("<script>", instance.decodeFromURL("%3Cscript%3E"));
             assertEquals("     ", instance.decodeFromURL("+++++") );
         } catch ( Exception e ) {
             fail();
         }
         try {
-        	instance.decodeFromURL( "%3xridiculous" );
-        	fail();
+            instance.decodeFromURL( "%3xridiculous" );
+            fail();
         } catch( Exception e ) {
-        	// expected
+            // expected
         }
     }
     
     /**
-	 * Test of encodeForBase64 method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of encodeForBase64 method, of class org.owasp.esapi.Encoder.
+     */
     public void testEncodeForBase64() {
         System.out.println("encodeForBase64");
         Encoder instance = ESAPI.encoder();
         
         try {
-        	assertEquals(null, instance.encodeForBase64(null, false));
+            assertEquals(null, instance.encodeForBase64(null, false));
             assertEquals(null, instance.encodeForBase64(null, true));
             assertEquals(null, instance.decodeFromBase64(null));
             for ( int i=0; i < 100; i++ ) {
@@ -664,8 +664,8 @@ public class EncoderTest extends TestCase {
     }
     
     /**
-	 * Test of decodeFromBase64 method, of class org.owasp.esapi.Encoder.
-	 */
+     * Test of decodeFromBase64 method, of class org.owasp.esapi.Encoder.
+     */
     public void testDecodeFromBase64() {
         System.out.println("decodeFromBase64");
         Encoder instance = ESAPI.encoder();
@@ -677,25 +677,25 @@ public class EncoderTest extends TestCase {
                 assertTrue( Arrays.equals( r, decoded ) );
             } catch ( IOException e ) {
                 fail();
-	        }
+            }
         }
         for ( int i=0; i < 100; i++ ) {
             try {
                 byte[] r = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS ).getBytes(PREFERRED_ENCODING);
                 String encoded = ESAPI.randomizer().getRandomString(1, EncoderConstants.CHAR_ALPHANUMERICS) + instance.encodeForBase64( r, ESAPI.randomizer().getRandomBoolean() );
-	            byte[] decoded = instance.decodeFromBase64( encoded );
-	            assertFalse( Arrays.equals(r, decoded) );
+                byte[] decoded = instance.decodeFromBase64( encoded );
+                assertFalse( Arrays.equals(r, decoded) );
             } catch( UnsupportedEncodingException ex) {
-            	fail();
+                fail();
             } catch ( IOException e ) {
-            	// expected
+                // expected
             }
         }
     }
     
     /**
-	 * Test of WindowsCodec
-	 */
+     * Test of WindowsCodec
+     */
     public void testWindowsCodec() {
         System.out.println("WindowsCodec");
         Encoder instance = ESAPI.encoder();
@@ -721,15 +721,15 @@ public class EncoderTest extends TestCase {
         assertEquals(orig, win.decode(orig));
         
      // TODO: Check that these are acceptable for Windows
-        assertEquals("c^:^\\jeff", instance.encodeForOS(win, "c:\\jeff"));		
+        assertEquals("c^:^\\jeff", instance.encodeForOS(win, "c:\\jeff"));        
         assertEquals("c^:^\\jeff", win.encode(immune, "c:\\jeff"));
         assertEquals("dir^ ^&^ foo", instance.encodeForOS(win, "dir & foo"));
         assertEquals("dir^ ^&^ foo", win.encode(immune, "dir & foo"));
     }
 
     /**
-	 * Test of UnixCodec
-	 */
+     * Test of UnixCodec
+     */
     public void testUnixCodec() {
         System.out.println("UnixCodec");
         Encoder instance = ESAPI.encoder();
@@ -768,140 +768,140 @@ public class EncoderTest extends TestCase {
     
     public void testCanonicalizePerformance() throws Exception {
         System.out.println("Canonicalization Performance");
-    	Encoder encoder = ESAPI.encoder();
-    	int iterations = 100;
-    	String normal = "The quick brown fox jumped over the lazy dog";
-    	
-    	long start = System.currentTimeMillis();
-    	String temp = null;		// Trade in 1/2 doz warnings in Eclipse for one (never read)
+        Encoder encoder = ESAPI.encoder();
+        int iterations = 100;
+        String normal = "The quick brown fox jumped over the lazy dog";
+        
+        long start = System.currentTimeMillis();
+        String temp = null;        // Trade in 1/2 doz warnings in Eclipse for one (never read)
         for ( int i=0; i< iterations; i++ ) {
-        	temp = normal;
+            temp = normal;
         }
-    	long stop = System.currentTimeMillis();
+        long stop = System.currentTimeMillis();
         System.out.println( "Normal: " + (stop-start) );
         
-    	start = System.currentTimeMillis();
+        start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	temp = encoder.canonicalize( normal, false );
+            temp = encoder.canonicalize( normal, false );
         }
-    	stop = System.currentTimeMillis();
+        stop = System.currentTimeMillis();
         System.out.println( "Normal Loose: " + (stop-start) );
         
-    	start = System.currentTimeMillis();
+        start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	temp = encoder.canonicalize( normal, true );
+            temp = encoder.canonicalize( normal, true );
         }
-    	stop = System.currentTimeMillis();
+        stop = System.currentTimeMillis();
         System.out.println( "Normal Strict: " + (stop-start) );
 
-    	String attack = "%2&#x35;2%3525&#x32;\\u0036lt;\r\n\r\n%&#x%%%3333\\u0033;&%23101;";
-    	
-    	start = System.currentTimeMillis();
+        String attack = "%2&#x35;2%3525&#x32;\\u0036lt;\r\n\r\n%&#x%%%3333\\u0033;&%23101;";
+        
+        start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	temp = attack;
+            temp = attack;
         }
-    	stop = System.currentTimeMillis();
+        stop = System.currentTimeMillis();
         System.out.println( "Attack: " + (stop-start) );
         
-    	start = System.currentTimeMillis();
+        start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	temp = encoder.canonicalize( attack, false );
+            temp = encoder.canonicalize( attack, false );
         }
-    	stop = System.currentTimeMillis();
+        stop = System.currentTimeMillis();
         System.out.println( "Attack Loose: " + (stop-start) );
         
-    	start = System.currentTimeMillis();
+        start = System.currentTimeMillis();
         for ( int i=0; i< iterations; i++ ) {
-        	try {
-        		temp = encoder.canonicalize( attack, true );
-        	} catch( IntrusionException e ) { 
-        		// expected
-        	}
+            try {
+                temp = encoder.canonicalize( attack, true );
+            } catch( IntrusionException e ) { 
+                // expected
+            }
         }
-    	stop = System.currentTimeMillis();
+        stop = System.currentTimeMillis();
         System.out.println( "Attack Strict: " + (stop-start) );
     }
     
 
     public void testConcurrency() {
         System.out.println("Encoder Concurrency");
-		for (int i = 0; i < 10; i++) {
-			new Thread( new EncoderConcurrencyMock( i )).start();
-		}
-	}
+        for (int i = 0; i < 10; i++) {
+            new Thread( new EncoderConcurrencyMock( i )).start();
+        }
+    }
 
     /**
      *  A simple class that calls the Encoder to test thread safety
      */
     public class EncoderConcurrencyMock implements Runnable {
-    	public int num = 0;
-    	public EncoderConcurrencyMock( int num ) {
-    		this.num = num;
-    	}
-	    public void run() {
-			while( true ) {
-				String nonce = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS );
-				String result = javaScriptEncode( nonce );
-				// randomize the threads
-				try {
-					Thread.sleep( ESAPI.randomizer().getRandomInteger( 100, 500 ) );
-				} catch (InterruptedException e) {
-					// just continue
-				}
-				assertTrue( result.equals ( javaScriptEncode( nonce ) ) );
-			}
-		}
-		
-	    public String javaScriptEncode(String str) {
-			Encoder encoder = DefaultEncoder.getInstance();
-			return encoder.encodeForJavaScript(str);
-		}
+        public int num = 0;
+        public EncoderConcurrencyMock( int num ) {
+            this.num = num;
+        }
+        public void run() {
+            while( true ) {
+                String nonce = ESAPI.randomizer().getRandomString( 20, EncoderConstants.CHAR_SPECIALS );
+                String result = javaScriptEncode( nonce );
+                // randomize the threads
+                try {
+                    Thread.sleep( ESAPI.randomizer().getRandomInteger( 100, 500 ) );
+                } catch (InterruptedException e) {
+                    // just continue
+                }
+                assertTrue( result.equals ( javaScriptEncode( nonce ) ) );
+            }
+        }
+        
+        public String javaScriptEncode(String str) {
+            Encoder encoder = DefaultEncoder.getInstance();
+            return encoder.encodeForJavaScript(str);
+        }
     }
     
     public void testGetCanonicalizedUri() throws Exception {
-    	Encoder e = ESAPI.encoder();
-    	
-    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
-    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
-    	//password information as in http://palpatine:password@foo.com, and this will
-    	//not appear in the userinfo field.  
-    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
-    	URI uri = new URI(input);
-    	System.out.println(uri.toString());
-    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
-    	
+        Encoder e = ESAPI.encoder();
+        
+        String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.  
+        String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+        
     }
     
     public void testGetCanonicalizedUriPiazza() throws Exception {
-    	Encoder e = ESAPI.encoder();
-    	
-    	String expectedUri = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft,Launched";
-    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
-    	//password information as in http://palpatine:password@foo.com, and this will
-    	//not appear in the userinfo field.  
-    	String input = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft%2CLaunched";
-    	URI uri = new URI(input);
-    	System.out.println(uri.toString());
-    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
-    	
+        Encoder e = ESAPI.encoder();
+        
+        String expectedUri = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft,Launched";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.  
+        String input = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft%2CLaunched";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+        
     }
-    	
+        
     public void testGetCanonicalizedUriWithMailto() throws Exception {
-    	Encoder e = ESAPI.encoder();
-    	
-    	String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
-    	//Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
-    	//password information as in http://palpatine:password@foo.com, and this will
-    	//not appear in the userinfo field.  
-    	String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
-    	URI uri = new URI(input);
-    	System.out.println(uri.toString());
-    	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+        Encoder e = ESAPI.encoder();
+        
+        String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar#frag";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.  
+        String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar#frag";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
     }
     
     public void testHtmlEncodeStrSurrogatePair()
     {
-    	Encoder enc = ESAPI.encoder();
+        Encoder enc = ESAPI.encoder();
         String inStr = new String (new int[]{0x2f804}, 0, 1);
         assertEquals(false, Character.isBmpCodePoint(inStr.codePointAt(0)));
         assertEquals(true, Character.isBmpCodePoint(new String(new int[] {0x0a}, 0, 1).codePointAt(0)));

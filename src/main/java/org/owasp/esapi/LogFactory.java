@@ -28,33 +28,33 @@ package org.owasp.esapi;
  *
  */
 public interface LogFactory {
-	
-	/**
-	 * Gets the logger associated with the specified module name. The module name is used by the logger to log which 
-	 * module is generating the log events. The implementation of this method should return any preexisting Logger 
-	 * associated with this module name, rather than creating a new Logger.
-	 * <br><br>
-	 * The JavaLogFactory reference implementation meets these requirements.
-	 * 
-	 * @param moduleName
-	 * 			The name of the module requesting the logger.
-	 * @return
-	 * 			The Logger associated with this module.
-	 */
-	Logger getLogger(String moduleName);
-	
-	/**
-	 * Gets the logger associated with the specified class. The class is used by the logger to log which 
-	 * class is generating the log events. The implementation of this method should return any preexisting Logger 
-	 * associated with this class name, rather than creating a new Logger.
-	 * <br><br>
-	 * The JavaLogFactory reference implementation meets these requirements.
-	 * 
-	 * @param clazz
-	 * 			The name of the class requesting the logger.
-	 * @return
-	 * 			The Logger associated with this class.
-	 */
-	Logger getLogger(Class clazz);
-	
+    
+    /**
+     * Gets the logger associated with the specified module name. The module name is used by the logger to log which 
+     * module is generating the log events. The implementation of this method should return any preexisting Logger 
+     * associated with this module name, rather than creating a new Logger.
+     * <br><br>
+     * The JavaLogFactory reference implementation meets these requirements.
+     * 
+     * @param moduleName
+     *             The name of the module requesting the logger.
+     * @return
+     *             The Logger associated with this module.
+     */
+    Logger getLogger(String moduleName);
+    
+    /**
+     * Gets the logger associated with the specified class. The class is used by the logger to log which 
+     * class is generating the log events. The implementation of this method should return any preexisting Logger 
+     * associated with this class name, rather than creating a new Logger.
+     * <br><br>
+     * The JavaLogFactory reference implementation meets these requirements.
+     * 
+     * @param clazz
+     *             The name of the class requesting the logger.
+     * @return
+     *             The Logger associated with this class.
+     */
+    Logger getLogger(Class clazz);
+    
 }

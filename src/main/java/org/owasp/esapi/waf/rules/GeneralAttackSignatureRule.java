@@ -35,29 +35,29 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class GeneralAttackSignatureRule extends Rule {
 
-	private Pattern signature;
+    private Pattern signature;
 
-	public GeneralAttackSignatureRule(String id, Pattern signature) {
-		this.signature = signature;
-		setId(id);
-	}
+    public GeneralAttackSignatureRule(String id, Pattern signature) {
+        this.signature = signature;
+        setId(id);
+    }
 
-	public Action check(HttpServletRequest req,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest req,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
-		Enumeration e = request.getParameterNames();
+        InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
+        Enumeration e = request.getParameterNames();
 
-		while(e.hasMoreElements()) {
-			String param = (String)e.nextElement();
-			if ( signature.matcher(request.getDictionaryParameter(param)).matches() ) {
-				log(request,"General attack signature detected in parameter '" + param + "' value '" + request.getDictionaryParameter(param) + "'");
-				return new DefaultAction();
-			}
-		}
+        while(e.hasMoreElements()) {
+            String param = (String)e.nextElement();
+            if ( signature.matcher(request.getDictionaryParameter(param)).matches() ) {
+                log(request,"General attack signature detected in parameter '" + param + "' value '" + request.getDictionaryParameter(param) + "'");
+                return new DefaultAction();
+            }
+        }
 
-		return new DoNothingAction();
-	}
+        return new DoNothingAction();
+    }
 
 }

@@ -7,17 +7,17 @@ import org.owasp.esapi.Encoder;
  */
 public class EncodeForXMLTag extends BaseEncodeTag
 {
-	private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 3L;
 
-	/**
-	 * Encode tag's content for usage in XML.
-	 * @param content The tag's content as a String
-	 * @param enc Encoder used to call
-	 * 	{@link Encoder#encodeForXML(String)}
-	 * @return content encoded for usage in XML
-	 */
-	protected String encode(String content, Encoder enc)
-	{
-		return enc.encodeForXML(content);
-	}
+    /**
+     * Encode tag's content for usage in XML.
+     * @param content The tag's content as a String
+     * @param enc Encoder used to call
+     *     {@link Encoder#encodeForXML(String)}
+     * @return content encoded for usage in XML
+     */
+    protected String encode(String content, Encoder enc)
+    {
+        return enc.encodeForXML(content);
+    }
 }

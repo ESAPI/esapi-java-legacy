@@ -27,14 +27,14 @@ import javax.servlet.ServletContext;
  * to pass information to a filter during initialization.
  */
 public class MockFilterConfig implements FilterConfig {
-	private Map map;
+    private Map map;
 
-	public MockFilterConfig( Map map ) {
-		this.map = map;
-	}
-	
+    public MockFilterConfig( Map map ) {
+        this.map = map;
+    }
+    
     public String getFilterName() {
-    	return "mock";
+        return "mock";
     }
 
     /**
@@ -42,7 +42,7 @@ public class MockFilterConfig implements FilterConfig {
      * is executing.
      */
     public ServletContext getServletContext() {
-    	return new MockServletContext();
+        return new MockServletContext();
     }
 
     /**
@@ -51,7 +51,7 @@ public class MockFilterConfig implements FilterConfig {
      * the parameter does not exist.
      */
     public String getInitParameter(String name) {
-    	return (String)map.get( name );
+        return (String)map.get( name );
     }
 
     /**
@@ -61,6 +61,6 @@ public class MockFilterConfig implements FilterConfig {
      * no initialization parameters.
      */
     public Enumeration getInitParameterNames() {
-    	return Collections.enumeration( map.keySet() );
+        return Collections.enumeration( map.keySet() );
     }
 }

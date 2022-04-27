@@ -54,18 +54,18 @@ import static org.junit.Assert.*;
  */
 public class HTMLValidationRuleCleanTest {
 
-	private static class ConfOverride extends SecurityConfigurationWrapper {
+    private static class ConfOverride extends SecurityConfigurationWrapper {
         private String desiredReturn = "clean";
 
-		ConfOverride(SecurityConfiguration orig, String desiredReturn) {
-			super(orig);
+        ConfOverride(SecurityConfiguration orig, String desiredReturn) {
+            super(orig);
             this.desiredReturn = desiredReturn;
-		}
+        }
 
-		@Override
-		public String getStringProp(String propName) {
+        @Override
+        public String getStringProp(String propName) {
             // Would it be better making this file a static import?
-			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
+            if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
                 return desiredReturn;
             } else {
                 return super.getStringProp( propName );
@@ -85,11 +85,11 @@ public class HTMLValidationRuleCleanTest {
         ESAPI.override(null);
     }
 
-	@Before
+    @Before
     public void setUp() throws Exception {
-		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), "clean" )
-		);
+        ESAPI.override(
+            new ConfOverride( ESAPI.securityConfiguration(), "clean" )
+        );
 
     }
 
@@ -204,11 +204,11 @@ public class HTMLValidationRuleCleanTest {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<style/>b<![cdata[</style><a href=javascript:alert(1)>test";
-		assertTrue(instance.isValidSafeHTML("test8", input, 100, false, errors));
-		String expected = "b&lt;/style&gt;&lt;a href=javascript:alert(1)&gt;test";
-		String output = instance.getValidSafeHTML("javascript Link", input, 250, false);
-		assertEquals(expected, output);
-		assertTrue(errors.size() == 0);
+        assertTrue(instance.isValidSafeHTML("test8", input, 100, false, errors));
+        String expected = "b&lt;/style&gt;&lt;a href=javascript:alert(1)&gt;test";
+        String output = instance.getValidSafeHTML("javascript Link", input, 250, false);
+        assertEquals(expected, output);
+        assertTrue(errors.size() == 0);
     }
 
     @Test
@@ -216,11 +216,11 @@ public class HTMLValidationRuleCleanTest {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<select<style/>W<xmp<script>alert(1)</script>";
-		assertTrue(instance.isValidSafeHTML("test9", input, 100, false, errors));
-		String expected = "W&lt;script&gt;alert(1)&lt;/script&gt;";
-		String output = instance.getValidSafeHTML("escaping style tag attack with script tag", input, 250, false);
-		assertEquals(expected, output);
-		assertTrue(errors.size() == 0);
+        assertTrue(instance.isValidSafeHTML("test9", input, 100, false, errors));
+        String expected = "W&lt;script&gt;alert(1)&lt;/script&gt;";
+        String output = instance.getValidSafeHTML("escaping style tag attack with script tag", input, 250, false);
+        assertEquals(expected, output);
+        assertTrue(errors.size() == 0);
     }
 
     @Test
@@ -228,11 +228,11 @@ public class HTMLValidationRuleCleanTest {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<select<style/>k<input<</>input/onfocus=alert(1)>";
-		assertTrue(instance.isValidSafeHTML("test10", input, 100, false, errors));
-		String expected = "k&lt;input/onfocus=alert(1)&gt;";	// Suspicious? Doesn't agree w/ AntiSamy test.
-		String output = instance.getValidSafeHTML("escaping style tag attack with onfocus attribute", input, 250, false);
-		assertEquals(expected, output);
-		assertTrue(errors.size() == 0);
+        assertTrue(instance.isValidSafeHTML("test10", input, 100, false, errors));
+        String expected = "k&lt;input/onfocus=alert(1)&gt;";    // Suspicious? Doesn't agree w/ AntiSamy test.
+        String output = instance.getValidSafeHTML("escaping style tag attack with onfocus attribute", input, 250, false);
+        assertEquals(expected, output);
+        assertTrue(errors.size() == 0);
     }
 
     // This test was a DoS issue (CVE-2022-28366) within a transitive dependency (Neko-HtmlUnit) that AntiSamy uses.
@@ -249,11 +249,11 @@ public class HTMLValidationRuleCleanTest {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<!--><?a/";
-		assertTrue(instance.isValidSafeHTML("test11", input, 100, false, errors)); // Safe bc "" gets returned!!!
+        assertTrue(instance.isValidSafeHTML("test11", input, 100, false, errors)); // Safe bc "" gets returned!!!
 
-		String expectEmpty = "";
-		String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
-		assertEquals(expectEmpty, output);  // Because AntiSamy's CleanResults.getCleanHTML() should throw and is caught.
-		assertTrue(errors.size() == 0);
+        String expectEmpty = "";
+        String output = instance.getValidSafeHTML("escaping style tag attack", input, 250, false);
+        assertEquals(expectEmpty, output);  // Because AntiSamy's CleanResults.getCleanHTML() should throw and is caught.
+        assertTrue(errors.size() == 0);
     }
 }

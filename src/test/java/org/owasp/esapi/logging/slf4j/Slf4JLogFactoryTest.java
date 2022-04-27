@@ -36,9 +36,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest (Slf4JLogFactory.class)
 public class Slf4JLogFactoryTest {
-	@Rule
+    @Rule
     public TestName testName = new TestName();
-	
+    
     @Test
     public void testCreateLoggerByString() {
         Logger logger = new Slf4JLogFactory().getLogger("test");
@@ -78,11 +78,11 @@ public class Slf4JLogFactoryTest {
     }
     
     /**
-	 * At this time there are no special considerations or handling for the appender
-	 * creation in this scope. It is expected that the arguments to the internal
-	 * creation method are passed directly to the constructor of the
-	 * LogPrefixAppender with no mutation or additional validation.
-	 */
+     * At this time there are no special considerations or handling for the appender
+     * creation in this scope. It is expected that the arguments to the internal
+     * creation method are passed directly to the constructor of the
+     * LogPrefixAppender with no mutation or additional validation.
+     */
     @Test
     public void checkPassthroughAppenderConstruct() throws Exception {
         LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, true, "");
@@ -94,14 +94,14 @@ public class Slf4JLogFactoryTest {
 
         PowerMockito.whenNew(LogPrefixAppender.class).withArguments(userInfoCapture.capture(), clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
 
-    	LogAppender appender = Slf4JLogFactory.createLogAppender(true, true, false, true, testName.getMethodName());
-    	
-    	Assert.assertEquals(stubAppender, appender);
-    	Assert.assertTrue(userInfoCapture.getValue());
-    	Assert.assertTrue(clientInfoCapture.getValue());
-    	Assert.assertFalse(serverInfoCapture.getValue());
-    	Assert.assertTrue(logAppNameCapture.getValue());
-    	Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());    	
+        LogAppender appender = Slf4JLogFactory.createLogAppender(true, true, false, true, testName.getMethodName());
+        
+        Assert.assertEquals(stubAppender, appender);
+        Assert.assertTrue(userInfoCapture.getValue());
+        Assert.assertTrue(clientInfoCapture.getValue());
+        Assert.assertFalse(serverInfoCapture.getValue());
+        Assert.assertTrue(logAppNameCapture.getValue());
+        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());        
     }
     
    

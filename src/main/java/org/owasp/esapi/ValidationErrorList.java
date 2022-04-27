@@ -49,7 +49,7 @@ import org.owasp.esapi.errors.ValidationException;
  *     if (request.getAttribute(Constants.ERROR_LIST) != null) {
  *        errors = (ValidationErrorList)request.getAttribute("ERROR_LIST");
  *     }
- * 	   return errors;
+ *        return errors;
  * }
  * </PRE>
  * 
@@ -77,61 +77,61 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class ValidationErrorList {
 
-	/**
-	 * Error list of ValidationException's
-	 */
-	private HashMap<String, ValidationException> errorList = new HashMap<String, ValidationException>();
+    /**
+     * Error list of ValidationException's
+     */
+    private HashMap<String, ValidationException> errorList = new HashMap<String, ValidationException>();
 
-	/**
-	 * Adds a new error to list with a unique named context.
-	 * No action taken if either element is null. 
-	 * Existing contexts will be overwritten.
-	 * 
-	 * @param context Unique named context for this {@code ValidationErrorList}.
-	 * @param vex	A {@code ValidationException}.
-	 */
-	public void addError(String context, ValidationException vex) {
-		if ( context == null ) throw new RuntimeException( "Context cannot be null: " + vex.getLogMessage(), vex );
-		if ( vex == null ) throw new RuntimeException( "ValidationException cannot be null for context  (" + context + ")" );
-		if (getError(context) != null) throw new RuntimeException("Context (" + context + ") already exists, must be unique");
-		errorList.put(context, vex);
-	}
+    /**
+     * Adds a new error to list with a unique named context.
+     * No action taken if either element is null. 
+     * Existing contexts will be overwritten.
+     * 
+     * @param context Unique named context for this {@code ValidationErrorList}.
+     * @param vex    A {@code ValidationException}.
+     */
+    public void addError(String context, ValidationException vex) {
+        if ( context == null ) throw new RuntimeException( "Context cannot be null: " + vex.getLogMessage(), vex );
+        if ( vex == null ) throw new RuntimeException( "ValidationException cannot be null for context  (" + context + ")" );
+        if (getError(context) != null) throw new RuntimeException("Context (" + context + ") already exists, must be unique");
+        errorList.put(context, vex);
+    }
 
-	/**
-	 * Returns list of ValidationException, or empty list of no errors exist.
-	 * 
-	 * @return List
-	 */
-	public List<ValidationException> errors() {
-		return new ArrayList<ValidationException>( errorList.values() );
-	}
+    /**
+     * Returns list of ValidationException, or empty list of no errors exist.
+     * 
+     * @return List
+     */
+    public List<ValidationException> errors() {
+        return new ArrayList<ValidationException>( errorList.values() );
+    }
 
-	/**
-	 * Retrieves ValidationException for given context if one exists.
-	 * 
-	 * @param context unique name for each error
-	 * @return ValidationException or null for given context
-	 */
-	public ValidationException getError(String context) {
-		if (context == null) return null;		
-		return errorList.get(context);
-	}
+    /**
+     * Retrieves ValidationException for given context if one exists.
+     * 
+     * @param context unique name for each error
+     * @return ValidationException or null for given context
+     */
+    public ValidationException getError(String context) {
+        if (context == null) return null;        
+        return errorList.get(context);
+    }
 
-	/**
-	 * Returns true if no error are present.
-	 * 
-	 * @return boolean
-	 */
-	public boolean isEmpty() {
-		return errorList.isEmpty();
-	}
-	
-	/**
-	 * Returns the numbers of errors present.
-	 * 
-	 * @return boolean
-	 */
-	public int size() {
-		return errorList.size();
-	}
+    /**
+     * Returns true if no error are present.
+     * 
+     * @return boolean
+     */
+    public boolean isEmpty() {
+        return errorList.isEmpty();
+    }
+    
+    /**
+     * Returns the numbers of errors present.
+     * 
+     * @return boolean
+     */
+    public int size() {
+        return errorList.size();
+    }
 }

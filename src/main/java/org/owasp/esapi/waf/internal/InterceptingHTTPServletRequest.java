@@ -46,164 +46,164 @@ import org.apache.commons.fileupload.util.Streams;
  */
 public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 
-	private Vector<Parameter> allParameters;
-	private Vector<String> allParameterNames;
-	private static int CHUNKED_BUFFER_SIZE = 1024;
-	
-	private boolean isMultipart = false;
-	private RandomAccessFile requestBody;
-	private RAFInputStream is;
-	
-	public ServletInputStream getInputStream() throws IOException {
-		
-		if ( isMultipart ) {
-			return is;	
-		} else {
-			return super.getInputStream();
-		}
+    private Vector<Parameter> allParameters;
+    private Vector<String> allParameterNames;
+    private static int CHUNKED_BUFFER_SIZE = 1024;
+    
+    private boolean isMultipart = false;
+    private RandomAccessFile requestBody;
+    private RAFInputStream is;
+    
+    public ServletInputStream getInputStream() throws IOException {
+        
+        if ( isMultipart ) {
+            return is;    
+        } else {
+            return super.getInputStream();
+        }
         
     }
-	
-	public BufferedReader getReader() throws IOException {
+    
+    public BufferedReader getReader() throws IOException {
         String enc = getCharacterEncoding();
         if(enc == null) enc = "UTF-8";
         return new BufferedReader(new InputStreamReader(getInputStream(), enc));
     }
-	
-	public InterceptingHTTPServletRequest(HttpServletRequest request) throws FileUploadException, IOException {
+    
+    public InterceptingHTTPServletRequest(HttpServletRequest request) throws FileUploadException, IOException {
 
-		super(request);
+        super(request);
 
-		allParameters = new Vector<Parameter>();
-		allParameterNames = new Vector<String>();
-
-
-		/*
-		 * Get all the regular parameters.
-		 */
-
-		Enumeration e = request.getParameterNames();
-
-		while(e.hasMoreElements()) {
-			String param = (String)e.nextElement();
-			allParameters.add(new Parameter(param,request.getParameter(param),false));
-			allParameterNames.add(param);
-		}
+        allParameters = new Vector<Parameter>();
+        allParameterNames = new Vector<String>();
 
 
-		/*
-		 * Get all the multipart fields.
-		 */
+        /*
+         * Get all the regular parameters.
+         */
 
-		isMultipart = ServletFileUpload.isMultipartContent(request);
+        Enumeration e = request.getParameterNames();
 
-		if ( isMultipart ) {
+        while(e.hasMoreElements()) {
+            String param = (String)e.nextElement();
+            allParameters.add(new Parameter(param,request.getParameter(param),false));
+            allParameterNames.add(param);
+        }
 
-			requestBody = new RandomAccessFile( File.createTempFile("oew","mpc"), "rw");
-	    	
-	    	byte buffer[] = new byte[CHUNKED_BUFFER_SIZE];
 
-	    	long size = 0;
-	    	int len = 0;
+        /*
+         * Get all the multipart fields.
+         */
 
-	    	while ( len != -1 && size <= Integer.MAX_VALUE) {
-	    		len = request.getInputStream().read(buffer, 0, CHUNKED_BUFFER_SIZE);
-	    		if ( len != -1 ) {
-	    			size += len;
-	    			requestBody.write(buffer,0,len);	
-	    		}
-	    	}
-			
-	    	is = new RAFInputStream(requestBody);
-	    	
-			ServletFileUpload sfu = new ServletFileUpload();
-			FileItemIterator iter = sfu.getItemIterator(this);
+        isMultipart = ServletFileUpload.isMultipartContent(request);
 
-			while(iter.hasNext()) {
-				FileItemStream item = iter.next();
-				String name = item.getFieldName();
-				InputStream stream = item.openStream();
+        if ( isMultipart ) {
 
-				/*
-				 * If this is a regular form field, add it to our
-				 * parameter collection.
-				 */
+            requestBody = new RandomAccessFile( File.createTempFile("oew","mpc"), "rw");
+            
+            byte buffer[] = new byte[CHUNKED_BUFFER_SIZE];
 
-				if (item.isFormField()) {
+            long size = 0;
+            int len = 0;
 
-					String value = Streams.asString(stream);
+            while ( len != -1 && size <= Integer.MAX_VALUE) {
+                len = request.getInputStream().read(buffer, 0, CHUNKED_BUFFER_SIZE);
+                if ( len != -1 ) {
+                    size += len;
+                    requestBody.write(buffer,0,len);    
+                }
+            }
+            
+            is = new RAFInputStream(requestBody);
+            
+            ServletFileUpload sfu = new ServletFileUpload();
+            FileItemIterator iter = sfu.getItemIterator(this);
 
-					allParameters.add(new Parameter(name,value,true));
-			    	allParameterNames.add(name);
+            while(iter.hasNext()) {
+                FileItemStream item = iter.next();
+                String name = item.getFieldName();
+                InputStream stream = item.openStream();
 
-			    } else {
-			    	/*
-			    	 * This is a multipart content that is not a
-			    	 * regular form field. Nothing to do here.
-			    	 */
-			    	
-			    }
+                /*
+                 * If this is a regular form field, add it to our
+                 * parameter collection.
+                 */
 
-			}
-			
-			requestBody.seek(0);
-			
-		}
+                if (item.isFormField()) {
 
-	}
+                    String value = Streams.asString(stream);
 
-	public String getDictionaryParameter(String s) {
+                    allParameters.add(new Parameter(name,value,true));
+                    allParameterNames.add(name);
 
-		for(int i=0;i<allParameters.size();i++) {
-			Parameter p = allParameters.get(i);
-			if ( p.getName().equals(s) ) {
-				return p.getValue();
-			}
-		}
-		
-		return null;
-	}
+                } else {
+                    /*
+                     * This is a multipart content that is not a
+                     * regular form field. Nothing to do here.
+                     */
+                    
+                }
 
-	public Enumeration getDictionaryParameterNames() {
-		return allParameterNames.elements();
-	}
-	
-	
-	private class RAFInputStream extends ServletInputStream {
-		
-		RandomAccessFile raf;
-		boolean isDone = false;
-		
-		public RAFInputStream(RandomAccessFile raf) throws IOException {
-			this.raf = raf;
-			this.raf.seek(0);
-		}
+            }
+            
+            requestBody.seek(0);
+            
+        }
 
-		public int read() throws IOException {
-			int rval = raf.read();
-			isDone = rval == -1;
-			return rval;
-		}
-		
-		public synchronized void reset() throws IOException {
-			raf.seek(0);
-			isDone=false;
-		}
+    }
 
-		@Override
-		public boolean isFinished() {
-			return isDone;
-		}
+    public String getDictionaryParameter(String s) {
 
-		@Override
-		public boolean isReady() {
-			return false;
-		}
+        for(int i=0;i<allParameters.size();i++) {
+            Parameter p = allParameters.get(i);
+            if ( p.getName().equals(s) ) {
+                return p.getValue();
+            }
+        }
+        
+        return null;
+    }
 
-		@Override
-		public void setReadListener(ReadListener readListener) {
-			//NO-OP.  Unused in this scope
-		}
-	}
-	
+    public Enumeration getDictionaryParameterNames() {
+        return allParameterNames.elements();
+    }
+    
+    
+    private class RAFInputStream extends ServletInputStream {
+        
+        RandomAccessFile raf;
+        boolean isDone = false;
+        
+        public RAFInputStream(RandomAccessFile raf) throws IOException {
+            this.raf = raf;
+            this.raf.seek(0);
+        }
+
+        public int read() throws IOException {
+            int rval = raf.read();
+            isDone = rval == -1;
+            return rval;
+        }
+        
+        public synchronized void reset() throws IOException {
+            raf.seek(0);
+            isDone=false;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return isDone;
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+            //NO-OP.  Unused in this scope
+        }
+    }
+    
 }

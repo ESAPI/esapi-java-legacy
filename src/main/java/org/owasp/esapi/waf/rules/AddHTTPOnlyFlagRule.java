@@ -32,32 +32,32 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class AddHTTPOnlyFlagRule extends Rule {
 
-	private List<Pattern> name;
+    private List<Pattern> name;
 
-	public AddHTTPOnlyFlagRule(String id, List<Pattern> name) {
-		setId(id);
-		this.name = name;
-	}
+    public AddHTTPOnlyFlagRule(String id, List<Pattern> name) {
+        setId(id);
+        this.name = name;
+    }
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		DoNothingAction action = new DoNothingAction();
+        DoNothingAction action = new DoNothingAction();
 
-		return action;
-	}
+        return action;
+    }
 
-	public boolean doesCookieMatch(String cookieName) {
+    public boolean doesCookieMatch(String cookieName) {
 
-		for(int i=0;i<name.size();i++) {
-			Pattern p = name.get(i);
-			if ( p.matcher(cookieName).matches() ) {
-				return true;
-			}
-		}
+        for(int i=0;i<name.size();i++) {
+            Pattern p = name.get(i);
+            if ( p.matcher(cookieName).matches() ) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }

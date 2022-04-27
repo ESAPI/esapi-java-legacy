@@ -102,20 +102,20 @@ public class AuthenticatorTest {
         }
     }
 
-	
-	/**
-	 * Test of createAccount method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
+    
+    /**
+     * Test of createAccount method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
      *             the authentication exception
      * @throws EncryptionException
-	 */
-	@Test public void testCreateUser() throws AuthenticationException, EncryptionException {
-		System.out.println("createUser");
-		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		User user = instance.createUser(accountName, password, password);
-		assertTrue(user.verifyPassword(password));
+     */
+    @Test public void testCreateUser() throws AuthenticationException, EncryptionException {
+        System.out.println("createUser");
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        String password = instance.generateStrongPassword();
+        User user = instance.createUser(accountName, password, password);
+        assertTrue(user.verifyPassword(password));
         try {
             instance.createUser(accountName, password, password); // duplicate user
             fail();
@@ -147,313 +147,313 @@ public class AuthenticatorTest {
             // success
         }
         try {
-        	String uName = "ea234kEknr";	//sufficiently random password that also works as a username
+            String uName = "ea234kEknr";    //sufficiently random password that also works as a username
             instance.createUser(uName, uName, uName);  // using username as password
             fail();
         } catch (AuthenticationException e) {
             // success
         }
-	}
+    }
 
-	/**
-	 * Test of generateStrongPassword method, of class
-	 * org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testGenerateStrongPassword() throws AuthenticationException {
-		System.out.println("generateStrongPassword");		
-		String oldPassword = "iiiiiiiiii";  // i is not allowed in passwords - this prevents failures from containing pieces of old password
-		String newPassword = null;
-		String username = "FictionalEsapiUser";
-		User user = new DefaultUser(username);
-		for (int i = 0; i < 100; i++) {
+    /**
+     * Test of generateStrongPassword method, of class
+     * org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testGenerateStrongPassword() throws AuthenticationException {
+        System.out.println("generateStrongPassword");        
+        String oldPassword = "iiiiiiiiii";  // i is not allowed in passwords - this prevents failures from containing pieces of old password
+        String newPassword = null;
+        String username = "FictionalEsapiUser";
+        User user = new DefaultUser(username);
+        for (int i = 0; i < 100; i++) {
             try {
                 newPassword = instance.generateStrongPassword();
                 instance.verifyPasswordStrength(oldPassword, newPassword, user);
             } catch( AuthenticationException e ) {
-            	System.out.println( "  FAILED >> " + newPassword + " : " + e.getLogMessage());
+                System.out.println( "  FAILED >> " + newPassword + " : " + e.getLogMessage());
                 fail();
             }
-		}
-		try {
-			instance.verifyPasswordStrength("test56^$test", "abcdx56^$sl", user );
-		} catch( AuthenticationException e ) {
-			// expected
-		}
-	}
+        }
+        try {
+            instance.verifyPasswordStrength("test56^$test", "abcdx56^$sl", user );
+        } catch( AuthenticationException e ) {
+            // expected
+        }
+    }
 
 
-	/**
-	 * Test of getCurrentUser method, of class org.owasp.esapi.Authenticator.
-	 * 
+    /**
+     * Test of getCurrentUser method, of class org.owasp.esapi.Authenticator.
+     * 
      *
      * @throws Exception
      */
-	@Test public void testGetCurrentUser() throws Exception {
-		System.out.println("getCurrentUser");
-		String username1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String username2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
-		User user2 = instance.createUser(username2, "getCurrentUser", "getCurrentUser");		
-		user1.enable();
-	    MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
+    @Test public void testGetCurrentUser() throws Exception {
+        System.out.println("getCurrentUser");
+        String username1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        String username2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
+        User user2 = instance.createUser(username2, "getCurrentUser", "getCurrentUser");        
+        user1.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		user1.loginWithPassword("getCurrentUser");
-		User currentUser = instance.getCurrentUser();
-		assertEquals( currentUser, user1 );
-		instance.setCurrentUser( user2 );
-		assertFalse( currentUser.getAccountName().equals( user2.getAccountName() ) );
-		
-		Runnable echo = new Runnable() {
-			public void run() {
-				User a = null;
-				try {
-					String password = instance.generateStrongPassword();
-					//Create account name using random strings to guarantee uniqueness among running threads.
+        user1.loginWithPassword("getCurrentUser");
+        User currentUser = instance.getCurrentUser();
+        assertEquals( currentUser, user1 );
+        instance.setCurrentUser( user2 );
+        assertFalse( currentUser.getAccountName().equals( user2.getAccountName() ) );
+        
+        Runnable echo = new Runnable() {
+            public void run() {
+                User a = null;
+                try {
+                    String password = instance.generateStrongPassword();
+                    //Create account name using random strings to guarantee uniqueness among running threads.
                     String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-					a = instance.getUser(accountName);
-					if ( a != null ) {
-					    instance.removeUser(accountName);
-					}
-					a = instance.createUser(accountName, password, password);
-					instance.setCurrentUser(a);
-				} catch (AuthenticationException e) {
-				    //Use ErrorCollector to fail test.
+                    a = instance.getUser(accountName);
+                    if ( a != null ) {
+                        instance.removeUser(accountName);
+                    }
+                    a = instance.createUser(accountName, password, password);
+                    instance.setCurrentUser(a);
+                } catch (AuthenticationException e) {
+                    //Use ErrorCollector to fail test.
                     collector.addError(e);
-				}
-				User b = instance.getCurrentUser();
-				collector.checkThat("Logged in user should equal original user", a.equals(b), new IsEqual<Boolean>(Boolean.TRUE));
-			}
-		};
+                }
+                User b = instance.getCurrentUser();
+                collector.checkThat("Logged in user should equal original user", a.equals(b), new IsEqual<Boolean>(Boolean.TRUE));
+            }
+        };
         ThreadGroup tg = new ThreadGroup("test");
-		for ( int i = 0; i<10; i++ ) {
-			new Thread( tg, echo ).start();
-		}
+        for ( int i = 0; i<10; i++ ) {
+            new Thread( tg, echo ).start();
+        }
         while (tg.activeCount() > 0 ) {
             Thread.sleep(100);
         }
-	}
+    }
 
-	/**
-	 * Test of getUser method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testGetUser() throws AuthenticationException {
-		System.out.println("getUser");
-		String password = instance.generateStrongPassword();
-		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		instance.createUser(accountName, password, password);
-		assertNotNull(instance.getUser( accountName ));
-		assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS) ));
-	}
-	
+    /**
+     * Test of getUser method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testGetUser() throws AuthenticationException {
+        System.out.println("getUser");
+        String password = instance.generateStrongPassword();
+        String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        instance.createUser(accountName, password, password);
+        assertNotNull(instance.getUser( accountName ));
+        assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS) ));
+    }
+    
     /**
      *
      * @throws org.owasp.esapi.errors.AuthenticationException
      */
     @Test public void testGetUserFromRememberToken() throws AuthenticationException {
-		System.out.println("getUserFromRememberToken");
-		String password = instance.generateStrongPassword();
-		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		User user = instance.createUser(accountName, password, password);
-		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		
-		System.out.println("getUserFromRememberToken - expecting failure");
-		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
-		try {
-			instance.login( request, response );  // wrong cookie will fail
-			fail();
-		} catch( AuthenticationException e ) {
-			// expected
-		}
+        System.out.println("getUserFromRememberToken");
+        String password = instance.generateStrongPassword();
+        String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        User user = instance.createUser(accountName, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        
+        System.out.println("getUserFromRememberToken - expecting failure");
+        request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
+        try {
+            instance.login( request, response );  // wrong cookie will fail
+            fail();
+        } catch( AuthenticationException e ) {
+            // expected
+        }
 
-		System.out.println("getUserFromRememberToken - expecting success");
-		request = new MockHttpServletRequest();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		ESAPI.authenticator().setCurrentUser(user);
-		String newToken = ESAPI.httpUtilities().setRememberToken(request, response, password, 10000, "test.com", request.getContextPath() );
-		request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, newToken );
+        System.out.println("getUserFromRememberToken - expecting success");
+        request = new MockHttpServletRequest();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        ESAPI.authenticator().setCurrentUser(user);
+        String newToken = ESAPI.httpUtilities().setRememberToken(request, response, password, 10000, "test.com", request.getContextPath() );
+        request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, newToken );
         user.logout();  // logout the current user so we can log them in with the remember cookie
-		User test2 = instance.login( request, response );
-		assertSame( user, test2 );
-	}
-	
+        User test2 = instance.login( request, response );
+        assertSame( user, test2 );
+    }
+    
 
-	
-	/**
-	 * Test get user from session.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testGetUserFromSession() throws AuthenticationException {
-		System.out.println("getUserFromSession");
-		assumeTrue(instance instanceof FileBasedAuthenticator);
-		String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		User user = instance.createUser(accountName, password, password);
-		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("username", accountName);
-		request.addParameter("password", password);
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP( request, response );
-		instance.login( request, response);
-		User test = ((FileBasedAuthenticator)instance).getUserFromSession();
-		assertEquals( user, test );
-	}
+    
+    /**
+     * Test get user from session.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testGetUserFromSession() throws AuthenticationException {
+        System.out.println("getUserFromSession");
+        assumeTrue(instance instanceof FileBasedAuthenticator);
+        String accountName=ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        String password = instance.generateStrongPassword();
+        User user = instance.createUser(accountName, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", accountName);
+        request.addParameter("password", password);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP( request, response );
+        instance.login( request, response);
+        User test = ((FileBasedAuthenticator)instance).getUserFromSession();
+        assertEquals( user, test );
+    }
 
-	/**
-	 * Test get user names.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testGetUserNames() throws AuthenticationException {
-		System.out.println("getUserNames");
-		String password = instance.generateStrongPassword();
-		String[] testnames = new String[10];
-		for(int i=0;i<testnames.length;i++) {
-			testnames[i] = ESAPI.randomizer().getRandomString(8,EncoderConstants.CHAR_ALPHANUMERICS);
-		}
-		for(int i=0;i<testnames.length;i++) {
-			instance.createUser(testnames[i], password, password);
-		}
-		Set names = instance.getUserNames();
-		for(int i=0;i<testnames.length;i++) {
-			assertTrue(names.contains(testnames[i].toLowerCase()));
-		}
-	}
-	
-	/**
-	 * Test of hashPassword method, of class org.owasp.esapi.Authenticator.
+    /**
+     * Test get user names.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testGetUserNames() throws AuthenticationException {
+        System.out.println("getUserNames");
+        String password = instance.generateStrongPassword();
+        String[] testnames = new String[10];
+        for(int i=0;i<testnames.length;i++) {
+            testnames[i] = ESAPI.randomizer().getRandomString(8,EncoderConstants.CHAR_ALPHANUMERICS);
+        }
+        for(int i=0;i<testnames.length;i++) {
+            instance.createUser(testnames[i], password, password);
+        }
+        Set names = instance.getUserNames();
+        for(int i=0;i<testnames.length;i++) {
+            assertTrue(names.contains(testnames[i].toLowerCase()));
+        }
+    }
+    
+    /**
+     * Test of hashPassword method, of class org.owasp.esapi.Authenticator.
      *
      * @throws EncryptionException
      */
-	@Test public void testHashPassword() throws EncryptionException {
-		System.out.println("hashPassword");
-		String username = "Jeff";
-		String password = "test";
-		String result1 = instance.hashPassword(password, username);
-		String result2 = instance.hashPassword(password, username);
-		assertTrue(result1.equals(result2));
-	}
+    @Test public void testHashPassword() throws EncryptionException {
+        System.out.println("hashPassword");
+        String username = "Jeff";
+        String password = "test";
+        String result1 = instance.hashPassword(password, username);
+        String result2 = instance.hashPassword(password, username);
+        assertTrue(result1.equals(result2));
+    }
 
-	/**
-	 * Test of login method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testLogin() throws AuthenticationException {
-		System.out.println("login");
+    /**
+     * Test of login method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testLogin() throws AuthenticationException {
+        System.out.println("login");
         String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		User user = instance.createUser(username, password, password);
-		user.enable();
-		MockHttpServletRequest request = new MockHttpServletRequest();
-		request.addParameter("username", username);
-		request.addParameter("password", password);
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		User test = instance.login( request, response);
-		assertTrue( test.isLoggedIn() );
-		assertSame(user, test);
-	}
-	
-	/**
-	 * Test of removeAccount method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test public void testRemoveUser() throws Exception {
-		System.out.println("removeUser");
-		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		instance.createUser(accountName, password, password);
-		assertTrue( instance.exists(accountName));
-		instance.removeUser(accountName);
-		assertFalse( instance.exists(accountName));
-	}
+        String password = instance.generateStrongPassword();
+        User user = instance.createUser(username, password, password);
+        user.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("username", username);
+        request.addParameter("password", password);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        User test = instance.login( request, response);
+        assertTrue( test.isLoggedIn() );
+        assertSame(user, test);
+    }
+    
+    /**
+     * Test of removeAccount method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws Exception
+     *             the exception
+     */
+    @Test public void testRemoveUser() throws Exception {
+        System.out.println("removeUser");
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        String password = instance.generateStrongPassword();
+        instance.createUser(accountName, password, password);
+        assertTrue( instance.exists(accountName));
+        instance.removeUser(accountName);
+        assertFalse( instance.exists(accountName));
+    }
 
-	/**
-	 * Test of saveUsers method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test public void testSaveUsers() throws Exception {
-		System.out.println("saveUsers");
-		assumeTrue(instance instanceof FileBasedAuthenticator);
-		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		instance.createUser(accountName, password, password);
-		((FileBasedAuthenticator)instance).saveUsers();
-		assertNotNull( instance.getUser(accountName) );
-		instance.removeUser(accountName);
-		assertNull( instance.getUser(accountName) );
-	}
+    /**
+     * Test of saveUsers method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws Exception
+     *             the exception
+     */
+    @Test public void testSaveUsers() throws Exception {
+        System.out.println("saveUsers");
+        assumeTrue(instance instanceof FileBasedAuthenticator);
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        String password = instance.generateStrongPassword();
+        instance.createUser(accountName, password, password);
+        ((FileBasedAuthenticator)instance).saveUsers();
+        assertNotNull( instance.getUser(accountName) );
+        instance.removeUser(accountName);
+        assertNull( instance.getUser(accountName) );
+    }
 
-	
-	/**
-	 * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 * @throws InterruptedException Thrown if test is interrupted while awaiting completion of child threads.
-	 */
-	@Test public void testSetCurrentUser() throws AuthenticationException, InterruptedException {
-		System.out.println("setCurrentUser");
+    
+    /**
+     * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     * @throws InterruptedException Thrown if test is interrupted while awaiting completion of child threads.
+     */
+    @Test public void testSetCurrentUser() throws AuthenticationException, InterruptedException {
+        System.out.println("setCurrentUser");
         String user1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
-		String user2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
-		User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
-		userOne.enable();
-	    MockHttpServletRequest request = new MockHttpServletRequest();
-		MockHttpServletResponse response = new MockHttpServletResponse();
-		ESAPI.httpUtilities().setCurrentHTTP(request, response);
-		userOne.loginWithPassword("getCurrentUser");
-		User currentUser = instance.getCurrentUser();
-		assertEquals( currentUser, userOne );
-		User userTwo = instance.createUser(user2, "getCurrentUser", "getCurrentUser");		
-		instance.setCurrentUser( userTwo );
-		assertFalse( currentUser.getAccountName().equals( userTwo.getAccountName() ) );
-		final CountDownLatch latch = new CountDownLatch(10);
-		Runnable echo = new Runnable() {
-			public void run() {
-				User u=null;
-				try {
-				  //Increase pwd size to guarantee greater than (not "or equal to") 16 strength.  See FileBasedAuthenticator 711-715
+        String user2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_UPPERS);
+        User userOne = instance.createUser(user1, "getCurrentUser", "getCurrentUser");
+        userOne.enable();
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        ESAPI.httpUtilities().setCurrentHTTP(request, response);
+        userOne.loginWithPassword("getCurrentUser");
+        User currentUser = instance.getCurrentUser();
+        assertEquals( currentUser, userOne );
+        User userTwo = instance.createUser(user2, "getCurrentUser", "getCurrentUser");        
+        instance.setCurrentUser( userTwo );
+        assertFalse( currentUser.getAccountName().equals( userTwo.getAccountName() ) );
+        final CountDownLatch latch = new CountDownLatch(10);
+        Runnable echo = new Runnable() {
+            public void run() {
+                User u=null;
+                try {
+                  //Increase pwd size to guarantee greater than (not "or equal to") 16 strength.  See FileBasedAuthenticator 711-715
                     String password = ESAPI.randomizer().getRandomString(17, EncoderConstants.CHAR_ALPHANUMERICS);
                     String username = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-					u = instance.createUser(username, password, password);
-					instance.setCurrentUser(u);
-					ESAPI.getLogger("test").info( Logger.SECURITY_SUCCESS, "Got current user" );
-					//If the user isn't removed every subsequent execution will fail because we cannot create a duplicate user of the same name!
+                    u = instance.createUser(username, password, password);
+                    instance.setCurrentUser(u);
+                    ESAPI.getLogger("test").info( Logger.SECURITY_SUCCESS, "Got current user" );
+                    //If the user isn't removed every subsequent execution will fail because we cannot create a duplicate user of the same name!
                     instance.removeUser( u.getAccountName() );
-				} catch (AuthenticationException e) {
-				    collector.addError(e);
+                } catch (AuthenticationException e) {
+                    collector.addError(e);
                 } finally {
                     latch.countDown();
                 }
-			}
-		};
-		for ( int i = 0; i<10; i++ ) {
-			new Thread( echo ).start();
-		}
-		while(!latch.await(500, TimeUnit.MILLISECONDS)) {
+            }
+        };
+        for ( int i = 0; i<10; i++ ) {
+            new Thread( echo ).start();
+        }
+        while(!latch.await(500, TimeUnit.MILLISECONDS)) {
             //Spurious Interrupt Guard. 
         }
-	}
-	
+    }
+    
 
 
     /**
@@ -559,110 +559,110 @@ public class AuthenticatorTest {
             // expected
         }
     }
-	
-	
-	
-	/**
-	 * Test of validatePasswordStrength method, of class
-	 * org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws AuthenticationException
-	 *             the authentication exception
-	 */
-	@Test public void testValidatePasswordStrength() throws AuthenticationException {
-		System.out.println("validatePasswordStrength");
+    
+    
+    
+    /**
+     * Test of validatePasswordStrength method, of class
+     * org.owasp.esapi.Authenticator.
+     * 
+     * @throws AuthenticationException
+     *             the authentication exception
+     */
+    @Test public void testValidatePasswordStrength() throws AuthenticationException {
+        System.out.println("validatePasswordStrength");
         
         String username = "FictionalEsapiUser";
-		User user = new DefaultUser(username);
+        User user = new DefaultUser(username);
 
-		// should fail
-		try {
-			instance.verifyPasswordStrength("password", "jeff", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("diff123bang", "same123string", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "JEFF", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "1234", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "password", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "-1", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "password123", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "test123", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		//jtm - 11/16/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
-		try {
-			instance.verifyPasswordStrength("password", "FictionalEsapiUser", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
-		try {
-			instance.verifyPasswordStrength("password", "FICTIONALESAPIUSER", user);
-			fail();
-		} catch (AuthenticationException e) {
-			// success
-		}
+        // should fail
+        try {
+            instance.verifyPasswordStrength("password", "jeff", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("diff123bang", "same123string", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "JEFF", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "1234", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "password", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "-1", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "password123", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "test123", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        //jtm - 11/16/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
+        try {
+            instance.verifyPasswordStrength("password", "FictionalEsapiUser", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
+        try {
+            instance.verifyPasswordStrength("password", "FICTIONALESAPIUSER", user);
+            fail();
+        } catch (AuthenticationException e) {
+            // success
+        }
 
-		// should pass
-		instance.verifyPasswordStrength("password", "jeffJEFF12!", user);
-		instance.verifyPasswordStrength("password", "super calif ragil istic", user);
-		instance.verifyPasswordStrength("password", "TONYTONYTONYTONY", user);
-		instance.verifyPasswordStrength("password", instance.generateStrongPassword(), user);
+        // should pass
+        instance.verifyPasswordStrength("password", "jeffJEFF12!", user);
+        instance.verifyPasswordStrength("password", "super calif ragil istic", user);
+        instance.verifyPasswordStrength("password", "TONYTONYTONYTONY", user);
+        instance.verifyPasswordStrength("password", instance.generateStrongPassword(), user);
 
         // chrisisbeef - Issue 65 - http://code.google.com/p/owasp-esapi-java/issues/detail?id=65
         instance.verifyPasswordStrength("password", "b!gbr0ther", user);
-	}
+    }
 
-	/**
-	 * Test of exists method, of class org.owasp.esapi.Authenticator.
-	 * 
-	 * @throws Exception
-	 *             the exception
-	 */
-	@Test public void testExists() throws Exception {
-		System.out.println("exists");
-		String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-		String password = instance.generateStrongPassword();
-		instance.createUser(accountName, password, password);
-		assertTrue(instance.exists(accountName));
-		instance.removeUser(accountName);
-		assertFalse(instance.exists(accountName));
-	}
+    /**
+     * Test of exists method, of class org.owasp.esapi.Authenticator.
+     * 
+     * @throws Exception
+     *             the exception
+     */
+    @Test public void testExists() throws Exception {
+        System.out.println("exists");
+        String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+        String password = instance.generateStrongPassword();
+        instance.createUser(accountName, password, password);
+        assertTrue(instance.exists(accountName));
+        instance.removeUser(accountName);
+        assertFalse(instance.exists(accountName));
+    }
 
     /**
      * Test of main method, of class org.owasp.esapi.Authenticator.

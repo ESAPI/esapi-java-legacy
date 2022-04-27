@@ -35,58 +35,58 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class AuthenticatedRule extends Rule {
 
-	private String sessionAttribute;
-	private Pattern path;
-	private List<Object> exceptions;
+    private String sessionAttribute;
+    private Pattern path;
+    private List<Object> exceptions;
 
-	public AuthenticatedRule(String id, String sessionAttribute, Pattern path, List<Object> exceptions) {
-		this.sessionAttribute = sessionAttribute;
-		this.path = path;
-		this.exceptions = exceptions;
-		setId(id);
-	}
+    public AuthenticatedRule(String id, String sessionAttribute, Pattern path, List<Object> exceptions) {
+        this.sessionAttribute = sessionAttribute;
+        this.path = path;
+        this.exceptions = exceptions;
+        setId(id);
+    }
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		HttpSession session = request.getSession();
-		String uri = request.getRequestURI();
+        HttpSession session = request.getSession();
+        String uri = request.getRequestURI();
 
-		if ( path != null && ! path.matcher(uri).matches() ) {
-			return new DoNothingAction();
-		}
+        if ( path != null && ! path.matcher(uri).matches() ) {
+            return new DoNothingAction();
+        }
 
-		if ( session != null && session.getAttribute(sessionAttribute) != null ) {
+        if ( session != null && session.getAttribute(sessionAttribute) != null ) {
 
-			return new DoNothingAction();
+            return new DoNothingAction();
 
-		} else { /* check if it's one of the exceptions */
+        } else { /* check if it's one of the exceptions */
 
-			Iterator<Object> it = exceptions.iterator();
+            Iterator<Object> it = exceptions.iterator();
 
-			while(it.hasNext()) {
-				Object o = it.next();
-				if ( o instanceof Pattern ) {
+            while(it.hasNext()) {
+                Object o = it.next();
+                if ( o instanceof Pattern ) {
 
-					Pattern p = (Pattern)o;
-					if ( p.matcher(uri).matches() ) {
-						return new DoNothingAction();
-					}
+                    Pattern p = (Pattern)o;
+                    if ( p.matcher(uri).matches() ) {
+                        return new DoNothingAction();
+                    }
 
-				} else if ( o instanceof String ) {
+                } else if ( o instanceof String ) {
 
-					if ( uri.equals((String)o)) {
-						return new DoNothingAction();
-					}
+                    if ( uri.equals((String)o)) {
+                        return new DoNothingAction();
+                    }
 
-				}
-			}
-		}
+                }
+            }
+        }
 
-		log(request, "User requested unauthenticated access to URI '" + request.getRequestURI() + "' [querystring="+request.getQueryString()+"]");
+        log(request, "User requested unauthenticated access to URI '" + request.getRequestURI() + "' [querystring="+request.getQueryString()+"]");
 
-		return new DefaultAction();
-	}
+        return new DefaultAction();
+    }
 
 }

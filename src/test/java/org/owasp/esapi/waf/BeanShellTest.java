@@ -27,21 +27,21 @@ import junit.framework.TestSuite;
 
 public class BeanShellTest extends WAFTestCase {
 
-	public static TestSuite suite() {
-		return new TestSuite(BeanShellTest.class);
-	}
+    public static TestSuite suite() {
+        return new TestSuite(BeanShellTest.class);
+    }
 
-	public void testRedirectBeanShellRule() throws Exception {
+    public void testRedirectBeanShellRule() throws Exception {
 
-		request = new MockHttpServletRequest( new URL( "http://www.example.com/beanshelltest" ) );
+        request = new MockHttpServletRequest( new URL( "http://www.example.com/beanshelltest" ) );
 
-    	WAFTestUtility.createAndExecuteWAFTransaction("waf-policies/bean-shell-policy.xml", request, response, new MockFilterChain() );
-    	
-    	HttpSession session = request.getSession();
-    	
-    	assert(session.getAttribute("simple_waf_test") != null);
-    	assert(response.getStatus() == HttpServletResponse.SC_MOVED_PERMANENTLY);
+        WAFTestUtility.createAndExecuteWAFTransaction("waf-policies/bean-shell-policy.xml", request, response, new MockFilterChain() );
+        
+        HttpSession session = request.getSession();
+        
+        assert(session.getAttribute("simple_waf_test") != null);
+        assert(response.getStatus() == HttpServletResponse.SC_MOVED_PERMANENTLY);
 
-	}
+    }
 
 }

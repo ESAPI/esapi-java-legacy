@@ -133,9 +133,9 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
     private void validateAgainstXSD(InputStream xml) throws IOException, SAXException {
         try ( InputStream xsd = getClass().getResourceAsStream("/ESAPI-properties.xsd"); ) {
             SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-	        Schema schema = factory.newSchema(new StreamSource(xsd));
-	        Validator validator = schema.newValidator();
-	        validator.validate(new StreamSource(xml));
+            Schema schema = factory.newSchema(new StreamSource(xsd));
+            Validator validator = schema.newValidator();
+            validator.validate(new StreamSource(xml));
         }
     }
 

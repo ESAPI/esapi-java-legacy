@@ -121,8 +121,8 @@ public class SecurityWrapper implements Filter {
      *
      */
     public void destroy() {
-		// no special action
-	}
+        // no special action
+    }
 
     /**
      *
@@ -130,7 +130,7 @@ public class SecurityWrapper implements Filter {
      * @throws javax.servlet.ServletException
      */
     public void init(FilterConfig filterConfig) throws ServletException {
-		this.allowableResourcesRoot = StringUtilities.replaceNull( filterConfig.getInitParameter( "allowableResourcesRoot" ), allowableResourcesRoot );
-	}
-	
+        this.allowableResourcesRoot = StringUtilities.replaceNull( filterConfig.getInitParameter( "allowableResourcesRoot" ), allowableResourcesRoot );
+    }
+    
 }

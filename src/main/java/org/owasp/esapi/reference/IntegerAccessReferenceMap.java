@@ -28,53 +28,53 @@ import java.util.Set;
  */
 public class IntegerAccessReferenceMap extends AbstractAccessReferenceMap<String> {
 
-	private static final long serialVersionUID = 5311769278372489771L;
+    private static final long serialVersionUID = 5311769278372489771L;
 
-	int count = 1;
+    int count = 1;
 
-	/**
-	 * TODO Javadoc
-	 */
-	public IntegerAccessReferenceMap()
-	{
-	}
+    /**
+     * TODO Javadoc
+     */
+    public IntegerAccessReferenceMap()
+    {
+    }
 
-	/**
-	 * TODO Javadoc
-	 */
-	public IntegerAccessReferenceMap(int initialSize)
-	{
-		super(initialSize);
-	}
+    /**
+     * TODO Javadoc
+     */
+    public IntegerAccessReferenceMap(int initialSize)
+    {
+        super(initialSize);
+    }
 
-	/**
-	 * TODO Javadoc
-	 */
-	public IntegerAccessReferenceMap(Set<Object> directReferences)
-	{
-		super(directReferences.size());
-		update(directReferences);
-	}
+    /**
+     * TODO Javadoc
+     */
+    public IntegerAccessReferenceMap(Set<Object> directReferences)
+    {
+        super(directReferences.size());
+        update(directReferences);
+    }
 
-	/**
-	 * TODO Javadoc
-	 */
-	public IntegerAccessReferenceMap(Set<Object> directReferences, int initialSize)
-	{
-		super(initialSize);
-		update(directReferences);
-	}
+    /**
+     * TODO Javadoc
+     */
+    public IntegerAccessReferenceMap(Set<Object> directReferences, int initialSize)
+    {
+        super(initialSize);
+        update(directReferences);
+    }
 
-	/**
+    /**
      * {@inheritDoc}
-	 * Note: this is final as redefinition by subclasses
-	 * can lead to use before initialization issues as
-	 * {@link #IntegerAccessReferenceMap(Set)} and
-	 * {@link #IntegerAccessReferenceMap(Set,int)} both call it
-	 * internally.
-	 */
-	protected final synchronized String getUniqueReference() {
-		return "" + count++;  // returns a string version of the counter
-	}
+     * Note: this is final as redefinition by subclasses
+     * can lead to use before initialization issues as
+     * {@link #IntegerAccessReferenceMap(Set)} and
+     * {@link #IntegerAccessReferenceMap(Set,int)} both call it
+     * internally.
+     */
+    protected final synchronized String getUniqueReference() {
+        return "" + count++;  // returns a string version of the counter
+    }
 
 }

@@ -23,15 +23,15 @@ package org.owasp.esapi.errors;
  */
 public class EncodingException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new service exception.
-	 */
-	protected EncodingException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new service exception.
+     */
+    protected EncodingException() {
+        // hidden
+    }
 
        /**
      * Creates a new instance of EncodingException.
@@ -39,7 +39,7 @@ public class EncodingException extends EnterpriseSecurityException {
      * @param userMessage
      *            the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public EncodingException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -51,7 +51,7 @@ public class EncodingException extends EnterpriseSecurityException {
      * @param userMessage
      *            the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause
      *            the cause
      */

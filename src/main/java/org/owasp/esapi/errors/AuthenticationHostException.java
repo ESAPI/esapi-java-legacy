@@ -23,35 +23,35 @@ package org.owasp.esapi.errors;
  */
 public class AuthenticationHostException extends AuthenticationException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new authentication exception.
-	 */
-	protected AuthenticationHostException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new authentication exception.
+     */
+    protected AuthenticationHostException() {
+        // hidden
+    }
 
-	/**
-	 * Creates a new instance of AuthenticationHostException.
-	 * 
-	 * @param userMessage the message displayed to the user
-	 * @param logMessage the message logged
-	 */
-	public AuthenticationHostException(String userMessage, String logMessage) {
-		super(userMessage, logMessage);
-	}
+    /**
+     * Creates a new instance of AuthenticationHostException.
+     * 
+     * @param userMessage the message displayed to the user
+     * @param logMessage the message logged
+     */
+    public AuthenticationHostException(String userMessage, String logMessage) {
+        super(userMessage, logMessage);
+    }
 
-	/**
-	 * Instantiates a new authentication exception.
-	 * 
-	 * @param userMessage the message displayed to the user
-	 * @param logMessage the message logged
-	 * @param cause the cause
-	 */
-	public AuthenticationHostException(String userMessage, String logMessage, Throwable cause) {
-		super(userMessage, logMessage, cause);
-	}
+    /**
+     * Instantiates a new authentication exception.
+     * 
+     * @param userMessage the message displayed to the user
+     * @param logMessage the message logged
+     * @param cause the cause
+     */
+    public AuthenticationHostException(String userMessage, String logMessage, Throwable cause) {
+        super(userMessage, logMessage, cause);
+    }
 
 }

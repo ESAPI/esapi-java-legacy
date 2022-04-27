@@ -32,24 +32,24 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public abstract class Rule {
 
-	protected String id = "(no rule ID)";
-	protected static Logger logger = ESAPI.getLogger(Rule.class);
+    protected String id = "(no rule ID)";
+    protected static Logger logger = ESAPI.getLogger(Rule.class);
 
-	public abstract Action check( HttpServletRequest request, InterceptingHTTPServletResponse response, HttpServletResponse httpResponse );
+    public abstract Action check( HttpServletRequest request, InterceptingHTTPServletResponse response, HttpServletResponse httpResponse );
 
-	public void log( HttpServletRequest request, String message ) {
-		logger.warning(Logger.SECURITY_FAILURE,"[IP=" + request.getRemoteAddr() +
-				",Rule=" + this.getClass().getSimpleName() + ",ID="+id+"] " + message);
-	}
+    public void log( HttpServletRequest request, String message ) {
+        logger.warning(Logger.SECURITY_FAILURE,"[IP=" + request.getRemoteAddr() +
+                ",Rule=" + this.getClass().getSimpleName() + ",ID="+id+"] " + message);
+    }
 
-	protected void setId(String id) {
-		if ( id == null || "".equals(id) )
-			return;
+    protected void setId(String id) {
+        if ( id == null || "".equals(id) )
+            return;
 
-		this.id = id;
-	}
+        this.id = id;
+    }
 
-	public String toString() {
-		return "Rule:" + this.getClass().getName();
-	}
+    public String toString() {
+        return "Rule:" + this.getClass().getName();
+    }
 }

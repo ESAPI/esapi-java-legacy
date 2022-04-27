@@ -24,15 +24,15 @@ package org.owasp.esapi.errors;
  */
 public class AvailabilityException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new availability exception.
-	 */
-	protected AvailabilityException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new availability exception.
+     */
+    protected AvailabilityException() {
+        // hidden
+    }
 
     /**
      * Creates a new instance of AvailabilityException.

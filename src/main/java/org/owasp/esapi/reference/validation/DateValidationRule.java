@@ -34,24 +34,24 @@ import org.owasp.esapi.errors.ValidationException;
  * @see org.owasp.esapi.Validator
  */
 public class DateValidationRule extends BaseValidationRule {
-	private DateFormat format = DateFormat.getDateInstance();
-	
-	public DateValidationRule( String typeName, Encoder encoder, DateFormat newFormat ) {
-		super( typeName, encoder );      
-		setDateFormat( newFormat );
-	}
-	
+    private DateFormat format = DateFormat.getDateInstance();
+    
+    public DateValidationRule( String typeName, Encoder encoder, DateFormat newFormat ) {
+        super( typeName, encoder );      
+        setDateFormat( newFormat );
+    }
+    
     public final void setDateFormat( DateFormat newFormat ) {
         if (newFormat == null) {
-			throw new IllegalArgumentException("DateValidationRule.setDateFormat requires a non-null DateFormat");
-		}
-    	// CHECKME fail fast?
-/*		
-  		try {
-			newFormat.parse(new Date());
-		} catch (ParseException e) {
-			throw new IllegalArgumentException(e);
-		}
+            throw new IllegalArgumentException("DateValidationRule.setDateFormat requires a non-null DateFormat");
+        }
+        // CHECKME fail fast?
+/*        
+          try {
+            newFormat.parse(new Date());
+        } catch (ParseException e) {
+            throw new IllegalArgumentException(e);
+        }
 */
         this.format = newFormat;
         this.format.setLenient( ESAPI.securityConfiguration().getLenientDatesAccepted() );
@@ -60,19 +60,19 @@ public class DateValidationRule extends BaseValidationRule {
     /**
      * {@inheritDoc}
      */
-	public Date getValid( String context, String input ) throws ValidationException {
-		return safelyParse(context, input, false);
-	}
+    public Date getValid( String context, String input ) throws ValidationException {
+        return safelyParse(context, input, false);
+    }
 
     /**
      * {@inheritDoc}
      */
-	@Override
-	public Date sanitize( String context, String input )  {
-		return sanitize(context, input, null);
-	}
-	
-	/**
+    @Override
+    public Date sanitize( String context, String input )  {
+        return sanitize(context, input, null);
+    }
+    
+    /**
      * Same as sanitize(String, String) except it returns any ValidationException generated in the provided errorList.
      * 
      *   @param errorList The error list to add any ValidationException to.
@@ -89,35 +89,35 @@ public class DateValidationRule extends BaseValidationRule {
         }
         return date;
     }
-	    
-	private Date safelyParse(String context, String input, boolean sanitize)
-			throws ValidationException {
-		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
-		if (StringUtilities.isEmpty(input)) {
-			if (allowNull) {
-				return null;
-			}
-			throw new ValidationException(context + ": Input date required",
-					"Input date required: context=" + context + ", input="
-							+ input, context);
-		}
+        
+    private Date safelyParse(String context, String input, boolean sanitize)
+            throws ValidationException {
+        // CHECKME should this allow empty Strings? "   " use IsBlank instead?
+        if (StringUtilities.isEmpty(input)) {
+            if (allowNull) {
+                return null;
+            }
+            throw new ValidationException(context + ": Input date required",
+                    "Input date required: context=" + context + ", input="
+                            + input, context);
+        }
 
-		 String canonical = encoder.canonicalize(input);
-	        try {
-	            Date rval = format.parse(canonical);
-	            if (sanitize) {
-	                String cycled = format.format(rval);
-	                if (!cycled.equals(canonical)) {
-	                    throw new Exception("Parameter date is not a clean translation between String and Date contexts.  Check input for additional characters");
-	                }
-	            }
-	            return rval;
-		} catch (Exception e) {
-			throw new ValidationException(context
-					+ ": Invalid date must follow the "
-					+ format.getNumberFormat() + " format",
-					"Invalid date: context=" + context + ", format=" + format
-							+ ", input=" + input, e, context);
-		}
-	}
+         String canonical = encoder.canonicalize(input);
+            try {
+                Date rval = format.parse(canonical);
+                if (sanitize) {
+                    String cycled = format.format(rval);
+                    if (!cycled.equals(canonical)) {
+                        throw new Exception("Parameter date is not a clean translation between String and Date contexts.  Check input for additional characters");
+                    }
+                }
+                return rval;
+        } catch (Exception e) {
+            throw new ValidationException(context
+                    + ": Invalid date must follow the "
+                    + format.getNumberFormat() + " format",
+                    "Invalid date: context=" + context + ", format=" + format
+                            + ", input=" + input, e, context);
+        }
+    }
 }

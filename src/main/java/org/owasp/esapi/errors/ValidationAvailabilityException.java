@@ -20,38 +20,38 @@ package org.owasp.esapi.errors;
  */
 public class ValidationAvailabilityException extends ValidationException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Instantiates a new validation exception.
-	 */
-	protected ValidationAvailabilityException() {
-		// hidden
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Create a new ValidationException
-     * @param userMessage
-     *            the message to display to users
-     * @param logMessage
-	 * 			  the message logged
+     * Instantiates a new validation exception.
      */
-	public ValidationAvailabilityException(String userMessage, String logMessage) {
-		super(userMessage, logMessage);
-	}
+    protected ValidationAvailabilityException() {
+        // hidden
+    }
 
     /**
      * Create a new ValidationException
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
+     */
+    public ValidationAvailabilityException(String userMessage, String logMessage) {
+        super(userMessage, logMessage);
+    }
+
+    /**
+     * Create a new ValidationException
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+     *               the message logged
      * @param cause
-     * 			  the cause
-     */			  
-	public ValidationAvailabilityException(String userMessage, String logMessage, Throwable cause) {
-		super(userMessage, logMessage, cause);
-	}
+     *               the cause
+     */              
+    public ValidationAvailabilityException(String userMessage, String logMessage, Throwable cause) {
+        super(userMessage, logMessage, cause);
+    }
 
 }

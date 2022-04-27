@@ -31,40 +31,40 @@ import junit.framework.TestSuite;
 
 public class DynamicInsertionTest extends WAFTestCase {
 
-	public static TestSuite suite() {
-		return new TestSuite(DynamicInsertionTest.class);
-	}
-	
-	public void testShouldReplaceContent() throws Exception {
-		
-    	System.out.println("dynamicInsertionPolicy - replaces </body> with 'this is a test'" );
-   	    
-    	request = new MockHttpServletRequest( new URL( "https://www.example.com/here+</body>+there+everywhere" ) );
+    public static TestSuite suite() {
+        return new TestSuite(DynamicInsertionTest.class);
+    }
+    
+    public void testShouldReplaceContent() throws Exception {
+        
+        System.out.println("dynamicInsertionPolicy - replaces </body> with 'this is a test'" );
+           
+        request = new MockHttpServletRequest( new URL( "https://www.example.com/here+</body>+there+everywhere" ) );
         request.setScheme("https");
         request.getSession(true).setAttribute("ESAPIUserSessionKey", user);
-    	WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/dynamic-insertion-policy.xml", request, response );
-    	
-    	assertTrue ( response.getStatus() == HttpServletResponse.SC_OK );
-    	String body = response.getBody();
-    	assertTrue ( body.indexOf("test") > -1 );
-    	System.out.println( body );
-   	
-	}
-	
-	public void testShouldNotReplaceContent() throws Exception {
-		
-		System.out.println("dynamicInsertionPolicy - should not replace '< /body>' or </body > or </bo dy> with anything" );
-   	    
-    	request = new MockHttpServletRequest( new URL( "https://www.example.com/here+<+/body></bo+dy>+</body+>+there+everywhere" ) );
-    	request.setScheme("https");
-    	request.getSession(true).setAttribute("ESAPIUserSessionKey", user);
-    	WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/dynamic-insertion-policy.xml", request, response );
-    	
-    	assertTrue ( response.getStatus() == HttpServletResponse.SC_OK );
-    	assertTrue ( response.getBody().indexOf("test") == -1 );
-    	System.out.println( response.getBody() );
-   		
-    	
-	}
-	
+        WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/dynamic-insertion-policy.xml", request, response );
+        
+        assertTrue ( response.getStatus() == HttpServletResponse.SC_OK );
+        String body = response.getBody();
+        assertTrue ( body.indexOf("test") > -1 );
+        System.out.println( body );
+       
+    }
+    
+    public void testShouldNotReplaceContent() throws Exception {
+        
+        System.out.println("dynamicInsertionPolicy - should not replace '< /body>' or </body > or </bo dy> with anything" );
+           
+        request = new MockHttpServletRequest( new URL( "https://www.example.com/here+<+/body></bo+dy>+</body+>+there+everywhere" ) );
+        request.setScheme("https");
+        request.getSession(true).setAttribute("ESAPIUserSessionKey", user);
+        WAFTestUtility.createAndExecuteWAFTransaction( "waf-policies/dynamic-insertion-policy.xml", request, response );
+        
+        assertTrue ( response.getStatus() == HttpServletResponse.SC_OK );
+        assertTrue ( response.getBody().indexOf("test") == -1 );
+        System.out.println( response.getBody() );
+           
+        
+    }
+    
 }
