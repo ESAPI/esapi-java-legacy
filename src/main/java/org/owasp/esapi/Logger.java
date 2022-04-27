@@ -205,9 +205,7 @@ public interface Logger {
      */
     void setLevel(int level);
     
-    /** Retrieve the current ESAPI logging level for this logger. See
-     * {@link org.owasp.esapi.logging.log4j.Log4JLogger} for an explanation of
-     * why this method is not simply called {@code getLevel()}.
+    /** Retrieve the current ESAPI logging level for this logger.
      * 
      * @return The current logging level.
      */
