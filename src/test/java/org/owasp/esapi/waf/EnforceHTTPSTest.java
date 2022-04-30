@@ -26,43 +26,43 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 
 public class EnforceHTTPSTest extends WAFTestCase {
 
-	public static TestSuite suite() {
-		return new TestSuite(EnforceHTTPSTest.class);
-	}
-	
-	public void setUp() throws Exception {
-		super.setUp();
-    	WAFTestUtility.setWAFPolicy( waf, "waf-policy.xml" );
-	}
+    public static TestSuite suite() {
+        return new TestSuite(EnforceHTTPSTest.class);
+    }
+    
+    public void setUp() throws Exception {
+        super.setUp();
+        WAFTestUtility.setWAFPolicy( waf, "waf-policy.xml" );
+    }
 
-	public void testGoodSchemeSSLRequired() throws Exception {
-	    // test good scheme
-		url = new URL( "https://www.example.com/" );
-		System.out.println( "\nTest good scheme (https): " + url );
-	    request = new MockHttpServletRequest( url );
-	    request.getSession(true);
-		response = new MockHttpServletResponse();
-		createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_OK );		
-	}
+    public void testGoodSchemeSSLRequired() throws Exception {
+        // test good scheme
+        url = new URL( "https://www.example.com/" );
+        System.out.println( "\nTest good scheme (https): " + url );
+        request = new MockHttpServletRequest( url );
+        request.getSession(true);
+        response = new MockHttpServletResponse();
+        createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_OK );        
+    }
 
      
-	public void testBadSchemeSSLNotRequired () throws Exception {
-	    // test bad scheme
-	    url = new URL( "http://www.example.com/images/test.gif" );
-		System.out.println( "\nTest bad scheme (no ssl - but its not required): " + url );
-	    request = new MockHttpServletRequest( url );
-	    request.getSession(true);
-		response = new MockHttpServletResponse();
-		createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_OK );		
-	}
+    public void testBadSchemeSSLNotRequired () throws Exception {
+        // test bad scheme
+        url = new URL( "http://www.example.com/images/test.gif" );
+        System.out.println( "\nTest bad scheme (no ssl - but its not required): " + url );
+        request = new MockHttpServletRequest( url );
+        request.getSession(true);
+        response = new MockHttpServletResponse();
+        createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_OK );        
+    }
 
-	public void testBadSchemeSSLRequired () throws Exception {
-	    // test bad scheme
-	    url = new URL( "http://www.example.com/secure" );
-		System.out.println( "\nTest bad scheme (no ssl - but its required): " + url );
-	    request = new MockHttpServletRequest( url );
-	    request.getSession(true);
-		response = new MockHttpServletResponse();
-		createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_MOVED_PERMANENTLY );		
-	}
+    public void testBadSchemeSSLRequired () throws Exception {
+        // test bad scheme
+        url = new URL( "http://www.example.com/secure" );
+        System.out.println( "\nTest bad scheme (no ssl - but its required): " + url );
+        request = new MockHttpServletRequest( url );
+        request.getSession(true);
+        response = new MockHttpServletResponse();
+        createAndExecuteWAFResponseCodeTest( waf, request, response, HttpServletResponse.SC_MOVED_PERMANENTLY );        
+    }
 }

@@ -65,10 +65,10 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     }
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public String getRandomString(int length, char[] characterSet) {
-    	StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         for (int loop = 0; loop < length; loop++) {
             int index = secureRandom.nextInt(characterSet.length);
             sb.append(characterSet[index]);
@@ -78,37 +78,37 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     }
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public boolean getRandomBoolean() {
         return secureRandom.nextBoolean();
     }
     
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public int getRandomInteger(int min, int max) {
         return secureRandom.nextInt(max - min) + min;
     }
     
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public long getRandomLong() {
         return secureRandom.nextLong();    
     }
     
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public float getRandomReal(float min, float max) {
         float factor = max - min;
         return secureRandom.nextFloat() * factor + min;
     }
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public String getRandomFilename(String extension) {
         String fn = getRandomString(12, EncoderConstants.CHAR_ALPHANUMERICS) + "." + extension;
         logger.debug(Logger.SECURITY_SUCCESS, "Generated new random filename: " + fn );
@@ -116,19 +116,19 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     }
     
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public String getRandomGUID() throws EncryptionException {
-    	return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString();
     }
-    	
+        
     /**
      * {@inheritDoc}
      */
     public byte[] getRandomBytes(int n) {
-    	byte[] result = new byte[ n ];
-    	secureRandom.nextBytes(result);
-    	return result;
+        byte[] result = new byte[ n ];
+        secureRandom.nextBytes(result);
+        return result;
     }
-    	
+        
 }

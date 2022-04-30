@@ -96,7 +96,7 @@ public class JavaLogFactory implements LogFactory {
             }
             logManager.readConfiguration(stream);
         } catch (IOException ioe) {
-            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);        	
+            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);            
         }
     }
 

@@ -89,13 +89,13 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     * @param directReferences
     *            the direct references
     * @deprecated This constructor internally calls the abstract method
-    *	{@link #getUniqueReference()}. Since this is a constructor, any
-    *	subclass that implements getUniqueReference() has not had it's
-    *	own constructor run. This leads to strange bugs because subclass
-    *	internal state is initializaed after calls to getUniqueReference()
-    *	have already happened. If this constructor is desired in a
-    *	subclass, consider running {@link #update(Set)} in the subclass
-    *	constructor instead.
+    *    {@link #getUniqueReference()}. Since this is a constructor, any
+    *    subclass that implements getUniqueReference() has not had it's
+    *    own constructor run. This leads to strange bugs because subclass
+    *    internal state is initializaed after calls to getUniqueReference()
+    *    have already happened. If this constructor is desired in a
+    *    subclass, consider running {@link #update(Set)} in the subclass
+    *    constructor instead.
     */
    @Deprecated
    public AbstractAccessReferenceMap( Set<Object> directReferences ) {
@@ -118,13 +118,13 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     *          The initial size to set the map to.
     *
     * @deprecated This constructor internally calls the abstract method
-    *	{@link #getUniqueReference()}. Since this is a constructor, any
-    *	subclass that implements getUniqueReference() has not had it's
-    *	own constructor run. This leads to strange bugs because subclass
-    *	internal state is initializaed after calls to getUniqueReference()
-    *	have already happened. If this constructor is desired in a
-    *	subclass, consider running {@link #update(Set)} in the subclass
-    *	constructor instead.
+    *    {@link #getUniqueReference()}. Since this is a constructor, any
+    *    subclass that implements getUniqueReference() has not had it's
+    *    own constructor run. This leads to strange bugs because subclass
+    *    internal state is initializaed after calls to getUniqueReference()
+    *    have already happened. If this constructor is desired in a
+    *    subclass, consider running {@link #update(Set)} in the subclass
+    *    constructor instead.
     */
    @Deprecated
    public AbstractAccessReferenceMap( Set<Object> directReferences, int initialSize ) {

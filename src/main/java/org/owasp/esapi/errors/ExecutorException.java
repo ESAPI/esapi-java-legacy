@@ -23,15 +23,15 @@ package org.owasp.esapi.errors;
  */
 public class ExecutorException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new ExecutorException.
-	 */
-	protected ExecutorException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new ExecutorException.
+     */
+    protected ExecutorException() {
+        // hidden
+    }
 
     /**
      * Creates a new instance of ExecutorException.
@@ -39,7 +39,7 @@ public class ExecutorException extends EnterpriseSecurityException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public ExecutorException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -51,7 +51,7 @@ public class ExecutorException extends EnterpriseSecurityException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause
      *            the cause
      */

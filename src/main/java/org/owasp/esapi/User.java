@@ -41,24 +41,24 @@ import java.util.*;
  */
 
 public interface User extends Principal, Serializable {
-	/**
-	 * @return the locale
-	 */
-	Locale getLocale();
+    /**
+     * @return the locale
+     */
+    Locale getLocale();
 
-	/**
-	 * @param locale the locale to set
-	 */
-	void setLocale(Locale locale);
+    /**
+     * @param locale the locale to set
+     */
+    void setLocale(Locale locale);
 
     /**
      * Adds a role to this user's account.
      * 
      * @param role 
-     * 		the role to add
+     *         the role to add
      * 
      * @throws AuthenticationException 
-     * 		the authentication exception
+     *         the authentication exception
      */
     void addRole(String role) throws AuthenticationException;
 
@@ -66,10 +66,10 @@ public interface User extends Principal, Serializable {
      * Adds a set of roles to this user's account.
      * 
      * @param newRoles 
-     * 		the new roles to add
+     *         the new roles to add
      * 
      * @throws AuthenticationException 
-     * 		the authentication exception
+     *         the authentication exception
      */
     void addRoles(Set<String> newRoles) throws AuthenticationException;
 
@@ -78,14 +78,14 @@ public interface User extends Principal, Serializable {
      * passwords, and the strength of the new password.
      * 
      * @param oldPassword 
-     * 		the old password
+     *         the old password
      * @param newPassword1 
-     * 		the new password
+     *         the new password
      * @param newPassword2 
-     * 		the new password - used to verify that the new password was typed correctly
+     *         the new password - used to verify that the new password was typed correctly
      * 
      * @throws AuthenticationException 
-     * 		if newPassword1 does not match newPassword2, if oldPassword does not match the stored old password, or if the new password does not meet complexity requirements 
+     *         if newPassword1 does not match newPassword2, if oldPassword does not match the stored old password, or if the new password does not meet complexity requirements 
      * @throws EncryptionException 
      */
     void changePassword(String oldPassword, String newPassword1, String newPassword2) throws AuthenticationException, EncryptionException;
@@ -146,14 +146,14 @@ public interface User extends Principal, Serializable {
      */
     String getLastHostAddress();
 
-	/**
+    /**
      * Returns the date of the last failed login time for a user. This date should be used in a message to users after a
      * successful login, to notify them of potential attack activity on their account.
      * 
      * @return date of the last failed login
      * 
      * @throws AuthenticationException 
-     * 		the authentication exception
+     *         the authentication exception
      */
     Date getLastFailedLoginTime() throws AuthenticationException;
 
@@ -190,7 +190,7 @@ public interface User extends Principal, Serializable {
      * Adds a session for this User.
      * 
      * @param s
-     * 			The session to associate with this user.
+     *             The session to associate with this user.
      */
     void addSession( HttpSession s );
     
@@ -198,7 +198,7 @@ public interface User extends Principal, Serializable {
      * Removes a session for this User.
      * 
      * @param s
-     * 			The session to remove from being associated with this user.
+     *             The session to remove from being associated with this user.
      */
     void removeSession( HttpSession s );
     
@@ -238,7 +238,7 @@ public interface User extends Principal, Serializable {
      * Checks if this user's account is assigned a particular role.
      * 
      * @param role 
-     * 		the role for which to check
+     *         the role for which to check
      * 
      * @return true, if role has been assigned to user
      */
@@ -272,7 +272,7 @@ public interface User extends Principal, Serializable {
       * 
       * A session may timeout prior to ESAPI's configuration setting due to 
       * the servlet container setting for session-timeout in web.xml. The 
-      * following is an example of a web.xml session-timeout set for one hour. 	
+      * following is an example of a web.xml session-timeout set for one hour.     
       *
       * <session-config>
       *   <session-timeout>60</session-timeout> 
@@ -292,9 +292,9 @@ public interface User extends Principal, Serializable {
      * Login with password.
      * 
      * @param password 
-     * 		the password
+     *         the password
      * @throws AuthenticationException 
-     * 		if login fails
+     *         if login fails
      */
     void loginWithPassword(String password) throws AuthenticationException;
 
@@ -307,9 +307,9 @@ public interface User extends Principal, Serializable {
      * Removes a role from this user's account.
      * 
      * @param role 
-     * 		the role to remove
+     *         the role to remove
      * @throws AuthenticationException 
-     * 		the authentication exception
+     *         the authentication exception
      */
     void removeRole(String role) throws AuthenticationException;
 
@@ -322,7 +322,7 @@ public interface User extends Principal, Serializable {
      * @return the new CSRF token
      * 
      * @throws AuthenticationException 
-     * 		the authentication exception
+     *         the authentication exception
      */
     String resetCSRFToken() throws AuthenticationException;
 
@@ -338,16 +338,16 @@ public interface User extends Principal, Serializable {
      * 
      * @param expirationTime the new expiration time
      */
-	void setExpirationTime(Date expirationTime);
+    void setExpirationTime(Date expirationTime);
 
-	/**
+    /**
      * Sets the roles for this account.
      * 
      * @param roles 
-     * 		the new roles
+     *         the new roles
      * 
      * @throws AuthenticationException 
-     * 		the authentication exception
+     *         the authentication exception
      */
     void setRoles(Set<String> roles) throws AuthenticationException;
 
@@ -363,80 +363,80 @@ public interface User extends Principal, Serializable {
      */
     void unlock();
 
-	/**
-	 * Verify that the supplied password matches the password for this user. This method
-	 * is typically used for "reauthentication" for the most sensitive functions, such
-	 * as transactions, changing email address, and changing other account information.
-	 * 
-	 * @param password 
-	 * 		the password that the user entered
-	 * 
-	 * @return true, if the password passed in matches the account's password
-	 * 
-	 * @throws EncryptionException 
-	 */
-	boolean verifyPassword(String password) throws EncryptionException;
+    /**
+     * Verify that the supplied password matches the password for this user. This method
+     * is typically used for "reauthentication" for the most sensitive functions, such
+     * as transactions, changing email address, and changing other account information.
+     * 
+     * @param password 
+     *         the password that the user entered
+     * 
+     * @return true, if the password passed in matches the account's password
+     * 
+     * @throws EncryptionException 
+     */
+    boolean verifyPassword(String password) throws EncryptionException;
 
-	/**
-	 * Set the time of the last failed login for this user.
-	 * 
-	 * @param lastFailedLoginTime the date and time when the user just failed to login correctly.
-	 */
-	void setLastFailedLoginTime(Date lastFailedLoginTime);
-	
-	/**
-	 * Set the last remote host address used by this user.
-	 * 
-	 * @param remoteHost The address of the user's current source host.
-	 */
-	void setLastHostAddress(String remoteHost) throws AuthenticationHostException;
-	
-	/**
-	 * Set the time of the last successful login for this user.
-	 * 
-	 * @param lastLoginTime the date and time when the user just successfully logged in.
-	 */
-	void setLastLoginTime(Date lastLoginTime);
-	
-	/**
-	 * Set the time of the last password change for this user.
-	 * 
-	 * @param lastPasswordChangeTime the date and time when the user just successfully changed his/her password.
-	 */
-	void setLastPasswordChangeTime(Date lastPasswordChangeTime);
+    /**
+     * Set the time of the last failed login for this user.
+     * 
+     * @param lastFailedLoginTime the date and time when the user just failed to login correctly.
+     */
+    void setLastFailedLoginTime(Date lastFailedLoginTime);
+    
+    /**
+     * Set the last remote host address used by this user.
+     * 
+     * @param remoteHost The address of the user's current source host.
+     */
+    void setLastHostAddress(String remoteHost) throws AuthenticationHostException;
+    
+    /**
+     * Set the time of the last successful login for this user.
+     * 
+     * @param lastLoginTime the date and time when the user just successfully logged in.
+     */
+    void setLastLoginTime(Date lastLoginTime);
+    
+    /**
+     * Set the time of the last password change for this user.
+     * 
+     * @param lastPasswordChangeTime the date and time when the user just successfully changed his/her password.
+     */
+    void setLastPasswordChangeTime(Date lastPasswordChangeTime);
 
-	/**
-	 * Returns the hashmap used to store security events for this user. Used by the
-	 * IntrusionDetector.
-	 */
-	HashMap getEventMap();
-	
+    /**
+     * Returns the hashmap used to store security events for this user. Used by the
+     * IntrusionDetector.
+     */
+    HashMap getEventMap();
+    
 
-	/**
-	 * The ANONYMOUS user is used to represent an unidentified user. Since there is
-	 * always a real user, the ANONYMOUS user is better than using null to represent
-	 * this.
-	 */
+    /**
+     * The ANONYMOUS user is used to represent an unidentified user. Since there is
+     * always a real user, the ANONYMOUS user is better than using null to represent
+     * this.
+     */
     User ANONYMOUS = new User() {
 
-		private static final long serialVersionUID = -1850916950784965502L;
+        private static final long serialVersionUID = -1850916950784965502L;
 
-		private String csrfToken = "";
-    	private Set<Object> sessions = new HashSet<Object>();
-		private Locale locale = null;
-    	
-    	/**
+        private String csrfToken = "";
+        private Set<Object> sessions = new HashSet<Object>();
+        private Locale locale = null;
+        
+        /**
          * {@inheritDoc}
          */
         public void addRole(String role) throws AuthenticationException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void addRoles(Set newRoles) throws AuthenticationException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
@@ -445,107 +445,107 @@ public interface User extends Principal, Serializable {
         public void changePassword(String oldPassword, String newPassword1,
                 String newPassword2) throws AuthenticationException,
                 EncryptionException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void disable() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void enable() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public long getAccountId() {
-	        return 0;
+            return 0;
         }
 
         /**
          * {@inheritDoc}
          */
         public String getAccountName() {
-	        return "Anonymous";
+            return "Anonymous";
         }
 
-		/**
-		 * Alias method that is equivalent to getAccountName()
-		 * 
-		 * @return the name of the current user's account
+        /**
+         * Alias method that is equivalent to getAccountName()
+         * 
+         * @return the name of the current user's account
          */
         public String getName() {
-        	return getAccountName();
+            return getAccountName();
         }
         
         /**
          * {@inheritDoc}
          */
         public String getCSRFToken() {
-	        return csrfToken;
+            return csrfToken;
         }
 
         /**
          * {@inheritDoc}
          */
         public Date getExpirationTime() {
-	        return null;
+            return null;
         }
 
         /**
          * {@inheritDoc}
          */
         public int getFailedLoginCount() {
-	        return 0;
+            return 0;
         }
 
         /**
          * {@inheritDoc}
          */
         public Date getLastFailedLoginTime() throws AuthenticationException {
-	        return null;
+            return null;
         }
 
         /**
          * {@inheritDoc}
          */
         public String getLastHostAddress() {
-	        return "unknown";
+            return "unknown";
         }
 
         /**
          * {@inheritDoc}
          */
         public Date getLastLoginTime() {
-	        return null;
+            return null;
         }
 
         /**
          * {@inheritDoc}
          */
         public Date getLastPasswordChangeTime() {
-	        return null;
+            return null;
         }
 
         /**
          * {@inheritDoc}
          */
         public Set<String> getRoles() {
-	        return new HashSet<String>();
+            return new HashSet<String>();
         }
 
         /**
          * {@inheritDoc}
          */
         public String getScreenName() {
-	        return "Anonymous";
+            return "Anonymous";
         }
 
         /**
@@ -571,70 +571,70 @@ public interface User extends Principal, Serializable {
          * {@inheritDoc}
          */
         public void incrementFailedLoginCount() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isAnonymous() {
-	        return true;
+            return true;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isEnabled() {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isExpired() {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isInRole(String role) {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isLocked() {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isLoggedIn() {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isSessionAbsoluteTimeout() {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean isSessionTimeout() {
-	        return false;
+            return false;
         }
 
         /**
          * {@inheritDoc}
          */
         public void lock() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
@@ -642,119 +642,119 @@ public interface User extends Principal, Serializable {
          */
         public void loginWithPassword(String password)
                 throws AuthenticationException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void logout() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void removeRole(String role) throws AuthenticationException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public String resetCSRFToken() throws AuthenticationException {
-    		csrfToken = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
-    		return csrfToken;
+            csrfToken = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
+            return csrfToken;
         }
 
         /**
          * {@inheritDoc}
          */
         public void setAccountName(String accountName) {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
-    	public void setExpirationTime(Date expirationTime) {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+        public void setExpirationTime(Date expirationTime) {
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
         
-    	/**
+        /**
          * {@inheritDoc}
          */
         public void setRoles(Set roles) throws AuthenticationException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void setScreenName(String screenName) {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void unlock() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public boolean verifyPassword(String password) throws EncryptionException {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
 
         /**
          * {@inheritDoc}
          */
         public void setLastFailedLoginTime(Date lastFailedLoginTime) {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
         
         /**
          * {@inheritDoc}
          */
-    	public void setLastLoginTime(Date lastLoginTime) {
-    		throw new RuntimeException("Invalid operation for the anonymous user");
-    	}
+        public void setLastLoginTime(Date lastLoginTime) {
+            throw new RuntimeException("Invalid operation for the anonymous user");
+        }
 
-    	/**
+        /**
          * {@inheritDoc}
          */
-     	public void setLastHostAddress(String remoteHost) {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+         public void setLastHostAddress(String remoteHost) {
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
                 
-     	/**
+         /**
          * {@inheritDoc}
          */
         public void setLastPasswordChangeTime(Date lastPasswordChangeTime) {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
         
         /**
          *  {@inheritDoc}
          */
         public HashMap getEventMap() {
-        	throw new RuntimeException("Invalid operation for the anonymous user");
+            throw new RuntimeException("Invalid operation for the anonymous user");
         }
          /**
-    	 * @return the locale
-    	 */
-    	public Locale getLocale() {
-    		return locale;
-    	}
+         * @return the locale
+         */
+        public Locale getLocale() {
+            return locale;
+        }
 
-    	/**
-    	 * @param locale the locale to set
-    	 */
-    	public void setLocale(Locale locale) {
-    		this.locale = locale;
-    	}
+        /**
+         * @param locale the locale to set
+         */
+        public void setLocale(Locale locale) {
+            this.locale = locale;
+        }
     };
 }

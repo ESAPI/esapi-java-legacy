@@ -63,46 +63,46 @@ import javax.servlet.http.HttpServletResponse;
 public class ClickjackFilter implements Filter 
 {
 
-	private String mode = "DENY";
+    private String mode = "DENY";
 
-	/**
-	 * Initialize "mode" parameter from web.xml. Valid values are "DENY" and "SAMEORIGIN". 
-	 * If you leave this parameter out, the default is to use the DENY mode.
-	 * 
-	 * @param filterConfig A filter configuration object used by a servlet container
-	 *                     to pass information to a filter during initialization. 
-	 */
-	public void init(FilterConfig filterConfig) {
-		String configMode = filterConfig.getInitParameter("mode");
-		if ( configMode != null && ( configMode.equals( "DENY" ) || configMode.equals( "SAMEORIGIN" ) ) ) {
-			mode = configMode;
-		}
-	}
-	
-	/**
-	 * Add X-FRAME-OPTIONS response header to tell IE8 (and any other browsers who
-	 * decide to implement) not to display this content in a frame. For details, please
-	 * refer to
-	 * @link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx
-	 * 
-	 * @param request The request object.
-	 * @param response The response object.
-	 * @param chain Refers to the {@code FilterChain} object to pass control to the
-	 *              next {@code Filter}.
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
-	{
+    /**
+     * Initialize "mode" parameter from web.xml. Valid values are "DENY" and "SAMEORIGIN". 
+     * If you leave this parameter out, the default is to use the DENY mode.
+     * 
+     * @param filterConfig A filter configuration object used by a servlet container
+     *                     to pass information to a filter during initialization. 
+     */
+    public void init(FilterConfig filterConfig) {
+        String configMode = filterConfig.getInitParameter("mode");
+        if ( configMode != null && ( configMode.equals( "DENY" ) || configMode.equals( "SAMEORIGIN" ) ) ) {
+            mode = configMode;
+        }
+    }
+    
+    /**
+     * Add X-FRAME-OPTIONS response header to tell IE8 (and any other browsers who
+     * decide to implement) not to display this content in a frame. For details, please
+     * refer to
+     * @link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx
+     * 
+     * @param request The request object.
+     * @param response The response object.
+     * @param chain Refers to the {@code FilterChain} object to pass control to the
+     *              next {@code Filter}.
+     * @throws IOException
+     * @throws ServletException
+     */
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
+    {
         HttpServletResponse res = (HttpServletResponse)response;
         res.addHeader("X-FRAME-OPTIONS", mode );
         chain.doFilter(request, response);
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void destroy() {
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    public void destroy() {
+    }
+    
 }

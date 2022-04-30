@@ -48,18 +48,18 @@ import static org.junit.Assert.*;
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
  */
 public class HTMLValidationRuleThrowsTest {
-	private static class ConfOverride extends SecurityConfigurationWrapper {
+    private static class ConfOverride extends SecurityConfigurationWrapper {
         private String desiredReturn = "clean";
 
-		ConfOverride(SecurityConfiguration orig, String desiredReturn) {
-			super(orig);
+        ConfOverride(SecurityConfiguration orig, String desiredReturn) {
+            super(orig);
             this.desiredReturn = desiredReturn;
-		}
+        }
 
-		@Override
-		public String getStringProp(String propName) {
+        @Override
+        public String getStringProp(String propName) {
             // Would it be better making this file a static import?
-			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
+            if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
                 return desiredReturn;
             } else {
                 return super.getStringProp( propName );
@@ -77,11 +77,11 @@ public class HTMLValidationRuleThrowsTest {
         thrownEx = ExpectedException.none();
     }
 
-	@Before
+    @Before
     public void setUp() throws Exception {
-		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), "throw" )
-		);
+        ESAPI.override(
+            new ConfOverride( ESAPI.securityConfiguration(), "throw" )
+        );
 
     }
 

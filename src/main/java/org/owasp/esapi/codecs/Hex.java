@@ -14,9 +14,9 @@ public class Hex {
 
     /** Output byte representation as hexadecimal representation.
      * 
-     * @param b				Bytes to encode to hexadecimal representation.
-     * @param leading0x		If true, return with leading "0x".
-     * @return				Hexadecimal representation of specified bytes.
+     * @param b                Bytes to encode to hexadecimal representation.
+     * @param leading0x        If true, return with leading "0x".
+     * @return                Hexadecimal representation of specified bytes.
      */
     public static String toHex(byte[] b, boolean leading0x) {
         StringBuffer hexString = new StringBuffer();
@@ -38,9 +38,9 @@ public class Hex {
      * Output byte representation as hexadecimal representation.
      * Alias for <code>toHex()</code> method.
      * 
-     * @param b				Bytes to encode to hexadecimal representation.
-     * @param leading0x		If true, return with leading "0x".
-     * @return				Hexadecimal representation of specified bytes.
+     * @param b                Bytes to encode to hexadecimal representation.
+     * @param leading0x        If true, return with leading "0x".
+     * @return                Hexadecimal representation of specified bytes.
      */
     public static String encode(byte[] b, boolean leading0x) {
         return toHex(b, leading0x);
@@ -54,8 +54,8 @@ public class Hex {
      * example, the string "0x0000face" is going to return a byte array
      * whose length is 4, not 2.
      * 
-     * @param hexStr	Hexadecimal-encoded string, with or without leading "0x".
-     * @return			The equivalent byte array.
+     * @param hexStr    Hexadecimal-encoded string, with or without leading "0x".
+     * @return            The equivalent byte array.
      */
     public static byte[] fromHex(String hexStr) {
         String hexRep = hexStr;
@@ -75,8 +75,8 @@ public class Hex {
     /** Decode hexadecimal-encoded string and return raw byte array.
      * Alias for <code>fromHex()</code> method.
      * 
-     * @param hexStr	Hexadecimal-encoded string, with or without leading "0x".
-     * @return			The equivalent byte array. 
+     * @param hexStr    Hexadecimal-encoded string, with or without leading "0x".
+     * @return            The equivalent byte array. 
      */
     public static byte[] decode(String hexStr) {
         return fromHex(hexStr);

@@ -31,201 +31,201 @@ import javax.servlet.http.HttpSession;
  */
 public class MockHttpSession implements HttpSession {
 
-	/** The invalidated. */
-	boolean invalidated = false;
-	
-	/** The creation time. */
-	private long creationTime=new Date().getTime();
-	
-	/** The accessed time. */
-	private long accessedTime=new Date().getTime();
-	
-	/** The count. */
-	private static int count = 1;
-	
-	/** The sessionid. */
-	private int sessionid=count++;
-	
-	/** The attributes. */
-	private Map<String, Object> attributes = new HashMap<String, Object>();
-	
-	/**
-	 * Instantiates a new test HTTP session.
-	 */
-	public MockHttpSession() {
-		// to replace synthetic accessor method
-	}
-	
-	/**
-	 * Instantiates a new test http session.
-	 * 
-	 * @param creationTime
-	 *            the creation time
-	 * @param accessedTime
-	 *            the accessed time
-	 */
-	public MockHttpSession( long creationTime, long accessedTime ) {
-		this.creationTime = creationTime;
-		this.accessedTime = accessedTime;
-	}
+    /** The invalidated. */
+    boolean invalidated = false;
+    
+    /** The creation time. */
+    private long creationTime=new Date().getTime();
+    
+    /** The accessed time. */
+    private long accessedTime=new Date().getTime();
+    
+    /** The count. */
+    private static int count = 1;
+    
+    /** The sessionid. */
+    private int sessionid=count++;
+    
+    /** The attributes. */
+    private Map<String, Object> attributes = new HashMap<String, Object>();
+    
+    /**
+     * Instantiates a new test HTTP session.
+     */
+    public MockHttpSession() {
+        // to replace synthetic accessor method
+    }
+    
+    /**
+     * Instantiates a new test http session.
+     * 
+     * @param creationTime
+     *            the creation time
+     * @param accessedTime
+     *            the accessed time
+     */
+    public MockHttpSession( long creationTime, long accessedTime ) {
+        this.creationTime = creationTime;
+        this.accessedTime = accessedTime;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public Object getAttribute(String string) {
-		return attributes.get( string );
-	}
+    public Object getAttribute(String string) {
+        return attributes.get( string );
+    }
 
     /**
      * {@inheritDoc}
      */
-	public Enumeration<String> getAttributeNames() {
-		Vector<String> v = new Vector<String>( attributes.keySet() );
-		return v.elements();
-	}
+    public Enumeration<String> getAttributeNames() {
+        Vector<String> v = new Vector<String>( attributes.keySet() );
+        return v.elements();
+    }
 
     /**
      * {@inheritDoc}
      */
-	public long getCreationTime() {
-		return creationTime;
-	}
+    public long getCreationTime() {
+        return creationTime;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public String getId() {
-		return ""+sessionid;
-	}
+    public String getId() {
+        return ""+sessionid;
+    }
 
-	/**
-	 * Gets the invalidated.
-	 * 
-	 * @return the invalidated
-	 */
-	public boolean getInvalidated() {
-		return invalidated;
-	}
+    /**
+     * Gets the invalidated.
+     * 
+     * @return the invalidated
+     */
+    public boolean getInvalidated() {
+        return invalidated;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public long getLastAccessedTime() {
-		return accessedTime;
-	}
+    public long getLastAccessedTime() {
+        return accessedTime;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public int getMaxInactiveInterval() {
-		return 0;
-	}
+    public int getMaxInactiveInterval() {
+        return 0;
+    }
 
     /**
      * {@inheritDoc}
      */
-	public ServletContext getServletContext() {
-		return null;
-	}
+    public ServletContext getServletContext() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      * @deprecated
      */
         @Deprecated
-	// need the full class here as for whatever stupid reason you can't
-	// seem to @SuppressWarnings{'deprecation'} on the import... *sigh*
-	public javax.servlet.http.HttpSessionContext getSessionContext() {
-		return null;
-	}
+    // need the full class here as for whatever stupid reason you can't
+    // seem to @SuppressWarnings{'deprecation'} on the import... *sigh*
+    public javax.servlet.http.HttpSessionContext getSessionContext() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      * @deprecated
      */
-     	@Deprecated
-	public Object getValue(String string) {
-		return null;
-	}
+         @Deprecated
+    public Object getValue(String string) {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
      * @deprecated
      */
-     	@Deprecated
-	public String[] getValueNames() {
-		return null;
-	}
+         @Deprecated
+    public String[] getValueNames() {
+        return null;
+    }
 
     /**
      * {@inheritDoc}
-	 */
-	public void invalidate() {
-		invalidated = true;
-	}
+     */
+    public void invalidate() {
+        invalidated = true;
+    }
     
     /**
      * {@inheritDoc}
      */
-	public boolean isNew() {
-		return true;
-	}
-
-	/**
-     * {@inheritDoc}
-     * @deprecated
-     */
-     	@Deprecated
-	public void putValue(String string, Object object) {
-		setAttribute( string, object );
-	}
-
-    /**
-     * {@inheritDoc}
-     */
-	public void removeAttribute(String string) {
-		attributes.remove( string );
-	}
+    public boolean isNew() {
+        return true;
+    }
 
     /**
      * {@inheritDoc}
      * @deprecated
      */
-     	@Deprecated
-	public void removeValue(String string) {
-		removeAttribute( string );
-	}
+         @Deprecated
+    public void putValue(String string, Object object) {
+        setAttribute( string, object );
+    }
 
     /**
      * {@inheritDoc}
      */
-	public void setAttribute(String string, Object object) {
-		attributes.put(string, object);
-	}
+    public void removeAttribute(String string) {
+        attributes.remove( string );
+    }
+
+    /**
+     * {@inheritDoc}
+     * @deprecated
+     */
+         @Deprecated
+    public void removeValue(String string) {
+        removeAttribute( string );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setAttribute(String string, Object object) {
+        attributes.put(string, object);
+    }
 
     /**
      * {@inheritDoc}
 =     */
-	public void setMaxInactiveInterval(int i) {
-		// stub
-	}
-	
+    public void setMaxInactiveInterval(int i) {
+        // stub
+    }
+    
     /**
      *
      * @param time
      */
     public void setAccessedTime( long time ) {
-		this.accessedTime = time;
-	}
+        this.accessedTime = time;
+    }
 
-	
+    
     /**
      *
      * @param time
      */
     public void setCreationTime( long time ) {
-		this.creationTime = time;
-	}
+        this.creationTime = time;
+    }
 
 }
 

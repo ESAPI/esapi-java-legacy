@@ -38,9 +38,9 @@ public class MockFilterChain implements FilterChain {
      * @throws javax.servlet.ServletException
      */
     public void doFilter( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
-    	System.out.println( "CHAIN received " + request.getClass().getName() + " and is issuing " + response.getClass().getName() );
-       	response.getOutputStream().println( "   This is the body of a response for " +  ((HttpServletRequest)request).getRequestURI() );
-           	((HttpServletResponse)response).addCookie( new Cookie( "name", "value" ) );
+        System.out.println( "CHAIN received " + request.getClass().getName() + " and is issuing " + response.getClass().getName() );
+           response.getOutputStream().println( "   This is the body of a response for " +  ((HttpServletRequest)request).getRequestURI() );
+               ((HttpServletResponse)response).addCookie( new Cookie( "name", "value" ) );
     }
 
 }

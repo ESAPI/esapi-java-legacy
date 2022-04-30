@@ -24,15 +24,15 @@ package org.owasp.esapi.errors;
  */
 public class AuthenticationException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new authentication exception.
-	 */
-	protected AuthenticationException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new authentication exception.
+     */
+    protected AuthenticationException() {
+        // hidden
+    }
 
     /**
      * Creates a new instance of {@code AuthenticationException}.

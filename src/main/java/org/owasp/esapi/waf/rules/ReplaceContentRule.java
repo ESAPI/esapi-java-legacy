@@ -36,78 +36,78 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class ReplaceContentRule extends Rule {
 
-	private Pattern pattern;
-	private String replacement;
-	private Pattern contentType;
-	private Pattern path;
-	
-	public ReplaceContentRule(String id, Pattern pattern, String replacement, Pattern contentType, Pattern path) {
-		this.pattern = pattern;
-		this.replacement = replacement;
-		this.path = path;
-		this.contentType = contentType;
-		setId(id);
-	}
+    private Pattern pattern;
+    private String replacement;
+    private Pattern contentType;
+    private Pattern path;
+    
+    public ReplaceContentRule(String id, Pattern pattern, String replacement, Pattern contentType, Pattern path) {
+        this.pattern = pattern;
+        this.replacement = replacement;
+        this.path = path;
+        this.contentType = contentType;
+        setId(id);
+    }
 
-	/*
-	 * Use regular expressions with capturing parentheses to perform replacement.
-	 */
+    /*
+     * Use regular expressions with capturing parentheses to perform replacement.
+     */
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		/*
-		 * First early fail: if the URI doesn't match the paths we're interested in.
-		 */
-		String uri = request.getRequestURI();
-		if ( path != null && ! path.matcher(uri).matches() ) {
-			return new DoNothingAction();
-		}
-		
-		/*
-		 * Second early fail: if the content type is one we'd like to search for output patterns.
-		 */
+        /*
+         * First early fail: if the URI doesn't match the paths we're interested in.
+         */
+        String uri = request.getRequestURI();
+        if ( path != null && ! path.matcher(uri).matches() ) {
+            return new DoNothingAction();
+        }
+        
+        /*
+         * Second early fail: if the content type is one we'd like to search for output patterns.
+         */
 
-		if ( contentType != null ) {
-			if ( response.getContentType() != null && ! contentType.matcher(response.getContentType()).matches() ) {
-				return new DoNothingAction();
-			}
-		}
+        if ( contentType != null ) {
+            if ( response.getContentType() != null && ! contentType.matcher(response.getContentType()).matches() ) {
+                return new DoNothingAction();
+            }
+        }
 
-		byte[] bytes = null;
+        byte[] bytes = null;
 
-		try {
-			bytes = response.getInterceptingServletOutputStream().getResponseBytes();
-		} catch (IOException ioe) {
-			log(request,"Error matching pattern '" + pattern.pattern() + "', IOException encountered (possibly too large?): " + ioe.getMessage() + " (in response to URL: '" + request.getRequestURL() + "')");
-			return new DoNothingAction(); // yes this is a fail open!
-		}
+        try {
+            bytes = response.getInterceptingServletOutputStream().getResponseBytes();
+        } catch (IOException ioe) {
+            log(request,"Error matching pattern '" + pattern.pattern() + "', IOException encountered (possibly too large?): " + ioe.getMessage() + " (in response to URL: '" + request.getRequestURL() + "')");
+            return new DoNothingAction(); // yes this is a fail open!
+        }
 
-		
-		try {
+        
+        try {
 
-			String s = new String(bytes,response.getCharacterEncoding());
+            String s = new String(bytes,response.getCharacterEncoding());
 
-			Matcher m = pattern.matcher(s);
-			String canary = m.replaceAll(replacement);
-			
-			try {
-				
-				if ( ! s.equals(canary) ) {
-					response.getInterceptingServletOutputStream().setResponseBytes(canary.getBytes(response.getCharacterEncoding()));
-					logger.debug(Logger.SECURITY_SUCCESS, "Successfully replaced pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "'");
-				}
-				
-			} catch (IOException ioe) {
-				logger.error(Logger.SECURITY_FAILURE, "Failed to replace pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "' due to [" + ioe.getMessage() + "]");
-			}
+            Matcher m = pattern.matcher(s);
+            String canary = m.replaceAll(replacement);
+            
+            try {
+                
+                if ( ! s.equals(canary) ) {
+                    response.getInterceptingServletOutputStream().setResponseBytes(canary.getBytes(response.getCharacterEncoding()));
+                    logger.debug(Logger.SECURITY_SUCCESS, "Successfully replaced pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "'");
+                }
+                
+            } catch (IOException ioe) {
+                logger.error(Logger.SECURITY_FAILURE, "Failed to replace pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "' due to [" + ioe.getMessage() + "]");
+            }
 
-		} catch(UnsupportedEncodingException uee) {
-			logger.error(Logger.SECURITY_FAILURE, "Failed to replace pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "' due to [" + uee.getMessage() + "]");
-		}
+        } catch(UnsupportedEncodingException uee) {
+            logger.error(Logger.SECURITY_FAILURE, "Failed to replace pattern '" + pattern.pattern() + "' on response to URL '" + request.getRequestURL() + "' due to [" + uee.getMessage() + "]");
+        }
 
-		return new DoNothingAction();
-	}
+        return new DoNothingAction();
+    }
 
 }

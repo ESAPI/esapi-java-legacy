@@ -36,27 +36,27 @@ import java.util.Map;
  */
 public interface HTTPUtilities
 {
-	// All implied static final as this is an interface
+    // All implied static final as this is an interface
     String REMEMBER_TOKEN_COOKIE_NAME = "rtoken";
     int MAX_COOKIE_LEN = 4096;            // From RFC 2109
-	int MAX_COOKIE_PAIRS = 20;			// From RFC 2109
-	String CSRF_TOKEN_NAME = "ctoken";
-	String ESAPI_STATE = "estate";
+    int MAX_COOKIE_PAIRS = 20;            // From RFC 2109
+    String CSRF_TOKEN_NAME = "ctoken";
+    String ESAPI_STATE = "estate";
 
-	int PARAMETER = 0;
-	int HEADER = 1;
-	int COOKIE = 2;
+    int PARAMETER = 0;
+    int HEADER = 1;
+    int COOKIE = 2;
 
-	/**
+    /**
      * Calls addCookie with the *current* request.
      *
      * @param cookie The cookie to add
      * 
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void addCookie(Cookie cookie);
 
-	/**
+    /**
      * Add a cookie to the response after ensuring that there are no encoded or
      * illegal characters in the name and name and value. This method also sets
      * the secure and HttpOnly flags on the cookie.
@@ -66,7 +66,7 @@ public interface HTTPUtilities
      */
     void addCookie(HttpServletResponse response, Cookie cookie);
 
-	/**
+    /**
      * Adds the current user's CSRF token (see User.getCSRFToken()) to the URL for purposes of preventing CSRF attacks.
      * This method should be used on all URLs to be put into all links and forms the application generates.
      *
@@ -78,7 +78,7 @@ public interface HTTPUtilities
     /**
      * Calls addHeader with the *current* request.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void addHeader(String name, String value);
 
@@ -95,49 +95,49 @@ public interface HTTPUtilities
      */
     void addHeader(HttpServletResponse response, String name, String value);
 
-	/**
+    /**
      * Calls assertSecureRequest with the *current* request.
-	 * @see HTTPUtilities#assertSecureRequest(HttpServletRequest)
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	void assertSecureRequest() throws AccessControlException;
+     * @see HTTPUtilities#assertSecureRequest(HttpServletRequest)
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    void assertSecureRequest() throws AccessControlException;
 
-	/**
+    /**
      * Calls assertSecureChannel with the *current* request.
-	 * @see HTTPUtilities#assertSecureChannel(HttpServletRequest)
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	void assertSecureChannel() throws AccessControlException;
+     * @see HTTPUtilities#assertSecureChannel(HttpServletRequest)
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    void assertSecureChannel() throws AccessControlException;
 
-	/**
-	 * Ensures that the request uses both SSL and POST to protect any sensitive parameters
-	 * in the querystring from being sniffed, logged, bookmarked, included in referer header, etc...
-	 * This method should be called for any request that contains sensitive data from a web form.
+    /**
+     * Ensures that the request uses both SSL and POST to protect any sensitive parameters
+     * in the querystring from being sniffed, logged, bookmarked, included in referer header, etc...
+     * This method should be called for any request that contains sensitive data from a web form.
      *
      * @param request
      * @throws AccessControlException if security constraints are not met
-	 */
+     */
     void assertSecureRequest(HttpServletRequest request) throws AccessControlException;
 
-	/**
-	 * Ensures the use of SSL to protect any sensitive parameters in the request and
-	 * any sensitive data in the response. This method should be called for any request
-	 * that contains sensitive data from a web form or will result in sensitive data in the
-	 * response page.
+    /**
+     * Ensures the use of SSL to protect any sensitive parameters in the request and
+     * any sensitive data in the response. This method should be called for any request
+     * that contains sensitive data from a web form or will result in sensitive data in the
+     * response page.
      *
      * @param request
      * @throws AccessControlException if security constraints are not met
-	 */
+     */
     void assertSecureChannel(HttpServletRequest request) throws AccessControlException;
 
-	/**
+    /**
      * Calls changeSessionIdentifier with the *current* request.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
-	HttpSession changeSessionIdentifier() throws AuthenticationException;
+    HttpSession changeSessionIdentifier() throws AuthenticationException;
 
-	/**
+    /**
      * Invalidate the existing session after copying all of its contents to a newly created session with a new session id.
      * Note that this is different from logging out and creating a new session identifier that does not contain the
      * existing session contents. Care should be taken to use this only when the existing session does not contain
@@ -150,34 +150,34 @@ public interface HTTPUtilities
     HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException;
 
     /**
-	 * Clears the current HttpRequest and HttpResponse associated with the current thread.
+     * Clears the current HttpRequest and HttpResponse associated with the current thread.
      *
-	 * @see ESAPI#clearCurrent()
-	 */
+     * @see ESAPI#clearCurrent()
+     */
     void clearCurrent();
 
     /**
-	 * Decrypts an encrypted hidden field value and returns the cleartext. If the field does not decrypt properly,
-	 * an IntrusionException is thrown to indicate tampering.
+     * Decrypts an encrypted hidden field value and returns the cleartext. If the field does not decrypt properly,
+     * an IntrusionException is thrown to indicate tampering.
      *
-	 * @param encrypted hidden field value to decrypt
-	 * @return decrypted hidden field value stored as a String
-	 */
-	String decryptHiddenField(String encrypted);
+     * @param encrypted hidden field value to decrypt
+     * @return decrypted hidden field value stored as a String
+     */
+    String decryptHiddenField(String encrypted);
 
     /**
-	 * Takes an encrypted querystring and returns a Map containing the original parameters.
+     * Takes an encrypted querystring and returns a Map containing the original parameters.
      *
-	 * @param encrypted the encrypted querystring to decrypt
-	 * @return a Map object containing the decrypted querystring
-	 * @throws EncryptionException
-	 */
+     * @param encrypted the encrypted querystring to decrypt
+     * @return a Map object containing the decrypted querystring
+     * @throws EncryptionException
+     */
     Map<String, String> decryptQueryString(String encrypted) throws EncryptionException;
 
     /**
      * Calls decryptStateFromCookie with the *current* request.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     Map<String, String> decryptStateFromCookie() throws EncryptionException;
 
@@ -186,7 +186,7 @@ public interface HTTPUtilities
      *
      * @param request
      * @return a map containing the decrypted cookie state value
-	 * @throws EncryptionException
+     * @throws EncryptionException
      */
     Map<String, String> decryptStateFromCookie(HttpServletRequest request) throws EncryptionException;
 
@@ -197,22 +197,22 @@ public interface HTTPUtilities
      * @return the encrypted value of the hidden field
      * @throws EncryptionException
      */
-	String encryptHiddenField(String value) throws EncryptionException;
+    String encryptHiddenField(String value) throws EncryptionException;
 
-	/**
-	 * Takes a querystring (everything after the question mark in the URL) and returns an encrypted string containing the parameters.
+    /**
+     * Takes a querystring (everything after the question mark in the URL) and returns an encrypted string containing the parameters.
      *
-	 * @param query the querystring to encrypt
-	 * @return encrypted querystring stored as a String
-	 * @throws EncryptionException
-	 */
-	String encryptQueryString(String query) throws EncryptionException;
+     * @param query the querystring to encrypt
+     * @return encrypted querystring stored as a String
+     * @throws EncryptionException
+     */
+    String encryptQueryString(String query) throws EncryptionException;
 
-	/**
-	 * Calls encryptStateInCookie with the *current* response.
+    /**
+     * Calls encryptStateInCookie with the *current* response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void encryptStateInCookie(Map<String, String> cleartext) throws EncryptionException;
 
     /**
@@ -229,28 +229,28 @@ public interface HTTPUtilities
     void encryptStateInCookie(HttpServletResponse response, Map<String, String> cleartext) throws EncryptionException;
 
     /**
-	 * Calls getCookie with the *current* response.
-	 * 
-	 * @param name The cookie to get
+     * Calls getCookie with the *current* response.
+     * 
+     * @param name The cookie to get
      * @return the requested cookie value
      * @throws ValidationException
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	String getCookie(String name) throws ValidationException;
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    String getCookie(String name) throws ValidationException;
 
-	/**
+    /**
      * A safer replacement for getCookies() in HttpServletRequest that returns the canonicalized
      * value of the named cookie after "global" validation against the
      * general type defined in ESAPI.properties. This should not be considered a replacement for
      * more specific validation.
      *
      * @param request
-	 * @param name The cookie to get
+     * @param name The cookie to get
      * @return the requested cookie value
      * @throws ValidationException
      */
-	String getCookie(HttpServletRequest request, String name) throws ValidationException;
+    String getCookie(HttpServletRequest request, String name) throws ValidationException;
 
     /**
      * Returns the current user's CSRF token. If there is no current user then return null.
@@ -259,44 +259,44 @@ public interface HTTPUtilities
      */
     String getCSRFToken();
 
-	/**
+    /**
      * Retrieves the current HttpServletRequest
      *
      * @return the current request
      */
     HttpServletRequest getCurrentRequest();
 
-	/**
+    /**
      * Retrieves the current HttpServletResponse
      *
      * @return the current response
      */
     HttpServletResponse getCurrentResponse();
 
-	/**
-	 * Calls getFileUploads with the *current* request, default upload directory, and default allowed file extensions
+    /**
+     * Calls getFileUploads with the *current* request, default upload directory, and default allowed file extensions
      *
      * @return List of new File objects from upload
      * @throws ValidationException if the file fails validation
      * 
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	List getFileUploads() throws ValidationException;
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    List getFileUploads() throws ValidationException;
 
     /**
-	 * Call getFileUploads with the specified request, default upload directory, and default allowed file extensions
+     * Call getFileUploads with the specified request, default upload directory, and default allowed file extensions
      *
      * @return List of new File objects from upload
      * @throws ValidationException if the file fails validation
-	 */
-	List getFileUploads(HttpServletRequest request) throws ValidationException;
+     */
+    List getFileUploads(HttpServletRequest request) throws ValidationException;
 
     /**
-	 * Call getFileUploads with the specified request, specified upload directory, and default allowed file extensions
+     * Call getFileUploads with the specified request, specified upload directory, and default allowed file extensions
      *
      * @return List of new File objects from upload
      * @throws ValidationException if the file fails validation
-	 */
+     */
     List getFileUploads(HttpServletRequest request, File finalDir) throws ValidationException;
 
 
@@ -306,7 +306,7 @@ public interface HTTPUtilities
      * possibly virus checking, and path and name checks. Refer to the file checking methods in Validator for more
      * information.
      * <p/>
-	 * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
+     * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the {@link HttpServletRequest} object
      *
      * @param request
      * @return List of new File objects from upload
@@ -315,12 +315,12 @@ public interface HTTPUtilities
     List getFileUploads(HttpServletRequest request, File destinationDir, List allowedExtensions) throws ValidationException;
 
 
-	/**
-	 * Calls getHeader with the *current* request.
+    /**
+     * Calls getHeader with the *current* request.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	String getHeader(String name) throws ValidationException;
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    String getHeader(String name) throws ValidationException;
 
     /**
      * A safer replacement for getHeader() in HttpServletRequest that returns the canonicalized
@@ -332,14 +332,14 @@ public interface HTTPUtilities
      * @param name
      * @return the requested header value
      */
-	String getHeader(HttpServletRequest request, String name) throws ValidationException;
+    String getHeader(HttpServletRequest request, String name) throws ValidationException;
 
-	/**
-	 * Calls getParameter with the *current* request.
+    /**
+     * Calls getParameter with the *current* request.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	String getParameter(String name) throws ValidationException;
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    String getParameter(String name) throws ValidationException;
 
     /**
      * A safer replacement for getParameter() in HttpServletRequest that returns the canonicalized
@@ -353,12 +353,12 @@ public interface HTTPUtilities
      */
     String getParameter(HttpServletRequest request, String name) throws ValidationException;
 
-	/**
-	 * Calls killAllCookies with the *current* request and response.
+    /**
+     * Calls killAllCookies with the *current* request and response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	void killAllCookies();
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    void killAllCookies();
 
     /**
      * Kill all cookies received in the last request from the browser. Note that new cookies set by the application in
@@ -369,12 +369,12 @@ public interface HTTPUtilities
      */
     void killAllCookies(HttpServletRequest request, HttpServletResponse response);
 
-	/**
-	 * Calls killCookie with the *current* request and response.
+    /**
+     * Calls killCookie with the *current* request and response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	void killCookie(String name);
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    void killCookie(String name);
 
     /**
      * Kills the specified cookie by setting a new cookie that expires immediately. Note that this
@@ -386,12 +386,12 @@ public interface HTTPUtilities
      */
     void killCookie(HttpServletRequest request, HttpServletResponse response, String name);
 
-	/**
-	 * Calls logHTTPRequest with the *current* request and logger.
+    /**
+     * Calls logHTTPRequest with the *current* request and logger.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
-	void logHTTPRequest();
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
+    void logHTTPRequest();
 
     /**
      * Format the Source IP address, URL, URL parameters, and all form
@@ -420,11 +420,11 @@ public interface HTTPUtilities
      */
     void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate);
 
-	/**
-	 * Calls sendForward with the *current* request and response.
+    /**
+     * Calls sendForward with the *current* request and response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void sendForward(String location) throws AccessControlException, ServletException, IOException;
 
     /**
@@ -443,11 +443,11 @@ public interface HTTPUtilities
     void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException, ServletException, IOException;
 
 
-	/**
-	 * Calls sendRedirect with the *current* response.
+    /**
+     * Calls sendRedirect with the *current* response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void sendRedirect(String location) throws AccessControlException, IOException;
 
 
@@ -464,25 +464,25 @@ public interface HTTPUtilities
      */
     void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException;
 
-	/**
-	 * Calls setContentType with the *current* request and response.
+    /**
+     * Calls setContentType with the *current* request and response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void setContentType();
 
      /**
-	 * Set the content type character encoding header on every HttpServletResponse in order to limit
-	 * the ways in which the input data can be represented. This prevents
-	 * malicious users from using encoding and multi-byte escape sequences to
-	 * bypass input validation routines.
+     * Set the content type character encoding header on every HttpServletResponse in order to limit
+     * the ways in which the input data can be represented. This prevents
+     * malicious users from using encoding and multi-byte escape sequences to
+     * bypass input validation routines.
      * <p/>
-	 * Implementations of this method should set the content type header to a safe value for your environment.
+     * Implementations of this method should set the content type header to a safe value for your environment.
      * The default is text/html; charset=UTF-8 character encoding, which is the default in early
-	 * versions of HTML and HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
-	 * information about character encoding and MIME.
+     * versions of HTML and HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
+     * information about character encoding and MIME.
      * <p/>
-	 * The DefaultHTTPUtilities reference implementation sets the content type as specified.
+     * The DefaultHTTPUtilities reference implementation sets the content type as specified.
      *
      * @param response The servlet response to set the content type for.
      */
@@ -498,11 +498,11 @@ public interface HTTPUtilities
     void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response);
 
 
-	/**
-	 * Calls setHeader with the *current* response.
+    /**
+     * Calls setHeader with the *current* response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void setHeader(String name, String value);
 
     /**
@@ -518,11 +518,11 @@ public interface HTTPUtilities
     void setHeader(HttpServletResponse response, String name, String value);
 
 
-	/**
-	 * Calls setNoCacheHeaders with the *current* response.
+    /**
+     * Calls setNoCacheHeaders with the *current* response.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void setNoCacheHeaders();
 
 
@@ -556,14 +556,14 @@ public interface HTTPUtilities
      */
     void setNoCacheHeaders(HttpServletResponse response);
 
-	/**
-	 * Calls setNoCacheHeaders with the *current* response.
-	 * 
-	 * ~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
-	 * company's stated security policies.  
+    /**
+     * Calls setNoCacheHeaders with the *current* response.
+     * 
+     * ~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
+     * company's stated security policies.  
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     @Deprecated
     String setRememberToken(String password, int maxAge, String domain, String path);
 
@@ -574,49 +574,49 @@ public interface HTTPUtilities
 
     
     /**
-	 * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
-	 * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
+     * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
+     * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
      * the user that this should only be enabled on computers where no other users will have access.
      * <p/>
      * Implementations should save the user's remember me data in an encrypted cookie and send it to the user.
      * Any old remember me cookie should be destroyed first. Setting this cookie should keep the user
-	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
-	 * If the cookie exists for the current user, it should automatically be used by ESAPI to
+     * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
+     * If the cookie exists for the current user, it should automatically be used by ESAPI to
      * log the user in, if the data is valid and not expired.
      * <p/>
-	 * The ESAPI reference implementation, DefaultHTTPUtilities.setRememberToken() implements all these suggestions.
+     * The ESAPI reference implementation, DefaultHTTPUtilities.setRememberToken() implements all these suggestions.
      * <p/>
      * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser();
      *
      *~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
-	 * company's stated security policies.  
+     * company's stated security policies.  
      *
      * @param request
      * @param password the user's password
      * @param response
      * @param maxAge the length of time that the token should be valid for in relative seconds
-	 * @param domain the domain to restrict the token to or null
-	 * @param path the path to restrict the token to or null
-	 * @return encrypted "Remember Me" token stored as a String
-	 */
+     * @param domain the domain to restrict the token to or null
+     * @param path the path to restrict the token to or null
+     * @return encrypted "Remember Me" token stored as a String
+     */
     @Deprecated
     String setRememberToken(HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path);
 
 
-	/**
-	 * Calls verifyCSRFToken with the *current* request.
+    /**
+     * Calls verifyCSRFToken with the *current* request.
      *
-	 * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
-	 */
+     * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
+     */
     void verifyCSRFToken();
 
     /**
      * Checks the CSRF token in the URL (see User.getCSRFToken()) against the user's CSRF token and
-	 * throws an IntrusionException if it is missing.
+     * throws an IntrusionException if it is missing.
      *
      * @param request
      * @throws IntrusionException if CSRF token is missing or incorrect
-	 */
+     */
     void verifyCSRFToken(HttpServletRequest request) throws IntrusionException;
 
    /**

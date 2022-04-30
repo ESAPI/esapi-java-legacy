@@ -38,10 +38,10 @@ public interface IntrusionDetector {
      * the current user's security exceptions.  If the User has reached any security thresholds, the appropriate security action can be taken and logged.
      * 
      * @param exception 
-     * 		the exception thrown
+     *         the exception thrown
      * 
      * @throws IntrusionException 
-     * 		the intrusion exception
+     *         the intrusion exception
      */
     void addException(Exception exception) throws IntrusionException;
 
@@ -51,12 +51,12 @@ public interface IntrusionDetector {
      * the current user's security event.  If the User has reached any security thresholds, the appropriate security action can be taken and logged.
      * 
      * @param eventName 
-     * 		the event to add
+     *         the event to add
      * @param logMessage 
-     * 		the message to log with the event
+     *         the message to log with the event
      * 
      * @throws IntrusionException 
-     * 		the intrusion exception
+     *         the intrusion exception
      */
     void addEvent(String eventName, String logMessage) throws IntrusionException;
 

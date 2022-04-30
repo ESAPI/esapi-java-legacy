@@ -97,7 +97,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         return instance;
     }
 
-	/**
+    /**
      * Defines the ThreadLocalRequest to store the current request for this thread.
      */
     private class ThreadLocalRequest extends InheritableThreadLocal<HttpServletRequest> {
@@ -107,7 +107,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
 
         public HttpServletRequest initialValue() {
-        	return null;
+            return null;
         }
 
         public void setRequest(HttpServletRequest newRequest) {
@@ -115,7 +115,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
     }
 
-	/**
+    /**
      * Defines the ThreadLocalResponse to store the current response for this thread.
      */
     private class ThreadLocalResponse extends InheritableThreadLocal<HttpServletResponse> {
@@ -125,7 +125,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
 
         public HttpServletResponse initialValue() {
-        	return null;
+            return null;
         }
 
         public void setResponse(HttpServletResponse newResponse) {
@@ -134,10 +134,10 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     }
 
     /** The logger. */
-	private final Logger logger = ESAPI.getLogger("HTTPUtilities");
+    private final Logger logger = ESAPI.getLogger("HTTPUtilities");
 
     /** The max bytes. */
-	static final int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
+    static final int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
 
 
     /*
@@ -147,7 +147,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
      */
     private ThreadLocalRequest currentRequest = new ThreadLocalRequest();
 
-	/*
+    /*
      * The currentResponse ThreadLocal variable is used to make the currentResponse available to any call in any part of an
      * application. This enables API's for actions that require the response to be much simpler. For example, the logout()
      * method in the Authenticator class requires the currentResponse to kill the Session ID cookie.
@@ -156,29 +156,29 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 
 
-	/**
+    /**
      * No arg constructor.
      */
     public DefaultHTTPUtilities() {
-	}
+    }
 
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
      * This implementation uses a custom "set-cookie" header rather than Java's
      * cookie interface which doesn't allow the use of HttpOnly. Configure the
      * HttpOnly and Secure settings in ESAPI.properties.
-	 */
-	public void addCookie( Cookie cookie ) {
-		addCookie( getCurrentResponse(), cookie );
+     */
+    public void addCookie( Cookie cookie ) {
+        addCookie( getCurrentResponse(), cookie );
     }
 
     /**
-	 * {@inheritDoc}
+     * {@inheritDoc}
      * This implementation uses a custom "set-cookie" header rather than Java's
      * cookie interface which doesn't allow the use of HttpOnly. Configure the
      * HttpOnly and Secure settings in ESAPI.properties.
-	 */
+     */
     public void addCookie(HttpServletResponse response, Cookie cookie) {
         String name = cookie.getName();
         String value = cookie.getValue();
@@ -195,14 +195,14 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
         // if there are no errors, then set the cookie either with a header or normally
         if (errors.size() == 0) {
-        	if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
-	            String header = createCookieHeader(cookieName, cookieValue, maxAge, domain, path, secure);
-	            addHeader(response, "Set-Cookie", header);
-        	} else {
+            if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
+                String header = createCookieHeader(cookieName, cookieValue, maxAge, domain, path, secure);
+                addHeader(response, "Set-Cookie", header);
+            } else {
                 // Issue 23 - If the ESAPI Configuration is set to force secure cookies, force the secure flag on the cookie before setting it
                 cookie.setSecure( secure || ESAPI.securityConfiguration().getForceSecureCookies() );
-        		response.addCookie(cookie);
-        	}
+                response.addCookie(cookie);
+            }
             return;
         }
         logger.warning(Logger.SECURITY_FAILURE, "Attempt to add unsafe data to cookie (skip mode). Skipping cookie and continuing.");
@@ -210,32 +210,32 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String addCSRFToken(String href) {
-		User user = ESAPI.authenticator().getCurrentUser();
-		if (user.isAnonymous()) {
-			return href;
-		}
-
-		// if there are already parameters append with &, otherwise append with ?
-		String token = CSRF_TOKEN_NAME + "=" + user.getCSRFToken();
-		return href.indexOf( '?') != -1 ? href + "&" + token : href + "?" + token;
-	}
-
     /**
-	 * {@inheritDoc}
+     * {@inheritDoc}
      */
-    public void addHeader(String name, String value) {
-    	addHeader( getCurrentResponse(), name, value );
+    public String addCSRFToken(String href) {
+        User user = ESAPI.authenticator().getCurrentUser();
+        if (user.isAnonymous()) {
+            return href;
+        }
+
+        // if there are already parameters append with &, otherwise append with ?
+        String token = CSRF_TOKEN_NAME + "=" + user.getCSRFToken();
+        return href.indexOf( '?') != -1 ? href + "&" + token : href + "?" + token;
     }
 
     /**
-	 * {@inheritDoc}
+     * {@inheritDoc}
+     */
+    public void addHeader(String name, String value) {
+        addHeader( getCurrentResponse(), name, value );
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public void addHeader(HttpServletResponse response, String name, String value) {
-    	SecurityConfiguration sc = ESAPI.securityConfiguration();
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         try {
             String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
             String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
@@ -247,109 +247,109 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         }
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void assertSecureChannel() throws AccessControlException {
-    	assertSecureChannel( getCurrentRequest() );
-    }
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * This implementation ignores the built-in isSecure() method
-	 * and uses the URL to determine if the request was transmitted over SSL.
-	 * This is because SSL may have been terminated somewhere outside the
-	 * container.
-	 */
-	public void assertSecureChannel(HttpServletRequest request) throws AccessControlException {
-	    if ( request == null ) {
-	    	throw new AccessControlException( "Insecure request received", "HTTP request was null" );
-	    }
-	    StringBuffer sb = request.getRequestURL();
-	    if ( sb == null ) {
-	    	throw new AccessControlException( "Insecure request received", "HTTP request URL was null" );
-	    }
-	    String url = sb.toString();
-	    if ( !url.startsWith( "https" ) ) {
-	    	throw new AccessControlException( "Insecure request received", "HTTP request did not use SSL" );
-	    }
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void assertSecureRequest() throws AccessControlException {
-    	assertSecureRequest( getCurrentRequest() );
-    }
-
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
      */
-	public void assertSecureRequest(HttpServletRequest request) throws AccessControlException {
-		assertSecureChannel( request );
-		String receivedMethod = request.getMethod();
-		String requiredMethod = "POST";
-		if ( !receivedMethod.equals( requiredMethod ) ) {
-			throw new AccessControlException( "Insecure request received", "Received request using " + receivedMethod + " when only " + requiredMethod + " is allowed" );
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public HttpSession changeSessionIdentifier() throws AuthenticationException {
-    	return changeSessionIdentifier( getCurrentRequest() );
+    public void assertSecureChannel() throws AccessControlException {
+        assertSecureChannel( getCurrentRequest() );
     }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     * 
+     * This implementation ignores the built-in isSecure() method
+     * and uses the URL to determine if the request was transmitted over SSL.
+     * This is because SSL may have been terminated somewhere outside the
+     * container.
      */
-	public HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException {
+    public void assertSecureChannel(HttpServletRequest request) throws AccessControlException {
+        if ( request == null ) {
+            throw new AccessControlException( "Insecure request received", "HTTP request was null" );
+        }
+        StringBuffer sb = request.getRequestURL();
+        if ( sb == null ) {
+            throw new AccessControlException( "Insecure request received", "HTTP request URL was null" );
+        }
+        String url = sb.toString();
+        if ( !url.startsWith( "https" ) ) {
+            throw new AccessControlException( "Insecure request received", "HTTP request did not use SSL" );
+        }
+    }
 
-		// get the current session
-		HttpSession oldSession = request.getSession();
+    /**
+     * {@inheritDoc}
+     */
+    public void assertSecureRequest() throws AccessControlException {
+        assertSecureRequest( getCurrentRequest() );
+    }
 
-		// make a copy of the session content
-		Map<String,Object> temp = new ConcurrentHashMap<String,Object>();
-		Enumeration e = oldSession.getAttributeNames();
-		while (e != null && e.hasMoreElements()) {
-			String name = (String) e.nextElement();
-			Object value = oldSession.getAttribute(name);
-			temp.put(name, value);
-		}
+    /**
+     * {@inheritDoc}
+     */
+    public void assertSecureRequest(HttpServletRequest request) throws AccessControlException {
+        assertSecureChannel( request );
+        String receivedMethod = request.getMethod();
+        String requiredMethod = "POST";
+        if ( !receivedMethod.equals( requiredMethod ) ) {
+            throw new AccessControlException( "Insecure request received", "Received request using " + receivedMethod + " when only " + requiredMethod + " is allowed" );
+        }
+    }
 
-		// kill the old session and create a new one
-		oldSession.invalidate();
-		HttpSession newSession = request.getSession();
-		User user = ESAPI.authenticator().getCurrentUser();
-		user.addSession( newSession );
-		user.removeSession( oldSession );
+    /**
+     * {@inheritDoc}
+     */
+    public HttpSession changeSessionIdentifier() throws AuthenticationException {
+        return changeSessionIdentifier( getCurrentRequest() );
+    }
 
-		// copy back the session content
+    /**
+     * {@inheritDoc}
+     */
+    public HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException {
+
+        // get the current session
+        HttpSession oldSession = request.getSession();
+
+        // make a copy of the session content
+        Map<String,Object> temp = new ConcurrentHashMap<String,Object>();
+        Enumeration e = oldSession.getAttributeNames();
+        while (e != null && e.hasMoreElements()) {
+            String name = (String) e.nextElement();
+            Object value = oldSession.getAttribute(name);
+            temp.put(name, value);
+        }
+
+        // kill the old session and create a new one
+        oldSession.invalidate();
+        HttpSession newSession = request.getSession();
+        User user = ESAPI.authenticator().getCurrentUser();
+        user.addSession( newSession );
+        user.removeSession( oldSession );
+
+        // copy back the session content
       for (Map.Entry<String, Object> stringObjectEntry : temp.entrySet())
       {
          newSession.setAttribute(stringObjectEntry.getKey(), stringObjectEntry.getValue());
-		}
-		return newSession;
-	}
+        }
+        return newSession;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void clearCurrent() {
-		currentRequest.set(null);
-		currentResponse.set(null);
-	}
+        currentRequest.set(null);
+        currentResponse.set(null);
+    }
 
-	private String createCookieHeader(String name, String value, int maxAge, String domain, String path, boolean secure) {
+    private String createCookieHeader(String name, String value, int maxAge, String domain, String path, boolean secure) {
         // create the special cookie header instead of creating a Java cookie
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
         // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly]
         String header = name + "=" + value;
-		if (maxAge >= 0) {
-			header += "; Max-Age=" + maxAge;
-		}
+        if (maxAge >= 0) {
+            header += "; Max-Age=" + maxAge;
+        }
         if (domain != null) {
             header += "; Domain=" + domain;
         }
@@ -365,486 +365,486 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         return header;
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String decryptHiddenField(String encrypted) {
-    	try {
-    		return decryptString(encrypted);
-    	} catch( EncryptionException e ) {
-    		throw new IntrusionException("Invalid request","Tampering detected. Hidden field data did not decrypt properly.", e);
-    	}
+    /**
+     * {@inheritDoc}
+     */
+    public String decryptHiddenField(String encrypted) {
+        try {
+            return decryptString(encrypted);
+        } catch( EncryptionException e ) {
+            throw new IntrusionException("Invalid request","Tampering detected. Hidden field data did not decrypt properly.", e);
+        }
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Map<String,String> decryptQueryString(String encrypted) throws EncryptionException {
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String,String> decryptQueryString(String encrypted) throws EncryptionException {
         String plaintext = decryptString(encrypted);
-		return queryToMap(plaintext);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Map<String,String> decryptStateFromCookie() throws EncryptionException {
-		return decryptStateFromCookie( getCurrentRequest() );
+        return queryToMap(plaintext);
     }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     */
+    public Map<String,String> decryptStateFromCookie() throws EncryptionException {
+        return decryptStateFromCookie( getCurrentRequest() );
+    }
+
+    /**
+     * {@inheritDoc}
      *
      * @param request
      */
     public Map<String,String> decryptStateFromCookie(HttpServletRequest request) throws EncryptionException {
-    	try {
-    		String encrypted = getCookie( request, ESAPI_STATE );
-    		if ( encrypted == null ) return new HashMap<String,String>();
-    		String plaintext = decryptString(encrypted);
-    		return queryToMap( plaintext );
-    	} catch( ValidationException e ) {
-        	return null;
-    	}
+        try {
+            String encrypted = getCookie( request, ESAPI_STATE );
+            if ( encrypted == null ) return new HashMap<String,String>();
+            String plaintext = decryptString(encrypted);
+            return queryToMap( plaintext );
+        } catch( ValidationException e ) {
+            return null;
+        }
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String encryptHiddenField(String value) throws EncryptionException {
-    	return encryptString(value);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String encryptHiddenField(String value) throws EncryptionException {
+        return encryptString(value);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String encryptQueryString(String query) throws EncryptionException {
-	    return encryptString(query);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String encryptQueryString(String query) throws EncryptionException {
+        return encryptString(query);
+    }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
      */
     public void encryptStateInCookie(HttpServletResponse response, Map<String,String> cleartext) throws EncryptionException {
-    	StringBuilder sb = new StringBuilder();
-    	Iterator i = cleartext.entrySet().iterator();
-    	while ( i.hasNext() ) {
-    		try {
-	    		Map.Entry entry = (Map.Entry)i.next();
-	    		
-	    		    // What do these need to be URL encoded? They are encrypted!
-	    		String name = ESAPI.encoder().encodeForURL( entry.getKey().toString() );
-	    		String value = ESAPI.encoder().encodeForURL( entry.getValue().toString() );
+        StringBuilder sb = new StringBuilder();
+        Iterator i = cleartext.entrySet().iterator();
+        while ( i.hasNext() ) {
+            try {
+                Map.Entry entry = (Map.Entry)i.next();
+                
+                    // What do these need to be URL encoded? They are encrypted!
+                String name = ESAPI.encoder().encodeForURL( entry.getKey().toString() );
+                String value = ESAPI.encoder().encodeForURL( entry.getValue().toString() );
              sb.append(name).append("=").append(value);
-	    		if ( i.hasNext() ) sb.append( "&" );
-    		} catch( EncodingException e ) {
-    			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry", e );
-    		}
-    	}
+                if ( i.hasNext() ) sb.append( "&" );
+            } catch( EncodingException e ) {
+                logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry", e );
+            }
+        }
 
-		String encrypted = encryptString(sb.toString());
+        String encrypted = encryptString(sb.toString());
 
-		if ( encrypted.length() > (MAX_COOKIE_LEN ) ) {
-			logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry");
-			throw new EncryptionException("Encryption failure", "Encrypted cookie state of " + encrypted.length() + " longer than allowed " + MAX_COOKIE_LEN );
-		}
+        if ( encrypted.length() > (MAX_COOKIE_LEN ) ) {
+            logger.error(Logger.SECURITY_FAILURE, "Problem encrypting state in cookie - skipping entry");
+            throw new EncryptionException("Encryption failure", "Encrypted cookie state of " + encrypted.length() + " longer than allowed " + MAX_COOKIE_LEN );
+        }
 
-    	Cookie cookie = new Cookie( ESAPI_STATE, encrypted );
-    	addCookie( response, cookie );
+        Cookie cookie = new Cookie( ESAPI_STATE, encrypted );
+        addCookie( response, cookie );
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void encryptStateInCookie( Map<String,String> cleartext ) throws EncryptionException {
-		encryptStateInCookie( getCurrentResponse(), cleartext );
+    /**
+     * {@inheritDoc}
+     */
+    public void encryptStateInCookie( Map<String,String> cleartext ) throws EncryptionException {
+        encryptStateInCookie( getCurrentResponse(), cleartext );
     }
 
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getCookie( HttpServletRequest request, String name ) throws ValidationException {
+    /**
+     * {@inheritDoc}
+     */
+    public String getCookie( HttpServletRequest request, String name ) throws ValidationException {
         Cookie c = getFirstCookie( request, name );
         SecurityConfiguration sc = ESAPI.securityConfiguration();
         if ( c == null ) return null;
-		String value = c.getValue();
-		return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
-	}
+        String value = c.getValue();
+        return ESAPI.validator().getValidInput("HTTP cookie value: " + value, value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public String getCookie( String name ) throws ValidationException {
-    	return getCookie( getCurrentRequest(), name );
+        return getCookie( getCurrentRequest(), name );
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getCSRFToken() {
-		User user = ESAPI.authenticator().getCurrentUser();
-		if (user == null) return null;
-		return user.getCSRFToken();
-	}
+    /**
+     * {@inheritDoc}
+     */
+    public String getCSRFToken() {
+        User user = ESAPI.authenticator().getCurrentUser();
+        if (user == null) return null;
+        return user.getCSRFToken();
+    }
 
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public HttpServletRequest getCurrentRequest() {
-    	return currentRequest.getRequest();
+        return currentRequest.getRequest();
     }
 
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public HttpServletResponse getCurrentResponse() {
         return currentResponse.getResponse();
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public List<File> getFileUploads() throws ValidationException {
-    	return getFileUploads( getCurrentRequest(), ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions() );
+        return getFileUploads( getCurrentRequest(), ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions() );
     }
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public List<File> getFileUploads(HttpServletRequest request) throws ValidationException {
-    	return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions());
+        return getFileUploads(request, ESAPI.securityConfiguration().getUploadDirectory(), ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public List<File> getFileUploads(HttpServletRequest request, File finalDir ) throws ValidationException {
-    	return getFileUploads(request, finalDir, ESAPI.securityConfiguration().getAllowedFileExtensions());
+        return getFileUploads(request, finalDir, ESAPI.securityConfiguration().getAllowedFileExtensions());
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public List<File> getFileUploads(HttpServletRequest request, File finalDir, List allowedExtensions) throws ValidationException {
+    /**
+     * {@inheritDoc}
+     */
+    public List<File> getFileUploads(HttpServletRequest request, File finalDir, List allowedExtensions) throws ValidationException {
         File tempDir = ESAPI.securityConfiguration().getUploadTempDirectory();
-		if ( !tempDir.exists() ) {
-		    if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
-		}
+        if ( !tempDir.exists() ) {
+            if ( !tempDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create temp directory: " + tempDir.getAbsolutePath() );
+        }
 
-		if( finalDir != null){
-			if ( !finalDir.exists() ) {
-				if ( !finalDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + finalDir.getAbsolutePath() );
-			}
-		}
-		else {
-			if ( !ESAPI.securityConfiguration().getUploadDirectory().exists()) {
-				if ( !ESAPI.securityConfiguration().getUploadDirectory().mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + ESAPI.securityConfiguration().getUploadDirectory().getAbsolutePath() );
-			}
-			finalDir = ESAPI.securityConfiguration().getUploadDirectory();
-		}
+        if( finalDir != null){
+            if ( !finalDir.exists() ) {
+                if ( !finalDir.mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + finalDir.getAbsolutePath() );
+            }
+        }
+        else {
+            if ( !ESAPI.securityConfiguration().getUploadDirectory().exists()) {
+                if ( !ESAPI.securityConfiguration().getUploadDirectory().mkdirs() ) throw new ValidationUploadException( "Upload failed", "Could not create final upload directory: " + ESAPI.securityConfiguration().getUploadDirectory().getAbsolutePath() );
+            }
+            finalDir = ESAPI.securityConfiguration().getUploadDirectory();
+        }
 
-		List<File> newFiles = new ArrayList<File>();
-		String dfiPrevValue = "false";   // Fail safely in case of Java Security Manager & weird security policy
-		try {
-			dfiPrevValue = System.getProperty(DISKFILEITEM_SERIALIZABLE);
-			System.setProperty(DISKFILEITEM_SERIALIZABLE, "false");
-			final HttpSession session = request.getSession(false);
-			if (!ServletFileUpload.isMultipartContent(request)) {
-				throw new ValidationUploadException("Upload failed", "Not a multipart request");
-			}
+        List<File> newFiles = new ArrayList<File>();
+        String dfiPrevValue = "false";   // Fail safely in case of Java Security Manager & weird security policy
+        try {
+            dfiPrevValue = System.getProperty(DISKFILEITEM_SERIALIZABLE);
+            System.setProperty(DISKFILEITEM_SERIALIZABLE, "false");
+            final HttpSession session = request.getSession(false);
+            if (!ServletFileUpload.isMultipartContent(request)) {
+                throw new ValidationUploadException("Upload failed", "Not a multipart request");
+            }
 
-			// this factory will store ALL files in the temp directory,
-			// regardless of size
-			DiskFileItemFactory factory = new DiskFileItemFactory(0, tempDir);
-			ServletFileUpload upload = new ServletFileUpload(factory);
-			upload.setSizeMax(maxBytes);
+            // this factory will store ALL files in the temp directory,
+            // regardless of size
+            DiskFileItemFactory factory = new DiskFileItemFactory(0, tempDir);
+            ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setSizeMax(maxBytes);
 
-			// Create a progress listener
-			ProgressListener progressListener = new ProgressListener() {
-				private long megaBytes = -1;
-				private long progress = 0;
+            // Create a progress listener
+            ProgressListener progressListener = new ProgressListener() {
+                private long megaBytes = -1;
+                private long progress = 0;
 
-				public void update(long pBytesRead, long pContentLength, int pItems) {
-					if (pItems == 0)
-						return;
-					long mBytes = pBytesRead / 1000000;
-					if (megaBytes == mBytes)
-						return;
-					megaBytes = mBytes;
-					progress = (long) (((double) pBytesRead / (double) pContentLength) * 100);
-					if ( session != null ) {
-					    session.setAttribute("progress", Long.toString(progress));
-					}
-					// logger.logSuccess(Logger.SECURITY, "   Item " + pItems + " (" + progress + "% of " + pContentLength + " bytes]");
-				}
-			};
-			upload.setProgressListener(progressListener);
+                public void update(long pBytesRead, long pContentLength, int pItems) {
+                    if (pItems == 0)
+                        return;
+                    long mBytes = pBytesRead / 1000000;
+                    if (megaBytes == mBytes)
+                        return;
+                    megaBytes = mBytes;
+                    progress = (long) (((double) pBytesRead / (double) pContentLength) * 100);
+                    if ( session != null ) {
+                        session.setAttribute("progress", Long.toString(progress));
+                    }
+                    // logger.logSuccess(Logger.SECURITY, "   Item " + pItems + " (" + progress + "% of " + pContentLength + " bytes]");
+                }
+            };
+            upload.setProgressListener(progressListener);
 
-			List<FileItem> items = upload.parseRequest(request);
-			for (FileItem item : items)
-			{
-				if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")))
-				{
-					String[] fparts = item.getName().split("[\\/\\\\]");
-					String filename = fparts[fparts.length - 1];
+            List<FileItem> items = upload.parseRequest(request);
+            for (FileItem item : items)
+            {
+                if (!item.isFormField() && item.getName() != null && !(item.getName().equals("")))
+                {
+                    String[] fparts = item.getName().split("[\\/\\\\]");
+                    String filename = fparts[fparts.length - 1];
 
-					if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false))
-					{
-						throw new ValidationUploadException("Upload only simple filenames with the following extensions " + allowedExtensions, "Upload failed isValidFileName check");
-					}
+                    if (!ESAPI.validator().isValidFileName("upload", filename, allowedExtensions, false))
+                    {
+                        throw new ValidationUploadException("Upload only simple filenames with the following extensions " + allowedExtensions, "Upload failed isValidFileName check");
+                    }
 
-					logger.info(Logger.SECURITY_SUCCESS, "File upload requested: " + filename);
-					File f = new File(finalDir, filename);
-					if (f.exists())
-					{
-						String[] parts = filename.split("\\/.");
-						String extension = "";
-						if (parts.length > 1)
-						{
-							extension = parts[parts.length - 1];
-						}
-						String filenm = filename.substring(0, filename.length() - extension.length());
-						f = File.createTempFile(filenm, "." + extension, finalDir);
-					}
+                    logger.info(Logger.SECURITY_SUCCESS, "File upload requested: " + filename);
+                    File f = new File(finalDir, filename);
+                    if (f.exists())
+                    {
+                        String[] parts = filename.split("\\/.");
+                        String extension = "";
+                        if (parts.length > 1)
+                        {
+                            extension = parts[parts.length - 1];
+                        }
+                        String filenm = filename.substring(0, filename.length() - extension.length());
+                        f = File.createTempFile(filenm, "." + extension, finalDir);
+                    }
 
-					item.write(f);
-					newFiles.add(f);
-					// delete temporary file
-					item.delete();
-					logger.fatal(Logger.SECURITY_SUCCESS, "File successfully uploaded: " + f);
-					if (session != null)
-					{
-						session.setAttribute("progress", Long.toString(0));
-					}
-				}
-			}
-		} catch (Exception e) {
-			if (e instanceof ValidationUploadException) {
-				throw (ValidationException)e;
-			}
-			throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
-		}
-		finally {
-			if ( dfiPrevValue != null ) {
-				System.setProperty(DISKFILEITEM_SERIALIZABLE, dfiPrevValue);
-			}
-		}
-		return Collections.synchronizedList(newFiles);
-	}
+                    item.write(f);
+                    newFiles.add(f);
+                    // delete temporary file
+                    item.delete();
+                    logger.fatal(Logger.SECURITY_SUCCESS, "File successfully uploaded: " + f);
+                    if (session != null)
+                    {
+                        session.setAttribute("progress", Long.toString(0));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            if (e instanceof ValidationUploadException) {
+                throw (ValidationException)e;
+            }
+            throw new ValidationUploadException("Upload failure", "Problem during upload:" + e.getMessage(), e);
+        }
+        finally {
+            if ( dfiPrevValue != null ) {
+                System.setProperty(DISKFILEITEM_SERIALIZABLE, dfiPrevValue);
+            }
+        }
+        return Collections.synchronizedList(newFiles);
+    }
 
 
 
-	/**
+    /**
      * Utility to return the first cookie matching the provided name.
      * @param request
      * @param name
      */
-	private Cookie getFirstCookie(HttpServletRequest request, String name) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
+    private Cookie getFirstCookie(HttpServletRequest request, String name) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
          for (Cookie cookie : cookies)
          {
             if (cookie.getName().equals(name))
             {
-					return cookie;
-				}
-			}
-		}
-		return null;
-	}
+                    return cookie;
+                }
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public String getHeader( HttpServletRequest request, String name ) throws ValidationException {
-		SecurityConfiguration sc = ESAPI.securityConfiguration();
+    /**
+     * {@inheritDoc}
+     */
+    public String getHeader( HttpServletRequest request, String name ) throws ValidationException {
+        SecurityConfiguration sc = ESAPI.securityConfiguration();
         String value = request.getHeader(name);
         return ESAPI.validator().getValidInput("HTTP header value: " + value, value, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
-	}
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-    public String getHeader( String name ) throws ValidationException {
-    	return getHeader( getCurrentRequest(), name );
     }
 
 
     /**
-	 * {@inheritDoc}
-	 */
-	public String getParameter( HttpServletRequest request, String name ) throws ValidationException {
-	    String value = request.getParameter(name);
-	    return ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
-	}
+     * {@inheritDoc}
+     */
+    public String getHeader( String name ) throws ValidationException {
+        return getHeader( getCurrentRequest(), name );
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+
+    /**
+     * {@inheritDoc}
+     */
+    public String getParameter( HttpServletRequest request, String name ) throws ValidationException {
+        String value = request.getParameter(name);
+        return ESAPI.validator().getValidInput("HTTP parameter value: " + value, value, "HTTPParameterValue", 2000, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public String getParameter( String name ) throws ValidationException {
-    	return getParameter( getCurrentRequest(), name );
+        return getParameter( getCurrentRequest(), name );
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void killAllCookies() {
-    	killAllCookies( getCurrentRequest(), getCurrentResponse() );
+        killAllCookies( getCurrentRequest(), getCurrentResponse() );
     }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * @param request
      * @param response
      */
-	public void killAllCookies(HttpServletRequest request, HttpServletResponse response) {
-		Cookie[] cookies = request.getCookies();
-		if (cookies != null) {
+    public void killAllCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
          for (Cookie cookie : cookies)
          {
-				killCookie(request, response, cookie.getName());
-			}
-		}
-	}
+                killCookie(request, response, cookie.getName());
+            }
+        }
+    }
 
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * @param request
      * @param response
      * @param name
      */
-	public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
-		String path = "/";
-		String domain="";
-		Cookie cookie = getFirstCookie(request, name);
-		if ( cookie != null ) {
-			path = cookie.getPath();
-			domain = cookie.getDomain();
-		}
-		Cookie deleter = new Cookie( name, "deleted" );
-		deleter.setMaxAge( 0 );
-		if ( domain != null ) deleter.setDomain( domain );
-		if ( path != null ) deleter.setPath( path );
-		response.addCookie( deleter );
-	}
+    public void killCookie(HttpServletRequest request, HttpServletResponse response, String name) {
+        String path = "/";
+        String domain="";
+        Cookie cookie = getFirstCookie(request, name);
+        if ( cookie != null ) {
+            path = cookie.getPath();
+            domain = cookie.getDomain();
+        }
+        Cookie deleter = new Cookie( name, "deleted" );
+        deleter.setMaxAge( 0 );
+        if ( domain != null ) deleter.setDomain( domain );
+        if ( path != null ) deleter.setPath( path );
+        response.addCookie( deleter );
+    }
 
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void killCookie( String name ) {
-    	killCookie( getCurrentRequest(), getCurrentResponse(), name );
+        killCookie( getCurrentRequest(), getCurrentResponse(), name );
     }
 
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void logHTTPRequest() {
-    	logHTTPRequest( getCurrentRequest(), logger, null );
+        logHTTPRequest( getCurrentRequest(), logger, null );
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void logHTTPRequest(HttpServletRequest request, Logger logger) {
-    	logHTTPRequest( request, logger, null );
+        logHTTPRequest( request, logger, null );
     }
 
-		/**
-		 * Formats an HTTP request into a log suitable string. This implementation logs the remote host IP address (or
-		 * hostname if available), the request method (GET/POST), the URL, and all the querystring and form parameters. All
-		 * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
-		 * match items in the parameterNamesToObfuscate are shown as eight asterisks.
-		 *
-		 *
-		 * @param request
-		 */
-		public void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate) {
-			StringBuilder params = new StringBuilder();
-		    Iterator i = request.getParameterMap().keySet().iterator();
-		    while (i.hasNext()) {
-		        String key = (String) i.next();
-		        String[] value = request.getParameterMap().get(key);
-		        for (int j = 0; j < value.length; j++) {
+        /**
+         * Formats an HTTP request into a log suitable string. This implementation logs the remote host IP address (or
+         * hostname if available), the request method (GET/POST), the URL, and all the querystring and form parameters. All
+         * the parameters are presented as though they were in the URL even if they were in a form. Any parameters that
+         * match items in the parameterNamesToObfuscate are shown as eight asterisks.
+         *
+         *
+         * @param request
+         */
+        public void logHTTPRequest(HttpServletRequest request, Logger logger, List parameterNamesToObfuscate) {
+            StringBuilder params = new StringBuilder();
+            Iterator i = request.getParameterMap().keySet().iterator();
+            while (i.hasNext()) {
+                String key = (String) i.next();
+                String[] value = request.getParameterMap().get(key);
+                for (int j = 0; j < value.length; j++) {
                  params.append(key).append("=");
-		            if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
-		                params.append("********");
-		            } else {
-		                params.append(value[j]);
-		            }
-		            if (j < value.length - 1) {
-		                params.append("&");
-		            }
-		        }
-		        if (i.hasNext())
-		            params.append("&");
-		    }
-		    Cookie[] cookies = request.getCookies();
-		    if ( cookies != null ) {
+                    if (parameterNamesToObfuscate != null && parameterNamesToObfuscate.contains(key)) {
+                        params.append("********");
+                    } else {
+                        params.append(value[j]);
+                    }
+                    if (j < value.length - 1) {
+                        params.append("&");
+                    }
+                }
+                if (i.hasNext())
+                    params.append("&");
+            }
+            Cookie[] cookies = request.getCookies();
+            if ( cookies != null ) {
              for (Cookie cooky : cookies)
              {
                 if (!cooky.getName().equals(ESAPI.securityConfiguration().getHttpSessionIdName())) 
                 {
                    params.append("+").append(cooky.getName()).append("=").append(cooky.getValue());
-		                    }
-		            }
-		    }
-		    String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
-		    logger.info(Logger.SECURITY_SUCCESS, msg);
-		}
+                            }
+                    }
+            }
+            String msg = request.getMethod() + " " + request.getRequestURL() + (params.length() > 0 ? "?" + params : "");
+            logger.info(Logger.SECURITY_SUCCESS, msg);
+        }
 
-	private Map<String,String> queryToMap(String query) {
-		TreeMap<String,String> map = new TreeMap<String,String>();
-		String[] parts = query.split("&");
+    private Map<String,String> queryToMap(String query) {
+        TreeMap<String,String> map = new TreeMap<String,String>();
+        String[] parts = query.split("&");
       for (String part : parts)
       {
          try
          {
             String[] nvpair = part.split("=");
-				String name = ESAPI.encoder().decodeFromURL(nvpair[0]);
-				String value = ESAPI.encoder().decodeFromURL(nvpair[1]);
+                String name = ESAPI.encoder().decodeFromURL(nvpair[0]);
+                String value = ESAPI.encoder().decodeFromURL(nvpair[1]);
             map.put(name, value);
          }
          catch (EncodingException e)
          {
-				// skip the nvpair with the encoding problem - note this is already logged.
-			}
-		}
-		return map;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
-	 * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
-	 */
-	public void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException,ServletException,IOException {
-		if (!location.startsWith("WEB-INF")) {
-			throw new AccessControlException("Forward failed", "Bad forward location: " + location);
-		}
-		RequestDispatcher dispatcher = request.getRequestDispatcher(location);
-		dispatcher.forward( request, response );
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-    public void sendForward( String location )  throws AccessControlException,ServletException,IOException {
-    	sendForward( getCurrentRequest(), getCurrentResponse(), location);
+                // skip the nvpair with the encoding problem - note this is already logged.
+            }
+        }
+        return map;
     }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * This implementation checks against the list of safe redirect locations defined in ESAPI.properties.
+    /**
+     * {@inheritDoc}
+     *
+     * This implementation simply checks to make sure that the forward location starts with "WEB-INF" and
+     * is intended for use in frameworks that forward to JSP files inside the WEB-INF folder.
+     */
+    public void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException,ServletException,IOException {
+        if (!location.startsWith("WEB-INF")) {
+            throw new AccessControlException("Forward failed", "Bad forward location: " + location);
+        }
+        RequestDispatcher dispatcher = request.getRequestDispatcher(location);
+        dispatcher.forward( request, response );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void sendForward( String location )  throws AccessControlException,ServletException,IOException {
+        sendForward( getCurrentRequest(), getCurrentResponse(), location);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * This implementation checks against the list of safe redirect locations defined in ESAPI.properties.
      */
     public void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException {
         if (!ESAPI.validator().isValidRedirectLocation("Redirect", location, false)) {
@@ -854,42 +854,42 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         response.sendRedirect(location);
     }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void sendRedirect( String location )  throws AccessControlException,IOException {
-    	sendRedirect( getCurrentResponse(), location);
+        sendRedirect( getCurrentResponse(), location);
     }
-
-	/**
-	 * {@inheritDoc}
-	 */
-    public void setContentType() {
-    	setContentType( getCurrentResponse() );
-    }
-
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void setContentType(HttpServletResponse response) {
-		response.setContentType((ESAPI.securityConfiguration()).getResponseContentType());
-	}
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
+    public void setContentType() {
+        setContentType( getCurrentResponse() );
+    }
+
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setContentType(HttpServletResponse response) {
+        response.setContentType((ESAPI.securityConfiguration()).getResponseContentType());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void setCurrentHTTP(HttpServletRequest request, HttpServletResponse response) {
-     	currentRequest.setRequest(request);
+         currentRequest.setRequest(request);
         currentResponse.setResponse(response);
     }
 
     /**
-	 * {@inheritDoc}
+     * {@inheritDoc}
      */
     public void setHeader(HttpServletResponse response, String name, String value) {
         try {
-        	SecurityConfiguration sc = ESAPI.securityConfiguration();
+            SecurityConfiguration sc = ESAPI.securityConfiguration();
             String strippedName = StringUtilities.replaceLinearWhiteSpace(name);
             String strippedValue = StringUtilities.replaceLinearWhiteSpace(value);
             String safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
@@ -901,145 +901,145 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     }
 
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void setHeader( String name, String value ) {
-    	setHeader( getCurrentResponse(), name, value );
+        setHeader( getCurrentResponse(), name, value );
     }
 
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public void setNoCacheHeaders() {
-    	setNoCacheHeaders( getCurrentResponse() );
+        setNoCacheHeaders( getCurrentResponse() );
     }
 
-	/**
-	 * {@inheritDoc}
+    /**
+     * {@inheritDoc}
      *
      * @param response
      */
-	public void setNoCacheHeaders(HttpServletResponse response) {
-		// HTTP 1.1
-		response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    public void setNoCacheHeaders(HttpServletResponse response) {
+        // HTTP 1.1
+        response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
 
-		// HTTP 1.0
-		response.setHeader("Pragma","no-cache");
-		response.setDateHeader("Expires", -1);
-	}
+        // HTTP 1.0
+        response.setHeader("Pragma","no-cache");
+        response.setDateHeader("Expires", -1);
+    }
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * Save the user's remember me data in an encrypted cookie and send it to the user.
-	 * Any old remember me cookie is destroyed first. Setting this cookie will keep the user
-	 * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
-	 * If the cookie exists for the current user, it will automatically be used by ESAPI to
-	 * log the user in, if the data is valid and not expired.
+    /**
+     * {@inheritDoc}
+     *
+     * Save the user's remember me data in an encrypted cookie and send it to the user.
+     * Any old remember me cookie is destroyed first. Setting this cookie will keep the user
+     * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
+     * If the cookie exists for the current user, it will automatically be used by ESAPI to
+     * log the user in, if the data is valid and not expired.
      *
      * @param request
      * @param response
      */
-	public String setRememberToken( HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path ) {
-		User user = ESAPI.authenticator().getCurrentUser();
-		try {
-			killCookie(request, response, REMEMBER_TOKEN_COOKIE_NAME );
-			// seal already contains random data
-			String clearToken = user.getAccountName() + "|" + password;
-			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
-			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
-			SecurityConfiguration sg = ESAPI.securityConfiguration();
-			boolean forceSecureCookies = sg.getBooleanProp("HttpUtilities.ForceSecureCookies");
-			boolean forceHttpOnly = sg.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
+    public String setRememberToken( HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path ) {
+        User user = ESAPI.authenticator().getCurrentUser();
+        try {
+            killCookie(request, response, REMEMBER_TOKEN_COOKIE_NAME );
+            // seal already contains random data
+            String clearToken = user.getAccountName() + "|" + password;
+            long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
+            String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
+            SecurityConfiguration sg = ESAPI.securityConfiguration();
+            boolean forceSecureCookies = sg.getBooleanProp("HttpUtilities.ForceSecureCookies");
+            boolean forceHttpOnly = sg.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
 
             // Do NOT URLEncode cryptToken before creating cookie. See Google Issue # 144,
-			// which was marked as "WontFix".
+            // which was marked as "WontFix".
 
-			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
-			cookie.setMaxAge( maxAge );
-			cookie.setDomain( domain );
-			cookie.setPath( path );
-			cookie.setHttpOnly(forceHttpOnly);
-			cookie.setSecure(forceSecureCookies);
-			response.addCookie( cookie );
-			logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
-			return cryptToken;
-		} catch( IntegrityException e ) {
-			logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
-			return null;
-		}
-	}
-	
-	
-	public String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path){
-		String rval = "";
-		User user = ESAPI.authenticator().getCurrentUser();
-		
-		try{
-			killCookie(request,response, REMEMBER_TOKEN_COOKIE_NAME);
-			// seal already contains random data
-			String clearToken = user.getAccountName();
-			long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
-			String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
-			SecurityConfiguration sg = ESAPI.securityConfiguration();
-			boolean forceSecureCookies = sg.getBooleanProp("HttpUtilities.ForceSecureCookies");
-			boolean forceHttpOnly = sg.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
+            Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
+            cookie.setMaxAge( maxAge );
+            cookie.setDomain( domain );
+            cookie.setPath( path );
+            cookie.setHttpOnly(forceHttpOnly);
+            cookie.setSecure(forceSecureCookies);
+            response.addCookie( cookie );
+            logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
+            return cryptToken;
+        } catch( IntegrityException e ) {
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
+            return null;
+        }
+    }
+    
+    
+    public String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path){
+        String rval = "";
+        User user = ESAPI.authenticator().getCurrentUser();
+        
+        try{
+            killCookie(request,response, REMEMBER_TOKEN_COOKIE_NAME);
+            // seal already contains random data
+            String clearToken = user.getAccountName();
+            long expiry = ESAPI.encryptor().getRelativeTimeStamp(maxAge * 1000);
+            String cryptToken = ESAPI.encryptor().seal(clearToken, expiry);
+            SecurityConfiguration sg = ESAPI.securityConfiguration();
+            boolean forceSecureCookies = sg.getBooleanProp("HttpUtilities.ForceSecureCookies");
+            boolean forceHttpOnly = sg.getBooleanProp("HttpUtilities.ForceHttpOnlyCookies");
             // Do NOT URLEncode cryptToken before creating cookie. See Google Issue # 144,
-			// which was marked as "WontFix".
+            // which was marked as "WontFix".
 
-			Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
-			cookie.setMaxAge( maxAge );
-			cookie.setDomain( domain );
-			cookie.setPath( path );
-			cookie.setHttpOnly(forceHttpOnly);
-			cookie.setSecure(forceSecureCookies);
-			response.addCookie( cookie );
-			logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
-		} catch( IntegrityException e){
-			logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
-			return null;
-		}
-		
-		
-		return rval;
-	}
+            Cookie cookie = new Cookie( REMEMBER_TOKEN_COOKIE_NAME, cryptToken );
+            cookie.setMaxAge( maxAge );
+            cookie.setDomain( domain );
+            cookie.setPath( path );
+            cookie.setHttpOnly(forceHttpOnly);
+            cookie.setSecure(forceSecureCookies);
+            response.addCookie( cookie );
+            logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
+        } catch( IntegrityException e){
+            logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
+            return null;
+        }
+        
+        
+        return rval;
+    }
 
     /**
-	 * {@inheritDoc}
-	 */
+     * {@inheritDoc}
+     */
     public String setRememberToken( String password, int maxAge, String domain, String path ) {
-    	return setRememberToken( getCurrentRequest(), getCurrentResponse(), password, maxAge, domain, path );
+        return setRememberToken( getCurrentRequest(), getCurrentResponse(), password, maxAge, domain, path );
     }
 
 
     /**
-	 * {@inheritDoc}
-	 */
-	public void verifyCSRFToken() throws IntrusionException {
-    	verifyCSRFToken( getCurrentRequest() );
+     * {@inheritDoc}
+     */
+    public void verifyCSRFToken() throws IntrusionException {
+        verifyCSRFToken( getCurrentRequest() );
     }
 
     /**
-	 * {@inheritDoc}
-	 *
-	 * This implementation uses the CSRF_TOKEN_NAME parameter for the token.
+     * {@inheritDoc}
+     *
+     * This implementation uses the CSRF_TOKEN_NAME parameter for the token.
      *
      * @param request
      */
-	public void verifyCSRFToken(HttpServletRequest request) throws IntrusionException {
-		User user = ESAPI.authenticator().getCurrentUser();
+    public void verifyCSRFToken(HttpServletRequest request) throws IntrusionException {
+        User user = ESAPI.authenticator().getCurrentUser();
 
-		// check if user authenticated with this request - no CSRF protection required
-		if( request.getAttribute(user.getCSRFToken()) != null ) {
-			return;
-		}
-		String token = request.getParameter(CSRF_TOKEN_NAME);
-		if ( !user.getCSRFToken().equals( token ) ) {
-			throw new IntrusionException("Authentication failed", "Possibly forged HTTP request without proper CSRF token detected");
-		}
-	}
+        // check if user authenticated with this request - no CSRF protection required
+        if( request.getAttribute(user.getCSRFToken()) != null ) {
+            return;
+        }
+        String token = request.getParameter(CSRF_TOKEN_NAME);
+        if ( !user.getCSRFToken().equals( token ) ) {
+            throw new IntrusionException("Authentication failed", "Possibly forged HTTP request without proper CSRF token detected");
+        }
+    }
 
     /**
      * {@inheritDoc}

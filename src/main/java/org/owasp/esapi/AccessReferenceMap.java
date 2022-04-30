@@ -63,34 +63,34 @@ import java.util.Set;
  */
 public interface AccessReferenceMap<K> extends Serializable {
 
-	/**
-	 * Get an iterator through the direct object references. No guarantee is made as 
-	 * to the order of items returned.
-	 * 
-	 * @return the iterator
-	 */
-	Iterator iterator();
+    /**
+     * Get an iterator through the direct object references. No guarantee is made as 
+     * to the order of items returned.
+     * 
+     * @return the iterator
+     */
+    Iterator iterator();
 
-	/**
-	 * Get a safe indirect reference to use in place of a potentially sensitive
-	 * direct object reference. Developers should use this call when building
-	 * URL's, form fields, hidden fields, etc... to help protect their private
-	 * implementation information.
-	 * 
-	 * @param directReference
-	 * 		the direct reference
-	 * 
-	 * @return 
-	 * 		the indirect reference
-	 */
-	<T> K getIndirectReference(T directReference);
+    /**
+     * Get a safe indirect reference to use in place of a potentially sensitive
+     * direct object reference. Developers should use this call when building
+     * URL's, form fields, hidden fields, etc... to help protect their private
+     * implementation information.
+     * 
+     * @param directReference
+     *         the direct reference
+     * 
+     * @return 
+     *         the indirect reference
+     */
+    <T> K getIndirectReference(T directReference);
 
-	/**
-	 * Get the original direct object reference from an indirect reference.
-	 * Developers should use this when they get an indirect reference from a
-	 * request to translate it back into the real direct reference. If an
-	 * invalid indirect reference is requested, then an AccessControlException is
-	 * thrown.
+    /**
+     * Get the original direct object reference from an indirect reference.
+     * Developers should use this when they get an indirect reference from a
+     * request to translate it back into the real direct reference. If an
+     * invalid indirect reference is requested, then an AccessControlException is
+     * thrown.
     *
     * If a type is implied the requested object will be cast to that type, if the
     * object is not of the requested type, a AccessControlException will be thrown to
@@ -122,55 +122,55 @@ public interface AccessReferenceMap<K> extends Serializable {
     *     // ...
     * }
     * </pre>
-	 * 
-	 * @param indirectReference
-	 * 		the indirect reference
-	 * 
-	 * @return 
-	 * 		the direct reference
-	 * 
-	 * @throws AccessControlException 
-	 * 		if no direct reference exists for the specified indirect reference
+     * 
+     * @param indirectReference
+     *         the indirect reference
+     * 
+     * @return 
+     *         the direct reference
+     * 
+     * @throws AccessControlException 
+     *         if no direct reference exists for the specified indirect reference
     * @throws ClassCastException
     *       if the implied type is not the same as the referenced object type
-	 */
-	<T> T getDirectReference(K indirectReference) throws AccessControlException;
+     */
+    <T> T getDirectReference(K indirectReference) throws AccessControlException;
 
-	/**
-	 * Adds a direct reference to the AccessReferenceMap, then generates and returns 
-	 * an associated indirect reference.
-	 *  
-	 * @param direct 
-	 * 		the direct reference
-	 * 
-	 * @return 
-	 * 		the corresponding indirect reference
-	 */
-	<T> K addDirectReference(T direct);
-	
-	/**
-	 * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
-	 * 
-	 * @param direct 
-	 * 		the direct reference to remove
-	 * 
-	 * @return 
-	 * 		the corresponding indirect reference
-	 * 
-	 * @throws AccessControlException
+    /**
+     * Adds a direct reference to the AccessReferenceMap, then generates and returns 
+     * an associated indirect reference.
+     *  
+     * @param direct 
+     *         the direct reference
+     * 
+     * @return 
+     *         the corresponding indirect reference
+     */
+    <T> K addDirectReference(T direct);
+    
+    /**
+     * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
+     * 
+     * @param direct 
+     *         the direct reference to remove
+     * 
+     * @return 
+     *         the corresponding indirect reference
+     * 
+     * @throws AccessControlException
     *          if the reference does not exist.
-	 */
-	<T> K removeDirectReference(T direct) throws AccessControlException;
+     */
+    <T> K removeDirectReference(T direct) throws AccessControlException;
 
-	/**
-	 * Updates the access reference map with a new set of direct references, maintaining
-	 * any existing indirect references associated with items that are in the new list.
-	 * New indirect references could be generated every time, but that
-	 * might mess up anything that previously used an indirect reference, such
-	 * as a URL parameter. 
-	 * 
-	 * @param directReferences
-	 * 		a Set of direct references to add
-	 */
-	void update(Set directReferences);
+    /**
+     * Updates the access reference map with a new set of direct references, maintaining
+     * any existing indirect references associated with items that are in the new list.
+     * New indirect references could be generated every time, but that
+     * might mess up anything that previously used an indirect reference, such
+     * as a URL parameter. 
+     * 
+     * @param directReferences
+     *         a Set of direct references to add
+     */
+    void update(Set directReferences);
 }

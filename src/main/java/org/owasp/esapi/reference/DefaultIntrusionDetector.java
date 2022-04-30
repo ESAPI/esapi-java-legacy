@@ -47,20 +47,20 @@ import org.owasp.esapi.errors.IntrusionException;
  */
 public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetector {
 
-	/** The logger. */
-	private final Logger logger = ESAPI.getLogger("IntrusionDetector");
+    /** The logger. */
+    private final Logger logger = ESAPI.getLogger("IntrusionDetector");
 
     public DefaultIntrusionDetector() {
-	}
-	
-	/**
-	 * {@inheritDoc}
+    }
+    
+    /**
+     * {@inheritDoc}
      *
      * @param e
      */
-	public void addException(Exception e) {
-		if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-		
+    public void addException(Exception e) {
+        if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+        
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY_FAILURE, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
@@ -68,7 +68,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
         }
 
         // add the exception to the current user, which may trigger a detector 
-		User user = ESAPI.authenticator().getCurrentUser();
+        User user = ESAPI.authenticator().getCurrentUser();
         String eventName = e.getClass().getName();
 
         if ( e instanceof IntrusionException) {
@@ -76,9 +76,9 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
         }
         
         // add the exception to the user's store, handle IntrusionException if thrown
-		try {
-			addSecurityEvent(user, eventName);
-		} catch( IntrusionException ex ) {
+        try {
+            addSecurityEvent(user, eventName);
+        } catch( IntrusionException ex ) {
             Threshold quota = ESAPI.securityConfiguration().getQuota(eventName);
             Iterator i = quota.actions.iterator();
             while ( i.hasNext() ) {
@@ -86,15 +86,15 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
                 String message = "User exceeded quota of " + quota.count + " per "+ quota.interval +" seconds for event " + eventName + ". Taking actions " + quota.actions;
                 takeSecurityAction( action, message );
             }
-		}
-	}
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
+    /**
+     * {@inheritDoc}
+     */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
-    	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-    	
+        if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+        
         logger.warning( Logger.SECURITY_FAILURE, "Security event " + eventName + " received : " + logMessage );
 
         // add the event to the current user, which may trigger a detector 
@@ -117,19 +117,19 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      * actions are: log, disable, logout.
      * 
      * @param action
-     * 		the action to take (log, disable, logout)
+     *         the action to take (log, disable, logout)
      * @param message
-     * 		the message to log if the action is "log"
+     *         the message to log if the action is "log"
      */
     private void takeSecurityAction( String action, String message ) {
-    	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-    	
+        if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+        
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY_FAILURE, "INTRUSION - " + message );
         }
         User user = ESAPI.authenticator().getCurrentUser();
         if (user == User.ANONYMOUS)
-        	return;
+            return;
         if ( action.equals( "disable" ) ) {
             user.disable();
         }
@@ -138,34 +138,34 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
         }
     }
 
-	 /**
-	 * Adds a security event to the user.  These events are used to check that the user has not
-	 * reached the security thresholds set in the properties file.
-	 * 
-	 * @param user
-	 * 			The user that caused the event.
-	 * @param eventName
-	 * 			The name of the event that occurred.
-	 */
-	private void addSecurityEvent(User user, String eventName) {
-		if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-		
-		if ( user.isAnonymous() ) return;
-		
-		HashMap eventMap = user.getEventMap();
-		
-		// if there is a threshold, then track this event
-		Threshold threshold = ESAPI.securityConfiguration().getQuota( eventName );
-		if ( threshold != null ) {
-			Event event = (Event)eventMap.get( eventName );
-			if ( event == null ) {
-				event = new Event( eventName );
-				eventMap.put( eventName, event );
-			}
-			// increment
-			event.increment(threshold.count, threshold.interval);
-		}
-	}
+     /**
+     * Adds a security event to the user.  These events are used to check that the user has not
+     * reached the security thresholds set in the properties file.
+     * 
+     * @param user
+     *             The user that caused the event.
+     * @param eventName
+     *             The name of the event that occurred.
+     */
+    private void addSecurityEvent(User user, String eventName) {
+        if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+        
+        if ( user.isAnonymous() ) return;
+        
+        HashMap eventMap = user.getEventMap();
+        
+        // if there is a threshold, then track this event
+        Threshold threshold = ESAPI.securityConfiguration().getQuota( eventName );
+        if ( threshold != null ) {
+            Event event = (Event)eventMap.get( eventName );
+            if ( event == null ) {
+                event = new Event( eventName );
+                eventMap.put( eventName, event );
+            }
+            // increment
+            event.increment(threshold.count, threshold.interval);
+        }
+    }
 
     private static class Event {
         public String key;
@@ -175,8 +175,8 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
             this.key = key;
         }
         public void increment(int count, long interval) throws IntrusionException {
-        	if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-        	
+            if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
+            
             Date now = new Date();
             times.add( 0, now );
             while ( times.size() > count ) times.remove( times.size()-1 );

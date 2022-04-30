@@ -31,13 +31,13 @@ public class EsapiPropertyManagerTest {
 
     @BeforeClass
     public static void captureEsapiConfigurations() {
-    	DEVTEAM_CFG = System.getProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(),"");
-    	OPSTEAM_CFG = System.getProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(),"");
+        DEVTEAM_CFG = System.getProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(),"");
+        OPSTEAM_CFG = System.getProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(),"");
     }
     
     @AfterClass
     public static void restoreEsapiConfigurations() {
-    	 System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), DEVTEAM_CFG);
+         System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), DEVTEAM_CFG);
          System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), OPSTEAM_CFG);
     }
 
@@ -422,20 +422,20 @@ public class EsapiPropertyManagerTest {
 
     @Test
     public void testExpectFileNotFoundException() {
-    	// given
-    	System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), noSuchFile);
+        // given
+        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), noSuchFile);
 
-    	// when
-    	try {
-    		testPropertyManager = new EsapiPropertyManager();
-    	} catch (IOException e) {
-    		if ( e instanceof FileNotFoundException ) {
-    			return;
-    		} else {
-    			fail("testExpectFileNotFoundException(): Was expecting FileNotFoundException for IOException. Exception:" + e);
-    		}
-    	}
+        // when
+        try {
+            testPropertyManager = new EsapiPropertyManager();
+        } catch (IOException e) {
+            if ( e instanceof FileNotFoundException ) {
+                return;
+            } else {
+                fail("testExpectFileNotFoundException(): Was expecting FileNotFoundException for IOException. Exception:" + e);
+            }
+        }
 
-    	fail("Did not throw expected IOException for property file " + noSuchFile);
+        fail("Did not throw expected IOException for property file " + noSuchFile);
     }
 }

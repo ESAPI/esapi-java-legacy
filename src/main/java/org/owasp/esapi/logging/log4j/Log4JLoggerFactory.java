@@ -59,7 +59,7 @@ public class Log4JLoggerFactory implements LoggerFactory {
      * @param name The class name to return a logger for.
      * @return org.owasp.esapi.reference.Log4JLogger
      */
-    public org.apache.log4j.Logger makeNewLoggerInstance(String name) {		
+    public org.apache.log4j.Logger makeNewLoggerInstance(String name) {        
         return new EsapiLog4JWrapper(name);
     }
 
@@ -67,7 +67,7 @@ public class Log4JLoggerFactory implements LoggerFactory {
     public static class EsapiLog4JWrapper extends org.apache.log4j.Logger {
 
         protected EsapiLog4JWrapper(String name) {
-            super(name);			
+            super(name);            
         }
 
         @Override

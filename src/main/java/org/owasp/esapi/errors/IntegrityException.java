@@ -24,15 +24,15 @@ package org.owasp.esapi.errors;
  */
 public class IntegrityException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new availability exception.
-	 */
-	protected IntegrityException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new availability exception.
+     */
+    protected IntegrityException() {
+        // hidden
+    }
 
     /**
      * Creates a new instance of IntegrityException.
@@ -40,7 +40,7 @@ public class IntegrityException extends EnterpriseSecurityException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public IntegrityException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -52,7 +52,7 @@ public class IntegrityException extends EnterpriseSecurityException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause
      *            the cause
      */

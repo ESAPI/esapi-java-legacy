@@ -25,15 +25,15 @@ package org.owasp.esapi.errors;
  */
 public class EncryptionRuntimeException extends EnterpriseSecurityRuntimeException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new EncryptionException.
-	 */
-	protected EncryptionRuntimeException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new EncryptionException.
+     */
+    protected EncryptionRuntimeException() {
+        // hidden
+    }
 
     /**
      * Creates a new instance of EncryptionException.
@@ -41,7 +41,7 @@ public class EncryptionRuntimeException extends EnterpriseSecurityRuntimeExcepti
      * @param userMessage
      *            the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public EncryptionRuntimeException(String userMessage, String logMessage) {
         super(userMessage, logMessage);
@@ -53,7 +53,7 @@ public class EncryptionRuntimeException extends EnterpriseSecurityRuntimeExcepti
      * @param userMessage
      *            the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause
      *            the cause
      */

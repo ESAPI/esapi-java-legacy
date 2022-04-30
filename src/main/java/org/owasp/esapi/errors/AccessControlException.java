@@ -23,35 +23,35 @@ package org.owasp.esapi.errors;
  */
 public class AccessControlException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new access control exception.
-	 */
-	protected AccessControlException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new access control exception.
+     */
+    protected AccessControlException() {
+        // hidden
+    }
 
-	/**
-	 * Creates a new instance of {@code AccessControlException}.
+    /**
+     * Creates a new instance of {@code AccessControlException}.
      *
      * @param userMessage
      * @param logMessage
      */
-	public AccessControlException(String userMessage, String logMessage) {
-		super(userMessage, logMessage);
-	}
+    public AccessControlException(String userMessage, String logMessage) {
+        super(userMessage, logMessage);
+    }
 
-	/**
-	 * Instantiates a new access control exception.
-	 * 
-	 * @param userMessage the message displayed to the user
-	 * @param logMessage the message logged
-	 * @param cause the root cause
-	 */
-	public AccessControlException(String userMessage, String logMessage, Throwable cause) {
-		super(userMessage, logMessage, cause);
-	}
+    /**
+     * Instantiates a new access control exception.
+     * 
+     * @param userMessage the message displayed to the user
+     * @param logMessage the message logged
+     * @param cause the root cause
+     */
+    public AccessControlException(String userMessage, String logMessage, Throwable cause) {
+        super(userMessage, logMessage, cause);
+    }
 
 }

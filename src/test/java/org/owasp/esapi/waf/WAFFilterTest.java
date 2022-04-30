@@ -35,23 +35,23 @@ import junit.framework.TestSuite;
 public class WAFFilterTest extends TestCase {
     
     /**
-	 * Instantiates a new WAF test.
-	 * 
-	 * @param testName the test name
-	 */
+     * Instantiates a new WAF test.
+     * 
+     * @param testName the test name
+     */
     public WAFFilterTest(String testName) {
         super(testName);
     }
 
 
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
 
-    	TestSuite suite = new TestSuite(WAFFilterTest.class);
+        TestSuite suite = new TestSuite(WAFFilterTest.class);
 
         suite.addTest(AddHeaderTest.suite());
         suite.addTest(BeanShellTest.suite());
@@ -72,9 +72,9 @@ public class WAFFilterTest extends TestCase {
     }
     
     public void testConfigurationCanBeRead() throws Exception {
-    	
-    	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
-    	WAFTestUtility.setWAFPolicy(waf, "waf-policy.xml");
+        
+        ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
+        WAFTestUtility.setWAFPolicy(waf, "waf-policy.xml");
 
     }
 

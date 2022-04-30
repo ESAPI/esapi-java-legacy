@@ -19,77 +19,77 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ESAPI.class })
 public class ServerInfoSupplierTest {
-	@Rule
-	public TestName testName = new TestName();
+    @Rule
+    public TestName testName = new TestName();
 
-	private HttpServletRequest request;
+    private HttpServletRequest request;
 
-	@Before
-	public void buildStaticMocks() throws Exception {
-		request = mock(HttpServletRequest.class);
-		mockStatic(ESAPI.class);
-		when(ESAPI.class, "currentRequest").thenReturn(request);
-	}
+    @Before
+    public void buildStaticMocks() throws Exception {
+        request = mock(HttpServletRequest.class);
+        mockStatic(ESAPI.class);
+        when(ESAPI.class, "currentRequest").thenReturn(request);
+    }
 
-	@Test
-	public void verifyFullOutput() {
-		when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
-		when(request.getLocalPort()).thenReturn(99999);
+    @Test
+    public void verifyFullOutput() {
+        when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
+        when(request.getLocalPort()).thenReturn(99999);
 
-		ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
-		sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
-		sis.setLogServerIp(true);
+        ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
+        sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
+        sis.setLogServerIp(true);
 
-		String result = sis.get();
-		assertEquals("LOCAL_ADDR:99999/" + testName.getMethodName() + "-APPLICATION/" + testName.getMethodName(),
-				result);
-	}
+        String result = sis.get();
+        assertEquals("LOCAL_ADDR:99999/" + testName.getMethodName() + "-APPLICATION/" + testName.getMethodName(),
+                result);
+    }
 
-	@Test
-	public void verifyOutputNullRequest() throws Exception {
-		when(ESAPI.class, "currentRequest").thenReturn(null);
-		ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
-		sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
-		sis.setLogServerIp(true);
+    @Test
+    public void verifyOutputNullRequest() throws Exception {
+        when(ESAPI.class, "currentRequest").thenReturn(null);
+        ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
+        sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
+        sis.setLogServerIp(true);
 
-		String result = sis.get();
-		assertEquals("/" + testName.getMethodName() + "-APPLICATION/" + testName.getMethodName(), result);
-	}
+        String result = sis.get();
+        assertEquals("/" + testName.getMethodName() + "-APPLICATION/" + testName.getMethodName(), result);
+    }
 
-	@Test
-	public void verifyOutputNoAppName() {
-		when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
-		when(request.getLocalPort()).thenReturn(99999);
+    @Test
+    public void verifyOutputNoAppName() {
+        when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
+        when(request.getLocalPort()).thenReturn(99999);
 
-		ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
-		sis.setLogApplicationName(false, null);
-		sis.setLogServerIp(true);
+        ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
+        sis.setLogApplicationName(false, null);
+        sis.setLogServerIp(true);
 
-		String result = sis.get();
-		assertEquals("LOCAL_ADDR:99999/" + testName.getMethodName(), result);
-	}
+        String result = sis.get();
+        assertEquals("LOCAL_ADDR:99999/" + testName.getMethodName(), result);
+    }
 
-	@Test
-	public void verifyOutputNullAppName() {
-		when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
-		when(request.getLocalPort()).thenReturn(99999);
+    @Test
+    public void verifyOutputNullAppName() {
+        when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
+        when(request.getLocalPort()).thenReturn(99999);
 
-		ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
-		sis.setLogApplicationName(true, null);
-		sis.setLogServerIp(true);
+        ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
+        sis.setLogApplicationName(true, null);
+        sis.setLogServerIp(true);
 
-		String result = sis.get();
-		assertEquals("LOCAL_ADDR:99999/null/" + testName.getMethodName(), result);
-	}
+        String result = sis.get();
+        assertEquals("LOCAL_ADDR:99999/null/" + testName.getMethodName(), result);
+    }
 
-	@Test
-	public void verifyOutputNoServerIp() {
-		ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
-		sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
-		sis.setLogServerIp(false);
+    @Test
+    public void verifyOutputNoServerIp() {
+        ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
+        sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
+        sis.setLogServerIp(false);
 
-		String result = sis.get();
-		assertEquals("/" + testName.getMethodName() + "-APPLICATION/" + testName.getMethodName(), result);
-	}
+        String result = sis.get();
+        assertEquals("/" + testName.getMethodName() + "-APPLICATION/" + testName.getMethodName(), result);
+    }
 
 }

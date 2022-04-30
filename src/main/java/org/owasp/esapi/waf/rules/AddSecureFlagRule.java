@@ -32,32 +32,32 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class AddSecureFlagRule extends Rule {
 
-	private List<Pattern> name;
+    private List<Pattern> name;
 
-	public AddSecureFlagRule(String id, List<Pattern> name) {
-		this.name = name;
-		setId(id);
-	}
+    public AddSecureFlagRule(String id, List<Pattern> name) {
+        this.name = name;
+        setId(id);
+    }
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
-		
-		DoNothingAction action = new DoNothingAction();
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
+        
+        DoNothingAction action = new DoNothingAction();
 
-		return action;
-	}
+        return action;
+    }
 
-	public boolean doesCookieMatch(String cookieName) {
+    public boolean doesCookieMatch(String cookieName) {
 
-		for(int i=0;i<name.size();i++) {
-			Pattern p = name.get(i);
-			if ( p.matcher(cookieName).matches() ) {
-				return true;
-			}
-		}
+        for(int i=0;i<name.size();i++) {
+            Pattern p = name.get(i);
+            if ( p.matcher(cookieName).matches() ) {
+                return true;
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
 }

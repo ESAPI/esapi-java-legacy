@@ -47,7 +47,7 @@ public class SecurityProviderLoader  {
             // IBMJCE is default for WebSphere and is used by IBM JDKs. They
             // also have IBMJCEFIPS, but not sure if this is *always* provided
             // with WebSphere or just an add-on, hence not including it. IBMJCEFIPS
-        	// is a FIPS 140-2 compliant JCE provider from IBM.
+            // is a FIPS 140-2 compliant JCE provider from IBM.
         jceProviders.put("IBMJCE", "com.ibm.crypto.provider.IBMJCE");
         // jceProviders.put("IBMJCEFIPS", "com.ibm.crypto.fips.provider.IBMJCEFIPS");
         
@@ -209,13 +209,13 @@ public class SecurityProviderLoader  {
                     // compliant JCE provider at the first position and it was
                     // already loaded at position 3, then this is not FIPS 140-2
                     // compliant. Therefore, we make it a warning and a failure.
-                	// Also log separately using 'always' in case warnings suppressed
-                	// as per NSA suggestion.
+                    // Also log separately using 'always' in case warnings suppressed
+                    // as per NSA suggestion.
                     logger.warning(Logger.SECURITY_FAILURE, msg);
                     logger.always(Logger.SECURITY_FAILURE, "(audit) " + msg);
                 }
             } else {
-            	// As per NSA suggestion.
+                // As per NSA suggestion.
                 logger.always(Logger.SECURITY_AUDIT,
                         "Successfully loaded preferred JCE provider " +
                         algProvider + " at position " + pos);
@@ -223,12 +223,12 @@ public class SecurityProviderLoader  {
             return ret;
         } catch(SecurityException ex) {
             // CHECKME: Log security event here too? This is a RuntimeException.
-        	// It would only be thrown if a SecurityManager is installed that
-        	// prohibits Security.addProvider() or Security.insertProviderAt()
-        	// by the current user of this thread. Will log it here. Can always
-        	// be ignored.
-        	logger.always(Logger.SECURITY_FAILURE, "Failed to load preferred JCE provider " +
-        				  algProvider + " at position " + pos, ex);
+            // It would only be thrown if a SecurityManager is installed that
+            // prohibits Security.addProvider() or Security.insertProviderAt()
+            // by the current user of this thread. Will log it here. Can always
+            // be ignored.
+            logger.always(Logger.SECURITY_FAILURE, "Failed to load preferred JCE provider " +
+                          algProvider + " at position " + pos, ex);
             throw ex;
         } catch(Exception ex) {
             // Possibilities include: ClassNotFoundException,
@@ -236,8 +236,8 @@ public class SecurityProviderLoader  {
             //
             // Log an error & re-throw original message as NoSuchProviderException,
             // since that what it probably really implied here. This probably a configuration
-        	// error (e.g., classpath problem, etc.) so we use EVENT_FAILURE rather than
-        	// SECURITY_FAILURE here.
+            // error (e.g., classpath problem, etc.) so we use EVENT_FAILURE rather than
+            // SECURITY_FAILURE here.
             logger.error(Logger.EVENT_FAILURE, "Failed to insert failed crypto " +
                     " provider " + algProvider + " at position " + pos, ex);
             throw new NoSuchProviderException("Failed to insert crypto " +
@@ -272,7 +272,7 @@ public class SecurityProviderLoader  {
         try {
             // If unset or set to empty string, then don't try to change it.
             if ( prefJCEProvider == null || prefJCEProvider.trim().length() == 0) {
-            		// Always log, per NSA suggestion.
+                    // Always log, per NSA suggestion.
                 logger.always(Logger.SECURITY_AUDIT, "No Encryptor.PreferredJCEProvider specified.");
                 return -1;  // Unchanged; it is, whatever it is.
             } else {
@@ -280,8 +280,8 @@ public class SecurityProviderLoader  {
             }
         } catch (NoSuchProviderException ex) {
             // Will already have logged with exception msg.
-        	String msg = "failed to load *preferred* " + "JCE crypto provider, " + prefJCEProvider;
-        	logger.always(Logger.SECURITY_AUDIT, msg);	// Per NSA suggestion.
+            String msg = "failed to load *preferred* " + "JCE crypto provider, " + prefJCEProvider;
+            logger.always(Logger.SECURITY_AUDIT, msg);    // Per NSA suggestion.
             logger.error(Logger.SECURITY_FAILURE, msg);
             throw ex;
         }

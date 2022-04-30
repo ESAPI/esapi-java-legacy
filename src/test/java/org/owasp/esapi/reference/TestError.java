@@ -12,11 +12,11 @@ import junit.framework.TestCase;
  */
 public class TestError extends TestCase {
 
-	/**
-	 * Dummy method so that JUnit won't complain
-	 */
-	public void testLogging() {
+    /**
+     * Dummy method so that JUnit won't complain
+     */
+    public void testLogging() {
 
-	}
+    }
 
 }

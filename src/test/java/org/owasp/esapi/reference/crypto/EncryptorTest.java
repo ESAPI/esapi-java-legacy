@@ -56,11 +56,11 @@ public class EncryptorTest extends TestCase {
     }
     
     /**
-	 * Instantiates a new encryptor test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new encryptor test.
+     * 
+     * @param testName
+     *            the test name
+     */
     public EncryptorTest(String testName) {
         super(testName);
     }
@@ -70,10 +70,10 @@ public class EncryptorTest extends TestCase {
      * @throws Exception
      */
     @SuppressWarnings("deprecation")
-	protected void setUp() throws Exception {
+    protected void setUp() throws Exception {
         // This is only mechanism to change this for now. Will do this with
         // a soon to be CryptoControls class or equivalent mechanism in a
-    	// future release.
+        // future release.
         ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
     }
 
@@ -82,15 +82,15 @@ public class EncryptorTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
      * Run all the test cases in this suite.
      * This is to allow running from {@code org.owasp.esapi.AllTests}.
      * 
-	 * @return the test
-	 */
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(EncryptorTest.class);
         
@@ -98,7 +98,7 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of hash method, of class org.owasp.esapi.Encryptor.
+     * Test of hash method, of class org.owasp.esapi.Encryptor.
      *
      * @throws EncryptionException
      */
@@ -114,12 +114,12 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of new encrypt / decrypt method for Strings whose length is
-	 * not a multiple of the cipher block size (16 bytes for AES).
-	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
-	 */
+     * Test of new encrypt / decrypt method for Strings whose length is
+     * not a multiple of the cipher block size (16 bytes for AES).
+     * 
+     * @throws EncryptionException
+     *             the encryption exception
+     */
     public void testEncryptDecrypt1() throws EncryptionException {
         System.out.println("testEncryptDecrypt2()");
         Encryptor instance = ESAPI.encryptor();
@@ -130,14 +130,14 @@ public class EncryptorTest extends TestCase {
             assertTrue( pt.toString().equals(plaintext) );
         }
         catch( EncryptionException e ) {
-        	fail("testEncryptDecrypt2(): Caught exception: " + e);
+            fail("testEncryptDecrypt2(): Caught exception: " + e);
         }
     }
 
     /**
-	 * Test of new encrypt / decrypt method for Strings whose length is
-	 * same as cipher block size (16 bytes for AES).
-	 */
+     * Test of new encrypt / decrypt method for Strings whose length is
+     * same as cipher block size (16 bytes for AES).
+     */
     public void testEncryptDecrypt2() {
         System.out.println("testEncryptDecrypt2()");
         Encryptor instance = ESAPI.encryptor();
@@ -148,7 +148,7 @@ public class EncryptorTest extends TestCase {
             assertTrue( pt.toString().equals(plaintext) );
         }
         catch( EncryptionException e ) {
-        	fail("testEncryptDecrypt2(): Caught exception: " + e);
+            fail("testEncryptDecrypt2(): Caught exception: " + e);
         }
     }
 
@@ -176,7 +176,7 @@ public class EncryptorTest extends TestCase {
         System.out.println("testEncryptNull()");
         Encryptor instance = ESAPI.encryptor();
         try {
-			CipherText ct = instance.encrypt( null );  // Should throw NPE or AssertionError
+            CipherText ct = instance.encrypt( null );  // Should throw NPE or AssertionError
             fail("New encrypt(PlainText) method did not throw. Result was: " + ct.toString());
         } catch(Throwable t) {
             // It should be one of these, depending on whether or not assertions are enabled.
@@ -191,7 +191,7 @@ public class EncryptorTest extends TestCase {
         System.out.println("testDecryptNull()");
         Encryptor instance = ESAPI.encryptor();
         try {
-			PlainText pt = instance.decrypt( null );  // Should throw IllegalArgumentException or AssertionError
+            PlainText pt = instance.decrypt( null );  // Should throw IllegalArgumentException or AssertionError
             fail("New decrypt(PlainText) method did not throw. Result was: " + pt.toString());
         } catch(Throwable t) {
             // It should be one of these, depending on whether or not assertions are enabled.
@@ -203,26 +203,26 @@ public class EncryptorTest extends TestCase {
      * Test of new encrypt / decrypt methods added in ESAPI 2.0.
      */
     public void testNewEncryptDecrypt() {
-    	System.out.println("testNewEncryptDecrypt()");
-    	try {
-    	    // Let's try it with a 2-key version of 3DES. This should work for all
-    	    // installations, whereas the 3-key Triple DES will only work for those
-    	    // who have the Unlimited Strength Jurisdiction Policy files installed.
-			runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
-			runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
-			
-	        runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
-	        
-	        // These tests are only valid (and run) if one has the JCE Unlimited
-	        // Strength Jurisdiction Policy files installed for this Java VM.
-	            // 256-bit AES
+        System.out.println("testNewEncryptDecrypt()");
+        try {
+            // Let's try it with a 2-key version of 3DES. This should work for all
+            // installations, whereas the 3-key Triple DES will only work for those
+            // who have the Unlimited Strength Jurisdiction Policy files installed.
+            runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
+            runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
+            
+            runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
+            
+            // These tests are only valid (and run) if one has the JCE Unlimited
+            // Strength Jurisdiction Policy files installed for this Java VM.
+                // 256-bit AES
             runNewEncryptDecryptTestCase("AES/ECB/NoPadding", 256, "test1234test1234".getBytes("UTF-8"));
                 // 168-bit (aka, 3-key) Triple DES
             runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 168, "Groucho's secret word".getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			fail("OK, who stole UTF-8 encoding from the Java rt.jar ???");
-		}
-    	
+        } catch (UnsupportedEncodingException e) {
+            fail("OK, who stole UTF-8 encoding from the Java rt.jar ???");
+        }
+        
     }
     
     /** Special encryption case!!! Test encryption with DES, which has a key less than the
@@ -268,37 +268,37 @@ public class EncryptorTest extends TestCase {
 
     /**
      * Helper method to test new encryption / decryption.
-     * @param cipherXform	Cipher transformation
-     * @param keySize	Size of key, in bits.
+     * @param cipherXform    Cipher transformation
+     * @param keySize    Size of key, in bits.
      * @param plaintextBytes Byte array of plaintext.
      * @return The base64-encoded IV+ciphertext (or just ciphertext if no IV) or
      *         null if {@code keysize} is greater than 128 bits and unlimited
      *         strength crypto is not available for this Java VM.
      */
     private String runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
-    	// System.err.println("New encrypt / decrypt: " + cipherXform + "; requested key size: " + keySize + " bits.");
-    	
-    	if ( keySize > 128 && !unlimitedStrengthJurisdictionPolicyInstalled ) {
-    	    System.err.println("Skipping test for cipher transformation " +
-    	                       cipherXform + " with key size of " + keySize +
-    	                       " bits because this requires JCE Unlimited Strength" +
-    	                       " Jurisdiction Policy files to be installed and they" +
-    	                       " are not.");
-    	    return null;
-    	}
+        // System.err.println("New encrypt / decrypt: " + cipherXform + "; requested key size: " + keySize + " bits.");
+        
+        if ( keySize > 128 && !unlimitedStrengthJurisdictionPolicyInstalled ) {
+            System.err.println("Skipping test for cipher transformation " +
+                               cipherXform + " with key size of " + keySize +
+                               " bits because this requires JCE Unlimited Strength" +
+                               " Jurisdiction Policy files to be installed and they" +
+                               " are not.");
+            return null;
+        }
 
-    	try {
-    		// Generate an appropriate random secret key
-			SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);	
-			assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
-			String cipherAlg = cipherXform.split("/")[0];
+        try {
+            // Generate an appropriate random secret key
+            SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);    
+            assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
+            String cipherAlg = cipherXform.split("/")[0];
 
             // System.err.println("Key size of generated encoded key: " + skey.getEncoded().length * 8 + " bits.");
-			
-			// Adjust key size for DES and DESede specific oddities.
-			// NOTE: Key size that encrypt() method is using is 192 bits!!!
-    		//        which is 3 times 64 bits, but DES key size is only 56 bits.
-    		// See 'IMPORTANT NOTE', in JavaEncryptor, near line 376. It's a "feature"!!!
+            
+            // Adjust key size for DES and DESede specific oddities.
+            // NOTE: Key size that encrypt() method is using is 192 bits!!!
+            //        which is 3 times 64 bits, but DES key size is only 56 bits.
+            // See 'IMPORTANT NOTE', in JavaEncryptor, near line 376. It's a "feature"!!!
 /////   This section is causing problems. BC for instance sometimes creates a
 /////   192 bit key and then subsequently creates a 128-bit key for 2-key
 /////   3DES so adjusing this is futile. THis is a holdover when we were
@@ -310,124 +310,124 @@ public class EncryptorTest extends TestCase {
 /////   official 2.2.0.0 release.
 /////
 /*
-			if ( cipherAlg.equals( "DESede" ) ) {
+            if ( cipherAlg.equals( "DESede" ) ) {
                 System.err.println("Adjusting requested key size of " + keySize + " bits to 192 bits for DESede");
-				keySize = 192;
-			} else if ( cipherAlg.equals( "DES" ) ) {
+                keySize = 192;
+            } else if ( cipherAlg.equals( "DES" ) ) {
                 System.err.println("Adjusting requested key size of " + keySize + " bits to 64 bits for DES");
-				keySize = 64;
-			} // Else... use specified keySize.
+                keySize = 64;
+            } // Else... use specified keySize.
  */
 
             assertTrue(cipherXform + ": encoded key size of " + skey.getEncoded().length + " shorter than requested key size of: " + (keySize / 8),
-            		skey.getEncoded().length >= (keySize / 8) );
+                    skey.getEncoded().length >= (keySize / 8) );
 
-			// Change to a possibly different cipher. This is kludgey at best. Am thinking about an
-			// alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
-			// Change the cipher transform from whatever it currently is to the specified cipherXform.
-	    	@SuppressWarnings("deprecation")
-			String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
+            // Change to a possibly different cipher. This is kludgey at best. Am thinking about an
+            // alternate way to do this using a new 'CryptoControls' class. Maybe not until release 2.1.
+            // Change the cipher transform from whatever it currently is to the specified cipherXform.
+            @SuppressWarnings("deprecation")
+            String oldCipherXform = ESAPI.securityConfiguration().setCipherTransformation(cipherXform);
 /*
-	    	if ( ! cipherXform.equals(oldCipherXform) ) {
-	    		System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
-	    	}
+            if ( ! cipherXform.equals(oldCipherXform) ) {
+                System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
+            }
  */
-	    	
-	    	// Get an Encryptor instance with the specified, possibly new, cipher transformation.
-	    	Encryptor instance = ESAPI.encryptor();
-	    	PlainText plaintext = new PlainText(plaintextBytes);
-	    	PlainText origPlainText = new PlainText( plaintext.toString() ); // Make _copy_ of original for comparison.
-	    	
-	    	// Do the encryption with the new encrypt() method and get back the CipherText.
-	    	CipherText ciphertext = instance.encrypt(skey, plaintext);	// The new encrypt() method.
-	    	System.err.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
-	    	assertNotNull( ciphertext );
-//	    	System.err.println("DEBUG: After encryption: base64-encoded IV+ciphertext: " + ciphertext.getEncodedIVCipherText());
-//	    	System.err.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getEncodedIVCipherText()) );
-//	    	System.err.println("DEBUG: After encryption: base64-encoded raw ciphertext: " + ciphertext.getBase64EncodedRawCipherText());
-//	    	System.err.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getBase64EncodedRawCipherText()) );
+            
+            // Get an Encryptor instance with the specified, possibly new, cipher transformation.
+            Encryptor instance = ESAPI.encryptor();
+            PlainText plaintext = new PlainText(plaintextBytes);
+            PlainText origPlainText = new PlainText( plaintext.toString() ); // Make _copy_ of original for comparison.
+            
+            // Do the encryption with the new encrypt() method and get back the CipherText.
+            CipherText ciphertext = instance.encrypt(skey, plaintext);    // The new encrypt() method.
+            System.err.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
+            assertNotNull( ciphertext );
+//            System.err.println("DEBUG: After encryption: base64-encoded IV+ciphertext: " + ciphertext.getEncodedIVCipherText());
+//            System.err.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getEncodedIVCipherText()) );
+//            System.err.println("DEBUG: After encryption: base64-encoded raw ciphertext: " + ciphertext.getBase64EncodedRawCipherText());
+//            System.err.println("\t\tOr... " + ESAPI.encoder().decodeFromBase64(ciphertext.getBase64EncodedRawCipherText()) );
 
-	    	// If we are supposed to have overwritten the plaintext, check this to see
-	    	// if origPlainText was indeed overwritten.
-	    	@SuppressWarnings("deprecation")
-			boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
-			if ( overwritePlaintext ) {
-				assertTrue( isPlaintextOverwritten(plaintext) );
-			}
-	    	
-	    	// Take the resulting ciphertext and decrypt w/ new decryption method.
-	    	PlainText decryptedPlaintext  = instance.decrypt(skey, ciphertext);		// The new decrypt() method.
-	    	
-	    	// Make sure we got back the same thing we started with.
-	    	System.out.println("\tOriginal plaintext: " + origPlainText);
-	    	System.out.println("\tResult after decryption: " + decryptedPlaintext);
-			assertEquals( "Failed to decrypt properly.", origPlainText.toString(), decryptedPlaintext.toString() );
-	    	
-	    	// Restore the previous cipher transformation. For now, this is only way to do this.
-	    	@SuppressWarnings("deprecation")
-			String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
-	    	assertEquals( previousCipherXform,  cipherXform  );
-	    	@SuppressWarnings("deprecation")
-	    	String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
-	    	assertEquals( defaultCipherXform, oldCipherXform );
-	    	
-	    	return ciphertext.getEncodedIVCipherText();
-		} catch (Exception e) {
-			// OK if not counted toward code coverage.
-			System.out.println("testNewEncryptDecrypt(): Caught unexpected exception: " + e.getClass().getName());
-			e.printStackTrace(System.out);
-			fail("Caught unexpected exception; msg was: " + e);
-		}
-		return null;
+            // If we are supposed to have overwritten the plaintext, check this to see
+            // if origPlainText was indeed overwritten.
+            @SuppressWarnings("deprecation")
+            boolean overwritePlaintext = ESAPI.securityConfiguration().overwritePlainText();
+            if ( overwritePlaintext ) {
+                assertTrue( isPlaintextOverwritten(plaintext) );
+            }
+            
+            // Take the resulting ciphertext and decrypt w/ new decryption method.
+            PlainText decryptedPlaintext  = instance.decrypt(skey, ciphertext);        // The new decrypt() method.
+            
+            // Make sure we got back the same thing we started with.
+            System.out.println("\tOriginal plaintext: " + origPlainText);
+            System.out.println("\tResult after decryption: " + decryptedPlaintext);
+            assertEquals( "Failed to decrypt properly.", origPlainText.toString(), decryptedPlaintext.toString() );
+            
+            // Restore the previous cipher transformation. For now, this is only way to do this.
+            @SuppressWarnings("deprecation")
+            String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
+            assertEquals( previousCipherXform,  cipherXform  );
+            @SuppressWarnings("deprecation")
+            String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
+            assertEquals( defaultCipherXform, oldCipherXform );
+            
+            return ciphertext.getEncodedIVCipherText();
+        } catch (Exception e) {
+            // OK if not counted toward code coverage.
+            System.out.println("testNewEncryptDecrypt(): Caught unexpected exception: " + e.getClass().getName());
+            e.printStackTrace(System.out);
+            fail("Caught unexpected exception; msg was: " + e);
+        }
+        return null;
     }
     
     private static boolean isPlaintextOverwritten(PlainText plaintext) {
-    	// Note: An assumption here that the original plaintext did not consist
-    	// entirely of all '*' characters.
-    	byte[] ptBytes = plaintext.asBytes();
-    	
-    	for ( int i = 0; i < ptBytes.length; i++ ) {
-    		if ( ptBytes[i] != '*' ) {
-    			return false;
-    		}
-    	}
-    	return true;
+        // Note: An assumption here that the original plaintext did not consist
+        // entirely of all '*' characters.
+        byte[] ptBytes = plaintext.asBytes();
+        
+        for ( int i = 0; i < ptBytes.length; i++ ) {
+            if ( ptBytes[i] != '*' ) {
+                return false;
+            }
+        }
+        return true;
     }
     
     // TODO - Because none of the encryption / decryption tests persists
-    //		  encrypted data across runs, that means everything is run
-    //		  under same JVM at same time thus always with the same
-    //		  _native_ byte encoding.
+    //          encrypted data across runs, that means everything is run
+    //          under same JVM at same time thus always with the same
+    //          _native_ byte encoding.
     //
-    //		  Need test(s) such that data is persisted across JVM runs
-    //		  so we can test a run on (say) a Windows Intel box can decrypt
-    //		  encrypted data produced by the reference Encryptor on
-    //		  (say) a Solaris SPARC box. I.e., test that the change to
-    //		  JavaEncryptor to use UTF-8 encoding throughout works as
-    //		  desired.
+    //          Need test(s) such that data is persisted across JVM runs
+    //          so we can test a run on (say) a Windows Intel box can decrypt
+    //          encrypted data produced by the reference Encryptor on
+    //          (say) a Solaris SPARC box. I.e., test that the change to
+    //          JavaEncryptor to use UTF-8 encoding throughout works as
+    //          desired.
     //
-    //		  Files saved across tests need to be added to SVN (under
-    //		  resources or where) and they should be named so we know
-    //		  where and how they were created. E.g., WinOS-AES-ECB.dat,
-    //		  Sparc-Solaris-AEC-CBC-PKCS5Padding.dat, etc., but they should be
-    //		  able to be decrypted from any platform. May wish to place that
-    //		  under a separate JUnit test.
+    //          Files saved across tests need to be added to SVN (under
+    //          resources or where) and they should be named so we know
+    //          where and how they were created. E.g., WinOS-AES-ECB.dat,
+    //          Sparc-Solaris-AEC-CBC-PKCS5Padding.dat, etc., but they should be
+    //          able to be decrypted from any platform. May wish to place that
+    //          under a separate JUnit test.
     //
     // TODO - Need to test rainy day paths of new encrypt / decrypt so can
-    //		  verify that exception handling working OK, etc. Maybe also in
-    //		  a separate JUnit test, since everything here seems to be sunny
-    //		  day path. (Note: Some of this no in new test case,
-    //		  org.owasp.esapi.crypto.ESAPICryptoMACByPassTest.)
+    //          verify that exception handling working OK, etc. Maybe also in
+    //          a separate JUnit test, since everything here seems to be sunny
+    //          day path. (Note: Some of this no in new test case,
+    //          org.owasp.esapi.crypto.ESAPICryptoMACByPassTest.)
     //
-    //				-kevin wall
+    //                -kevin wall
     
 
     /**
-	 * Test of sign method, of class org.owasp.esapi.Encryptor.
-	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
-	 */
+     * Test of sign method, of class org.owasp.esapi.Encryptor.
+     * 
+     * @throws EncryptionException
+     *             the encryption exception
+     */
     public void testSign() throws EncryptionException {
         System.out.println("testSign()");        
         Encryptor instance = ESAPI.encryptor();
@@ -439,11 +439,11 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of verifySignature method, of class org.owasp.esapi.Encryptor.
-	 * 
-	 * @throws EncryptionException
-	 *             the encryption exception
-	 */
+     * Test of verifySignature method, of class org.owasp.esapi.Encryptor.
+     * 
+     * @throws EncryptionException
+     *             the encryption exception
+     */
     public void testVerifySignature() throws EncryptionException {
         System.out.println("testVerifySignature()");
         Encryptor instance = ESAPI.encryptor();
@@ -454,10 +454,10 @@ public class EncryptorTest extends TestCase {
     
  
     /**
-	 * Test of seal method, of class org.owasp.esapi.Encryptor.
-	 * 
+     * Test of seal method, of class org.owasp.esapi.Encryptor.
+     * 
      * @throws IntegrityException
-	 */
+     */
     public void testSeal() throws IntegrityException {
         System.out.println("testSeal()");
         Encryptor instance = ESAPI.encryptor(); 
@@ -504,10 +504,10 @@ public class EncryptorTest extends TestCase {
     }
 
     /**
-	 * Test of verifySeal method, of class org.owasp.esapi.Encryptor.
-	 * 
+     * Test of verifySeal method, of class org.owasp.esapi.Encryptor.
+     * 
      * @throws EnterpriseSecurityException
-	 */
+     */
     public void testVerifySeal() throws EnterpriseSecurityException {
         final int NSEC = 5;
         System.out.println("testVerifySeal()");
@@ -515,10 +515,10 @@ public class EncryptorTest extends TestCase {
         String plaintext = "ridiculous:with:delimiters";    // Should now work w/ : (issue #28)
         String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000 * NSEC ) );
         try {
-        	assertNotNull("Encryptor.seal() returned null", seal );
-        	assertTrue("Failed to verify seal", instance.verifySeal( seal ) );
+            assertNotNull("Encryptor.seal() returned null", seal );
+            assertTrue("Failed to verify seal", instance.verifySeal( seal ) );
         } catch ( Exception e ) {
-        	fail();
+            fail();
         }
         int progressMark = 1;
         try {
@@ -534,8 +534,8 @@ public class EncryptorTest extends TestCase {
             //
             // All these should return false and log a warning with an Exception stack
             // trace caused by an EncryptionException indicating "Invalid seal".
-        	assertFalse( instance.verifySeal( plaintext ) );
-        	progressMark++;      	
+            assertFalse( instance.verifySeal( plaintext ) );
+            progressMark++;          
             assertFalse( instance.verifySeal( instance.encrypt( new PlainText(plaintext) ).getBase64EncodedRawCipherText() ) );
             progressMark++;            
             assertFalse( instance.verifySeal( instance.encrypt( new PlainText(100 + ":" + plaintext) ).getBase64EncodedRawCipherText() ) );
@@ -549,7 +549,7 @@ public class EncryptorTest extends TestCase {
             assertFalse( instance.verifySeal( instance.encrypt( new PlainText(Long.MAX_VALUE + ":random:" + plaintext + ":"+ instance.sign( Long.MAX_VALUE + ":random:" + plaintext) ) ).getBase64EncodedRawCipherText() ) );
             progressMark++;
         } catch ( Exception e ) {
-        	// fail("Failed invalid seal test # " + progressMark + " to verify seal.");
+            // fail("Failed invalid seal test # " + progressMark + " to verify seal.");
             System.err.println("Failed seal verification at step # " + progressMark);
             System.err.println("Exception was: " + e);
             e.printStackTrace(System.err);

@@ -37,10 +37,10 @@ public class EventTypeLogSupplierTest {
         this.eventType = eventType;
         this.expectedResult = result;
     }
-	@Test
-	public void testEventTypeLog() {
-		EventTypeLogSupplier supplier = new EventTypeLogSupplier(eventType);
-		assertEquals(expectedResult, supplier.get());
-	}
-	
+    @Test
+    public void testEventTypeLog() {
+        EventTypeLogSupplier supplier = new EventTypeLogSupplier(eventType);
+        assertEquals(expectedResult, supplier.get());
+    }
+    
 }

@@ -38,9 +38,9 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 public class ClickjackFilterTest extends TestCase {
     
     /**
-	 * @param testName
-	 *            the test name
-	 */
+     * @param testName
+     *            the test name
+     */
     public ClickjackFilterTest(String testName) {
         super(testName);
     }
@@ -50,7 +50,7 @@ public class ClickjackFilterTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
 
     /**
@@ -58,14 +58,14 @@ public class ClickjackFilterTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(ClickjackFilterTest.class);
         return suite;
@@ -73,30 +73,30 @@ public class ClickjackFilterTest extends TestCase {
 
     
     /**
-	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
+     * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
      * @throws Exception
      */
     public void testFilter() throws Exception {
         System.out.println("ClickjackFilter");
 
         Map map = new HashMap();
-    	FilterConfig mfc = new MockFilterConfig( map );
-    	ClickjackFilter filter = new ClickjackFilter();        
-    	filter.init( mfc );
-   	    MockHttpServletRequest request = new MockHttpServletRequest();
-		
-		// the mock filter chain writes the requested URI to the response body
-		MockFilterChain chain = new MockFilterChain();
+        FilterConfig mfc = new MockFilterConfig( map );
+        ClickjackFilter filter = new ClickjackFilter();        
+        filter.init( mfc );
+           MockHttpServletRequest request = new MockHttpServletRequest();
+        
+        // the mock filter chain writes the requested URI to the response body
+        MockFilterChain chain = new MockFilterChain();
 
         URL url = new URL( "http://www.example.com/index.jsp" );
-		System.out.println( "\nTest request: " + url );
+        System.out.println( "\nTest request: " + url );
         request = new MockHttpServletRequest( url );
-    	MockHttpServletResponse response = new MockHttpServletResponse();
-    	try {
-        	filter.doFilter(request, response, chain);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        try {
+            filter.doFilter(request, response, chain);
         } catch( Exception e ) {
-        	e.printStackTrace();
-        	fail();
+            e.printStackTrace();
+            fail();
         }
         String header = response.getHeader( "X-FRAME-OPTIONS");
         System.out.println(">>>" + header );

@@ -14,21 +14,21 @@ package org.owasp.esapi.errors;
  */
 public class ConfigurationException extends RuntimeException {
 
-	protected static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
 
-	public ConfigurationException(Exception e) {
-		super(e);
-	}
+    public ConfigurationException(Exception e) {
+        super(e);
+    }
 
-	public ConfigurationException(String s) {
-		super(s);
-	}
-	
-	public ConfigurationException(String s, Throwable cause) {
-		super(s, cause);
-	}
-	
-	public ConfigurationException(Throwable cause) {
-		super(cause);
-	}
+    public ConfigurationException(String s) {
+        super(s);
+    }
+    
+    public ConfigurationException(String s, Throwable cause) {
+        super(s, cause);
+    }
+    
+    public ConfigurationException(Throwable cause) {
+        super(cause);
+    }
 }

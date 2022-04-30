@@ -35,61 +35,61 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class EnforceHTTPSRule extends Rule {
 
-	private Pattern path;
-	private List<Object> exceptions;
-	private String action;
+    private Pattern path;
+    private List<Object> exceptions;
+    private String action;
 
-	/*
-	 * action = [ redirect | block ] [=default (redirect will redirect to error page]
-	 */
+    /*
+     * action = [ redirect | block ] [=default (redirect will redirect to error page]
+     */
 
-	public EnforceHTTPSRule(String id, Pattern path, List<Object> exceptions, String action) {
-		this.path = path;
-		this.exceptions = exceptions;
-		this.action = action;
-		setId(id);
-	}
+    public EnforceHTTPSRule(String id, Pattern path, List<Object> exceptions, String action) {
+        this.path = path;
+        this.exceptions = exceptions;
+        this.action = action;
+        setId(id);
+    }
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		if ( ! request.isSecure() ) {
+        if ( ! request.isSecure() ) {
 
-			if ( path.matcher(request.getRequestURI()).matches() ) {
+            if ( path.matcher(request.getRequestURI()).matches() ) {
 
-				Iterator<Object> it = exceptions.iterator();
+                Iterator<Object> it = exceptions.iterator();
 
-				while(it.hasNext()){
+                while(it.hasNext()){
 
-					Object o = it.next();
+                    Object o = it.next();
 
-					if ( o instanceof String ) {
-						if ( ((String)o).equalsIgnoreCase(request.getRequestURI()) ) {
-							return new DoNothingAction();
-						}
-					} else if ( o instanceof Pattern ) {
-						if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
-							return new DoNothingAction();
-						}
-					}
+                    if ( o instanceof String ) {
+                        if ( ((String)o).equalsIgnoreCase(request.getRequestURI()) ) {
+                            return new DoNothingAction();
+                        }
+                    } else if ( o instanceof Pattern ) {
+                        if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
+                            return new DoNothingAction();
+                        }
+                    }
 
-				}
+                }
 
-				log(request,"Insecure request to resource detected in URL: '" + request.getRequestURL() + "'");
+                log(request,"Insecure request to resource detected in URL: '" + request.getRequestURL() + "'");
 
-				if ( "redirect".equals(action) ) {
-					RedirectAction ra = new RedirectAction();
-					ra.setRedirectURL(request.getRequestURL().toString().replaceFirst("http", "https"));
-					return ra;
-				}
+                if ( "redirect".equals(action) ) {
+                    RedirectAction ra = new RedirectAction();
+                    ra.setRedirectURL(request.getRequestURL().toString().replaceFirst("http", "https"));
+                    return ra;
+                }
 
-				return new DefaultAction();
+                return new DefaultAction();
 
-			}
-		}
+            }
+        }
 
-		return new DoNothingAction();
+        return new DoNothingAction();
 
-	}
+    }
 }

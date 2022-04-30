@@ -45,11 +45,11 @@ import junit.framework.TestSuite;
 public class EnterpriseSecurityExceptionTest extends TestCase {
     
     /**
-	 * Instantiates a new access reference map test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new access reference map test.
+     * 
+     * @param testName
+     *            the test name
+     */
     public EnterpriseSecurityExceptionTest(String testName) {
         super(testName);
     }
@@ -59,7 +59,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
 
     /**
@@ -67,14 +67,14 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(EnterpriseSecurityExceptionTest.class);
         return suite;
@@ -82,9 +82,9 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
 
     
     /**
-	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
-	 * 
-	 */
+     * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
+     * 
+     */
     public void testExceptions() {
         System.out.println("exceptions");
         EnterpriseSecurityException e = null;

@@ -23,7 +23,7 @@ import org.owasp.esapi.errors.EnterpriseSecurityException;
  */
 public abstract class AbstractAuthenticator implements org.owasp.esapi.Authenticator {
 
-	/**
+    /**
      * Key for user in session
      */
     protected static final String USER = "ESAPIUserSessionKey";
@@ -54,13 +54,13 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         }
     }
     
-	/**
-	 *
-	 */
-	public AbstractAuthenticator() {
-		super();
-	}
-	
+    /**
+     *
+     */
+    public AbstractAuthenticator() {
+        super();
+    }
+    
     /**
      * {@inheritDoc}
      */
@@ -96,8 +96,8 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
      * @return the user from session or null if no user is found in the session
      */
     protected User getUserFromSession() {
-    	HTTPUtilities httpUtils = ESAPI.httpUtilities();
-    	HttpServletRequest req = httpUtils.getCurrentRequest();
+        HTTPUtilities httpUtils = ESAPI.httpUtilities();
+        HttpServletRequest req = httpUtils.getCurrentRequest();
         HttpSession session = req.getSession(false);
         if (session == null) return null;
         return ESAPI.httpUtilities().getSessionAttribute(USER);
@@ -114,7 +114,7 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
      */
     protected DefaultUser getUserFromRememberToken() {
         try {
-        	HTTPUtilities utils =ESAPI.httpUtilities();
+            HTTPUtilities utils =ESAPI.httpUtilities();
             String token = utils.getCookie(ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME);
             if (token == null) return null;
             
