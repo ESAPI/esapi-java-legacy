@@ -95,7 +95,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 
     /**
      * To prevent accidental footgun usage and calling
-     * @{link #encodeCharacter( char[], int)} when called with {@code char} and
+     * {@link #encodeCharacter( char[], int)} when called with {@code char} and
      * {@code char} is first silently converted to {@code int} and then the
      * unexpected method is called. 
      *

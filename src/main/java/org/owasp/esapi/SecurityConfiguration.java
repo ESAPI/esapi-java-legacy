@@ -397,10 +397,9 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @return A string specifying the IV type. Should be "random". Anything
      * else should fail with a {@code ConfigurationException} being thrown.
      * 
-     * @see #getFixedIV()
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      *             This method will be removed in a future release as it is now moot since
-     *             it can only legitimately have the single value of "random".
+     *             it can <i>only</i> legitimately have the single value of "random".
      */
     @Deprecated
     String getIVType();
