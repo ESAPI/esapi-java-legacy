@@ -26,39 +26,45 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@code ClickjackFilter} is discussed at
- * @{link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE OWASP Clickjack Filter for JavaEE}
+ * The {@code ClickjackFilter} is configured as follows:
  * <pre>
- *     <filter>
- *            <filter-name>ClickjackFilterDeny</filter-name>
- *            <filter-class>org.owasp.filters.ClickjackFilter</filter-class>
- *            <init-param>
- *                <param-name>mode</param-name>
- *                 <param-value>DENY</param-value>
- *             </init-param>
- *         </filter>
+ *
+ *     &lt;filter&gt;
+ *            &lt;filter-name&gt;ClickjackFilterDeny&lt;/filter-name&gt;
+ *            &lt;filter-class&gt;org.owasp.filters.ClickjackFilter&lt;/filter-class&gt;
+ *            &lt;init-param&gt;
+ *                &lt;param-name&gt;mode&lt;/param-name&gt;
+ *                 &lt;param-value&gt;DENY&lt;/param-value&gt;
+ *             &lt;/init-param&gt;
+ *         &lt;/filter&gt;
  *         
- *         <filter>
- *             <filter-name>ClickjackFilterSameOrigin</filter-name>
- *             <filter-class>org.owasp.filters.ClickjackFilter</filter-class>
- *             <init-param>
- *                 <param-name>mode</param-name>
- *                 <param-value>SAMEORIGIN</param-value>
- *             </init-param>
- *         </filter>
+ *         &lt;filter&gt;
+ *             &lt;filter-name&gt;ClickjackFilterSameOrigin&lt;/filter-name&gt;
+ *             &lt;filter-class&gt;org.owasp.filters.ClickjackFilter&lt;/filter-class&gt;
+ *             &lt;init-param&gt;
+ *                 &lt;param-name&gt;mode&lt;/param-name&gt;
+ *                 &lt;param-value&gt;SAMEORIGIN&lt;/param-value&gt;
+ *             &lt;/init-param&gt;
+ *         &lt;/filter&gt;
  *        
- *        <!--  use the Deny version to prevent anyone, including yourself, from framing the page -->
- *        <filter-mapping> 
- *            <filter-name>ClickjackFilterDeny</filter-name>
- *            <url-pattern>/*</url-pattern>
- *        </filter-mapping>
+ *        &lt;!--  use the Deny version to prevent anyone, including yourself, from framing the page --&gt;
+ *        &lt;filter-mapping&gt; 
+ *            &lt;filter-name&gt;ClickjackFilterDeny&lt;/filter-name&gt;
+ *            &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+ *        &lt;/filter-mapping&gt;
  *         
- *         <!-- use the SameOrigin version to allow your application to frame, but nobody else
- *         <filter-mapping> 
- *            <filter-name>ClickjackFilterSameOrigin</filter-name>
- *             <url-pattern>/*</url-pattern>
- *         </filter-mapping>
+ *         &lt;!-- use the SameOrigin version to allow your application to frame, but nobody else
+ *         &lt;filter-mapping&gt; 
+ *            &lt;filter-name&gt;ClickjackFilterSameOrigin&lt;/filter-name&gt;
+ *             &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+ *         &lt;/filter-mapping&gt;
  * </pre>
+ *
+ * @see <a href="https://web.archive.org/web/20131020084831/https://www.owasp.org/index.php/ClickjackFilter_for_Java_EE">
+ *          OWASP - Clickjacking Filter for JavaEE</a>
+ * @see <a href="https://owasp.org/www-community/attacks/Clickjacking">OWASP - Clickjacking Attack</a>
+ * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html">
+ *          OWASP - Clickjacking Defense Cheat Sheet</a>
  */
 public class ClickjackFilter implements Filter 
 {
