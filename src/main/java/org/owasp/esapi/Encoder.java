@@ -160,11 +160,20 @@ public interface Encoder {
     /**
      * This method is equivalent to calling {@code Encoder.canonicalize(input, restrictMultiple, restrictMixed);}.
      *
-     * The default values for restrictMultiple and restrictMixed come from {@code ESAPI.properties}
+     * The <i>default</i> values for {@code restrictMultiple} and {@code restrictMixed} come from {@code ESAPI.properties}.
      * <pre>
      * Encoder.AllowMultipleEncoding=false
      * Encoder.AllowMixedEncoding=false
      * </pre>
+     * and the default codecs that are used for canonicalization are the list
+     * of codecs that comes from:
+     * <pre>
+     * Encoder.DefaultCodecList=HTMLEntityCodec,PercentCodec,JavaScriptCodec
+     * </pre>
+     * (If the {@code Encoder.DefaultCodecList} property is null or not set,
+     * these same codecs are listed in the same order. Note that you may supply
+     * your own codec by using a fully cqualified class name of a class that
+     * implements {@code org.owasp.esapi.codecs.Codec<T>}.
      *
      * @see #canonicalize(String, boolean, boolean)
      * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
@@ -224,7 +233,25 @@ public interface Encoder {
      *     Encoder encoder = new DefaultEncoder( list );
      *     String clean = encoder.canonicalize( request.getParameter( "input" ));
      * </pre>
-     * In ESAPI, the Validator uses the canonicalize method before it does validation.  So all you need to
+     * or alternately, you can just customize {@code Encoder.DefaultCodecList} property
+     * in the {@code ESAPI.properties} file with your preferred codecs; for
+     * example:
+     * <pre>
+     * Encoder.DefaultCodecList=WindowsCodec,MySQLCodec,PercentCodec
+     * </pre>
+     * and then use:
+     * <pre>
+     *     Encoder encoder = ESAPI.encoder();
+     *     String clean = encoder.canonicalize( request.getParameter( "input" ));
+     * </pre>
+     * as you normally would. However, the downside to using the
+     * {@code ESAPI.properties} file approach does not allow you to vary your
+     * list of codecs that are used each time. The downside to using the
+     * {@code DefaultEncoder} constructor is that your code is now timed to
+     * specific reference implementations rather than just interfaces and those
+     * reference implementations are what is most likely to change in ESAPI 3.x.
+     * </p><p>
+     * In ESAPI, the {@code Validator} uses the {@code canonicalize} method before it does validation.  So all you need to
      * do is to validate as normal and you'll be protected against a host of encoded attacks.
      * <pre>
      *     String input = request.getParameter( "name" );
@@ -253,14 +280,22 @@ public interface Encoder {
      *     // disabling strict mode to allow mixed encoding
      *     String url = ESAPI.encoder().canonicalize( request.getParameter("url"), false, false);
      * </pre>
-     * <b>WARNING!!!</b> Please note that this method is incompatible with URLs and if there exist any HTML Entities
+     * <b>WARNING #1!!!</b> Please note that this method is incompatible with URLs and if there exist any HTML Entities
      * that correspond with parameter values in a URL such as "&amp;para;" in a URL like 
      * "https://foo.com/?bar=foo&amp;parameter=wrong" you will get a mixed encoding validation exception.
      * <p>
      * If you wish to canonicalize a URL/URI use the method {@code Encoder.getCanonicalizedURI(URI dirtyUri);}
+     * </p><p>
+     * <b>WARNING #2!!!</b> Even if you use {@code WindowsCodec} or {@code UnixCodec}
+     * as appropriate, file path names in the {@code input} parameter will <b><i>NOT</i></b>
+     * be canonicalized. It the failure of such file path name canonicalization
+     * presents a potential security issue, consider using one of the
+     * {@code Validator.getValidDirectoryPath()} methods instead of or in addition to this method.
      *
      * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
+     * @see #canonicalize(String)
      * @see #getCanonicalizedURI(URI dirtyUri)
+     * @see org.owasp.esapi.Validator#getValidDirectoryPath(java.lang.String, java.lang.String, java.io.File, boolean)
      *
      * @param input
      *      the text to canonicalize
