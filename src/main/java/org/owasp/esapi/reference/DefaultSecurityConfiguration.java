@@ -961,7 +961,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public File getUploadTempDirectory() {
         String dir = getESAPIProperty(UPLOAD_TEMP_DIRECTORY,
-            System.getProperty("java.io.tmpdir","UploadTempDir"));
+                                      System.getProperty("java.io.tmpdir","UploadTempDir")
+                                     );
         return new File( dir );
     }
     
