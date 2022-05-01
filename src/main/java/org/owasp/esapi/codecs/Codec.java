@@ -77,8 +77,8 @@ public interface Codec<T> {
 
     /**
      * Returns the decoded version of the next character from the input string and advances the
-     * current character in the PushbackSequence.  If the current character is not encoded, this 
-     * method MUST reset the PushbackString.
+     * current character in the {@code PushbackSequence}.  If the current character is not encoded, this 
+     * method <i>MUST</i> reset the {@code PushbackString}.
      * 
      * @param input    the Character to decode
      * 
@@ -100,10 +100,25 @@ public interface Codec<T> {
      */
     public String getHexForNonAlphanumeric(int c);
 
+    /**
+     * Convert the {@code char} parameter to its octal representation.
+     * @param c the character for which to return the new representation.
+     * @return the octal representation.
+     */
     public String toOctal(char c);
 
+    /**
+     * Convert the {@code char} parameter to its hexadecimal representation.
+     * @param c the character for which to return the new representation.
+     * @return the hexadecimal representation.
+     */
     public String toHex(char c);
     
+    /**
+     * Convert the {@code int} parameter to its hexadecimal representation.
+     * @param c the character for which to return the new representation.
+     * @return the hexadecimal representation.
+     */
     public String toHex(int c);
 
     /**

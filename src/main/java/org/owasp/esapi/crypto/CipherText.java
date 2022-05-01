@@ -798,7 +798,7 @@ public final class CipherText implements Serializable {
      * proved in 1996 [see http://pssic.free.fr/Extra%20Reading/SEC+/SEC+/hmac-cb.pdf] that
      * HMAC security doesn’t require that the underlying hash function be collision resistant,
      * but only that it acts as a pseudo-random function, which SHA1 satisfies.
-     * @param authKey    The {@Code SecretKey} used with the computed HMAC-SHA1
+     * @param authKey    The {@code SecretKey} used with the computed HMAC-SHA1
      * to ensure authenticity.
      * @return The value for the MAC.
      */ 

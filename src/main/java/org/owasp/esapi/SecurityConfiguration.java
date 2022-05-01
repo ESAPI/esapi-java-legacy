@@ -390,12 +390,12 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * especially for any supported cipher mode that is considered a streaming mode
      * (which is basically anything except CBC for modes that support require an IV).
      * For this reason, 'fixed' has now been removed (it was considered <b>deprecated</b>
-     * since release 2.2.0.0). An <b>ESAPI.properties</b> value of {@Code fixed} for the property
-     * {@Code Encryptor.ChooseIVMethod} will now result in a {@Code ConfigurationException}
+     * since release 2.2.0.0). An <b>ESAPI.properties</b> value of {@code fixed} for the property
+     * {@code Encryptor.ChooseIVMethod} will now result in a {@code ConfigurationException}
      * being thrown.
      * 
      * @return A string specifying the IV type. Should be "random". Anything
-     * else should fail with a {@Code ConfigurationException} being thrown.
+     * else should fail with a {@code ConfigurationException} being thrown.
      * 
      * @see #getFixedIV()
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
