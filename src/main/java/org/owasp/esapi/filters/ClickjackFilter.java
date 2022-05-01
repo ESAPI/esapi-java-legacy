@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * The {@code ClickjackFilter} is discussed at
- * @link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE
+ * @{link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE OWASP Clickjack Filter for JavaEE}
  * <pre>
  *     <filter>
  *            <filter-name>ClickjackFilterDeny</filter-name>
