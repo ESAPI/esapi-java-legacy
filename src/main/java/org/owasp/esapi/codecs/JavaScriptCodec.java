@@ -80,12 +80,14 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
      * 
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
-     * See http://www.planetpdf.com/codecuts/pdfs/tutorial/jsspec.pdf 
+     * </p><p>
      * Formats all are legal both upper/lower case:
+     * <pre>
      *   \\a - special characters
      *   \\xHH
      *   \\uHHHH
      *   \\OOO (1, 2, or 3 digits)
+     * </pre>
      */
     public Character decodeCharacter( PushbackSequence<Character> input ) {
         input.mark();
