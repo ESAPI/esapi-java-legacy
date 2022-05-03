@@ -99,14 +99,18 @@ public class DefaultEncoder implements Encoder {
     
     
     /**
-     * Instantiates a new DefaultEncoder
+     * Instantiates a new {@code DefaultEncoder} based on the property {@code Encoder.DefaultCodecList}
+     * from the {@code ESAPI.properties} file.
      */
     private DefaultEncoder() {
-        codecs.add( htmlCodec );
-        codecs.add( percentCodec );
-        codecs.add( javaScriptCodec );
+        this( ESAPI.securityConfiguration().getDefaultCanonicalizationCodecs() );
     }
     
+    /**
+     * Instantiates a new {@code DefaultEncoder} based on the specified list of
+     * codec names. Unqualified codec names are assumed to belong to the package
+     * "org.owasp.esapi.codecs".
+     */
     public DefaultEncoder( List<String> codecNames ) {
         for ( String clazz : codecNames ) {
             try {
