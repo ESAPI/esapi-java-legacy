@@ -17,11 +17,15 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * The Codec interface defines a set of methods for encoding and decoding application level encoding schemes,
- * such as HTML entity encoding and percent encoding (aka URL encoding). Codecs are used in output encoding
+ * The {@code Coded} interface defines a set of methods for encoding and decoding application level encoding schemes,
+ * such as HTML entity encoding and percent encoding (aka URL encoding). {@code Coded}s are used in output encoding
  * and canonicalization.  The design of these codecs allows for character-by-character decoding, which is
  * necessary to detect double-encoding and the use of multiple encoding schemes, both of which are techniques
  * used by attackers to bypass validation and bury encoded attacks in data.
+ * <p>
+ * Be sure to see the several <b>WARNING</b>s associated with the detailed
+ * method descriptions. You will not find that in the "Method Summary" section
+ * of the javadoc because that only shows the intial sentence.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -52,15 +56,13 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     }
 
     /**
-     * WARNING!!  {@code Character} based Codecs will silently transform code points that are not 
+     * {@inheritDoc}
+     * </p><p>
+     * <b>WARNING!!</b>  {@code Character} based {@code Codec}s will silently transform code points that are not 
      * legal UTF code points into garbage data as they will cast them to {@code char}s.  
-     * </br></br>
-     * If you are implementing an {@code Integer} based codec, these will be silently discarded
+     * Also, if you are implementing an {@code Integer} based codec, these will be silently discarded
      * based on the return from {@code Character.isValidCodePoint( int )}.  This is the preferred
      * behavior moving forward.  
-     * 
-     * 
-     * {@inheritDoc}
      */
     @Override
     public String encode(char[] immune, String input) {
@@ -79,19 +81,29 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     }
 
     /**
-     * WARNING!!!!  Passing a standard char to this method will resolve to the 
-     * @see #encodeCharacter( char[], int )
-     * method instead of this one!!!  YOU HAVE BEEN WARNED!!!!
-     * 
      * {@inheritDoc}
+     * <p>
+     * <b>WARNING!!!!</b>  Passing a standard {@code char} rather than {@code Character} to this method will resolve to the 
+     * {@link #encodeCharacter( char[], char )} method, which will throw an {@code IllegalArgumentException} instead.
+     * YOU HAVE BEEN WARNED!!!!
      */
     @Override
     public String encodeCharacter( char[] immune, Character c ) {
         return ""+c;
     }
     
+
+    /**
+     * To prevent accidental footgun usage and calling
+     * {@link #encodeCharacter( char[], int)} when called with {@code char} and
+     * {@code char} is first silently converted to {@code int} and then the
+     * unexpected method is called. 
+     *
+     * @throws IllegalArgumentException to indicate that you called the incorrect method.
+     */
     public String encodeCharacter(char[] immune, char c) {
-        throw new IllegalArgumentException("You tried to call encodeCharacter with a char.  Nope.  Use Character instead!");
+        throw new IllegalArgumentException("You tried to call encodeCharacter() with a char.  Nope.  " +
+                                           "Use 'encodeCharacter( char[] immune, Character c)' instead!");
     }
     
     /* (non-Javadoc)

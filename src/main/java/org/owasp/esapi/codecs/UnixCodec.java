@@ -17,7 +17,7 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Implementation of the Codec interface for '\' encoding from Unix command shell.
+ * Implementation of the {@code Codec} interface for '\' encoding from Unix command shell (bash lineage, not csh lineage).
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -29,9 +29,11 @@ public class UnixCodec extends AbstractCharacterCodec {
     /**
      * {@inheritDoc}
      * 
-     * Returns backslash-encoded character
+     * @return the backslash-encoded character
      *
-     * @param immune
+     * @param immune Array of characters that should not be encoded. Use with caution! All
+     *               alphanumeric characters are "immune" by default so you needn't
+     *               include them.
      */
     public String encodeCharacter( char[] immune, Character c ) {
         char ch = c.charValue();
@@ -53,13 +55,15 @@ public class UnixCodec extends AbstractCharacterCodec {
     
     /**
      * {@inheritDoc}
-     * 
-     * Returns the decoded version of the character starting at index, or
-     * null if no decoding is possible.
+     *
      * <p>
      * Formats all are legal both upper/lower case:
+     * <pre>
      *   \x - all special characters
-     *   
+     * </pre>
+     * 
+     * @return the decoded version of the character starting at index, or
+     * null if no decoding is possible.
      */
     public Character decodeCharacter( PushbackSequence<Character> input ) {
         input.mark();

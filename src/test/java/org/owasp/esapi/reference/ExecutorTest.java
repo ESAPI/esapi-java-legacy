@@ -42,8 +42,6 @@ import junit.framework.TestSuite;
  */
 public class ExecutorTest extends TestCase {
 
-    private SecurityConfiguration origConfig;
-
     private static class Conf extends SecurityConfigurationWrapper
     {
         private final List allowedExes;
