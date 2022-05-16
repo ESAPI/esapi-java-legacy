@@ -4,8 +4,8 @@
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.2.3.1 (latest) | :white_check_mark: |
-| 2.1.0.1-2.2.3.0  | :x:, upgrade to latest release |
+| 2.4.0.0 (latest) | :white_check_mark: |
+| 2.1.0.1-2.3.0.0  | :x:, upgrade to latest release |
 | <= 1.4.x  | :x:, no longer supported AT ALL |
 
 ## Reporting a Vulnerability
@@ -41,11 +41,9 @@ are not in a position to pay out bug bounties for vulnerabilities.
 
 Eventually, we would like to have BugCrowd handle this, but that's still a ways off.
 
-## Security Bulletins
+## ESAPI Security Bulletins and GitHub Security Advisories
 
 There are some ESAPI security bulletins published in the "documentation" directory on GitHub.
-For details see:
+GitHub also has published some Security Advisories for ESAPI.
+For details, see [Vulnerability Summary](https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md).
 
-* [Security Bulletin #1 - MAC Bypass in ESAPI Symmetric Encryption](documentation/ESAPI-security-bulletin1.pdf), which covers CVE-2013-5679 and CVE-2013-5960
-* [Security Bulletin #2 - How Does CVE-2019-17571 Impact ESAPI?](documentation/ESAPI-security-bulletin2.pdf), which covers the Log4J 1 deserialization CVE.
-* [Security Bulletin #3 - How Does the Apache Xerces Vulnerability(SNYK-JAVA-XERCES-608891) Impact ESAPI?](documentation/ESAPI-security-bulletin3.pdf), which decribes a unpatched Apache Xerces vulnerability similar to [CVE-2020-14621](https://nvd.nist.gov/vuln/detail/CVE-2020-14621)
