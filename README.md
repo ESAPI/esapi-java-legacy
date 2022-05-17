@@ -22,7 +22,7 @@ It is too lengthy, and if you are using the latest available ESAPI version--gene
 place in this **README** file.
 
 # Where are the OWASP ESAPI wiki pages?
-You can find the OWASP ESAPI *Project* wiki pages at
+You can find the official OWASP ESAPI Project wiki pages at
 [https://owasp.org/www-project-enterprise-security-api/](https://owasp.org/www-project-enterprise-security-api/).
 The ESAPI legacy GitHub repo also has several useful [wiki pages](https://github.com/ESAPI/esapi-java-legacy/wiki).
 
@@ -31,16 +31,16 @@ This is the legacy branch of ESAPI which means it is an actively maintained bran
 Development for the "next generation" of ESAPI (starting with ESAPI 3.0), will be done at the
 GitHub repository at [https://github.com/ESAPI/esapi-java](https://github.com/ESAPI/esapi-java).
 
-<b>IMPORTANT NOTES:</b>
-The default branch for ESAPI legacy is the 'develop' branch (rather than the 'main' (formerly 'master') branch), where future development, bug fixes, etc. will now be done. The 'main' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.1.0.1 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
-
-Also, the <i>minimal</i> baseline Java version to use ESAPI is Java 8. (This was changed from Java 7 during the 2.4.0.0 release.)
+**IMPORTANT NOTES:**
+* The default branch for ESAPI legacy is the 'develop' branch (rather than the 'main' (formerly 'master') branch), where future development, bug fixes, etc. are now being done. The 'main' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.4.0.0 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
+* Also, the *minimal* baseline Java version to use ESAPI is now Java 8. (This was changed from Java 7 during the 2.4.0.0 release.)
 
 # Where can I find ESAPI 3.x?
 As mentioned above, you can find it at [https://github.com/ESAPI/esapi-java](https://github.com/ESAPI/esapi-java).
 
-Note however that work on ESAPI 3 has not yet become in earnest and is only in its earliest planning stages.
-Even the code that is presently there will likely change.
+Note however that work on ESAPI 3 has not yet begun in earnest and is only
+in its earliest planning stages. Even the code that is presently there
+will likely change.
 
 # ESAPI Release Notes
 The ESAPI release notes may be found in ESAPI's "documentation" directory. They are generally named "esapi4java-core-*2.#.#.#*-release-notes.txt", where "*2.#.#.#*" refers to the ESAPI release number (which uses semantic versioning).
@@ -51,70 +51,115 @@ link to the specific release notes.
 ### Really IMPORTANT information in release notes
 * Starting with ESAPI 2.2.1.0, important details changed reading the ESAPI
   Logger. If you have are getting things like ClassNotFoundException, you
-  probably have not read it. Please be sure to read this section of the release
-  notes: https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.1.0-release-notes.txt#L128-L155
+  probably have not read it. Please be sure to read this specific section
+  of the
+  [2.2.1.0 release notes](https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.1.0-release-notes.txt#L128-L155)
 * Starting with ESAPI 2.2.3.0, ESAPI is using a version of AntiSamy that by default includes 'slf4j-simple' and
-  does XML schema validation on the AntiSamy policy files. Please **READ** the release notes for the 2.2.3.0 release
+  does XML schema validation on the AntiSamy policy files. Please **READ** this
+  section from the
+  [2.2.3.0 release notes](https://github.com/ESAPI/esapi-java-legacy/blob/1312102e79d4ed98d1396f5c56e12f437534d62b/documentation/esapi4java-core-2.2.3.0-release-notes.txt#L22-L34)
   (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
 * ESAPI 2.3.0.0 is the last release to support Java 7 as the minimal JDK.
   Starting with release 2.4.0.0, Java 8 or later is required.
 
 # Locating ESAPI Jar files
 The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.4.0.0.
-All the *regular* ESAPI jars, with the exception of the ESAPI configuration jar (i.e.,
-esapi-2.#.#.#-configuration.jar) and its detached GPG signature, are
-available from Maven Central. The ESAPI configuration jars are linked as 'Assets' to
-each of the specific ESAPI releases under the
+All the *regular* ESAPI jars, with the exception of the ESAPI configuration
+jar (i.e., esapi-2.#.#.#-configuration.jar) and its associated detached
+GPG signature, are available from Maven Central. The ESAPI configuration
+jars are linked under the 'Assets' section to each of the specific
+ESAPI releases under the
 GitHub [Releases page](https://github.com/ESAPI/esapi-java-legacy/releases).
 
 
-However, before you start a *new* project using ESAPI, but sure to read "[Should I use ESAPI?](https://owasp.org/www-project-enterprise-security-api/#div-shouldiuseesapi)".
+However, **before** you start a *new* project using ESAPI, but sure to read "[Should I use ESAPI?](https://owasp.org/www-project-enterprise-security-api/#div-shouldiuseesapi)".
 
 # ESAPI Deprecation Policy
-Unless we unintentionally screw-up, our intent is to keep classes, methods, and/or fields whihc have been annotated as "@deprecated" for a minimum of two (2) years or until the next major release number (e.g., 3.x as of now), which ever comes first, before we remove them.
-Note that this policy does not apply to classes under the **org.owasp.esapi.reference** package. You are not expected to be using such classes directly in your code.
+Unless we unintentionally screw-up, our intent is to keep classes, methods,
+and/or fields which have been annotated as "@deprecated" for a
+minimum of two (2) years or until the next major release number (e.g.,
+3.x as of now), which ever comes first, before we remove them. Note
+that this policy does not apply to classes under
+the **org.owasp.esapi.reference** package. You generally are not expected
+to be using such classes directly in your code. At the ESAPI team's discretion,
+it will also not apply for any known exploitable vulnerabilities for which
+no available workaround exists.
+
+**IMPORTANT NOTES:** The next planned removal of deprecated code is for us to
+remove all the Log4J 1.x related ESAPI Logger code. The Log4J 1 ESAPI Logger
+was first marked deprecated in ESAPI 2.2.1.0, which was released July 13, 2022.
+This means that on or shortly after, you can expect a new ESAPI release that
+will no longer have a dependency on Log4J 1.  **YOU HAVE BEEN WARNED!!!**
 
 # Contributing to ESAPI legacy
 ### How can I contribute or help with fix bugs?
-Fork and submit a pull request! Simple as pi! (How's that for an irrational statement? :)
-We generally only accept bug fixes, not new features because as a legacy project, we don't intend on adding new
-features, although we may make exceptions. If you are interesting in doing bug fixes though, the best place to start is
-the [CONTRIBUTING-TO-ESAPI.txt](https://github.com/ESAPI/esapi-java-legacy/blob/develop/CONTRIBUTING-TO-ESAPI.txt)
+Fork and submit a pull request! Easy as pi! (How's that for an irrational
+statement, you math nerds? :) We generally only accept bug fixes, not
+new features because as a legacy project, we don't intend on adding new
+features that we will have to maintain long term (although we may make
+exceptions; see the 'New Features' section in this **README**). If
+you are interesting in doing bug fixes though, the best place to start is the
+[CONTRIBUTING-TO-ESAPI.txt](https://github.com/ESAPI/esapi-java-legacy/blob/develop/CONTRIBUTING-TO-ESAPI.txt)
 
 If you are new to ESAPI, a good place to start is to look for GitHub issues labled as 'good first issue'. (E.g., to find all open issues with that label, use [https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22](https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).)
 
-Again, please can find additional specific details in the file
-'[CONTRIBUTING-TO-ESAPI.txt](https://raw.githubusercontent.com/ESAPI/esapi-java-legacy/develop/CONTRIBUTING-TO-ESAPI.txt)'.
+Again, please find additional important details in the file
+'[CONTRIBUTING-TO-ESAPI.txt](https://github.com/ESAPI/esapi-java-legacy/blob/develop/CONTRIBUTING-TO-ESAPI.txt)',
+which will also describe the tool requirements.
 
 #### Want to report an issue?
-If you have found a bug, then create an issue on the esapi-legacy-java repo: [https://github.com/ESAPI/esapi-java-legacy/issues](https://github.com/ESAPI/esapi-java-legacy/issues)
+If you have found a bug, then create an issue on the esapi-legacy-java repo at [https://github.com/ESAPI/esapi-java-legacy/issues](https://github.com/ESAPI/esapi-java-legacy/issues)
+As of May 11, 2022, we switched back to using (GitHub) issue templates. (We previously used issue templates when our source code repository was still on Google Code.) You can read more about our issue templates in this brief
+[announcement](https://github.com/ESAPI/esapi-java-legacy/discussions/700).
 
-NOTE: Please do **NOT** use GitHub issues to ask questions about ESAPI. If you wish to do this, post to either of
-the 2 mailing lists (now on Google Groups) found at the bottom of this page. If we find questions as GitHub issues,
-we simply will close them and direct you to do this anyhow. Alternately you may use the new
+NOTE: Please do **NOT** use GitHub issues to ask questions about ESAPI.
+If you wish to ask questions, instead, post to either of the 2 mailing
+lists (now on Google Groups) found the References section at the bottom
+of this page. If we find questions posted as GitHub issues, we simply will
+close them and direct you to do this anyhow. Alternately you may use the new
 [Q&A](https://github.com/ESAPI/esapi-java-legacy/discussions/categories/q-a) section of our GitHub
 [Discussions](https://github.com/ESAPI/esapi-java-legacy/discussions) page to ask questions.
 
-When reporting an issue or just asking a question, please be clear and try to ensure that the ESAPI
-development team has sufficient information to be able to reproduce your results or to understand
-your question. If you have not already done so, this might be a good time to read Eric S. Raymond's classic
-"[How to Ask Questions the Smart Way](http://www.catb.org/esr/faqs/smart-questions.html)" before posting your issue.
+When reporting an issue or just asking a question, please be clear and try
+to ensure that the ESAPI development team has sufficient information to be
+able to reproduce your results or to understand your question. If you have
+not already done so, this might be a good time to read Eric S. Raymond's classic
+"[How to Ask Questions the Smart Way](http://www.catb.org/esr/faqs/smart-questions.html)"
+before posting your issue.
 
 #### Find a Vulnerability?
-If you have found a vulnerability in ESAPI legacy, first search the issues list (see above) to see if it has already been reported. If it has not, then please contact both Kevin W. Wall (kevin.w.wall at gmail.com) and Matt Seil (matt.seil at owasp.org) directly. Please do not report vulnerabilities via GitHub issues or via the ESAPI mailing lists as we wish to keep our users secure while a patch is implemented and deployed. If you wish to be acknowledged for finding the vulnerability, then please follow this process. (Eventually, we would like to have BugCrowd handle this, but that's still a ways off.) Also, when you post the email describing the vulnerability, please do so from an email address that you usually monitor.
+If believe you have found a vulnerability in ESAPI legacy, for the sake of the
+ESAPI community, please practice Responsible Disclosure. (Note: We will be sure
+you get credit and will work with you to create a GitHub Security Advisory, and
+if you so choose, to persue filing a CVE via the GitHub CNA.)
 
-More detail is available in the file '[SECURITY.md](https://raw.githubusercontent.com/ESAPI/esapi-java-legacy/develop/SECURITY.md)'.
+You are of course encouraged to first search our GitHub issues list (see above)
+to see if it has already been reported. If it has not, then please contact
+both Kevin W. Wall (kevin.w.wall at gmail.com) and
+Matt Seil (matt.seil at owasp.org) directly. Please do not report
+vulnerabilities via GitHub issues or via the ESAPI mailing lists as
+we wish to keep our users secure while a patch is implemented and
+deployed. If you wish to be acknowledged for finding the vulnerability,
+then please follow this process. Also, when you post the email describing
+the vulnerability, please do so from an email address that you usually
+monitor.
+
+More detail is available in the file
+'[SECURITY.md](https://github.com/ESAPI/esapi-java-legacy/blob/develop/SECURITY.md)'.
+https://raw.githubusercontent.com/ESAPI/esapi-java-legacy/blob/develop/SECURITY.md)'.
 
 ### New Features
-If you wish to propose a new feature, the best place to discuss it is via new 'Discussions' board, probably under
-'[Ideas](https://github.com/ESAPI/esapi-java-legacy/discussions/categories/ideas)', or on the
-ESAPI-DEV mailing list mentioned below.  As mentioned previously, we generally
-are not considering new features for ESAPI 2.x. This is because:
+If you wish to propose a new feature, the best place to discuss it is via
+new 'Discussions' board, probably under
+'[Ideas](https://github.com/ESAPI/esapi-java-legacy/discussions/categories/ideas)',
+or on the ESAPI-DEV mailing list mentioned below under the References section.
+As mentioned previously, we generally are not considering new features
+for ESAPI 2.x. This is because:
 - ESAPI is already too monolithic and has too many dependencies for its size.
-- We are trying to wide down support of ESAPI 2.x and get ESAPI 3.0 going so any
+- We are trying to wind down support of ESAPI 2.x and get ESAPI 3.0 going so any
   resources we throw at ESAPI 2.x will slow down that goal.
 
-That said, if you believe you have an idea for a additional simple feature that
+That said, if you believe you have an idea for an additional simple feature that
 does not pull in any additional 3rd party libraries, toss it out there for
 discussion or even show us how it works with a PR. (Note that we vet all pull
 requests, including coding style of any contributions, so please use the same
@@ -125,13 +170,15 @@ coding style found in the files you are already editing.)
 In mid-2014 ESAPI migrated all code and issues from Google Code to GitHub. This migration was completed in November 2014.
 
 ### What about the issues still located on Google Code?
-All issues from Google Code have been migrated to GitHub issues. We now use GitHut Issues for
-reporting everything except security vulnerabilities. Other bug tracking sites are undoubtably
-more advanced, but as developers, we do not want to spent time having to close issues from
-multiple bug-tracking sites. Therefore, until this synchronization happens with the Atlassian Jira
-instance that we have (but are not using; see GitHub issue #371), please ONLY use GitHub for reporting bugs.
+All issues from Google Code have been migrated to GitHub issues. We now
+use GitHut Issues for reporting everything *except* security vulnerabilities.
+Other bug tracking sites are undoubtably more advanced, but as developers,
+we do not want to spent time having to close issues from multiple bug-tracking
+systems. Therefore, until the synchronization happens with the Atlassian Jira
+instance that we have (but are not using; see GitHub issue #371), please
+ONLY use GitHub Issues for reporting bugs.
 
-# Where to Find More Information on ESAPI
+# References: Where to Find More Information on ESAPI
 **OWASP Wiki:** https://owasp.org/www-project-enterprise-security-api/
 
 **GitHub ESAPI Wiki:** https://github.com/ESAPI/esapi-java-legacy/wiki 
