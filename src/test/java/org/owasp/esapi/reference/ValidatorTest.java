@@ -404,7 +404,7 @@ public class ValidatorTest {
         
         String invalidPath = tempFolder.newFolder("esapi-test2").getAbsolutePath();
         File parent = tempFolder.newFolder("sibling-of-esapi-test2");
-        String validPath = tempFolder.newFolder("sibling-of-esapi-test2", "child").getAbsolutePath();
+        String validPath = tempFolder.newFolder("sibling-of-esapi-test2", "child").getCanonicalPath();
 
         // Before the fix, this incorrectly would return 'true' even though
         // 'esapi-test2' directory clearly was not within the 'esapi-test'
