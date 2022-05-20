@@ -123,7 +123,7 @@ public interface Validator {
      * @param input
      *        The actual user input data to validate.
      * @param type
-     *        The regular expression name while maps to the actual regular expression from "ESAPI.properties".
+     *        The regular expression name that maps to the actual regular expression from "ESAPI.properties".
      * @param maxLength
      *        The maximum post-canonicalized String length allowed.
      * @param allowNull
@@ -144,6 +144,8 @@ public interface Validator {
      * and adds validation exceptions to the supplied {@code errorList}.
      * <p>
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}.
+     *
+     * @throws IntrusionException Input is clearly an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -739,6 +741,8 @@ public interface Validator {
      * <p>
      * Calls {@link #assertValidFileUpload(String, String, String, File, byte[], int, List, boolean)},
      * the supplied {@code errorList} is used to capture ValidationExceptions.
+     *
+     * @throws IntrusionException Input is clearly an attack.
      */
     void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
