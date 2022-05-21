@@ -340,7 +340,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     /**
      * {@inheritDoc}
      * <p>
-     * This implementation relies on the OWASP AntiSamy project.
+     * This implementation relies on the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a>.
      */
     @Override
     public String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull ) throws ValidationException, IntrusionException {
@@ -1022,7 +1022,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * <p>
      * This implementation does not throw {@link IntrusionException}.
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public boolean isValidPrintable(String context, char[] input, int maxLength, boolean allowNull) {
@@ -1040,7 +1040,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * Checks that all bytes are valid ASCII characters (between 33 and 126
      * inclusive). This implementation does no decoding.
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public boolean isValidPrintable(String context, char[] input, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
@@ -1058,7 +1058,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * <p>
      * Input is valid if it only contains printable ASCII characters (33-126 inclusive).
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public char[] getValidPrintable(String context, char[] input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException {
@@ -1086,7 +1086,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * <p>
      * Input is valid if it only contains printable ASCII characters (33-126 inclusive).
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public char[] getValidPrintable(String context, char[] input, int maxLength, boolean allowNull, ValidationErrorList errors)
@@ -1109,7 +1109,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * <p>
      * This implementation does not throw {@link IntrusionException}.
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull) {
@@ -1126,7 +1126,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      *
      * Returns true if input is valid printable ASCII characters (33-126 inclusive).
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
@@ -1144,7 +1144,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * <p>
      * Input is valid if it only contains printable ASCII characters (33-126 inclusive).
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public String getValidPrintable(String context, String input, int maxLength, boolean allowNull) throws ValidationException {
@@ -1163,7 +1163,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      *
      * Input is valid if it only contains printable ASCII characters (33-126 inclusive).
      *
-     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>.
+     * @see <a href="https://en.wikipedia.org/wiki/ASCII">Wikipedia - ASCII</a>
      */
     @Override
     public String getValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {

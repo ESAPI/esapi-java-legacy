@@ -64,7 +64,7 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)} with {@code canonicalize=true}
      * and returns true if no exceptions are thrown.
      * 
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;
 
@@ -75,7 +75,7 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)} with {@code canonicalize=true}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -85,7 +85,7 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws IntrusionException;
 
@@ -96,7 +96,7 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errorList) throws IntrusionException;
 
@@ -107,7 +107,7 @@ public interface Validator {
      * with {@code canonicalize=true}.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -123,19 +123,19 @@ public interface Validator {
      * @param input
      *        The actual user input data to validate.
      * @param type
-     *        The regular expression name that maps to the actual regular expression from "ESAPI.properties".
+     *        The regular expression name which maps to the actual regular expression from "ESAPI.properties".
      * @param maxLength
      *        The maximum post-canonicalized String length allowed.
      * @param allowNull
-     *        If allowNull is true then an input that is NULL or an empty string will be legal.
-     *        If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *        If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *        If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      * @param canonicalize
      *        If canonicalize is true then input will be canonicalized before validation.
      *
      * @return The canonicalized user input.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws ValidationException, IntrusionException;
 
@@ -145,7 +145,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -156,7 +156,7 @@ public interface Validator {
      * Returns the result of calling {@link #getValidInput(String, String, String, int, boolean, boolean)}
      * with {@code canonicalize=true}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errorList) throws IntrusionException;
 
@@ -166,7 +166,7 @@ public interface Validator {
      * Calls {@link #getValidDate(String, String, DateFormat, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidDate(String context, String input, DateFormat format, boolean allowNull) throws IntrusionException;
 
@@ -177,12 +177,12 @@ public interface Validator {
      * Calls {@link #getValidDate(String, String, DateFormat, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns a valid date as a Date.
+     * Returns a valid date as a {@link java.util.Date}.
      * <p>
      * Invalid input will generate a descriptive ValidationException,
      * and input that is clearly an attack will generate a descriptive IntrusionException.
@@ -195,23 +195,23 @@ public interface Validator {
      * @param format
      *         Required formatting of date inputted.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal.
-     *         If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
-     * @return A valid date as a Date
+     * @return A valid date as a {@link java.util.Date}
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException;
 
     /**
-     * Returns a valid date as a Date,
+     * Returns a valid date as a {@link java.util.Date},
      * any validation exceptions are added to the supplied {@code errorList}.
      * <p>
      * Calls {@link #getValidDate(String, String, DateFormat, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -221,7 +221,7 @@ public interface Validator {
      * Calls {@link #getValidSafeHTML(String, String, int, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
@@ -232,14 +232,15 @@ public interface Validator {
      * Calls {@link #getValidSafeHTML(String, String, int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
      * Returns canonicalized and validated "safe" HTML that does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else.
      * <p>
-     * Implementors should reference the OWASP AntiSamy project for ideas
+     * The default behavior of this check depends on the {@code antisamy-esapi.xml} configuration.
+     * Implementors should reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
      * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
      *
      * @param context
@@ -250,13 +251,13 @@ public interface Validator {
      * @param maxLength
      *         The maximum String length allowed.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal.
-     *         If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return Valid safe HTML
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -264,30 +265,34 @@ public interface Validator {
      * Returns canonicalized and validated "safe" HTML that does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else,
      * any validation exceptions are added to the supplied {@code errorList}.
      * <p>
+     * The default behavior of this check depends on the {@code antisamy-esapi.xml} configuration.
+     * Implementors should reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
+     * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
+     * <p>
      * Calls {@link #getValidSafeHTML(String, String, int, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid.
+     * Returns true if {@code input} matches the pattern for a valid credit card number.
      * <p>
      * Calls {@link #getValidCreditCard(String, String, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidCreditCard(String context, String input, boolean allowNull) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid,
+     * Returns true if {@code input} matches the pattern for a valid credit card number,
      * any validation exceptions are added to the supplied {@code errorList}.
      * <p>
      * Calls {@link #getValidCreditCard(String, String, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidCreditCard(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -303,13 +308,13 @@ public interface Validator {
      * @param input
      *         The actual user input data to validate.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal.
-     *         If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return A valid credit card number
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidCreditCard(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -319,7 +324,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidCreditCard(String, String, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidCreditCard(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -329,7 +334,7 @@ public interface Validator {
      * Calls {@link #getValidDirectoryPath(String, String, File, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidDirectoryPath(String context, String input, File parent, boolean allowNull) throws IntrusionException;
 
@@ -340,7 +345,7 @@ public interface Validator {
      * Calls {@link #getValidDirectoryPath(String, String, File, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidDirectoryPath(String context, String input, File parent, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -357,13 +362,13 @@ public interface Validator {
      * @param input
      *         The actual input data to validate.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal.
-     *         If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return A valid directory path
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidDirectoryPath(String context, String input, File parent, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -374,7 +379,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidDirectoryPath(String, String, File, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidDirectoryPath(String context, String input, File parent, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -385,7 +390,7 @@ public interface Validator {
      * with allowedExtensions set to the configured {@code ESAPI.securityConfiguration().getAllowedFileExtensions()}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      *
      * @see ESAPI#securityConfiguration()
      * @see SecurityConfiguration#getAllowedFileExtensions()
@@ -400,7 +405,7 @@ public interface Validator {
      * with allowedExtensions set to the configured {@code ESAPI.securityConfiguration().getAllowedFileExtensions()}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      *
      * @see ESAPI#securityConfiguration()
      * @see SecurityConfiguration#getAllowedFileExtensions()
@@ -413,7 +418,7 @@ public interface Validator {
      * Calls {@link #getValidFileName(String, String, List, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      *
      * @see ESAPI#securityConfiguration()
      * @see SecurityConfiguration#getAllowedFileExtensions()
@@ -427,7 +432,7 @@ public interface Validator {
      * Calls {@link #getValidFileName(String, String, List, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      *
      * @see ESAPI#securityConfiguration()
      * @see SecurityConfiguration#getAllowedFileExtensions()
@@ -442,18 +447,20 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual input data to validate.
      * @param allowedExtensions
      *         List of file extensions which will be accepted.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return A valid file name
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -464,7 +471,7 @@ public interface Validator {
      * Calls {@link #getValidFileName(String, String, List, boolean)},
      * the supplied {@code errorList} is used to capture ValidationExceptions.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -474,7 +481,7 @@ public interface Validator {
      * Calls {@link #getValidNumber(String, String, long, long, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws IntrusionException;
 
@@ -485,7 +492,7 @@ public interface Validator {
      * Calls {@link #getValidNumber(String, String, long, long, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -495,11 +502,13 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual input data to validate.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      * @param minValue
      *         Lowest legal value for input.
      * @param maxValue
@@ -508,7 +517,7 @@ public interface Validator {
      * @return A validated number as a double.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -518,42 +527,45 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidNumber(String, String, long, long, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid.
+     * Returns true if {@code input} is a valid integer between {@code minValue} and {@code maxValue} inclusive.
      * <p>
      * Calls {@link #getValidInteger(String, String, int, int, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid,
+     * Returns true if {@code input} is a valid integer between {@code minValue} and {@code maxValue} inclusive,
      * any validation exceptions are added to the supplied {@code errorList}.
      * <p>
      * Calls {@link #getValidInteger(String, String, int, int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns a validated integer. Invalid input
-     * will generate a descriptive ValidationException, and input that is clearly an attack
-     * will generate a descriptive IntrusionException.
+     * Returns a validated integer,
+     * {@code input} is a valid integer if it is between {@code minValue} and {@code maxValue} inclusive.
+     * Invalid input will generate a descriptive ValidationException,
+     * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual input data to validate.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      * @param minValue
      *         Lowest legal value for input.
      * @param maxValue
@@ -562,7 +574,7 @@ public interface Validator {
      * @return A validated number as an integer.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -572,7 +584,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidInteger(String, String, int, int, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -582,7 +594,7 @@ public interface Validator {
      * Calls {@link #getValidDouble(String, String, double, double, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws IntrusionException;
 
@@ -593,7 +605,7 @@ public interface Validator {
      * Calls {@link #getValidDouble(String, String, double, double, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -608,8 +620,8 @@ public interface Validator {
      * @param input
      *         The actual input data to validate.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. 
-     *         If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      * @param minValue
      *         Lowest legal value for input.
      * @param maxValue
@@ -618,7 +630,7 @@ public interface Validator {
      * @return A validated real number as a double.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -629,7 +641,7 @@ public interface Validator {
      * Calls {@link #getValidDouble(String, String, double, double, boolean)},
      * the supplied {@code errorList} is used to capture ValidationExceptions.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     Double getValidDouble(String context, String input, double minValue, double maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -639,7 +651,7 @@ public interface Validator {
      * Calls {@link #getValidFileContent(String, byte[], int, boolean)},
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws IntrusionException;
 
@@ -650,7 +662,7 @@ public interface Validator {
      * Calls {@link #getValidFileContent(String, byte[], int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -661,18 +673,20 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual input data to validate.
      * @param maxBytes
      *         The maximum number of bytes allowed in a legal file.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return A byte array containing valid file content.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -683,7 +697,7 @@ public interface Validator {
      * Calls {@link #getValidFileContent(String, byte[], int, boolean)},
      * the supplied {@code errorList} is used to capture ValidationExceptions.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     byte[] getValidFileContent(String context, byte[] input, int maxBytes, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -695,7 +709,7 @@ public interface Validator {
      * and {@link #isValidFileContent(String, byte[], int, boolean)},
      * and returns true if all three checks pass.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, boolean allowNull) throws IntrusionException;
 
@@ -708,7 +722,7 @@ public interface Validator {
      * and {@link #isValidFileContent(String, byte[], int, boolean, ValidationErrorList)},
      * and returns true if all three checks pass.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -718,7 +732,8 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param filepath
      *         The file path of the uploaded file.
      * @param filename
@@ -728,10 +743,11 @@ public interface Validator {
      * @param maxBytes
      *         The max number of bytes allowed for a legal file upload.
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -742,7 +758,7 @@ public interface Validator {
      * Calls {@link #assertValidFileUpload(String, String, String, File, byte[], int, List, boolean)},
      * the supplied {@code errorList} is used to capture ValidationExceptions.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     void assertValidFileUpload(String context, String filepath, String filename, File parent, byte[] content, int maxBytes, List<String> allowedExtensions, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -752,7 +768,7 @@ public interface Validator {
      * Calls {@link #getValidListItem(String, String, List)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidListItem(String context, String input, List<String> list) throws IntrusionException;
 
@@ -763,7 +779,7 @@ public interface Validator {
      * Calls {@link #getValidListItem(String, String, List)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidListItem(String context, String input, List<String> list, ValidationErrorList errorList) throws IntrusionException;
 
@@ -782,7 +798,7 @@ public interface Validator {
      * @return The list item that exactly matches the canonicalized input.
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidListItem(String context, String input, List<String> list) throws ValidationException, IntrusionException;
 
@@ -792,7 +808,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidListItem(String, String, List)}
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidListItem(String context, String input, List<String> list, ValidationErrorList errorList) throws IntrusionException;
 
@@ -802,7 +818,7 @@ public interface Validator {
      * Calls {@link #assertValidHTTPRequestParameterSet(String, HttpServletRequest, Set, Set)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional) throws IntrusionException;
 
@@ -813,7 +829,7 @@ public interface Validator {
      * Calls {@link #assertValidHTTPRequestParameterSet(String, HttpServletRequest, Set, Set)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional, ValidationErrorList errorList) throws IntrusionException;
 
@@ -831,7 +847,7 @@ public interface Validator {
      *         additional parameters that may be in HTTP request
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional) throws ValidationException, IntrusionException;
 
@@ -842,7 +858,7 @@ public interface Validator {
      * <p>
      * Calls {@link #assertValidHTTPRequestParameterSet(String, HttpServletRequest, Set, Set)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     void assertValidHTTPRequestParameterSet(String context, HttpServletRequest request, Set<String> required, Set<String> optional, ValidationErrorList errorList) throws IntrusionException;
 
@@ -852,7 +868,7 @@ public interface Validator {
      * Calls {@link #getValidPrintable(String, char[], int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidPrintable(String context, char[] input, int maxLength, boolean allowNull) throws IntrusionException;
 
@@ -863,7 +879,7 @@ public interface Validator {
      * Calls {@link #getValidPrintable(String, char[], int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidPrintable(String context, char[] input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -873,13 +889,15 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         data to be returned as valid and printable
      * @param maxLength
      *         Maximum number of bytes stored in 'input'
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return a byte array containing only printable characters, made up of data from 'input'
      *
@@ -893,7 +911,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidPrintable(String, char[], int, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     char[] getValidPrintable(String context, char[] input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -903,7 +921,7 @@ public interface Validator {
      * Calls {@link #getValidPrintable(String, String, int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
@@ -914,7 +932,7 @@ public interface Validator {
      * Calls {@link #getValidPrintable(String, String, int, boolean)}
      * and returns true if no exceptions are thrown.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -924,13 +942,15 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         data to be returned as valid and printable
      * @param maxLength
      *         Maximum number of bytes stored in 'input' after canonicalization
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return a String containing only printable characters, made up of data from 'input'
      *
@@ -944,7 +964,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidPrintable(String, String, int, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidPrintable(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -971,16 +991,18 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any logging or error handling that is done with respect to the value passed in.
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         redirect location to be returned as valid, according to encoding rules set in "ESAPI.properties"
      * @param allowNull
-     *         If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an empty String will throw a ValidationException.
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return A canonicalized and validated redirect location, as defined in "ESAPI.properties"
      *
      * @throws ValidationException Input is invalid.
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidRedirectLocation(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
 
@@ -990,7 +1012,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidRedirectLocation(String, String, boolean)}.
      *
-     * @throws IntrusionException Input is clearly an attack.
+     * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidRedirectLocation(String context, String input, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
@@ -1020,13 +1042,13 @@ public interface Validator {
      * @see <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986.</a>
      * 
      * @param context
-     *          A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). This value is used by any 
-     *          logging or error handling that is done with respect to the value passed in.
+     *          A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *          This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *          redirect location to be returned as valid, according to encoding rules set in "ESAPI.properties"
      * @param allowNull
-     *          If allowNull is true then an input that is NULL or an empty string will be legal. If allowNull is false then NULL or an 
-     *          empty String will throw a ValidationException.
+     *          If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *          If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @return True if the URI is valid
      */
