@@ -54,10 +54,37 @@ import org.owasp.esapi.reference.validation.NumberValidationRule;
 import org.owasp.esapi.reference.validation.StringValidationRule;
 
 /**
- * Reference implementation of the Validator interface. This implementation
- * relies on the ESAPI Encoder, Java Pattern (regex), Date,
+ * Reference implementation of the {@code Validator} interface. This implementation
+ * relies on the ESAPI {@code Encoder}, {@link java.util.regex.Pattern},
+ * {@link java.util.Date},
  * and several other classes to provide basic validation functions. This library
- * has a heavy emphasis on whitelist validation and canonicalization.
+ * has a heavy emphasis on allow-list validation and canonicalization.
+ * <p>
+ * <b>A Note about Canonicalization</b>:
+ * The behaviors of objects of this class are largely driven by how the
+ * associated {@code Encoder} is created and passed to one of this
+ * class' constructors. Specifically, what {@link org.owasp.esapi.codecs.Codec}
+ * types are what referenced by the {@link org.owasp.esapi.Encoder} instance
+ * associated with this particular {@code DefaultValidator} instance. In places
+ * where the default {@code Encoder} instance is used, the behavior is driven
+ * by three ESAPI properties as defined in the <b>ESAPI.properties</b> file.
+ * These property names and their default values (as delivered in ESAPI's
+ * "configuration" jar) are as follows:
+ * <pre>
+ * Encoder.AllowMultipleEncoding=false
+ * Encoder.AllowMixedEncoding=false
+ * Encoder.DefaultCodecList=HTMLEntityCodec,PercentCodec,JavaScriptCodec
+ * </pre>
+ * In places where canonicalization is checked, generally multiple
+ * encoding (the first property, which refers to encoding in the <i>same</i> manner
+ * more than once) or mixed encoding (the second property which refers to
+ * encoding using multiple <i>different</i> encoding mechanisms) are generally
+ * considered an attack unless these respective property values are set to
+ * "true".
+ * </p><p>
+ * Note that changing any of these three properties may affect the behavior as
+ * documented in this class' methods.
+ * </p>
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
@@ -65,6 +92,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  *
  * @since June 1, 2007
  * @see org.owasp.esapi.Validator
+ * @see org.owasp.esapi.Encoder
  */
 public class DefaultValidator implements org.owasp.esapi.Validator {
     private static Logger logger = ESAPI.log();
@@ -139,7 +167,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException  {
@@ -150,7 +182,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errors)  {
@@ -161,7 +197,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      * <p>
      * This implementation does not throw {@link IntrusionException}.
      */
@@ -179,7 +219,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errors) throws IntrusionException  {
@@ -196,7 +240,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException {
@@ -207,7 +255,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws ValidationException {
@@ -229,7 +281,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
@@ -240,7 +296,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * Double encoding is treated as an attack.
-     * The default encoder supports HTML encoding, URL encoding, and javascript escaping.
+     * The canonicalization behavior is controlled by the instance's associated ESAPI
+     * {@code Encoder} and generally driven through the ESAPI property
+     * {@code Encoder.DefaultCodecList} specified in the <b>ESAPI.properties</b>
+     * file. See the class level documentation section "<b>A Note about Canonicalization</b>"
+     * for additional details.
      */
     @Override
     public String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errors) throws IntrusionException {
