@@ -93,6 +93,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  * @since June 1, 2007
  * @see org.owasp.esapi.Validator
  * @see org.owasp.esapi.Encoder
+ * @see org.owasp.esapi.Encoder#canonicalize(String,boolean,boolean)
  */
 public class DefaultValidator implements org.owasp.esapi.Validator {
     private static Logger logger = ESAPI.log();
@@ -130,6 +131,9 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
     /**
      * Default constructor uses the ESAPI standard encoder for canonicalization.
+     * This uses an {@code Encoder} created based on the {@code Codec}s
+     * specified by the value of the {@code Encoder.DefaultCodecList} ESAPI
+     * property as defined in your <b>ESAPI.properties</b> file.
      */
     public DefaultValidator() {
         this.encoder = ESAPI.encoder();
@@ -137,9 +141,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
 
     /**
      * Construct a new DefaultValidator that will use the specified
-     * Encoder for canonicalization.
-     *
-     * @param encoder
+     * {@code Encoder} for canonicalization.
+     * @param encoder The specialy constructed ESAPI {@code Encoder} instance
+     *                that uses a custom list of {@code Codec}s for
+     *                canonicalization purposes. See
+     *                {@link org.owasp.esapi.Encoder#canonicalize(String,boolean,boolean)}
+     *                for an example of how to create a custom {@code Encoder}.
      */
     public DefaultValidator( Encoder encoder ) {
         this.encoder = encoder;
