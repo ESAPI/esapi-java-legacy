@@ -64,7 +64,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  * The behaviors of objects of this class are largely driven by how the
  * associated {@code Encoder} is created and passed to one of this
  * class' constructors. Specifically, what {@link org.owasp.esapi.codecs.Codec}
- * types are what referenced by the {@link org.owasp.esapi.Encoder} instance
+ * types are referenced by the {@link org.owasp.esapi.Encoder} instance
  * associated with this particular {@code DefaultValidator} instance. In places
  * where the default {@code Encoder} instance is used, the behavior is driven
  * by three ESAPI properties as defined in the <b>ESAPI.properties</b> file.
@@ -75,11 +75,11 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  * Encoder.AllowMixedEncoding=false
  * Encoder.DefaultCodecList=HTMLEntityCodec,PercentCodec,JavaScriptCodec
  * </pre>
- * In places where canonicalization is checked, generally multiple
+ * In places where canonicalization is checked, multiple
  * encoding (the first property, which refers to encoding in the <i>same</i> manner
- * more than once) or mixed encoding (the second property which refers to
+ * more than once) or mixed encoding (the second property, which refers to
  * encoding using multiple <i>different</i> encoding mechanisms) are generally
- * considered an attack unless these respective property values are set to
+ * considered attacks unless these respective property values are set to
  * "true".
  * </p><p>
  * Note that changing any of these three properties may affect the behavior as
@@ -142,7 +142,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     /**
      * Construct a new DefaultValidator that will use the specified
      * {@code Encoder} for canonicalization.
-     * @param encoder The specialy constructed ESAPI {@code Encoder} instance
+     * @param encoder The specially constructed ESAPI {@code Encoder} instance
      *                that uses a custom list of {@code Codec}s for
      *                canonicalization purposes. See
      *                {@link org.owasp.esapi.Encoder#canonicalize(String,boolean,boolean)}
