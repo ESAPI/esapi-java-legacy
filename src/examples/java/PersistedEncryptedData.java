@@ -4,7 +4,6 @@ import org.owasp.esapi.crypto.*;
 import org.owasp.esapi.errors.*;
 import org.owasp.esapi.codecs.*;
 import javax.servlet.ServletRequest;
-import org.apache.log4j.Logger;
 
 /** A slightly more complex example showing encoding encrypted data and writing
  *  it out to a file. This is very similar to the example in the ESAPI User
