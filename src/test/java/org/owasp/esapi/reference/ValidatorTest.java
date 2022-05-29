@@ -392,7 +392,7 @@ public class ValidatorTest {
         }
     }
 
-    // GitHub issue # xxxx - GHSL-2022-008
+    // GHSL-2022-008 - CVE-2022-23457 - Patched in commit a0d67b7
     @Test
     public void testIsValidDirectoryPathGHSL_POC() throws IOException {
         // Note this uses different 'parent' and 'input' directories that generally don't already
