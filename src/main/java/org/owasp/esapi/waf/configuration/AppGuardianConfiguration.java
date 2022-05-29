@@ -46,12 +46,25 @@ public class AppGuardianConfiguration {
     public static final int OPERATOR_IN_LIST = 2;
     public static final int OPERATOR_EXISTS = 3;
 
+    //// TODO - Delete these comments and the next 2 declarations on log4j clean-up.
     /*
      * We have static copies of the log settings so that the Rule objects
      * can access them, because they don't have access to the instance of
      * the configuration object.
      */
+    /**
+     * @deprecated This {@code LOG_LEVEL} has never actually been used
+     * internally and this will be deleted when we remove all Log4J 1.x
+     * references.
+     */
+    @Deprecated
     public static Level LOG_LEVEL = Level.INFO;    
+    /**
+     * @deprecated This {@code LOG_DIRECTORY} has never actually been used
+     * internally and this will be deleted when we remove all Log4J 1.x
+     * references.
+     */
+    @Deprecated
     public static String LOG_DIRECTORY = "/WEB-INF/logs";
 
     /*
