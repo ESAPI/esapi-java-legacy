@@ -20,7 +20,13 @@ import org.apache.log4j.spi.LoggerFactory;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+
+import static org.owasp.esapi.PropNames.LOG_ENCODING_REQUIRED;
+import static org.owasp.esapi.PropNames.LOG_USER_INFO;
+import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
+import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
+import static org.owasp.esapi.PropNames.APPLICATION_NAME;
+import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
 
 /**
  * Service Provider Interface implementation that can be provided as the org.apache.log4j.spi.LoggerFactory reference in a Log4J configuration.
@@ -37,14 +43,14 @@ public class Log4JLoggerFactory implements LoggerFactory {
     private static LogScrubber LOG4J_LOG_SCRUBBER;
 
     static {
-        boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
+        boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(LOG_ENCODING_REQUIRED);
         LOG4J_LOG_SCRUBBER = Log4JLogFactory.createLogScrubber(encodeLog);
 
-        boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
-        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_CLIENT_INFO);
-        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
-        String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
-        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
+        boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(LOG_USER_INFO);
+        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(LOG_CLIENT_INFO);
+        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
+        String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
+        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
         LOG4J_LOG_APPENDER = Log4JLogFactory.createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
     }
 

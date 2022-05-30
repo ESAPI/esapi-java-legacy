@@ -30,7 +30,10 @@ import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
+import org.owasp.esapi.PropNames.DefaultSearchPath;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE;
+
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
@@ -106,13 +109,11 @@ public class HTMLValidationRule extends StringValidationRule {
     /*package */ static String resolveAntisamyFilename() {
         String antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
         try {
-            antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
-                    // Future: This will be moved to a new PropNames class
-                org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
+            antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp( VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
         } catch (ConfigurationException cex) {
             
             LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " + 
-                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
+                           VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
                            " not set, using default value: " + ANTISAMYPOLICY_FILENAME);
         }
         return antisamyPolicyFilename;
@@ -197,9 +198,7 @@ public class HTMLValidationRule extends StringValidationRule {
             // Hindsight: maybe we should have getBooleanProp(), getStringProp(),
             // getIntProp() methods that take a default arg as well?
             // At least for ESAPI 3.x.
-            propValue = ESAPI.securityConfiguration().getStringProp(
-                                // Future: This will be moved to a new PropNames class
-                            org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION );
+            propValue = ESAPI.securityConfiguration().getStringProp( VALIDATOR_HTML_VALIDATION_ACTION );
             switch ( propValue.toLowerCase() ) {
                 case "throw":
                     legacy = false;     // New, presumably correct behavior, as addressed by GitHub issue 509
@@ -209,7 +208,7 @@ public class HTMLValidationRule extends StringValidationRule {
                     break;
                 default:
                     LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
-                                   org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION +
+                                   VALIDATOR_HTML_VALIDATION_ACTION +
                                    " was set to \"" + propValue + "\".  Must be set to either \"clean\"" +
                                    " (the default for legacy support) or \"throw\"; assuming \"clean\" for legacy behavior.");
                     legacy = true;
@@ -219,7 +218,7 @@ public class HTMLValidationRule extends StringValidationRule {
             // OPEN ISSUE: Should we log this? I think so. Convince me otherwise. But maybe
             //             we should only log it once or every Nth time??
             LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
-                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION +
+                           VALIDATOR_HTML_VALIDATION_ACTION +
                            " must be set to either \"clean\" (the default for legacy support) or \"throw\"; assuming \"clean\"",
                            cex);
         }

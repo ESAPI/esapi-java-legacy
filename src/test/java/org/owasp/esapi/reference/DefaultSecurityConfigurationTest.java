@@ -16,7 +16,9 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.errors.ConfigurationException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
+import org.owasp.esapi.PropNames.DefaultSearchPath;
+
+import static org.owasp.esapi.PropNames.*;
 
 public class DefaultSecurityConfigurationTest {
 
@@ -29,7 +31,7 @@ public class DefaultSecurityConfigurationTest {
     @Test
     public void testGetApplicationName() {
         final String expected = "ESAPI_UnitTests";
-        DefaultSecurityConfiguration secConf = this.createWithProperty(DefaultSecurityConfiguration.APPLICATION_NAME, expected);
+        DefaultSecurityConfiguration secConf = this.createWithProperty(APPLICATION_NAME, expected);
         assertEquals(expected, secConf.getApplicationName());
     }
     
@@ -37,10 +39,10 @@ public class DefaultSecurityConfigurationTest {
     public void testGetLogImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_LOG_IMPLEMENTATION, secConf.getLogImplementation());
+        assertEquals(DEFAULT_LOG_IMPLEMENTATION, secConf.getLogImplementation());
         
         final String expected = "TestLogger";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.LOG_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(LOG_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getLogImplementation());
     }
     
@@ -48,10 +50,10 @@ public class DefaultSecurityConfigurationTest {
     public void testAuthenticationImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_AUTHENTICATION_IMPLEMENTATION, secConf.getAuthenticationImplementation());
+        assertEquals(DEFAULT_AUTHENTICATION_IMPLEMENTATION, secConf.getAuthenticationImplementation());
         
         final String expected = "TestAuthentication";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.AUTHENTICATION_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(AUTHENTICATION_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getAuthenticationImplementation());
     }
     
@@ -59,10 +61,10 @@ public class DefaultSecurityConfigurationTest {
     public void testEncoderImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_ENCODER_IMPLEMENTATION, secConf.getEncoderImplementation());
+        assertEquals(DEFAULT_ENCODER_IMPLEMENTATION, secConf.getEncoderImplementation());
         
         final String expected = "TestEncoder";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ENCODER_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(ENCODER_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getEncoderImplementation());
     }
     
@@ -70,10 +72,10 @@ public class DefaultSecurityConfigurationTest {
     public void testAccessControlImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_ACCESS_CONTROL_IMPLEMENTATION, secConf.getAccessControlImplementation());
+        assertEquals(DEFAULT_ACCESS_CONTROL_IMPLEMENTATION, secConf.getAccessControlImplementation());
         
         final String expected = "TestAccessControl";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ACCESS_CONTROL_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(ACCESS_CONTROL_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getAccessControlImplementation());
     }
     
@@ -81,10 +83,10 @@ public class DefaultSecurityConfigurationTest {
     public void testEncryptionImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_ENCRYPTION_IMPLEMENTATION, secConf.getEncryptionImplementation());
+        assertEquals(DEFAULT_ENCRYPTION_IMPLEMENTATION, secConf.getEncryptionImplementation());
         
         final String expected = "TestEncryption";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ENCRYPTION_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(ENCRYPTION_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getEncryptionImplementation());
     }
     
@@ -92,10 +94,10 @@ public class DefaultSecurityConfigurationTest {
     public void testIntrusionDetectionImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION, secConf.getIntrusionDetectionImplementation());
+        assertEquals(DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION, secConf.getIntrusionDetectionImplementation());
         
         final String expected = "TestIntrusionDetection";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.INTRUSION_DETECTION_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(INTRUSION_DETECTION_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getIntrusionDetectionImplementation());
     }
     
@@ -103,10 +105,10 @@ public class DefaultSecurityConfigurationTest {
     public void testRandomizerImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_RANDOMIZER_IMPLEMENTATION, secConf.getRandomizerImplementation());
+        assertEquals(DEFAULT_RANDOMIZER_IMPLEMENTATION, secConf.getRandomizerImplementation());
         
         final String expected = "TestRandomizer";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.RANDOMIZER_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(RANDOMIZER_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getRandomizerImplementation());
     }
     
@@ -114,10 +116,10 @@ public class DefaultSecurityConfigurationTest {
     public void testExecutorImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_EXECUTOR_IMPLEMENTATION, secConf.getExecutorImplementation());
+        assertEquals(DEFAULT_EXECUTOR_IMPLEMENTATION, secConf.getExecutorImplementation());
         
         final String expected = "TestExecutor";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.EXECUTOR_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(EXECUTOR_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getExecutorImplementation());
     }
     
@@ -125,10 +127,10 @@ public class DefaultSecurityConfigurationTest {
     public void testHTTPUtilitiesImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_HTTP_UTILITIES_IMPLEMENTATION, secConf.getHTTPUtilitiesImplementation());
+        assertEquals(DEFAULT_HTTP_UTILITIES_IMPLEMENTATION, secConf.getHTTPUtilitiesImplementation());
         
         final String expected = "TestHTTPUtilities";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.HTTP_UTILITIES_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(HTTP_UTILITIES_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getHTTPUtilitiesImplementation());
     }
     
@@ -136,10 +138,10 @@ public class DefaultSecurityConfigurationTest {
     public void testValidationImplementation() {
         //test the default
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
-        assertEquals(DefaultSecurityConfiguration.DEFAULT_VALIDATOR_IMPLEMENTATION, secConf.getValidationImplementation());
+        assertEquals(DEFAULT_VALIDATOR_IMPLEMENTATION, secConf.getValidationImplementation());
         
         final String expected = "TestValidation";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.VALIDATOR_IMPLEMENTATION, expected);
+        secConf = this.createWithProperty(VALIDATOR_IMPLEMENTATION, expected);
         assertEquals(expected, secConf.getValidationImplementation());
     }
     
@@ -150,7 +152,7 @@ public class DefaultSecurityConfigurationTest {
         assertEquals(128, secConf.getEncryptionKeyLength());
         
         final int expected = 256;
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.KEY_LENGTH, String.valueOf(expected));
+        secConf = this.createWithProperty(KEY_LENGTH, String.valueOf(expected));
         assertEquals(expected, secConf.getEncryptionKeyLength());
     }
     
@@ -161,7 +163,7 @@ public class DefaultSecurityConfigurationTest {
         assertEquals("HmacSHA256", secConf.getKDFPseudoRandomFunction());
         
         final String expected = "HmacSHA1";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.KDF_PRF_ALG, expected);
+        secConf = this.createWithProperty(KDF_PRF_ALG, expected);
         assertEquals(expected, secConf.getKDFPseudoRandomFunction());
     }
     
@@ -179,7 +181,7 @@ public class DefaultSecurityConfigurationTest {
         final String salt = "53081";
         final String property = ESAPI.encoder().encodeForBase64(salt.getBytes(), false);
         Properties properties = new Properties();
-        properties.setProperty(DefaultSecurityConfiguration.MASTER_SALT, property);
+        properties.setProperty(MASTER_SALT, property);
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(properties);
         assertEquals(salt, new String(secConf.getMasterSalt()));
     }
@@ -195,7 +197,7 @@ public class DefaultSecurityConfigurationTest {
         
         
         Properties properties = new Properties();
-        properties.setProperty(DefaultSecurityConfiguration.APPROVED_EXECUTABLES, String.valueOf("/bin/bzip2,/bin/diff, /bin/cvs"));
+        properties.setProperty(APPROVED_EXECUTABLES, String.valueOf("/bin/bzip2,/bin/diff, /bin/cvs"));
         secConf = new DefaultSecurityConfiguration(properties);
         allowedExecutables = secConf.getAllowedExecutables();
         assertEquals(3, allowedExecutables.size());
@@ -216,7 +218,7 @@ public class DefaultSecurityConfigurationTest {
         
         
         Properties properties = new Properties();
-        properties.setProperty(DefaultSecurityConfiguration.APPROVED_UPLOAD_EXTENSIONS, String.valueOf(".txt,.xml,.html,.png"));
+        properties.setProperty(APPROVED_UPLOAD_EXTENSIONS, String.valueOf(".txt,.xml,.html,.png"));
         secConf = new DefaultSecurityConfiguration(properties);
         allowedFileExtensions = secConf.getAllowedFileExtensions();
         assertEquals(4, allowedFileExtensions.size());
@@ -230,7 +232,7 @@ public class DefaultSecurityConfigurationTest {
         assertTrue(secConf.getAllowedFileUploadSize() > (1024 * 100));
         
         final int expected = (1024 * 1000);
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.MAX_UPLOAD_FILE_BYTES, String.valueOf(expected));
+        secConf = this.createWithProperty(MAX_UPLOAD_FILE_BYTES, String.valueOf(expected));
         assertEquals(expected, secConf.getAllowedFileUploadSize());
     }
     
@@ -242,8 +244,8 @@ public class DefaultSecurityConfigurationTest {
         assertEquals("username", secConf.getUsernameParameterName());
         
         Properties properties = new Properties();
-        properties.setProperty(DefaultSecurityConfiguration.PASSWORD_PARAMETER_NAME, "j_password");
-        properties.setProperty(DefaultSecurityConfiguration.USERNAME_PARAMETER_NAME, "j_username");
+        properties.setProperty(PASSWORD_PARAMETER_NAME, "j_password");
+        properties.setProperty(USERNAME_PARAMETER_NAME, "j_username");
         secConf = new DefaultSecurityConfiguration(properties);
         assertEquals("j_password", secConf.getPasswordParameterName());
         assertEquals("j_username", secConf.getUsernameParameterName());
@@ -255,7 +257,7 @@ public class DefaultSecurityConfigurationTest {
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
         assertEquals("AES", secConf.getEncryptionAlgorithm());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ENCRYPTION_ALGORITHM, "3DES");
+        secConf = this.createWithProperty(ENCRYPTION_ALGORITHM, "3DES");
         assertEquals("3DES", secConf.getEncryptionAlgorithm());
     }
     
@@ -266,7 +268,7 @@ public class DefaultSecurityConfigurationTest {
         //assertEquals("AES/CBC/PKCS5Padding", secConf.getC);
         
         Properties properties = new Properties();
-        properties.setProperty(DefaultSecurityConfiguration.CIPHER_TRANSFORMATION_IMPLEMENTATION, "Blowfish/CFB/ISO10126Padding");
+        properties.setProperty(CIPHER_TRANSFORMATION_IMPLEMENTATION, "Blowfish/CFB/ISO10126Padding");
         secConf = new DefaultSecurityConfiguration(properties);
         assertEquals("Blowfish/CFB/ISO10126Padding", secConf.getCipherTransformation());
         
@@ -285,18 +287,18 @@ public class DefaultSecurityConfigurationTest {
 
         Properties props = new Properties();
         String ivType = null;
-        props.setProperty(DefaultSecurityConfiguration.IV_TYPE, "fixed");  // No longer supported.
+        props.setProperty(IV_TYPE, "fixed");  // No longer supported.
 
         secConf = new DefaultSecurityConfiguration( props );
         try {
             ivType = secConf.getIVType();    // This should now throw a Configuration Exception.
-            fail("Expected ConfigurationException to be thrown for " + DefaultSecurityConfiguration.IV_TYPE + "=" + ivType);
+            fail("Expected ConfigurationException to be thrown for " + IV_TYPE + "=" + ivType);
         }
         catch (ConfigurationException ce) {
             assertNotNull(ce.getMessage());
         }
         
-        props.setProperty(DefaultSecurityConfiguration.IV_TYPE, "illegal");    // This will just result in a logSpecial message & "random" is returned.
+        props.setProperty(IV_TYPE, "illegal");    // This will just result in a logSpecial message & "random" is returned.
         secConf = new DefaultSecurityConfiguration(props);
         ivType = secConf.getIVType();
         assertEquals(ivType, "random");
@@ -307,13 +309,13 @@ public class DefaultSecurityConfigurationTest {
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
         assertFalse(secConf.getAllowMultipleEncoding());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ALLOW_MULTIPLE_ENCODING, "yes");
+        secConf = this.createWithProperty(ALLOW_MULTIPLE_ENCODING, "yes");
         assertTrue(secConf.getAllowMultipleEncoding());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ALLOW_MULTIPLE_ENCODING, "true");
+        secConf = this.createWithProperty(ALLOW_MULTIPLE_ENCODING, "true");
         assertTrue(secConf.getAllowMultipleEncoding());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.ALLOW_MULTIPLE_ENCODING, "no");
+        secConf = this.createWithProperty(ALLOW_MULTIPLE_ENCODING, "no");
         assertFalse(secConf.getAllowMultipleEncoding());
     }
     
@@ -323,7 +325,7 @@ public class DefaultSecurityConfigurationTest {
         assertFalse(secConf.getDefaultCanonicalizationCodecs().isEmpty());
         
         String property = "org.owasp.esapi.codecs.TestCodec1,org.owasp.esapi.codecs.TestCodec2";
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.CANONICALIZATION_CODECS, property);
+        secConf = this.createWithProperty(CANONICALIZATION_CODECS, property);
         assertTrue(secConf.getDefaultCanonicalizationCodecs().contains("org.owasp.esapi.codecs.TestCodec1"));
     }
     
@@ -332,13 +334,13 @@ public class DefaultSecurityConfigurationTest {
         DefaultSecurityConfiguration secConf = new DefaultSecurityConfiguration(new Properties());
         assertFalse(secConf.getDisableIntrusionDetection());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION, "TRUE");
+        secConf = this.createWithProperty(DISABLE_INTRUSION_DETECTION, "TRUE");
         assertTrue(secConf.getDisableIntrusionDetection());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION, "true");
+        secConf = this.createWithProperty(DISABLE_INTRUSION_DETECTION, "true");
         assertTrue(secConf.getDisableIntrusionDetection());
         
-        secConf = this.createWithProperty(DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION, "false");
+        secConf = this.createWithProperty(DISABLE_INTRUSION_DETECTION, "false");
         assertFalse(secConf.getDisableIntrusionDetection());
     }
     
@@ -482,7 +484,7 @@ public class DefaultSecurityConfigurationTest {
     {
         assertTrue("1: Deprecated (1st) method returns different value than new (2nd) method",
                     ESAPI.securityConfiguration().getDisableIntrusionDetection() ==
-                      ESAPI.securityConfiguration().getBooleanProp( DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION )
+                      ESAPI.securityConfiguration().getBooleanProp( DISABLE_INTRUSION_DETECTION )
                   );
         // TODO: add some more tests here for the deprecated replacements.
     }

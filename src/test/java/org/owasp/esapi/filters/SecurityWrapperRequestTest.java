@@ -22,8 +22,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-// A hack for now; eventually, I plan to move this into a new org.owasp.esapi.PropNames class. -kww
-import static org.owasp.esapi.reference.DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION;
+import static org.owasp.esapi.PropNames.DISABLE_INTRUSION_DETECTION;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

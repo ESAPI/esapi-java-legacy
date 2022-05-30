@@ -21,7 +21,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.EncryptionException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import static org.owasp.esapi.PropNames.KDF_PRF_ALG;
 import org.owasp.esapi.util.ByteConversionUtil;
 
 /**
@@ -133,7 +133,7 @@ public class KeyDerivationFunction {
         if ( ! KeyDerivationFunction.isValidPRF(prfName) ) {
             throw new ConfigurationException("Algorithm name " + prfName +
                                 " not a valid algorithm name for property " +
-                                DefaultSecurityConfiguration.KDF_PRF_ALG);
+                                KDF_PRF_ALG);
         }
         prfAlg_ = prfName;
     }
@@ -159,8 +159,7 @@ public class KeyDerivationFunction {
             }
         }
         throw new ConfigurationException("Algorithm name " + prfName +
-                " not a valid algorithm name for property " +
-                DefaultSecurityConfiguration.KDF_PRF_ALG);
+                " not a valid algorithm name for property " + KDF_PRF_ALG);
     }
     
     /**

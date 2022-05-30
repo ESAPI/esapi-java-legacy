@@ -23,6 +23,7 @@ import org.owasp.esapi.ValidationRule;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.reference.validation.HTMLValidationRule;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
 
 import org.junit.Test;
 import org.junit.Before;
@@ -59,7 +60,7 @@ public class HTMLValidationRuleThrowsTest {
         @Override
         public String getStringProp(String propName) {
             // Would it be better making this file a static import?
-            if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
+            if ( propName.equals( VALIDATOR_HTML_VALIDATION_ACTION ) ) {
                 return desiredReturn;
             } else {
                 return super.getStringProp( propName );
