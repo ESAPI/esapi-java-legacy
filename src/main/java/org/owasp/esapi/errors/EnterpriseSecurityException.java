@@ -18,12 +18,7 @@ package org.owasp.esapi.errors;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
-// At some point, all these property names will be moved to a new class named
-//      org.owasp.esapi.PropNames
-// but until then, while this is an ugly kludge, we are importing it via a
-// reference implementation class until we have a chance to clean it up.
-// (Note: kwwall's Bitbucket code already has that class.)
-import static org.owasp.esapi.reference.DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION;
+import static org.owasp.esapi.PropNames.DISABLE_INTRUSION_DETECTION;
 
 
 /**

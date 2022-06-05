@@ -2,7 +2,7 @@
  * OWASP Enterprise Security API (ESAPI)
  *
  * This file is part of the Open Web Application Security Project (OWASP)
- * Enterprise Security API (ESAPI) project. For details, please see
+ * Enterprise Security API (ESAPI) project. For details, please see{               
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
@@ -36,6 +36,8 @@ import java.util.regex.PatternSyntaxException;
 import org.apache.commons.lang.text.StrTokenizer;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.PropNames;   // <== Actual property names moved to here. Eventually we'll do static import.
+import org.owasp.esapi.PropNames.DefaultSearchPath;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
@@ -63,10 +65,17 @@ import org.owasp.esapi.errors.ConfigurationException;
  * keys and passwords, logging locations, error thresholds, and allowed file extensions.
  * <p>
  * WARNING: Do not forget to update ESAPI.properties to change the master key and other security critical settings.
+ * <p>
+ * <b>DEPRECATION WARNING</b>: All of the variables of the type '{@code public static final String}'
+ * are now declared and defined in the {@code org.owasp.esapi.PropNames}. These public fields
+ * representing property names and values in <i>this</i> class <i>will</i> be eventually deleted and
+ * no longer available, so please migrate to the corresponding names in {@code PropNames}. Removal of these
+ * public fields from this class will likely occur sometime in 2Q2024.
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim .at. manico.net) <a href="http://www.manico.net">Manico.net</a>
- * @author Kevin Wall (kevin.w.wall .at. gmail.com)
+ * @author Kevin W. Wall (kevin.w.wall .at. gmail.com)
+ *
  */
 
 public class DefaultSecurityConfiguration implements SecurityConfiguration {
@@ -82,123 +91,267 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         }
         return instance;
     }
-    
+
     private Properties properties = null;
     private String cipherXformFromESAPIProp = null;    // New in ESAPI 2.0
-    private String cipherXformCurrent = null;        // New in ESAPI 2.0
+    private String cipherXformCurrent = null;          // New in ESAPI 2.0
 
-    /** The name of the ESAPI property file */
-    public static final String DEFAULT_RESOURCE_FILE = "ESAPI.properties";
-    
-    public static final String REMEMBER_TOKEN_DURATION = "Authenticator.RememberTokenDuration";
-    public static final String IDLE_TIMEOUT_DURATION = "Authenticator.IdleTimeoutDuration";
-    public static final String ABSOLUTE_TIMEOUT_DURATION = "Authenticator.AbsoluteTimeoutDuration";
-    public static final String ALLOWED_LOGIN_ATTEMPTS = "Authenticator.AllowedLoginAttempts";
-    public static final String USERNAME_PARAMETER_NAME = "Authenticator.UsernameParameterName";
-    public static final String PASSWORD_PARAMETER_NAME = "Authenticator.PasswordParameterName";
-    public static final String MAX_OLD_PASSWORD_HASHES = "Authenticator.MaxOldPasswordHashes";
+    /** The name of the ESAPI property file.
+     *  @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead.
+     */
+    @Deprecated public static final String DEFAULT_RESOURCE_FILE = PropNames.DEFAULT_RESOURCE_FILE;
 
-    public static final String ALLOW_MULTIPLE_ENCODING = "Encoder.AllowMultipleEncoding";
-    public static final String ALLOW_MIXED_ENCODING    = "Encoder.AllowMixedEncoding";
-    public static final String CANONICALIZATION_CODECS = "Encoder.DefaultCodecList";
 
-    public static final String DISABLE_INTRUSION_DETECTION  = "IntrusionDetector.Disable";
-    
-    public static final String MASTER_KEY = "Encryptor.MasterKey";
-    public static final String MASTER_SALT = "Encryptor.MasterSalt";
-    public static final String KEY_LENGTH = "Encryptor.EncryptionKeyLength";
-    public static final String ENCRYPTION_ALGORITHM = "Encryptor.EncryptionAlgorithm";
-    public static final String HASH_ALGORITHM = "Encryptor.HashAlgorithm";
-    public static final String HASH_ITERATIONS = "Encryptor.HashIterations";
-    public static final String CHARACTER_ENCODING = "Encryptor.CharacterEncoding";
-    public static final String RANDOM_ALGORITHM = "Encryptor.RandomAlgorithm";
-    public static final String DIGITAL_SIGNATURE_ALGORITHM = "Encryptor.DigitalSignatureAlgorithm";
-    public static final String DIGITAL_SIGNATURE_KEY_LENGTH = "Encryptor.DigitalSignatureKeyLength";
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String REMEMBER_TOKEN_DURATION = PropNames.REMEMBER_TOKEN_DURATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String IDLE_TIMEOUT_DURATION = PropNames.IDLE_TIMEOUT_DURATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ABSOLUTE_TIMEOUT_DURATION = PropNames.ABSOLUTE_TIMEOUT_DURATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ALLOWED_LOGIN_ATTEMPTS = PropNames.ALLOWED_LOGIN_ATTEMPTS;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String USERNAME_PARAMETER_NAME = PropNames.USERNAME_PARAMETER_NAME;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String PASSWORD_PARAMETER_NAME = PropNames.PASSWORD_PARAMETER_NAME;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String MAX_OLD_PASSWORD_HASHES = PropNames.MAX_OLD_PASSWORD_HASHES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ALLOW_MULTIPLE_ENCODING = PropNames.ALLOW_MULTIPLE_ENCODING;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ALLOW_MIXED_ENCODING    = PropNames.ALLOW_MIXED_ENCODING   ;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String CANONICALIZATION_CODECS = PropNames.CANONICALIZATION_CODECS;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DISABLE_INTRUSION_DETECTION  = PropNames.DISABLE_INTRUSION_DETECTION ;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String MASTER_KEY = PropNames.MASTER_KEY;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String MASTER_SALT = PropNames.MASTER_SALT;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String KEY_LENGTH = PropNames.KEY_LENGTH;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ENCRYPTION_ALGORITHM = PropNames.ENCRYPTION_ALGORITHM;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String HASH_ALGORITHM = PropNames.HASH_ALGORITHM;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String HASH_ITERATIONS = PropNames.HASH_ITERATIONS;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String CHARACTER_ENCODING = PropNames.CHARACTER_ENCODING;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String RANDOM_ALGORITHM = PropNames.RANDOM_ALGORITHM;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DIGITAL_SIGNATURE_ALGORITHM = PropNames.DIGITAL_SIGNATURE_ALGORITHM;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DIGITAL_SIGNATURE_KEY_LENGTH = PropNames.DIGITAL_SIGNATURE_KEY_LENGTH;
+
                 // ==================================//
-                //        New in ESAPI Java 2.x         //
+                //        New in ESAPI Java 2.x      //
                 // ================================= //
-    public static final String PREFERRED_JCE_PROVIDER = "Encryptor.PreferredJCEProvider";
-    public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = "Encryptor.CipherTransformation";
-    public static final String CIPHERTEXT_USE_MAC = "Encryptor.CipherText.useMAC";
-    public static final String PLAINTEXT_OVERWRITE = "Encryptor.PlainText.overwrite";
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String PREFERRED_JCE_PROVIDER = PropNames.PREFERRED_JCE_PROVIDER;
 
-    @Deprecated
-    public static final String IV_TYPE = "Encryptor.ChooseIVMethod";    // Will be removed in future release.
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String CIPHER_TRANSFORMATION_IMPLEMENTATION = PropNames.CIPHER_TRANSFORMATION_IMPLEMENTATION;
 
-    public static final String COMBINED_CIPHER_MODES = "Encryptor.cipher_modes.combined_modes";
-    public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = "Encryptor.cipher_modes.additional_allowed";
-    public static final String KDF_PRF_ALG = "Encryptor.KDF.PRF";
-    public static final String PRINT_PROPERTIES_WHEN_LOADED = "ESAPI.printProperties";
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String CIPHERTEXT_USE_MAC = PropNames.CIPHERTEXT_USE_MAC;
 
-    public static final String WORKING_DIRECTORY = "Executor.WorkingDirectory";
-    public static final String APPROVED_EXECUTABLES = "Executor.ApprovedExecutables";
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String PLAINTEXT_OVERWRITE = PropNames.PLAINTEXT_OVERWRITE;
 
-    public static final String FORCE_HTTPONLYSESSION = "HttpUtilities.ForceHttpOnlySession";
-    public static final String FORCE_SECURESESSION = "HttpUtilities.SecureSession";
-    public static final String FORCE_HTTPONLYCOOKIES = "HttpUtilities.ForceHttpOnlyCookies";
-    public static final String FORCE_SECURECOOKIES = "HttpUtilities.ForceSecureCookies";
-    public static final String MAX_HTTP_HEADER_SIZE = "HttpUtilities.MaxHeaderSize";
-    public static final String UPLOAD_DIRECTORY = "HttpUtilities.UploadDir";
-    public static final String UPLOAD_TEMP_DIRECTORY = "HttpUtilities.UploadTempDir";
-    public static final String APPROVED_UPLOAD_EXTENSIONS = "HttpUtilities.ApprovedUploadExtensions";
-    public static final String MAX_UPLOAD_FILE_BYTES = "HttpUtilities.MaxUploadFileBytes";
-    public static final String RESPONSE_CONTENT_TYPE = "HttpUtilities.ResponseContentType";
-    public static final String HTTP_SESSION_ID_NAME = "HttpUtilities.HttpSessionIdName";
+    @Deprecated public static final String IV_TYPE = PropNames.IV_TYPE;    // Will be removed in future release.
 
-    public static final String APPLICATION_NAME = "Logger.ApplicationName";
-    public static final String LOG_ENCODING_REQUIRED = "Logger.LogEncodingRequired";
-    public static final String LOG_APPLICATION_NAME = "Logger.LogApplicationName";
-    public static final String LOG_SERVER_IP = "Logger.LogServerIP";
-    public static final String LOG_USER_INFO = "Logger.UserInfo";
-    public static final String LOG_CLIENT_INFO = "Logger.ClientInfo";
-    public static final String VALIDATION_PROPERTIES = "Validator.ConfigurationFile";
-    public static final String VALIDATION_PROPERTIES_MULTIVALUED = "Validator.ConfigurationFile.MultiValued";
-    public static final String ACCEPT_LENIENT_DATES = "Validator.AcceptLenientDates";
-    public static final String VALIDATOR_HTML_VALIDATION_ACTION = "Validator.HtmlValidationAction";
-    public static final String VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE = "Validator.HtmlValidationConfigurationFile";
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String COMBINED_CIPHER_MODES = PropNames.COMBINED_CIPHER_MODES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ADDITIONAL_ALLOWED_CIPHER_MODES = PropNames.ADDITIONAL_ALLOWED_CIPHER_MODES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String KDF_PRF_ALG = PropNames.KDF_PRF_ALG;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String PRINT_PROPERTIES_WHEN_LOADED = PropNames.PRINT_PROPERTIES_WHEN_LOADED;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String WORKING_DIRECTORY = PropNames.WORKING_DIRECTORY;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String APPROVED_EXECUTABLES = PropNames.APPROVED_EXECUTABLES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String FORCE_HTTPONLYSESSION = PropNames.FORCE_HTTPONLYSESSION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String FORCE_SECURESESSION = PropNames.FORCE_SECURESESSION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String FORCE_HTTPONLYCOOKIES = PropNames.FORCE_HTTPONLYCOOKIES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String FORCE_SECURECOOKIES = PropNames.FORCE_SECURECOOKIES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String MAX_HTTP_HEADER_SIZE = PropNames.MAX_HTTP_HEADER_SIZE;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String UPLOAD_DIRECTORY = PropNames.UPLOAD_DIRECTORY;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String UPLOAD_TEMP_DIRECTORY = PropNames.UPLOAD_TEMP_DIRECTORY;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String APPROVED_UPLOAD_EXTENSIONS = PropNames.APPROVED_UPLOAD_EXTENSIONS;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String MAX_UPLOAD_FILE_BYTES = PropNames.MAX_UPLOAD_FILE_BYTES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String RESPONSE_CONTENT_TYPE = PropNames.RESPONSE_CONTENT_TYPE;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String HTTP_SESSION_ID_NAME = PropNames.HTTP_SESSION_ID_NAME;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String APPLICATION_NAME = PropNames.APPLICATION_NAME;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String LOG_ENCODING_REQUIRED = PropNames.LOG_ENCODING_REQUIRED;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String LOG_APPLICATION_NAME = PropNames.LOG_APPLICATION_NAME;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String LOG_SERVER_IP = PropNames.LOG_SERVER_IP;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String LOG_USER_INFO = PropNames.LOG_USER_INFO;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String LOG_CLIENT_INFO = PropNames.LOG_CLIENT_INFO;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String VALIDATION_PROPERTIES = PropNames.VALIDATION_PROPERTIES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String VALIDATION_PROPERTIES_MULTIVALUED = PropNames.VALIDATION_PROPERTIES_MULTIVALUED;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ACCEPT_LENIENT_DATES = PropNames.ACCEPT_LENIENT_DATES;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String VALIDATOR_HTML_VALIDATION_ACTION = PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE = PropNames.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE;
 
     /**
-     * Special {@code System} property that, if set to {@code true}, will
+     * Special {@code java.lang.System} property that, if set to {@code true}, will
      * disable logging from {@code DefaultSecurityConfiguration.logToStdout()}
      * methods, which is called from various {@code logSpecial()} methods.
      * @see org.owasp.esapi.reference.DefaultSecurityConfiguration#logToStdout(String msg, Throwable t)
+     * @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead.
      */
-    public static final String DISCARD_LOGSPECIAL = "org.owasp.esapi.logSpecial.discard";
+    @Deprecated public static final String DISCARD_LOGSPECIAL = PropNames.DISCARD_LOGSPECIAL;
 
     // We assume that this does not change in the middle of processing the
     // ESAPI.properties files and thus only fetch its value once.
-    private static final String logSpecialValue = System.getProperty(DISCARD_LOGSPECIAL, "false");
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated private static final String logSpecialValue = System.getProperty( PropNames.DISCARD_LOGSPECIAL, "false" );
 
 
     protected final int MAX_REDIRECT_LOCATION = 1000;
-    
+
+
     /*
      * Implementation Keys
      */
-    public static final String LOG_IMPLEMENTATION = "ESAPI.Logger";
-    public static final String AUTHENTICATION_IMPLEMENTATION = "ESAPI.Authenticator";
-    public static final String ENCODER_IMPLEMENTATION = "ESAPI.Encoder";
-    public static final String ACCESS_CONTROL_IMPLEMENTATION = "ESAPI.AccessControl";
-    public static final String ENCRYPTION_IMPLEMENTATION = "ESAPI.Encryptor";
-    public static final String INTRUSION_DETECTION_IMPLEMENTATION = "ESAPI.IntrusionDetector";
-    public static final String RANDOMIZER_IMPLEMENTATION = "ESAPI.Randomizer";
-    public static final String EXECUTOR_IMPLEMENTATION = "ESAPI.Executor";
-    public static final String VALIDATOR_IMPLEMENTATION = "ESAPI.Validator";
-    public static final String HTTP_UTILITIES_IMPLEMENTATION = "ESAPI.HTTPUtilities";
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String LOG_IMPLEMENTATION = PropNames.LOG_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String AUTHENTICATION_IMPLEMENTATION = PropNames.AUTHENTICATION_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ENCODER_IMPLEMENTATION = PropNames.ENCODER_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ACCESS_CONTROL_IMPLEMENTATION = PropNames.ACCESS_CONTROL_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String ENCRYPTION_IMPLEMENTATION = PropNames.ENCRYPTION_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String INTRUSION_DETECTION_IMPLEMENTATION = PropNames.INTRUSION_DETECTION_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String RANDOMIZER_IMPLEMENTATION = PropNames.RANDOMIZER_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String EXECUTOR_IMPLEMENTATION = PropNames.EXECUTOR_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String VALIDATOR_IMPLEMENTATION = PropNames.VALIDATOR_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String HTTP_UTILITIES_IMPLEMENTATION = PropNames.HTTP_UTILITIES_IMPLEMENTATION;
+
 
     /*
      * Default Implementations
      */
-    public static final String DEFAULT_LOG_IMPLEMENTATION = "org.owasp.esapi.logging.java.JavaLogFactory";
-    public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = "org.owasp.esapi.reference.FileBasedAuthenticator";
-    public static final String DEFAULT_ENCODER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultEncoder";
-    public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultAccessController";
-    public static final String DEFAULT_ENCRYPTION_IMPLEMENTATION = "org.owasp.esapi.reference.crypto.JavaEncryptor";
-    public static final String DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultIntrusionDetector";
-    public static final String DEFAULT_RANDOMIZER_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultRandomizer";
-    public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultExecutor";
-    public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultHTTPUtilities";
-    public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = "org.owasp.esapi.reference.DefaultValidator";
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_LOG_IMPLEMENTATION = PropNames.DEFAULT_LOG_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_AUTHENTICATION_IMPLEMENTATION = PropNames.DEFAULT_AUTHENTICATION_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_ENCODER_IMPLEMENTATION = PropNames.DEFAULT_ENCODER_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_ACCESS_CONTROL_IMPLEMENTATION = PropNames.DEFAULT_ACCESS_CONTROL_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_ENCRYPTION_IMPLEMENTATION = PropNames.DEFAULT_ENCRYPTION_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION = PropNames.DEFAULT_INTRUSION_DETECTION_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_RANDOMIZER_IMPLEMENTATION = PropNames.DEFAULT_RANDOMIZER_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_EXECUTOR_IMPLEMENTATION = PropNames.DEFAULT_EXECUTOR_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_HTTP_UTILITIES_IMPLEMENTATION = PropNames.DEFAULT_HTTP_UTILITIES_IMPLEMENTATION;
+
+    /** @deprecated Use same field name, but from {@code org.owasp.esapi.PropNames} instead. */
+    @Deprecated public static final String DEFAULT_VALIDATOR_IMPLEMENTATION = PropNames.DEFAULT_VALIDATOR_IMPLEMENTATION;
 
     private static final Map<String, Pattern> patternCache = new HashMap<String, Pattern>();
 
@@ -220,11 +373,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     private final String resourceFile;
     private EsapiPropertyManager esapiPropertyManager;
 
-//    private static long lastModified = -1;
 
     /**
-     * Instantiates a new configuration, using the provided property file name
-     * 
+     * Instantiates a new configuration, using the provided property file name.
+     *
      * @param resourceFile The name of the property file to load
      */
     DefaultSecurityConfiguration(String resourceFile) {
@@ -239,13 +391,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             throw new ConfigurationException("Failed to load security configuration", e);
         }
     }
-    
+
     /**
      * Instantiates a new configuration with the supplied properties.
-     * 
+     *
      * Warning - if the setResourceDirectory() method is invoked the properties will
      * be re-loaded, replacing the supplied properties.
-     * 
+     *
      * @param properties
      */
     public DefaultSecurityConfiguration(Properties properties) {
@@ -257,10 +409,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             logSpecial("Failed to load security configuration", e );
             throw new ConfigurationException("Failed to load security configuration", e);
         }
-        this.properties = properties; 
+        this.properties = properties;
         this.setCipherXProperties();
     }
-    
+
     /**
      * Instantiates a new configuration.
      */
@@ -438,7 +590,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /**
      * Load configuration. Never prints properties.
-     * 
+     *
      * @throws java.io.IOException
      *             if the file is inaccessible
      */
@@ -447,34 +599,33 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             //first attempt file IO loading of properties
             logSpecial("Attempting to load " + resourceFile + " via file I/O.");
             properties = loadPropertiesFromStream(getResourceStream(resourceFile), resourceFile);
-            
         } catch (Exception iae) {
             //if file I/O loading fails, attempt classpath based loading next
             logSpecial("Loading " + resourceFile + " via file I/O failed. Exception was: " + iae);
             logSpecial("Attempting to load " + resourceFile + " via the classpath.");
             try {
                 properties = loadConfigurationFromClasspath(resourceFile);
-            } catch (Exception e) {                
+            } catch (Exception e) {
                 logSpecial(resourceFile + " could not be loaded by any means. Fail.", e);
                 throw new ConfigurationException(resourceFile + " could not be loaded by any means. Fail.", e);
-            }            
+            }
         }
-        
+
         // if properties loaded properly above, get validation properties and merge them into the main properties
         if (properties != null) {
             final Iterator<String> validationPropFileNames;
-            
+
             //defaults to single-valued for backwards compatibility
             final boolean multivalued= getESAPIProperty(VALIDATION_PROPERTIES_MULTIVALUED, false);
             final String validationPropValue = getESAPIProperty(VALIDATION_PROPERTIES, "validation.properties");
-            
+
             if(multivalued){
-                // the following cast warning goes away if the apache commons lib is updated to current version                
+                // the following cast warning goes away if the apache commons lib is updated to current version
                 validationPropFileNames = StrTokenizer.getCSVInstance(validationPropValue);
             } else {
                 validationPropFileNames = Collections.singletonList(validationPropValue).iterator();
             }
-            
+
             //clear any cached validation patterns so they can be reloaded from validation.properties
             patternCache.clear();
             while(validationPropFileNames.hasNext()){
@@ -484,18 +635,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                     //first attempt file IO loading of properties
                     logSpecial("Attempting to load " + validationPropFileName + " via file I/O.");
                     validationProperties = loadPropertiesFromStream(getResourceStream(validationPropFileName), validationPropFileName);
-                    
                 } catch (Exception iae) {
                     //if file I/O loading fails, attempt classpath based loading next
                     logSpecial("Loading " + validationPropFileName + " via file I/O failed.");
-                    logSpecial("Attempting to load " + validationPropFileName + " via the classpath.");        
+                    logSpecial("Attempting to load " + validationPropFileName + " via the classpath.");
                     try {
                         validationProperties = loadConfigurationFromClasspath(validationPropFileName);
-                    } catch (Exception e) {                
+                    } catch (Exception e) {
                         logSpecial(validationPropFileName + " could not be loaded by any means. fail.", e);
-                    }            
+                    }
                 }
-                
+
                 if (validationProperties != null) {
                     Iterator<?> i = validationProperties.keySet().iterator();
                     while( i.hasNext() ) {
@@ -504,27 +654,29 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                         properties.put( key, value);
                     }
                 }
-                
+
                 if ( shouldPrintProperties() ) {
-                
-                //FIXME - make this chunk configurable
-                /*
-                logSpecial("  ========Master Configuration========", null);
-                //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
-                Iterator j = new TreeSet( properties.keySet() ).iterator();
-                while (j.hasNext()) {
-                    String key = (String)j.next();
-                    // print out properties, but not sensitive ones like MasterKey and MasterSalt
-                    if ( !key.contains( "Master" ) ) {
-                            logSpecial("  |   " + key + "=" + properties.get(key), null);
-                    }
+                        // Gotta give them something.
+                    logSpecial("DefaultSecurityConfiguration: The code to print all the properties is currently commented out");
+
+                    //FIXME - make this chunk configurable
+                    /*
+                        logSpecial("  ========Master Configuration========", null);
+                        //logSpecial( "  ResourceDirectory: " + DefaultSecurityConfiguration.resourceDirectory );
+                        Iterator j = new TreeSet( properties.keySet() ).iterator();
+                        while (j.hasNext()) {
+                            String key = (String)j.next();
+                            // print out properties, but not sensitive ones like MasterKey and MasterSalt
+                            if ( !key.contains( "Master" ) ) {
+                                    logSpecial("  |   " + key + "=" + properties.get(key), null);
+                            }
+                        }
+                    */
                 }
-                */
-                }       
             }
         }
-    }    
-    
+    }
+
     /**
      * @param filename
      * @return An {@code InputStream} associated with the specified file name as
@@ -547,7 +699,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
         throw new FileNotFoundException();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -623,9 +775,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         // return null if not found
         return null;
     }
-    
+
     /**
-     * Used to load ESAPI.properties from a variety of different classpath locations.
+     * Used to load ESAPI.properties from a variety of different classpath locations. The order is described in the
+     * class overview Javadoc for this class.
      *
      * @param fileName The properties file filename.
      */
@@ -636,7 +789,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         ClassLoader[] loaders = new ClassLoader[] {
                 Thread.currentThread().getContextClassLoader(),
                 ClassLoader.getSystemClassLoader(),
-                getClass().getClassLoader() 
+                getClass().getClassLoader()
         };
         String[] classLoaderNames = {
                 "current thread context class loader",
@@ -658,7 +811,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                         //      in = loaders[i].getResourceAsStream(fileName);
                         //
                     in = loaders[i].getResourceAsStream(DefaultSearchPath.ROOT.value() + fileName);
-                    
+
                     // try resourceDirectory folder
                     if (in == null) {
                         currentClasspathSearchLocation = resourceDirectory + "/";
@@ -669,26 +822,26 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                     if (in == null) {
                         currentClasspathSearchLocation = ".esapi/";
                         in = currentLoader.getResourceAsStream(DefaultSearchPath.DOT_ESAPI.value() + fileName);
-                    } 
-                    
+                    }
+
                     // try esapi folder (new directory)
                     if (in == null) {
                         currentClasspathSearchLocation = "esapi/";
                         in = currentLoader.getResourceAsStream(DefaultSearchPath.ESAPI.value() + fileName);
-                    } 
-                    
+                    }
+
                     // try resources folder
                     if (in == null) {
                         currentClasspathSearchLocation = "resources/";
                         in = currentLoader.getResourceAsStream(DefaultSearchPath.RESOURCES.value() + fileName);
                     }
-                    
+
                     // try src/main/resources folder
                     if (in == null) {
                         currentClasspathSearchLocation = "src/main/resources/";
                         in = currentLoader.getResourceAsStream(DefaultSearchPath.SRC_MAIN_RESOURCES.value() + fileName);
                     }
-        
+
                     // now load the properties
                     if (in != null) {
                         result = new Properties();
@@ -699,7 +852,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                     }
                 } catch (Exception e) {
                     result = null;
-        
                 } finally {
                     try {
                         in.close();
@@ -749,7 +901,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                                "; exception message was: " + t);
         }
     }
-    
+
     /**
      * Used to log errors to the console during the loading of the properties file itself. Can't use
      * standard logging in this case, since the Logger may not be initialized yet. Output is sent to
@@ -834,7 +986,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public boolean overwritePlainText() {
         return getESAPIProperty(PLAINTEXT_OVERWRITE, true);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -965,7 +1117,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
                                      );
         return new File( dir );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1064,7 +1216,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     public String getHttpSessionIdName() {
         return getESAPIProperty( HTTP_SESSION_ID_NAME, "JSESSIONID" );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1126,13 +1278,13 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getPreferredJCEProvider() {
         return properties.getProperty(PREFERRED_JCE_PROVIDER); // No default!
-    }  
+    }
 
     /**
      * {@inheritDoc}
@@ -1151,7 +1303,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         List<String> empty = new ArrayList<String>();     // Default is empty list
         return getESAPIProperty(ADDITIONAL_ALLOWED_CIPHER_MODES, empty);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1214,7 +1366,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     /**
      * Returns a {@code List} representing the parsed, comma-separated property.
-     * 
+     *
      * @param key  The specified property name
      * @param def  A default value for the property name to return if the property
      *             is not set.
@@ -1233,9 +1385,9 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * {@inheritDoc}
      * Looks for property in three configuration files in following order:
-     * 1.) In file defined as org.owasp.esapi.opsteam system property 
-     * 2.) In file defined as org.owasp.esapi.devteam system property 
-     * 3.) In ESAPI.properties* 
+     * 1.) In file defined as org.owasp.esapi.opsteam system property
+     * 2.) In file defined as org.owasp.esapi.devteam system property
+     * 3.) In ESAPI.properties
      */
     @Override
     public int getIntProp(String propertyName) throws ConfigurationException {
@@ -1255,8 +1407,8 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     /**
      * {@inheritDoc}
      * Looks for property in three configuration files in following order:
-     * 1.) In file defined as org.owasp.esapi.opsteam system property 
-     * 2.) In file defined as org.owasp.esapi.devteam system property 
+     * 1.) In file defined as org.owasp.esapi.opsteam system property
+     * 2.) In file defined as org.owasp.esapi.devteam system property
      * 3.) In ESAPI.properties
      */
     @Override
@@ -1278,10 +1430,10 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
     }
 
     /**
-     * {@inheritDoc}  
+     * {@inheritDoc}
      * Looks for property in three configuration files in following order:
-     * 1.) In file defined as org.owasp.esapi.opsteam system property 
-     * 2.) In file defined as org.owasp.esapi.devteam system property 
+     * 1.) In file defined as org.owasp.esapi.opsteam system property
+     * 2.) In file defined as org.owasp.esapi.devteam system property
      * 3.) In ESAPI.properties
      */
     @Override
@@ -1331,25 +1483,5 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
 
     protected Properties getESAPIProperties() {
         return properties;
-    }
-    
-    public enum DefaultSearchPath {
-        
-        RESOURCE_DIRECTORY("resourceDirectory/"),
-        SRC_MAIN_RESOURCES("src/main/resources/"),
-        ROOT(""),
-        DOT_ESAPI(".esapi/"),
-        ESAPI("esapi/"),
-        RESOURCES("resources/");
-        
-        private final String path;
-        
-        private DefaultSearchPath(String s){
-            this.path = s;
-        }
-        
-        public String value(){
-            return path;
-        }
     }
 }

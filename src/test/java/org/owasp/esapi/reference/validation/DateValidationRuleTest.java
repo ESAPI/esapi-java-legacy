@@ -23,8 +23,8 @@ import org.owasp.esapi.Encoder;
 import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+import static org.owasp.esapi.PropNames.ACCEPT_LENIENT_DATES;
 import org.powermock.reflect.Whitebox;
-
 
 public class DateValidationRuleTest {
     
@@ -74,7 +74,7 @@ public class DateValidationRuleTest {
     
     @Test
     public void testsetDateFormat() {
-        boolean acceptLenient = ESAPI.securityConfiguration().getBooleanProp( DefaultSecurityConfiguration.ACCEPT_LENIENT_DATES);
+        boolean acceptLenient = ESAPI.securityConfiguration().getBooleanProp( ACCEPT_LENIENT_DATES );
         DateFormat newFormat = DateFormat.getDateInstance(DateFormat.SHORT, Locale.US);
         newFormat.setLenient(!acceptLenient);
         
