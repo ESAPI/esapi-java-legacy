@@ -305,12 +305,17 @@ public class DefaultEncoder implements Encoder {
         }
         // TODO: replace with LDAP codec
         StringBuilder sb = new StringBuilder();
+        // According to "Special Characters" at [1], the encoder should escape '*', '(', ')', '\', '/', NUL. Also see [2].
+        // [1] https://docs.microsoft.com/en-us/windows/win32/adsi/search-filter-syntax
+        // [2] https://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-
             switch (c) {
                 case '\\':
                     sb.append("\\5c");
+                    break;
+                case '/':
+                    sb.append("\\2f");
                     break;
                 case '*': 
                     if (encodeWildcards) {
@@ -349,11 +354,17 @@ public class DefaultEncoder implements Encoder {
         if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
             sb.append('\\'); // add the leading backslash if needed
         }
+        // According to [1] and [2], the encoder should escape forward slash ('/') in DNs.
+        // [1] https://docs.microsoft.com/en-us/windows/win32/adsi/search-filter-syntax
+        // [2] https://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             switch (c) {
             case '\\':
                 sb.append("\\\\");
+                break;
+            case '/':
+                sb.append("\\/");
                 break;
             case ',':
                 sb.append("\\,");
