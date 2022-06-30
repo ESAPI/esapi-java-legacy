@@ -548,7 +548,7 @@ public class EncoderTest extends TestCase {
         assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��", false));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000", false));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is * a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �", false));
-        assertEquals("Forward slash for \\2fMicrosoft\\2f \\2fAD\\2f", instance.encodeForLDAP("Forward slash for /Microsoft/ /AD/"));
+        assertEquals("Forward slash for \\/Microsoft\\/ \\/AD\\/", instance.encodeForLDAP("Forward slash for /Microsoft/ /AD/"));
     }
     
     /**
