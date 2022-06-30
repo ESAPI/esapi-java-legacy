@@ -535,6 +535,7 @@ public class EncoderTest extends TestCase {
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �"));
         assertEquals("Hi \\28This\\29 =", instance.encodeForLDAP("Hi (This) ="));
+        assertEquals("Forward slash for \\2fMicrosoft\\2f \\2fAD\\2f", instance.encodeForLDAP("Forward slash for /Microsoft/ /AD/"));
     }
     
     /**
@@ -547,6 +548,7 @@ public class EncoderTest extends TestCase {
         assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��", false));
         assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000", false));
         assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is * a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �", false));
+        assertEquals("Forward slash for \\2fMicrosoft\\2f \\2fAD\\2f", instance.encodeForLDAP("Forward slash for /Microsoft/ /AD/"));
     }
     
     /**
@@ -563,6 +565,7 @@ public class EncoderTest extends TestCase {
         assertEquals("less than greater than", "Hello\\<\\>", instance.encodeForDN("Hello<>"));
         assertEquals("only 3 spaces", "\\  \\ ", instance.encodeForDN("   "));
         assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
+        assertEquals("Forward slash for \\/Microsoft\\/ \\/AD\\/", instance.encodeForDN("Forward slash for /Microsoft/ /AD/"));
     }
     
     /**

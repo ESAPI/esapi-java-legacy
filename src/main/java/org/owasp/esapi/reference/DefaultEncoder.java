@@ -305,12 +305,21 @@ public class DefaultEncoder implements Encoder {
         }
         // TODO: replace with LDAP codec
         StringBuilder sb = new StringBuilder();
+        // According to Microsoft docs [1,2], the forward slash ('/') MUST be escaped.
+        // According to RFC 4513 Section 3 [3], the forward slash (and other characters) MAY be escaped.
+        // Since Microsoft is a MUST, escape forward slash for all implementations. Also see discussion at [4].
+        // [1] https://docs.microsoft.com/en-us/windows/win32/adsi/search-filter-syntax
+        // [2] https://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
+        // [3] https://tools.ietf.org/search/rfc4515#section-3
+        // [4] https://lists.openldap.org/hyperkitty/list/openldap-technical@openldap.org/thread/3QPDDLO356ONSJM3JUKD7NMPOOIKIQ5T/
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
-
             switch (c) {
                 case '\\':
                     sb.append("\\5c");
+                    break;
+                case '/':
+                    sb.append("\\2f");
                     break;
                 case '*': 
                     if (encodeWildcards) {
@@ -349,11 +358,15 @@ public class DefaultEncoder implements Encoder {
         if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
             sb.append('\\'); // add the leading backslash if needed
         }
+        // See discussion of forward slash ('/') in encodeForLDAP()
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             switch (c) {
             case '\\':
                 sb.append("\\\\");
+                break;
+            case '/':
+                sb.append("\\/");
                 break;
             case ',':
                 sb.append("\\,");
