@@ -32,6 +32,8 @@ import org.owasp.esapi.ValidationErrorList;
 import org.owasp.esapi.Validator;
 import org.owasp.esapi.errors.ValidationException;
 import org.owasp.validator.html.PolicyException;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE;
 
 /**
  * The Class HTMLValidationRuleThrowsTest.
@@ -59,22 +61,22 @@ public class HTMLValidationRuleClasspathTest {
      */
     private static final String ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION = "antisamy-esapi-CP.xml";
  
-	private static class ConfOverride extends SecurityConfigurationWrapper {
-	    private String desiredReturnAction = "clean";
-	    private String desiredReturnConfigurationFile = null;
-	    
-		ConfOverride(SecurityConfiguration orig, String desiredReturnAction, String desiredReturnConfigurationFile) {
-			super(orig);
+    private static class ConfOverride extends SecurityConfigurationWrapper {
+        private String desiredReturnAction = "clean";
+        private String desiredReturnConfigurationFile = null;
+        
+        ConfOverride(SecurityConfiguration orig, String desiredReturnAction, String desiredReturnConfigurationFile) {
+            super(orig);
             this.desiredReturnAction = desiredReturnAction;
-			this.desiredReturnConfigurationFile = desiredReturnConfigurationFile;
-		}
+            this.desiredReturnConfigurationFile = desiredReturnConfigurationFile;
+        }
 
-		@Override
-		public String getStringProp(String propName) {
+        @Override
+        public String getStringProp(String propName) {
             // Would it be better making this file a static import?
-			if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION ) ) {
+            if ( propName.equals( VALIDATOR_HTML_VALIDATION_ACTION ) ) {
                 return desiredReturnAction;
-            } else if ( propName.equals( org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE ) ) {
+            } else if ( propName.equals( VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE ) ) {
                 return desiredReturnConfigurationFile;
             } else {
                 return super.getStringProp( propName );
@@ -91,21 +93,21 @@ public class HTMLValidationRuleClasspathTest {
         ESAPI.override(null);
     }
 
-	@Before
+    @Before
     public void setUp() throws Exception {
-		ESAPI.override(
-			new ConfOverride( ESAPI.securityConfiguration(), "throw", ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION )
-		);
+        ESAPI.override(
+            new ConfOverride( ESAPI.securityConfiguration(), "throw", ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION )
+        );
     }
 
-	
-	@Test
+    
+    @Test
     public void checkPolicyExceptionWithBadConfig() throws Exception {
         ESAPI.override(null);
         thrownEx.expect(PolicyException.class);
         HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
     }
-	
+    
     @Test
     public void testGetValid() throws Exception {
         System.out.println("getValidCP");

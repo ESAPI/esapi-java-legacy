@@ -231,7 +231,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
      *
      */
     private FileBasedAuthenticator() {
-    	super();
+        super();
     }
 
 
@@ -663,7 +663,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             sb.append(s).append(",");
         }
         if ( c.size() > 0) {
-        	return sb.toString().substring(0, sb.length() - 1);
+            return sb.toString().substring(0, sb.length() - 1);
         }
         return "";
         
@@ -746,8 +746,8 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         
         //jtm - 11/3/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
         if (accountName.equalsIgnoreCase(newPassword)) {
-        	//password can't be account name
-        	throw new AuthenticationCredentialsException("Invalid password", "Password matches account name, irrespective of case");
+            //password can't be account name
+            throw new AuthenticationCredentialsException("Invalid password", "Password matches account name, irrespective of case");
         }
     }
 

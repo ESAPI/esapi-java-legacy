@@ -28,15 +28,15 @@ import org.owasp.esapi.errors.EnterpriseSecurityException;
  */
 public class ConfigurationException extends EnterpriseSecurityException {
 
-	protected static final long serialVersionUID = 1L;
+    protected static final long serialVersionUID = 1L;
 
-	public ConfigurationException(String userMsg, String logMsg) {
-		super(userMsg,logMsg);
-	}
+    public ConfigurationException(String userMsg, String logMsg) {
+        super(userMsg,logMsg);
+    }
 
-	public ConfigurationException(String userMsg, String logMsg,
-			Throwable t) {
-		super(userMsg,logMsg,t);
-	}
+    public ConfigurationException(String userMsg, String logMsg,
+            Throwable t) {
+        super(userMsg,logMsg,t);
+    }
 
 }

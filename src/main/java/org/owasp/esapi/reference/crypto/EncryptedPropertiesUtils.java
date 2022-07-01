@@ -18,7 +18,7 @@ import org.owasp.esapi.EncryptedProperties;
  * Usage:<br/>
  * <code>
  *    java org.owasp.esapi.reference.crypto.EncryptedPropertiesUtils [--in file] [--out file] 
- *			[--in-encrypted true|false] [--verbose true|false]
+ *            [--in-encrypted true|false] [--verbose true|false]
  * </code>
  * <p>
  * Command line parameters:<br/>
@@ -36,177 +36,177 @@ import org.owasp.esapi.EncryptedProperties;
  */
 public class EncryptedPropertiesUtils {
 
-	/**
-	 * Loads encrypted or plaintext properties file based on the location passed in args
-	 * then prompts the user to input key-value pairs.  When the user enters a null or
-	 * blank key, the values are stored to the properties file.
-	 *
-	 * @throws Exception Any exception thrown
-	 */
-	public static void main(String[] args) throws Exception {
+    /**
+     * Loads encrypted or plaintext properties file based on the location passed in args
+     * then prompts the user to input key-value pairs.  When the user enters a null or
+     * blank key, the values are stored to the properties file.
+     *
+     * @throws Exception Any exception thrown
+     */
+    public static void main(String[] args) throws Exception {
 
-		//command line options
-		String inFile = null;
-		String outFile = null;
-		boolean inFileEncrypted = true;
-		boolean verbose = false;
+        //command line options
+        String inFile = null;
+        String outFile = null;
+        boolean inFileEncrypted = true;
+        boolean verbose = false;
 
-		//parse command line params
-		for (int i = 0; i < args.length; i = i + 2) {
-			String paramType = args[i];
+        //parse command line params
+        for (int i = 0; i < args.length; i = i + 2) {
+            String paramType = args[i];
 
-			if ("--in".equals(paramType) && args.length >= i + 1) {
-				inFile = args[i + 1];
+            if ("--in".equals(paramType) && args.length >= i + 1) {
+                inFile = args[i + 1];
 
-			} else if ("--out".equals(paramType) && args.length >= i + 1) {
-				outFile = args[i + 1];
+            } else if ("--out".equals(paramType) && args.length >= i + 1) {
+                outFile = args[i + 1];
 
-			} else if ("--in-encrypted".equals(paramType) && args.length >= i + 1) {
-				inFileEncrypted = Boolean.valueOf(args[i + 1]);
+            } else if ("--in-encrypted".equals(paramType) && args.length >= i + 1) {
+                inFileEncrypted = Boolean.valueOf(args[i + 1]);
 
-			} else if ("--verbose".equals(paramType) && args.length >= i + 1) {
-				verbose = Boolean.valueOf(args[i + 1]);
-			}
+            } else if ("--verbose".equals(paramType) && args.length >= i + 1) {
+                verbose = Boolean.valueOf(args[i + 1]);
+            }
 
-		}
+        }
 
-		if (outFile == null) {
-			outFile = inFile; //if no output file is specified we will overwrite the input file
-		}
-		if (outFile == null) {
-			//no input or output file specified. Can't continue.
-			System.out.println("You must specify an input file or output file");
-			System.exit(1);
-		}
+        if (outFile == null) {
+            outFile = inFile; //if no output file is specified we will overwrite the input file
+        }
+        if (outFile == null) {
+            //no input or output file specified. Can't continue.
+            System.out.println("You must specify an input file or output file");
+            System.exit(1);
+        }
 
-		//load in existing properties from a file
-		Properties props = loadProperties(inFile, inFileEncrypted);
+        //load in existing properties from a file
+        Properties props = loadProperties(inFile, inFileEncrypted);
 
-		//read user input and add keys and values to the property file
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		String key = null;
-		do {
-			System.out.print("Enter key: ");
-			key = br.readLine();
+        //read user input and add keys and values to the property file
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String key = null;
+        do {
+            System.out.print("Enter key: ");
+            key = br.readLine();
 
-			if (props.containsKey(key)) {
-				System.out.print("Key already exists. Replace? ");
-				String confirm = br.readLine();
-				if (!("y".equals(confirm) || "yes".equals(confirm))) {
-					continue;
-				}
-			}
+            if (props.containsKey(key)) {
+                System.out.print("Key already exists. Replace? ");
+                String confirm = br.readLine();
+                if (!("y".equals(confirm) || "yes".equals(confirm))) {
+                    continue;
+                }
+            }
 
-			System.out.print("Enter value: ");
-			String value = br.readLine();
+            System.out.print("Enter value: ");
+            String value = br.readLine();
 
-			addProperty(props, key, value);
+            addProperty(props, key, value);
 
-		} while (key != null && key.length() > 0);
+        } while (key != null && key.length() > 0);
 
-		//save output file
-		storeProperties(outFile, props,
-				"Encrypted Properties File generated by org.owasp.esapi.reference.crypto.EncryptedPropertiesUtils");
+        //save output file
+        storeProperties(outFile, props,
+                "Encrypted Properties File generated by org.owasp.esapi.reference.crypto.EncryptedPropertiesUtils");
 
-		System.out.println("Encrypted Properties file output to " + outFile);
+        System.out.println("Encrypted Properties file output to " + outFile);
 
-		if (verbose) {
-			for (Object oKey : props.keySet()) {
-				String sKey = (String) oKey;
-				String value = props.getProperty(sKey);
-				System.out.println("   " + sKey + "=" + value);
-			}
-		}
+        if (verbose) {
+            for (Object oKey : props.keySet()) {
+                String sKey = (String) oKey;
+                String value = props.getProperty(sKey);
+                System.out.println("   " + sKey + "=" + value);
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Loads a Properties file from a filename. If the filename is unspecified
-	 * or the file could not be found, a new Properties is returned.
-	 *
-	 * @param inFile Filename to load Properties from.
-	 * @param inFileEncrypted If true, the input file is assumed to be already encrypted. Default true.
-	 * @return Either the loaded Properties object or a new one if the file could not be found.
-	 * @throws IOException
-	 */
-	public static Properties loadProperties(String inFile, Boolean inFileEncrypted) throws IOException {
+    /**
+     * Loads a Properties file from a filename. If the filename is unspecified
+     * or the file could not be found, a new Properties is returned.
+     *
+     * @param inFile Filename to load Properties from.
+     * @param inFileEncrypted If true, the input file is assumed to be already encrypted. Default true.
+     * @return Either the loaded Properties object or a new one if the file could not be found.
+     * @throws IOException
+     */
+    public static Properties loadProperties(String inFile, Boolean inFileEncrypted) throws IOException {
 
-		if (inFileEncrypted == null) inFileEncrypted = true;
+        if (inFileEncrypted == null) inFileEncrypted = true;
 
-		Properties props;
+        Properties props;
 
-		if (inFile != null) {
+        if (inFile != null) {
 
-			File f = new File(inFile);
-			if (!f.exists()) {
-				System.out.println("Input properties file not found. Creating new.");
-				props = new ReferenceEncryptedProperties();
+            File f = new File(inFile);
+            if (!f.exists()) {
+                System.out.println("Input properties file not found. Creating new.");
+                props = new ReferenceEncryptedProperties();
 
-			} else {
-				String encrypted = inFileEncrypted ? "Encrypted" : "Plaintext";
-				System.out.println(encrypted + " properties found in " + f.getAbsolutePath());
+            } else {
+                String encrypted = inFileEncrypted ? "Encrypted" : "Plaintext";
+                System.out.println(encrypted + " properties found in " + f.getAbsolutePath());
 
-				Properties inProperties;
-				if (inFileEncrypted) {
-					inProperties = new ReferenceEncryptedProperties();
-				} else {
-					inProperties = new Properties();
-				}
+                Properties inProperties;
+                if (inFileEncrypted) {
+                    inProperties = new ReferenceEncryptedProperties();
+                } else {
+                    inProperties = new Properties();
+                }
 
-				InputStream in = null;
-				try {
-					in = new FileInputStream(f);
-					inProperties.load(in);
-				} finally {
-					try {
-						if (in != null) in.close(); //quietly close the InputStream
-					} catch (Exception e) {}
-				}
+                InputStream in = null;
+                try {
+                    in = new FileInputStream(f);
+                    inProperties.load(in);
+                } finally {
+                    try {
+                        if (in != null) in.close(); //quietly close the InputStream
+                    } catch (Exception e) {}
+                }
 
-				//Use the existing properties
-				props = new ReferenceEncryptedProperties(inProperties);
-			}
-		} else {
-			System.out.println("Input properties file not found. Creating new.");
-			props = new ReferenceEncryptedProperties();
-		}
+                //Use the existing properties
+                props = new ReferenceEncryptedProperties(inProperties);
+            }
+        } else {
+            System.out.println("Input properties file not found. Creating new.");
+            props = new ReferenceEncryptedProperties();
+        }
 
-		return props;
-	}
+        return props;
+    }
 
-	/**
-	 * Stores a Properties object to a file.
-	 *
-	 * @param outFile Filename to store to
-	 * @param props Properties to store
-	 * @param message A message to add to the comments in the stored file
-	 * @throws Exception
-	 */
-	public static void storeProperties(String outFile, Properties props, String message) throws Exception {
-		OutputStream out = null;
-		try {
-			out = new FileOutputStream(new File(outFile));
-			props.store(out, message);
-		} finally {
-			try {
-				if (out != null) out.close();  //quietly close OutputStream
-			} catch (Exception e) {}
-		}
-	}
+    /**
+     * Stores a Properties object to a file.
+     *
+     * @param outFile Filename to store to
+     * @param props Properties to store
+     * @param message A message to add to the comments in the stored file
+     * @throws Exception
+     */
+    public static void storeProperties(String outFile, Properties props, String message) throws Exception {
+        OutputStream out = null;
+        try {
+            out = new FileOutputStream(new File(outFile));
+            props.store(out, message);
+        } finally {
+            try {
+                if (out != null) out.close();  //quietly close OutputStream
+            } catch (Exception e) {}
+        }
+    }
 
-	/**
-	 * Adds a new key-value property to the passed Properties object
-	 *
-	 * @param props The Properties object to add to
-	 * @param key The key to add
-	 * @param value The value to set
-	 * @return The previous value of the property, or null if it is newly added.
-	 */
-	public static Object addProperty(Properties props, String key, String value) {
-		if (props != null && key != null && key.length() > 0 && value != null && value.length() > 0) {
-			return props.setProperty(key, value);
-		}
-		return null;
-	}
-	
+    /**
+     * Adds a new key-value property to the passed Properties object
+     *
+     * @param props The Properties object to add to
+     * @param key The key to add
+     * @param value The value to set
+     * @return The previous value of the property, or null if it is newly added.
+     */
+    public static Object addProperty(Properties props, String key, String value) {
+        if (props != null && key != null && key.length() > 0 && value != null && value.length() > 0) {
+            return props.setProperty(key, value);
+        }
+        return null;
+    }
+    
 }

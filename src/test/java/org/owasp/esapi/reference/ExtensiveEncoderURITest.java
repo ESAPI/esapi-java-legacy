@@ -21,39 +21,39 @@ import org.owasp.esapi.Validator;
 
 @RunWith(Parameterized.class)
 public class ExtensiveEncoderURITest {
-	static List<String> inputs = new ArrayList<>();
-	Validator v = ESAPI.validator();
-	String uri;
-	boolean expected;
-	
-	public ExtensiveEncoderURITest(String uri){
-		String[] values = uri.split(","); 
-		this.uri = values[0];
-		this.expected = Boolean.parseBoolean(values[1]);
-	}
-	
-	@Parameters
-	public static Collection<String> getMyUris() throws Exception{
-		URL url = ExtensiveEncoderURITest.class.getResource("/urisForTest.txt");
+    static List<String> inputs = new ArrayList<>();
+    Validator v = ESAPI.validator();
+    String uri;
+    boolean expected;
+    
+    public ExtensiveEncoderURITest(String uri){
+        String[] values = uri.split(","); 
+        this.uri = values[0];
+        this.expected = Boolean.parseBoolean(values[1]);
+    }
+    
+    @Parameters
+    public static Collection<String> getMyUris() throws Exception{
+        URL url = ExtensiveEncoderURITest.class.getResource("/urisForTest.txt");
 
-		try( BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)) ) {
-			inputs = readAllLines(br);
-		}
-		return inputs;
-	}
+        try( BufferedReader br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)) ) {
+            inputs = readAllLines(br);
+        }
+        return inputs;
+    }
 
-	private static List<String> readAllLines(BufferedReader br) throws IOException {
-		List<String> lines = new ArrayList<>();
-		String line;
-		while ((line = br.readLine()) != null) {
-			lines.add(line);
-		}
-		return lines;
-	}
+    private static List<String> readAllLines(BufferedReader br) throws IOException {
+        List<String> lines = new ArrayList<>();
+        String line;
+        while ((line = br.readLine()) != null) {
+            lines.add(line);
+        }
+        return lines;
+    }
 
-	@Test
-	public void testUrlsFromFile() {
-		assertEquals(this.expected, v.isValidURI("URL", uri, false));
-	}
+    @Test
+    public void testUrlsFromFile() {
+        assertEquals(this.expected, v.isValidURI("URL", uri, false));
+    }
 
 }

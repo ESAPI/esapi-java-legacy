@@ -22,47 +22,47 @@ package org.owasp.esapi.codecs;
  */
 public class DB2Codec extends AbstractCharacterCodec {
 
-	public String encodeCharacter(char[] immune, Character c) {
+    public String encodeCharacter(char[] immune, Character c) {
 
-		if (c.charValue() == '\'')
-			return "\'\'";
+        if (c.charValue() == '\'')
+            return "\'\'";
 
-		if (c.charValue() == ';')
-			return ".";
+        if (c.charValue() == ';')
+            return ".";
 
-		return "" + c;
-	}
+        return "" + c;
+    }
 
-	public Character decodeCharacter(PushbackString input) {
+    public Character decodeCharacter(PushbackString input) {
 
-		input.mark();
-		Character first = input.next();
+        input.mark();
+        Character first = input.next();
 
-		if (first == null) {
-			input.reset();
-			return null;
-		}
+        if (first == null) {
+            input.reset();
+            return null;
+        }
 
-		// if this is not an encoded character, return null
+        // if this is not an encoded character, return null
 
-		if (first.charValue() != '\'') {
-			input.reset();
-			return null;
-		}
+        if (first.charValue() != '\'') {
+            input.reset();
+            return null;
+        }
 
-		Character second = input.next();
+        Character second = input.next();
 
-		if (second == null) {
-			input.reset();
-			return null;
-		}
+        if (second == null) {
+            input.reset();
+            return null;
+        }
 
-		// if this is not an encoded character, return null
-		if (second.charValue() != '\'') {
-			input.reset();
-			return null;
-		}
+        // if this is not an encoded character, return null
+        if (second.charValue() != '\'') {
+            input.reset();
+            return null;
+        }
 
-		return (Character.valueOf('\''));
-	}
+        return (Character.valueOf('\''));
+    }
 }

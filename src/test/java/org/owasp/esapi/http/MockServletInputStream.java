@@ -47,23 +47,23 @@ public class MockServletInputStream extends ServletInputStream {
         if (next < body.length) {
             return body[next++];
         } else {
-        	isDone = true;
+            isDone = true;
             return -1;
         }
     }
 
-	@Override
-	public boolean isFinished() {
-		return isDone;
-	}
+    @Override
+    public boolean isFinished() {
+        return isDone;
+    }
 
-	@Override
-	public boolean isReady() {
-		return false;
-	}
+    @Override
+    public boolean isReady() {
+        return false;
+    }
 
-	@Override
-	public void setReadListener(ReadListener readListener) {
-		//NO_OP
-	}
+    @Override
+    public void setReadListener(ReadListener readListener) {
+        //NO_OP
+    }
 }

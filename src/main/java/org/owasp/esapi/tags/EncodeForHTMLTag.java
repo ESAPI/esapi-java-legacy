@@ -23,17 +23,17 @@ import org.owasp.esapi.Encoder;
  */
 public class EncodeForHTMLTag extends BaseEncodeTag
 {
-	private static final long serialVersionUID = 3L;
+    private static final long serialVersionUID = 3L;
 
-	/**
-	 * Encode tag's content for usage in HTML.
-	 * @param content The tag's content as a String
-	 * @param enc Encoder used to call
-	 * 	{@link Encoder#encodeForHTML(String)}
-	 * @return content encoded for usage in HTML
-	 */
-	protected String encode(String content, Encoder enc)
-	{
-		return enc.encodeForHTML(content);
-	}
+    /**
+     * Encode tag's content for usage in HTML.
+     * @param content The tag's content as a String
+     * @param enc Encoder used to call
+     *     {@link Encoder#encodeForHTML(String)}
+     * @return content encoded for usage in HTML
+     */
+    protected String encode(String content, Encoder enc)
+    {
+        return enc.encodeForHTML(content);
+    }
 }

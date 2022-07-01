@@ -47,7 +47,7 @@ public class IntrusionException extends EnterpriseSecurityRuntimeException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public IntrusionException(String userMessage, String logMessage) {
         super(userMessage);
@@ -61,9 +61,9 @@ public class IntrusionException extends EnterpriseSecurityRuntimeException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause 
-     *			  the cause
+     *              the cause
      */
     public IntrusionException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);

@@ -32,48 +32,48 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class IPRule extends Rule {
 
-	private Pattern allowedIP;
-	private String exactPath;
-	private Pattern path;
-	private boolean useExactPath = false;
-	private String ipHeader;
+    private Pattern allowedIP;
+    private String exactPath;
+    private Pattern path;
+    private boolean useExactPath = false;
+    private String ipHeader;
 
-	public IPRule(String id, Pattern allowedIP, Pattern path, String ipHeader) {
-		this.allowedIP = allowedIP;
-		this.path = path;
-		this.useExactPath = false;
-		this.ipHeader = ipHeader;
-		setId(id);
-	}
+    public IPRule(String id, Pattern allowedIP, Pattern path, String ipHeader) {
+        this.allowedIP = allowedIP;
+        this.path = path;
+        this.useExactPath = false;
+        this.ipHeader = ipHeader;
+        setId(id);
+    }
 
-	public IPRule(String id, Pattern allowedIP, String exactPath) {
-		this.path = null;
-		this.exactPath = exactPath;
-		this.useExactPath = true;
-		setId(id);
-	}
+    public IPRule(String id, Pattern allowedIP, String exactPath) {
+        this.path = null;
+        this.exactPath = exactPath;
+        this.useExactPath = true;
+        setId(id);
+    }
 
-	public Action check(HttpServletRequest request,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		String uri = request.getRequestURI();
+        String uri = request.getRequestURI();
 
-		if ( (!useExactPath && path.matcher(uri).matches()) ||
-			 ( useExactPath && exactPath.equals(uri)) ) {
-			
-			String sourceIP = request.getRemoteAddr() + "";
-			
-			if ( ipHeader != null ) {
-				sourceIP = request.getHeader(ipHeader);
-			}
-			
-			if ( ! allowedIP.matcher(sourceIP).matches() ) {
-				log(request, "IP not allowed to access URI '" + uri + "'");
-				return new DefaultAction();
-			}
-		}
+        if ( (!useExactPath && path.matcher(uri).matches()) ||
+             ( useExactPath && exactPath.equals(uri)) ) {
+            
+            String sourceIP = request.getRemoteAddr() + "";
+            
+            if ( ipHeader != null ) {
+                sourceIP = request.getHeader(ipHeader);
+            }
+            
+            if ( ! allowedIP.matcher(sourceIP).matches() ) {
+                log(request, "IP not allowed to access URI '" + uri + "'");
+                return new DefaultAction();
+            }
+        }
 
-		return new DoNothingAction();
-	}
+        return new DoNothingAction();
+    }
 }

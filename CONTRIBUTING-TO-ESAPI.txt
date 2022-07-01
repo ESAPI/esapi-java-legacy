@@ -50,7 +50,8 @@ Required Software:
     JDK 8 or later.
     [Note: If you use JDK 9 or later, there will be multiple
     failures when you try to run 'mvn test' as well as some general warnings.
-    See ESAPI GitHub issue #496 for details.]
+    See ESAPI GitHub issue #496 for details. We welcome volunteers to address
+    this.]
 
 Building ESAPI:
     https://www.owasp.org/index.php/ESAPI-Building briefly discusses how to

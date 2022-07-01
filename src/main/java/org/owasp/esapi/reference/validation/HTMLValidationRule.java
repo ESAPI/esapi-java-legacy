@@ -30,7 +30,10 @@ import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.ValidationException;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration.DefaultSearchPath;
+import org.owasp.esapi.PropNames.DefaultSearchPath;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
+import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE;
+
 import org.owasp.validator.html.AntiSamy;
 import org.owasp.validator.html.CleanResults;
 import org.owasp.validator.html.Policy;
@@ -49,77 +52,75 @@ import org.owasp.validator.html.ScanException;
  */
 public class HTMLValidationRule extends StringValidationRule {
 
-	/** OWASP AntiSamy markup verification policy */
-	private static Policy antiSamyPolicy = null;
-	private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
-	private static final String ANTISAMYPOLICY_FILENAME = "antisamy-esapi.xml";
+    /** OWASP AntiSamy markup verification policy */
+    private static Policy antiSamyPolicy = null;
+    private static final Logger LOGGER = ESAPI.getLogger( "HTMLValidationRule" );
+    private static final String ANTISAMYPOLICY_FILENAME = "antisamy-esapi.xml";
 
-	/*package */ static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
-	    InputStream result = null;
-	    
-	    for (String searchPath: searchPaths) {
-	        result = classLoader.getResourceAsStream(searchPath + fileName);
-	        
-	        if (result != null) {
-	            LOGGER.info(Logger.EVENT_SUCCESS, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + 
-	                    searchPath + "' using " + contextDescription + "!");
-	                break; 
-	        }
-	    }
-	    
-	    return result;
-	}
-	
-	/*package */ static InputStream getResourceStreamFromClasspath(String fileName) {
-	    LOGGER.info(Logger.EVENT_FAILURE, "Loading " + fileName + " from classpaths");
-		
-	    InputStream resourceStream = null;
-		
-		List<String> orderedSearchPaths = Arrays.asList(DefaultSearchPath.ROOT.value(), 
-		        DefaultSearchPath.RESOURCE_DIRECTORY.value(),
-		        DefaultSearchPath.DOT_ESAPI.value(),
-		        DefaultSearchPath.ESAPI.value(),
-		        DefaultSearchPath.RESOURCES.value(),
-		        DefaultSearchPath.SRC_MAIN_RESOURCES.value());
-		
-		resourceStream = getResourceStreamFromClassLoader("current thread context class loader", Thread.currentThread().getContextClassLoader(), fileName, orderedSearchPaths);
-		 
-		//I'm lazy. Using ternary for shorthand "if null then do next thing"  Harder to read, sorry
-		resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("system class loader", ClassLoader.getSystemClassLoader(), fileName, orderedSearchPaths);
-		resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("class loader for DefaultSecurityConfiguration class", ESAPI.securityConfiguration().getClass().getClassLoader(), fileName, orderedSearchPaths);
-		
-		return resourceStream;
-	}
-	
-	/*package */ static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
-	    InputStream resourceStream = null;
-	    SecurityConfiguration secCfg = ESAPI.securityConfiguration();
-	    
-	    //Rather than catching the IOException from the resource stream, let's ask if the file exists to give this a best-case resolution.
-	    //This helps with the IOException handling too.  If the file is there and we get an IOException from the SecurityConfiguration, then the file is there and something else is wrong (FAIL -- don't try the other path)
-	    File file = secCfg.getResourceFile(antisamyPolicyFilename);
+    /*package */ static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
+        InputStream result = null;
+        
+        for (String searchPath: searchPaths) {
+            result = classLoader.getResourceAsStream(searchPath + fileName);
+            
+            if (result != null) {
+                LOGGER.info(Logger.EVENT_SUCCESS, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + 
+                        searchPath + "' using " + contextDescription + "!");
+                    break; 
+            }
+        }
+        
+        return result;
+    }
+    
+    /*package */ static InputStream getResourceStreamFromClasspath(String fileName) {
+        LOGGER.info(Logger.EVENT_FAILURE, "Loading " + fileName + " from classpaths");
+        
+        InputStream resourceStream = null;
+        
+        List<String> orderedSearchPaths = Arrays.asList(DefaultSearchPath.ROOT.value(), 
+                DefaultSearchPath.RESOURCE_DIRECTORY.value(),
+                DefaultSearchPath.DOT_ESAPI.value(),
+                DefaultSearchPath.ESAPI.value(),
+                DefaultSearchPath.RESOURCES.value(),
+                DefaultSearchPath.SRC_MAIN_RESOURCES.value());
+        
+        resourceStream = getResourceStreamFromClassLoader("current thread context class loader", Thread.currentThread().getContextClassLoader(), fileName, orderedSearchPaths);
+         
+        //I'm lazy. Using ternary for shorthand "if null then do next thing"  Harder to read, sorry
+        resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("system class loader", ClassLoader.getSystemClassLoader(), fileName, orderedSearchPaths);
+        resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("class loader for DefaultSecurityConfiguration class", ESAPI.securityConfiguration().getClass().getClassLoader(), fileName, orderedSearchPaths);
+        
+        return resourceStream;
+    }
+    
+    /*package */ static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
+        InputStream resourceStream = null;
+        SecurityConfiguration secCfg = ESAPI.securityConfiguration();
+        
+        //Rather than catching the IOException from the resource stream, let's ask if the file exists to give this a best-case resolution.
+        //This helps with the IOException handling too.  If the file is there and we get an IOException from the SecurityConfiguration, then the file is there and something else is wrong (FAIL -- don't try the other path)
+        File file = secCfg.getResourceFile(antisamyPolicyFilename);
     
         resourceStream = file == null ? getResourceStreamFromClasspath(antisamyPolicyFilename) : secCfg.getResourceStream(antisamyPolicyFilename);
         return resourceStream == null ? null : Policy.getInstance(resourceStream);
-	}
+    }
 
-	/*package */ static String resolveAntisamyFilename() {
-	    String antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
+    /*package */ static String resolveAntisamyFilename() {
+        String antisamyPolicyFilename = ANTISAMYPOLICY_FILENAME;
         try {
-            antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp(
-                    // Future: This will be moved to a new PropNames class
-                org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
+            antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp( VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
         } catch (ConfigurationException cex) {
             
             LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " + 
-                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
+                           VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
                            " not set, using default value: " + ANTISAMYPOLICY_FILENAME);
         }
         return antisamyPolicyFilename;
-	}
-	
-	/*package */ static void configureInstance() {
-	    String antisamyPolicyFilename = resolveAntisamyFilename();
+    }
+    
+    /*package */ static void configureInstance() {
+        String antisamyPolicyFilename = resolveAntisamyFilename();
 
         try {
             antiSamyPolicy = loadAntisamyPolicy(antisamyPolicyFilename);
@@ -135,45 +136,45 @@ public class HTMLValidationRule extends StringValidationRule {
             throw new ConfigurationException("Couldn't find " + antisamyPolicyFilename);
         }
 
-	}
-	
-	static {		
-	    configureInstance();
-	}
+    }
+    
+    static {        
+        configureInstance();
+    }
 
-	public HTMLValidationRule( String typeName ) {
-		super( typeName );
-	}
+    public HTMLValidationRule( String typeName ) {
+        super( typeName );
+    }
 
-	public HTMLValidationRule( String typeName, Encoder encoder ) {
-		super( typeName, encoder );
-	}
+    public HTMLValidationRule( String typeName, Encoder encoder ) {
+        super( typeName, encoder );
+    }
 
-	public HTMLValidationRule( String typeName, Encoder encoder, String whitelistPattern ) {
-		super( typeName, encoder, whitelistPattern );
-	}
-
-    /**
-     * {@inheritDoc}
-     */
-	@Override
-	public String getValid( String context, String input ) throws ValidationException {
-		return invokeAntiSamy( context, input );
-	}
+    public HTMLValidationRule( String typeName, Encoder encoder, String whitelistPattern ) {
+        super( typeName, encoder, whitelistPattern );
+    }
 
     /**
      * {@inheritDoc}
      */
-	@Override
-	public String sanitize( String context, String input ) {
-		String safe = "";
-		try {
-			safe = invokeAntiSamy( context, input );
-		} catch( ValidationException e ) {
-			// just return safe
-		}
-		return safe;
-	}
+    @Override
+    public String getValid( String context, String input ) throws ValidationException {
+        return invokeAntiSamy( context, input );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String sanitize( String context, String input ) {
+        String safe = "";
+        try {
+            safe = invokeAntiSamy( context, input );
+        } catch( ValidationException e ) {
+            // just return safe
+        }
+        return safe;
+    }
 
     /**
      * Check whether we want the legacy behavior ("clean") or the presumably intended
@@ -197,9 +198,7 @@ public class HTMLValidationRule extends StringValidationRule {
             // Hindsight: maybe we should have getBooleanProp(), getStringProp(),
             // getIntProp() methods that take a default arg as well?
             // At least for ESAPI 3.x.
-            propValue = ESAPI.securityConfiguration().getStringProp(
-                                // Future: This will be moved to a new PropNames class
-                            org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION );
+            propValue = ESAPI.securityConfiguration().getStringProp( VALIDATOR_HTML_VALIDATION_ACTION );
             switch ( propValue.toLowerCase() ) {
                 case "throw":
                     legacy = false;     // New, presumably correct behavior, as addressed by GitHub issue 509
@@ -209,7 +208,7 @@ public class HTMLValidationRule extends StringValidationRule {
                     break;
                 default:
                     LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
-                                   org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION +
+                                   VALIDATOR_HTML_VALIDATION_ACTION +
                                    " was set to \"" + propValue + "\".  Must be set to either \"clean\"" +
                                    " (the default for legacy support) or \"throw\"; assuming \"clean\" for legacy behavior.");
                     legacy = true;
@@ -219,7 +218,7 @@ public class HTMLValidationRule extends StringValidationRule {
             // OPEN ISSUE: Should we log this? I think so. Convince me otherwise. But maybe
             //             we should only log it once or every Nth time??
             LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
-                           org.owasp.esapi.reference.DefaultSecurityConfiguration.VALIDATOR_HTML_VALIDATION_ACTION +
+                           VALIDATOR_HTML_VALIDATION_ACTION +
                            " must be set to either \"clean\" (the default for legacy support) or \"throw\"; assuming \"clean\"",
                            cex);
         }
@@ -227,37 +226,37 @@ public class HTMLValidationRule extends StringValidationRule {
         return legacy;
     }
 
-	private String invokeAntiSamy( String context, String input ) throws ValidationException {
-		// CHECKME should this allow empty Strings? "   " use IsBlank instead?
-	    if ( StringUtilities.isEmpty(input) ) {
-			if (allowNull) {
-				return null;
-			}
-			throw new ValidationException( context + " is required", "AntiSamy validation error: context=" + context + ", input=" + input, context );
-	    }
+    private String invokeAntiSamy( String context, String input ) throws ValidationException {
+        // CHECKME should this allow empty Strings? "   " use IsBlank instead?
+        if ( StringUtilities.isEmpty(input) ) {
+            if (allowNull) {
+                return null;
+            }
+            throw new ValidationException( context + " is required", "AntiSamy validation error: context=" + context + ", input=" + input, context );
+        }
 
-		String canonical = super.getValid( context, input );
+        String canonical = super.getValid( context, input );
 
-		try {
-			AntiSamy as = new AntiSamy();
-			CleanResults test = as.scan(canonical, antiSamyPolicy);
+        try {
+            AntiSamy as = new AntiSamy();
+            CleanResults test = as.scan(canonical, antiSamyPolicy);     // Uses AntiSamy.DOM scanner.
 
-			List<String> errors = test.getErrorMessages();
-			if ( !errors.isEmpty() ) {
+            List<String> errors = test.getErrorMessages();
+            if ( !errors.isEmpty() ) {
                 if ( legacyHtmlValidation() ) {        // See GitHub issues 509 and 521
                     LOGGER.info(Logger.SECURITY_FAILURE, "Cleaned up invalid HTML input: " + errors );
                 } else {
-				    throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
+                    throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
                 }
-			}
+            }
 
-			return test.getCleanHTML().trim();
+            return test.getCleanHTML().trim();
 
-		} catch (ScanException e) {
-			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
-		} catch (PolicyException e) {
-			throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e, context );
-		}
-	}
+        } catch (ScanException e) {
+            throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input: context=" + context + " error=" + e.getMessage(), e, context );
+        } catch (PolicyException e) {
+            throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " error=" + e.getMessage(), e, context );
+        }
+    }
 }
 

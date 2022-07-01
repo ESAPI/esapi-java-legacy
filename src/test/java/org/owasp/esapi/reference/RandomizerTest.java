@@ -37,11 +37,11 @@ import org.owasp.esapi.errors.EncryptionException;
 public class RandomizerTest extends TestCase {
     
     /**
-	 * Instantiates a new randomizer test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new randomizer test.
+     * 
+     * @param testName
+     *            the test name
+     */
     public RandomizerTest(String testName) {
         super(testName);
     }
@@ -51,7 +51,7 @@ public class RandomizerTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
 
     /**
@@ -59,22 +59,22 @@ public class RandomizerTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(RandomizerTest.class);        
         return suite;
     }
 
     /**
-	 * Test of getRandomString method, of class org.owasp.esapi.Randomizer.
-	 */
+     * Test of getRandomString method, of class org.owasp.esapi.Randomizer.
+     */
     public void testGetRandomString() {
         System.out.println("getRandomString");
         int length = 20;
@@ -84,8 +84,8 @@ public class RandomizerTest extends TestCase {
         for ( int i = 0; i < 1000; i++ ) {
             String result = instance.getRandomString(length, EncoderConstants.CHAR_ALPHANUMERICS );
             for ( int j=0;j<result.length();j++ ) {
-            	char c = result.charAt(j);
-            	counts[c]++;
+                char c = result.charAt(j);
+                counts[c]++;
             }
             assertEquals(length, result.length());
         }
@@ -94,22 +94,22 @@ public class RandomizerTest extends TestCase {
         int min=Integer.MAX_VALUE;
         int max=0;
         for ( int i = 0; i < 128; i++ ) {
-        	if ( counts[i] > max ) { max = counts[i]; } 
-        	if ( counts[i] > 0 && counts[i] < min ) { min = counts[i]; }
-        	if ( max - min > trials/10 ) {
-        		System.err.println("*** WARNING: RandomizerTest.testGetRandomString(): " +
+            if ( counts[i] > max ) { max = counts[i]; } 
+            if ( counts[i] > 0 && counts[i] < min ) { min = counts[i]; }
+            if ( max - min > trials/10 ) {
+                System.err.println("*** WARNING: RandomizerTest.testGetRandomString(): " +
                         "Randomness counts are off. This may be simply from " +
                         "statistical variance or it could signify a flaw in " +
                         "Randomizer.getRandomString(). Repeat this test " +
                         "multiple times and if you get repeated warnings " +
                         "you should assume the latter and investigate further.");
-        	}
+            }
         }
     }
 
     /**
-	 * Test of getRandomInteger method, of class org.owasp.esapi.Randomizer.
-	 */
+     * Test of getRandomInteger method, of class org.owasp.esapi.Randomizer.
+     */
     public void testGetRandomInteger() {
         System.out.println("getRandomInteger");        
         int min = -20;
@@ -126,8 +126,8 @@ public class RandomizerTest extends TestCase {
     }
 
     /**
-	 * Test of getRandomReal method, of class org.owasp.esapi.Randomizer.
-	 */
+     * Test of getRandomReal method, of class org.owasp.esapi.Randomizer.
+     */
     public void testGetRandomReal() {
         System.out.println("getRandomReal");
         float min = -20.5234F;
@@ -168,14 +168,14 @@ public class RandomizerTest extends TestCase {
      * Check to be sure your analysis tool loads exactly 20,000 tokens of 20 characters each.
      */
     
-	public static void main(String[] args) throws IOException {
-		FileWriter fw = new FileWriter("tokens.txt");
-		for (int i = 0; i < 20000; i++) {
-			String token = ESAPI.randomizer().getRandomString(20, EncoderConstants.CHAR_ALPHANUMERICS);
-			fw.write(token + "\n");
-		}
-		fw.close();
-	}
+    public static void main(String[] args) throws IOException {
+        FileWriter fw = new FileWriter("tokens.txt");
+        for (int i = 0; i < 20000; i++) {
+            String token = ESAPI.randomizer().getRandomString(20, EncoderConstants.CHAR_ALPHANUMERICS);
+            fw.write(token + "\n");
+        }
+        fw.close();
+    }
 
 
      

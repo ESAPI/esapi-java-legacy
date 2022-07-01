@@ -44,9 +44,9 @@ public class HTMLValidationRuleAntisamyPropertyTest {
         //System.setProperty( "owasp.validator.validateschema", "false" ); 
     }
 
-	@Test
-	public void checkAntisamySystemPropertyWorksAsAdvertised() throws Exception {
-	    HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
-	}
-	
+    @Test
+    public void checkAntisamySystemPropertyWorksAsAdvertised() throws Exception {
+        HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
+    }
+    
 }

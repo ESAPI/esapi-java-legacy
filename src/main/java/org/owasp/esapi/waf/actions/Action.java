@@ -23,23 +23,23 @@ package org.owasp.esapi.waf.actions;
  */
 public abstract class Action {
 
-	protected boolean failed = true;
-	protected boolean actionNecessary = true;
+    protected boolean failed = true;
+    protected boolean actionNecessary = true;
 
-	public void setFailed(boolean didFail) {
-		failed = didFail;
-	}
+    public void setFailed(boolean didFail) {
+        failed = didFail;
+    }
 
-	public boolean failedRule() {
-		return failed;
-	}
+    public boolean failedRule() {
+        return failed;
+    }
 
-	public boolean isActionNecessary() {
-		return actionNecessary;
-	}
+    public boolean isActionNecessary() {
+        return actionNecessary;
+    }
 
-	public void setActionNecessary(boolean b) {
-		this.actionNecessary = b;
+    public void setActionNecessary(boolean b) {
+        this.actionNecessary = b;
 
-	}
+    }
 }

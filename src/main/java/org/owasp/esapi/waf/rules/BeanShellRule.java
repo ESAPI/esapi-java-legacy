@@ -40,80 +40,80 @@ import bsh.Interpreter;
  */
 public class BeanShellRule extends Rule {
 
-	private Interpreter i;
-	private String script;
-	private Pattern path;
+    private Interpreter i;
+    private String script;
+    private Pattern path;
 
-	public BeanShellRule(String fileLocation, String id, Pattern path) throws IOException, EvalError {
-		i = new Interpreter();
-		i.set("logger", logger);
-		this.script = getFileContents(ESAPI.securityConfiguration().getResourceFile(fileLocation));
-		this.id = id;
-		this.path = path;
-	}
+    public BeanShellRule(String fileLocation, String id, Pattern path) throws IOException, EvalError {
+        i = new Interpreter();
+        i.set("logger", logger);
+        this.script = getFileContents(ESAPI.securityConfiguration().getResourceFile(fileLocation));
+        this.id = id;
+        this.path = path;
+    }
 
-	public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response,
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest request, InterceptingHTTPServletResponse response,
+            HttpServletResponse httpResponse) {
 
-		/*
-		 * Early fail: if the URL doesn't match one we're interested in.
-		 */
+        /*
+         * Early fail: if the URL doesn't match one we're interested in.
+         */
 
-		if (path != null && !path.matcher(request.getRequestURI()).matches()) {
-			return new DoNothingAction();
-		}
+        if (path != null && !path.matcher(request.getRequestURI()).matches()) {
+            return new DoNothingAction();
+        }
 
-		/*
-		 * Run the beanshell that we've already parsed and pre-compiled.
-		 * Populate the "request" and "response" objects so the script has
-		 * access to the same variables we do here.
-		 */
+        /*
+         * Run the beanshell that we've already parsed and pre-compiled.
+         * Populate the "request" and "response" objects so the script has
+         * access to the same variables we do here.
+         */
 
-		try {
+        try {
 
-			Action a = null;
+            Action a = null;
 
-			i.set("action", a);
-			i.set("request", request);
+            i.set("action", a);
+            i.set("request", request);
 
-			if (response != null) {
-				i.set("response", response);
-			} else {
-				i.set("response", httpResponse);
-			}
+            if (response != null) {
+                i.set("response", response);
+            } else {
+                i.set("response", httpResponse);
+            }
 
-			i.set("session", request.getSession());
-			i.eval(script);
+            i.set("session", request.getSession());
+            i.eval(script);
 
-			a = (Action) i.get("action");
+            a = (Action) i.get("action");
 
-			if (a != null) {
-				return a;
-			}
+            if (a != null) {
+                return a;
+            }
 
-		} catch (EvalError e) {
-			log(request, "Error running custom beanshell rule (" + id + ") - " + e.getMessage());
-		}
+        } catch (EvalError e) {
+            log(request, "Error running custom beanshell rule (" + id + ") - " + e.getMessage());
+        }
 
-		return new DoNothingAction();
-	}
+        return new DoNothingAction();
+    }
 
-	private String getFileContents(File f) throws IOException {
-		StringBuffer sb = new StringBuffer();
-		BufferedReader br = null;
+    private String getFileContents(File f) throws IOException {
+        StringBuffer sb = new StringBuffer();
+        BufferedReader br = null;
 
-		try {
-			br = new BufferedReader(new FileReader(f));
-			String line;
-			while ((line = br.readLine()) != null) {
-				sb.append(line + System.getProperty("line.separator"));
-			}
+        try {
+            br = new BufferedReader(new FileReader(f));
+            String line;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + System.getProperty("line.separator"));
+            }
 
-		} finally {
-			if (br != null) {
-				br.close();
-			}
-		}
-		return sb.toString();
-	}
+        } finally {
+            if (br != null) {
+                br.close();
+            }
+        }
+        return sb.toString();
+    }
 }

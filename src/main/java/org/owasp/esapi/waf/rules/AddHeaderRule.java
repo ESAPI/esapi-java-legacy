@@ -32,61 +32,61 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class AddHeaderRule extends Rule {
 
-	private String header;
-	private String value;
-	private Pattern path;
-	private List<Object> exceptions;
+    private String header;
+    private String value;
+    private Pattern path;
+    private List<Object> exceptions;
 
-	public AddHeaderRule(String id, String header, String value, Pattern path, List<Object> exceptions) {
-		setId(id);
-		this.header = header;
-		this.value = value;
-		this.path = path;
-		this.exceptions = exceptions;
-	}
+    public AddHeaderRule(String id, String header, String value, Pattern path, List<Object> exceptions) {
+        setId(id);
+        this.header = header;
+        this.value = value;
+        this.path = path;
+        this.exceptions = exceptions;
+    }
 
-	public Action check(
-			HttpServletRequest request, 
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(
+            HttpServletRequest request, 
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		DoNothingAction action = new DoNothingAction();
+        DoNothingAction action = new DoNothingAction();
 
-		if ( path.matcher(request.getRequestURI()).matches() ) {
+        if ( path.matcher(request.getRequestURI()).matches() ) {
 
-			for(int i=0;i<exceptions.size();i++) {
+            for(int i=0;i<exceptions.size();i++) {
 
-				Object o = exceptions.get(i);
+                Object o = exceptions.get(i);
 
-				if ( o instanceof String ) {
-					if ( request.getRequestURI().equals((String)o)) {
-						action.setFailed(false);
-						action.setActionNecessary(false);
-						return action;
-					}
-				} else if ( o instanceof Pattern ) {
-					if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
-						action.setFailed(false);
-						action.setActionNecessary(false);
-						return action;					
-					}
-				}
+                if ( o instanceof String ) {
+                    if ( request.getRequestURI().equals((String)o)) {
+                        action.setFailed(false);
+                        action.setActionNecessary(false);
+                        return action;
+                    }
+                } else if ( o instanceof Pattern ) {
+                    if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
+                        action.setFailed(false);
+                        action.setActionNecessary(false);
+                        return action;                    
+                    }
+                }
 
-			}
+            }
 
 
-			action.setFailed(true);
-			action.setActionNecessary(false);
+            action.setFailed(true);
+            action.setActionNecessary(false);
 
-			if ( response != null ) {
-				response.setHeader(header, value);
-			} else {
-				httpResponse.setHeader(header, value);
-			}
+            if ( response != null ) {
+                response.setHeader(header, value);
+            } else {
+                httpResponse.setHeader(header, value);
+            }
 
-		}
+        }
 
-		return action;
-	}
+        return action;
+    }
 
 }

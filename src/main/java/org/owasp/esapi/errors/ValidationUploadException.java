@@ -20,27 +20,15 @@ package org.owasp.esapi.errors;
  */
 public class ValidationUploadException extends ValidationException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
-
-	/**
-	 * Instantiates a new validation exception.
-	 */
-	protected ValidationUploadException() {
-		// hidden
-	}
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
     /**
-     * Create a new ValidationException
-     * 
-     * @param userMessage
-     *            the message to display to users
-     * @param logMessage
-	 * 			  the message logged
+     * Instantiates a new validation exception.
      */
-	public ValidationUploadException(String userMessage, String logMessage) {
-		super(userMessage, logMessage);
-	}
+    protected ValidationUploadException() {
+        // hidden
+    }
 
     /**
      * Create a new ValidationException
@@ -48,12 +36,24 @@ public class ValidationUploadException extends ValidationException {
      * @param userMessage
      *            the message to display to users
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
+     */
+    public ValidationUploadException(String userMessage, String logMessage) {
+        super(userMessage, logMessage);
+    }
+
+    /**
+     * Create a new ValidationException
+     * 
+     * @param userMessage
+     *            the message to display to users
+     * @param logMessage
+     *               the message logged
      * @param cause
-     * 			  the cause
+     *               the cause
      */
-	public ValidationUploadException(String userMessage, String logMessage, Throwable cause) {
-		super(userMessage, logMessage, cause);
-	}
+    public ValidationUploadException(String userMessage, String logMessage, Throwable cause) {
+        super(userMessage, logMessage, cause);
+    }
 
 }

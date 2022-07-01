@@ -33,7 +33,14 @@ import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
 import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
-import org.owasp.esapi.reference.DefaultSecurityConfiguration;
+
+import static org.owasp.esapi.PropNames.LOG_ENCODING_REQUIRED;
+import static org.owasp.esapi.PropNames.LOG_USER_INFO;
+import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
+import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
+import static org.owasp.esapi.PropNames.APPLICATION_NAME;
+import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
+
 /**
  * LogFactory implementation which creates JAVA supporting Loggers.
  * 
@@ -55,15 +62,15 @@ public class JavaLogFactory implements LogFactory {
     private static JavaLogBridge LOG_BRIDGE;
 
     static {
-        boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_ENCODING_REQUIRED);
+        boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(LOG_ENCODING_REQUIRED);
         JAVA_LOG_SCRUBBER = createLogScrubber(encodeLog);
 
 
-        boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_USER_INFO);
-        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_CLIENT_INFO);
-        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_APPLICATION_NAME);
-        String appName = ESAPI.securityConfiguration().getStringProp(DefaultSecurityConfiguration.APPLICATION_NAME);
-        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(DefaultSecurityConfiguration.LOG_SERVER_IP);
+        boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(LOG_USER_INFO);
+        boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(LOG_CLIENT_INFO);
+        boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
+        String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
+        boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
         JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
 
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
@@ -96,7 +103,7 @@ public class JavaLogFactory implements LogFactory {
             }
             logManager.readConfiguration(stream);
         } catch (IOException ioe) {
-            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);        	
+            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);            
         }
     }
 

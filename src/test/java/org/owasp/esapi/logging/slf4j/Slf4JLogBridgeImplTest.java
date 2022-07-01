@@ -73,10 +73,10 @@ public class Slf4JLogBridgeImplTest {
     
     @Test
     public void testLogMessage() {
-    	EventType eventType = Logger.EVENT_UNSPECIFIED;
-    	String loggerName = testName.getMethodName() + "-LOGGER";
-    	String orignMsg = testName.getMethodName();
-    	String appendMsg = "[APPEND] " + orignMsg;
+        EventType eventType = Logger.EVENT_UNSPECIFIED;
+        String loggerName = testName.getMethodName() + "-LOGGER";
+        String orignMsg = testName.getMethodName();
+        String appendMsg = "[APPEND] " + orignMsg;
         String cleanMsg = appendMsg + " [CLEANED]";
 
         //Setup for Appender
@@ -103,10 +103,10 @@ public class Slf4JLogBridgeImplTest {
 
     @Test
     public void testLogErrorMessageWithException() {
-    	EventType eventType = Logger.EVENT_UNSPECIFIED;
-    	String loggerName = testName.getMethodName() + "-LOGGER";
-    	String orignMsg = testName.getMethodName();
-    	String appendMsg = "[APPEND] " + orignMsg;
+        EventType eventType = Logger.EVENT_UNSPECIFIED;
+        String loggerName = testName.getMethodName() + "-LOGGER";
+        String orignMsg = testName.getMethodName();
+        String appendMsg = "[APPEND] " + orignMsg;
         String cleanMsg = appendMsg + " [CLEANED]";
 
         //Setup for Appender

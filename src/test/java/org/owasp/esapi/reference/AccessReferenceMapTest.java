@@ -39,11 +39,11 @@ import org.owasp.esapi.errors.EncryptionException;
 public class AccessReferenceMapTest extends TestCase {
     
     /**
-	 * Instantiates a new access reference map test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new access reference map test.
+     * 
+     * @param testName
+     *            the test name
+     */
     public AccessReferenceMapTest(String testName) {
         super(testName);
     }
@@ -53,7 +53,7 @@ public class AccessReferenceMapTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
 
     /**
@@ -61,14 +61,14 @@ public class AccessReferenceMapTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(AccessReferenceMapTest.class);
         return suite;
@@ -76,60 +76,60 @@ public class AccessReferenceMapTest extends TestCase {
 
     
     /**
-	 * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
-	 * 
-	 * @throws AuthenticationException
+     * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
+     * 
+     * @throws AuthenticationException
      *             the authentication exception
      * @throws EncryptionException
-	 */
+     */
     public void testUpdate() throws AuthenticationException, EncryptionException {
         System.out.println("update");
-    	RandomAccessReferenceMap arm = new RandomAccessReferenceMap();
-    	Authenticator auth = ESAPI.authenticator();
-    	
-    	String pass = auth.generateStrongPassword();
-    	User u = auth.createUser( "armUpdate", pass, pass );
-    	
-    	// test to make sure update returns something
-		arm.update(auth.getUserNames());
-		String indirect = arm.getIndirectReference( u.getAccountName() );
-		if ( indirect == null ) fail();
-		
-		// test to make sure update removes items that are no longer in the list
-		auth.removeUser( u.getAccountName() );
-		arm.update(auth.getUserNames());
-		indirect = arm.getIndirectReference( u.getAccountName() );
-		if ( indirect != null ) fail();
-		
-		// test to make sure old indirect reference is maintained after an update
-		arm.update(auth.getUserNames());
-		String newIndirect = arm.getIndirectReference( u.getAccountName() );
-		assertEquals(indirect, newIndirect);
-    }
-    
-    
-    /**
-	 * Test of iterator method, of class org.owasp.esapi.AccessReferenceMap.
-	 */
-    public void testIterator() {
-        System.out.println("iterator");
-    	RandomAccessReferenceMap arm = new RandomAccessReferenceMap();
+        RandomAccessReferenceMap arm = new RandomAccessReferenceMap();
         Authenticator auth = ESAPI.authenticator();
         
-		arm.update(auth.getUserNames());
+        String pass = auth.generateStrongPassword();
+        User u = auth.createUser( "armUpdate", pass, pass );
+        
+        // test to make sure update returns something
+        arm.update(auth.getUserNames());
+        String indirect = arm.getIndirectReference( u.getAccountName() );
+        if ( indirect == null ) fail();
+        
+        // test to make sure update removes items that are no longer in the list
+        auth.removeUser( u.getAccountName() );
+        arm.update(auth.getUserNames());
+        indirect = arm.getIndirectReference( u.getAccountName() );
+        if ( indirect != null ) fail();
+        
+        // test to make sure old indirect reference is maintained after an update
+        arm.update(auth.getUserNames());
+        String newIndirect = arm.getIndirectReference( u.getAccountName() );
+        assertEquals(indirect, newIndirect);
+    }
+    
+    
+    /**
+     * Test of iterator method, of class org.owasp.esapi.AccessReferenceMap.
+     */
+    public void testIterator() {
+        System.out.println("iterator");
+        RandomAccessReferenceMap arm = new RandomAccessReferenceMap();
+        Authenticator auth = ESAPI.authenticator();
+        
+        arm.update(auth.getUserNames());
 
-		Iterator i = arm.iterator();
-		while ( i.hasNext() ) {
-			String userName = (String)i.next();
-			User u = auth.getUser( userName );
-			if ( u == null ) fail();
-		}
+        Iterator i = arm.iterator();
+        while ( i.hasNext() ) {
+            String userName = (String)i.next();
+            User u = auth.getUser( userName );
+            if ( u == null ) fail();
+        }
     }
     
     /**
-	 * Test of getIndirectReference method, of class
-	 * org.owasp.esapi.AccessReferenceMap.
-	 */
+     * Test of getIndirectReference method, of class
+     * org.owasp.esapi.AccessReferenceMap.
+     */
     public void testGetIndirectReference() {
         System.out.println("getIndirectReference");
         
@@ -146,12 +146,12 @@ public class AccessReferenceMapTest extends TestCase {
     }
 
     /**
-	 * Test of getDirectReference method, of class
-	 * org.owasp.esapi.AccessReferenceMap.
-	 * 
-	 * @throws AccessControlException
-	 *             the access control exception
-	 */
+     * Test of getDirectReference method, of class
+     * org.owasp.esapi.AccessReferenceMap.
+     * 
+     * @throws AccessControlException
+     *             the access control exception
+     */
     public void testGetDirectReference() throws AccessControlException {
         System.out.println("getDirectReference");
         
@@ -166,10 +166,10 @@ public class AccessReferenceMapTest extends TestCase {
         String dir = (String)instance.getDirectReference(ind);
         assertEquals(directReference, dir);
         try {
-        	instance.getDirectReference("invalid");
-        	fail();
+            instance.getDirectReference("invalid");
+            fail();
         } catch( AccessControlException e ) {
-        	// success
+            // success
         }
     }
     
@@ -192,8 +192,8 @@ public class AccessReferenceMapTest extends TestCase {
         String ind = instance.addDirectReference(directReference);
         String dir = (String)instance.getDirectReference(ind);
         assertEquals(directReference, dir);
-    	String newInd = instance.addDirectReference(directReference);
-    	assertEquals(ind, newInd);
+        String newInd = instance.addDirectReference(directReference);
+        assertEquals(ind, newInd);
     }
 
     /**
@@ -214,8 +214,8 @@ public class AccessReferenceMapTest extends TestCase {
         assertNotNull(indirect);
         String deleted = instance.removeDirectReference(directReference);
         assertEquals(indirect,deleted);
-    	deleted = instance.removeDirectReference("ridiculous");
-    	assertNull(deleted);
+        deleted = instance.removeDirectReference("ridiculous");
+        assertNull(deleted);
     }
     
     

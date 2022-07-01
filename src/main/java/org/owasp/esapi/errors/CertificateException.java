@@ -23,15 +23,15 @@ package org.owasp.esapi.errors;
  */
 public class CertificateException extends EnterpriseSecurityException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new certificate exception.
-	 */
-	protected CertificateException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new certificate exception.
+     */
+    protected CertificateException() {
+        // hidden
+    }
 
     /**
      * Creates a new instance of CertificateException.

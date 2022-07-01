@@ -29,11 +29,11 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 public class InterceptingHttpServletResponseTest extends TestCase {
     
     /**
-	 * Instantiates a new test.
-	 * 
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new test.
+     * 
+     * @param testName
+     *            the test name
+     */
     public InterceptingHttpServletResponseTest(String testName) {
         super(testName);
     }
@@ -43,7 +43,7 @@ public class InterceptingHttpServletResponseTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
 
     /**
@@ -51,14 +51,14 @@ public class InterceptingHttpServletResponseTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
-	 * Suite.
-	 * 
-	 * @return the test
-	 */
+     * Suite.
+     * 
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(InterceptingHttpServletResponseTest.class);
         return suite;
@@ -66,11 +66,11 @@ public class InterceptingHttpServletResponseTest extends TestCase {
 
     
     /**
-	 * Test.
+     * Test.
      */
     public void testRequest() throws Exception {
         System.out.println("InterceptingHTTPServletResponse");
-   	    MockHttpServletResponse mres = new MockHttpServletResponse();
+           MockHttpServletResponse mres = new MockHttpServletResponse();
         InterceptingHTTPServletResponse ires = new InterceptingHTTPServletResponse(mres, false, new ArrayList() );
         // isos.println( "Hello" );
         // ires.getOutputStream().println( "Hello" );

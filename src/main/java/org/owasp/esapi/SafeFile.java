@@ -30,78 +30,78 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class SafeFile extends File {
 
-	private static final long serialVersionUID = 1L;
-	private static final Pattern PERCENTS_PAT = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");	
-	private static final Pattern FILE_BLACKLIST_PAT = Pattern.compile("([\\\\/:*?<>|^])");	
-	private static final Pattern DIR_BLACKLIST_PAT = Pattern.compile("([*?<>|^])");
+    private static final long serialVersionUID = 1L;
+    private static final Pattern PERCENTS_PAT = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");    
+    private static final Pattern FILE_BLACKLIST_PAT = Pattern.compile("([\\\\/:*?<>|^])");    
+    private static final Pattern DIR_BLACKLIST_PAT = Pattern.compile("([*?<>|^])");
 
-	public SafeFile(String path) throws ValidationException {
-		super(path);
-		doDirCheck(this.getParent());
-		doFileCheck(this.getName());
-	}
+    public SafeFile(String path) throws ValidationException {
+        super(path);
+        doDirCheck(this.getParent());
+        doFileCheck(this.getName());
+    }
 
-	public SafeFile(String parent, String child) throws ValidationException {
-		super(parent, child);
-		doDirCheck(this.getParent());
-		doFileCheck(this.getName());
-	}
+    public SafeFile(String parent, String child) throws ValidationException {
+        super(parent, child);
+        doDirCheck(this.getParent());
+        doFileCheck(this.getName());
+    }
 
-	public SafeFile(File parent, String child) throws ValidationException {
-		super(parent, child);
-		doDirCheck(this.getParent());
-		doFileCheck(this.getName());
-	}
+    public SafeFile(File parent, String child) throws ValidationException {
+        super(parent, child);
+        doDirCheck(this.getParent());
+        doFileCheck(this.getName());
+    }
 
-	public SafeFile(URI uri) throws ValidationException {
-		super(uri);
-		doDirCheck(this.getParent());
-		doFileCheck(this.getName());
-	}
+    public SafeFile(URI uri) throws ValidationException {
+        super(uri);
+        doDirCheck(this.getParent());
+        doFileCheck(this.getName());
+    }
 
-	
-	private void doDirCheck(String path) throws ValidationException {
-		Matcher m1 = DIR_BLACKLIST_PAT.matcher( path );
-		if ( null != m1 && m1.find() ) {
-			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
-		}
+    
+    private void doDirCheck(String path) throws ValidationException {
+        Matcher m1 = DIR_BLACKLIST_PAT.matcher( path );
+        if ( null != m1 && m1.find() ) {
+            throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
+        }
 
-		Matcher m2 = PERCENTS_PAT.matcher( path );
-		if (null != m2 &&  m2.find() ) {
-			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains encoded characters: " + m2.group() );
-		}
-		
-		int ch = containsUnprintableCharacters(path);
-		if (ch != -1) {
-			throw new ValidationException("Invalid directory", "Directory path (" + path + ") contains unprintable character: " + ch);
-		}
-	}
-	
-	private void doFileCheck(String path) throws ValidationException {
-		Matcher m1 = FILE_BLACKLIST_PAT.matcher( path );
-		if ( m1.find() ) {
-			throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
-		}
+        Matcher m2 = PERCENTS_PAT.matcher( path );
+        if (null != m2 &&  m2.find() ) {
+            throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains encoded characters: " + m2.group() );
+        }
+        
+        int ch = containsUnprintableCharacters(path);
+        if (ch != -1) {
+            throw new ValidationException("Invalid directory", "Directory path (" + path + ") contains unprintable character: " + ch);
+        }
+    }
+    
+    private void doFileCheck(String path) throws ValidationException {
+        Matcher m1 = FILE_BLACKLIST_PAT.matcher( path );
+        if ( m1.find() ) {
+            throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
+        }
 
-		Matcher m2 = PERCENTS_PAT.matcher( path );
-		if ( m2.find() ) {
-			throw new ValidationException( "Invalid file", "File path (" + path + ") contains encoded characters: " + m2.group() );
-		}
-		
-		int ch = containsUnprintableCharacters(path);
-		if (ch != -1) {
-			throw new ValidationException("Invalid file", "File path (" + path + ") contains unprintable character: " + ch);
-		}
-	}
+        Matcher m2 = PERCENTS_PAT.matcher( path );
+        if ( m2.find() ) {
+            throw new ValidationException( "Invalid file", "File path (" + path + ") contains encoded characters: " + m2.group() );
+        }
+        
+        int ch = containsUnprintableCharacters(path);
+        if (ch != -1) {
+            throw new ValidationException("Invalid file", "File path (" + path + ") contains unprintable character: " + ch);
+        }
+    }
 
-	private int containsUnprintableCharacters(String s) {
-		for (int i = 0; i < s.length(); i++) {
-			char ch = s.charAt(i);
-			if (((int) ch) < 32 || ((int) ch) > 126) {
-				return (int) ch;
-			}
-		}
-		return -1;
-	}
+    private int containsUnprintableCharacters(String s) {
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (((int) ch) < 32 || ((int) ch) > 126) {
+                return (int) ch;
+            }
+        }
+        return -1;
+    }
 
 }

@@ -38,16 +38,16 @@ public class WAFTestUtility {
 
     public static void setWAFPolicy( ESAPIWebApplicationFirewallFilter waf, String policyFile ) throws Exception {
         Map map = new HashMap();
-    	map.put( "configuration", policyFile );
-    	map.put( "log_settings", "../log4j.xml");
-    	FilterConfig mfc = new MockWafFilterConfig( map );
-    	waf.init( mfc );
+        map.put( "configuration", policyFile );
+        map.put( "log_settings", "../log4j.xml");
+        FilterConfig mfc = new MockWafFilterConfig( map );
+        waf.init( mfc );
     }
     
     public static int checkWAFResult( ESAPIWebApplicationFirewallFilter waf, MockHttpServletRequest request, MockHttpServletResponse response, MockFilterChain chain ) throws Exception {
 
         //request.dump();
-    	waf.doFilter(request, response, chain);
+        waf.doFilter(request, response, chain);
         //response.dump();
         
         return response.getStatus();
@@ -56,36 +56,36 @@ public class WAFTestUtility {
 
     public static int createAndExecuteWAFTransaction ( ESAPIWebApplicationFirewallFilter waf, MockHttpServletRequest request, MockHttpServletResponse response ) throws Exception {
 
-		MockFilterChain chain = new MockFilterChain();
-		
-		return WAFTestUtility.checkWAFResult(waf, request, response, chain);
-		
-	}
+        MockFilterChain chain = new MockFilterChain();
+        
+        return WAFTestUtility.checkWAFResult(waf, request, response, chain);
+        
+    }
 
     public static int createAndExecuteWAFTransaction ( ESAPIWebApplicationFirewallFilter waf, MockHttpServletRequest request, MockHttpServletResponse response, MockFilterChain filterChain ) throws Exception {
 
 
-    	return WAFTestUtility.checkWAFResult(waf, request, response, filterChain);
-		
-	}
+        return WAFTestUtility.checkWAFResult(waf, request, response, filterChain);
+        
+    }
     
     public static int createAndExecuteWAFTransaction ( String policy, MockHttpServletRequest request, MockHttpServletResponse response ) throws Exception {
 
-    	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
-    	File f = ESAPI.securityConfiguration().getResourceFile(policy);
-    	waf.setConfiguration(f.getAbsolutePath(),"");
+        ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
+        File f = ESAPI.securityConfiguration().getResourceFile(policy);
+        waf.setConfiguration(f.getAbsolutePath(),"");
 
-		return createAndExecuteWAFTransaction(waf, request, response );
-		
-	}
+        return createAndExecuteWAFTransaction(waf, request, response );
+        
+    }
     
     public static int createAndExecuteWAFTransaction ( String policy, MockHttpServletRequest request, MockHttpServletResponse response, MockFilterChain filterChain ) throws Exception {
 
-    	ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
-    	File f = ESAPI.securityConfiguration().getResourceFile(policy);        
-    	waf.setConfiguration(f.getAbsolutePath(),"");
+        ESAPIWebApplicationFirewallFilter waf = new ESAPIWebApplicationFirewallFilter();
+        File f = ESAPI.securityConfiguration().getResourceFile(policy);        
+        waf.setConfiguration(f.getAbsolutePath(),"");
 
-		return createAndExecuteWAFTransaction(waf, request, response, filterChain );
-		
-	}
+        return createAndExecuteWAFTransaction(waf, request, response, filterChain );
+        
+    }
 }

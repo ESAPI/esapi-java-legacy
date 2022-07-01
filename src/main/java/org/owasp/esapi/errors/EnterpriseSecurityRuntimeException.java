@@ -93,15 +93,15 @@ public class EnterpriseSecurityRuntimeException extends java.lang.RuntimeExcepti
      * context of the exception.
      * 
      * @param userMessage 
-     * 			  the message displayed to the user
+     *               the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public EnterpriseSecurityRuntimeException(String userMessage, String logMessage) {
-    	super(userMessage);
+        super(userMessage);
         this.logMessage = logMessage;
         if (!ESAPI.securityConfiguration().getDisableIntrusionDetection()) {
-        	ESAPI.intrusionDetector().addException(this);
+            ESAPI.intrusionDetector().addException(this);
         }
     }
 
@@ -113,16 +113,16 @@ public class EnterpriseSecurityRuntimeException extends java.lang.RuntimeExcepti
      * context of the exception.
      *
      * @param userMessage
-     * 			  the message displayed to the user
+     *               the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause the cause
      */
     public EnterpriseSecurityRuntimeException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
         if (!ESAPI.securityConfiguration().getDisableIntrusionDetection()) {
-        	ESAPI.intrusionDetector().addException(this);
+            ESAPI.intrusionDetector().addException(this);
         }
     }
     

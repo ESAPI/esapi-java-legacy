@@ -37,139 +37,139 @@ import javax.servlet.WriteListener;
 
 public class InterceptingServletOutputStream extends ServletOutputStream {
 
-	private static final int FLUSH_BLOCK_SIZE = 1024;
-	private ServletOutputStream os;
-	private boolean buffering;
-	private boolean committed;
-	private boolean closed;
-	
-	private RandomAccessFile out;
-	
-	public InterceptingServletOutputStream(ServletOutputStream os, boolean buffered) throws FileNotFoundException, IOException {
-		super();
-		this.os = os;
-		this.buffering = buffered;
-		this.committed = false;
-		this.closed = false;
-		
-		/*
-		 * Creating a RandomAccessFile to keep track of output generated. I made
-		 * the prefix and suffix small for less processing. The "oew" is intended
-		 * to stand for "OWASP ESAPI WAF" and the "hop" for HTTP output.
-		 */
-		File tempFile= File.createTempFile("oew", ".hop");
-		this.out = new RandomAccessFile (tempFile, "rw" ); 
-		tempFile.deleteOnExit();
-		
-	}
+    private static final int FLUSH_BLOCK_SIZE = 1024;
+    private ServletOutputStream os;
+    private boolean buffering;
+    private boolean committed;
+    private boolean closed;
+    
+    private RandomAccessFile out;
+    
+    public InterceptingServletOutputStream(ServletOutputStream os, boolean buffered) throws FileNotFoundException, IOException {
+        super();
+        this.os = os;
+        this.buffering = buffered;
+        this.committed = false;
+        this.closed = false;
+        
+        /*
+         * Creating a RandomAccessFile to keep track of output generated. I made
+         * the prefix and suffix small for less processing. The "oew" is intended
+         * to stand for "OWASP ESAPI WAF" and the "hop" for HTTP output.
+         */
+        File tempFile= File.createTempFile("oew", ".hop");
+        this.out = new RandomAccessFile (tempFile, "rw" ); 
+        tempFile.deleteOnExit();
+        
+    }
 
-	public void reset() throws IOException {
-		out.setLength(0L);
-	}
+    public void reset() throws IOException {
+        out.setLength(0L);
+    }
 
-	public byte[] getResponseBytes() throws IOException {
-		
-		byte[] buffer = new byte[(int) out.length()];
-		out.seek(0);
-		out.read(buffer, 0, (int)out.length());
-		out.seek(out.length());
-		return buffer;
-		
-	}
+    public byte[] getResponseBytes() throws IOException {
+        
+        byte[] buffer = new byte[(int) out.length()];
+        out.seek(0);
+        out.read(buffer, 0, (int)out.length());
+        out.seek(out.length());
+        return buffer;
+        
+    }
 
-	public void setResponseBytes(byte[] responseBytes) throws IOException {
-		
-		if ( ! buffering && out.length() > 0 ) {
-			throw new IOException("Already committed response because not currently buffering");
-		}
+    public void setResponseBytes(byte[] responseBytes) throws IOException {
+        
+        if ( ! buffering && out.length() > 0 ) {
+            throw new IOException("Already committed response because not currently buffering");
+        }
 
-		out.setLength(0L);
-		out.write(responseBytes);
-	}
+        out.setLength(0L);
+        out.write(responseBytes);
+    }
 
-	public void write(int i) throws IOException {
-		if (!buffering) {
-			os.write(i);
-		}
-		out.write(i);
-	}
-
-	public void write(byte[] b) throws IOException {
+    public void write(int i) throws IOException {
         if (!buffering) {
-        	os.write(b, 0, b.length);
+            os.write(i);
+        }
+        out.write(i);
+    }
+
+    public void write(byte[] b) throws IOException {
+        if (!buffering) {
+            os.write(b, 0, b.length);
         }
         out.write(b, 0, b.length);
     }
 
-	public void write(byte[] b, int off, int len) throws IOException {
+    public void write(byte[] b, int off, int len) throws IOException {
         if (!buffering) {
-        	os.write(b, off, len);
+            os.write(b, off, len);
         }
         out.write(b, off, len);
     }
 
-	public void flush() throws IOException {
-		
-		if (buffering) {
-		
-			synchronized(out) {
+    public void flush() throws IOException {
+        
+        if (buffering) {
+        
+            synchronized(out) {
 
-				out.seek(0);
-				
-				byte[] buff = new byte[FLUSH_BLOCK_SIZE];
-				
-				for(int i=0;i<out.length();) {
-					
-					long currentPos = out.getFilePointer();
-					long totalSize = out.length();
-					int amountToWrite = FLUSH_BLOCK_SIZE;
-					
-					if ( (totalSize - currentPos) < FLUSH_BLOCK_SIZE ) {
-						amountToWrite = (int) (totalSize - currentPos);
-					}
-			
-					out.read(buff, 0, amountToWrite);
-					
-					os.write(buff,0,amountToWrite);
-					
-					i+=amountToWrite;
-					
-				}
-				
-				out.setLength(0);
-				
-			}
-		}
-
-	}
-
-	public void commit() throws IOException {
-		
-		if (!buffering) { // || committed || closed
-        	return;
-        } else {
-        	flush();
+                out.seek(0);
+                
+                byte[] buff = new byte[FLUSH_BLOCK_SIZE];
+                
+                for(int i=0;i<out.length();) {
+                    
+                    long currentPos = out.getFilePointer();
+                    long totalSize = out.length();
+                    int amountToWrite = FLUSH_BLOCK_SIZE;
+                    
+                    if ( (totalSize - currentPos) < FLUSH_BLOCK_SIZE ) {
+                        amountToWrite = (int) (totalSize - currentPos);
+                    }
+            
+                    out.read(buff, 0, amountToWrite);
+                    
+                    os.write(buff,0,amountToWrite);
+                    
+                    i+=amountToWrite;
+                    
+                }
+                
+                out.setLength(0);
+                
+            }
         }
-		committed = true;
+
+    }
+
+    public void commit() throws IOException {
+        
+        if (!buffering) { // || committed || closed
+            return;
+        } else {
+            flush();
+        }
+        committed = true;
     }
 
     public void close() throws IOException {
-    	
+        
         if (!buffering)  {
-        	os.close();
+            os.close();
         }
         closed = true;
 
     }
 
-	@Override
-	public boolean isReady() {
-		return os.isReady();
-	}
+    @Override
+    public boolean isReady() {
+        return os.isReady();
+    }
 
-	@Override
-	public void setWriteListener(WriteListener writeListener) {
-		os.setWriteListener(writeListener);
-	}
+    @Override
+    public void setWriteListener(WriteListener writeListener) {
+        os.setWriteListener(writeListener);
+    }
 
 }

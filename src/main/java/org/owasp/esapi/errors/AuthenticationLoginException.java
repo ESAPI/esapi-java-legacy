@@ -24,35 +24,35 @@ package org.owasp.esapi.errors;
  */
 public class AuthenticationLoginException extends AuthenticationException {
 
-	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 1L;
+    /** The Constant serialVersionUID. */
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Instantiates a new authentication exception.
-	 */
-	protected AuthenticationLoginException() {
-		// hidden
-	}
+    /**
+     * Instantiates a new authentication exception.
+     */
+    protected AuthenticationLoginException() {
+        // hidden
+    }
 
-	/**
-	 * Creates a new instance of EnterpriseSecurityException.
-	 * 
-	 * @param userMessage the message displayed to the user
-	 * @param logMessage the message logged
-	 */
-	public AuthenticationLoginException(String userMessage, String logMessage) {
-		super(userMessage, logMessage);
-	}
+    /**
+     * Creates a new instance of EnterpriseSecurityException.
+     * 
+     * @param userMessage the message displayed to the user
+     * @param logMessage the message logged
+     */
+    public AuthenticationLoginException(String userMessage, String logMessage) {
+        super(userMessage, logMessage);
+    }
 
-	/**
-	 * Instantiates a new authentication exception.
-	 * 
-	 * @param userMessage the message displayed to the user
-	 * @param logMessage the message logged
-	 * @param cause the cause
-	 */
-	public AuthenticationLoginException(String userMessage, String logMessage, Throwable cause) {
-		super(userMessage, logMessage, cause);
-	}
+    /**
+     * Instantiates a new authentication exception.
+     * 
+     * @param userMessage the message displayed to the user
+     * @param logMessage the message logged
+     * @param cause the cause
+     */
+    public AuthenticationLoginException(String userMessage, String logMessage, Throwable cause) {
+        super(userMessage, logMessage, cause);
+    }
 
 }

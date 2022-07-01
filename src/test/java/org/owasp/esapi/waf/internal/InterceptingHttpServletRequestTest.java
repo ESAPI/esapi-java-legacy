@@ -27,11 +27,11 @@ import org.owasp.esapi.http.MockHttpServletRequest;
 public class InterceptingHttpServletRequestTest extends TestCase {
 
     /**
-	 * Instantiates a new test.
-	 *
-	 * @param testName
-	 *            the test name
-	 */
+     * Instantiates a new test.
+     *
+     * @param testName
+     *            the test name
+     */
     public InterceptingHttpServletRequestTest(String testName) {
         super(testName);
     }
@@ -41,7 +41,7 @@ public class InterceptingHttpServletRequestTest extends TestCase {
      * @throws Exception
      */
     protected void setUp() throws Exception {
-    	// none
+        // none
     }
 
     /**
@@ -49,14 +49,14 @@ public class InterceptingHttpServletRequestTest extends TestCase {
      * @throws Exception
      */
     protected void tearDown() throws Exception {
-    	// none
+        // none
     }
 
     /**
-	 * Suite.
-	 *
-	 * @return the test
-	 */
+     * Suite.
+     *
+     * @return the test
+     */
     public static Test suite() {
         TestSuite suite = new TestSuite(InterceptingHttpServletRequestTest.class);
         return suite;
@@ -64,12 +64,12 @@ public class InterceptingHttpServletRequestTest extends TestCase {
 
 
     /**
-	 * Test.
+     * Test.
      */
     public void testRequest() throws Exception {
         System.out.println("InterceptingHTTPServletRequest");
-   	    MockHttpServletRequest mreq = new MockHttpServletRequest();
-   	    mreq.setMethod( "GET" );
+           MockHttpServletRequest mreq = new MockHttpServletRequest();
+           mreq.setMethod( "GET" );
         InterceptingHTTPServletRequest ireq = new InterceptingHTTPServletRequest(mreq);
         assertEquals( mreq.getMethod(), ireq.getMethod() );
     }

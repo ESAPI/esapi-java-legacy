@@ -5,10 +5,10 @@ import org.owasp.esapi.http.MockServletContext;
 
 public class MockWafServletContext extends MockServletContext {
 
-	public String getRealPath(String s) {
-		
-		return ESAPI.securityConfiguration().getResourceFile( "" ).getAbsolutePath() + "/" + s;
-		
-	}
-	
+    public String getRealPath(String s) {
+        
+        return ESAPI.securityConfiguration().getResourceFile( "" ).getAbsolutePath() + "/" + s;
+        
+    }
+    
 }

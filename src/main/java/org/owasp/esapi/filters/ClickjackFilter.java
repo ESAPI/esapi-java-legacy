@@ -26,83 +26,89 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * The {@code ClickjackFilter} is discussed at
- * @link http://www.owasp.org/index.php/ClickjackFilter_for_Java_EE
+ * The {@code ClickjackFilter} is configured as follows:
  * <pre>
- *     <filter>
- *            <filter-name>ClickjackFilterDeny</filter-name>
- *            <filter-class>org.owasp.filters.ClickjackFilter</filter-class>
- *            <init-param>
- *                <param-name>mode</param-name>
- *                 <param-value>DENY</param-value>
- *             </init-param>
- *         </filter>
+ *
+ *     &lt;filter&gt;
+ *            &lt;filter-name&gt;ClickjackFilterDeny&lt;/filter-name&gt;
+ *            &lt;filter-class&gt;org.owasp.filters.ClickjackFilter&lt;/filter-class&gt;
+ *            &lt;init-param&gt;
+ *                &lt;param-name&gt;mode&lt;/param-name&gt;
+ *                 &lt;param-value&gt;DENY&lt;/param-value&gt;
+ *             &lt;/init-param&gt;
+ *         &lt;/filter&gt;
  *         
- *         <filter>
- *             <filter-name>ClickjackFilterSameOrigin</filter-name>
- *             <filter-class>org.owasp.filters.ClickjackFilter</filter-class>
- *             <init-param>
- *                 <param-name>mode</param-name>
- *                 <param-value>SAMEORIGIN</param-value>
- *             </init-param>
- *         </filter>
+ *         &lt;filter&gt;
+ *             &lt;filter-name&gt;ClickjackFilterSameOrigin&lt;/filter-name&gt;
+ *             &lt;filter-class&gt;org.owasp.filters.ClickjackFilter&lt;/filter-class&gt;
+ *             &lt;init-param&gt;
+ *                 &lt;param-name&gt;mode&lt;/param-name&gt;
+ *                 &lt;param-value&gt;SAMEORIGIN&lt;/param-value&gt;
+ *             &lt;/init-param&gt;
+ *         &lt;/filter&gt;
  *        
- *        <!--  use the Deny version to prevent anyone, including yourself, from framing the page -->
- *        <filter-mapping> 
- *            <filter-name>ClickjackFilterDeny</filter-name>
- *            <url-pattern>/*</url-pattern>
- *        </filter-mapping>
+ *        &lt;!--  use the Deny version to prevent anyone, including yourself, from framing the page --&gt;
+ *        &lt;filter-mapping&gt; 
+ *            &lt;filter-name&gt;ClickjackFilterDeny&lt;/filter-name&gt;
+ *            &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+ *        &lt;/filter-mapping&gt;
  *         
- *         <!-- use the SameOrigin version to allow your application to frame, but nobody else
- *         <filter-mapping> 
- *            <filter-name>ClickjackFilterSameOrigin</filter-name>
- *             <url-pattern>/*</url-pattern>
- *         </filter-mapping>
+ *         &lt;!-- use the SameOrigin version to allow your application to frame, but nobody else
+ *         &lt;filter-mapping&gt; 
+ *            &lt;filter-name&gt;ClickjackFilterSameOrigin&lt;/filter-name&gt;
+ *             &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+ *         &lt;/filter-mapping&gt;
  * </pre>
+ *
+ * @see <a href="https://web.archive.org/web/20131020084831/https://www.owasp.org/index.php/ClickjackFilter_for_Java_EE">
+ *          OWASP - Clickjacking Filter for JavaEE</a>
+ * @see <a href="https://owasp.org/www-community/attacks/Clickjacking">OWASP - Clickjacking Attack</a>
+ * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Clickjacking_Defense_Cheat_Sheet.html">
+ *          OWASP - Clickjacking Defense Cheat Sheet</a>
  */
 public class ClickjackFilter implements Filter 
 {
 
-	private String mode = "DENY";
+    private String mode = "DENY";
 
-	/**
-	 * Initialize "mode" parameter from web.xml. Valid values are "DENY" and "SAMEORIGIN". 
-	 * If you leave this parameter out, the default is to use the DENY mode.
-	 * 
-	 * @param filterConfig A filter configuration object used by a servlet container
-	 *                     to pass information to a filter during initialization. 
-	 */
-	public void init(FilterConfig filterConfig) {
-		String configMode = filterConfig.getInitParameter("mode");
-		if ( configMode != null && ( configMode.equals( "DENY" ) || configMode.equals( "SAMEORIGIN" ) ) ) {
-			mode = configMode;
-		}
-	}
-	
-	/**
-	 * Add X-FRAME-OPTIONS response header to tell IE8 (and any other browsers who
-	 * decide to implement) not to display this content in a frame. For details, please
-	 * refer to
-	 * @link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx
-	 * 
-	 * @param request The request object.
-	 * @param response The response object.
-	 * @param chain Refers to the {@code FilterChain} object to pass control to the
-	 *              next {@code Filter}.
-	 * @throws IOException
-	 * @throws ServletException
-	 */
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
-	{
+    /**
+     * Initialize "mode" parameter from web.xml. Valid values are "DENY" and "SAMEORIGIN". 
+     * If you leave this parameter out, the default is to use the DENY mode.
+     * 
+     * @param filterConfig A filter configuration object used by a servlet container
+     *                     to pass information to a filter during initialization. 
+     */
+    public void init(FilterConfig filterConfig) {
+        String configMode = filterConfig.getInitParameter("mode");
+        if ( configMode != null && ( configMode.equals( "DENY" ) || configMode.equals( "SAMEORIGIN" ) ) ) {
+            mode = configMode;
+        }
+    }
+    
+    /**
+     * Add X-FRAME-OPTIONS response header to tell IE8 (and any other browsers who
+     * decide to implement) not to display this content in a frame. For details, please
+     * refer to
+     * @link http://blogs.msdn.com/sdl/archive/2009/02/05/clickjacking-defense-in-ie8.aspx
+     * 
+     * @param request The request object.
+     * @param response The response object.
+     * @param chain Refers to the {@code FilterChain} object to pass control to the
+     *              next {@code Filter}.
+     * @throws IOException
+     * @throws ServletException
+     */
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException
+    {
         HttpServletResponse res = (HttpServletResponse)response;
         res.addHeader("X-FRAME-OPTIONS", mode );
         chain.doFilter(request, response);
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public void destroy() {
-	}
-	
+    /**
+     * {@inheritDoc}
+     */
+    public void destroy() {
+    }
+    
 }

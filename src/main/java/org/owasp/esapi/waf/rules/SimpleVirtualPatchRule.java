@@ -34,106 +34,106 @@ import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
  */
 public class SimpleVirtualPatchRule extends Rule {
 
-	private static final String REQUEST_PARAMETERS = "request.parameters.";
-	private static final String REQUEST_HEADERS = "request.headers.";
+    private static final String REQUEST_PARAMETERS = "request.parameters.";
+    private static final String REQUEST_HEADERS = "request.headers.";
 
-	private Pattern path;
-	private String variable;
-	private Pattern valid;
-	private String message;
+    private Pattern path;
+    private String variable;
+    private Pattern valid;
+    private String message;
 
-	public SimpleVirtualPatchRule(String id, Pattern path, String variable, Pattern valid, String message) {
-		setId(id);
-		this.path = path;
-		this.variable = variable;
-		this.valid = valid;
-		this.message = message;
-	}
+    public SimpleVirtualPatchRule(String id, Pattern path, String variable, Pattern valid, String message) {
+        setId(id);
+        this.path = path;
+        this.variable = variable;
+        this.valid = valid;
+        this.message = message;
+    }
 
-	public Action check(HttpServletRequest req,
-			InterceptingHTTPServletResponse response, 
-			HttpServletResponse httpResponse) {
+    public Action check(HttpServletRequest req,
+            InterceptingHTTPServletResponse response, 
+            HttpServletResponse httpResponse) {
 
-		InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
+        InterceptingHTTPServletRequest request = (InterceptingHTTPServletRequest)req;
 
-		String uri = request.getRequestURI();
-		if ( ! path.matcher(uri).matches() ) {
+        String uri = request.getRequestURI();
+        if ( ! path.matcher(uri).matches() ) {
 
-			return new DoNothingAction();
+            return new DoNothingAction();
 
-		} else {
+        } else {
 
-			/*
-			 * Decide which parameters/headers to act on.
-			 */
-			String target = null;
-			Enumeration en = null;
-			boolean parameter = true;
+            /*
+             * Decide which parameters/headers to act on.
+             */
+            String target = null;
+            Enumeration en = null;
+            boolean parameter = true;
 
-			if ( variable.startsWith(REQUEST_PARAMETERS)) {
+            if ( variable.startsWith(REQUEST_PARAMETERS)) {
 
-				target = variable.substring(REQUEST_PARAMETERS.length());
-				en = request.getParameterNames();
+                target = variable.substring(REQUEST_PARAMETERS.length());
+                en = request.getParameterNames();
 
-			} else if ( variable.startsWith(REQUEST_HEADERS) ) {
+            } else if ( variable.startsWith(REQUEST_HEADERS) ) {
 
-				parameter = false;
-				target = variable.substring(REQUEST_HEADERS.length());
-				en = request.getHeaderNames();
+                parameter = false;
+                target = variable.substring(REQUEST_HEADERS.length());
+                en = request.getHeaderNames();
 
-			} else {
-				log(request, "Patch failed (improperly configured variable '" + variable + "')");
-				return new DefaultAction();
-			}
+            } else {
+                log(request, "Patch failed (improperly configured variable '" + variable + "')");
+                return new DefaultAction();
+            }
 
-			/*
-			 * If it contains a regex character, it's a regex. Loop through elements and grab any matches.
-			 */
-			if ( target.contains("*") || target.contains("?") ) {
+            /*
+             * If it contains a regex character, it's a regex. Loop through elements and grab any matches.
+             */
+            if ( target.contains("*") || target.contains("?") ) {
 
-				target = target.replaceAll("\\*", ".*");
-				Pattern p = Pattern.compile(target);
-				while (en.hasMoreElements() ) {
-					String s = (String)en.nextElement();
-					String value = null;
-					if ( p.matcher(s).matches() ) {
-						if ( parameter ) {
-							value = request.getDictionaryParameter(s);
-						} else {
-							value = request.getHeader(s);
-						}
-						if ( value != null && ! valid.matcher(value).matches() ) {
-							log(request, "Virtual patch tripped on variable '" + variable + "' (specifically '" + s + "'). User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
-							return new DefaultAction();
-						}
-					}
-				}
-				
-				return new DoNothingAction();
+                target = target.replaceAll("\\*", ".*");
+                Pattern p = Pattern.compile(target);
+                while (en.hasMoreElements() ) {
+                    String s = (String)en.nextElement();
+                    String value = null;
+                    if ( p.matcher(s).matches() ) {
+                        if ( parameter ) {
+                            value = request.getDictionaryParameter(s);
+                        } else {
+                            value = request.getHeader(s);
+                        }
+                        if ( value != null && ! valid.matcher(value).matches() ) {
+                            log(request, "Virtual patch tripped on variable '" + variable + "' (specifically '" + s + "'). User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
+                            return new DefaultAction();
+                        }
+                    }
+                }
+                
+                return new DoNothingAction();
 
-			} else {
+            } else {
 
-				if ( parameter ) {
-					String value = request.getDictionaryParameter(target);
-					if ( value == null || valid.matcher(value).matches() ) {
-						return new DoNothingAction();
-					} else {
-						log(request, "Virtual patch tripped on parameter '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
-						return new DefaultAction();
-					}
-				} else {
-					String value = request.getHeader(target);
-					if ( value == null || valid.matcher(value).matches() ) {
-						return new DoNothingAction();
-					} else {
-						log(request, "Virtual patch tripped on header '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
-						return new DefaultAction();
-					}
-				}
-			}
+                if ( parameter ) {
+                    String value = request.getDictionaryParameter(target);
+                    if ( value == null || valid.matcher(value).matches() ) {
+                        return new DoNothingAction();
+                    } else {
+                        log(request, "Virtual patch tripped on parameter '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
+                        return new DefaultAction();
+                    }
+                } else {
+                    String value = request.getHeader(target);
+                    if ( value == null || valid.matcher(value).matches() ) {
+                        return new DoNothingAction();
+                    } else {
+                        log(request, "Virtual patch tripped on header '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
+                        return new DefaultAction();
+                    }
+                }
+            }
 
-		}
+        }
 
-	}
+    }
 
 }

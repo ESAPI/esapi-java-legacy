@@ -18,12 +18,7 @@ package org.owasp.esapi.errors;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
-// At some point, all these property names will be moved to a new class named
-//      org.owasp.esapi.PropNames
-// but until then, while this is an ugly kludge, we are importing it via a
-// reference implementation class until we have a chance to clean it up.
-// (Note: kwwall's Bitbucket code already has that class.)
-import static org.owasp.esapi.reference.DefaultSecurityConfiguration.DISABLE_INTRUSION_DETECTION;
+import static org.owasp.esapi.PropNames.DISABLE_INTRUSION_DETECTION;
 
 
 /**
@@ -97,15 +92,15 @@ public class EnterpriseSecurityException extends Exception {
      * context of the exception.
      * 
      * @param userMessage 
-     * 			  the message displayed to the user
+     *               the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      */
     public EnterpriseSecurityException(String userMessage, String logMessage) {
-    	super(userMessage);
+        super(userMessage);
         this.logMessage = logMessage;
         if (!ESAPI.securityConfiguration().getBooleanProp( DISABLE_INTRUSION_DETECTION )) {
-        	ESAPI.intrusionDetector().addException(this);
+            ESAPI.intrusionDetector().addException(this);
         }
     }
 
@@ -117,16 +112,16 @@ public class EnterpriseSecurityException extends Exception {
      * context of the exception.
      *
      * @param userMessage
-     * 			  the message displayed to the user
+     *               the message displayed to the user
      * @param logMessage
-	 * 			  the message logged
+     *               the message logged
      * @param cause the cause
      */
     public EnterpriseSecurityException(String userMessage, String logMessage, Throwable cause) {
         super(userMessage, cause);
         this.logMessage = logMessage;
         if (!ESAPI.securityConfiguration().getBooleanProp( DISABLE_INTRUSION_DETECTION )) {
-        	ESAPI.intrusionDetector().addException(this);
+            ESAPI.intrusionDetector().addException(this);
         }
     }
     

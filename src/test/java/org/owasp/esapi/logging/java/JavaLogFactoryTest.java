@@ -134,7 +134,7 @@ public class JavaLogFactoryTest {
         Assert.assertTrue(clientInfoCapture.getValue());
         Assert.assertFalse(serverInfoCapture.getValue());
         Assert.assertTrue(logAppNameCapture.getValue());
-        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());    	
+        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());        
     }
 
 

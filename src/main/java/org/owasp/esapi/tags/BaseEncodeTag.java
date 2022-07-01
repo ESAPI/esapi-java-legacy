@@ -28,43 +28,43 @@ import org.owasp.esapi.Encoder;
 /** Abstract base class for tags that just encode their bodies with Encoder methods. */
 public abstract class BaseEncodeTag extends BodyTagSupport
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * Encode tag's content.
-	 * @param content The tag's content as a String
-	 * @param enc Encoder provided as a convinence.
-	 * @return content encoded by the subclass's implementation.
-	 */
-	protected abstract String encode(String content, Encoder enc) throws JspTagException;
+    /**
+     * Encode tag's content.
+     * @param content The tag's content as a String
+     * @param enc Encoder provided as a convinence.
+     * @return content encoded by the subclass's implementation.
+     */
+    protected abstract String encode(String content, Encoder enc) throws JspTagException;
 
-	/**
-	 * After tag body parsing handler. This provides the necessary
-	 * plubming to allow subclasses to just concern themselves with
-	 * encoding a single string.
-	 * @return {@link javax.servlet.jsp.tagext.Tag#SKIP_BODY}
-	 * @throws JspTagException if writing to the bodyContent's
-	 * enclosing writer throws an IOException.
-	 */
-	public int doAfterBody() throws JspTagException
-	{
-		String content;
-		JspWriter out;
+    /**
+     * After tag body parsing handler. This provides the necessary
+     * plubming to allow subclasses to just concern themselves with
+     * encoding a single string.
+     * @return {@link javax.servlet.jsp.tagext.Tag#SKIP_BODY}
+     * @throws JspTagException if writing to the bodyContent's
+     * enclosing writer throws an IOException.
+     */
+    public int doAfterBody() throws JspTagException
+    {
+        String content;
+        JspWriter out;
 
-		content = bodyContent.getString();
-		out = bodyContent.getEnclosingWriter();
+        content = bodyContent.getString();
+        out = bodyContent.getEnclosingWriter();
 
-		content = encode(content, ESAPI.encoder());
-		try
-		{
-			out.print(content);
-		}
-		catch (IOException e)
-		{
-			throw new JspTagException("Error writing to body's enclosing JspWriter",e);
-		}
+        content = encode(content, ESAPI.encoder());
+        try
+        {
+            out.print(content);
+        }
+        catch (IOException e)
+        {
+            throw new JspTagException("Error writing to body's enclosing JspWriter",e);
+        }
 
-		bodyContent.clearBody();
-		return SKIP_BODY;
-	}
+        bodyContent.clearBody();
+        return SKIP_BODY;
+    }
 }

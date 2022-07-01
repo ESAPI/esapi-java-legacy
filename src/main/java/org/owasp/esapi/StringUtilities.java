@@ -27,31 +27,31 @@ import java.util.regex.Pattern;
  */
 public class StringUtilities {
 
-	private static final Pattern p = Pattern.compile( "\\s");
-	public static String replaceLinearWhiteSpace( String input ) {
-		return p.matcher(input).replaceAll( " " );
-	}
-	
-	/**
-	 * Removes all unprintable characters from a string 
-	 * and replaces with a space.
-	 * @param input
-	 * @return the stripped value
-	 */
-	public static String stripControls( String input ) {
-		StringBuilder sb = new StringBuilder();
-		for ( int i=0; i<input.length(); i++ ) {
-			char c = input.charAt( i );
-			if ( c > 0x20 && c < 0x7f ) {
-				sb.append( c );
-			} else {
-				sb.append( ' ' );
-			}
-		}
-		return sb.toString();
-	}
+    private static final Pattern p = Pattern.compile( "\\s");
+    public static String replaceLinearWhiteSpace( String input ) {
+        return p.matcher(input).replaceAll( " " );
+    }
+    
+    /**
+     * Removes all unprintable characters from a string 
+     * and replaces with a space.
+     * @param input
+     * @return the stripped value
+     */
+    public static String stripControls( String input ) {
+        StringBuilder sb = new StringBuilder();
+        for ( int i=0; i<input.length(); i++ ) {
+            char c = input.charAt( i );
+            if ( c > 0x20 && c < 0x7f ) {
+                sb.append( c );
+            } else {
+                sb.append( ' ' );
+            }
+        }
+        return sb.toString();
+    }
 
-	
+    
     /**
      * Union multiple character arrays.
      * 
@@ -59,14 +59,14 @@ public class StringUtilities {
      * @return the union of the char[]s
      */
     public static char[] union(char[]... list) {
-    	StringBuilder sb = new StringBuilder();
-    	
-		for (char[] characters : list) {
-			for ( char c : characters ) {
-				if ( !contains( sb, c ) )
-					sb.append( c );
-			}
-		}
+        StringBuilder sb = new StringBuilder();
+        
+        for (char[] characters : list) {
+            for ( char c : characters ) {
+                if ( !contains( sb, c ) )
+                    sb.append( c );
+            }
+        }
 
         char[] toReturn = new char[sb.length()];
         sb.getChars(0, sb.length(), toReturn, 0);
@@ -75,11 +75,11 @@ public class StringUtilities {
     }
 
 
-	/**
+    /**
      * Returns true if the character is contained in the provided StringBuilder.
-     * @param input 	The input
-     * @param c 		The character to check for to see if {@code input} contains.
-     * @return			True if the specified character is contained; false otherwise.
+     * @param input     The input
+     * @param c         The character to check for to see if {@code input} contains.
+     * @return            True if the specified character is contained; false otherwise.
      */
     public static boolean contains(StringBuilder input, char c) {
         for (int i = 0; i < input.length(); i++) {
@@ -171,24 +171,24 @@ public class StringUtilities {
      * trimming of leading and trailing whitespace). Usually used with
      * assertions, as in
      * <pre>
-     * 		assert StringUtils.notNullOrEmpty(cipherXform, true) :
-     * 								"Cipher transformation may not be null or empty!";
+     *         assert StringUtils.notNullOrEmpty(cipherXform, true) :
+     *                                 "Cipher transformation may not be null or empty!";
      * </pre>
      * or an equivalent runtime check that throws an {@code IllegalArgumentException}.
      *
-     * @param str	The {@code String} to be checked.
-     * @param trim	If {@code true}, the string is first trimmed before checking
-     * 				to see if it is empty, otherwise it is not.
-     * @return		True if the string is null or empty (after possible
-     * 				trimming); otherwise false.
+     * @param str    The {@code String} to be checked.
+     * @param trim    If {@code true}, the string is first trimmed before checking
+     *                 to see if it is empty, otherwise it is not.
+     * @return        True if the string is null or empty (after possible
+     *                 trimming); otherwise false.
      * @since 2.0
      */
     public static boolean notNullOrEmpty(String str, boolean trim) {
-    	if ( trim ) {
-    		return !( str == null || str.trim().equals("") );
-    	} else {
-    		return !( str == null || str.equals("") );
-    	}
+        if ( trim ) {
+            return !( str == null || str.trim().equals("") );
+        } else {
+            return !( str == null || str.equals("") );
+        }
     }
 
     /**

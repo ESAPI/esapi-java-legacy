@@ -93,7 +93,7 @@ public class MockServletContext implements ServletContext {
      * @see RequestDispatcher
      */
     public ServletContext getContext(String uripath) {
-    	return null;
+        return null;
     }
 
     /**
@@ -105,7 +105,7 @@ public class MockServletContext implements ServletContext {
      * @return 2
      */
     public int getMajorVersion() {
-    	return 2;
+        return 2;
     }
 
     /**
@@ -115,7 +115,7 @@ public class MockServletContext implements ServletContext {
      * return the integer 4.
      */
     public int getMinorVersion() {
-    	return 4;
+        return 4;
     }
 
     /**
@@ -131,7 +131,7 @@ public class MockServletContext implements ServletContext {
      * @return a <code>String</code> specifying the file's MIME type
      */
     public String getMimeType(String file) {
-    	return "text/html";
+        return "text/html";
     }
 
     /**
@@ -161,7 +161,7 @@ public class MockServletContext implements ServletContext {
      * @since Servlet 2.3
      */
     public Set getResourcePaths(String path) {
-    	return null;
+        return null;
     }
 
     /**
@@ -203,7 +203,7 @@ public class MockServletContext implements ServletContext {
      * the correct form
      */
     public URL getResource(String path) throws MalformedURLException {
-    	return null;
+        return null;
     }
 
     /**
@@ -238,7 +238,7 @@ public class MockServletContext implements ServletContext {
      * specified path
      */
     public InputStream getResourceAsStream(String path) {
-    	return null;
+        return null;
     }
 
     /**
@@ -265,7 +265,7 @@ public class MockServletContext implements ServletContext {
      * @see ServletContext#getContext
      */
     public RequestDispatcher getRequestDispatcher(String path) {
-    	return null;
+        return null;
     }
 
     /**
@@ -294,7 +294,7 @@ public class MockServletContext implements ServletContext {
      * @see ServletConfig#getServletName
      */
     public RequestDispatcher getNamedDispatcher(String name) {
-    	return null;
+        return null;
     }
 
     /**
@@ -312,7 +312,7 @@ public class MockServletContext implements ServletContext {
      */
     @Deprecated
     public Servlet getServlet(String name) throws ServletException {
-    	return null;
+        return null;
     }
 
     /**
@@ -327,7 +327,7 @@ public class MockServletContext implements ServletContext {
      */
     @Deprecated
     public Enumeration getServlets() {
-    	return null;
+        return null;
     }
 
     /**
@@ -342,7 +342,7 @@ public class MockServletContext implements ServletContext {
      */
     @Deprecated
     public Enumeration getServletNames() {
-    	return null;
+        return null;
     }
 
     /**
@@ -354,7 +354,7 @@ public class MockServletContext implements ServletContext {
      * message to be written to the log file
      */
     public void log(String msg) {
-    	ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, msg );
+        ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, msg );
     }
 
     /**
@@ -368,7 +368,7 @@ public class MockServletContext implements ServletContext {
      */
     @Deprecated
     public void log(Exception exception, String msg) {
-    	ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, msg, exception );
+        ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, msg, exception );
     }
 
     /**
@@ -384,7 +384,7 @@ public class MockServletContext implements ServletContext {
      * or exception
      */
     public void log(String message, Throwable throwable) {
-    	ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, message, throwable );
+        ESAPI.getLogger( "MockServletContext" ).warning( Logger.EVENT_FAILURE, message, throwable );
     }
 
     /**
@@ -408,7 +408,7 @@ public class MockServletContext implements ServletContext {
      * or null if the translation cannot be performed
      */
     public String getRealPath(String path) {
-    	return ESAPI.securityConfiguration().getResourceFile( path ).getAbsolutePath();
+        return ESAPI.securityConfiguration().getResourceFile( path ).getAbsolutePath();
     }
 
     /**
@@ -428,7 +428,7 @@ public class MockServletContext implements ServletContext {
      * servlet container name and version number
      */
     public String getServerInfo() {
-    	return null;
+        return null;
     }
 
     /**
@@ -450,7 +450,7 @@ public class MockServletContext implements ServletContext {
      * @see ServletConfig#getInitParameter
      */
     public String getInitParameter(String name) {
-    	return null;
+        return null;
     }
 
     /**
@@ -465,7 +465,7 @@ public class MockServletContext implements ServletContext {
      * @see ServletConfig#getInitParameter
      */
     public Enumeration getInitParameterNames() {
-    	return null;
+        return null;
     }
 
 
@@ -496,7 +496,7 @@ public class MockServletContext implements ServletContext {
      * @see ServletContext#getAttributeNames
      */
     public Object getAttribute(String name) {
-    	return null;
+        return null;
     }
 
     /**
@@ -511,7 +511,7 @@ public class MockServletContext implements ServletContext {
      * @see #getAttribute
      */
     public Enumeration getAttributeNames() {
-    	return null;
+        return null;
     }
 
     /**
@@ -561,7 +561,7 @@ public class MockServletContext implements ServletContext {
      * @since Servlet 2.3
      */
     public String getServletContextName() {
-    	return null;
+        return null;
     }
 
     @Override
@@ -694,8 +694,8 @@ public class MockServletContext implements ServletContext {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-	@Override
-	public String getVirtualServerName() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    @Override
+    public String getVirtualServerName() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
