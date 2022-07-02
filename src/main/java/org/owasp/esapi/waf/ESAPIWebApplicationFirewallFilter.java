@@ -100,7 +100,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 			lastConfigReadTime = System.currentTimeMillis();
 			configurationFilename = policyFilePath;
 		} catch (ConfigurationException e) {
-			// TODO: It would be ideal if this method through the
+			// TODO: It would be ideal if this method threw the
 			// ConfigurationException rather than catching it and
 			// writing the error to the console.
 			e.printStackTrace();
