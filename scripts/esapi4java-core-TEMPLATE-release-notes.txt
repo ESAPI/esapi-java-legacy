@@ -58,7 +58,6 @@ However, if you try to juse the new ESAPI 2.2.1.0 or later logging you will noti
 To use ESAPI logging in ESAPI 2.2.1.0 (and later), you will need to set the ESAPI.Logger property to
 
     org.owasp.esapi.logging.java.JavaLogFactory     - To use the new default, java.util.logging (JUL)
-    org.owasp.esapi.logging.log4j.Log4JLogFactory   - To use the end-of-life Log4J 1.x logger
     org.owasp.esapi.logging.slf4j.Slf4JLogFactory   - To use the new (to release 2.2.0.0) SLF4J logger
 
 In addition, if you wish to use JUL for logging, you *MUST* supply an "esapi-java-logging.properties" file in your classpath. This file is included in the 'esapi-2.2.2.0-configuration.jar' file provided under the 'Assets' section of the GitHub Release at
