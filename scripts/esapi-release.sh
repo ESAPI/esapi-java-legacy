@@ -64,8 +64,8 @@ USAGE="Usage: $PROG esapi_svn_dir"
 tmpdir="/tmp/$PROG.$RANDOM-$$"
 esapi_release_dir="$tmpdir/esapi_release_dir"
 
-    # This is the directory under esapi_svn_dir where the log4j and ESAPI
-    # properties files are located as well as the $esapiConfig/* config files.
+    # This is the directory under esapi_svn_dir where ESAPI configuration files
+    # such as ESAPI.properties are located as well as the $esapiConfig/* config files.
     # Note that formerly used to be under src/main/resources, but it since
     # has been moved because where it was previously was causing problems with
     # Sonatype's Nexus. That particular problem may have been resolved, but it
@@ -141,7 +141,7 @@ mkdir $jartmpdir
 cd $jartmpdir || exit
 jar xf "$jarfile"
 rm -fr ${esapiConfig:?}
-rm -f properties/* log4j.*
+rm -f properties/*
 rm -f settings.xml owasp-esapi-dev.jks
 # TODO: This part would need some work if we sign or seal the ESAPI jar as
 #       that creates a special MANIFEST.MF file and other special files and
