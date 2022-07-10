@@ -8,7 +8,7 @@ import org.owasp.esapi.reference.crypto.DefaultEncryptedProperties;
 //          that were encrypted using ESAPI's EncryptedProperties class.
 //
 // Usage: java -classpath <cp> DisplayEncryptedProperties encryptedPropFileName
-//        where <cp> is proper classpath, which minimally include esapi.jar & log4j.jar
+//        where <cp> is proper classpath, which minimally includes the esapi.jar.
 public class DisplayEncryptedProperties {
 
     public DisplayEncryptedProperties() {
