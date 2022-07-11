@@ -39,7 +39,19 @@ public class WAFTestUtility {
     public static void setWAFPolicy( ESAPIWebApplicationFirewallFilter waf, String policyFile ) throws Exception {
         Map map = new HashMap();
         map.put( "configuration", policyFile );
-        map.put( "log_settings", "../log4j.xml");
+
+            // As of ESAPI 2.5.0.0 (when Log4J 1 dependency was removed), thsi
+            // init parameter is not ignored. However, it will produce a warning
+            // log message that looks something like this:
+            //
+            // [2022-07-11 00:25:45] [org.owasp.esapi.waf.ESAPIWebApplicationFirewallFilter] [EVENT FAILURE Anonymous:90471@unknown -> 10.1.43.6:80/ExampleApplication/org.owasp.esapi.waf.ESAPIWebApplicationFirewallFilter] >> Since ESAPI 2.5.0.0, ESAPI WAF ignoring parameter 'log_settings; for further details, see https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.5.0.0-release-notes.txt 
+            //
+            // Without getting really fancy and making this test way more
+            // complicated than I want though, I am not sure how to test for
+            // some specicif log output. It's been manually verified (once).
+            // Hopefully, that is good enough.      -kwwall
+            //
+        map.put( "log_settings", "parameter-now-ignored!!!");
         FilterConfig mfc = new MockWafFilterConfig( map );
         waf.init( mfc );
     }
