@@ -19,10 +19,8 @@ then echo >2&1 "Can't find class file: ${className}.class"
      exit 1
 fi
 echo "Your ESAPI.properties file: ${esapi_resources_test:?}/ESAPI.properties"
-echo "Your log4j properties file: ${log4j_properties:?}"
 echo
 set -x
-java -Dlog4j.configuration="file:$log4j_properties" \
-     -Dorg.owasp.esapi.resources="$esapi_resources_test" \
+java -Dorg.owasp.esapi.resources="$esapi_resources_test" \
      -classpath "$esapi_classpath" \
      ${className} "$@"

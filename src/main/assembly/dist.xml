@@ -38,8 +38,6 @@
             <outputDirectory>configuration</outputDirectory>
             <includes>
                 <include>esapi/**/*</include>
-                <include>log4j.dtd</include>
-                <include>log4j.xml</include>
                 <include>properties/**/*</include>
             </includes>
         </fileSet>

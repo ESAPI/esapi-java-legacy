@@ -16,12 +16,12 @@
 package org.owasp.esapi;
 
 /**
- * The Logger interface defines a set of methods that can be used to log
+ * The {@code Logger} interface defines a set of methods that can be used to log
  * security events. It supports a hierarchy of logging levels which can be configured at runtime to determine
  * the severity of events that are logged, and those below the current threshold that are discarded.
  * Implementors should use a well established logging library
  * as it is quite difficult to create a high-performance logger.
- * <P>
+ * <p>
  * The logging levels defined by this interface (in descending order) are:
  * <ul>
  * <li>fatal (highest value)</li>
@@ -33,9 +33,9 @@ package org.owasp.esapi;
  * </ul>
  * There are also several variations of {@code always()} methods that will <i>always</i>
  * log a message regardless of the log level.
- * <p>
+ * </p><p>
  * ESAPI also allows for the definition of the type of log event that is being generated.
- * The Logger interface predefines 6 types of Log events:
+ * The {@code Logger} interface predefines 6 types of Log events:
  * <ul>
  * <li>SECURITY_SUCCESS</li>
  * <li>SECURITY_FAILURE</li>
@@ -44,47 +44,54 @@ package org.owasp.esapi;
  * <li>EVENT_FAILURE</li>
  * <li>EVENT_UNSPECIFIED</li>
  * </ul>
- * <p>
- * Your implementation can extend or change this list if desired. 
- * <p>
- * This Logger allows callers to determine which logging levels are enabled, and to submit events 
+ * </p><p>
+ * Your custom implementation can extend or change this list if desired. 
+ * </p><p>
+ * This {@code Logger} allows callers to determine which logging levels are enabled, and to submit events 
  * at different severity levels.<br>
  * <br>Implementors of this interface should:
  * 
  * <ol>
- * <li>provide a mechanism for setting the logging level threshold that is currently enabled. This usually works by logging all 
+ * <li>Provide a mechanism for setting the logging level threshold that is currently enabled. This usually works by logging all 
  * events at and above that severity level, and discarding all events below that level.
  * This is usually done via configuration, but can also be made accessible programmatically.</li>
- * <li>ensure that dangerous HTML characters are encoded before they are logged to defend against malicious injection into logs 
+ * <li>Ensure that dangerous HTML characters are encoded before they are logged to defend against malicious injection into logs 
  * that might be viewed in an HTML based log viewer.</li>
- * <li>encode any CRLF characters included in log data in order to prevent log injection attacks.</li>
- * <li>avoid logging the user's session ID. Rather, they should log something equivalent like a 
+ * <li>Encode any CRLF characters included in log data in order to prevent log injection attacks.</li>
+ * <li>Avoid logging the user's session ID. Rather, they should log something equivalent like a 
  * generated logging session ID, or a hashed value of the session ID so they can track session specific 
  * events without risking the exposure of a live session's ID.</li> 
- * <li>record the following information with each event:</li>
+ * <li>Record the following information with each event:</li>
  *   <ol type="a">
- *   <li>identity of the user that caused the event,</li>
- *   <li>a description of the event (supplied by the caller),</li>
- *   <li>whether the event succeeded or failed (indicated by the caller),</li>
- *   <li>severity level of the event (indicated by the caller),</li>
- *   <li>that this is a security relevant event (indicated by the caller),</li>
- *   <li>hostname or IP where the event occurred (and ideally the user's source IP as well),</li>
- *   <li>a time stamp</li>
+ *   <li>Identity of the user that caused the event.</li>
+ *   <li>A description of the event (supplied by the caller).</li>
+ *   <li>Whether the event succeeded or failed (indicated by the caller).</li>
+ *   <li>Severity level of the event (indicated by the caller).</li>
+ *   <li>That this is a security relevant event (indicated by the caller).</li>
+ *   <li>Hostname or IP where the event occurred (and ideally the user's source IP as well).</li>
+ *   <li>A date/time stamp.</li>
  *   </ol>
  * </ol>
  *  
  * Custom logger implementations might also:
  * <ol start="6">
- * <li>filter out any sensitive data specific to the current application or organization, such as credit cards, 
+ * <li>Filter out any sensitive data specific to the current application or organization, such as credit cards, 
  * social security numbers, etc.</li>
  * </ol>
  * 
- * There are both Log4j and native Java Logging default implementations. JavaLogger uses the java.util.logging package as the basis for its logging 
- * implementation. Both default implementations implements requirements #1 thru #5 above.<br>
- * <br>
- * Customization: It is expected that most organizations will implement their own custom Logger class in 
- * order to integrate ESAPI logging with their logging infrastructure. The ESAPI Reference Implementation 
- * is intended to provide a simple functional example of an implementation.
+ * There are both SLF4J and native Java Logging (i.e., {@code java.util.logging}, aka JUL) implementations
+ * of the ESAPI logger with JUL being our default logger for our stock <b>ESAPI.properties</b> file that
+ * is delivered along with ESAPI releases in a separate <b>esapi-configuration</b> jar available from the
+ * releases mentioned on
+ * <a href="https://github.com/ESAPI/esapi-java-legacy/releases/">ESAPI's GitHub Releases page</a>.
+ * </p><p>
+ * The {@code org.owasp.esapi.logging.java.JavaLogger} class uses the {@code java.util.logging} package as
+ * the basis for its logging implementation. Both provided implementations implement requirements #1 through #5 above.
+ * </p><p>
+ * <i>Customization</i>: It is expected that most organizations may wish to implement their own custom {@code Logger} class in 
+ * order to integrate ESAPI logging with their specific logging infrastructure. The ESAPI feference implementations
+ * can serve as a useful starting point to intended to provide a simple functional example of an implementation, but
+ * they are also largely usuable out-of-the-box with some additional minimal log configuration.
  * 
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  * href="http://www.aspectsecurity.com">Aspect Security</a>

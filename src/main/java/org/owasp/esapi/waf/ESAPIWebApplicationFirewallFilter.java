@@ -139,8 +139,18 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 
 		logger.debug(Logger.EVENT_SUCCESS, ">> Initializing WAF");
 		/*
-		 * Pull logging file.
+		 * Pull logging file. -- We now ignore this arg, but will log something
+         * letting users know we are ignoring it, because many of them never
+         * seem to read the release notes. And this is probably better than
+         * throwing an exception.
 		 */
+        String logSettingsFilename = fc.getInitParameter(LOGGING_FILE_PARAM);
+        if ( logSettingsFilename != null ) {
+            logger.warning(Logger.EVENT_FAILURE, ">> Since ESAPI 2.5.0.0, ESAPI WAF ignoring parameter '" +
+                    LOGGING_FILE_PARAM + "; for further details, see " +
+                    "https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.5.0.0-release-notes.txt");
+
+        }
 
 		/*
 		 * Pull main configuration file.

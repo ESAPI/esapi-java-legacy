@@ -4,7 +4,7 @@ import org.owasp.esapi.Logger;
 // Purpose: Short code snippet to show how ESAPI logging works.
 //
 // Usage: java -classpath <cp> ESAPILogging
-//        where <cp> is proper classpath, which minimally include esapi.jar & log4j.jar
+//        where <cp> is proper classpath, which minimally includes the esapi.jar.
 public class ESAPILogging {
 
     public static void main(String[] args) {

@@ -51,7 +51,7 @@ Issue #         GitHub Issue Title
 @@@@ NOTE any special notes here. Probably leave this one, but I would suggest noting additions BEFORE this.
 [If you have already successfully been using ESAPI 2.2.1.0 or later, you probably can skip this section.]
 
-Since ESAPI 2.2.1.0, the new default ESAPI logger is JUL (java.util.logging packages) and we have deprecated the use of Log4J 1.x because we now support SLF4J and Log4J 1.x is way past its end-of-life. We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on ESAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
+Since ESAPI 2.2.1.0, the new default ESAPI logger is JUL (java.util.logging packages) and we had deprecated the use of Log4J 1.x because was way past its end-of-life. (Note: As of ESAPI 2.5.0.0, we have officially removed all Log4J 1 dependencies, after it had been deprecated for 2 years as per our deprecation policy.) We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on ESAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
 
 However, if you try to juse the new ESAPI 2.2.1.0 or later logging you will notice that you need to change ESAPI.Logger and also possibly provide some other properties as well to get the logging behavior that you desire.
 
@@ -85,11 +85,6 @@ If you are using JavaLogFactory, you will also want to ensure that you have the 
     Logger.ClientInfo=true
 
 See GitHub issue #560 for additional details.
-
-
-Related to that aforemented Log4J 1.x CVE and how it affects ESAPI, be sure to read
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
-which describes CVE-2019-17571, a deserialization vulnerability in Log4J 1.2.17. ESAPI is *NOT* affected by this (even if you chose to use Log4J 1 as you default ESAPI logger). This security bulletin describes why this CVE is not exploitable as used by ESAPI.
 
 
 Finally, while ESAPI still supports JDK 7 (even though that too is way past end-of-life), the next ESAPI release will move to JDK 8 as the minimal baseline. (We already use Java 8 for development but still to Java 7 source and runtime compatibility.) We need to do this out of necessity because some of our dependencies are no longer doing updates that support Java 7.
@@ -126,11 +121,6 @@ Another problem is if you run 'mvn test' from the 'cmd' prompt (and possibly Pow
     C:\code\esapi-java-legacy> mvn test >testoutput.txt 2>&1
 
 We believe these failures is because the maven-surefire-plugin is by default not forking a new JVM process for each test class. We are looking into this. For now, we have only have observed this behavior on Windows 10. If you see this error, please do NOT report it as a GitHub issue unless you know a fix for it. (And yes, we are aware of '<reuseForks>false</reuseForks>' in the pom for the maven-surefire-plugin, but that causes other tests to fail that we haven't had time to fix.)
-
-
-Lastly, some SCA services may continue to flag vulnerabilties in ESAPI ${VERSION} related to log4j 1.2.17 (e.g., CVE-2020-9488). We do not believe the way that ESAPI uses log4j in a manner that leads to any exploitable behavior.  See the security bulletins
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
-for additional details.
 
 -----------------------------------------------------------------------------
 

@@ -22,6 +22,6 @@ The general workflow is:
 
     Logger.info/warn/etc(message) -> forwards to LogBridgelog(logger, esapiLevel, type, message) -> forwards to LogHandler.log(...) -> forwards to slf4j Logger implementation with appropriate level and composed message.
 
-So each of the tests for each of the classes verifies data in -> data out based on the Logging API.  The structure for JUL, Log4J, and SLF4J are almost identical.  There are a few differences in the interaction with the underlying Logger interactions and expectations.  As a result, the tests are also almost full duplications (again accounting for differences in the underlying logging API).
+So each of the tests for each of the classes verifies data in -> data out based on the Logging API.  The structure for JUL and SLF4J are almost identical.  There are a few differences in the interaction with the underlying Logger interactions and expectations.  As a result, the tests are also almost full duplications (again accounting for differences in the underlying logging API).
 
 -J
