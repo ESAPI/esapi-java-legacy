@@ -140,7 +140,7 @@
         <version.powermock>2.0.9</version.powermock>
         <version.spotbugs>4.7.1</version.spotbugs>
         <version.findsecbugs>1.12.0</version.findsecbugs>
-        <version.spotbugs.maven>4.7.0.0</version.spotbugs.maven>
+        <version.spotbugs.maven>4.7.1.0</version.spotbugs.maven>
         <version.surefire>3.0.0-M7</version.surefire>
         <project.java.target>1.8</project.java.target>
             <!-- TODO: Be sure to update. Should be date of previous official release -->
@@ -406,7 +406,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.4.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -538,7 +538,7 @@
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>extra-enforcer-rules</artifactId>
-                    <version>1.5.1</version>
+                    <version>1.6.0</version>
                   </dependency>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
