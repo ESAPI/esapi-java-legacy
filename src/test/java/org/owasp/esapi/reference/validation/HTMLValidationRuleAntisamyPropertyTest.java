@@ -15,12 +15,8 @@
  */
 package org.owasp.esapi.reference.validation;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.owasp.validator.html.Policy;
+import org.owasp.validator.html.PolicyException;
 
 /**
  * Isolate scope test to assert the behavior of the HTMLValidationRule
@@ -32,21 +28,9 @@ public class HTMLValidationRuleAntisamyPropertyTest {
      */
     private static final String INVALID_ANTISAMY_POLICY_FILE = "antisamy-InvalidPolicy.xml";
 
-    @AfterClass
-    public static void enableAntisamySchemaValidation() {
-        Policy.setSchemaValidation(true);
-    }
-    
-    @BeforeClass
-    public static void disableAntisamySchemaValidation() {
-        Policy.setSchemaValidation(false);
-        //System property is read once, so we're preferring the static method for testing.
-        //System.setProperty( "owasp.validator.validateschema", "false" ); 
-    }
-
-    @Test
+    @Test( expected = PolicyException.class )
     public void checkAntisamySystemPropertyWorksAsAdvertised() throws Exception {
         HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
     }
-    
+
 }
