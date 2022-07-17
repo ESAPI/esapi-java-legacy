@@ -1,0 +1,243 @@
+Release notes for ESAPI 2.5.0.0
+    Release date: 2022-07-17
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.4.0.0, 2022-04-24
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+
+In addition to this summary, please also be sure to thoroughly read the section "Changes Requiring Special Attention", below.
+
+Major changes:
+    Logging:
+        The major change in ESAPI 2.5.0.0 is the removal of the Log4J 1 dependency (specifically, log4j-1.2.17). It has been removed because in accordance with the ESAPI deprecation policy (see the README.md file), the Log4J supported logger has been deprecated for 2 years.
+
+        For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode SourceClear, OWASP Dependency Check, etc., you will notice that the 4 Log4J 1.x related CVEs are no longer flagged. This is because of removal of the Log4J 1.2.17 dependency.
+
+        Any remaining flagged vulnerabilities (e.g., CVE-2020-7791 for transitive dependency batik-i18n-1.14) are believed to be false positives.
+
+        You are encouraged to review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md and email us or contact us in our GitHub Discussions page if you have questions.
+
+    AntiSamy 1.7.0 and potentially breaking changes
+        We have updated to AntiSamy 1.7.0. If you have a custom version of antisamy-esapi.xml,then be sure to read the section "Changes Requiring Special Attention", below.
+
+Minor changes:
+    Miscellaneous bug fixes, Javadoc enhancements, and minor dependency updates.
+
+=================================================================================================================
+
+Basic ESAPI facts
+-----------------
+
+ESAPI 2.4.0.0 release:
+     212 Java source files
+    4325 JUnit tests in 136 Java source files (1 test skipped)
+
+ESAPI 2.5.0.0 release:
+     206 Java source files
+    4274 JUnit tests in 131 Java source files (0 tests skipped)
+
+18 GitHub Issues closed in this release, including those we've decided not to fix (marked 'wontfix' and 'falsepositive').
+(Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D2022-04-24)
+
+Issue #         GitHub Issue Title
+----------------------------------------------------------------------------------------------
+717             Update to AntiSamy 1.7.0 once it is officially released
+715             ESAPI - Not working with Eclipse bug
+713             Should '/' be encoded for LDAP searches? bug
+705             Add more details to DefaultValidator class-level javadoc on ESAPI canonicalization properties Component-Docs Component-Validator javadoc
+702             ValidatorTest#testIsValidDirectoryPathGHSL_POC fails on Mac
+695             Esapi 2.3.0.0 does not supported in opensaml 2.6.6 bug
+692             Multiple (2x) encoding detected in from PercentCodec question
+690             Plugin/Dependency Version Updates
+689             Clean-up ESAPI Javadoc Component-Docs javadoc
+686             ESAPI canonicalization in DefaultEncoder ignoring Encoder.DefaultCodecList property bug Component-Encoder
+684             Hello world
+682             Update baseline to java 1.8
+674             Add the missing Javadoc for the Validator interface Component-Docs Component-Validator good first issue
+656             DefaultHTTPUtility uses hard coded Header name/value lengths (Note: Actually fixed in ESAPI 2.3.0.0, but just closed this release. - kww)
+644             Do not include a logging implementation as a dependency slf4j-simple
+620             Move the default property names and values out of a reference implementation class Component-SecurityConfiguration
+587             Drop Xerces dependency from pom.xml Build-Maven Vulnerable Dependencies
+534             Delete Deprecated Log4J implementation and Dependencies wait4future
+
+-----------------------------------------------------------------------------
+
+        Changes Requiring Special Attention
+
+-----------------------------------------------------------------------------
+
+Important ESAPI Logging Changes
+
+* Since ESAPI 2.5.0.0, support for logging directly via Log4J 1 has been removed. (This was two years after it having first been deprecated.) Thus, your only choice for ESAPI logging are:
+    - java.util.logging (JUL), which as been the default since ESAPI 2.2.1.0.
+        * Set ESAPI.Logger=org.owasp.esapi.logging.java.JavaLogFactory in your ESAPI.properties file.
+    - SLF4J (which your choice of supported SLF4J logging implementation)
+        * Set ESAPI.Logger=org.owasp.esapi.logging.slf4j.Slf4JLogFactory in your ESAPI.properties file.
+        * Create your own custom logger.
+* Logger configuration notes - If you are migrating from prior to ESAPI 2.2.1.1, you will need to update your ESAPI.properties file as logging-related configuration as per the ESAPI 2.2.1.1 release notes, which may be found at:
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.1.1-release-notes.txt#L39-L78
+
+If you use ESAPI 2.5.0.0 or later, you will get an ClassNotFoundException as the root cause if you still have your ESAPI.Logger property set to use Log4J because the org.owasp.esapi.logger.log4j.Log4JFactory class has been completely removed from the ESAPI jar.  If you are dead set on continuing to use Log4J 1, you ought to be able to do so via SLF4J. The set up for Log4J 1 (which has not be tested), should be similar to configure ESAPI to use SLF4J with Log4J 2 as described here:
+    https://github.com/ESAPI/esapi-java-legacy/wiki/Using-ESAPI-with-SLF4J#slf4j-using-log4j-2x
+
+Potentially Breaking Changes in AntiSamy 1.7.0
+
+* This version of ESAPI has upgraded to the latest version of AntiSamy (1.7.0 at the time of our release). AntiSamy 1.7.0 has some breaking changes to its SDK and the way that it processes AntiSamy policy files, of which the antisamy-esapi.xml file, included in our esapi-2.5.0.0-configuration.jar found at https://github.com/ESAPI/esapi-java-legacy/releases/download/esapi-2.5.0.0/esapi-2.4.0.0-configuration.jar, is the one we include.
+
+* None of the AntiSamy SDK changes affected how ESAPI, in its default configuration, uses it, but you may be affected if you have customized your AntiSamy policy file. If your regression tests fail when you upgrade to ESAPI 2.5.0.0 sand they seem to be related to AntiSamy, then please review https://github.com/nahsra/antisamy/blob/main/README.md#important---api-breaking-changes-in-170. Also, as a temporary workaround, you could do something like this (in Maven, but similar exclusion can be done with Gradle) to allow you time to correct your customized AntiSamy policy file:
+
+        <dependency>
+            <groupId>org.owasp.esapi</groupId>
+            <artifactId>esapi</artifactId>
+            <version>2.5.0.0</version>
+            <exclusions>
+                <!-- Exclude breaking version of AntiSamy 1.7.0 to allow time to fix our AntiSamy policy file, antisamy-esapi.xml -->
+                <exclusion>
+                    <groupId>org.owasp.antisamy</groupId>
+                    <artifactId>antisamy</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.owasp.antisamy</groupId>
+            <artifactId>antisamy</artifactId>
+            <version>1.6.8</version>
+        </dependency>
+
+Indeed the only change that we had to make is to alter a JUnit test that was intended to ensure that invalid AntiSamy policy files could be disabled by setting
+    Policy.setSchemaValidation(false);
+before processing any AntiSamy policy file not conforming to its schema. This specific (previously deprecated) method was removed in AntiSamy 1.7.0 so the schema validation checks can no longer be ignored. (And hence the reason for the workaround noted above.)
+
+Instead, we simply changed the JUnit test to check that the expected AntiSamy org.owasp.validator.html.PolicyException class is thrown when the invalid policy file is loaded.
+
+-----------------------------------------------------------------------------
+
+        Remaining Known Issues / Problems
+
+-----------------------------------------------------------------------------
+'mvn site' fails to build these two reports:
+    "Tag reference" report           --- maven-taglib-plugin:2.4:tagreference
+    "Taglibdoc documentation" report --- maven-taglib-plugin:2.4:taglibdoc
+
+Thus no tag library documentation will be generated. :-(
+
+We are attempting to find a solution, but on the surface, it seems like the maven-taglib-plugin does not play nicely with versions of Java after Java 6. (So, this probably has been happening for a while and we just noticed it.)
+
+No others problems are known, other than the remaining open issues on GitHub.
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, some of which not tracked via GitHub issues
+
+-----------------------------------------------------------------------------
+
+* Minor updates to README.md file with respect to version information.
+
+-----------------------------------------------------------------------------
+
+Developer Activity Report (Changes between release 2.4.0.0 and 2.5.0.0, i.e., between 2022-04-24 and 2022-07-17)
+Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
+
+#
+# 34 PRs merged since ESAPI 2.4.0.0 release
+#
+Developer       Total       Total Number        # Merged
+(GitHub ID)     commits   of Files Changed        PRs
+========================================================
+jeremiahjstacey 265            180               24
+kwwall           35             64                5
+xeno6696          1            267                1
+noloader          5              2                1
+stevebosman-oc    4              3                2
+VinodAnandan      1              1                1
+========================================================
+                                     Total PRs:  34
+
+-----------------------------------------------------------------------------
+
+CHANGELOG:      Create your own. May I suggest:
+
+        git log --stat --since=2022-04-24 --reverse --pretty=medium
+
+    which will show all the commits since just after the previous (2.4.0.0) release.
+
+    Alternately, you can download the most recent ESAPI source and run
+
+        mvn site
+
+    which will create a CHANGELOG file named 'target/site/changelog.html'
+
+
+-----------------------------------------------------------------------------
+
+Direct and Transitive Runtime and Test Dependencies:
+
+        $ mvn -B dependency:tree
+        ...
+        [INFO] --- maven-dependency-plugin:3.3.0:tree (default-cli) @ esapi ---
+        [INFO] org.owasp.esapi:esapi:jar:2.5.0.0
+        [INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+        [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
+        [INFO] +- xom:xom:jar:1.3.7:compile
+        [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+        [INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+        [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
+        [INFO] +- commons-configuration:commons-configuration:jar:1.10:compile
+        [INFO] +- commons-lang:commons-lang:jar:2.6:compile
+        [INFO] +- commons-fileupload:commons-fileupload:jar:1.4:compile
+        [INFO] +- org.apache.commons:commons-collections4:jar:4.4:compile
+        [INFO] +- org.apache-extras.beanshell:bsh:jar:2.0b6:compile
+        [INFO] +- org.owasp.antisamy:antisamy:jar:1.7.0:compile
+        [INFO] |  +- net.sourceforge.htmlunit:neko-htmlunit:jar:2.63.0:compile
+        [INFO] |  +- org.apache.httpcomponents.client5:httpclient5:jar:5.1.3:compile
+        [INFO] |  |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.1.3:compile
+        [INFO] |  +- org.apache.httpcomponents.core5:httpcore5:jar:5.1.4:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-css:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.14:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-util:jar:1.14:compile
+        [INFO] |  |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.14:compile
+        [INFO] |  |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.14:compile
+        [INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.6:compile
+        [INFO] |  +- xerces:xercesImpl:jar:2.12.2:compile
+        [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
+        [INFO] +- org.slf4j:slf4j-api:jar:1.7.36:compile
+        [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
+        [INFO] +- commons-io:commons-io:jar:2.11.0:compile
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.7.1:compile
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+        [INFO] +- commons-codec:commons-codec:jar:1.15:test
+        [INFO] +- junit:junit:jar:4.13.2:test
+        [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+        [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
+        [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
+        [INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.9:test
+        [INFO] |  \- org.powermock:powermock-api-support:jar:2.0.9:test
+        [INFO] +- org.mockito:mockito-core:jar:3.12.4:test
+        [INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.13:test
+        [INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.13:test
+        [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+        [INFO] +- org.powermock:powermock-core:jar:2.0.9:test
+        [INFO] |  \- org.javassist:javassist:jar:3.27.0-GA:test
+        [INFO] +- org.powermock:powermock-module-junit4:jar:2.0.9:test
+        [INFO] |  \- org.powermock:powermock-module-junit4-common:jar:2.0.9:test
+        [INFO] +- org.powermock:powermock-reflect:jar:2.0.9:test
+        [INFO] \- org.openjdk.jmh:jmh-core:jar:1.35:test
+        [INFO]    +- net.sf.jopt-simple:jopt-simple:jar:5.0.4:test
+        [INFO]    \- org.apache.commons:commons-math3:jar:3.2:test
+        ...
+
+
+-----------------------------------------------------------------------------
+
+Acknowledgments:
+    A special shout-out our new contributors noloader, stevebosman-oc, and VinodAnandan.
+    Another hat tip to Dave Wichers, Sebastián Passaro, and the rest of the AntiSamy crew for promptly releasing AntiSamy 1.7.0.  And thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
+
+A special thanks to the ESAPI community from the ESAPI project co-leaders:
+    Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!
+    Matt Seil (xeno6696)

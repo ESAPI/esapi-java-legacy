@@ -1,6 +1,7 @@
 @@@@ IMPORTANT: Be sure to 1) save in DOS text format, and 2) Delete this line and others starting with @@@@
 @@@@             Edit this file in vim with       :set tw=0
 @@@@            Meant to be used with   scripts/newReleaseNotes.sh and the 'vars.*' scripts there.
+@@@@    There are specific references to ESAPI 2.5.0.0 and other old releases in this file. Do NOT change the version #s. They are there for a reason.
 Release notes for ESAPI ${VERSION}
     Release date: ${YYYY_MM_DD_RELEASE_DATE}
     Project leaders:
@@ -13,11 +14,14 @@ Previous release: ESAPI ${PREV_VERSION}, ${PREV_RELEASE_DATE}
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
 @@@@ View previous release notes to see examples of what to put here. This is typical. YMMV.
+@@@@ Obviously, you should summarize any major changes / new features here.
 This is a patch release with the primary intent of updating some dependencies, some with known vulnerabilities. Details follow.
 
-For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode SourceClear, OWASP Dependency Check, etc., you might notice that there is vulnerability in xerces:xercesImpl:2.12.0 that ESAPI uses (also a transitive dependency) that is similar to CVE-2020-14621. Unfortunately there is no official patch for this in the regular Maven Central repository. Further details are described in Security Bulletin #3, which is viewable here
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf 
-and associated with this release on GitHub. Manual workarounds possible. See the security bulletin for further details.
+For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode SourceClear, OWASP Dependency Check, etc., you will notice that the 4 Log4J 1.x related CVEs are no longer flagged. This is because we have finally removed the Log4J 1.2.17 dependency in ESAPI 2.5.0.0.
+
+Any remaining flagged vulnerabilities (e.g., CVE-2020-7791 for transitive dependency batik-i18n-1.14) are believed to be false postives.
+
+You are encouraged to review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md and email us or contact us in our GitHub Discussions page if you have questions.
 
 
 =================================================================================================================
@@ -49,78 +53,30 @@ Issue #         GitHub Issue Title
 
 -----------------------------------------------------------------------------
 @@@@ NOTE any special notes here. Probably leave this one, but I would suggest noting additions BEFORE this.
-[If you have already successfully been using ESAPI 2.2.1.0 or later, you probably can skip this section.]
 
-Since ESAPI 2.2.1.0, the new default ESAPI logger is JUL (java.util.logging packages) and we had deprecated the use of Log4J 1.x because was way past its end-of-life. (Note: As of ESAPI 2.5.0.0, we have officially removed all Log4J 1 dependencies, after it had been deprecated for 2 years as per our deprecation policy.) We did not want to make SLF4J the default logger (at least not yet) as we did not want to have the default ESAPI use require additional dependencies. However, SLF4J is likely to be the future choice, at least once we start on ESAPI 3.0. A special shout-out to Jeremiah Stacey for making this possible by re-factoring much of the ESAPI logger code. Note, the straw that broke the proverbial camel's back was the announcement of CVE-2019-17571 (rated Critical), for which there is no fix available and likely will never be.
+Important JDK Support Announcement
+* ESAPI 2.3.0.0 was the last Java release to support Java 7. ESAPI 2.4.0 requires using Java 8 or later. See the ESAPI 2.4.0.0 release notes (https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.4.0.0-release-notes.txt) for details as to the reason.
+    - This means if your project requires Java 7, you must use ESAPI 2.3.0.0 or earlier.
 
-However, if you try to juse the new ESAPI 2.2.1.0 or later logging you will notice that you need to change ESAPI.Logger and also possibly provide some other properties as well to get the logging behavior that you desire.
+Important ESAPI Logging Changes
 
-To use ESAPI logging in ESAPI 2.2.1.0 (and later), you will need to set the ESAPI.Logger property to
+* Since ESAPI 2.5.0.0, support for logging directly via Log4J 1 has been removed. (This was two years after it haveing first been deprecated.) Thus, you only choice of ESAPI logging are
+    - java.util.logging (JUL), which as been the default since ESAPI 2.2.1.0.
+        * Set ESAPI.Logger=org.owasp.esapi.logging.java.JavaLogFactory in your ESAPI.properties file.
+    - SLF4J (which your choice of supported SLF4J logging implemmentation)
+        * Set ESAPI.Logger=org.owasp.esapi.logging.slf4j.Slf4JLogFactory in your ESAPI.properties file.
+* Logger configuration notes - If you are migrating from prior to ESAPI 2.2.1.1, you will need to update your ESAPI.properties file as logging-related configuration as per the ESAPI 2.2.1.1 release notes, which may be found at:
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.1.1-release-notes.txt#L39-L78
 
-    org.owasp.esapi.logging.java.JavaLogFactory     - To use the new default, java.util.logging (JUL)
-    org.owasp.esapi.logging.slf4j.Slf4JLogFactory   - To use the new (to release 2.2.0.0) SLF4J logger
-
-In addition, if you wish to use JUL for logging, you *MUST* supply an "esapi-java-logging.properties" file in your classpath. This file is included in the 'esapi-2.2.2.0-configuration.jar' file provided under the 'Assets' section of the GitHub Release at
-    https://github.com/ESAPI/esapi-java-legacy/releases/esapi-2.2.2.0
-
-Unfortunately, there was a logic error in the static initializer of JavaLogFactory (now fixed in this release) that caused a NullPointerException to be thrown so that the message about the missing "esapi-java-logging.properties" file was never seen.
-
-If you are using JavaLogFactory, you will also want to ensure that you have the following ESAPI logging properties set:
-    # Set the application name if these logs are combined with other applications
-    Logger.ApplicationName=ExampleApplication
-    # If you use an HTML log viewer that does not properly HTML escape log data, you can set LogEncodingRequired to true
-    Logger.LogEncodingRequired=false
-    # Determines whether ESAPI should log the application name. This might be clutter in some single-server/single-app environments.
-    Logger.LogApplicationName=true
-    # Determines whether ESAPI should log the server IP and port. This might be clutter in some single-server environments.
-    Logger.LogServerIP=true
-    # LogFileName, the name of the logging file. Provide a full directory path (e.g., C:\\ESAPI\\ESAPI_logging_file) if you
-    # want to place it in a specific directory.
-    Logger.LogFileName=ESAPI_logging_file
-    # MaxLogFileSize, the max size (in bytes) of a single log file before it cuts over to a new one (default is 10,000,000)
-    Logger.MaxLogFileSize=10000000
-    # Determines whether ESAPI should log the user info.
-    Logger.UserInfo=true
-    # Determines whether ESAPI should log the session id and client IP.
-    Logger.ClientInfo=true
-
-See GitHub issue #560 for additional details.
-
-
-Finally, while ESAPI still supports JDK 7 (even though that too is way past end-of-life), the next ESAPI release will move to JDK 8 as the minimal baseline. (We already use Java 8 for development but still to Java 7 source and runtime compatibility.) We need to do this out of necessity because some of our dependencies are no longer doing updates that support Java 7.
+If you use ESAPI 2.5.0.0 or later, you will get an ClassNotFoundException as the root cause if you still have your ESAPI.Logger property set to use Log4J because the org.owasp.esapi.logger.log4j.Log4JFactory class has been completely removed from the ESAPI jar.  If you are dead set on continuing to use Log4J 1, you ought to be able to do so via SLF4J. The set up for Log4J 1 (which has not be tested), should be similar to configure ESAPI to use SLF4J with Log4J 2 as described here:
+    https://github.com/ESAPI/esapi-java-legacy/wiki/Using-ESAPI-with-SLF4J#slf4j-using-log4j-2x
 
 -----------------------------------------------------------------------------
 
         Remaining Known Issues / Problems
 
 -----------------------------------------------------------------------------
-If you use Java 7 (the minimal Java baseline supported by ESAPI) and try to run 'mvn test' there is one test that fails. This test passes with Java 8. The failing test is:
-
-        [ERROR] Tests run: 5, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 0.203 s
-        <<< FAILURE! - in org.owasp.esapi.crypto.SecurityProviderLoaderTest
-        [ERROR] org.owasp.esapi.crypto.SecurityProviderLoaderTest.testWithBouncyCastle
-        Time elapsed: 0.116 s <<< FAILURE!
-        java.lang.AssertionError: Encryption w/ Bouncy Castle failed with
-        EncryptionException for preferred cipher transformation; exception was:
-        org.owasp.esapi.errors.EncryptionException: Encryption failure (unavailable
-        cipher requested)
-        at
-        org.owasp.esapi.crypto.SecurityProviderLoaderTest.testWithBouncyCastle(Security
-        ProviderLoaderTest.java:133)
-
-I will spare you all the details and tell you that this has to do with Java 7 not being able to correctly parse the signed Bouncy Castle JCE provider jar. More details are available at:
-    https://www.bouncycastle.org/latest_releases.html
-and
-    https://github.com/bcgit/bc-java/issues/477
-I am sure that there are ways of making Bouncy Castle work with Java 7, but since ESAPI does not rely on Bouncy Castle (it can use any compliant JCE provider), this should not be a problem. (It works fine with the default SunJCE provider.) If it is important to get the BC provider working with the ESAPI Encryptor and Java 7, then open a GitHub issue and we will take a deeper look at it and see if we can suggest something.
-
-
-
-Another problem is if you run 'mvn test' from the 'cmd' prompt (and possibly PowerShell as well), you will get intermittent failures (generally between 10-25% of the time) at arbitrary spots. If you run it again without any changes it will work fine without any failures. We have discovered that it doesn't seem to fail if you run the tests from an IDE like Eclipse or if you redirect both stdout and stderr to a file; e.g.,
-
-    C:\code\esapi-java-legacy> mvn test >testoutput.txt 2>&1
-
-We believe these failures is because the maven-surefire-plugin is by default not forking a new JVM process for each test class. We are looking into this. For now, we have only have observed this behavior on Windows 10. If you see this error, please do NOT report it as a GitHub issue unless you know a fix for it. (And yes, we are aware of '<reuseForks>false</reuseForks>' in the pom for the maven-surefire-plugin, but that causes other tests to fail that we haven't had time to fix.)
+None known, other than the remaining open issues on GitHub.
 
 -----------------------------------------------------------------------------
 
@@ -128,13 +84,16 @@ We believe these failures is because the maven-surefire-plugin is by default not
 
 -----------------------------------------------------------------------------
 
-* Minor updates to README.md file
+* Minor updates to README.md file with respect to version information.
 
 -----------------------------------------------------------------------------
 
 Developer Activity Report (Changes between release ${PREV_VERSION} and ${VERSION}, i.e., between ${PREV_RELEASE_DATE} and ${YYYY_MM_DD_RELEASE_DATE})
 Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
 
+@@@@ 
+@@@@ This section needs to be manually updated.
+@@@@ 
 Developer       Total       Total Number        # Merged
 (GitHub ID)     commits   of Files Changed        PRs
 ========================================================
@@ -144,8 +103,6 @@ kwwall           7              8               0
 ========================================================
                                     Total PRs:  2
 
-There were also several snyk-bot PRs that were rejected for various reasons, mostly because 1) I was already making the proposed changes and preferred to do them in single commit or 2) there were other reasons for rejecting them (such as the dependency requiring Java 8). The proposed changes that were not outright rejected were included as part of commit a8a79bc5196653500ce664b7b063284e60bddaa0.
-
 -----------------------------------------------------------------------------
 
 CHANGELOG:      Create your own. May I suggest:
@@ -153,6 +110,13 @@ CHANGELOG:      Create your own. May I suggest:
         git log --stat --since=${PREV_RELEASE_DATE} --reverse --pretty=medium
 
     which will show all the commits since just after the previous (${PREV_VERSION}) release.
+
+    Alternately, you can download the most recent ESAPI source and run
+
+        mvn site
+
+    which will create a CHANGELOG file named 'target/site/changelog.html'
+
 
 -----------------------------------------------------------------------------
 
@@ -163,8 +127,9 @@ Direct and Transitive Runtime and Test Dependencies:
 
 -----------------------------------------------------------------------------
 
+@@@@ Review these notes, especially the reference to the AntiSamy version information.
 Acknowledgments:
-    Another hat tip to Dave Wichers for promptly releasing AntiSamy 1.6.1.  And thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
+    Another hat tip to Dave Wichers and the AntiSamy crew for promptly releasing AntiSamy 1.7.0.  And thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
 
 A special thanks to the ESAPI community from the ESAPI project co-leaders:
     Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!

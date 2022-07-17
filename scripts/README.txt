@@ -12,4 +12,5 @@ newReleaseNotes.sh  -- Bash script to create the release notes boillerplate from
 vars.2.2.3.0        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
 vars.2.2.3.1        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
 vars.2.3.0.0        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
+vars.2.4.0.0        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
 vars.template       -- Template to construct the release specific vars files
