@@ -145,6 +145,8 @@ Generated manually (this time) -- all errors are the fault of kwwall and his ina
 
 #
 # 34 PRs merged since ESAPI 2.4.0.0 release
+#       Note: Figures here may not agree with generated Change Log Report, which is date-based,
+#       as some commits included in this release were prior to ESAPI 2.4.0.0.
 #
 Developer       Total       Total Number        # Merged
 (GitHub ID)     commits   of Files Changed        PRs
