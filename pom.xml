@@ -146,7 +146,7 @@
             <!-- TODO: Be sure to update. Should be date of previous official release -->
             <!-- Exact date in the form 'yyyy-dd-yy 00:00:00' should be used. You can find the previous release date -->
             <!-- n the previous release notes file under the 'documentation/' directory. -->
-        <date.prev_release>2021-05-07 00:00:00</date.prev_release>
+        <date.prev_release>2021-05-24 00:00:00</date.prev_release>
     </properties>
 
     <dependencyManagement>
@@ -683,7 +683,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.3.0</version>
+               <version>3.4.0</version>
             </plugin>
 
             <plugin>
