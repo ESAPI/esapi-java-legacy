@@ -134,7 +134,7 @@ before posting your issue.
 If believe you have found a vulnerability in ESAPI legacy, for the sake of the
 ESAPI community, please practice Responsible Disclosure. (Note: We will be sure
 you get credit and will work with you to create a GitHub Security Advisory, and
-if you so choose, to persue filing a CVE via the GitHub CNA.)
+if you so choose, to pursue filing a CVE via the GitHub CNA.)
 
 You are of course encouraged to first search our GitHub issues list (see above)
 to see if it has already been reported. If it has not, then please contact
@@ -175,7 +175,7 @@ In mid-2014 ESAPI migrated all code and issues from Google Code to GitHub. This 
 ### What about the issues still located on Google Code?
 All issues from Google Code have been migrated to GitHub issues. We now
 use GitHut Issues for reporting everything *except* security vulnerabilities.
-Other bug tracking sites are undoubtably more advanced, but as developers,
+Other bug tracking sites are undoubtedly more advanced, but as developers,
 we do not want to spent time having to close issues from multiple bug-tracking
 systems. Therefore, until the synchronization happens with the Atlassian Jira
 instance that we have (but are not using; see GitHub issue #371), please

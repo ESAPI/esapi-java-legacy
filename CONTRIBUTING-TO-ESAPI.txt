@@ -3,12 +3,12 @@
 Getting Started:
     If you have not already done so, go back and read the section
     "Contributing to ESAPI legacy" in ESAPI's README.md file. It
-    make contain updates and advice not contained herein.
+    may contain updates and advice not contained herein.
 
 A Special Note on GitHub Authentication:
-    GitHub has announced that they are deprecating authentiation based on
-    username / password and beginning 2021-08-13, you will no longer be able
-    to your password to authenticate to 'git' operations on GitHub.com.
+    GitHub has announced that they are deprecating password based authentication
+    using username / password and beginning 2021-08-13, you will no longer be
+    able to your password to authenticate to 'git' operations on GitHub.com.
     Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/
     for details and plan accordingly.
 
@@ -21,22 +21,23 @@ Finding Something Interesting to Work on:
     or "help wanted", those are good places to start for someone not yet
     familiar with the ESAPI code base.
 
-    You will need a account on GitHub though. Once you create one, let me know
+    You will need a account on GitHub though. Once you create one, let us know
     what it is. Then if you want to work on a particular issue, we can assign
     it to you so someone else won't take it.
 
-    If you have questions, email Kevin Wall (Kevin.W.Wall@gmail.com) or Matt Seil (xeno6696@gmail.com).
+    If you have questions, email Kevin Wall (Kevin.W.Wall@gmail.com) or Matt
+    Seil (xeno6696@gmail.com).
 
 Overview:
     We are following the branching model described in
         https://nvie.com/posts/a-successful-git-branching-model
-    If you are unfamiliar with it, you would be advised to give it a
-    quick perusal. The major point is that the 'main' (formerly 'master') branch
-    is reserved for official releases (which will be tagged), the 'develop' branch is
-    used for ongoing development work and is the default branch, and we generally work
-    off 'issue' branches named 'issue-#' where # is the GitHub issue number.
-    (The last is not an absolute requirement, but rather a suggested
-    approach.)
+    If you are unfamiliar with it, you would be advised to give it a quick
+    perusal. The major point is that the 'main' (formerly 'master') branch is
+    reserved for official releases (which will be tagged), the 'develop' branch
+    is used for ongoing development work and is the default branch, and we
+    generally work off 'issue' branches named 'issue-#' where # is the GitHub
+    issue number. (The last is not an absolute requirement, but rather a
+    suggested approach.)
 
     Finally, we recommend setting the git property 'core.autocrlf' to 'input'
     in your $HOME/.gitconfig file; e.g., that file should contain something
@@ -47,8 +48,7 @@ Overview:
 
 Required Software:
     We use Maven for building. Maven 3.3.9 or later is required. You also need
-    JDK 8 or later.
-    [Note: If you use JDK 9 or later, there will be multiple
+    JDK 8 or later. [Note: If you use JDK 9 or later, there will be multiple
     failures when you try to run 'mvn test' as well as some general warnings.
     See ESAPI GitHub issue #496 for details. We welcome volunteers to address
     this.]
@@ -106,7 +106,7 @@ Steps to work with ESAPI:
     9. Go to your personal, forked ESAPI GitHub repo (web interface) and create a
        'Pull Request' from your 'issue-#' branch.
    10. Back on your local personal laptop / desktop, merge your issue branch with
-       your local 'develop' branch. I.e.
+       your local 'develop' branch. I.e.,
             $ git checkout develop
             $ git merge issue-444
 
