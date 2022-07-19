@@ -77,6 +77,11 @@ public class EncryptedPropertiesUtilsTest {
      * @throws Exception Any exception that occurs
      */
     @Test public void testCreateNew() throws Exception {
+
+        // https://github.com/ESAPI/esapi-java-legacy/issues/721
+        System.out.println("testCreateNew removed due to deprecation of EncryptedPropertiesUtils.storeProperties()");
+
+        /*
         File encryptedFile = getTempPropertiesFile();
         
         //create a new properties with no input
@@ -98,6 +103,7 @@ public class EncryptedPropertiesUtilsTest {
         
         assertEquals(VALUE1, loadedProps.getProperty(KEY1));
         assertEquals(VALUE2, loadedProps.getProperty(KEY2));
+        */
     }
 
     /**
@@ -110,10 +116,15 @@ public class EncryptedPropertiesUtilsTest {
      * @throws Exception Any exception that occurs
      */
     @Test public void testLoadPlaintextAndEncrypt() throws Exception {
+
+        // https://github.com/ESAPI/esapi-java-legacy/issues/721
+        System.out.println("testLoadPlaintextAndEncrypt removed due to deprecation of EncryptedPropertiesUtils.storeProperties()");
+
+        /*
         File encryptedFile = getTempPropertiesFile();
         File plainTextFile = getTempPropertiesFile();
         
-      //write an initial plaintext properties file
+        //write an initial plaintext properties file
         Properties props = new Properties();
         props.setProperty(KEY3, VALUE3);
         props.setProperty(KEY4, VALUE4);
@@ -136,6 +147,7 @@ public class EncryptedPropertiesUtilsTest {
 
         assertEquals(VALUE3, loadedProps.getProperty(KEY3));
         assertEquals(VALUE4, loadedProps.getProperty(KEY4));
+        */
     }
 
     /**
@@ -148,6 +160,11 @@ public class EncryptedPropertiesUtilsTest {
      * @throws Exception Any exception that occurs
      */
     @Test public void testLoadEncryptedAndAdd() throws Exception {
+
+        // https://github.com/ESAPI/esapi-java-legacy/issues/721
+        System.out.println("testLoadEncryptedAndAdd removed due to deprecation of EncryptedPropertiesUtils.storeProperties()");
+
+        /*
         File encryptedFile = getTempPropertiesFile();
         File encryptedFile2 = getTempPropertiesFile();
         //load the plaintext properties file
@@ -171,6 +188,7 @@ public class EncryptedPropertiesUtilsTest {
         //test the values read in
         assertEquals(VALUE1, loadedProps.getProperty(KEY1));
         assertEquals(VALUE2, loadedProps.getProperty(KEY2));
+        */
     }
 
 }

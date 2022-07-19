@@ -146,58 +146,64 @@ public class ReferenceEncryptedPropertiesTest {
      */
     @Test public void testStoreLoad() throws Exception
     {
-        ReferenceEncryptedProperties toLoad = new ReferenceEncryptedProperties();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ByteArrayInputStream bais;
-        boolean sawOne = false;
-        boolean sawTwo = false;
-        boolean sawSeuss = false;
+        if ( hasSettersAndStores() == false ) {
+            // https://github.com/ESAPI/esapi-java-legacy/issues/721
+            System.out.println("testStoreLoad removed due to deprecation of ReferenceEncryptedProperties.store()");
+        }
+        else {
+            ReferenceEncryptedProperties toLoad = new ReferenceEncryptedProperties();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ByteArrayInputStream bais;
+            boolean sawOne = false;
+            boolean sawTwo = false;
+            boolean sawSeuss = false;
 
-        ReferenceEncryptedProperties toStore = new ReferenceEncryptedProperties();
-        toStore.setProperty("one", "two");
-        toStore.setProperty("two", "three");
-        toStore.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
-        toStore.store(baos, "testStore");
+            ReferenceEncryptedProperties toStore = new ReferenceEncryptedProperties();
+            toStore.setProperty("one", "two");
+            toStore.setProperty("two", "three");
+            toStore.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
+            toStore.store(baos, "testStore");
 
-        bais = new ByteArrayInputStream(baos.toByteArray());
-        toLoad.load(bais);
+            bais = new ByteArrayInputStream(baos.toByteArray());
+            toLoad.load(bais);
 
-        for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
-        {
-            String key = (String)i.next();
+            for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
+            {
+                String key = (String)i.next();
 
-            assertNotNull("key returned from keySet() iterator was null", key);
-            if(key.equals("one"))
-                if(sawOne)
-                    fail("Key one seen more than once.");
-                else
-                {
-                    sawOne = true;
-                    assertEquals("Key one's value was not two", "two", toLoad.getProperty("one"));
-                }
-            else if(key.equals("two"))
-                if(sawTwo)
-                    fail("Key two seen more than once.");
-                else
-                {
-                    sawTwo = true;
-                    assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
-                }
-             else if(key.equals("seuss.schneier"))
-                    if(sawSeuss)
-                        fail("Key seuss.schneier seen more than once.");
+                assertNotNull("key returned from keySet() iterator was null", key);
+                if(key.equals("one"))
+                    if(sawOne)
+                        fail("Key one seen more than once.");
                     else
                     {
-                        sawSeuss = true;
-                        assertEquals("Key seuss.schneier's value was not expected value",
-                                     "one fish, twofish, red fish, blowfish",
-                                     toStore.getProperty("seuss.schneier"));
+                        sawOne = true;
+                        assertEquals("Key one's value was not two", "two", toLoad.getProperty("one"));
                     }
-            else
-                fail("Unset key " + key + " returned from keySet().iterator()");
+                else if(key.equals("two"))
+                    if(sawTwo)
+                        fail("Key two seen more than once.");
+                    else
+                    {
+                        sawTwo = true;
+                        assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
+                    }
+                else if(key.equals("seuss.schneier"))
+                        if(sawSeuss)
+                            fail("Key seuss.schneier seen more than once.");
+                        else
+                        {
+                            sawSeuss = true;
+                            assertEquals("Key seuss.schneier's value was not expected value",
+                                        "one fish, twofish, red fish, blowfish",
+                                        toStore.getProperty("seuss.schneier"));
+                        }
+                else
+                    fail("Unset key " + key + " returned from keySet().iterator()");
+            }
+            assertTrue("Key one was never seen", sawOne);
+            assertTrue("Key two was never seen", sawTwo);
         }
-        assertTrue("Key one was never seen", sawOne);
-        assertTrue("Key two was never seen", sawTwo);
     }
 
     /**
@@ -205,65 +211,69 @@ public class ReferenceEncryptedPropertiesTest {
      */
     @Test public void testStoreLoadWithReader() throws Exception
     {
-/*
-        //create an EncryptedProperties to store
-        ReferenceEncryptedProperties toStore = new ReferenceEncryptedProperties();
-        toStore.setProperty("one", "two");
-        toStore.setProperty("two", "three");
-        toStore.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
+        if ( hasSettersAndStores() == false ) {
+            // https://github.com/ESAPI/esapi-java-legacy/issues/721
+            System.out.println("testStoreLoadWithReader removed due to deprecation of ReferenceEncryptedProperties.store()");
+        }
+        else {
+            //create an EncryptedProperties to store
+            ReferenceEncryptedProperties toStore = new ReferenceEncryptedProperties();
+            toStore.setProperty("one", "two");
+            toStore.setProperty("two", "three");
+            toStore.setProperty("seuss.schneier", "one fish, twofish, red fish, blowfish");
 
-        //store properties to a Writer
-        CharArrayWriter writer = new CharArrayWriter();
-        //toStore.store(writer, "testStore");
+            //store properties to a Writer
+            CharArrayWriter writer = new CharArrayWriter();
+            //toStore.store(writer, "testStore");
 
-        //read it back in from a Reader
-        Reader reader = new CharArrayReader(writer.toCharArray());
+            //read it back in from a Reader
+            Reader reader = new CharArrayReader(writer.toCharArray());
 
-        ReferenceEncryptedProperties toLoad = new ReferenceEncryptedProperties();
-        toLoad.load(reader);
+            ReferenceEncryptedProperties toLoad = new ReferenceEncryptedProperties();
+            toLoad.load(reader);
 
-        //test the resulting loaded properties
-        boolean sawOne = false;
-        boolean sawTwo = false;
-        boolean sawSeuss = false;
+            //test the resulting loaded properties
+            boolean sawOne = false;
+            boolean sawTwo = false;
+            boolean sawSeuss = false;
 
-        for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
-        {
-            String key = (String)i.next();
+            for(Iterator i=toLoad.keySet().iterator();i.hasNext();)
+            {
+                String key = (String)i.next();
 
-            assertNotNull("key returned from keySet() iterator was null", key);
-            if(key.equals("one"))
-                if(sawOne)
-                    fail("Key one seen more than once.");
-                else
-                {
-                    sawOne = true;
-                    assertEquals("Key one's value was not two", "two", toLoad.getProperty("one"));
-                }
-            else if(key.equals("two"))
-                if(sawTwo)
-                    fail("Key two seen more than once.");
-                else
-                {
-                    sawTwo = true;
-                    assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
-                }
-             else if(key.equals("seuss.schneier"))
-                    if(sawSeuss)
-                        fail("Key seuss.schneier seen more than once.");
+                assertNotNull("key returned from keySet() iterator was null", key);
+                if(key.equals("one"))
+                    if(sawOne)
+                        fail("Key one seen more than once.");
                     else
                     {
-                        sawSeuss = true;
-                        assertEquals("Key seuss.schneier's value was not expected value",
-                                     "one fish, twofish, red fish, blowfish",
-                                     toStore.getProperty("seuss.schneier"));
+                        sawOne = true;
+                        assertEquals("Key one's value was not two", "two", toLoad.getProperty("one"));
                     }
-            else
-                fail("Unset key " + key + " returned from keySet().iterator()");
+                else if(key.equals("two"))
+                    if(sawTwo)
+                        fail("Key two seen more than once.");
+                    else
+                    {
+                        sawTwo = true;
+                        assertEquals("Key two's value was not three", "three", toLoad.getProperty("two"));
+                    }
+                else if(key.equals("seuss.schneier"))
+                        if(sawSeuss)
+                            fail("Key seuss.schneier seen more than once.");
+                        else
+                        {
+                            sawSeuss = true;
+                            assertEquals("Key seuss.schneier's value was not expected value",
+                                        "one fish, twofish, red fish, blowfish",
+                                        toStore.getProperty("seuss.schneier"));
+                        }
+                else
+                    fail("Unset key " + key + " returned from keySet().iterator()");
+            }
+            assertTrue("Key one was never seen", sawOne);
+            assertTrue("Key two was never seen", sawTwo);
         }
-        assertTrue("Key one was never seen", sawOne);
-        assertTrue("Key two was never seen", sawTwo);
-*/
     }
 
     /**
@@ -494,6 +504,38 @@ public class ReferenceEncryptedPropertiesTest {
         } catch( Exception e ) {
             assertTrue( e instanceof UnsupportedOperationException );
         }
+    }
+
+    /**
+     * Test whether ReferenceEncryptedProperties has setters and stores available.
+     *
+     * It appears we need to catch for both exceptions. I think setProperty() relies on store().
+     * Also see https://github.com/ESAPI/esapi-java-legacy/issues/721.
+     */
+    protected boolean hasSettersAndStores() {
+
+        ReferenceEncryptedProperties props = new ReferenceEncryptedProperties();
+
+        try {            
+            props.setProperty("x", "y");
+            props.store(new ByteArrayOutputStream(), "XYZ");
+        }
+        catch (UnsupportedOperationException ex) {
+            return false;
+        }
+        catch (IOException ex) {
+            return false;
+        }
+        finally {
+            try {
+                props.remove("x");
+                props.remove("XYZ");
+            }
+            catch (Exception ex) {
+            }
+        }
+
+        return true;
     }
 
 }
