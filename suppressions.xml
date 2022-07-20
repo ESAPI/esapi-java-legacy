@@ -11,4 +11,50 @@
         <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
         <cve>CVE-2020-7791</cve>
     </suppress>
+
+
+        <!-- NOTE: These 4 suppression rules are redundant. Will decide later which one to keep. -->
+    <suppress>
+        <notes><![CDATA[
+            CVE-2017-10355 in library xercesImpl-2.12.2.jar, which is a transitive dependency, pulled in via AntiSamy.
+            It is a Denial of Service vulnerability with a CVSSv3 score of 5.9.
+
+            We are suppressing this because it is believed by the ESAPI and AntiSamy teams that it is a false positive.
+            Dependency Check itself doesn't flag this and neither does Snyk. Dependency Check reports it because it is reported
+            directly by Sonatype's OSS Index. For futher details, see
+            https://ossindex.sonatype.org/vulnerability/sonatype-2017-0348?component-type=maven&component-name=xerces%2FxercesImpl
+
+            OSS Index seems to have the wrong CPE. They have 'cpe:2.3:a:xerces:xercesImpl:2.12.2:*:*:*:*:*:*:*', whereas the CPE IDs
+            associated with NVD are 'cpe:2.3:a:apache:xerces-j:2.12.2:*:*:*:*:*:*:*' and
+            'cpe:2.3:a:apache:xerces2_java:2.12.2:*:*:*:*:*:*:*'.
+
+            Note also that this has been reported as GitHub issue #a 4614
+            https://github.com/jeremylong/DependencyCheck/issues/4614
+            ]]></notes>
+        <sha1>f051f988aa2c9b4d25d05f95742ab0cc3ed789e2</sha1>
+       <cpe>cpe:/a:apache:xerces-j</cpe>
+    </suppress>
+    <suppress>
+       <notes><![CDATA[
+            CVE-2017-10355 in xercesImpl. See above for details.
+       ]]></notes>
+       <sha1>f051f988aa2c9b4d25d05f95742ab0cc3ed789e2</sha1>
+       <cpe>cpe:/a:apache:xerces2_java</cpe>
+   </suppress>
+   <suppress>
+        <notes><![CDATA[
+            CVE-2017-10355 in xercesImpl. See above for details.
+
+            This is the one that matches the OSS Index
+        ]]></notes>
+        <packageUrl regex="true">^pkg:maven/xerces/xercesImpl@.*$</packageUrl>
+        <vulnerabilityName>CVE-2017-10355</vulnerabilityName> 
+    </suppress>
+    <suppress>
+        <notes><![CDATA[
+            FP per Dependency Check GitHub issue #4614
+        ]]></notes>
+        <cve>CVE-2017-10355</cve>
+    </suppress>
+
 </suppressions>
