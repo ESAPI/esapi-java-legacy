@@ -184,7 +184,7 @@ ONLY use GitHub Issues for reporting bugs.
 # References: Where to Find More Information on ESAPI
 **OWASP Wiki:** https://owasp.org/www-project-enterprise-security-api/
 
-**GitHub ESAPI Wiki:** https://github.com/ESAPI/esapi-java-legacy/wiki 
+**GitHub ESAPI Wiki:** https://github.com/ESAPI/esapi-java-legacy/wiki
 
 **General Documentation:** Under the '[documentation](https://github.com/ESAPI/esapi-java-legacy/tree/develop/documentation)' folder.
 

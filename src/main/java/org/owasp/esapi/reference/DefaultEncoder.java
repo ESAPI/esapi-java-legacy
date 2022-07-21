@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -50,7 +50,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * Reference implementation of the Encoder interface. This implementation takes
  * a whitelist approach to encoding, meaning that everything not specifically identified in a
  * list of "immune" characters is encoded.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -81,7 +81,7 @@ public class DefaultEncoder implements Encoder {
     private CSSCodec cssCodec = new CSSCodec();
 
     private final Logger logger = ESAPI.getLogger("Encoder");
-    
+
     /**
      *  Character sets that define characters (in addition to alphanumerics) that are
      * immune from encoding in various formats
@@ -96,8 +96,8 @@ public class DefaultEncoder implements Encoder {
     private final static char[] IMMUNE_OS = { '-' };
     private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
     private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
-    
-    
+
+
     /**
      * Instantiates a new {@code DefaultEncoder} based on the property {@code Encoder.DefaultCodecList}
      * from the {@code ESAPI.properties} file.
@@ -105,7 +105,7 @@ public class DefaultEncoder implements Encoder {
     private DefaultEncoder() {
         this( ESAPI.securityConfiguration().getDefaultCanonicalizationCodecs() );
     }
-    
+
     /**
      * Instantiates a new {@code DefaultEncoder} based on the specified list of
      * codec names. Unqualified codec names are assumed to belong to the package
@@ -121,7 +121,7 @@ public class DefaultEncoder implements Encoder {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -131,12 +131,12 @@ public class DefaultEncoder implements Encoder {
         }
 
         // Issue 231 - These are reverse boolean logic in the Encoder interface, so we need to invert these values - CS
-        return canonicalize(input, 
+        return canonicalize(input,
                             !ESAPI.securityConfiguration().getAllowMultipleEncoding(),
                             !ESAPI.securityConfiguration().getAllowMixedEncoding() );
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -152,7 +152,7 @@ public class DefaultEncoder implements Encoder {
         if ( input == null ) {
             return null;
         }
-        
+
         String working = input;
         Codec codecFound = null;
         int mixedCount = 1;
@@ -160,7 +160,7 @@ public class DefaultEncoder implements Encoder {
         boolean clean = false;
         while( !clean ) {
             clean = true;
-            
+
             // try each codec and keep track of which ones work
             Iterator i = codecs.iterator();
             while ( i.hasNext() ) {
@@ -179,7 +179,7 @@ public class DefaultEncoder implements Encoder {
                 }
             }
         }
-        
+
         // do strict tests and handle if any mixed, multiple, nested encoding were found
         if ( foundCount >= 2 && mixedCount > 1 ) {
             if ( restrictMultiple || restrictMixed ) {
@@ -212,20 +212,20 @@ public class DefaultEncoder implements Encoder {
         if( input == null ) {
             return null;
         }
-        return htmlCodec.encode( IMMUNE_HTML, input);        
+        return htmlCodec.encode( IMMUNE_HTML, input);
      }
-    
+
     /**
      * {@inheritDoc}
      */
     public String decodeForHTML(String input) {
-        
+
         if( input == null ) {
             return null;
         }
-        return htmlCodec.decode( input);     
+        return htmlCodec.decode( input);
     }
-     
+
     /**
      * {@inheritDoc}
      */
@@ -236,7 +236,7 @@ public class DefaultEncoder implements Encoder {
         return htmlCodec.encode( IMMUNE_HTMLATTR, input);
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -247,7 +247,7 @@ public class DefaultEncoder implements Encoder {
         return cssCodec.encode( IMMUNE_CSS, input);
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -265,10 +265,10 @@ public class DefaultEncoder implements Encoder {
         if( input == null ) {
             return null;
         }
-        return vbScriptCodec.encode(IMMUNE_VBSCRIPT, input);        
+        return vbScriptCodec.encode(IMMUNE_VBSCRIPT, input);
     }
 
-    
+
     /**
      * {@inheritDoc}
      */
@@ -284,7 +284,7 @@ public class DefaultEncoder implements Encoder {
      */
     public String encodeForOS(Codec codec, String input) {
         if( input == null ) {
-            return null;    
+            return null;
         }
         return codec.encode( IMMUNE_OS, input);
     }
@@ -295,13 +295,13 @@ public class DefaultEncoder implements Encoder {
     public String encodeForLDAP(String input) {
         return encodeForLDAP(input, true);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String encodeForLDAP(String input, boolean encodeWildcards) {
         if( input == null ) {
-            return null;    
+            return null;
         }
         // TODO: replace with LDAP codec
         StringBuilder sb = new StringBuilder();
@@ -321,14 +321,14 @@ public class DefaultEncoder implements Encoder {
                 case '/':
                     sb.append("\\2f");
                     break;
-                case '*': 
+                case '*':
                     if (encodeWildcards) {
-                        sb.append("\\2a"); 
+                        sb.append("\\2a");
                     }
                     else {
                         sb.append(c);
                     }
-                    
+
                     break;
                 case '(':
                     sb.append("\\28");
@@ -351,7 +351,7 @@ public class DefaultEncoder implements Encoder {
      */
     public String encodeForDN(String input) {
         if( input == null ) {
-            return null;    
+            return null;
         }
         // TODO: replace with DN codec
         StringBuilder sb = new StringBuilder();
@@ -403,7 +403,7 @@ public class DefaultEncoder implements Encoder {
      */
     public String encodeForXPath(String input) {
         if( input == null ) {
-            return null;    
+            return null;
         }
         return htmlCodec.encode( IMMUNE_XPATH, input);
     }
@@ -413,7 +413,7 @@ public class DefaultEncoder implements Encoder {
      */
     public String encodeForXML(String input) {
         if( input == null ) {
-            return null;    
+            return null;
         }
         return xmlCodec.encode( IMMUNE_XML, input);
     }
@@ -423,7 +423,7 @@ public class DefaultEncoder implements Encoder {
      */
     public String encodeForXMLAttribute(String input) {
         if( input == null ) {
-            return null;    
+            return null;
         }
         return xmlCodec.encode( IMMUNE_XMLATTR, input);
     }
@@ -484,28 +484,28 @@ public class DefaultEncoder implements Encoder {
         }
         return Base64.decode( input );
     }
-    
+
     /**
      * {@inheritDoc}
-     * 
-     * This will extract each piece of a URI according to parse zone as specified in <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986</a> section 3, 
-     * and it will construct a canonicalized String representing a version of the URI that is safe to 
-     * run regex against. 
-     * 
+     *
+     * This will extract each piece of a URI according to parse zone as specified in <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986</a> section 3,
+     * and it will construct a canonicalized String representing a version of the URI that is safe to
+     * run regex against.
+     *
      * @param dirtyUri
      * @return Canonicalized URI string.
      * @throws IntrusionException
      */
     public String getCanonicalizedURI(URI dirtyUri) throws IntrusionException{
-        
-//        From RFC-3986 section 3        
+
+//        From RFC-3986 section 3
 //          URI         = scheme ":" hier-part [ "?" query ] [ "#" fragment ]
 //
 //                  hier-part   = "//" authority path-abempty
 //                              / path-absolute
 //                              / path-rootless
 //                              / path-empty
-        
+
 //           The following are two example URIs and their component parts:
 //
 //                 foo://example.com:8042/over/there?name=ferret#nose
@@ -527,14 +527,14 @@ public class DefaultEncoder implements Encoder {
         parseMap.put(UriSegment.PATH, dirtyUri.getRawPath());
         parseMap.put(UriSegment.QUERY, dirtyUri.getRawQuery());
         parseMap.put(UriSegment.FRAGMENT, dirtyUri.getRawFragment());
-        
-        //Now we canonicalize each part and build our string.  
+
+        //Now we canonicalize each part and build our string.
         StringBuilder sb = new StringBuilder();
-        
+
         //Replace all the items in the map with canonicalized versions.
-        
+
         Set<UriSegment> set = parseMap.keySet();
-        
+
         SecurityConfiguration sg = ESAPI.securityConfiguration();
         boolean allowMixed = sg.getBooleanProp("Encoder.AllowMixedEncoding");
         boolean allowMultiple = sg.getBooleanProp("Encoder.AllowMultipleEncoding");
@@ -549,7 +549,7 @@ public class DefaultEncoder implements Encoder {
                     Set<Entry<String, List<String>>> query = canonicalizedMap.entrySet();
                     Iterator<Entry<String, List<String>>> i = query.iterator();
                     while(i.hasNext()){
-                        Entry<String, List<String>> e = i.next(); 
+                        Entry<String, List<String>> e = i.next();
                         String key = e.getKey();
                         String qVal = "";
                         List<String> list = e.getValue();
@@ -559,7 +559,7 @@ public class DefaultEncoder implements Encoder {
                         qBuilder.append(key)
                         .append("=")
                         .append(qVal);
-                        
+
                         if(i.hasNext()){
                             qBuilder.append("&");
                         }
@@ -577,13 +577,13 @@ public class DefaultEncoder implements Encoder {
             }
             parseMap.put(seg, value );
         }
-        
+
         return buildUrl(parseMap);
     }
-    
+
     /**
-     * All the parts should be canonicalized by this point.  This is straightforward assembly.  
-     * 
+     * All the parts should be canonicalized by this point.  This is straightforward assembly.
+     *
      * @param parseMap The parts of the URL to put back together.
      * @return The canonicalized URL.
      */
@@ -592,28 +592,28 @@ public class DefaultEncoder implements Encoder {
         sb.append(parseMap.get(UriSegment.SCHEME))
         .append("://")
         //can't use SCHEMESPECIFICPART for this, because we need to canonicalize all the parts of the query.
-        //USERINFO is also deprecated.  So we technically have more than we need.  
+        //USERINFO is also deprecated.  So we technically have more than we need.
         .append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).equals("") ? "" : parseMap.get(UriSegment.AUTHORITY))
         .append(parseMap.get(UriSegment.PATH) == null || parseMap.get(UriSegment.PATH).equals("") ? ""  : parseMap.get(UriSegment.PATH))
-        .append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).equals("") 
+        .append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).equals("")
                 ? "" : "?" + parseMap.get(UriSegment.QUERY))
         .append((parseMap.get(UriSegment.FRAGMENT) == null) || parseMap.get(UriSegment.FRAGMENT).equals("")
                 ? "": "#" + parseMap.get(UriSegment.FRAGMENT))
         ;
         return sb.toString();
     }
-    
+
     public enum UriSegment {
         AUTHORITY, SCHEME, SCHEMSPECIFICPART, USERINFO, HOST, PORT, PATH, QUERY, FRAGMENT
     }
-    
-    
+
+
     /**
      * The meat of this method was taken from StackOverflow:  http://stackoverflow.com/a/13592567/557153
-     * It has been modified to return a canonicalized key and value pairing.  
-     * 
+     * It has been modified to return a canonicalized key and value pairing.
+     *
      * @param uri The URI to analyze.
-     * @return a map of canonicalized query parameters.  
+     * @return a map of canonicalized query parameters.
      * @throws UnsupportedEncodingException
      */
     public Map<String, List<String>> splitQuery(URI uri) throws UnsupportedEncodingException {

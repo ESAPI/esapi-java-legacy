@@ -25,13 +25,13 @@ public class ExtensiveEncoderURITest {
     Validator v = ESAPI.validator();
     String uri;
     boolean expected;
-    
+
     public ExtensiveEncoderURITest(String uri){
-        String[] values = uri.split(","); 
+        String[] values = uri.split(",");
         this.uri = values[0];
         this.expected = Boolean.parseBoolean(values[1]);
     }
-    
+
     @Parameters
     public static Collection<String> getMyUris() throws Exception{
         URL url = ExtensiveEncoderURITest.class.getResource("/urisForTest.txt");

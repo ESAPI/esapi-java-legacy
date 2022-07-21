@@ -20,11 +20,11 @@ package org.owasp.esapi.codecs;
 /**
  * Implementation of the Codec interface for Oracle strings. This function will only protect you from SQLi in the case of user data
  * bring placed within an Oracle quoted string such as:
- * 
+ *
  * select * from table where user_name='  USERDATA    ';
- * 
+ *
  * @see <a href="http://oraqa.com/2006/03/20/how-to-escape-single-quotes-in-strings/">how-to-escape-single-quotes-in-strings</a>
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
  * @since June 1, 2007
@@ -35,7 +35,7 @@ public class OracleCodec extends AbstractCharacterCodec {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Encodes ' to ''
      *
      * Encodes ' to ''
@@ -47,7 +47,7 @@ public class OracleCodec extends AbstractCharacterCodec {
             return "\'\'";
         return ""+c;
     }
-    
+
 
 
     /**
@@ -78,7 +78,7 @@ public class OracleCodec extends AbstractCharacterCodec {
             input.reset();
             return null;
         }
-        
+
         // if this is not an encoded character, return null
         if ( second.charValue() != '\'' ) {
             input.reset();

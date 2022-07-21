@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -56,7 +56,7 @@ import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 /**
  * The Class HTTPUtilitiesTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class HTTPUtilitiesTest extends TestCase
@@ -66,7 +66,7 @@ public class HTTPUtilitiesTest extends TestCase
 
     /**
      * Suite.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
@@ -75,7 +75,7 @@ public class HTTPUtilitiesTest extends TestCase
 
     /**
      * Instantiates a new HTTP utilities test.
-     * 
+     *
      * @param testName the test name
      */
     public HTTPUtilitiesTest(String testName) {
@@ -118,7 +118,7 @@ public class HTTPUtilitiesTest extends TestCase
 
     /**
      * Test of addCSRFToken method, of class org.owasp.esapi.HTTPUtilities.
-     * @throws AuthenticationException 
+     * @throws AuthenticationException
      */
     public void testAddCSRFToken() throws AuthenticationException {
         Authenticator instance = ESAPI.authenticator();
@@ -183,7 +183,7 @@ public class HTTPUtilitiesTest extends TestCase
 
     /**
      * Test of sendRedirect method, of class org.owasp.esapi.HTTPUtilities.
-     * 
+     *
      * @throws EnterpriseSecurityException
      */
     public void testChangeSessionIdentifier() throws EnterpriseSecurityException {
@@ -204,7 +204,7 @@ public class HTTPUtilitiesTest extends TestCase
 
     /**
      * Test of formatHttpRequestForLog method, of class org.owasp.esapi.HTTPUtilities.
-     * @throws IOException 
+     * @throws IOException
      */
     public void testGetFileUploads() throws Exception {
         File home = null;
@@ -214,7 +214,7 @@ public class HTTPUtilitiesTest extends TestCase
             home = FileTestUtils.createTmpDirectory(CLASS_NAME);
             String content = "--ridiculous\r\nContent-Disposition: form-data; name=\"upload\"; filename=\"testupload.txt\"\r\nContent-Type: application/octet-stream\r\n\r\nThis is a test of the multipart broadcast system.\r\nThis is only a test.\r\nStop.\r\n\r\n--ridiculous\r\nContent-Disposition: form-data; name=\"submit\"\r\n\r\nSubmit Query\r\n--ridiculous--\r\nEpilogue";
 
-            MockHttpServletResponse response = new MockHttpServletResponse();    
+            MockHttpServletResponse response = new MockHttpServletResponse();
             MockHttpServletRequest request1 = new MockHttpServletRequest("/test", content.getBytes(response.getCharacterEncoding()));
             ESAPI.httpUtilities().setCurrentHTTP(request1, response);
             try {
@@ -303,7 +303,7 @@ public class HTTPUtilitiesTest extends TestCase
 
     /**
      * Test of sendRedirect method, of class org.owasp.esapi.HTTPUtilities.
-     * 
+     *
      * @throws ValidationException the validation exception
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -332,13 +332,13 @@ public class HTTPUtilitiesTest extends TestCase
 
         @Rule
         public ExpectedException thrown = ExpectedException.none();
-        
+
     /**
      * Test of setCookie method, of class org.owasp.esapi.HTTPUtilities.
      */
     public void testSetCookie() {
         System.out.println("setCookie");
-        HTTPUtilities instance = ESAPI.httpUtilities(); 
+        HTTPUtilities instance = ESAPI.httpUtilities();
         MockHttpServletResponse response = new MockHttpServletResponse();
         assertTrue(response.getHeaderNames().isEmpty());
 
@@ -360,13 +360,13 @@ public class HTTPUtilitiesTest extends TestCase
         instance.addCookie( response, new Cookie( "test3", "tes<t3" ) );
         assertTrue(response.getHeaderNames().size() == 2);
     }
-    
+
     /**
      * Test of setCookie method, of class org.owasp.esapi.HTTPUtilities.
-     * Validation failures should prevent cookies being added.  
+     * Validation failures should prevent cookies being added.
      */
     public void testSetCookieExceedingMaxValueAndName() {
-        HTTPUtilities instance = ESAPI.httpUtilities(); 
+        HTTPUtilities instance = ESAPI.httpUtilities();
         MockHttpServletResponse response = new MockHttpServletResponse();
         assertTrue(response.getHeaderNames().isEmpty());
         //request.addParameter(TestUtils.generateStringOfLength(32), "pass");
@@ -465,7 +465,7 @@ public class HTTPUtilitiesTest extends TestCase
         }
         catch (EncryptionException expected) {
             //expected
-        }        
+        }
     }
 
     /**
@@ -511,7 +511,7 @@ public class HTTPUtilitiesTest extends TestCase
         // String value = response.getCookie( Authenticator.REMEMBER_TOKEN_COOKIE_NAME ).getValue();
         // assertEquals( user.getRememberToken(), value );
     }
-    
+
     /**
      *
      * @throws org.owasp.esapi.errors.AuthenticationException
@@ -533,7 +533,7 @@ public class HTTPUtilitiesTest extends TestCase
         int maxAge = ( 60 * 60 * 24 * 14 );
 
         ESAPI.httpUtilities().setRememberToken( request, response, maxAge, "domain", "/" );
-        
+
         Field field = response.getClass().getDeclaredField("cookies");
         field.setAccessible(true);
         @SuppressWarnings("unchecked")
@@ -541,7 +541,7 @@ public class HTTPUtilitiesTest extends TestCase
         Cookie cookie = null;
         for(Cookie c: cookies){
             if(c.getName().equals(HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME)){
-                cookie = c; 
+                cookie = c;
                 break;
             }
         }

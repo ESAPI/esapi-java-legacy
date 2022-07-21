@@ -11,7 +11,7 @@ public class ESAPILogging {
 
         try {
             Logger logger = ESAPI.getLogger("ESAPILogging");
-            
+
             logger.warning(Logger.SECURITY_FAILURE, "This is a warning.");
             logger.always(Logger.SECURITY_AUDIT, "This is an audit log. It always logs.");
         } catch(Throwable t) {

@@ -39,7 +39,7 @@ ESAPI 2.3.0.0 release (current / new release):
 
 Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
-163             Limit max size of entire cookies Component-Validator enhancement good first issue help wanted imported Priority-High 
+163             Limit max size of entire cookies Component-Validator enhancement good first issue help wanted imported Priority-High
 198             Uninitialized esapi logging assumes logging to System.out/System.err - Make configurable/extensible bug imported wontfix
 324             ClassCastException during web application redeploy due to the grift logging classes enhancement imported
 564             Create release notes for 2.2.1.1 patch release Component-Docs
@@ -70,7 +70,7 @@ Issue #         GitHub Issue Title
 
 -----------------------------------------------------------------------------
 
-1) This likely will be the LAST ESAPI release supporting Java 7. There are just some vulnerabilities (notably a DoS one in Neko HtmlUnit that was assigned CVE-2022-28366 after the ESAPI 2.3.0.0 release) that because they are transitive dependencies, that we simply cannot remediate without at least moving on to Java 8 as the minimally supported JDK. Please plan accordingly.  
+1) This likely will be the LAST ESAPI release supporting Java 7. There are just some vulnerabilities (notably a DoS one in Neko HtmlUnit that was assigned CVE-2022-28366 after the ESAPI 2.3.0.0 release) that because they are transitive dependencies, that we simply cannot remediate without at least moving on to Java 8 as the minimally supported JDK. Please plan accordingly.
 
 2) If you are not upgrading to ESAPI release 2.3.0.0 from 2.2.3.1 (the previous release), then you NEED to read at least the release notes in 2.2.3.1 and ideally, all the ones in all the previous ESAPI release notes from where you are updating to 2.3.0.0. In particular, if you were using ESAPI 2.2.1.0 or earlier, you need to see those ESAPI release notes in regards to changes in the ESAPI.Logger property.
 

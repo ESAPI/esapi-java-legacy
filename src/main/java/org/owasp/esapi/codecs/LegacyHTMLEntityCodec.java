@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -20,14 +20,14 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * 
+ *
  * This class is DEPRECATED.  It did not correctly handle encoding of non-BMP
  * unicode code points.  This class is provided solely for any fatal bugs
  * not accounted for in the new version and will be removed entirely in
- * a future release.  
- * 
+ * a future release.
+ *
  * Implementation of the Codec interface for HTML entity encoding.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Deprecated
 public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
-    
+
     private static final char REPLACEMENT_CHAR = '\ufffd';
     private static final String REPLACEMENT_HEX = "fffd";
     private static final String REPLACEMENT_STR = "" + REPLACEMENT_CHAR;
@@ -44,7 +44,7 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Encodes a Character for safe use in an HTML entity field.
      * @param immune
      */
@@ -54,34 +54,34 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
         if ( containsCharacter(c, immune ) ) {
             return ""+c;
         }
-        
+
         // check for alphanumeric characters
         String hex = super.getHexForNonAlphanumeric(c);
         if ( hex == null ) {
             return ""+c;
         }
-        
+
         // check for illegal characters
         if ( ( c <= 0x1f && c != '\t' && c != '\n' && c != '\r' ) || ( c >= 0x7f && c <= 0x9f ) )
         {
             hex = REPLACEMENT_HEX;    // Let's entity encode this instead of returning it
             c = REPLACEMENT_CHAR;
         }
-        
+
         // check if there's a defined entity
         String entityName = characterToEntityMap.get(c);
         if (entityName != null) {
             return "&" + entityName + ";";
         }
-        
+
         // return the hex entity as suggested in the spec
         return "&#x" + hex + ";";
     }
-    
+
     /**
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
-     * 
+     *
      * Formats all are legal both with and without semi-colon, upper/lower case:
      *   &#dddd;
      *   &#xhhhh;
@@ -94,20 +94,20 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
             input.reset();
             return null;
         }
-        
+
         // if this is not an encoded character, return null
         if (first != '&' ) {
             input.reset();
             return null;
         }
-        
+
         // test for numeric encodings
         Character second = input.next();
         if ( second == null ) {
             input.reset();
             return null;
         }
-        
+
         if (second == '#' ) {
             // handle numbers
             Character c = getNumericEntity( input );
@@ -121,13 +121,13 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
         input.reset();
         return null;
     }
-    
+
     /**
      * getNumericEntry checks input to see if it is a numeric entity
-     * 
+     *
      * @param input
      *             The input to test for being a numeric entity
-     *  
+     *
      * @return
      *             null if input is null, the character of input after decoding
      */
@@ -144,28 +144,28 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
 
     /**
      * Parse a decimal number, such as those from JavaScript's String.fromCharCode(value)
-     * 
+     *
      * @param input
      *             decimal encoded string, such as 65
      * @return
-     *             character representation of this decimal value, e.g. A 
+     *             character representation of this decimal value, e.g. A
      * @throws NumberFormatException
      */
     private Character parseNumber( PushbackString input ) {
         StringBuilder sb = new StringBuilder();
         while( input.hasNext() ) {
             Character c = input.peek();
-            
+
             // if character is a digit then add it on and keep going
             if ( Character.isDigit( c.charValue() ) ) {
                 sb.append( c );
                 input.next();
-                
+
             // if character is a semi-colon, eat it and quit
             } else if (c == ';' ) {
                 input.next();
                 break;
-                
+
             // otherwise just quit
             } else {
                 break;
@@ -181,10 +181,10 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
         }
             return null;
         }
-    
+
     /**
      * Parse a hex encoded entity
-     * 
+     *
      * @param input
      *             Hex encoded input (such as 437ae;)
      * @return
@@ -195,17 +195,17 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
         StringBuilder sb = new StringBuilder();
         while( input.hasNext() ) {
             Character c = input.peek();
-            
+
             // if character is a hex digit then add it on and keep going
             if ( "0123456789ABCDEFabcdef".indexOf(c) != -1 ) {
                 sb.append( c );
                 input.next();
-                
+
             // if character is a semi-colon, eat it and quit
             } else if (c == ';' ) {
                 input.next();
                 break;
-                
+
             // otherwise just quit
             } else {
                 break;
@@ -221,12 +221,12 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
         }
             return null;
         }
-    
+
     /**
-     * 
+     *
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
-     * 
+     *
      * Formats all are legal both with and without semi-colon, upper/lower case:
      *   &aa;
      *   &aaa;
@@ -244,7 +244,7 @@ public class LegacyHTMLEntityCodec extends AbstractCharacterCodec {
         StringBuilder possible = new StringBuilder();
         Map.Entry<CharSequence,Character> entry;
         int len;
-        
+
         // kludge around PushbackString....
         len = Math.min(input.remainder().length(), entityToCharacterTrie.getMaxKeyLength());
         for(int i=0;i<len;i++)

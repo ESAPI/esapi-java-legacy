@@ -12,7 +12,7 @@ import junit.framework.TestCase;
  */
 public class TestDebug extends TestCase {
 
-    /** 
+    /**
      * Dummy method so that JUnit won't complain
      */
     public void testLogging() {

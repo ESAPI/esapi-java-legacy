@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright &copy; 2007-2019 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author kevin.w.wall@gmail.com
  * @created 2007
@@ -49,7 +49,7 @@ import org.owasp.esapi.errors.IntegrityException;
  * section 4 of
  * <a href="http://owasp-esapi-java.googlecode.com/svn/trunk/documentation/esapi4java-core-2.0-crypto-design-goals.doc">
  * Design Goals in OWASP ESAPI Cryptography</a>.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -65,17 +65,17 @@ public interface Encryptor {
      * but not to an attacker.
      * See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">
      * this article</a> for more information about hashing as it pertains to password schemes.
-     * 
+     *
      * @param plaintext
      *         the plaintext String to encrypt
      * @param salt
      *      the salt to add to the plaintext String before hashing
-     * 
-     * @return 
+     *
+     * @return
      *         the encrypted hash of 'plaintext' stored as a String
-     * 
+     *
      * @throws EncryptionException
-     *      if the specified hash algorithm could not be found or another problem exists with 
+     *      if the specified hash algorithm could not be found or another problem exists with
      *      the hashing of 'plaintext'
      */
     String hash(String plaintext, String salt) throws EncryptionException;
@@ -85,33 +85,33 @@ public interface Encryptor {
      * salt. The salt helps to protect against a rainbow table attack by mixing
      * in some extra data with the plaintext. Some good choices for a salt might
      * be an account name or some other string that is known to the application
-     * but not to an attacker. 
+     * but not to an attacker.
      * See <a href="http://www.matasano.com/log/958/enough-with-the-rainbow-tables-what-you-need-to-know-about-secure-password-schemes/">
      * this article</a> for more information about hashing as it pertains to password schemes.
-     * 
+     *
      * @param plaintext
      *         the plaintext String to encrypt
      * @param salt
      *      the salt to add to the plaintext String before hashing
      * @param iterations
      *      the number of times to iterate the hash
-     * 
-     * @return 
+     *
+     * @return
      *         the encrypted hash of 'plaintext' stored as a String
-     * 
+     *
      * @throws EncryptionException
-     *      if the specified hash algorithm could not be found or another problem exists with 
+     *      if the specified hash algorithm could not be found or another problem exists with
      *      the hashing of 'plaintext'
      */
     String hash(String plaintext, String salt, int iterations) throws EncryptionException;
-    
+
     /**
      * Encrypts the provided plaintext bytes using the cipher transformation
      * specified by the property <code>Encryptor.CipherTransformation</code>
      * and the <i>master encryption key</i> as specified by the property
      * {@code Encryptor.MasterKey} as defined in the <code>ESAPI.properties</code> file.
      * </p>
-     * 
+     *
      * @param plaintext    The {@code PlainText} to be encrypted.
      * @return the {@code CipherText} object from which the raw ciphertext, the
      *                 IV, the cipher transformation, and many other aspects about
@@ -175,7 +175,7 @@ public interface Encryptor {
      * @see #decrypt(SecretKey, CipherText)
      */
     PlainText decrypt(CipherText ciphertext) throws EncryptionException;
-    
+
     /**
      * Decrypts the provided {@link CipherText} using the information from it
      * and the <i>specified secret key</i>.
@@ -199,7 +199,7 @@ public interface Encryptor {
      * @see #decrypt(CipherText)
      */
     PlainText decrypt(SecretKey key, CipherText ciphertext) throws EncryptionException;
-    
+
     /**
      * Create a digital signature for the provided data and return it in a
      * string.
@@ -213,13 +213,13 @@ public interface Encryptor {
      * can not be used with expected results across JVM instances. This limitation
      * will be addressed in ESAPI 2.1.
      * </p>
-     * 
+     *
      * @param data
      *      the data to sign
-     * 
-     * @return 
+     *
+     * @return
      *         the digital signature stored as a String
-     * 
+     *
      * @throws EncryptionException
      *         if the specified signature algorithm cannot be found
      */
@@ -242,23 +242,23 @@ public interface Encryptor {
      *      the signature to verify against 'data'
      * @param data
      *      the data to verify against 'signature'
-     * 
-     * @return 
+     *
+     * @return
      *         true, if the signature is verified, false otherwise
      */
     boolean verifySignature(String signature, String data);
 
     /**
      * Creates a seal that binds a set of data and includes an expiration timestamp.
-     * 
+     *
      * @param data
      *      the data to seal
      * @param timestamp
      *      the absolute expiration date of the data, expressed as seconds since the epoch
-     * 
-     * @return 
+     *
+     * @return
      *         the seal
-     * 
+     *
      * @throws IntegrityException
      */
     String seal(String data, long timestamp) throws IntegrityException;
@@ -267,48 +267,48 @@ public interface Encryptor {
      * Unseals data (created with the seal method) and throws an exception
      * describing any of the various problems that could exist with a seal, such
      * as an invalid seal format, expired timestamp, or decryption error.
-     * 
+     *
      * @param seal
      *      the sealed data
-     * 
-     * @return 
+     *
+     * @return
      *         the original (unsealed) data
-     * 
-     * @throws EncryptionException 
+     *
+     * @throws EncryptionException
      *         if the unsealed data cannot be retrieved for any reason
      */
     String unseal( String seal ) throws EncryptionException;
-    
+
     /**
      * Verifies a seal (created with the seal method) and throws an exception
      * describing any of the various problems that could exist with a seal, such
      * as an invalid seal format, expired timestamp, or data mismatch.
-     * 
+     *
      * @param seal
      *      the seal to verify
-     * 
-     * @return 
+     *
+     * @return
      *         true, if the seal is valid.  False otherwise
      */
     boolean verifySeal(String seal);
-    
+
     /**
      * Gets an absolute timestamp representing an offset from the current time to be used by
      * other functions in the library.
-     * 
-     * @param offset 
+     *
+     * @param offset
      *         the offset to add to the current time
-     * 
-     * @return 
+     *
+     * @return
      *         the absolute timestamp
      */
     long getRelativeTimeStamp( long offset );
-    
+
     /**
      * Gets a timestamp representing the current date and time to be used by
      * other functions in the library.
-     * 
-     * @return 
+     *
+     * @return
      *         a timestamp representing the current time
      */
     long getTimeStamp();

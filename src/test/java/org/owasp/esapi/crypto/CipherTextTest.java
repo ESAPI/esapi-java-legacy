@@ -29,8 +29,8 @@ public class CipherTextTest {
     private IvParameterSpec ivSpec = null;
     @Rule
     public TemporaryFolder tempFolder = new TemporaryFolder();
-   
-    
+
+
     @Before
     public void setUp() throws Exception {
         encryptor = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -114,7 +114,7 @@ public class CipherTextTest {
             String plaintext = new String( ptraw, "UTF-8");
             assertTrue( plaintext.equals("Hello") );
             assertArrayEquals( ct.getRawCipherText(), ctraw );
-            
+
             byte[] ivAndRaw = ESAPI.encoder().decodeFromBase64( ct.getEncodedIVCipherText() );
             assertTrue( ivAndRaw.length > ctraw.length );
             assertTrue( ct.getBlockSize() == ( ivAndRaw.length - ctraw.length ) );
@@ -147,7 +147,7 @@ public class CipherTextTest {
             CipherText ct = new CipherText(cipherSpec, ctraw);
             assertTrue( ct.getIV() != null && ct.getIV().length > 0 );
             SecretKey authKey = CryptoHelper.computeDerivedKey(key, key.getEncoded().length * 8, "authenticity");
-            ct.computeAndStoreMAC( authKey ); 
+            ct.computeAndStoreMAC( authKey );
             try {
                 ct.setIVandCiphertext(ivSpec.getIV(), ctraw);    // Expected to log & throw.
             } catch( Exception ex ) {
@@ -176,7 +176,7 @@ public class CipherTextTest {
         System.out.println("CipherTextTest.testPortableSerialization()starting...");
         String filename = "ciphertext-portable.ser";
         File serializedFile = tempFolder.newFile(filename);
-      
+
 
         int keySize = 128;
         if ( CryptoPolicy.isUnlimitedStrengthCryptoAvailable() ) {
@@ -196,20 +196,20 @@ public class CipherTextTest {
             ciphertext.computeAndStoreMAC( authKey );
 //          System.err.println("Original ciphertext being serialized: " + ciphertext);
             byte[] serializedBytes = ciphertext.asPortableSerializedByteArray();
-            
+
             FileOutputStream fos = new FileOutputStream(serializedFile);
             fos.write(serializedBytes);
                 // Note: FindBugs complains that this test may fail to close
                 // the fos output stream. We don't really care.
             fos.close();
-            
+
             // NOTE: FindBugs complains about this (OS_OPEN_STREAM). It apparently
             //       is too lame to know that 'fis.read()' is a serious side-effect.
             FileInputStream fis = new FileInputStream(serializedFile);
             int avail = fis.available();
             byte[] bytes = new byte[avail];
             fis.read(bytes, 0, avail);
-            
+
             // Sleep one second to prove that the timestamp on the original
             // CipherText object is the one that we use and not just the
             // current time. Only after that, do we restore the serialized bytes.
@@ -217,7 +217,7 @@ public class CipherTextTest {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 ;    // Ignore
-            }       
+            }
             CipherText restoredCipherText = CipherText.fromPortableSerializedBytes(bytes);
 //          System.err.println("Restored ciphertext: " + restoredCipherText);
             assertTrue( ciphertext.equals(restoredCipherText));
@@ -234,7 +234,7 @@ public class CipherTextTest {
             serializedFile.delete();
         }
     }
-    
+
     /** Test <i>portable</i> serialization for backward compatibility with ESAPI 2.0. */
     @Test public final void testPortableSerializationBackwardCompatibility() {
         System.out.println("testPortableSerializationBackwardCompatibility()starting...");
@@ -243,7 +243,7 @@ public class CipherTextTest {
 
         try {
             // String expectedMsg = "This is my secret message!!!";
-            
+
             // NOTE: FindBugs complains about this (OS_OPEN_STREAM). It apparently
             //       is too lame to know that 'fis.read()' is a serious side-effect.
             FileInputStream fis = new FileInputStream(serializedFile);
@@ -267,14 +267,14 @@ public class CipherTextTest {
             ; // Do NOT delete the file.
         }
     }
-    
+
     /** Test Java serialization. */
     @Test public final void testJavaSerialization() {
         String filename = "ciphertext.ser";
-      
+
         try {
             File serializedFile = tempFolder.newFile(filename);
-            
+
             CipherSpec cipherSpec = new CipherSpec(encryptor, 128);
             cipherSpec.setIV(ivSpec.getIV());
             SecretKey key =
@@ -305,7 +305,7 @@ public class CipherTextTest {
             assertEquals("3: Serialized restored CipherText differs from saved CipherText",
                          ciphertext.getBase64EncodedRawCipherText(),
                          restoredCipherText.getBase64EncodedRawCipherText());
-            
+
         } catch(IOException ex) {
             ex.printStackTrace(System.err);
             fail("testJavaSerialization(): Unexpected IOException: " + ex);
@@ -327,9 +327,9 @@ public class CipherTextTest {
         } catch (InvalidAlgorithmParameterException ex) {
             ex.printStackTrace(System.err);
             fail("testJavaSerialization(): Unexpected InvalidAlgorithmParameterException: " + ex);
-        } 
+        }
     }
-    
+
     /**
      * Run all the test cases in this suite.
      * This is to allow running from {@code org.owasp.esapi.AllTests} which

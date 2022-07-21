@@ -15,7 +15,7 @@ package org.owasp.esapi.codecs;
 
 /**
  * Implementation of the Codec interface for DB2 strings. This function will only protect you from SQLi in limited situations.
- * 
+ *
  * @author Sivasankar Tanakala (stanakal@TRS.NYC.NY.US)
  * @since October 26, 2010
  * @see org.owasp.esapi.Encoder

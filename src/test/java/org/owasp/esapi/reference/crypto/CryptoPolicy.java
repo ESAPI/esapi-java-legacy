@@ -61,14 +61,14 @@ public class CryptoPolicy {
             byte[] raw = skey.getEncoded();
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
             Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding");
-            
+
                 // This usually will throw InvalidKeyException unless the
                 // unlimited jurisdiction policy files are installed. However,
                 // it can succeed even if it's not a provider chooses to use
                 // an exemption mechanism such as key escrow, key recovery, or
                 // key weakening for this cipher instead.
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
-            
+
                 // Try the encryption on dummy string to make sure it works.
                 // Not using padding so # bytes must be multiple of AES cipher
                 // block size which is 16 bytes. Also, OK not to use UTF-8 here.

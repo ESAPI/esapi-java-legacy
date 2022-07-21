@@ -32,7 +32,7 @@ import org.owasp.esapi.errors.EncryptionException;
 public class SecurityProviderLoaderTest {
 
     private static boolean HAS_BOUNCY_CASTLE = false;
-    
+
     @BeforeClass
     public static void setUpBeforeClass() {
         try {
@@ -76,7 +76,7 @@ public class SecurityProviderLoaderTest {
                  preferredProvider + "; exception was: " + e);
         }
     }
-    
+
     @Test(expected=NoSuchProviderException.class)
     public final void testNoSuchProviderException() throws NoSuchProviderException {
         SecurityProviderLoader.insertProviderAt("DrBobsSecretSnakeOilElixirCryptoJCE", 5);
@@ -86,7 +86,7 @@ public class SecurityProviderLoaderTest {
     public final void testBogusProviderWithFQCN() throws NoSuchProviderException {
         SecurityProviderLoader.insertProviderAt("com.snakeoil.DrBobsSecretSnakeOilElixirCryptoJCE", 5);
     }
-    
+
     @Test
     public final void testWithBouncyCastle() {
         if ( ! HAS_BOUNCY_CASTLE ) {
@@ -101,7 +101,7 @@ public class SecurityProviderLoaderTest {
         } catch (NoSuchProviderException e) {
             fail("Caught NoSuchProviderException trying to load Bouncy Castle; exception was: " + e);
         }
-        
+
         // First encrypt w/ preferred cipher transformation (AES/CBC/PKCS5Padding).
         try {
             PlainText clearMsg = new PlainText("This is top secret! We are all out of towels!");
@@ -114,7 +114,7 @@ public class SecurityProviderLoaderTest {
             fail("Encryption w/ Bouncy Castle failed with EncryptionException for preferred " +
                  "cipher transformation; exception was: " + e);
         }
-        
+
         // Next, try a "combined mode" cipher mode available in Bouncy Castle.
         String origCipherXform = null;
         try {

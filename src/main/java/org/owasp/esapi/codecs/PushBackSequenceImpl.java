@@ -4,7 +4,7 @@ package org.owasp.esapi.codecs;
 /**
  * The pushback string is used by Codecs to allow them to push decoded characters back onto a string
  * for further decoding. This is necessary to detect double-encoding.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -18,7 +18,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
     public PushBackSequenceImpl( String input ) {
         super(input);
     }
-    
+
     /**
      *
      * @return The next value in this Sequence, as an Integer.
@@ -36,7 +36,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
         index += Character.charCount(point);
         return point;
     }
-    
+
     /**
     *
     * @return The next value in this Sequence, as an Integer if it is a hex digit. Null otherwise.
@@ -77,7 +77,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
      */
     public static boolean isOctalDigit( Integer c ) {
         if ( c == null ) return false;
-        Integer ch = Integer.valueOf(c); 
+        Integer ch = Integer.valueOf(c);
         return ch >= '0' && ch <= '7';
     }
 
@@ -89,10 +89,10 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
         if ( pushback != null ) return pushback;
         if ( input == null ) return null;
         if ( input.length() == 0 ) return null;
-        if ( index >= input.length() ) return null;        
+        if ( index >= input.length() ) return null;
         return input.codePointAt(index);
     }
-    
+
     /**
      * Test to see if the next codePoint is a particular value without affecting the current index.
      * @param c
@@ -102,10 +102,10 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
         if ( pushback != null && pushback.intValue() == c ) return true;
         if ( input == null ) return false;
         if ( input.length() == 0 ) return false;
-        if ( index >= input.length() ) return false;        
+        if ( index >= input.length() ) return false;
         return input.codePointAt(index) == c;
-    }    
-    
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -121,7 +121,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
         pushback = temp;
         index = mark;
     }
-    
+
     /**
      * {@inheritDoc}
      */

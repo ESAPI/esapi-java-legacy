@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -82,7 +82,7 @@ public class SafeFileTest extends TestCase
         } catch (ValidationException e) {
             assertEquals("Invalid directory", e.getMessage());
         }
-        
+
     }
 
     public void testEscapeCharacterInDirectoryInjection() {
@@ -103,7 +103,7 @@ public class SafeFileTest extends TestCase
             assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
             sf = new SafeFile(testDir, TEST_FILE_NAME + ch + "test");
             assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
-        }        
+        }
     }
 
     public void testJavaFileInjectionBad()
@@ -127,7 +127,7 @@ public class SafeFileTest extends TestCase
             catch(ValidationException expected)
             {
             }
-        }        
+        }
     }
 
     public void testMultipleJavaFileInjectionGood() throws ValidationException
@@ -140,7 +140,7 @@ public class SafeFileTest extends TestCase
             assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
             sf = new SafeFile(testDir, TEST_FILE_NAME + ch + "test");
             assertFalse("File \"" + TEST_FILE_NAME + ch + "\" should not exist ((int)ch=" + (int)ch.charAt(0) + ").", sf.exists());
-        }        
+        }
     }
 
     public void testMultipleJavaFileInjectionBad()
@@ -165,7 +165,7 @@ public class SafeFileTest extends TestCase
             catch(ValidationException expected)
             {
             }
-        }        
+        }
     }
 
     public void testAlternateDataStream() {
@@ -183,7 +183,7 @@ public class SafeFileTest extends TestCase
         final char hexDigit[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
         final char[] array = { hexDigit[(b >> 4) & 0x0f], hexDigit[b & 0x0f] };
         return new String(array);
-    }    
+    }
 
     public void testCreatePath() throws Exception
     {
@@ -272,7 +272,7 @@ public class SafeFileTest extends TestCase
             // expected
         }
     }
-    
+
     public final void testSafeFileShouldAcceptEmptyPath() throws ValidationException
     {
         String filename = "hello.txt";
@@ -282,7 +282,7 @@ public class SafeFileTest extends TestCase
         }catch(NullPointerException npe){
             assertNotNull(npe);
         }
-        
+
 
     }
 }

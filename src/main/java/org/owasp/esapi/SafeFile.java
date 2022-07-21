@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2008 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2008
  */
@@ -31,8 +31,8 @@ import org.owasp.esapi.errors.ValidationException;
 public class SafeFile extends File {
 
     private static final long serialVersionUID = 1L;
-    private static final Pattern PERCENTS_PAT = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");    
-    private static final Pattern FILE_BLACKLIST_PAT = Pattern.compile("([\\\\/:*?<>|^])");    
+    private static final Pattern PERCENTS_PAT = Pattern.compile("(%)([0-9a-fA-F])([0-9a-fA-F])");
+    private static final Pattern FILE_BLACKLIST_PAT = Pattern.compile("([\\\\/:*?<>|^])");
     private static final Pattern DIR_BLACKLIST_PAT = Pattern.compile("([*?<>|^])");
 
     public SafeFile(String path) throws ValidationException {
@@ -59,7 +59,7 @@ public class SafeFile extends File {
         doFileCheck(this.getName());
     }
 
-    
+
     private void doDirCheck(String path) throws ValidationException {
         Matcher m1 = DIR_BLACKLIST_PAT.matcher( path );
         if ( null != m1 && m1.find() ) {
@@ -70,13 +70,13 @@ public class SafeFile extends File {
         if (null != m2 &&  m2.find() ) {
             throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains encoded characters: " + m2.group() );
         }
-        
+
         int ch = containsUnprintableCharacters(path);
         if (ch != -1) {
             throw new ValidationException("Invalid directory", "Directory path (" + path + ") contains unprintable character: " + ch);
         }
     }
-    
+
     private void doFileCheck(String path) throws ValidationException {
         Matcher m1 = FILE_BLACKLIST_PAT.matcher( path );
         if ( m1.find() ) {
@@ -87,7 +87,7 @@ public class SafeFile extends File {
         if ( m2.find() ) {
             throw new ValidationException( "Invalid file", "File path (" + path + ") contains encoded characters: " + m2.group() );
         }
-        
+
         int ch = containsUnprintableCharacters(path);
         if (ch != -1) {
             throw new ValidationException("Invalid file", "File path (" + path + ") contains unprintable character: " + ch);

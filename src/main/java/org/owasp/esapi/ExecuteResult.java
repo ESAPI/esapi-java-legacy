@@ -25,7 +25,7 @@ package org.owasp.esapi;
  * @since Aug 25, 2010
  */
 public class ExecuteResult {
-    
+
     private final int exitValue;
     private final String output;
     private final String errors;
@@ -66,7 +66,7 @@ public class ExecuteResult {
     public String getErrors() {
         return errors;
     }
-    
+
     @Override
     public String toString() {
         return "ExecuteResult[exitValue="+exitValue+",output="+output+",errors="+errors+"]";

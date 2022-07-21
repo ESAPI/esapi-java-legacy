@@ -6,7 +6,7 @@ import org.junit.Test;
 
 public class HTMLEntityCodecTest {
     Codec<Integer> codec = new HTMLEntityCodec();
-    
+
     @Test
     public void testEntityDecoding(){
         assertEquals("<", codec.decode("&lt;"));
@@ -14,7 +14,7 @@ public class HTMLEntityCodecTest {
         assertEquals( "<", codec.decode("&lt;"));
         assertEquals( "<", codec.decode("&LT;"));
     }
-    
+
     @Test
     public void test32BitCJK(){
         String s = "𡘾𦴩𥻂";
@@ -23,7 +23,7 @@ public class HTMLEntityCodecTest {
         assertEquals(false, expected.equals(bad));
         assertEquals(expected, codec.encode(new char[0], s));
     }
-    
+
     @Test
     public void test32BitCJKMixedWithBmp(){
         String s = "𡘾𦴩<𥻂";
@@ -32,14 +32,14 @@ public class HTMLEntityCodecTest {
         assertEquals(false, expected.equals(bad));
         assertEquals(expected, codec.encode(new char[0], s));
     }
-    
+
     @Test
     public void testDecodeforChars(){
         String s = "!@$%()=+{}[]";
         String expected = "!@$%()=+{}[]";
         assertEquals(expected, codec.decode(s));
     }
-    
+
     @Test
     public void testMixedBmpAndNonBmp(){
         String nonBMP = new String(new int[]{0x2f804}, 0, 1);

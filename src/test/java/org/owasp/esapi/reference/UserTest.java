@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -38,24 +38,24 @@ import org.owasp.esapi.http.MockHttpSession;
 
 /**
  * The Class UserTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class UserTest extends TestCase {
 
     /**
      * Suite.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
         TestSuite suite = new TestSuite(UserTest.class);
         return suite;
     }
-    
+
     /**
      * Instantiates a new user test.
-     * 
+     *
      * @param testName
      *            the test name
      */
@@ -65,12 +65,12 @@ public class UserTest extends TestCase {
 
     /**
      * Creates the test user.
-     * 
+     *
      * @param password
      *            the password
-     * 
+     *
      * @return the user
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -102,7 +102,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of testAddRole method, of class org.owasp.esapi.User.
-     * 
+     *
      * @exception Exception
      *                 any Exception thrown by testing addRole()
      */
@@ -120,7 +120,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of addRoles method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -140,7 +140,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of changePassword method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -178,7 +178,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of disable method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -195,7 +195,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of enable method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -212,7 +212,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of failedLoginCount lockout, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      * @throws EncryptionException
@@ -225,12 +225,12 @@ public class UserTest extends TestCase {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
-        
+
         user.loginWithPassword("failedLoginLockout");
-        
+
         try {
             user.loginWithPassword("ridiculous");
-        } catch( AuthenticationException e ) { 
+        } catch( AuthenticationException e ) {
             // expected
         }
          System.out.println("FAILED: " + user.getFailedLoginCount());
@@ -238,7 +238,7 @@ public class UserTest extends TestCase {
 
         try {
             user.loginWithPassword("ridiculous");
-        } catch( AuthenticationException e ) { 
+        } catch( AuthenticationException e ) {
             // expected
         }
         System.out.println("FAILED: " + user.getFailedLoginCount());
@@ -246,7 +246,7 @@ public class UserTest extends TestCase {
 
         try {
             user.loginWithPassword("ridiculous");
-        } catch( AuthenticationException e ) { 
+        } catch( AuthenticationException e ) {
             // expected
         }
         System.out.println("FAILED: " + user.getFailedLoginCount());
@@ -255,7 +255,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of getAccountName method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -270,7 +270,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test get last failed login time.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -281,14 +281,14 @@ public class UserTest extends TestCase {
         DefaultUser user = createTestUser(oldPassword);
         try {
             user.loginWithPassword("ridiculous");
-        } catch( AuthenticationException e ) { 
+        } catch( AuthenticationException e ) {
             // expected
         }
         Date llt1 = user.getLastFailedLoginTime();
         Thread.sleep(100); // need a short delay to separate attempts
         try {
             user.loginWithPassword("ridiculous");
-        } catch( AuthenticationException e ) { 
+        } catch( AuthenticationException e ) {
             // expected
         }
         Date llt2 = user.getLastFailedLoginTime();
@@ -297,7 +297,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test get last login time.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -316,7 +316,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test getLastPasswordChangeTime method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -350,7 +350,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of getScreenName method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -387,25 +387,25 @@ public class UserTest extends TestCase {
         }
         assertTrue(sessions.size() == 3);
     }
-    
-    
+
+
     /**
      *
      */
     public void testAddSession() {
         // TODO
     }
-    
+
     /**
      *
      */
     public void testRemoveSession() {
         // TODO
     }
-    
+
     /**
      * Test of incrementFailedLoginCount method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -445,7 +445,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of isEnabled method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -458,11 +458,11 @@ public class UserTest extends TestCase {
         assertTrue(user.isEnabled());
     }
 
-    
-    
+
+
     /**
      * Test of isInRole method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -478,7 +478,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of isLocked method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -494,7 +494,7 @@ public class UserTest extends TestCase {
     /**
      * Test of isSessionAbsoluteTimeout method, of class
      * org.owasp.esapi.IntrusionDetector.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -509,11 +509,11 @@ public class UserTest extends TestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         MockHttpSession session = (MockHttpSession)request.getSession();
-                
-        // set session creation -3 hours (default is 2 hour timeout)        
+
+        // set session creation -3 hours (default is 2 hour timeout)
         session.setCreationTime( now - (1000 * 60 * 60 * 3) );
         assertTrue(user.isSessionAbsoluteTimeout());
-        
+
         // set session creation -1 hour (default is 2 hour timeout)
         session.setCreationTime( now - (1000 * 60 * 60 * 1) );
         assertFalse(user.isSessionAbsoluteTimeout());
@@ -522,7 +522,7 @@ public class UserTest extends TestCase {
     /**
      * Test of isSessionTimeout method, of class
      * org.owasp.esapi.IntrusionDetector.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -537,11 +537,11 @@ public class UserTest extends TestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         MockHttpSession session = (MockHttpSession)request.getSession();
-        
+
         // set creation -30 mins (default is 20 min timeout)
         session.setAccessedTime( now - 1000 * 60 * 30 );
         assertTrue(user.isSessionTimeout());
-        
+
         // set creation -1 hour (default is 20 min timeout)
         session.setAccessedTime( now - 1000 * 60 * 10 );
         assertFalse(user.isSessionTimeout());
@@ -549,7 +549,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of lockAccount method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -566,7 +566,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of loginWithPassword method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -606,7 +606,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of logout method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -634,7 +634,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of testRemoveRole method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -650,7 +650,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of testResetCSRFToken method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -661,7 +661,7 @@ public class UserTest extends TestCase {
         String token2 = user.resetCSRFToken();
         assertFalse( token1.equals( token2 ) );
     }
-    
+
     /**
      * Test of setAccountName method, of class org.owasp.esapi.User.
      *
@@ -691,10 +691,10 @@ public class UserTest extends TestCase {
         assertTrue( user.isExpired() );
     }
 
-    
+
     /**
      * Test of setRoles method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -715,7 +715,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of setScreenName method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -730,7 +730,7 @@ public class UserTest extends TestCase {
 
     /**
      * Test of unlockAccount method, of class org.owasp.esapi.User.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */

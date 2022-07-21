@@ -36,9 +36,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 /**
- * This class contains a subsection of tests of the DefaultValidator class 
+ * This class contains a subsection of tests of the DefaultValidator class
  * SPECIFIC TO THE DATE VALIDATION API.
- * 
+ *
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DefaultValidator.class)
@@ -48,7 +48,7 @@ public class DefaultValidaterDateAPITest {
     @Rule
     public TestName testName = new TestName();
     private String dateString="Input Does not matter in this context";
-    
+
     private ValidationException validationEx;
     private Date testDate = new Date();
     private String contextStr;
@@ -56,109 +56,109 @@ public class DefaultValidaterDateAPITest {
     private DateFormat testFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.US);
     private DateValidationRule spyDateRule;
     private ValidationErrorList errors = new ValidationErrorList();
-    
+
     private DefaultValidator uit;
-    
-    
+
+
     @Before
     public void setup() throws Exception {
         contextStr = testName.getMethodName();
-        
+
         validationEx = new ValidationException(contextStr, contextStr);
-        
+
         mockEncoder = mock(Encoder.class);
         uit = new DefaultValidator(mockEncoder);
-        
+
         spyDateRule = new DateValidationRule(contextStr, mockEncoder, testFormat);
         spyDateRule = spy(spyDateRule);
         whenNew(DateValidationRule.class).withArguments(anyString(), eq(mockEncoder), eq(testFormat)).thenReturn(spyDateRule);
-        
+
         errors = spy(errors);
         whenNew(ValidationErrorList.class).withNoArguments().thenReturn(errors);
     }
-    
+
     @After
     public void tearDown() {
         verifyNoMoreInteractions(spyDateRule, errors);
     }
-    
+
     @Test
     public void testIsValidDate() {
         doReturn(testDate).when(spyDateRule).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
-        
+
         boolean isValid = uit.isValidDate(contextStr, dateString, testFormat, true);
         Assert.assertTrue("Mock is configured to return a valid date, return should be equally valid.", isValid);
-        
+
         verify(errors, atLeastOnce()).isEmpty();
         verify(errors, times(0)).errors();
         verify(spyDateRule, times(1)).setAllowNull(true);
         verify(spyDateRule, times(1)).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
     }
-    
+
     @Test
     public void testIsValidDateErrorList() {
         doReturn(testDate).when(spyDateRule).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
-        
+
         boolean isValid = uit.isValidDate(contextStr, dateString, testFormat, true, errors);
         Assert.assertTrue("Mock is configured to return a valid date, return should be equally valid.", isValid);
-        
+
         verify(errors, atLeastOnce()).isEmpty();
         verify(errors, times(0)).errors();
         verify(spyDateRule, times(1)).setAllowNull(true);
         verify(spyDateRule, times(1)).sanitize(eq(contextStr), eq(dateString), eq(errors));
     }
-    
+
     @Test
     public void testGetValidDate() throws IntrusionException, ValidationException {
         doReturn(testDate).when(spyDateRule).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
         Date validDate = uit.getValidDate(contextStr, dateString, testFormat, true);
         Assert.assertEquals("ValidDate should match the mock's configured return value", testDate, validDate);
-        
+
         verify(errors, atLeastOnce()).isEmpty();
         verify(errors, times(0)).errors();
         verify(spyDateRule, times(1)).setAllowNull(true);
         verify(spyDateRule, times(1)).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
     }
-    
+
     @Test
     public void testGetValidDateErrorList() {
         doReturn(testDate).when(spyDateRule).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
         Date validDate = uit.getValidDate(contextStr, dateString, testFormat, true, errors);
         Assert.assertEquals("ValidDate should match the mock's configured return value", testDate, validDate);
-        
+
         verify(errors, atLeastOnce()).isEmpty();
         verify(errors, times(0)).errors();
         verify(spyDateRule, times(1)).setAllowNull(true);
         verify(spyDateRule, times(1)).sanitize(eq(contextStr), eq(dateString), eq(errors));
     }
-    
-    
+
+
     @Test
     public void testIsValidDateOnValidationError() {
         doReturn(false).when(errors).isEmpty();
         doReturn(Arrays.asList(validationEx)).when(errors).errors();
-        
+
         doReturn(testDate).when(spyDateRule).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
-        
+
         boolean isValid = uit.isValidDate(contextStr, dateString, testFormat, true);
         Assert.assertFalse("On ValidationException input should be invalid", isValid);
-        
+
         verify(errors, atLeastOnce()).isEmpty();
         verify(errors, times(1)).errors();
         verify(spyDateRule, times(1)).setAllowNull(true);
         verify(spyDateRule, times(1)).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
     }
-    
+
     @Test
     public void testIsValidDateErrorListOnValidationError() {
         doReturn(false).when(errors).isEmpty();
         doReturn(Arrays.asList(validationEx)).when(errors).errors();
-        
+
         doReturn(testDate).when(spyDateRule).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
-        
+
         boolean isValid = uit.isValidDate(contextStr, dateString, testFormat, true, errors);
         Assert.assertFalse("On ValidationException input should be invalid", isValid);
-        
+
         verify(errors, times(2)).isEmpty();
         verify(errors, times(0)).errors();
         verify(spyDateRule, times(1)).setAllowNull(true);
@@ -180,7 +180,7 @@ public class DefaultValidaterDateAPITest {
             verify(spyDateRule, times(1)).sanitize(eq(contextStr), eq(dateString), isA(ValidationErrorList.class));
         }
     }
-    
+
     @Test
     public void testGetValidDateErrorListOnValidationError() {
         doReturn(false).when(errors).isEmpty();

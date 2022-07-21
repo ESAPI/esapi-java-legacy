@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -34,10 +34,10 @@ import org.owasp.esapi.errors.ExecutorException;
 
 /**
  * Reference implementation of the Executor interface. This implementation is very restrictive. Commands must exactly
- * equal the canonical path to an executable on the system. 
- * 
+ * equal the canonical path to an executable on the system.
+ *
  * <p>Valid characters for parameters are codec dependent, but will usually only include alphanumeric, forward-slash, and dash.</p>
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Executor
@@ -60,7 +60,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
     private final Logger logger = ESAPI.getLogger("Executor");
     private Codec codec = null;
     //private final int MAX_SYSTEM_COMMAND_LENGTH = 2500;
-    
+
 
     /**
      * Instantiate a new Executor
@@ -100,18 +100,18 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             if (!executable.exists()) {
                 throw new ExecutorException("Execution failure", "No such executable: " + executable);
             }
-            
+
             // executable must use canonical path
             if ( !executable.isAbsolute() ) {
                 throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-absolute path: " + executable);
             }
-            
+
             // executable must use canonical path
             if ( !executable.getPath().equals( executable.getCanonicalPath() ) ) {
                 throw new ExecutorException("Execution failure", "Attempt to invoke an executable using a non-canonical path: " + executable);
             }
-            
-            // exact, absolute, canonical path to executable must be listed in ESAPI configuration 
+
+            // exact, absolute, canonical path to executable must be listed in ESAPI configuration
             List approved = ESAPI.securityConfiguration().getAllowedExecutables();
             if (!approved.contains(executable.getPath())) {
                 throw new ExecutorException("Execution failure", "Attempt to invoke executable that is not listed as an approved executable in ESAPI configuration: " + executable.getPath() + " not listed in " + approved );
@@ -122,19 +122,19 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
                 String param = (String)params.get(i);
                 params.set( i, ESAPI.encoder().encodeForOS(codec, param));
             }
-            
+
             // working directory must exist
             if (!workdir.exists()) {
                 throw new ExecutorException("Execution failure", "No such working directory for running executable: " + workdir.getPath());
             }
-            
+
             // set the command into the list and create command array
             params.add(0, executable.getCanonicalPath());
 
             // Legacy - this is how to implement in Java 1.4
             // String[] command = (String[])params.toArray( new String[0] );
             // Process process = Runtime.getRuntime().exec(command, new String[0], workdir);
-            
+
             // The following is host to implement in Java 1.5+
             ProcessBuilder pb = new ProcessBuilder(params);
             Map env = pb.environment();
@@ -196,7 +196,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
 
     /**
      * readStream reads lines from an input stream and returns all of them in a single string
-     * 
+     *
      * @param is
      *             input stream to read from
      * @throws IOException
@@ -209,7 +209,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             sb.append(line).append('\n');
         }
     }
-    
+
     private static class ReadThread extends Thread {
         volatile IOException exception;
         private final InputStream stream;

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2019
  */
 package org.owasp.esapi.logging.java;
@@ -43,7 +43,7 @@ import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
 
 /**
  * LogFactory implementation which creates JAVA supporting Loggers.
- * 
+ *
  * This implementation requires that a file named 'esapi-java-logging.properties' exists on the classpath.
  * <br>
  * A default file implementation is available in the configuration jar on GitHub under the 'Releases'
@@ -103,7 +103,7 @@ public class JavaLogFactory implements LogFactory {
             }
             logManager.readConfiguration(stream);
         } catch (IOException ioe) {
-            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);            
+            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);
         }
     }
 
@@ -126,21 +126,21 @@ public class JavaLogFactory implements LogFactory {
 
     /**
      * Populates the default log appender for use in factory-created loggers.
-     * @param appName 
-     * @param logApplicationName 
-     * @param logServerIp 
-     * @param logClientInfo 
-     * 
+     * @param appName
+     * @param logApplicationName
+     * @param logServerIp
+     * @param logClientInfo
+     *
      * @return LogAppender instance.
      */
     /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);  
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
     }
 
 
     @Override
     public Logger getLogger(String moduleName) {
-        java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(moduleName); 
+        java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger(moduleName);
         return new JavaLogger(javaLogger, LOG_BRIDGE, Logger.ALL);
     }
 

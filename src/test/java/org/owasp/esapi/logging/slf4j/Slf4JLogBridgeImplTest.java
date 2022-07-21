@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2018
  */
 package org.owasp.esapi.logging.slf4j;
@@ -62,7 +62,7 @@ public class Slf4JLogBridgeImplTest {
         Map<Integer, Slf4JLogLevelHandler> emptyMap = Collections.emptyMap();
         new Slf4JLogBridgeImpl(mockAppender, mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail");
     }
-    
+
     @Test
     public void testLogMessageAndExceptionWithUnmappedEsapiLevelThrowsException() {
         exEx.expect(IllegalArgumentException.class);
@@ -70,7 +70,7 @@ public class Slf4JLogBridgeImplTest {
         Map<Integer, Slf4JLogLevelHandler> emptyMap = Collections.emptyMap();
         new Slf4JLogBridgeImpl(mockAppender, mockScrubber, emptyMap).log(mockSlf4JLogger, 0, Logger.EVENT_UNSPECIFIED, "This Should fail", testEx);
     }
-    
+
     @Test
     public void testLogMessage() {
         EventType eventType = Logger.EVENT_UNSPECIFIED;
@@ -96,7 +96,7 @@ public class Slf4JLogBridgeImplTest {
         Mockito.verify(mockHandler, Mockito.times(1)).isEnabled(mockSlf4JLogger);
         Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class), ArgumentMatchers.any(Throwable.class));
         Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.eq(cleanMsg));
-     
+
         Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());
         Mockito.verifyNoMoreInteractions(mockSlf4JLogger, mockAppender, mockScrubber,mockHandler);
     }
@@ -127,7 +127,7 @@ public class Slf4JLogBridgeImplTest {
         Mockito.verify(mockHandler, Mockito.times(0)).log(ArgumentMatchers.any(org.slf4j.Logger.class), ArgumentMatchers.any(Marker.class), ArgumentMatchers.any(String.class));
 
         Mockito.verify(mockHandler, Mockito.times(1)).log(ArgumentMatchers.same(mockSlf4JLogger), markerCapture.capture(), ArgumentMatchers.eq(cleanMsg), ArgumentMatchers.same(testEx));
-     
+
         Assert.assertEquals(Logger.EVENT_UNSPECIFIED.toString(), markerCapture.getValue().getName());
         Mockito.verifyNoMoreInteractions(mockSlf4JLogger, mockAppender, mockScrubber,mockHandler);
     }

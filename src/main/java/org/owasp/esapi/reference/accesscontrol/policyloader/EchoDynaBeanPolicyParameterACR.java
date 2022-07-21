@@ -9,7 +9,7 @@ public class EchoDynaBeanPolicyParameterACR extends BaseACR<DynaBeanACRParameter
      * Returns true if runtimeParameter is a Boolean true.
      * throws ClassCastException if runtimeParameter is not a Boolean.
      */
-    public boolean isAuthorized(Object runtimeParameter) throws ClassCastException{        
+    public boolean isAuthorized(Object runtimeParameter) throws ClassCastException{
         return getPolicyParameters().getBoolean("isTrue");
     }
 }

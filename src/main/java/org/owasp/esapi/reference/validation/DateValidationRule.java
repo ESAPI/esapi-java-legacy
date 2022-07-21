@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -27,7 +27,7 @@ import org.owasp.esapi.errors.ValidationException;
 /**
  * A validator performs syntax and possibly semantic validation of a single
  * piece of data from an untrusted source.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -35,18 +35,18 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class DateValidationRule extends BaseValidationRule {
     private DateFormat format = DateFormat.getDateInstance();
-    
+
     public DateValidationRule( String typeName, Encoder encoder, DateFormat newFormat ) {
-        super( typeName, encoder );      
+        super( typeName, encoder );
         setDateFormat( newFormat );
     }
-    
+
     public final void setDateFormat( DateFormat newFormat ) {
         if (newFormat == null) {
             throw new IllegalArgumentException("DateValidationRule.setDateFormat requires a non-null DateFormat");
         }
         // CHECKME fail fast?
-/*        
+/*
           try {
             newFormat.parse(new Date());
         } catch (ParseException e) {
@@ -71,10 +71,10 @@ public class DateValidationRule extends BaseValidationRule {
     public Date sanitize( String context, String input )  {
         return sanitize(context, input, null);
     }
-    
+
     /**
      * Same as sanitize(String, String) except it returns any ValidationException generated in the provided errorList.
-     * 
+     *
      *   @param errorList The error list to add any ValidationException to.
      *   @return The valid sanitized Date, or Date(0) if the supplied input was not a valid date.
      */
@@ -89,7 +89,7 @@ public class DateValidationRule extends BaseValidationRule {
         }
         return date;
     }
-        
+
     private Date safelyParse(String context, String input, boolean sanitize)
             throws ValidationException {
         // CHECKME should this allow empty Strings? "   " use IsBlank instead?

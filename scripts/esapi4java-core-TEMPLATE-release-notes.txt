@@ -91,9 +91,9 @@ None known, other than the remaining open issues on GitHub.
 Developer Activity Report (Changes between release ${PREV_VERSION} and ${VERSION}, i.e., between ${PREV_RELEASE_DATE} and ${YYYY_MM_DD_RELEASE_DATE})
 Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
 
-@@@@ 
+@@@@
 @@@@ This section needs to be manually updated.
-@@@@ 
+@@@@
 Developer       Total       Total Number        # Merged
 (GitHub ID)     commits   of Files Changed        PRs
 ========================================================

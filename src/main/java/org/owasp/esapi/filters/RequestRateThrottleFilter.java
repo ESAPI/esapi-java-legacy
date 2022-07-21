@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -48,7 +48,7 @@ public class RequestRateThrottleFilter implements Filter
      * placed into service. The servlet container calls the init method exactly
      * once after instantiating the filter. The init method must complete
      * successfully before the filter is asked to do any filtering work.
-     * 
+     *
      * @param filterConfig
      *            configuration object
      */
@@ -64,9 +64,9 @@ public class RequestRateThrottleFilter implements Filter
      * exceeded, then a short error message is written to the output stream and
      * no further processing is done on the request. Otherwise the request is
      * processed as normal.
-     * @param request 
-     * @param response 
-     * @param chain 
+     * @param request
+     * @param response
+     * @param chain
      * @throws IOException
      * @throws ServletException
      */
@@ -74,7 +74,7 @@ public class RequestRateThrottleFilter implements Filter
     {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpSession session = httpRequest.getSession(true);
-        
+
         synchronized( session.getId().intern() ) {
             List<Long> times = ESAPI.httpUtilities().getSessionAttribute("times");
             if (times == null) {

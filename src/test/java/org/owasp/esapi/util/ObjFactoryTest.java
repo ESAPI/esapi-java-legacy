@@ -11,16 +11,16 @@ import javax.crypto.spec.SecretKeySpec;
 import org.owasp.esapi.errors.ConfigurationException;
 
 public class ObjFactoryTest extends TestCase {
-    
+
     // Purpose of this is to prevent a default, no-arg, public CTOR to be generated.
     // We want to prevent this so we can use this class to test the case of where
     // ObjectFactory<T>.make() throws an IllegalAccessException.
     @SuppressWarnings("unused")
     private ObjFactoryTest(int i) { ; }
-    
+
     /**
      * Instantiates a new object factory test.
-     * 
+     *
      * @param testName
      *            the test name
      */
@@ -47,14 +47,14 @@ public class ObjFactoryTest extends TestCase {
     /**
      * Run all the test cases in this suite.
      * This is to allow running from {@code org.owasp.esapi.AllTests}.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
         TestSuite suite = new TestSuite(ObjFactoryTest.class);
         return suite;
     }
-    
+
     /** Test that NullCipher object is correctly returned. */
     public void testMakeNullCipher() throws ConfigurationException {
         String className = "javax.crypto.NullCipher";
@@ -63,12 +63,12 @@ public class ObjFactoryTest extends TestCase {
         assertTrue( nullCipher instanceof javax.crypto.NullCipher );
         System.out.println("W00t! Watch out NSA...we have a NullCipher and we're not afraid to use it!");
     }
-    
+
     /** Test that InstantiationException is thrown as the root cause when the
      * specified class name is an abstract class or interface.
      */
     public void testInterface() throws ConfigurationException {
-        Key key = null;      
+        Key key = null;
         try {
             key = ObjFactory.make("java.security.Key", "Key");
             assertFalse("Should not be reached - interface or abstract class", key != null);
@@ -77,16 +77,16 @@ public class ObjFactoryTest extends TestCase {
             assertTrue( cause instanceof InstantiationException);
         }
     }
-    
+
     /** Test that IllegalAccessException is thrown as the root cause when the
      *  specified class has no public, no-arg CTOR. Cipher has only a protected
      *  CTOR that takes multiple parameters.
-     *  
+     *
      *  FIXME: Need new test. This also throws an InstantiationException as the
      *  root cause. The goal is to have it throw IllegalAccessException.
      */
     public void testMakeNoPublicConstructor() throws ConfigurationException {
-        ObjFactoryTest oft = null;    
+        ObjFactoryTest oft = null;
         try {
             // CHECKME: As I read
             //      http://java.sun.com/docs/books/tutorial/reflect/member/ctorTrouble.html
@@ -100,13 +100,13 @@ public class ObjFactoryTest extends TestCase {
             assertTrue( cause instanceof InstantiationException);
         }
     }
-    
+
     /** Test that ClassNotFoundException is thrown as the root cause when
      * the class name to be created is not a class name that exists anywhere.
      */
     public void testMakeNoSuchClass() throws ConfigurationException {
         Object obj = null;
-        
+
         try {
             obj = ObjFactory.make("kevin.wall.HasNoClass", "Object");
             assertFalse("Should not be reached - no such class", obj != null);
@@ -115,7 +115,7 @@ public class ObjFactoryTest extends TestCase {
             assertTrue( cause instanceof ClassNotFoundException);
         }
     }
-    
+
     /** Test that ClassCastException is thrown as the root cause when the
      * created class is not a subclass / does not implement the specified type.
      * (In this case, String is not a subclass / does not implement Key.)
@@ -133,7 +133,7 @@ public class ObjFactoryTest extends TestCase {
             assertTrue("Caught expected class cast exception", true);
         }
     }
-    
+
     /** Test that IllegalArgumentException is thrown as the cause when the
      * class name is specified as an empty string.
      */
@@ -147,7 +147,7 @@ public class ObjFactoryTest extends TestCase {
             assertTrue( cause instanceof IllegalArgumentException);
         }
     }
-    
+
     /** Test that some other exception is thrown from the no-arg, public CTOR as the
      * root cause. Had to use special external class here because strangely, this didn't
      * work as an inner class. (Threw InstantiationException in that case instead.)
@@ -162,7 +162,7 @@ public class ObjFactoryTest extends TestCase {
             assertTrue( cause instanceof UnsupportedOperationException);
         }
     }
-    
+
     /** Test case where typeName is null or empty string. */
     public void testNullorEmptyTypeName() throws ConfigurationException {
         String className = "javax.crypto.NullCipher";
@@ -173,7 +173,7 @@ public class ObjFactoryTest extends TestCase {
             ObjFactory.make(className, "");
         assertTrue( nullCipher instanceof javax.crypto.NullCipher );
     }
-    
+
     /** Test case where no-arg CTOR does not exist. By all indications from
      * Javadoc for {@code Class.newInstance()} one would think this should
      * throw an {@code IllegalAccessException} because {@code SecretKeySpec}

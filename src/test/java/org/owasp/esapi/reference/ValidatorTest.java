@@ -61,7 +61,7 @@ import org.owasp.esapi.util.TestUtils;
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class ValidatorTest {
-    
+
     private static final String PREFERRED_ENCODING = "UTF-8";
 
     @Rule
@@ -401,7 +401,7 @@ public class ValidatorTest {
 
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
-        
+
         String invalidPath = tempFolder.newFolder("esapi-test2").getAbsolutePath();
         File parent = tempFolder.newFolder("sibling-of-esapi-test2");
         String validPath = tempFolder.newFolder("sibling-of-esapi-test2", "child").getCanonicalPath();
@@ -575,7 +575,7 @@ public class ValidatorTest {
         System.err.println(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));;
         assertFalse(instance.isValidInput("test", "jeff^WILLIAMS", "HTTPParameterValue", 100, false));
         assertFalse(instance.isValidInput("test", "jeff\\WILLIAMS", "HTTPParameterValue", 100, false));
-        
+
         assertTrue(instance.isValidInput("test", null, "Email", 100, true));
         assertFalse(instance.isValidInput("test", null, "Email", 100, false));
 
@@ -1057,7 +1057,7 @@ public class ValidatorTest {
         assertFalse(safeRequest.getHeader("f2").equals(request.getHeader("f2")));
         assertNull(safeRequest.getHeader("p3"));
     }
-    
+
     @Test
     public void testHeaderLengthChecks(){
         Validator v = ESAPI.validator();
@@ -1118,40 +1118,40 @@ public class ValidatorTest {
         // Fail-case - URL Splitting
         assertFalse(ESAPI.validator().isValidInput("HTTPContextPath", "/\\nGET http://evil.com", "HTTPContextPath", 512, true));
     }
-    
+
     @Test
     public void testGmailEmailAddress(){
         Validator v = ESAPI.validator();
         assertTrue(v.isValidInput("Gmail", "Darth+Sidious@gmail.com", "Gmail", 512, false));
         assertTrue(v.isValidInput("Gmail", "Darth.Sidious@gmail.com", "Gmail", 512, false));
     }
-    
+
     @Test
     public void testGetValidUri(){
         Validator v = ESAPI.validator();
         assertFalse(v.isValidURI("test", "http://core-jenkins.scansafe.cisco.com/佐贺诺伦-^ńörén.jpg", false));
     }
-    
+
     @Test
     public void testGetValidUriNullInput(){
         Validator v = ESAPI.validator();
         boolean isValid = v.isValidURI("test", null, true);
         assertTrue(isValid);
     }
-    
+
     @Test
     public void testRegex(){
         Validator v = ESAPI.validator();
         boolean isValid = v.isValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
         assertFalse(isValid);
     }
-    
+
     @Test(expected = ValidationException.class)
     public void testRegexWithGetValid() throws IntrusionException, ValidationException {
         Validator v = ESAPI.validator();
         String foo = v.getValidInput("RegexString", "%2d%2d%3e%3c%2f%73%43%72%49%70%54%3e%3c%73%43%72%49%70%54%3e%61%6c%65%72%74%28%31%36%35%38%38%29%3c%2f%73%43%72%49%70%54%3e", "RegexString", 30000, true);
     }
-    
+
     @Test
     public void testavaloqLooseSafeString(){
         Validator v = ESAPI.validator();

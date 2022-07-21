@@ -13,9 +13,9 @@ public class StringValidationRuleTest {
 
     @Test
     public void testWhitelistPattern() throws ValidationException {
-        
+
         StringValidationRule validationRule = new StringValidationRule("Alphabetic");
-        
+
         Assert.assertEquals("Magnum44", validationRule.getValid("", "Magnum44"));
         validationRule.addWhitelistPattern("^[a-zA-Z]*");
         try {
@@ -26,14 +26,14 @@ public class StringValidationRuleTest {
             Assert.assertNotNull(ve.getMessage());
         }
         Assert.assertEquals("MagnumPI", validationRule.getValid("", "MagnumPI"));
-        
+
     }
-    
+
     @Test
     public void testWhitelistPattern_Invalid() throws ValidationException {
-        
+
         StringValidationRule validationRule = new StringValidationRule("");
-        
+
         //null white list patterns throw IllegalArgumentException
         try {
             String pattern = null;
@@ -43,7 +43,7 @@ public class StringValidationRuleTest {
         catch (IllegalArgumentException ie) {
             Assert.assertNotNull(ie.getMessage());
         }
-        
+
         try {
             java.util.regex.Pattern pattern = null;
             validationRule.addWhitelistPattern(pattern);
@@ -52,7 +52,7 @@ public class StringValidationRuleTest {
         catch (IllegalArgumentException ie) {
             Assert.assertNotNull(ie.getMessage());
         }
-        
+
         //invalid white list patterns throw PatternSyntaxException
         try {
             String pattern = "_][0}[";
@@ -63,20 +63,20 @@ public class StringValidationRuleTest {
             Assert.assertNotNull(ie.getMessage());
         }
     }
-    
+
     @Test
     public void testWhitelist() {
         StringValidationRule validationRule = new StringValidationRule("");
-        
+
         char[] whitelistArray = new char[] {'a', 'b', 'c'};
         Assert.assertEquals("abc", validationRule.whitelist("12345abcdef", whitelistArray));
     }
-    
+
     @Test
     public void testBlacklistPattern() throws ValidationException {
-        
+
         StringValidationRule validationRule = new StringValidationRule("NoAngleBrackets");
-        
+
         Assert.assertEquals("beg <script> end", validationRule.getValid("", "beg <script> end"));
         validationRule.addBlacklistPattern("^.*(<|>).*");
         try {
@@ -88,12 +88,12 @@ public class StringValidationRuleTest {
         }
         Assert.assertEquals("beg script end", validationRule.getValid("", "beg script end"));
     }
-    
+
     @Test
     public void testBlacklistPattern_Invalid() throws ValidationException {
-        
+
         StringValidationRule validationRule = new StringValidationRule("");
-        
+
         //null black list patterns throw IllegalArgumentException
         try {
             String pattern = null;
@@ -103,7 +103,7 @@ public class StringValidationRuleTest {
         catch (IllegalArgumentException ie) {
             Assert.assertNotNull(ie.getMessage());
         }
-        
+
         try {
             java.util.regex.Pattern pattern = null;
             validationRule.addBlacklistPattern(pattern);
@@ -112,7 +112,7 @@ public class StringValidationRuleTest {
         catch (IllegalArgumentException ie) {
             Assert.assertNotNull(ie.getMessage());
         }
-        
+
         //invalid black list patterns throw PatternSyntaxException
         try {
             String pattern = "_][0}[";
@@ -122,42 +122,42 @@ public class StringValidationRuleTest {
         catch (IllegalArgumentException ie) {
             Assert.assertNotNull(ie.getMessage());
         }
-    }    
-    
+    }
+
     @Test
     public void testCheckLengths() throws ValidationException {
-        
+
         StringValidationRule validationRule = new StringValidationRule("Max12_Min2");
         validationRule.setMinimumLength(2);
         validationRule.setMaximumLength(12);
-        
+
         Assert.assertTrue(validationRule.isValid("", "12"));
         Assert.assertTrue(validationRule.isValid("", "123456"));
         Assert.assertTrue(validationRule.isValid("", "ABCDEFGHIJKL"));
-        
+
         Assert.assertFalse(validationRule.isValid("", "1"));
         Assert.assertFalse(validationRule.isValid("", "ABCDEFGHIJKLM"));
-        
+
         ValidationErrorList errorList = new ValidationErrorList();
         Assert.assertEquals("1234567890", validationRule.getValid("", "1234567890", errorList));
         Assert.assertEquals(0, errorList.size());
         Assert.assertEquals(null, validationRule.getValid("", "123456789012345", errorList));
         Assert.assertEquals(1, errorList.size());
     }
-    
+
     @Test
     public void testAllowNull() throws ValidationException {
-        
+
         StringValidationRule validationRule = new StringValidationRule("");
-        
+
         Assert.assertFalse(validationRule.isAllowNull());
         Assert.assertFalse(validationRule.isValid("", null));
-        
+
         validationRule.setAllowNull(true);
         Assert.assertTrue(validationRule.isAllowNull());
         Assert.assertTrue(validationRule.isValid("", null));
     }
-    
+
     @Test
     public void testSetCanonicalize() throws ValidationException {
         String context = "test-scope";
@@ -170,11 +170,11 @@ public class StringValidationRuleTest {
         Assert.assertEquals(encoderReturn, valid);
         Mockito.verify(mockEncoder, Mockito.times(1)).canonicalize(inputString);
         Mockito.reset(mockEncoder);
-        
+
         testRule.setCanonicalize(false);
         valid = testRule.getValid(context, inputString);
         Assert.assertEquals(inputString, valid);
         Mockito.verify(mockEncoder, Mockito.times(0)).canonicalize(inputString);
     }
-    
+
 }

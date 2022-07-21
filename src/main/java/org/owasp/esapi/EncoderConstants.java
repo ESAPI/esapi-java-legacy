@@ -19,7 +19,7 @@ public class EncoderConstants {
     static {
         PASSWORD_SPECIALS = CollectionsUtil.arrayToSet(CHAR_PASSWORD_SPECIALS);
     }
-    
+
     /**
      * a-b
      */
@@ -28,7 +28,7 @@ public class EncoderConstants {
     static {
         LOWERS = CollectionsUtil.arrayToSet(CHAR_PASSWORD_SPECIALS);
     }
-    
+
     /**
      * A-Z
      */
@@ -45,7 +45,7 @@ public class EncoderConstants {
     static {
         DIGITS = CollectionsUtil.arrayToSet(CHAR_DIGITS);
     }
-    
+
     /**
      * !$*+-.=?@^_|~
      */
@@ -54,7 +54,7 @@ public class EncoderConstants {
     static {
         SPECIALS = CollectionsUtil.arrayToSet(CHAR_SPECIALS);
     }
-    
+
     /**
      * CHAR_LOWERS union CHAR_UPPERS
      */
@@ -63,7 +63,7 @@ public class EncoderConstants {
     static {
         LETTERS = CollectionsUtil.arrayToSet(CHAR_LETTERS);
     }
-    
+
     /**
      * CHAR_LETTERS union CHAR_DIGITS
      */
@@ -72,7 +72,7 @@ public class EncoderConstants {
     static {
         ALPHANUMERICS = CollectionsUtil.arrayToSet(CHAR_ALPHANUMERICS);
     }
-    
+
     /**
      * Password character set, is alphanumerics (without l, i, I, o, O, and 0)
      * selected specials like + (bad for URL encoding, | is like i and 1,
@@ -83,16 +83,16 @@ public class EncoderConstants {
     static {
         PASSWORD_LOWERS = CollectionsUtil.arrayToSet(CHAR_ALPHANUMERICS);
     }
-    
+
     /**
-     * 
+     *
      */
     public final static char[] CHAR_PASSWORD_UPPERS = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z' };
     public final static Set<Character> PASSWORD_UPPERS;
     static {
         PASSWORD_UPPERS = CollectionsUtil.arrayToSet(CHAR_PASSWORD_UPPERS);
     }
-    
+
     /**
      * 2-9
      */
@@ -101,7 +101,7 @@ public class EncoderConstants {
     static {
         PASSWORD_DIGITS = CollectionsUtil.arrayToSet(CHAR_PASSWORD_DIGITS);
     }
-    
+
     /**
      * CHAR_PASSWORD_LOWERS union CHAR_PASSWORD_UPPERS
      */

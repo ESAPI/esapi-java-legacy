@@ -91,7 +91,7 @@ public class CryptoHelperTest {
          * Unfortunately, can't rely no the nanosecond timer because as the
          * Javadoc for System.nanoTime() states, " No guarantees are made
          * about how frequently values change", so this is not very reliable.
-         * 
+         *
          * However, on can uncomment the code and observe that elapsed times
          * are generally less than 10 millionth of a second. I suppose if we
          * declared a large enough epsilon, we could make it work, but it is
@@ -99,7 +99,7 @@ public class CryptoHelperTest {
          * itself that it always goes through all the bits of the byte array
          * if it compares any bits at all.
          */
-        
+
 //        long start, stop, diff;
 
 //        start = System.nanoTime();
@@ -131,13 +131,13 @@ public class CryptoHelperTest {
 //        stop = System.nanoTime();
 //        diff = stop - start;
 //        System.out.println("diff: " + diff + " nanosec");
- 
+
 //        start = System.nanoTime();
         assertFalse(CryptoHelper.arrayCompare(null, ba1));
 //        stop = System.nanoTime();
 //        diff = stop - start;
 //        System.out.println("diff: " + diff + " nanosec");
- 
+
         ba2 = ba1;
 //        start = System.nanoTime();
         assertTrue(CryptoHelper.arrayCompare(ba1, ba2));
@@ -169,7 +169,7 @@ public class CryptoHelperTest {
             assertTrue( e instanceof IllegalArgumentException);
         }
     }
-    
+
     private void fillByteArray(byte[] ba, byte b) {
         for (int i = 0; i < ba.length; i++) {
             ba[i] = b;

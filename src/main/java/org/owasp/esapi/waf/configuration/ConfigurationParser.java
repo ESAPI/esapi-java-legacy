@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2009 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2009
  */
@@ -51,9 +51,9 @@ import org.owasp.esapi.waf.rules.SimpleVirtualPatchRule;
 import bsh.EvalError;
 
 /**
- * 
- * The class used to turn a policy file's contents into an object model. 
- * 
+ *
+ * The class used to turn a policy file's contents into an object model.
+ *
  * @author Arshan Dabirsiaghi
  * @see org.owasp.esapi.waf.configuration.AppGuardianConfiguration
  */
@@ -63,7 +63,7 @@ public class ConfigurationParser {
     private static final String DEFAULT_PATH_APPLY_ALL = ".*";
     private static final int DEFAULT_RESPONSE_CODE = 403;
     private static final String DEFAULT_SESSION_COOKIE;
-    
+
     static {
         String sessionIdName = null;
         try {
@@ -73,13 +73,13 @@ public class ConfigurationParser {
         }
         DEFAULT_SESSION_COOKIE = sessionIdName;
     }
-    
+
     private static final String[] STAGES = {
         "before-request-body",
         "after-request-body",
         "before-response"
     };
-    
+
     public static AppGuardianConfiguration readConfigurationFile(InputStream stream, String webRootDir) throws ConfigurationException {
 
         AppGuardianConfiguration config = new AppGuardianConfiguration();
@@ -102,16 +102,16 @@ public class ConfigurationParser {
             Element virtualPatchesRoot = root.getFirstChildElement("virtual-patches");
             Element outboundRoot = root.getFirstChildElement("outbound-rules");
             Element beanShellRoot = root.getFirstChildElement("bean-shell-rules");
-            
-            
+
+
             /**
              * Parse the 'settings' section.
              */
             if ( settingsRoot == null ) {
                 throw new ConfigurationException("", "The <settings> section is required");
             } else if ( settingsRoot != null ) {
-                
-                
+
+
                 try {
                     String sessionCookieName = settingsRoot.getFirstChildElement("session-cookie-name").getValue();
                     if ( ! "".equals(sessionCookieName) ) {
@@ -122,7 +122,7 @@ public class ConfigurationParser {
                 }
 
                 String mode = settingsRoot.getFirstChildElement("mode").getValue();
-                
+
                 if ( "block".equals(mode.toLowerCase() ) ) {
                     AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.BLOCK;
                 } else if ( "redirect".equals(mode.toLowerCase() ) ){
@@ -130,18 +130,18 @@ public class ConfigurationParser {
                 } else {
                     AppGuardianConfiguration.DEFAULT_FAIL_ACTION = AppGuardianConfiguration.LOG;
                 }
-    
+
                 Element errorHandlingRoot = settingsRoot.getFirstChildElement("error-handling");
-    
+
                 config.setDefaultErrorPage( errorHandlingRoot.getFirstChildElement("default-redirect-page").getValue() );
-    
+
                 try {
                     config.setDefaultResponseCode( Integer.parseInt(errorHandlingRoot.getFirstChildElement("block-status").getValue()) );
                 } catch (Exception e) {
                     config.setDefaultResponseCode( DEFAULT_RESPONSE_CODE );
                 }
             }
-            
+
             /**
              * Parse the 'authentication-rules' section if they have one.
              */
@@ -338,7 +338,7 @@ public class ConfigurationParser {
                     }
 
                     if ( allow != null ) {
-                        
+
                         config.addBeforeBodyRule( new RestrictUserAgentRule(id, Pattern.compile(allow), null) );
 
                     } else if ( deny != null ) {
@@ -370,12 +370,12 @@ public class ConfigurationParser {
             /*
             if ( customRulesRoot != null ) {
                 Elements rules = customRulesRoot.getChildElements("rule");
-                
+
                  // Parse the complex rules.
-                 
+
             }
             */
-            
+
             if ( outboundRoot != null ) {
 
                 /*
@@ -473,12 +473,12 @@ public class ConfigurationParser {
                     Element replacement = e.getFirstChildElement("replacement");
 
                     ReplaceContentRule rcr = new ReplaceContentRule(
-                            id, 
-                            Pattern.compile(pattern,Pattern.DOTALL), 
+                            id,
+                            Pattern.compile(pattern,Pattern.DOTALL),
                             replacement.getValue(),
                             contentType != null ? Pattern.compile(contentType) : null,
                             urlPaths != null ? Pattern.compile(urlPaths) : null);
-                    
+
                     config.addBeforeResponseRule(rcr);
 
                 }
@@ -504,49 +504,49 @@ public class ConfigurationParser {
                     }
 
                     DetectOutboundContentRule docr = new DetectOutboundContentRule(
-                            id, 
+                            id,
                             Pattern.compile(contentType),
                             Pattern.compile(token,Pattern.DOTALL),
                             path != null ? Pattern.compile(path) : null);
-                    
+
                     config.addBeforeResponseRule(docr);
 
                 }
 
             }
-            
+
             /**
              * Parse the 'bean-shell-rules' section.
              */
-            
+
             if ( beanShellRoot != null ) {
-            
+
                 Elements beanShellRules = beanShellRoot.getChildElements("bean-shell-script");
-                
+
                 for (int i=0;i<beanShellRules.size(); i++) {
 
                     Element e = beanShellRules.get(i);
-                    
+
                     String id = e.getAttributeValue("id");
                     String fileName = e.getAttributeValue("file");
                     String stage = e.getAttributeValue("stage"); //
                     String path = e.getAttributeValue("path");
-                    
+
                     if ( id == null ) {
                         throw new ConfigurationException("", "bean shell rules all require a unique 'id' attribute");
                     }
-                    
+
                     if ( fileName == null ) {
                         throw new ConfigurationException("", "bean shell rules all require a unique 'file' attribute that has the location of the .bsh script" );
                     }
-                    
+
                     try {
-                        
+
                         BeanShellRule bsr = new BeanShellRule(
-                                webRootDir + fileName, 
+                                webRootDir + fileName,
                                 id,
                                 path != null ? Pattern.compile(path) : null);
-                        
+
                         if ( STAGES[0].equals(stage) ) {
                             config.addBeforeBodyRule(bsr);
                         } else if ( STAGES[1].equals(stage)) {
@@ -556,13 +556,13 @@ public class ConfigurationParser {
                         } else {
                             throw new ConfigurationException("", "bean shell rules all require a 'stage' attribute when the rule should be fired (valid values are " + STAGES[0] + ", " + STAGES[1] + ", or " + STAGES[2] + ")" );
                         }
-                                                
+
                     } catch (FileNotFoundException fnfe) {
                         throw new ConfigurationException ("", "bean shell rule '" + id + "' had a source file that could not be found (" + fileName + "), web directory = " + webRootDir );
                     } catch (EvalError ee) {
                         throw new ConfigurationException ("", "bean shell rule '" + id + "' contained an error (" + ee.getErrorText() + "): " + ee.getScriptStackTrace());
                     }
-                    
+
                 }
             }
 

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -29,7 +29,7 @@ import org.owasp.esapi.errors.ValidationException;
 /**
  * A ValidationRule performs syntax and possibly semantic validation of a single
  * piece of data from an untrusted source.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -40,23 +40,23 @@ public abstract class BaseValidationRule implements ValidationRule {
     private String typeName = null;
     protected boolean allowNull = false;
     protected Encoder encoder = null;
-    
+
     private BaseValidationRule() {
         // prevent use of no-arg constructor
     }
-    
+
     public BaseValidationRule( String typeName ) {
         this();
         setEncoder( ESAPI.encoder() );
         setTypeName( typeName );
     }
-    
+
     public BaseValidationRule( String typeName, Encoder encoder ) {
         this();
         setEncoder( encoder );
         setTypeName( typeName );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -70,21 +70,21 @@ public abstract class BaseValidationRule implements ValidationRule {
     public String getTypeName() {
         return typeName;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public final void setTypeName( String typeName ) {
         this.typeName = typeName;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public final void setEncoder( Encoder encoder ) {
         this.encoder = encoder;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -100,7 +100,7 @@ public abstract class BaseValidationRule implements ValidationRule {
         try {
             valid = getValid( context, input );
         } catch (ValidationException e) {
-            if( errorList == null) { 
+            if( errorList == null) {
                 throw e;
             } else {
                 errorList.addError(context, e);
@@ -108,7 +108,7 @@ public abstract class BaseValidationRule implements ValidationRule {
         }
         return valid;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -128,13 +128,13 @@ public abstract class BaseValidationRule implements ValidationRule {
      * input (in some cases you may not care)</b>. In most cases this should be the
      * same as the getSafe method only instead of throwing an exception, return
      * some default value.
-     * 
+     *
      * @param context
      * @param input
      * @return a parsed version of the input or a default value.
      */
     protected abstract Object sanitize( String context, String input );
-    
+
     /**
      * {@inheritDoc}
      */
@@ -146,7 +146,7 @@ public abstract class BaseValidationRule implements ValidationRule {
         } catch( Exception e ) {
             valid = false;
         }
-        
+
         return valid;
     }
 
@@ -156,13 +156,13 @@ public abstract class BaseValidationRule implements ValidationRule {
     public String whitelist( String input, char[] whitelist) {
         return whitelist(input, charArrayToSet(whitelist));
     }
-    
+
     /**
-     * Removes characters that aren't in the whitelist from the input String.  
+     * Removes characters that aren't in the whitelist from the input String.
      * O(input.length) whitelist performance
      * @param input String to be sanitized
      * @param whitelist allowed characters
-     * @return input stripped of all chars that aren't in the whitelist 
+     * @return input stripped of all chars that aren't in the whitelist
      */
     public String whitelist( String input, Set<Character> whitelist) {
         StringBuilder stripped = new StringBuilder();
@@ -174,7 +174,7 @@ public abstract class BaseValidationRule implements ValidationRule {
         }
         return stripped.toString();
     }
-    
+
     // CHECKME should be moved to some utility class (Would potentially be used by new EncoderConstants class)
     // Is there a standard way to convert an array of primitives to a Collection
     /**
@@ -191,7 +191,7 @@ public abstract class BaseValidationRule implements ValidationRule {
         }
         return toReturn;
     }
-    
+
     public boolean isAllowNull() {
         return allowNull;
     }

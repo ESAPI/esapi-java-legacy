@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -32,11 +32,11 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 
 /**
  * The Class ClickjackFilterTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class ClickjackFilterTest extends TestCase {
-    
+
     /**
      * @param testName
      *            the test name
@@ -63,7 +63,7 @@ public class ClickjackFilterTest extends TestCase {
 
     /**
      * Suite.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
@@ -71,7 +71,7 @@ public class ClickjackFilterTest extends TestCase {
         return suite;
     }
 
-    
+
     /**
      * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
      * @throws Exception
@@ -81,10 +81,10 @@ public class ClickjackFilterTest extends TestCase {
 
         Map map = new HashMap();
         FilterConfig mfc = new MockFilterConfig( map );
-        ClickjackFilter filter = new ClickjackFilter();        
+        ClickjackFilter filter = new ClickjackFilter();
         filter.init( mfc );
            MockHttpServletRequest request = new MockHttpServletRequest();
-        
+
         // the mock filter chain writes the requested URI to the response body
         MockFilterChain chain = new MockFilterChain();
 

@@ -66,7 +66,7 @@ public class SecurityWrapperResponseTest {
             PowerMockito.when(ESAPI.class, SecurityWrapperRequestTest.ESAPI_VALIDATOR_GETTER_METHOD_NAME).thenReturn(mockValidator);
             PowerMockito.when(ESAPI.class, SecurityWrapperRequestTest.ESAPI_GET_LOGGER_METHOD_NAME, "SecurityWrapperResponse").thenReturn(mockLogger);
             PowerMockito.when(ESAPI.class, SecurityWrapperRequestTest.ESAPY_SECURITY_CONFIGURATION_GETTER_METHOD_NAME).thenReturn(mockSecConfig);
-            //Is intrusion detection disabled?  A:  Yes, it is off.  
+            //Is intrusion detection disabled?  A:  Yes, it is off.
             //This logic is confusing:  True, the value is False...
             Mockito.when( mockSecConfig.getBooleanProp( DISABLE_INTRUSION_DETECTION ) ).thenReturn(true);
 
@@ -104,7 +104,7 @@ public class SecurityWrapperResponseTest {
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
         verify(mockResponse, times(1)).setHeader(validateNameResponse, validateValueResponse);
-        verify(mockLogger,times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));      
+        verify(mockLogger,times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));
     }
 
     @Test
@@ -261,7 +261,7 @@ public class SecurityWrapperResponseTest {
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
         verify(mockResponse, times(0)).setHeader(anyString(), anyString());
         verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
-                ArgumentMatchers.any(Exception.class)); 
+                ArgumentMatchers.any(Exception.class));
     }
 
     @Test
@@ -300,7 +300,7 @@ public class SecurityWrapperResponseTest {
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
         verify(mockResponse, times(0)).setHeader(anyString(), anyString());
         verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
-                ArgumentMatchers.any(Exception.class));   
+                ArgumentMatchers.any(Exception.class));
     }
 
     @Test
@@ -372,7 +372,7 @@ public class SecurityWrapperResponseTest {
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR);
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
         verify(mockResponse, times(1)).addHeader(validateNameResponse, validateValueResponse);
-        verify(mockLogger,times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));      
+        verify(mockLogger,times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));
     }
 
     @Test
@@ -529,7 +529,7 @@ public class SecurityWrapperResponseTest {
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
         verify(mockResponse, times(0)).addHeader(anyString(), anyString());
         verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
-                ArgumentMatchers.any(Exception.class)); 
+                ArgumentMatchers.any(Exception.class));
     }
 
     @Test
@@ -568,7 +568,7 @@ public class SecurityWrapperResponseTest {
         verify(mockSecConfig, times(1)).getIntProp(SEC_CTX_MAX_HEADER_VALUE_SIZE_ATTR);
         verify(mockResponse, times(0)).addHeader(anyString(), anyString());
         verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class),anyString(),
-                ArgumentMatchers.any(Exception.class));   
+                ArgumentMatchers.any(Exception.class));
     }
 
     @Test
@@ -665,7 +665,7 @@ public class SecurityWrapperResponseTest {
 
     @Test
     public void testAddHeaderInvalidValueLength(){
-        //refactor this to use a spy. 
+        //refactor this to use a spy.
         HttpServletResponse servResp = mock(HttpServletResponse.class);
         SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
         SecurityWrapperResponse spyResp = spy(resp);
@@ -722,9 +722,9 @@ public class SecurityWrapperResponseTest {
 
         /*
          * We're indirectly testing our class.  Since it ultimately
-         * delegates to HttpServletResponse.addHeader, we're actually 
+         * delegates to HttpServletResponse.addHeader, we're actually
          * validating that our test method constructs a header with the
-         * expected properties.  This implicitly tests the 
+         * expected properties.  This implicitly tests the
          * createCookieHeader method as well.
          */
         verify(servResp, times(1)).addHeader("Set-Cookie", "Foo=aaaaaaaaaa; Max-Age=5000; Secure; HttpOnly");

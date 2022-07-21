@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -36,7 +36,7 @@ import org.owasp.esapi.reference.crypto.JavaEncryptor;
 
 /**
  * The Class EncryptorTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @author kevin.w.wall@gmail.com
  */
@@ -54,10 +54,10 @@ public class EncryptorTest extends TestCase {
                                 " be skipped.");
         }
     }
-    
+
     /**
      * Instantiates a new encryptor test.
-     * 
+     *
      * @param testName
      *            the test name
      */
@@ -88,12 +88,12 @@ public class EncryptorTest extends TestCase {
     /**
      * Run all the test cases in this suite.
      * This is to allow running from {@code org.owasp.esapi.AllTests}.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
         TestSuite suite = new TestSuite(EncryptorTest.class);
-        
+
         return suite;
     }
 
@@ -116,7 +116,7 @@ public class EncryptorTest extends TestCase {
     /**
      * Test of new encrypt / decrypt method for Strings whose length is
      * not a multiple of the cipher block size (16 bytes for AES).
-     * 
+     *
      * @throws EncryptionException
      *             the encryption exception
      */
@@ -168,7 +168,7 @@ public class EncryptorTest extends TestCase {
             fail("testEncryptEmptyStrings() -- Caught exception: " + e);
         }
     }
-    
+
     /**
      * Test encryption method for null.
      */
@@ -198,7 +198,7 @@ public class EncryptorTest extends TestCase {
             assertTrue( t instanceof IllegalArgumentException || t instanceof AssertionError);
         }
     }
-    
+
     /**
      * Test of new encrypt / decrypt methods added in ESAPI 2.0.
      */
@@ -210,9 +210,9 @@ public class EncryptorTest extends TestCase {
             // who have the Unlimited Strength Jurisdiction Policy files installed.
             runNewEncryptDecryptTestCase("DESede/CBC/PKCS5Padding", 112, "1234567890".getBytes("UTF-8"));
             runNewEncryptDecryptTestCase("DESede/CBC/NoPadding", 112, "12345678".getBytes("UTF-8"));
-            
+
             runNewEncryptDecryptTestCase("AES/CBC/PKCS5Padding", 128, "Encrypt the world!".getBytes("UTF-8"));
-            
+
             // These tests are only valid (and run) if one has the JCE Unlimited
             // Strength Jurisdiction Policy files installed for this Java VM.
                 // 256-bit AES
@@ -222,9 +222,9 @@ public class EncryptorTest extends TestCase {
         } catch (UnsupportedEncodingException e) {
             fail("OK, who stole UTF-8 encoding from the Java rt.jar ???");
         }
-        
+
     }
-    
+
     /** Special encryption case!!! Test encryption with DES, which has a key less than the
      * min key size specified as Encryptor.EncryptionKeyLength in the file
      * src/test/resources/esapi/ESAPI.properties.
@@ -277,7 +277,7 @@ public class EncryptorTest extends TestCase {
      */
     private String runNewEncryptDecryptTestCase(String cipherXform, int keySize, byte[] plaintextBytes) {
         // System.err.println("New encrypt / decrypt: " + cipherXform + "; requested key size: " + keySize + " bits.");
-        
+
         if ( keySize > 128 && !unlimitedStrengthJurisdictionPolicyInstalled ) {
             System.err.println("Skipping test for cipher transformation " +
                                cipherXform + " with key size of " + keySize +
@@ -289,12 +289,12 @@ public class EncryptorTest extends TestCase {
 
         try {
             // Generate an appropriate random secret key
-            SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);    
+            SecretKey skey = CryptoHelper.generateSecretKey(cipherXform, keySize);
             assertTrue( skey.getAlgorithm().equals(cipherXform.split("/")[0]) );
             String cipherAlg = cipherXform.split("/")[0];
 
             // System.err.println("Key size of generated encoded key: " + skey.getEncoded().length * 8 + " bits.");
-            
+
             // Adjust key size for DES and DESede specific oddities.
             // NOTE: Key size that encrypt() method is using is 192 bits!!!
             //        which is 3 times 64 bits, but DES key size is only 56 bits.
@@ -332,12 +332,12 @@ public class EncryptorTest extends TestCase {
                 System.err.println("Cipher xform changed from \"" + oldCipherXform + "\" to \"" + cipherXform + "\"");
             }
  */
-            
+
             // Get an Encryptor instance with the specified, possibly new, cipher transformation.
             Encryptor instance = ESAPI.encryptor();
             PlainText plaintext = new PlainText(plaintextBytes);
             PlainText origPlainText = new PlainText( plaintext.toString() ); // Make _copy_ of original for comparison.
-            
+
             // Do the encryption with the new encrypt() method and get back the CipherText.
             CipherText ciphertext = instance.encrypt(skey, plaintext);    // The new encrypt() method.
             System.err.println("DEBUG: Encrypt(): CipherText object is -- " + ciphertext);
@@ -354,15 +354,15 @@ public class EncryptorTest extends TestCase {
             if ( overwritePlaintext ) {
                 assertTrue( isPlaintextOverwritten(plaintext) );
             }
-            
+
             // Take the resulting ciphertext and decrypt w/ new decryption method.
             PlainText decryptedPlaintext  = instance.decrypt(skey, ciphertext);        // The new decrypt() method.
-            
+
             // Make sure we got back the same thing we started with.
             System.out.println("\tOriginal plaintext: " + origPlainText);
             System.out.println("\tResult after decryption: " + decryptedPlaintext);
             assertEquals( "Failed to decrypt properly.", origPlainText.toString(), decryptedPlaintext.toString() );
-            
+
             // Restore the previous cipher transformation. For now, this is only way to do this.
             @SuppressWarnings("deprecation")
             String previousCipherXform = ESAPI.securityConfiguration().setCipherTransformation(null);
@@ -370,7 +370,7 @@ public class EncryptorTest extends TestCase {
             @SuppressWarnings("deprecation")
             String defaultCipherXform = ESAPI.securityConfiguration().getCipherTransformation();
             assertEquals( defaultCipherXform, oldCipherXform );
-            
+
             return ciphertext.getEncodedIVCipherText();
         } catch (Exception e) {
             // OK if not counted toward code coverage.
@@ -380,12 +380,12 @@ public class EncryptorTest extends TestCase {
         }
         return null;
     }
-    
+
     private static boolean isPlaintextOverwritten(PlainText plaintext) {
         // Note: An assumption here that the original plaintext did not consist
         // entirely of all '*' characters.
         byte[] ptBytes = plaintext.asBytes();
-        
+
         for ( int i = 0; i < ptBytes.length; i++ ) {
             if ( ptBytes[i] != '*' ) {
                 return false;
@@ -393,7 +393,7 @@ public class EncryptorTest extends TestCase {
         }
         return true;
     }
-    
+
     // TODO - Because none of the encryption / decryption tests persists
     //          encrypted data across runs, that means everything is run
     //          under same JVM at same time thus always with the same
@@ -420,16 +420,16 @@ public class EncryptorTest extends TestCase {
     //          org.owasp.esapi.crypto.ESAPICryptoMACByPassTest.)
     //
     //                -kevin wall
-    
+
 
     /**
      * Test of sign method, of class org.owasp.esapi.Encryptor.
-     * 
+     *
      * @throws EncryptionException
      *             the encryption exception
      */
     public void testSign() throws EncryptionException {
-        System.out.println("testSign()");        
+        System.out.println("testSign()");
         Encryptor instance = ESAPI.encryptor();
         String plaintext = ESAPI.randomizer().getRandomString( 32, EncoderConstants.CHAR_ALPHANUMERICS );
         String signature = instance.sign(plaintext);
@@ -440,7 +440,7 @@ public class EncryptorTest extends TestCase {
 
     /**
      * Test of verifySignature method, of class org.owasp.esapi.Encryptor.
-     * 
+     *
      * @throws EncryptionException
      *             the encryption exception
      */
@@ -451,20 +451,20 @@ public class EncryptorTest extends TestCase {
         String signature = instance.sign(plaintext);
         assertTrue( instance.verifySignature( signature, plaintext ) );
     }
-    
- 
+
+
     /**
      * Test of seal method, of class org.owasp.esapi.Encryptor.
-     * 
+     *
      * @throws IntegrityException
      */
     public void testSeal() throws IntegrityException {
         System.out.println("testSeal()");
-        Encryptor instance = ESAPI.encryptor(); 
+        Encryptor instance = ESAPI.encryptor();
         String plaintext = ESAPI.randomizer().getRandomString( 32, EncoderConstants.CHAR_ALPHANUMERICS );
         String seal = instance.seal( plaintext, instance.getTimeStamp() + 1000*60 );
         instance.verifySeal( seal );
-        
+
         int progressMark = 1;
         boolean caughtExpectedEx = false;
         try {
@@ -484,7 +484,7 @@ public class EncryptorTest extends TestCase {
             fail("Failed null string test; did not get expected IllegalArgumentException: " + e);
         }
         assertTrue(caughtExpectedEx);
-        
+
         try {
             seal = instance.seal("test", 0);
             progressMark++;
@@ -505,13 +505,13 @@ public class EncryptorTest extends TestCase {
 
     /**
      * Test of verifySeal method, of class org.owasp.esapi.Encryptor.
-     * 
+     *
      * @throws EnterpriseSecurityException
      */
     public void testVerifySeal() throws EnterpriseSecurityException {
         final int NSEC = 5;
         System.out.println("testVerifySeal()");
-        Encryptor instance = ESAPI.encryptor(); 
+        Encryptor instance = ESAPI.encryptor();
         String plaintext = "ridiculous:with:delimiters";    // Should now work w/ : (issue #28)
         String seal = instance.seal( plaintext, instance.getRelativeTimeStamp( 1000 * NSEC ) );
         try {
@@ -535,9 +535,9 @@ public class EncryptorTest extends TestCase {
             // All these should return false and log a warning with an Exception stack
             // trace caused by an EncryptionException indicating "Invalid seal".
             assertFalse( instance.verifySeal( plaintext ) );
-            progressMark++;          
+            progressMark++;
             assertFalse( instance.verifySeal( instance.encrypt( new PlainText(plaintext) ).getBase64EncodedRawCipherText() ) );
-            progressMark++;            
+            progressMark++;
             assertFalse( instance.verifySeal( instance.encrypt( new PlainText(100 + ":" + plaintext) ).getBase64EncodedRawCipherText() ) );
             progressMark++;
             assertFalse( instance.verifySeal( instance.encrypt( new PlainText(Long.MAX_VALUE + ":" + plaintext) ).getBase64EncodedRawCipherText() ) );
@@ -554,7 +554,7 @@ public class EncryptorTest extends TestCase {
             System.err.println("Exception was: " + e);
             e.printStackTrace(System.err);
         }
-        
+
         try {
             Thread.sleep(1000 * (NSEC + 1) );
                 // Seal now past expiration date.
@@ -563,22 +563,22 @@ public class EncryptorTest extends TestCase {
             fail("Failed expired seal test. Seal should be expired.");
         }
     }
-        
+
 
     @SuppressWarnings("deprecation")
     public void testEncryptionSerialization() throws EncryptionException {
         String secretMsg = "Secret Message";
         ESAPI.securityConfiguration().setCipherTransformation("AES/CBC/PKCS5Padding");
         CipherText ct = ESAPI.encryptor().encrypt(new PlainText(secretMsg));
-        
+
         byte[] serializedCipherText = ct.asPortableSerializedByteArray();
-        
+
         PlainText plainText = ESAPI.encryptor().decrypt(
                                 CipherText.fromPortableSerializedBytes(serializedCipherText) );
-        
+
         assertTrue( secretMsg.equals( plainText.toString() ) );
     }
-    
+
     /**
      * Test of main method, of class org.owasp.esapi.Encryptor. Must be done by
      * visual inspection for now. (Needs improvement.)
@@ -587,13 +587,13 @@ public class EncryptorTest extends TestCase {
     public void testMain() throws Exception {
         System.out.println("testMain(): Encryptor Main with '-print' argument.");
         String[] args = {};
-        JavaEncryptor.main( args );        
+        JavaEncryptor.main( args );
             // TODO:
             // It probably would be a better if System.out were changed to be
             // a file or a byte stream so that the output could be slurped up
             // and checked against (at least some of) the expected output.
             // Left as an exercise to some future, ambitious ESAPI developer. ;-)
         String[] args1 = {"-print"};
-        JavaEncryptor.main( args1 );        
-    }    
+        JavaEncryptor.main( args1 );
+    }
 }

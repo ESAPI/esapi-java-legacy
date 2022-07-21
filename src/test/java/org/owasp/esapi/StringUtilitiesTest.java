@@ -12,14 +12,14 @@ public class StringUtilitiesTest extends TestCase {
     /**
      * Run all the test cases in this suite.
      * This is to allow running from {@code org.owasp.esapi.AllTests}.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
         TestSuite suite = new TestSuite(StringUtilitiesTest.class);
         return suite;
     }
-    
+
     /** Test the getLevenshteinDistance() method. */
     public void testGetLevenshteinDistance() {
         String src    = "GUMBO";
@@ -52,7 +52,7 @@ public class StringUtilitiesTest extends TestCase {
         char[] union = StringUtilities.union(a1, a2);
         assertTrue( Arrays.equals( union, new char[] {'a','b','c','d','e' } ) );
     }
-    
+
     /** Test the contains() method. */
     public void contains() {
         StringBuilder sb = new StringBuilder( "abc" );

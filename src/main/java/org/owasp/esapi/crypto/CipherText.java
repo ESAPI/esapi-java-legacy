@@ -1,6 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -71,9 +71,9 @@ public final class CipherText implements Serializable {
     public  static final int cipherTextVersion = 20130830; // Format: YYYYMMDD, max is 99991231.
         // Required by Serializable classes.
     private static final long serialVersionUID = cipherTextVersion; // Format: YYYYMMDD
-    
+
     private static final Logger logger = ESAPI.getLogger("CipherText");
-    
+
     private CipherSpec cipherSpec_           = null;
     private byte[]     raw_ciphertext_       = null;
     private byte[]     separate_mac_         = null;
@@ -94,7 +94,7 @@ public final class CipherText implements Serializable {
                    CipherTextFlags.PADDING,    CipherTextFlags.KEYSIZE,
                    CipherTextFlags.BLOCKSIZE,  CipherTextFlags.CIPHERTEXT,
                    CipherTextFlags.INITVECTOR);
-    
+
     // These are all the pieces we collect when passed a CipherSpec object.
     private final EnumSet<CipherTextFlags> fromCipherSpec =
         EnumSet.of(CipherTextFlags.ALGNAME,    CipherTextFlags.CIPHERMODE,
@@ -103,7 +103,7 @@ public final class CipherText implements Serializable {
 
     // How much we've collected so far. We start out with having collected nothing.
     private EnumSet<CipherTextFlags> progress = EnumSet.noneOf(CipherTextFlags.class);
-    
+
     // Check if versions of KeyDerivationFunction, CipherText, and
     // CipherTextSerializer are all the same.
     {
@@ -118,7 +118,7 @@ public final class CipherText implements Serializable {
     }
 
     ///////////////////////////  C O N S T R U C T O R S  /////////////////////////
-    
+
     /**
      * Default CTOR. Takes all the defaults from the ESAPI.properties, or
      * default values from initial values from this class (when appropriate)
@@ -128,12 +128,12 @@ public final class CipherText implements Serializable {
         cipherSpec_ = new CipherSpec(); // Uses default for everything but IV.
         received(fromCipherSpec);
     }
-    
+
     /**
      * Construct from a {@code CipherSpec} object. Still needs to have
      * {@link #setCiphertext(byte[])} or {@link #setIVandCiphertext(byte[], byte[])}
      * called to be usable.
-     * 
+     *
      * @param cipherSpec The cipher specification to use.
      */
     public CipherText(final CipherSpec cipherSpec) {
@@ -143,10 +143,10 @@ public final class CipherText implements Serializable {
             received(CipherTextFlags.INITVECTOR);
         }
     }
-    
+
     /**
      * Construct from a {@code CipherSpec} object and the raw ciphertext.
-     * 
+     *
      * @param cipherSpec The cipher specification to use.
      * @param cipherText The raw ciphertext bytes to use.
      * @throws EncryptionException  Thrown if {@code cipherText} is null or
@@ -162,7 +162,7 @@ public final class CipherText implements Serializable {
             received(CipherTextFlags.INITVECTOR);
         }
     }
-    
+
     /** Create a {@code CipherText} object from what is supposed to be a
      *  portable serialized byte array, given in network byte order, that
      *  represents a valid, previously serialized {@code CipherText} object
@@ -194,39 +194,39 @@ public final class CipherText implements Serializable {
      * The cipher transformation name is usually sufficient to be passed to
      * {@link javax.crypto.Cipher#getInstance(String)} to create a
      * <code>Cipher</code> object to decrypt the ciphertext.
-     * 
+     *
      * @return The cipher transformation name used to encrypt the plaintext
      *         resulting in this ciphertext.
      */
     public String getCipherTransformation() {
         return cipherSpec_.getCipherTransformation();
     }
-    
+
     /**
      * Obtain the name of the cipher algorithm used for encrypting the
      * plaintext.
-     * 
+     *
      * @return The name as the cryptographic algorithm used to perform the
      *         encryption resulting in this ciphertext.
      */
     public String getCipherAlgorithm() {
         return cipherSpec_.getCipherAlgorithm();
     }
-    
+
     /**
      * Retrieve the key size used with the cipher algorithm that was used to
      * encrypt data to produce this ciphertext.
-     * 
+     *
      * @return The key size in bits. We work in bits because that's the crypto way!
      */
     public int getKeySize() {
         return cipherSpec_.getKeySize();
     }
-    
+
     /**
      * Retrieve the block size (in bytes!) of the cipher used for encryption.
      * (Note: If an IV is used, this will also be the IV length.)
-     * 
+     *
      * @return The block size in bytes. (Bits, bytes! It's confusing I know. Blame
      *                                  the cryptographers; we've just following
      *                                  convention.)
@@ -234,10 +234,10 @@ public final class CipherText implements Serializable {
     public int getBlockSize() {
         return cipherSpec_.getBlockSize();
     }
-    
+
     /**
      * Get the name of the cipher mode used to encrypt some plaintext.
-     * 
+     *
      * @return The name of the cipher mode used to encrypt the plaintext
      *         resulting in this ciphertext. E.g., "CBC" for "cipher block
      *         chaining", "ECB" for "electronic code book", etc.
@@ -245,10 +245,10 @@ public final class CipherText implements Serializable {
     public String getCipherMode() {
         return cipherSpec_.getCipherMode();
     }
-    
+
     /**
      * Get the name of the padding scheme used to encrypt some plaintext.
-     * 
+     *
      * @return The name of the padding scheme used to encrypt the plaintext
      *         resulting in this ciphertext. Example: "PKCS5Padding". If no
      *         padding was used "None" is returned.
@@ -256,11 +256,11 @@ public final class CipherText implements Serializable {
     public String getPaddingScheme() {
         return cipherSpec_.getPaddingScheme();
     }
-    
+
     /**
      * Return the initialization vector (IV) used to encrypt the plaintext
      * if applicable.
-     *  
+     *
      * @return  The IV is returned if the cipher mode used to encrypt the
      *          plaintext was not "ECB". ECB mode does not use an IV so in
      *          that case, <code>null</code> is returned.
@@ -273,8 +273,8 @@ public final class CipherText implements Serializable {
             return null;
         }
     }
-    
-    /** 
+
+    /**
      * Return true if the cipher mode used requires an IV. Usually this will
      * be true unless ECB mode (which should be avoided whenever possible) is
      * used.
@@ -282,11 +282,11 @@ public final class CipherText implements Serializable {
     public boolean requiresIV() {
         return cipherSpec_.requiresIV();
     }
-    
+
     /**
      * Get the raw ciphertext byte array resulting from encrypting some
      * plaintext.
-     * 
+     *
      * @return A copy of the raw ciphertext as a byte array.
      */
     public byte[] getRawCipherText() {
@@ -299,11 +299,11 @@ public final class CipherText implements Serializable {
             return null;
         }
     }
-    
+
     /**
      * Get number of bytes in raw ciphertext. Zero is returned if ciphertext has not
      * yet been stored.
-     * 
+     *
      * @return The number of bytes of raw ciphertext; 0 if no raw ciphertext has been stored.
      */
     public int getRawCipherTextByteLength() {
@@ -330,7 +330,7 @@ public final class CipherText implements Serializable {
     public String getBase64EncodedRawCipherText() {
         return ESAPI.encoder().encodeForBase64(getRawCipherText(),false);
     }
-    
+
     /**
      * Return the ciphertext as a base64-encoded <code>String</code>. If an
      * IV was used, the IV if first prepended to the raw ciphertext before
@@ -382,7 +382,7 @@ public final class CipherText implements Serializable {
      * implementation of {@code Encryptor} always computes it and includes it.
      * The recipient of the ciphertext can then choose whether or not to validate
      * it.
-     * 
+     *
      * @param authKey The secret key that is used for proving authenticity of
      *              the IV and ciphertext. This key should be derived from
      *              the {@code SecretKey} passed to the
@@ -424,7 +424,7 @@ public final class CipherText implements Serializable {
         }
         // If 'result' is null, we already logged this in computeMAC().
     }
-    
+
     /**
      * Same as {@link #computeAndStoreMAC(SecretKey)} but this is only used by
      * {@code CipherTextSerializeer}. (Has package level access.)
@@ -437,14 +437,14 @@ public final class CipherText implements Serializable {
             assert macComputed() : "MAC failed to compute correctly!";
         }
     }
-    
+
     /**
      * Validate the message authentication code (MAC) associated with the ciphertext.
      * This is mostly meant to ensure that an attacker has not replaced the IV
      * or raw ciphertext with something arbitrary. Note however that it will
      * <i>not</i> detect the case where an attacker simply substitutes one
      * valid ciphertext with another ciphertext.
-     * 
+     *
      * @param authKey The secret key that is used for proving authenticity of
      *              the IV and ciphertext. This key should be derived from
      *              the {@code SecretKey} passed to the
@@ -490,14 +490,14 @@ public final class CipherText implements Serializable {
             return false;    // Deprecated decrypt() method removed, so now return false.
         }
     }
-    
+
     /**
      * Return this {@code CipherText} object as a portable (i.e., network byte
      * ordered) serialized byte array. Note this is <b>not</b> the same as
      * returning a serialized object using Java serialization. Instead this
      * is a representation that all ESAPI implementations will use to pass
      * ciphertext between different programming language implementations.
-     * 
+     *
      * @return A network byte-ordered serialized representation of this object.
      * @throws EncryptionException
      */    // DISCUSS: This method name sucks too. Suggestions???
@@ -509,7 +509,7 @@ public final class CipherText implements Serializable {
                          "all mandatory information has been collected";
             throw new EncryptionException("Can't serialize incomplete ciphertext info", msg);
         }
-        
+
         // If we are supposed to be using a (separate) MAC, also make sure
         // that it has been computed/stored.
         boolean requiresMAC = ESAPI.securityConfiguration().useMACforCipherText();
@@ -522,11 +522,11 @@ public final class CipherText implements Serializable {
             throw new EncryptionException("Can't serialize ciphertext info: Data integrity issue.",
                                           msg);
         }
-        
+
         // OK, everything ready, so give it a shot.
         return new CipherTextSerializer(this).asSerializedByteArray();
     }
-    
+
     ///// Setters /////
     /**
      * Set the raw ciphertext.
@@ -555,7 +555,7 @@ public final class CipherText implements Serializable {
             throw new EncryptionException("MAC already set; cannot store new raw ciphertext", logMsg);
         }
     }
-    
+
     /**
      * Set the IV and raw ciphertext.
      * @param iv            The initialization vector.
@@ -599,7 +599,7 @@ public final class CipherText implements Serializable {
             throw new EncryptionException("Validation of decryption failed.", logMsg);
         }
     }
-    
+
     public int getKDFVersion() {
         return kdfVersion_;
     }
@@ -608,7 +608,7 @@ public final class CipherText implements Serializable {
         CryptoHelper.isValidKDFVersion(vers, false, true);
         kdfVersion_ = vers;
     }
-    
+
     public KeyDerivationFunction.PRF_ALGORITHMS getKDF_PRF() {
         return KeyDerivationFunction.convertIntToPRF(kdfPrfSelection_);
     }
@@ -616,19 +616,19 @@ public final class CipherText implements Serializable {
     int kdfPRFAsInt() {
         return kdfPrfSelection_;
     }
-    
+
     public void setKDF_PRF(int prfSelection) {
         if ( prfSelection < 0 || prfSelection > 15 ) {
             throw new IllegalArgumentException("kdfPrf == " + prfSelection + " must be between 0 and 15, inclusive.");
         }
         kdfPrfSelection_ = prfSelection;
     }
-    
+
     /** Get stored time stamp representing when data was encrypted. */
     public long getEncryptionTimestamp() {
         return encryption_timestamp_;
     }
-    
+
     /**
      * Set the encryption timestamp to the current system time as determined by
      * {@code System.currentTimeMillis()}, but only if it has not been previously
@@ -647,12 +647,12 @@ public final class CipherText implements Serializable {
         }
         encryption_timestamp_ = System.currentTimeMillis();
     }
- 
+
     /**
      * Set the encryption timestamp to the time stamp specified by the parameter.
      * </p><p>
      * This method is intended for use only by {@code CipherTextSerializer}.
-     * 
+     *
      * @param timestamp The time in milliseconds since epoch time (midnight,
      *                  January 1, 1970 GMT).
      */ // Package level access. ESAPI jar should be sealed and signed.
@@ -666,7 +666,7 @@ public final class CipherText implements Serializable {
         }
         encryption_timestamp_ = timestamp;
     }
-    
+
     /** Return the separately calculated Message Authentication Code (MAC) that
      * is computed via the {@code computeAndStoreMAC(SecretKey authKey)} method.
      * @return The copy of the computed MAC, or {@code null} if one is not used.
@@ -677,9 +677,9 @@ public final class CipherText implements Serializable {
         }
         byte[] copy = new byte[ separate_mac_.length ];
         System.arraycopy(separate_mac_, 0, copy, 0, separate_mac_.length);
-        return copy;   
+        return copy;
     }
-    
+
     /**
      * More useful {@code toString()} method.
      */
@@ -782,7 +782,7 @@ public final class CipherText implements Serializable {
     }
 
     ////////////////////////////////////  P R I V A T E  /////////////////////////////////////////
-    
+
     /**
      * Compute a MAC, but do not store it. May set the nonce value as a
      * side-effect.  The MAC is calculated as:
@@ -801,7 +801,7 @@ public final class CipherText implements Serializable {
      * @param authKey    The {@code SecretKey} used with the computed HMAC-SHA1
      * to ensure authenticity.
      * @return The value for the MAC.
-     */ 
+     */
     private byte[] computeMAC(SecretKey authKey) {
         // These assertions are okay and leaving them as assertions rather than
         // changing the to conditional statements that throw should be all right
@@ -840,7 +840,7 @@ public final class CipherText implements Serializable {
             return null;
         }
     }
-    
+
     /**
      * Return true if the MAC has already been computed (i.e., not null).
      */
@@ -859,7 +859,7 @@ public final class CipherText implements Serializable {
             EnumSet<CipherTextFlags> initVector = EnumSet.of(CipherTextFlags.INITVECTOR);
             ctFlags = EnumSet.complementOf(initVector);
         }
-        boolean result = progress.containsAll(ctFlags);  
+        boolean result = progress.containsAll(ctFlags);
         return result;
     }
 
@@ -878,7 +878,7 @@ public final class CipherText implements Serializable {
     private void received(CipherTextFlags flag) {
         progress.add(flag);
     }
-    
+
     /**
      * Add all the flags from the specified set to that we've collected so far.
      * @param ctSet A {@code EnumSet<CipherTextFlags>} containing all the flags

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Pawan Singh (pawan.singh@owasp.org) <a href="www.owasp.org">OWASP</a>
  * @created 2009
  */
@@ -29,9 +29,9 @@ public class DefaultMessageUtil {
 
     private final String DEFAULT_LOCALE_LANG = "en";
     private final String DEFAULT_LOCALE_LOC = "US";
-    
+
     private ResourceBundle messages = null;
-    
+
     public void initialize() {
         try {
                 messages = ResourceBundle.getBundle("ESAPI", ESAPI.authenticator().getCurrentUser().getLocale());
@@ -42,7 +42,7 @@ public class DefaultMessageUtil {
 
 
     public String getMessage(String msgKey, Object[] arguments) {
-        
+
         initialize();
         return MessageFormat.format( messages.getString(msgKey), arguments );
     }

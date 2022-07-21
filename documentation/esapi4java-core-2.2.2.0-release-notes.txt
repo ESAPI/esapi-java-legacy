@@ -13,7 +13,7 @@ Executive Summary: Important Things to Note for this Release
 This is a patch release with the primary intent of updating some dependencies with known vulnerabilities.  The main vulnerability that was remediated was CVE-2020-13956, which was a vulnerability introduced through the ESAPI transitive dependency org.apache.httpcomponents:httpclient:4.5.12, potentially exposed through org.owasp.antisamy:antisamy:1.5.10. Updating to AntiSamy 1.5.11 remediated that issue.  In addition, that update to AntiSamy 1.5.11 also addressed AntiSamy issue #48 (https://github.com/nahsra/antisamy/issues/48), which was a low risk security issue that potentially could be exposed via phishing.
 
 For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode SourceClear, OWASP Dependency Check, etc., you might notice that there is vulnerability in xerces:xercesImpl:2.12.0 that ESAPI uses (also a transitive dependency) that is similar to CVE-2020-14621. Unfortunately there is no official patch for this in the regular Maven Central repository. Further details are described in Security Bulletin #3, which is viewable here
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf 
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf
 and associated with this release on GitHub. Manual workarounds possible. See the security bulletin for further details.
 
 
@@ -91,7 +91,7 @@ See GitHub issue #560 for additional details.
 
 
 Related to that aforemented Log4J 1.x CVE and how it affects ESAPI, be sure to read
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf
 which describes CVE-2019-17571, a deserialization vulnerability in Log4J 1.2.17. ESAPI is *NOT* affected by this (even if you chose to use Log4J 1 as you default ESAPI logger). This security bulletin describes why this CVE is not exploitable as used by ESAPI.
 
 
@@ -132,9 +132,9 @@ We do not know the reason for these failures, but only that we have observed the
 
 
 Lastly, some SCA services may continue to flag vulnerabilties in ESAPI 2.2.2.0 related to log4j 1.2.17 and xerces 2.12.0.  We do not believe the way that ESAPI uses either of these in a manner that leads to any exploitable behavior.  See the security bulletins
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf
 and
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf 
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin3.pdf
 respectively, for additional details.
 
 -----------------------------------------------------------------------------
@@ -175,11 +175,11 @@ Direct and Transitive Runtime and Test Dependencies:
 
         $ mvn dependency:tree
         [INFO] Scanning for projects...
-        [INFO] 
+        [INFO]
         [INFO] -----------------------< org.owasp.esapi:esapi >------------------------
         [INFO] Building ESAPI 2.2.2.0
         [INFO] --------------------------------[ jar ]---------------------------------
-        [INFO] 
+        [INFO]
         [INFO] --- maven-dependency-plugin:3.1.2:tree (default-cli) @ esapi ---
         [INFO] org.owasp.esapi:esapi:jar:2.2.2.0-SNAPSHOT
         [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
@@ -212,9 +212,9 @@ Direct and Transitive Runtime and Test Dependencies:
         [INFO] |  \- xalan:serializer:jar:2.7.2:compile
         [INFO] +- xerces:xercesImpl:jar:2.12.0:compile
         [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
-        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.1.4:compile (optional) 
-        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional) 
-        [INFO] +- net.jcip:jcip-annotations:jar:1.0:compile (optional) 
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.1.4:compile (optional)
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional)
+        [INFO] +- net.jcip:jcip-annotations:jar:1.0:compile (optional)
         [INFO] +- junit:junit:jar:4.13.1:test
         [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
         [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.65.01:test

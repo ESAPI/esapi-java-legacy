@@ -8,7 +8,7 @@ public interface ValidationRule {
 
     /**
      * Parse the input, throw exceptions if validation fails
-     * 
+     *
      * @param context
      *            for logging
      * @param input
@@ -33,7 +33,7 @@ public interface ValidationRule {
      * Whether or not a valid valid can be null. {@code getValid} will throw an
      * Exception and {#code getSafe} will return the default value if flag is set to
      * true
-     * 
+     *
      * @param flag
      *            whether or not null values are valid/safe
      */
@@ -56,7 +56,7 @@ public interface ValidationRule {
     void setEncoder(Encoder encoder);
 
     /**
-     * Check if the input is valid, throw an Exception otherwise 
+     * Check if the input is valid, throw an Exception otherwise
      */
     void assertValid(String context, String input)
             throws ValidationException;
@@ -72,7 +72,7 @@ public interface ValidationRule {
      * finally return a default value.
      */
     Object getSafe(String context, String input);
-    
+
     /**
      * @return true if the input passes validation
      */
@@ -82,7 +82,7 @@ public interface ValidationRule {
      * String the input of all chars contained in the list
      */
     String whitelist(String input, char[] list);
-    
+
     /**
      * String the input of all chars contained in the list
      */

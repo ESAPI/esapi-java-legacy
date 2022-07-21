@@ -27,7 +27,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * supports. (Perhaps wishful thinking that other ESAPI implementations such as
  * ESAPI for .NET, ESAPI for C, ESAPI for C++, etc. will all support a single, common
  * serialization technique so they could exchange encrypted data.)
- * 
+ *
  * @author kevin.w.wall@gmail.com
  * @since 2.0
  *
@@ -44,9 +44,9 @@ public class CipherTextSerializer {
     private static final long serialVersionUID = cipherTextSerializerVersion;
 
     private static final Logger logger = ESAPI.getLogger("CipherTextSerializer");
-    
+
     private CipherText cipherText_ = null;
-    
+
     // Check if versions of KeyDerivationFunction, CipherText, and
     // CipherTextSerializer are all the same.
     {
@@ -59,14 +59,14 @@ public class CipherTextSerializer {
             throw new ExceptionInInitializerError("Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.");
         }
     }
-    
+
     public CipherTextSerializer(CipherText cipherTextObj) {
         if ( cipherTextObj == null ) {
             throw new IllegalArgumentException("CipherText object must not be null.");
         }
         cipherText_ = cipherTextObj;
     }
-    
+
     /**
      * Given byte array in network byte order (i.e., big-endian order), convert
      * it so that a {@code CipherText} can be constructed from it.
@@ -116,7 +116,7 @@ public class CipherTextSerializer {
             throw new IllegalArgumentException("MAC length too large. Max is " + Short.MAX_VALUE + " bytes");
         }
         short macLen = (short) mac.length;
-        
+
         byte[] serializedObj = computeSerialization(kdfInfo,
                                                     timestamp,
                                                     cipherXform,
@@ -129,10 +129,10 @@ public class CipherTextSerializer {
                                                     macLen,
                                                     mac
                                                    );
-        
+
         return serializedObj;
     }
-    
+
     /**
      * Return the actual {@code CipherText} object.
      * @return The {@code CipherText} object that we are serializing.
@@ -143,7 +143,7 @@ public class CipherTextSerializer {
         }
         return cipherText_;
     }
-      
+
     /**
      * Take all the individual elements that make of the serialized ciphertext
      * format and put them in order and return them as a byte array.
@@ -204,7 +204,7 @@ public class CipherTextSerializer {
         if ( macLen > 0 ) baos.write(mac, 0, mac.length);
         return baos.toByteArray();
     }
-    
+
     // All strings are written as UTF-8 encoded byte streams with the
     // length prepended before it as a short. The prepended length is
     // more for the benefit of languages like C so they can pre-allocate
@@ -230,7 +230,7 @@ public class CipherTextSerializer {
                            "converting string to UTF8 encoding. Results suspect. Corrupt rt.jar????");
         }
     }
-    
+
     private String readString(ByteArrayInputStream bais, short sz)
         throws NullPointerException, IOException
     {
@@ -242,7 +242,7 @@ public class CipherTextSerializer {
         }
         return new String(bytes, "UTF8");
     }
-    
+
     private void writeShort(ByteArrayOutputStream baos, short s) {
         byte[] shortAsByteArray = ByteConversionUtil.fromShort(s);
         if ( shortAsByteArray.length != 2 ) {
@@ -250,7 +250,7 @@ public class CipherTextSerializer {
         }
         baos.write(shortAsByteArray, 0, 2);
     }
-    
+
     private short readShort(ByteArrayInputStream bais)
         throws NullPointerException, IndexOutOfBoundsException
     {
@@ -261,12 +261,12 @@ public class CipherTextSerializer {
         }
         return ByteConversionUtil.toShort(shortAsByteArray);
     }
-    
+
     private void writeInt(ByteArrayOutputStream baos, int i) {
         byte[] intAsByteArray = ByteConversionUtil.fromInt(i);
         baos.write(intAsByteArray, 0, 4);
     }
-    
+
     private int readInt(ByteArrayInputStream bais)
         throws NullPointerException, IndexOutOfBoundsException
     {
@@ -277,7 +277,7 @@ public class CipherTextSerializer {
         }
         return ByteConversionUtil.toInt(intAsByteArray);
     }
-    
+
     private void writeLong(ByteArrayOutputStream baos, long l) {
         byte[] longAsByteArray = ByteConversionUtil.fromLong(l);
         if ( longAsByteArray.length != 8 ) {
@@ -285,7 +285,7 @@ public class CipherTextSerializer {
         }
         baos.write(longAsByteArray, 0, 8);
     }
-    
+
     private long readLong(ByteArrayInputStream bais)
         throws NullPointerException, IndexOutOfBoundsException
     {
@@ -296,7 +296,7 @@ public class CipherTextSerializer {
         }
         return ByteConversionUtil.toLong(longAsByteArray);
     }
-    
+
     /** Convert the serialized ciphertext byte array to a {@code CipherText}
      * object.
      * @param cipherTextSerializedBytes    The serialized ciphertext as a byte array.
@@ -337,11 +337,11 @@ public class CipherTextSerializer {
                 throw new EncryptionException("Version info from serialized ciphertext not in valid range.",
                              "Likely tampering with KDF version on serialized ciphertext." + logMsg);
             }
-            
+
             debug("convertToCipherText: kdfPrf = " + kdfPrf + ", kdfVers = " + kdfVers);
             if ( ! versionIsCompatible( kdfVers) ) {
                 throw new EncryptionException("This version of ESAPI is not compatible with the version of ESAPI that encrypted your data.",
-                        "KDF version " + kdfVers + " from serialized ciphertext not compatibile with current KDF version of " + 
+                        "KDF version " + kdfVers + " from serialized ciphertext not compatibile with current KDF version of " +
                         KeyDerivationFunction.kdfVersion);
             }
             long timestamp = readLong(bais);
@@ -424,12 +424,12 @@ public class CipherTextSerializer {
      *  the serialized ciphertext. In particular, we assume that if we have a
      *  newer version of KDF than we can support it as we assume that we have
      *  built in backward compatibility.
-     *  
+     *
      *  At this point (ESAPI 2.1.0, KDF version 20130830), all we need to check
      *  if the version is either the current version or the previous version as
      *  both versions work the same. This checking may get more complicated in
      *  the future.
-     *  
+     *
      *  @param readKdfVers    The version information extracted from the serialized
      *                      ciphertext.
      */
@@ -437,7 +437,7 @@ public class CipherTextSerializer {
         if ( readKdfVers <= 0 ) {
             throw new IllegalArgumentException("Extracted KDF version is <= 0. Must be integer >= 1.");
         }
-        
+
         switch ( readKdfVers ) {
         case KeyDerivationFunction.originalVersion:        // First version
             return true;

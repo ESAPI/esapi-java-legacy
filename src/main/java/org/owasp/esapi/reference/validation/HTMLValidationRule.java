@@ -59,49 +59,49 @@ public class HTMLValidationRule extends StringValidationRule {
 
     /*package */ static InputStream getResourceStreamFromClassLoader(String contextDescription, ClassLoader classLoader, String fileName, List<String> searchPaths) {
         InputStream result = null;
-        
+
         for (String searchPath: searchPaths) {
             result = classLoader.getResourceAsStream(searchPath + fileName);
-            
+
             if (result != null) {
-                LOGGER.info(Logger.EVENT_SUCCESS, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" + 
+                LOGGER.info(Logger.EVENT_SUCCESS, "SUCCESSFULLY LOADED " + fileName + " via the CLASSPATH from '" +
                         searchPath + "' using " + contextDescription + "!");
-                    break; 
+                    break;
             }
         }
-        
+
         return result;
     }
-    
+
     /*package */ static InputStream getResourceStreamFromClasspath(String fileName) {
         LOGGER.info(Logger.EVENT_FAILURE, "Loading " + fileName + " from classpaths");
-        
+
         InputStream resourceStream = null;
-        
-        List<String> orderedSearchPaths = Arrays.asList(DefaultSearchPath.ROOT.value(), 
+
+        List<String> orderedSearchPaths = Arrays.asList(DefaultSearchPath.ROOT.value(),
                 DefaultSearchPath.RESOURCE_DIRECTORY.value(),
                 DefaultSearchPath.DOT_ESAPI.value(),
                 DefaultSearchPath.ESAPI.value(),
                 DefaultSearchPath.RESOURCES.value(),
                 DefaultSearchPath.SRC_MAIN_RESOURCES.value());
-        
+
         resourceStream = getResourceStreamFromClassLoader("current thread context class loader", Thread.currentThread().getContextClassLoader(), fileName, orderedSearchPaths);
-         
+
         //I'm lazy. Using ternary for shorthand "if null then do next thing"  Harder to read, sorry
         resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("system class loader", ClassLoader.getSystemClassLoader(), fileName, orderedSearchPaths);
         resourceStream = resourceStream != null ? resourceStream : getResourceStreamFromClassLoader("class loader for DefaultSecurityConfiguration class", ESAPI.securityConfiguration().getClass().getClassLoader(), fileName, orderedSearchPaths);
-        
+
         return resourceStream;
     }
-    
+
     /*package */ static Policy loadAntisamyPolicy(String antisamyPolicyFilename) throws IOException, PolicyException {
         InputStream resourceStream = null;
         SecurityConfiguration secCfg = ESAPI.securityConfiguration();
-        
+
         //Rather than catching the IOException from the resource stream, let's ask if the file exists to give this a best-case resolution.
         //This helps with the IOException handling too.  If the file is there and we get an IOException from the SecurityConfiguration, then the file is there and something else is wrong (FAIL -- don't try the other path)
         File file = secCfg.getResourceFile(antisamyPolicyFilename);
-    
+
         resourceStream = file == null ? getResourceStreamFromClasspath(antisamyPolicyFilename) : secCfg.getResourceStream(antisamyPolicyFilename);
         return resourceStream == null ? null : Policy.getInstance(resourceStream);
     }
@@ -111,14 +111,14 @@ public class HTMLValidationRule extends StringValidationRule {
         try {
             antisamyPolicyFilename = ESAPI.securityConfiguration().getStringProp( VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE );
         } catch (ConfigurationException cex) {
-            
-            LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " + 
+
+            LOGGER.info(Logger.EVENT_FAILURE, "ESAPI property " +
                            VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE +
                            " not set, using default value: " + ANTISAMYPOLICY_FILENAME);
         }
         return antisamyPolicyFilename;
     }
-    
+
     /*package */ static void configureInstance() {
         String antisamyPolicyFilename = resolveAntisamyFilename();
 
@@ -131,14 +131,14 @@ public class HTMLValidationRule extends StringValidationRule {
             //Thrown if the resource stream was created, but the contents of the file are not compatible with antisamy expectations.
             throw new ConfigurationException("Couldn't parse " + antisamyPolicyFilename, e);
         }
-        
+
         if (antiSamyPolicy == null) {
             throw new ConfigurationException("Couldn't find " + antisamyPolicyFilename);
         }
 
     }
-    
-    static {        
+
+    static {
         configureInstance();
     }
 
@@ -207,7 +207,7 @@ public class HTMLValidationRule extends StringValidationRule {
                     legacy = true;      // Give the caller that legacy behavior of sanitizing.
                     break;
                 default:
-                    LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
+                    LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " +
                                    VALIDATOR_HTML_VALIDATION_ACTION +
                                    " was set to \"" + propValue + "\".  Must be set to either \"clean\"" +
                                    " (the default for legacy support) or \"throw\"; assuming \"clean\" for legacy behavior.");
@@ -217,7 +217,7 @@ public class HTMLValidationRule extends StringValidationRule {
         } catch( ConfigurationException cex ) {
             // OPEN ISSUE: Should we log this? I think so. Convince me otherwise. But maybe
             //             we should only log it once or every Nth time??
-            LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " + 
+            LOGGER.warning(Logger.EVENT_FAILURE, "ESAPI property " +
                            VALIDATOR_HTML_VALIDATION_ACTION +
                            " must be set to either \"clean\" (the default for legacy support) or \"throw\"; assuming \"clean\"",
                            cex);

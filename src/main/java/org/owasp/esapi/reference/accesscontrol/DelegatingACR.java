@@ -11,7 +11,7 @@ import org.apache.commons.collections4.iterators.ArrayListIterator;
 public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
     protected Method delegateMethod;
     protected Object delegateInstance;
-    
+
     @Override
     public void setPolicyParameters(DynaBeanACRParameter policyParameter) {
         String delegateClassName = policyParameter.getString("delegateClass", "").trim();
@@ -24,35 +24,35 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
         try {
             this.delegateMethod = delegateClass.getMethod(methodName, parameterClasses);
         } catch (SecurityException e) {
-            throw new IllegalArgumentException(e.getMessage() + 
-                    " delegateClass.delegateMethod(parameterClasses): \"" +  
+            throw new IllegalArgumentException(e.getMessage() +
+                    " delegateClass.delegateMethod(parameterClasses): \"" +
                     delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
                     ")\" must be public.", e);
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException(e.getMessage() + 
-                    " delegateClass.delegateMethod(parameterClasses): \"" +  
+            throw new IllegalArgumentException(e.getMessage() +
+                    " delegateClass.delegateMethod(parameterClasses): \"" +
                     delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
                     ")\" does not exist.", e);
         }
-    
+
         //static methods do not need a delegateInstance. Non-static methods do.
         if(!Modifier.isStatic(this.delegateMethod.getModifiers())) {
             try {
                 this.delegateInstance = delegateClass.newInstance();
             } catch (InstantiationException ex) {
-                throw new IllegalArgumentException( 
-                        " Delegate class \"" + delegateClassName + 
+                throw new IllegalArgumentException(
+                        " Delegate class \"" + delegateClassName +
                         "\" must be concrete, because method " +
                         delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
                         ") is not static.", ex);
             } catch (IllegalAccessException ex) {
-                new IllegalArgumentException( 
-                        " Delegate class \"" + delegateClassName + 
+                new IllegalArgumentException(
+                        " Delegate class \"" + delegateClassName +
                         "\" must must have a zero-argument constructor, because " +
-                        "method delegateClass.delegateMethod(parameterClasses): \"" +  
+                        "method delegateClass.delegateMethod(parameterClasses): \"" +
                         delegateClassName + "." + methodName + "(" + Arrays.toString(parameterClassNames) +
                         ")\" is not static.", ex);
-            }    
+            }
         } else {
             this.delegateInstance = null;
         }
@@ -84,10 +84,10 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
             Class theClass = Class.forName(className);
             return theClass;
         } catch ( ClassNotFoundException ex ) {
-            throw new IllegalArgumentException(ex.getMessage() + 
-                    " " + purpose + " Class " + className + 
+            throw new IllegalArgumentException(ex.getMessage() +
+                    " " + purpose + " Class " + className +
                     " must be in the classpath", ex);
-        } 
+        }
     }
     /**
      * Delegates to the method specified in setPolicyParameters

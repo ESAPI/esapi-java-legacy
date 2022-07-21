@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2019
  */
 
@@ -38,7 +38,7 @@ public class LogPrefixAppender implements LogAppender {
 
     /**
      * Ctr.
-     * 
+     *
      * @param logUserInfo      Whether or not to record user information
      * @param logClientInfo      Whether or not to record client information
      * @param logServerIp        Whether or not to record server ip information
@@ -59,10 +59,10 @@ public class LogPrefixAppender implements LogAppender {
 
         UserInfoSupplier userInfoSupplier = new UserInfoSupplier();
         userInfoSupplier.setLogUserInfo(logUserInfo);
-        
+
         ClientInfoSupplier clientInfoSupplier = new ClientInfoSupplier();
         clientInfoSupplier.setLogClientInfo(logClientInfo);
-        
+
         ServerInfoSupplier serverInfoSupplier = new ServerInfoSupplier(logName);
         serverInfoSupplier.setLogServerIp(logServerIp);
         serverInfoSupplier.setLogApplicationName(logApplicationName, appName);
@@ -71,10 +71,10 @@ public class LogPrefixAppender implements LogAppender {
         String userInfoMsg = userInfoSupplier.get().trim();
         String clientInfoMsg = clientInfoSupplier.get().trim();
         String serverInfoMsg = serverInfoSupplier.get().trim();
-        
+
         //If both user and client have content, then postfix the semicolon to the userInfoMsg at this point to simplify the StringBuilder operations later.
         userInfoMsg = (!userInfoMsg.isEmpty() && !clientInfoMsg.isEmpty()) ? userInfoMsg + ":" : userInfoMsg;
-      
+
         //If both server has content, then prefix the arrow to the serverInfoMsg at this point to simplify the StringBuilder operations later.
         serverInfoMsg = (!serverInfoMsg.isEmpty()) ? "-> " + serverInfoMsg: serverInfoMsg;
 
@@ -83,14 +83,14 @@ public class LogPrefixAppender implements LogAppender {
         StringBuilder logPrefix = new StringBuilder();
         //EventType is always appended
         logPrefix.append(eventTypeMsg);
-        
+
         for (String element : optionalPrefixContent) {
             if (!element.isEmpty()) {
                 logPrefix.append(" ");
                 logPrefix.append(element);
             }
         }
-      
+
         return String.format(RESULT_FORMAT, logPrefix.toString(), message);
     }
 }

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2018
  */
 
@@ -39,7 +39,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
     private final LogScrubber scrubber;
     /** Appender used for assembling default message content for all logs.*/
     private final LogAppender appender;
-    
+
     /**
      * Constructor.
      * @param logScrubber  Log message cleaner.
@@ -60,7 +60,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
         if (handler.isEnabled(logger)) {
             String fullMessage = appender.appendTo(logger.getName(), type, message);
             String cleanString = scrubber.cleanMessage(fullMessage);
-            
+
             Marker typeMarker = MARKER_FACTORY.getMarker(type.toString());
             handler.log(logger, typeMarker, cleanString);
         }

@@ -43,7 +43,7 @@ Issue #         GitHub Issue Title
         Changes Requiring Special Attention
 
 -----------------------------------------------------------------------------
-See this section from the previous release notes at: 
+See this section from the previous release notes at:
     https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt
 
 -----------------------------------------------------------------------------
@@ -51,12 +51,12 @@ See this section from the previous release notes at:
         Remaining Known Issues / Problems
 
 -----------------------------------------------------------------------------
-See this section from the previous release notes at: 
+See this section from the previous release notes at:
     https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.3.0-release-notes.txt
 
 NEW since last release (ESAPI 2.2.3.0) - CVE-2021-29425
     https://nvd.nist.gov/vuln/detail/CVE-2021-29425
-    
+
 
 -----------------------------------------------------------------------------
 
@@ -93,11 +93,11 @@ Direct and Transitive Runtime and Test Dependencies:
 
         $ mvn dependency:tree
         [INFO] Scanning for projects...
-        [INFO] 
+        [INFO]
         [INFO] -----------------------< org.owasp.esapi:esapi >------------------------
         [INFO] Building ESAPI 2.2.3.1-SNAPSHOT
         [INFO] --------------------------------[ jar ]---------------------------------
-        [INFO] 
+        [INFO]
         [INFO] --- maven-dependency-plugin:3.1.2:tree (default-cli) @ esapi ---
         [INFO] org.owasp.esapi:esapi:jar:2.2.3.1-SNAPSHOT
         [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
@@ -128,8 +128,8 @@ Direct and Transitive Runtime and Test Dependencies:
         [INFO] +- org.slf4j:slf4j-api:jar:1.7.30:compile
         [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
         [INFO] +- commons-io:commons-io:jar:2.6:compile
-        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.2.2:compile (optional) 
-        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional) 
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.2.2:compile (optional)
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional)
         [INFO] +- commons-codec:commons-codec:jar:1.15:test
         [INFO] +- junit:junit:jar:4.13.2:test
         [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.68:test

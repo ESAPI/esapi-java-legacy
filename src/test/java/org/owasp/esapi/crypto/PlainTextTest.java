@@ -10,10 +10,10 @@ import org.junit.Test;
 import org.owasp.esapi.crypto.PlainText;
 
 public class PlainTextTest {
-    
+
     private String unicodeStr = "A\u00ea\u00f1\u00fcC";    // I.e., "AêñüC"
     private String altString  = "AêñüC";                // Same as above.
-    
+
     /* NOTE: This test will not work on Windows unless executed under
      * Eclipse and the file is stored / treated as a UTF-8 encoded file
      * rather than the Windows native OS encoding of Windows-1252 (aka,
@@ -44,21 +44,21 @@ public class PlainTextTest {
             byte[] utf8Bytes = unicodeStr.getBytes("UTF-8");
             PlainText pt1 = new PlainText(unicodeStr);
             PlainText pt2 = new PlainText(altString);
-            
+
             assertTrue( pt1.equals(pt1) );   // Equals self
             assertFalse( pt1.equals(null) );
             assertTrue( pt1.equals(pt2) );
             assertFalse( pt1.equals( unicodeStr ) );
             assertTrue( pt1.length() == utf8Bytes.length );
-            assertTrue( Arrays.equals(utf8Bytes, pt1.asBytes()) );            
+            assertTrue( Arrays.equals(utf8Bytes, pt1.asBytes()) );
             assertTrue( pt1.hashCode() == unicodeStr.hashCode() );
-            
+
         } catch (UnsupportedEncodingException e) {
             fail("No UTF-8 byte encoding: " + e);
             e.printStackTrace(System.err);
         }
     }
-    
+
     @Test
     public final void testNullCase() {
         int counter = 0;
@@ -87,9 +87,9 @@ public class PlainTextTest {
             byte[] origBytes = unicodeStr.getBytes("UTF-8");
             PlainText pt = new PlainText(origBytes);
             assertTrue( pt.toString().equals(unicodeStr) );
-            assertTrue( Arrays.equals(origBytes, pt.asBytes()) );            
+            assertTrue( Arrays.equals(origBytes, pt.asBytes()) );
             assertTrue( pt.hashCode() == unicodeStr.hashCode() );
-            
+
             int origLen = origBytes.length;
 
             pt.overwrite();

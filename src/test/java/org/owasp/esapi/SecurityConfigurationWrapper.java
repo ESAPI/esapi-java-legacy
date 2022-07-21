@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Simple wrapper implementation of {@link SecurityConfiguration}. 
+ * Simple wrapper implementation of {@link SecurityConfiguration}.
  * This allows for easy subclassing and property fixups for unit tests.
  *
  * Note that there are some compilers have issues with Override
@@ -47,7 +47,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getApplicationName();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -56,7 +56,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getLogImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -65,7 +65,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getAuthenticationImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -74,7 +74,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getEncoderImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -83,7 +83,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getAccessControlImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -92,7 +92,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getIntrusionDetectionImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -101,7 +101,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getRandomizerImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -110,7 +110,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getEncryptionImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -119,7 +119,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getValidationImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -128,7 +128,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getValidationPattern(typeName);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -137,7 +137,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getExecutorImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -146,7 +146,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getHTTPUtilitiesImplementation();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -164,7 +164,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getUploadDirectory();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -182,7 +182,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getEncryptionKeyLength();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -363,7 +363,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getDigitalSignatureKeyLength();
     }
-           
+
     /**
      * {@inheritDoc}
      */
@@ -408,12 +408,12 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getResourceFile(filename);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     // @Override
-    public boolean getForceHttpOnlySession() 
+    public boolean getForceHttpOnlySession()
     {
         return wrapped.getForceHttpOnlySession();
     }
@@ -422,7 +422,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
      * {@inheritDoc}
      */
     // @Override
-    public boolean getForceSecureSession() 
+    public boolean getForceSecureSession()
     {
         return wrapped.getForceSecureSession();
     }
@@ -462,7 +462,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
         return wrapped.getResourceStream(filename);
     }
 
-        
+
     /**
      * {@inheritDoc}
      */
@@ -471,7 +471,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         wrapped.setResourceDirectory(dir);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -488,7 +488,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     public String getHttpSessionIdName() {
         return wrapped.getHttpSessionIdName();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -506,7 +506,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getSessionIdleTimeoutLength();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -515,7 +515,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getSessionAbsoluteTimeoutLength();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -524,7 +524,7 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     {
         return wrapped.getLogEncodingRequired();
     }
-    
+
     /**
      * {@inheritDoc}
      */

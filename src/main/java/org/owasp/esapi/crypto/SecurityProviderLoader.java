@@ -8,7 +8,7 @@ import java.util.Hashtable;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
-/** 
+/**
  * This class provides a generic static method that loads a
  * {@code java.security.Provider} either by some generic name
  * (i.e., {@code Provider.getName()}) or by a fully-qualified class name.
@@ -43,14 +43,14 @@ public class SecurityProviderLoader  {
             // with Sun-based JREs. As of JDK 1.3 and later, it is part of the
             // standard JRE install.
         jceProviders.put("SunJCE", "com.sun.crypto.provider.SunJCE");
-        
+
             // IBMJCE is default for WebSphere and is used by IBM JDKs. They
             // also have IBMJCEFIPS, but not sure if this is *always* provided
             // with WebSphere or just an add-on, hence not including it. IBMJCEFIPS
             // is a FIPS 140-2 compliant JCE provider from IBM.
         jceProviders.put("IBMJCE", "com.ibm.crypto.provider.IBMJCE");
         // jceProviders.put("IBMJCEFIPS", "com.ibm.crypto.fips.provider.IBMJCEFIPS");
-        
+
             // GnuCrypto is JCE provider for GNU Compiler for Java (GCJ)
         jceProviders.put("GnuCrypto", "gnu.crypto.jce.GnuCrypto");
 
@@ -79,9 +79,9 @@ public class SecurityProviderLoader  {
         jceProviders.put("ABA", "au.net.aba.crypto.provider.ABAProvider");
     }
 
-    /** 
+    /**
      * This methods adds a provider to the {@code SecurityManager}
-     * either by some generic name or by the class name. 
+     * either by some generic name or by the class name.
      * </p><p>
      * The following generic JCE provider names are built-in:
      * <ul>
@@ -245,7 +245,7 @@ public class SecurityProviderLoader  {
                                        "; exception msg: " + ex.toString());
         }
     }
-    
+
     /**
      * Load the preferred JCE provider for ESAPI based on the <b>ESAPI.properties</b>
      * property {@code Encryptor.PreferredJCEProvider}. If this property is null

@@ -16,7 +16,7 @@ This is a patch release with the primary intent of updating some dependencies, s
         -- AntiSamy, from 1.5.11 to 1.6.2.
         -- As a result of the AntiSamy upgrade, the transitive dependency xercesImpl was updated from 2.12.0 to 2.12.1 which should address CVE-2020-14338.
         -- Apache batik-css, updated from 1.13 to 1.14.
-        
+
 Details follow.
 
     * IMPORTANT: Effects of updating to AntiSamy 1.6.2
@@ -30,7 +30,7 @@ Details follow.
                         </exclusion>
                   in your dependency for ESAPI in your application's pom.xml. (You Gradle, Ivy, etc. other build tool users will have to figure out how to do this yourself.)
                   This is especially important if you are using SLF4J logging in ESAPI with some other SLF4J logger such as slf4j-log4j2, etc. If you don't do that, your logging may not come out as expected. See <https://github.com/nahsra/antisamy#note-schema-validation-behavior-change-starting-with-antisamy-160>, under its section discussing Logging for more details.
-        
+
                 o Previously, ESAPI shipped with a default AntiSamy policy file called 'antisamy-esapi.xml'. For 10 plus years, unbeknownst to anyone, that file contained an unused '<html-entities>' node that not only did ESAPI not directly used, but was also completely ignored by AntiSamy! However, starting with AntiSamy 1.6.0, AntiSamy does XML schema validation by default, so that causes any non-compliant AntiSamy policy file to be rejected. This may result in some rather obtuse error messages and you may want to set the AntiSamy system property 'owasp.validator.validateschema' to "false" temporarily until you have time to correct your AntiSamy policy file(s).
 
     Old News
@@ -72,7 +72,7 @@ Issue #         GitHub Issue Title
 602             Update failing ValidatorTest in 'Java CI with Maven' GitHub workflow
 606             Vulnerability in transitive dependency of esapi
 609             Change log4j dependency scope to provided Build-Maven Component-Docs Component-Logger Configuration
-614             Potentlial XXE Injection vulnerability in loading XML version of ESAPI properties file 
+614             Potentlial XXE Injection vulnerability in loading XML version of ESAPI properties file
 
 -----------------------------------------------------------------------------
 
@@ -125,7 +125,7 @@ See GitHub issue #560 for additional details.
 
 
 Related to that aforemented Log4J 1.x CVE and how it affects ESAPI, be sure to read
-   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf 
+   https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin2.pdf
 which describes CVE-2019-17571, a deserialization vulnerability in Log4J 1.2.17. ESAPI is *NOT* affected by this (even if you chose to use Log4J 1 as you default ESAPI logger). This security bulletin describes why this CVE is not exploitable as used by ESAPI.
 
 
@@ -211,11 +211,11 @@ Direct and Transitive Runtime and Test Dependencies:
 
         $ mvn -B dependency:tree
         [INFO] Scanning for projects...
-        [INFO] 
+        [INFO]
         [INFO] -----------------------< org.owasp.esapi:esapi >------------------------
         [INFO] Building ESAPI 2.2.3.0-SNAPSHOT
         [INFO] --------------------------------[ jar ]---------------------------------
-        [INFO] 
+        [INFO]
         [INFO] --- maven-dependency-plugin:3.1.2:tree (default-cli) @ esapi ---
         [INFO] org.owasp.esapi:esapi:jar:2.2.3.0-SNAPSHOT
         [INFO] +- javax.servlet:javax.servlet-api:jar:3.0.1:provided
@@ -249,9 +249,9 @@ Direct and Transitive Runtime and Test Dependencies:
         [INFO] +- xalan:xalan:jar:2.7.2:compile
         [INFO] |  \- xalan:serializer:jar:2.7.2:compile
         [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
-        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.2.0:compile (optional) 
-        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional) 
-        [INFO] +- net.jcip:jcip-annotations:jar:1.0:compile (optional) 
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.2.0:compile (optional)
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile (optional)
+        [INFO] +- net.jcip:jcip-annotations:jar:1.0:compile (optional)
         [INFO] +- junit:junit:jar:4.13.1:test
         [INFO] |  \- org.hamcrest:hamcrest-core:jar:1.3:test
         [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.68:test

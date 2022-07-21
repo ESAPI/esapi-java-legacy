@@ -1,6 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -33,21 +33,21 @@ import org.owasp.esapi.util.NullSafe;
  * by application developers, but rather only by those either extending ESAPI
  * or in the ESAPI reference implementation. Use <i>directly</i> by application
  * code is not recommended or supported.
- * 
+ *
  * @author kevin.w.wall@gmail.com
  * @since 2.0
  */
 public final class CipherSpec implements Serializable {
 
     private static final long serialVersionUID = 20090822;    // version, in YYYYMMDD format
-    
+
     private String  cipher_xform_   = ESAPI.securityConfiguration().getCipherTransformation();
     private int     keySize_        = ESAPI.securityConfiguration().getEncryptionKeyLength(); // In bits
     private int     blockSize_      = 16;   // In bytes! I.e., 128 bits!!!
     private byte[]  iv_             = null;
 
     private boolean blockSizeExplicitlySet = false;    // Used for check in setIV().
-    
+
     // Cipher transformation component. Format is ALG/MODE/PADDING
     private enum CipherTransformationComponent { ALG, MODE, PADDING }
 
@@ -64,7 +64,7 @@ public final class CipherSpec implements Serializable {
         setBlockSize(blockSize);
         setIV(iv);
     }
-    
+
     /**
      * CTOR that sets everything but IV.
      * @param cipherXform    The cipher transformation
@@ -80,13 +80,13 @@ public final class CipherSpec implements Serializable {
         setKeySize(keySize);
         setBlockSize(blockSize);
     }
-    
+
     /** CTOR that sets everything but block size and IV. */
     public CipherSpec(String cipherXform, int keySize) {
         setCipherTransformation(cipherXform);
         setKeySize(keySize);
     }
-    
+
     /** CTOR that sets everything except block size. */
     public CipherSpec(String cipherXform, int keySize, final byte[] iv) {
         setCipherTransformation(cipherXform);
@@ -105,18 +105,18 @@ public final class CipherSpec implements Serializable {
             setIV(cipher.getIV());
         }
     }
-    
+
     /** CTOR that sets everything. */
     public CipherSpec(final Cipher cipher, int keySize) {
         this(cipher);
         setKeySize(keySize);
     }
-    
+
     /* CTOR that sets only the IV and uses defaults for everything else. */
     public CipherSpec(final byte[] iv) {
         setIV(iv);
     }
-    
+
     /**
      * Default CTOR. Creates a cipher specification for 128-bit cipher
      * transformation of "AES/CBC/PKCS5Padding" and a {@code null} IV.
@@ -186,7 +186,7 @@ public final class CipherSpec implements Serializable {
         this.cipher_xform_ = cipherXform;
         return this;
     }
-    
+
     /**
      * Get the cipher transformation.
      * @return    The cipher transformation {@code String}.
@@ -246,7 +246,7 @@ public final class CipherSpec implements Serializable {
     public String getCipherAlgorithm() {
         return getFromCipherXform(CipherTransformationComponent.ALG);
     }
-    
+
     /**
      * Retrieve the cipher mode.
      * @return    The cipher mode.
@@ -254,7 +254,7 @@ public final class CipherSpec implements Serializable {
     public String getCipherMode() {
         return getFromCipherXform(CipherTransformationComponent.MODE);
     }
-    
+
     /**
      * Retrieve the cipher padding scheme.
      * @return    The padding scheme is returned.
@@ -262,7 +262,7 @@ public final class CipherSpec implements Serializable {
     public String getPaddingScheme() {
         return getFromCipherXform(CipherTransformationComponent.PADDING);
     }
-    
+
     /**
      * Retrieve the initialization vector (IV).
      * @return    The IV as a byte array.
@@ -270,7 +270,7 @@ public final class CipherSpec implements Serializable {
     public byte[] getIV() {
         return iv_;
     }
-    
+
     /**
      * Set the initialization vector (IV).
      * @param iv    The byte array to set as the IV. A copy of the IV is saved.
@@ -282,7 +282,7 @@ public final class CipherSpec implements Serializable {
         if ( ! ( requiresIV() && (iv != null && iv.length != 0) ) ) {
             throw new IllegalArgumentException("Required IV cannot be null or 0 length.");
         }
-        
+
         // Don't store a reference, but make a copy! When an IV is provided, it generally should
         // be the same length as the block size of the cipher.
         if ( iv != null ) {    // Allow null IV for ECB mode.
@@ -307,9 +307,9 @@ public final class CipherSpec implements Serializable {
      * @return True if the cipher mode requires an IV, otherwise false.
      * */
     public boolean requiresIV() {
-        
+
         String cm = getCipherMode();
-        
+
         // Add any other cipher modes supported by JCE but not requiring IV.
         // ECB is the only one I'm aware of that doesn't. Mode is not case
         // sensitive.
@@ -318,7 +318,7 @@ public final class CipherSpec implements Serializable {
         }
         return true;
     }
-    
+
     /**
      * Override {@code Object.toString()} to provide something more useful.
      * @return A meaningful string describing this object.
@@ -338,7 +338,7 @@ public final class CipherSpec implements Serializable {
         sb.append("; IV length = ").append( ivLen ).append(" bytes.");
         return sb.toString();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -399,10 +399,10 @@ public final class CipherSpec implements Serializable {
      */
     protected boolean canEqual(Object other) {
         return (other instanceof CipherSpec);
-    }    
-    
+    }
+
     /**
-     * Split the current cipher transformation and return the requested part. 
+     * Split the current cipher transformation and return the requested part.
      * @param component The component of the cipher transformation to return.
      * @return The cipher algorithm, cipher mode, or padding, as requested.
      */
@@ -411,7 +411,7 @@ public final class CipherSpec implements Serializable {
         String[] parts = getCipherTransformation().split("/");
             // Assertion should also be okay here as these conditions are checked
             // elsewhere and this method is private.
-        assert parts.length == 3 : "Invalid cipher transformation: " + getCipherTransformation();    
+        assert parts.length == 3 : "Invalid cipher transformation: " + getCipherTransformation();
         return parts[part];
     }
 }

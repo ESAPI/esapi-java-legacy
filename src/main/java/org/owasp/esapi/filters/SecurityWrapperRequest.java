@@ -6,7 +6,7 @@
  * www.owasp.org/index.php/ESAPI</a>. Copyright (c) 2007 - The OWASP Foundation
  * The ESAPI is published by OWASP under the BSD license. You should read and
  * accept the LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect
  *         Security</a>
  * @created 2007
@@ -57,10 +57,10 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
 
     private String allowableContentRoot = "WEB-INF";
 
-    /** 
+    /**
      * Construct a safe request that overrides the default request methods with
      * safer versions.
-     * 
+     *
      * @param request The {@code HttpServletRequest} we are wrapping.
      */
     public SecurityWrapperRequest(HttpServletRequest request) {
@@ -70,7 +70,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     private HttpServletRequest getHttpServletRequest() {
         return (HttpServletRequest)super.getRequest();
     }
-    
+
     /**
      * Same as HttpServletRequest, no security changes required.
      * @param name The attribute name
@@ -159,7 +159,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
                 int maxAge = c.getMaxAge();
                 String domain = c.getDomain();
                 String path = c.getPath();
-                
+
                 Cookie n = new Cookie(name, value);
                 n.setMaxAge(maxAge);
 
@@ -398,7 +398,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
                 String name = (String) e.getKey();
                 SecurityConfiguration sc = ESAPI.securityConfiguration();
                 String cleanName = ESAPI.validator().getValidInput("HTTP parameter name: " + name, name, "HTTPParameterName", sc.getIntProp("HttpUtilities.httpQueryParamNameLength"), true);
-                
+
                 String[] value = (String[]) e.getValue();
                 String[] cleanValues = new String[value.length];
                 for (int j = 0; j < value.length; j++) {
@@ -520,7 +520,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      * Same as HttpServletRequest, no security changes required. Note that this
      * reader may contain attacks and the developer is responsible for
      * canonicalizing, validating, and encoding any data from this stream.
-     * @return aA {@code BufferedReader} containing the body of the request. 
+     * @return aA {@code BufferedReader} containing the body of the request.
      * @throws IOException If an input error occurred while reading the request
      *                     body (e.g., premature EOF).
      */
@@ -689,7 +689,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         }
         return port;
     }
-    
+
 
     /**
      * Returns the server path from the HttpServletRequest after canonicalizing

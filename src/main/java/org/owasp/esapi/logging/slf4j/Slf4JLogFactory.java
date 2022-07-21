@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2018
  */
 package org.owasp.esapi.logging.slf4j;
@@ -58,11 +58,11 @@ public class Slf4JLogFactory implements LogFactory {
     private static LogScrubber SLF4J_LOG_SCRUBBER;
     /** Bridge class for mapping esapi -> slf4j log levels.*/
     private static Slf4JLogBridge LOG_BRIDGE;
-    
+
     static {
         boolean encodeLog = ESAPI.securityConfiguration().getBooleanProp(LOG_ENCODING_REQUIRED);
         SLF4J_LOG_SCRUBBER = createLogScrubber(encodeLog);
-        
+
 
         boolean logUserInfo = ESAPI.securityConfiguration().getBooleanProp(LOG_USER_INFO);
         boolean logClientInfo = ESAPI.securityConfiguration().getBooleanProp(LOG_CLIENT_INFO);
@@ -70,7 +70,7 @@ public class Slf4JLogFactory implements LogFactory {
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
         SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
-        
+
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, Slf4JLogLevelHandlers.TRACE);
         levelLookup.put(Logger.TRACE, Slf4JLogLevelHandlers.TRACE);
@@ -80,10 +80,10 @@ public class Slf4JLogFactory implements LogFactory {
         levelLookup.put(Logger.WARNING, Slf4JLogLevelHandlers.WARN);
         levelLookup.put(Logger.FATAL, Slf4JLogLevelHandlers.ERROR);
         //LEVEL.OFF not used.  If it's off why would we try to log it?
-        
+
         LOG_BRIDGE = new Slf4JLogBridgeImpl(SLF4J_LOG_APPENDER, SLF4J_LOG_SCRUBBER, levelLookup);
     }
-    
+
     /**
      * Populates the default log scrubber for use in factory-created loggers.
      * @param requiresEncoding {@code true} if encoding is required for log content.
@@ -92,29 +92,29 @@ public class Slf4JLogFactory implements LogFactory {
     /*package*/ static LogScrubber createLogScrubber(boolean requiresEncoding) {
         List<LogScrubber> messageScrubber = new ArrayList<>();
         messageScrubber.add(new NewlineLogScrubber());
-        
+
         if (requiresEncoding) {
             messageScrubber.add(new CodecLogScrubber(HTML_CODEC, IMMUNE_SLF4J_HTML));
         }
-        
+
         return new CompositeLogScrubber(messageScrubber);
-        
+
     }
-    
+
     /**
      * Populates the default log appender for use in factory-created loggers.
-     * @param appName 
-     * @param logApplicationName 
-     * @param logServerIp 
-     * @param logClientInfo 
-     * 
+     * @param appName
+     * @param logApplicationName
+     * @param logServerIp
+     * @param logClientInfo
+     *
      * @return LogAppender instance.
      */
     /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);       
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
     }
-    
-    
+
+
     @Override
     public Logger getLogger(String moduleName) {
         org.slf4j.Logger slf4JLogger = LoggerFactory.getLogger(moduleName);

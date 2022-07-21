@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2017 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Matt Seil (mseil .at. owasp.org)
  * @created 2017
  */
@@ -26,7 +26,7 @@ package org.owasp.esapi.codecs;
  * Be sure to see the several <b>WARNING</b>s associated with the detailed
  * method descriptions. You will not find that in the "Method Summary" section
  * of the javadoc because that only shows the intial sentence.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @param <T>
@@ -58,11 +58,11 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     /**
      * {@inheritDoc}
      * </p><p>
-     * <b>WARNING!!</b>  {@code Character} based {@code Codec}s will silently transform code points that are not 
-     * legal UTF code points into garbage data as they will cast them to {@code char}s.  
+     * <b>WARNING!!</b>  {@code Character} based {@code Codec}s will silently transform code points that are not
+     * legal UTF code points into garbage data as they will cast them to {@code char}s.
      * Also, if you are implementing an {@code Integer} based codec, these will be silently discarded
      * based on the return from {@code Character.isValidCodePoint( int )}.  This is the preferred
-     * behavior moving forward.  
+     * behavior moving forward.
      */
     @Override
     public String encode(char[] immune, String input) {
@@ -73,7 +73,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
                 //We can then safely cast this to char and maintain legacy behavior.
                 sb.append(encodeCharacter(immune, new Character((char) point)));
             } else {
-                sb.append(encodeCharacter(immune, point));    
+                sb.append(encodeCharacter(immune, point));
             }
             offset += Character.charCount(point);
         }
@@ -83,7 +83,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     /**
      * {@inheritDoc}
      * <p>
-     * <b>WARNING!!!!</b>  Passing a standard {@code char} rather than {@code Character} to this method will resolve to the 
+     * <b>WARNING!!!!</b>  Passing a standard {@code char} rather than {@code Character} to this method will resolve to the
      * {@link #encodeCharacter( char[], char )} method, which will throw an {@code IllegalArgumentException} instead.
      * YOU HAVE BEEN WARNED!!!!
      */
@@ -91,13 +91,13 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     public String encodeCharacter( char[] immune, Character c ) {
         return ""+c;
     }
-    
+
 
     /**
      * To prevent accidental footgun usage and calling
      * {@link #encodeCharacter( char[], int)} when called with {@code char} and
      * {@code char} is first silently converted to {@code int} and then the
-     * unexpected method is called. 
+     * unexpected method is called.
      *
      * @throws IllegalArgumentException to indicate that you called the incorrect method.
      */
@@ -105,7 +105,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
         throw new IllegalArgumentException("You tried to call encodeCharacter() with a char.  Nope.  " +
                                            "Use 'encodeCharacter( char[] immune, Character c)' instead!");
     }
-    
+
     /* (non-Javadoc)
      * @see org.owasp.esapi.codecs.Codec#encodeCharacter(char[], int)
      */
@@ -136,7 +136,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
             return hex[c];
         return toHex(c);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -155,7 +155,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     public String toHex(char c) {
         return Integer.toHexString(c);
     }
-    
+
     public String toHex(int c) {
         return Integer.toHexString(c);
     }

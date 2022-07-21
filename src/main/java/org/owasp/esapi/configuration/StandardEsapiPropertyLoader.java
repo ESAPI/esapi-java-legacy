@@ -83,7 +83,7 @@ public class StandardEsapiPropertyLoader extends AbstractPrioritizedPropertyLoad
     }
 
     /**
-     * Methods loads configuration from .properties file. 
+     * Methods loads configuration from .properties file.
      * @param file
      */
     protected void loadPropertiesFromFile(File file) {

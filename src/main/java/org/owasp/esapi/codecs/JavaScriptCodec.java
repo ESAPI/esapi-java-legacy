@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -18,7 +18,7 @@ package org.owasp.esapi.codecs;
 
 /**
  * Implementation of the Codec interface for backslash encoding in JavaScript.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -29,7 +29,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns backslash encoded numeric format. Does not use backslash character escapes
      * such as, \" or \' as these may cause parsing problems. For example, if a javascript
      * attribute, such as onmouseover, contains a \" that will close the entire attribute and
@@ -43,13 +43,13 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
         if ( containsCharacter(c, immune ) ) {
             return ""+c;
         }
-        
+
         // check for alphanumeric characters
         String hex = super.getHexForNonAlphanumeric(c);
         if ( hex == null ) {
             return ""+c;
         }
-                
+
         // Do not use these shortcuts as they can be used to break out of a context
         // if ( ch == 0x00 ) return "\\0";
         // if ( ch == 0x08 ) return "\\b";
@@ -74,10 +74,10 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
         return "\\u" + pad + temp.toUpperCase();
     }
 
-    
+
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
      * </p><p>
@@ -96,7 +96,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
             input.reset();
             return null;
         }
-        
+
         // if this is not an encoded character, return null
         if (first != '\\' ) {
             input.reset();
@@ -108,7 +108,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
             input.reset();
             return null;
         }
-        
+
         // \0 collides with the octal decoder and is non-standard
         // if ( second.charValue() == '0' ) {
         //    return Character.valueOf( (char)0x00 );
@@ -130,7 +130,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
             return 0x27;
         } else if (second == '\\' ) {
             return 0x5c;
-            
+
         // look for \\xXX format
         } else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
             // Search for exactly 2 hex digits following
@@ -154,7 +154,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
                 input.reset();
                 return null;
             }
-            
+
         // look for \\uXXXX format
         } else if ( Character.toLowerCase( second.charValue() ) == 'u') {
             // Search for exactly 4 hex digits following
@@ -178,13 +178,13 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
                 input.reset();
                 return null;
             }
-            
+
         // look for one, two, or three octal digits
         } else if ( PushbackString.isOctalDigit(second) ) {
             StringBuilder sb = new StringBuilder();
             // get digit 1
             sb.append(second);
-            
+
             // get digit 2 if present
             Character c2 = input.next();
             if ( !PushbackString.isOctalDigit(c2) ) {
@@ -211,7 +211,7 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
                 return null;
             }
         }
-        
+
         // ignore the backslash and return the character
         input.reset();
         return null;

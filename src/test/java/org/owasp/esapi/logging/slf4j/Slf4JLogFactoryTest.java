@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2018
  */
 package org.owasp.esapi.logging.slf4j;
@@ -38,45 +38,45 @@ import org.powermock.modules.junit4.PowerMockRunner;
 public class Slf4JLogFactoryTest {
     @Rule
     public TestName testName = new TestName();
-    
+
     @Test
     public void testCreateLoggerByString() {
         Logger logger = new Slf4JLogFactory().getLogger("test");
         Assert.assertTrue(logger instanceof Slf4JLogger);
     }
-    
+
     @Test public void testCreateLoggerByClass() {
         Logger logger = new Slf4JLogFactory().getLogger(Slf4JLogBridgeImplTest.class);
         Assert.assertTrue(logger instanceof Slf4JLogger);
     }
-    
+
     @Test
     public void checkScrubberWithEncoding() throws Exception {
         ArgumentCaptor<List> delegates = ArgumentCaptor.forClass(List.class);
         PowerMockito.whenNew(CompositeLogScrubber.class).withArguments(delegates.capture()).thenReturn(null);
-        
+
         //Call to invoke the constructor capture
         Slf4JLogFactory.createLogScrubber(true);
-        
+
         List<LogScrubber> scrubbers = delegates.getValue();
         Assert.assertEquals(2, scrubbers.size());
         Assert.assertTrue(scrubbers.get(0) instanceof NewlineLogScrubber);
         Assert.assertTrue(scrubbers.get(1) instanceof CodecLogScrubber);
     }
-    
+
     @Test
     public void checkScrubberWithoutEncoding() throws Exception {
         ArgumentCaptor<List> delegates = ArgumentCaptor.forClass(List.class);
         PowerMockito.whenNew(CompositeLogScrubber.class).withArguments(delegates.capture()).thenReturn(null);
-        
+
         //Call to invoke the constructor capture
         Slf4JLogFactory.createLogScrubber(false);
-        
+
         List<LogScrubber> scrubbers = delegates.getValue();
         Assert.assertEquals(1, scrubbers.size());
         Assert.assertTrue(scrubbers.get(0) instanceof NewlineLogScrubber);
     }
-    
+
     /**
      * At this time there are no special considerations or handling for the appender
      * creation in this scope. It is expected that the arguments to the internal
@@ -95,14 +95,14 @@ public class Slf4JLogFactoryTest {
         PowerMockito.whenNew(LogPrefixAppender.class).withArguments(userInfoCapture.capture(), clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
 
         LogAppender appender = Slf4JLogFactory.createLogAppender(true, true, false, true, testName.getMethodName());
-        
+
         Assert.assertEquals(stubAppender, appender);
         Assert.assertTrue(userInfoCapture.getValue());
         Assert.assertTrue(clientInfoCapture.getValue());
         Assert.assertFalse(serverInfoCapture.getValue());
         Assert.assertTrue(logAppNameCapture.getValue());
-        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());        
+        Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());
     }
-    
-   
+
+
 }

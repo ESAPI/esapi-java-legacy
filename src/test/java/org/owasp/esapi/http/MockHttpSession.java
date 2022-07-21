@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -26,39 +26,39 @@ import javax.servlet.http.HttpSession;
 
 /**
  * The Class MockHttpSession.
- * 
+ *
  * @author jwilliams
  */
 public class MockHttpSession implements HttpSession {
 
     /** The invalidated. */
     boolean invalidated = false;
-    
+
     /** The creation time. */
     private long creationTime=new Date().getTime();
-    
+
     /** The accessed time. */
     private long accessedTime=new Date().getTime();
-    
+
     /** The count. */
     private static int count = 1;
-    
+
     /** The sessionid. */
     private int sessionid=count++;
-    
+
     /** The attributes. */
     private Map<String, Object> attributes = new HashMap<String, Object>();
-    
+
     /**
      * Instantiates a new test HTTP session.
      */
     public MockHttpSession() {
         // to replace synthetic accessor method
     }
-    
+
     /**
      * Instantiates a new test http session.
-     * 
+     *
      * @param creationTime
      *            the creation time
      * @param accessedTime
@@ -100,7 +100,7 @@ public class MockHttpSession implements HttpSession {
 
     /**
      * Gets the invalidated.
-     * 
+     *
      * @return the invalidated
      */
     public boolean getInvalidated() {
@@ -163,7 +163,7 @@ public class MockHttpSession implements HttpSession {
     public void invalidate() {
         invalidated = true;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -209,7 +209,7 @@ public class MockHttpSession implements HttpSession {
     public void setMaxInactiveInterval(int i) {
         // stub
     }
-    
+
     /**
      *
      * @param time
@@ -218,7 +218,7 @@ public class MockHttpSession implements HttpSession {
         this.accessedTime = time;
     }
 
-    
+
     /**
      *
      * @param time

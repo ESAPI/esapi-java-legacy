@@ -153,7 +153,7 @@ public class HashTrie<T> implements Trie<T>
             return new HashMap<Character,Node<T>>(prev);
         }
 
-        /** 
+        /**
          * Set the value for the key terminated at this node.
          * @param value The value for this key.
          */
@@ -225,7 +225,7 @@ public class HashTrie<T> implements Trie<T>
                 return null;
             return nextNode.get(key,pos+1);
         }
-            
+
         /**
          * Recursively lookup the longest key match.
          * @param key The key being looked up.
@@ -507,7 +507,7 @@ public class HashTrie<T> implements Trie<T>
     public Set<CharSequence> keySet()
     {
         Set<CharSequence> keys = new HashSet<CharSequence>(size);
-        
+
         if(root == null)
             return keys;
         return root.keySet(new StringBuilder(), keys);

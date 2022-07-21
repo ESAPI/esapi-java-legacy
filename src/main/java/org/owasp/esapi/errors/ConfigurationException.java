@@ -23,11 +23,11 @@ public class ConfigurationException extends RuntimeException {
     public ConfigurationException(String s) {
         super(s);
     }
-    
+
     public ConfigurationException(String s, Throwable cause) {
         super(s, cause);
     }
-    
+
     public ConfigurationException(Throwable cause) {
         super(cause);
     }

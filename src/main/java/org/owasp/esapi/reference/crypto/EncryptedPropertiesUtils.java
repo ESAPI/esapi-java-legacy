@@ -17,7 +17,7 @@ import org.owasp.esapi.EncryptedProperties;
  * <p>
  * Usage:<br/>
  * <code>
- *    java org.owasp.esapi.reference.crypto.EncryptedPropertiesUtils [--in file] [--out file] 
+ *    java org.owasp.esapi.reference.crypto.EncryptedPropertiesUtils [--in file] [--out file]
  *            [--in-encrypted true|false] [--verbose true|false]
  * </code>
  * <p>
@@ -208,5 +208,5 @@ public class EncryptedPropertiesUtils {
         }
         return null;
     }
-    
+
 }

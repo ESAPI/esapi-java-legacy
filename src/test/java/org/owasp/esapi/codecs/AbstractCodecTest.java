@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -44,7 +44,7 @@ public class AbstractCodecTest extends TestCase {
 
     /**
      * Instantiates a new access reference map test.
-     * 
+     *
      * @param testName
      *            the test name
      */
@@ -70,7 +70,7 @@ public class AbstractCodecTest extends TestCase {
 
     /**
      * Suite.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
@@ -134,10 +134,10 @@ public class AbstractCodecTest extends TestCase {
             assertEquals( "^<", windowsCodec.encode(EMPTY_CHAR_ARRAY, "<") );
     }
 
-    
+
     public void testHtmlEncodeChar()
     {
-        
+
             assertEquals( "&lt;", htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, (int) LESS_THAN) );
     }
 
@@ -148,7 +148,7 @@ public class AbstractCodecTest extends TestCase {
         String expected = "&#x100;";
         String result;
         //The new default for HTMLEntityCodec is ints/Integers.  Use Character/char at your own risk!
-        //Characters destroy non-BMP codepoints.  This Codec is now supposed surpass that. 
+        //Characters destroy non-BMP codepoints.  This Codec is now supposed surpass that.
         result = htmlCodec.encodeCharacter(EMPTY_CHAR_ARRAY, (int) in);
         // this should be escaped
         assertFalse(inStr.equals(result));
@@ -233,7 +233,7 @@ public class AbstractCodecTest extends TestCase {
             assertFalse(inStr.equals(result));
             assertEquals(expected,result);
     }
-        
+
     public void testVBScriptEncodeChar()
     {
             assertEquals( "chrw(60)", vbScriptCodec.encodeCharacter(EMPTY_CHAR_ARRAY, LESS_THAN) );
@@ -400,7 +400,7 @@ public class AbstractCodecTest extends TestCase {
             assertFalse(inStr.equals(result));
             assertEquals(expected,result);
     }
-    
+
     public void testHtmlDecodeDecimalEntities()
     {
             assertEquals( "test!", htmlCodec.decode("&#116;&#101;&#115;&#116;!") );
@@ -513,7 +513,7 @@ public class AbstractCodecTest extends TestCase {
     {
             assertEquals( "<", javaScriptCodec.decode("\\x3c") );
     }
-        
+
     public void testVBScriptDecode()
     {
             assertEquals( "<", vbScriptCodec.decode("\"<") );
@@ -573,7 +573,7 @@ public class AbstractCodecTest extends TestCase {
     {
             assertEquals( "<", windowsCodec.decode("^<") );
     }
-    
+
     public void testHtmlDecodeCharLessThan()
     {
         Integer value = htmlCodec.decodeCharacter(new PushBackSequenceImpl("&lt;"));
@@ -591,7 +591,7 @@ public class AbstractCodecTest extends TestCase {
     {
             assertEquals( LESS_THAN, javaScriptCodec.decodeCharacter(new PushbackString("\\x3c") ));
     }
-        
+
     public void testVBScriptDecodeChar()
     {
             assertEquals( LESS_THAN, vbScriptCodec.decodeCharacter(new PushbackString("\"<") ));

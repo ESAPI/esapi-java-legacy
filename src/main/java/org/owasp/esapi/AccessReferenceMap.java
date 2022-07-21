@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -40,7 +40,7 @@ import java.util.Set;
  * references, as opposed to simple integers makes it impossible for an attacker to
  * guess valid identifiers. So if per-user AccessReferenceMaps are used, then request
  * forgery (CSRF) attacks will also be prevented.
- * 
+ *
  * <pre>
  * Set fileSet = new HashSet();
  * fileSet.addAll(...); // add direct references (e.g. File objects)
@@ -55,18 +55,18 @@ import java.util.Set;
  * String indref = request.getParameter( &quot;file&quot; );
  * File file = (File)map.getDirectReference( indref );
  * </pre>
- * 
+ *
  * <P>
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @author Chris Schmidt (chrisisbeef@gmail.com)
  */
 public interface AccessReferenceMap<K> extends Serializable {
 
     /**
-     * Get an iterator through the direct object references. No guarantee is made as 
+     * Get an iterator through the direct object references. No guarantee is made as
      * to the order of items returned.
-     * 
+     *
      * @return the iterator
      */
     Iterator iterator();
@@ -76,11 +76,11 @@ public interface AccessReferenceMap<K> extends Serializable {
      * direct object reference. Developers should use this call when building
      * URL's, form fields, hidden fields, etc... to help protect their private
      * implementation information.
-     * 
+     *
      * @param directReference
      *         the direct reference
-     * 
-     * @return 
+     *
+     * @return
      *         the indirect reference
      */
     <T> K getIndirectReference(T directReference);
@@ -122,14 +122,14 @@ public interface AccessReferenceMap<K> extends Serializable {
     *     // ...
     * }
     * </pre>
-     * 
+     *
      * @param indirectReference
      *         the indirect reference
-     * 
-     * @return 
+     *
+     * @return
      *         the direct reference
-     * 
-     * @throws AccessControlException 
+     *
+     * @throws AccessControlException
      *         if no direct reference exists for the specified indirect reference
     * @throws ClassCastException
     *       if the implied type is not the same as the referenced object type
@@ -137,26 +137,26 @@ public interface AccessReferenceMap<K> extends Serializable {
     <T> T getDirectReference(K indirectReference) throws AccessControlException;
 
     /**
-     * Adds a direct reference to the AccessReferenceMap, then generates and returns 
+     * Adds a direct reference to the AccessReferenceMap, then generates and returns
      * an associated indirect reference.
-     *  
-     * @param direct 
+     *
+     * @param direct
      *         the direct reference
-     * 
-     * @return 
+     *
+     * @return
      *         the corresponding indirect reference
      */
     <T> K addDirectReference(T direct);
-    
+
     /**
      * Removes a direct reference and its associated indirect reference from the AccessReferenceMap.
-     * 
-     * @param direct 
+     *
+     * @param direct
      *         the direct reference to remove
-     * 
-     * @return 
+     *
+     * @return
      *         the corresponding indirect reference
-     * 
+     *
      * @throws AccessControlException
     *          if the reference does not exist.
      */
@@ -167,8 +167,8 @@ public interface AccessReferenceMap<K> extends Serializable {
      * any existing indirect references associated with items that are in the new list.
      * New indirect references could be generated every time, but that
      * might mess up anything that previously used an indirect reference, such
-     * as a URL parameter. 
-     * 
+     * as a URL parameter.
+     *
      * @param directReferences
      *         a Set of direct references to add
      */

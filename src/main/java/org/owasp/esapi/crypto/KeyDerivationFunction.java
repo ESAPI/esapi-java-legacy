@@ -1,6 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -60,7 +60,7 @@ public class KeyDerivationFunction {
     public  static final int  originalVersion  = 20110203;     // First version. Do not change. EVER!
     public  static final int  kdfVersion       = 20130830;   // Current version. Format: YYYYMMDD, max is 99991231.
     private static final long serialVersionUID = kdfVersion; // Format: YYYYMMDD
-    
+
     // Pseudo-random function algorithms suitable for NIST KDF in counter mode.
     // Note that HmacMD5 is intentionally omitted here!!!
     public enum PRF_ALGORITHMS {
@@ -81,17 +81,17 @@ public class KeyDerivationFunction {
         // Reserved for future use -- values 8 through 15
         //  Most likely these might be some other strong contenders that
         //  were are based on HMACs from the NIST SHA-3 finalists.
-        
+
         private final byte value;    // Value stored in serialized encrypted data to represent PRF
         private final short bits;
         private final String algName;
-        
+
         PRF_ALGORITHMS(int value, int bits, String algName) {
             this.value = (byte) value;
             this.bits  = (short) bits;
             this.algName = algName;
         }
-        
+
         public byte getValue() { return value; }
         public short getBits() { return bits; }
         public String getAlgName() { return algName; }
@@ -115,7 +115,7 @@ public class KeyDerivationFunction {
             throw new ExceptionInInitializerError("Versions of CipherTextSerializer and KeyDerivationFunction are not compatible.");
         }
     }
-    
+
     /**
      * Construct a {@code KeyDerivationFunction}.
      * @param prfAlg    Specifies a supported algorithm.
@@ -128,7 +128,7 @@ public class KeyDerivationFunction {
      * Construct a {@code KeyDerivationFunction} based on the
      * <b>ESAPI.property</b> property, {@code Encryptor.KDF.PRF}.
      */
-    public KeyDerivationFunction() {            
+    public KeyDerivationFunction() {
         String prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
         if ( ! KeyDerivationFunction.isValidPRF(prfName) ) {
             throw new ConfigurationException("Algorithm name " + prfName +
@@ -144,12 +144,12 @@ public class KeyDerivationFunction {
      * @return    The PRF algorithm name.
      */
     public String getPRFAlgName() {
-        return prfAlg_;        
+        return prfAlg_;
     }
-    
+
     /**
      * Package level method for use by {@code CipherText} class to get default
-     * 
+     *
      */
     static int getDefaultPRFSelection() {
         String prfName = ESAPI.securityConfiguration().getKDFPseudoRandomFunction();
@@ -161,7 +161,7 @@ public class KeyDerivationFunction {
         throw new ConfigurationException("Algorithm name " + prfName +
                 " not a valid algorithm name for property " + KDF_PRF_ALG);
     }
-    
+
     /**
      * Set version so backward compatibility can be supported. Used to set the
      * version to some previous version so that previously encrypted data can
@@ -184,8 +184,8 @@ public class KeyDerivationFunction {
     public int getVersion() {
         return version_;
     }
-    
-    
+
+
     // TODO: IMPORTANT NOTE: In a future release (hopefully starting in 2.3),
     // we will be using the 'context' to mix in some additional things. At a
     // minimum, we will be using the KDF version (version_) so that downgrade version
@@ -195,7 +195,7 @@ public class KeyDerivationFunction {
      * Set the 'context' as specified by NIST Special Publication 800-108. NIST
      * defines 'context' as "A binary string containing the information related
      * to the derived keying material. It may include identities of parties who
-     * are deriving and/or using the derived keying material and, optionally, a 
+     * are deriving and/or using the derived keying material and, optionally, a
      * once known by the parties who derive the keys." NIST SP 800-108 seems to
      * imply that while 'context' is recommended, that it is optional. In section
      * 7.6 of NIST 800-108, NIST uses "SHOULD" rather than "MUST":
@@ -215,7 +215,7 @@ public class KeyDerivationFunction {
      * 'context' data is not specified at all. Therefore, ESAPI 2.0's
      * reference implementation, {@code JavaEncryptor}, chooses not to use
      * 'context' at all.
-     * 
+     *
      * @param context    Optional binary string containing information related to
      *                     the derived keying material. By default (if this method
      *                     is never called), the empty string is used. May have any
@@ -227,7 +227,7 @@ public class KeyDerivationFunction {
         }
         context_ = context;
     }
-    
+
     /**
      * Return the optional 'context' that typically contains information
      * related to the keying material, such as the identities of the message
@@ -255,7 +255,7 @@ public class KeyDerivationFunction {
      * It is used by ESAPI's reference crypto implementation class {@code JavaEncryptor}
      * and might be useful for someone implementing their own replacement class, but
      * generally it is not something that is useful to application client code.
-     * 
+     *
      * @param keyDerivationKey  A key used as an input to a key derivation function
      *                          to derive other keys. This is the key that generally
      *                          is created using some key generation mechanism such as
@@ -275,7 +275,7 @@ public class KeyDerivationFunction {
      *                         be set to anything other than {@code null} or an empty string when called outside
      *                         of ESAPI's {@code JavaEncryptor} reference implementation (but you must consistent).
      * @return                The derived {@code SecretKey} to be used according
-     *                         to the specified purpose. 
+     *                         to the specified purpose.
      * @throws NoSuchAlgorithmException        The {@code keyDerivationKey} has an unsupported
      *                         encryption algorithm or no current JCE provider supports requested
      *                         Hmac algorithrm used for the PRF for key generation.
@@ -356,7 +356,7 @@ public class KeyDerivationFunction {
             throw new EncryptionException("Encryption failure (internal encoding error: UTF-8)",
                      "UTF-8 encoding is NOT supported as a standard byte encoding: " + e.getMessage(), e);
         }
-        
+
             // Note that keyDerivationKey is going to be some SecretKey like an AES or
             // DESede key, but not an HmacSHA1 key. That means it is not likely
             // going to be 20 bytes but something different. Experiments show
@@ -379,7 +379,7 @@ public class KeyDerivationFunction {
                     sk.getAlgorithm(), ex);
             throw ex;
         }
-        
+
         // Repeatedly call of PRF Hmac until we've collected enough bits
         // for the derived key. The first time through, we calculate the HmacSHA1
         // on the "purpose" string, but subsequent calculations are performed
@@ -408,14 +408,14 @@ public class KeyDerivationFunction {
             // document (Section 7.6) implies that Context is to be an
             // optional field (based on NIST's use of the word SHOULD
             // rather than MUST)
-            // 
+            //
             mac.update( ByteConversionUtil.fromInt( ctr++ ) );
             mac.update(label);
             mac.update((byte) '\0');
             mac.update(context); // This is problematic for us. See Jeff Walton's
                                   // analysis of ESAPI 2.0's KDF for details.
                                   // Maybe for 2.1, we'll see; 2.0 too close to GA.
-            
+
                 // According to the Javadoc for Mac.doFinal(byte[]),
                 // "A call to this method resets this Mac object to the state it was
                 // in when previously initialized via a call to init(Key) or
@@ -424,7 +424,7 @@ public class KeyDerivationFunction {
                 // desired, via new calls to update and doFinal." Therefore, we do
                 // not do an explicit reset().
             tmpKey = mac.doFinal( ByteConversionUtil.fromInt( keySize ) );
-            
+
             if ( tmpKey.length >= keySize ) {
                 len = keySize;
             } else {
@@ -435,7 +435,7 @@ public class KeyDerivationFunction {
             totalCopied += tmpKey.length;
             destPos += len;
         } while( totalCopied < keySize );
-        
+
         // Don't leave remnants of the partial key in memory. (Note: we could
         // not do this if tmpKey were declared in the do-while loop.
         // Of course, in reality, trying to stomp these bits out is probably not
@@ -451,7 +451,7 @@ public class KeyDerivationFunction {
             tmpKey[i] = '\0';
         }
         tmpKey = null;    // Make it immediately eligible for GC.
-        
+
         // Convert it back into a SecretKey of the appropriate type.
         return new SecretKeySpec(derivedKey, keyDerivationKey.getAlgorithm());
     }
@@ -479,16 +479,16 @@ public class KeyDerivationFunction {
         throw new IllegalArgumentException("Algorithm name " + prfAlgName +
                 " not a valid PRF algorithm name for the ESAPI KDF.");
     }
-    
+
     public static PRF_ALGORITHMS convertIntToPRF(int selection) {
         for (PRF_ALGORITHMS prf : PRF_ALGORITHMS.values()) {
             if ( prf.getValue() == selection ) {
                 return prf;
             }
         }
-        throw new IllegalArgumentException("No KDF PRF algorithm found for value name " + selection);        
+        throw new IllegalArgumentException("No KDF PRF algorithm found for value name " + selection);
     }
-    
+
     /**
      * Calculate the size of a key. The key size is given in bits, but we
      * can only allocate them by octets (i.e., bytes), so make sure we

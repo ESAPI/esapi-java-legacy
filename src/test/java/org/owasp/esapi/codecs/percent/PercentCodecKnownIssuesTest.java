@@ -26,7 +26,7 @@ import org.owasp.esapi.codecs.PercentCodec;
  * the author to move the test to an appropriate Test file and update the functionality to a working expectation.
  */
 public class PercentCodecKnownIssuesTest {
-    
+
     private PercentCodec codec = new PercentCodec();
 
     /**
@@ -39,18 +39,18 @@ public class PercentCodecKnownIssuesTest {
     public void failsUTF16Conversions() {
         //This should be 195
         int incorrectDecodeExpect = 196;
-        
+
         char[] encodeImmune = PERCENT_CODEC_IMMUNE;
         String decodedValue = ""+(char) 0x100;
         String input = "%C4%80";
 
         String actualDecodeChar = codec.decode(input);
         int actualChar = (int)actualDecodeChar.charAt(0);
-        
+
         assertEquals(incorrectDecodeExpect, actualChar);
-        
+
         //This works as expected.
         assertEquals(input, codec.encode(encodeImmune, decodedValue));
     }
-    
+
 }

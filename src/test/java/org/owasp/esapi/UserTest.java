@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -40,18 +40,18 @@ public class UserTest extends TestCase {
         TestSuite suite = new TestSuite(UserTest.class);
         return suite;
     }
-    
+
     public void testAllMethods() throws Exception {
         // create a user to test Anonymous
         String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         Authenticator instance = ESAPI.authenticator();
         String password = instance.generateStrongPassword();
-        
+
             // Probably could skip the assignment here, but maybe someone had
             // future plans to use this. So will just suppress warning for now.
         @SuppressWarnings("unused")
         User user = instance.createUser(accountName, password, password);
-        
+
         // test the rest of the Anonymous user
         try { User.ANONYMOUS.addRole(null); } catch( RuntimeException e ) {}
         try { User.ANONYMOUS.addRoles(null); } catch( RuntimeException e ) {}

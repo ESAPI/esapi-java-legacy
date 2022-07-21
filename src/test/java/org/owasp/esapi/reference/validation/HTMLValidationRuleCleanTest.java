@@ -199,7 +199,7 @@ public class HTMLValidationRuleCleanTest {
         assertTrue(errors.size() == 0);
 
     }
-    
+
     @Test
     public void testAntiSamyRegressionCDATAWithJavascriptURL() throws Exception {
         Validator instance = ESAPI.validator();
@@ -238,11 +238,11 @@ public class HTMLValidationRuleCleanTest {
 
     // This test was a DoS issue (CVE-2022-28366) within a transitive dependency (Neko-HtmlUnit) that AntiSamy uses.
     // It is fixed only in Neko-HtmlUnit 2.27 and later, but all those releases are only available for Java 8 and later.
-    // 
+    //
     // When the input here is called with AntiSamy.scan().getCleanHtml(), AntiSamy throws a ScanException.
     // (For details, see the AntiSamy JUnit test case "testMalformedPIScan" in
     // https://github.com/nahsra/antisamy/blob/main/src/test/java/org/owasp/validator/html/test/AntiSamyTest.java.)
-    // 
+    //
     @Test
     public void testNekoDOSWithAnHTMLComment() throws Exception {
         System.out.println("testNekoDOSWithAnHTMLComment");

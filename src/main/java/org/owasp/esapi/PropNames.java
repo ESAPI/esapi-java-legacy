@@ -67,7 +67,7 @@ public final class PropNames {
     public static final String CANONICALIZATION_CODECS                                                          = "Encoder.DefaultCodecList";
 
     public static final String DISABLE_INTRUSION_DETECTION                                                      = "IntrusionDetector.Disable";
-    
+
     public static final String MASTER_KEY                                                                       = "Encryptor.MasterKey";
     public static final String MASTER_SALT                                                                      = "Encryptor.MasterSalt";
     public static final String KEY_LENGTH                                                                       = "Encryptor.EncryptionKeyLength";

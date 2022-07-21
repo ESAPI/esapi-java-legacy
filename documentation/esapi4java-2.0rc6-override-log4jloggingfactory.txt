@@ -1,4 +1,4 @@
-This release includes critical changes to the ESAPI Log4JLogger that will now allow you to over-ride the user specific 
+This release includes critical changes to the ESAPI Log4JLogger that will now allow you to over-ride the user specific
 message using your own User or java.security.Principal implementation.
 
 There are a three critical steps that need to be taken to over-ride the ESAPI Log4JLogger:
@@ -23,8 +23,8 @@ ESAPI.Logger=com.yourcompany.logging.ExtendedLog4JFactory
 
 And you should be all set!
 
-PS: The original ESAPI Log4JLogging class used a secure random number as a replacement to logging the session ID. This allowed 
-us to tie log messages from the same session together, without exposing the actual session id in the log file. The code looks 
+PS: The original ESAPI Log4JLogging class used a secure random number as a replacement to logging the session ID. This allowed
+us to tie log messages from the same session together, without exposing the actual session id in the log file. The code looks
 like this, and you may wish to use it in your over-ridden version of getUserInfo.
 
 HttpServletRequest request = ESAPI.httpUtilities().getCurrentRequest();
@@ -40,7 +40,7 @@ if ( request != null ) {
     }
 }
 
-In fact, here is the entire original getUserInfo() implementation (that was tied to the ESAPI request and user object) – 
+In fact, here is the entire original getUserInfo() implementation (that was tied to the ESAPI request and user object) –
 you may wish to emulate some of this.
 
 public String getUserInfo() {
@@ -58,14 +58,14 @@ public String getUserInfo() {
             }
         }
     }
-    
+
     // log user information - username:session@ipaddr
-    User user = ESAPI.authenticator().getCurrentUser();            
+    User user = ESAPI.authenticator().getCurrentUser();
     String userInfo = "";
     //TODO - make type logging configurable
     if ( user != null) {
         userInfo += user.getAccountName()+ ":" + sid + "@"+ user.getLastHostAddress();
     }
-    
+
     return userInfo;
 }
