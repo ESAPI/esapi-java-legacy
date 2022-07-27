@@ -6,7 +6,7 @@
  * www.owasp.org/index.php/ESAPI</a>. Copyright (c) 2007 - The OWASP Foundation
  * The ESAPI is published by OWASP under the BSD license. You should read and
  * accept the LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect
  *         Security</a>
  * @created 2007
@@ -45,7 +45,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     /**
      * Construct a safe response that overrides the default response methods
      * with safer versions. Default is 'log' mode.
-     * 
+     *
      * @param response
      */
     public SecurityWrapperResponse(HttpServletResponse response) {
@@ -54,8 +54,8 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
 
     /**
      * Construct a safe response that overrides the default response methods
-     * with safer versions. 
-     * 
+     * with safer versions.
+     *
      * @param response
      * @param mode The mode for this wrapper. Legal modes are "log", "skip", "sanitize", "throw".
      */
@@ -149,7 +149,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     /**
      * Add a cookie to the response after ensuring that there are no encoded or
      * illegal characters in the name.
-     * @param name 
+     * @param name
      * @param date
      */
     public void addDateHeader(String name, long date) {
@@ -183,25 +183,25 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header NAME denied: HTTPHeaderName:"+ name, e);
         }
-        
+
         try {
             safeValue = ESAPI.validator().getValidInput("addHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to add invalid header VALUE denied: HTTPHeaderName:"+ name, e);
         }
-        
+
         boolean validName = StringUtilities.notNullOrEmpty(safeName, true);
         boolean validValue = StringUtilities.notNullOrEmpty(safeValue, true);
-        
+
         if (validName && validValue) {
             getHttpServletResponse().addHeader(safeName, safeValue);
         }
     }
-    
+
     /**
-     * Add a referer header to the response, after validating there are no illegal characters according to the 
-     * Validator.isValidURI() method, as well as ensuring there are no instances of mixed or double encoding 
-     * depending on how you have configured ESAPI defaults.  
+     * Add a referer header to the response, after validating there are no illegal characters according to the
+     * Validator.isValidURI() method, as well as ensuring there are no instances of mixed or double encoding
+     * depending on how you have configured ESAPI defaults.
      * @param uri
      */
     public void addReferer( String uri) {
@@ -213,14 +213,14 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         if(isValidURI) {
             safeValue = strippedValue;
         }
-        
+
         getHttpServletResponse().addHeader("referer", safeValue);
     }
 
     /**
      * Add an int header to the response after ensuring that there are no
      * encoded or illegal characters in the name and value. git
-     * @param name 
+     * @param name
      * @param value
      */
     public void addIntHeader(String name, int value) {
@@ -248,7 +248,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * Session ID to the URL if support for cookies is not detected. This
      * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
-     * 
+     *
      * @param url
      * @return original url
      * @deprecated in servlet spec 2.1. Use
@@ -265,7 +265,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * Session ID to the URL if support for cookies is not detected. This
      * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
-     * 
+     *
      * @param url
      * @return original url
      */
@@ -279,7 +279,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * Session ID to the URL if support for cookies is not detected. This
      * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
-     * 
+     *
      * @param url
      * @return original url
      * @deprecated in servlet spec 2.1. Use
@@ -296,7 +296,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * Session ID to the URL if support for cookies is not detected. This
      * exposes the Session ID credential in bookmarks, referer headers, server
      * logs, and more.
-     * 
+     *
      * @param url
      * @return original url
      */
@@ -387,7 +387,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     /**
      * Override the error code with a 200 in order to confound attackers using
      * automated scanners.  Overwriting is controlled by {@code HttpUtilities.OverwriteStatusCodes}
-     * in ESAPI.properties. 
+     * in ESAPI.properties.
      * @param sc -- http status code
      * @throws IOException
      */
@@ -404,7 +404,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * Override the error code with a 200 in order to confound attackers using
      * automated scanners. The message is canonicalized and filtered for
      * dangerous characters.  Overwriting is controlled by {@code HttpUtilities.OverwriteStatusCodes}
-     * in ESAPI.properties.  
+     * in ESAPI.properties.
      * @param sc -- http status code
      * @param msg -- error message
      * @throws IOException
@@ -425,7 +425,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * be modified by attackers, so do not rely information contained within
      * redirect requests, and do not include sensitive information in a
      * redirect.
-     * @param location 
+     * @param location
      * @throws IOException
      */
     public void sendRedirect(String location) throws IOException {
@@ -472,7 +472,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     /**
      * Add a date header to the response after ensuring that there are no
      * encoded or illegal characters in the name.
-     * @param name 
+     * @param name
      * @param date
      */
     public void setDateHeader(String name, long date) {
@@ -491,7 +491,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * linear white space with a single SP before interpreting the field value
      * or forwarding the message downstream."
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
-     * @param name 
+     * @param name
      * @param value
      */
     public void setHeader(String name, String value) {
@@ -505,16 +505,16 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header NAME denied: HTTPHeaderName:"+ name, e);
         }
-        
+
         try {
             safeValue = ESAPI.validator().getValidInput("setHeader", strippedValue, "HTTPHeaderValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header VALUE denied: HTTPHeaderName:"+ name, e);
         }
-        
+
         boolean validName = StringUtilities.notNullOrEmpty(safeName, true);
         boolean validValue = StringUtilities.notNullOrEmpty(safeValue, true);
-        
+
         if (validName && validValue) {
             getHttpServletResponse().setHeader(safeName, safeValue);
         }
@@ -523,7 +523,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
     /**
      * Add an int header to the response after ensuring that there are no
      * encoded or illegal characters in the name.
-     * @param name 
+     * @param name
      * @param value
      */
     public void setIntHeader(String name, int value) {
@@ -557,14 +557,14 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         }else{
             getHttpServletResponse().setStatus(sc);
         }
-        
+
     }
 
     /**
      * Override the status code with a 200 in order to confound attackers using
      * automated scanners. The message is canonicalized and filtered for
      * dangerous characters.
-     * @param sc 
+     * @param sc
      * @param sm
      * @deprecated In Servlet spec 2.1.
      */

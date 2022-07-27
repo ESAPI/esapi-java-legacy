@@ -24,7 +24,7 @@ import org.owasp.esapi.codecs.abstraction.AbstractCodecStringTest;
 
 /**
  *  Codec validation focused on the PercentCodec String-based api.
- *  
+ *
  */
 public class PercentCodecStringTest extends AbstractCodecStringTest {
     public static final char[] PERCENT_CODEC_IMMUNE;
@@ -32,7 +32,7 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
     static {
         /*
          * The percent codec contains a unique immune character set which include letters and numbers that will not be transformed.
-         * 
+         *
          * It is being replicated here to allow the test to reasonably expect the correct state back.
          */
         List<Character> immune = new ArrayList<>();
@@ -45,9 +45,9 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
         for (int index = 65 ; index < 91; index ++) {
             Character capsChar = (char)index;
             immune.add(capsChar);
-            immune.add(Character.toLowerCase(capsChar));            
+            immune.add(Character.toLowerCase(capsChar));
         }
-        
+
         PERCENT_CODEC_IMMUNE = new char[immune.size()];
         for (int index = 0; index < immune.size(); index++) {
             PERCENT_CODEC_IMMUNE[index] = immune.get(index).charValue();
@@ -58,7 +58,7 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
     public static Collection<Object[]> buildTests() {
         Collection<Object[]> tests = new ArrayList<>();
         List<CodecStringTestTuple> tuples = new ArrayList<>();
-        
+
         tuples.add(newTuple("%3C", "<"));
         tuples.add(newTuple("%00", Character.MIN_VALUE));
         tuples.add(newTuple("%3D", '='));
@@ -67,7 +67,7 @@ public class PercentCodecStringTest extends AbstractCodecStringTest {
         for (char c : PERCENT_CODEC_IMMUNE) {
             tuples.add(newTuple(Character.toString(c), c));
         }
-        
+
         for (CodecStringTestTuple tuple : tuples) {
             tests.add(new Object[] { tuple });
         }

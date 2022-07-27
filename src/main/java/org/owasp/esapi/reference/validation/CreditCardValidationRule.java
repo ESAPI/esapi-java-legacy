@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -26,7 +26,7 @@ import org.owasp.esapi.errors.ValidationException;
 /**
  * A validator performs syntax and possibly semantic validation of Credit Card
  * String from an untrusted source.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -34,14 +34,14 @@ import org.owasp.esapi.errors.ValidationException;
  */
 public class CreditCardValidationRule extends BaseValidationRule {
     private int maxCardLength = 19;
-    
+
     /**
      * Key used to pull out encoder in configuration.  Prefixed with "Validator."
      */
     protected static final String CREDIT_CARD_VALIDATOR_KEY = "CreditCard";
-    
-    private StringValidationRule ccrule = null; 
-    
+
+    private StringValidationRule ccrule = null;
+
     /**
      * Creates a CreditCardValidator using the rule found in security configuration
      * @param typeName a description of the type of card being validated
@@ -51,7 +51,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
         super( typeName, encoder );
         ccrule = readDefaultCreditCardRule();
     }
-    
+
     public CreditCardValidationRule( String typeName, Encoder encoder, StringValidationRule validationRule ) {
         super( typeName, encoder );
         ccrule = validationRule;
@@ -64,7 +64,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
         ccr.setAllowNull( false );
         return ccr;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -76,14 +76,14 @@ public class CreditCardValidationRule extends BaseValidationRule {
             }
             throw new ValidationException( context + ": Input credit card required", "Input credit card required: context=" + context + ", input=" + input, context );
         }
-        
+
         String canonical = ccrule.getValid( context, input );
 
         if( ! validCreditCardFormat(canonical)) {
             throw new ValidationException( context + ": Invalid credit card input", "Invalid credit card input: context=" + context, context );
         }
-        
-        return canonical;        
+
+        return canonical;
     }
 
     /**
@@ -93,7 +93,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
      * @return true if the ccNum passes the Luhn Algorithm
      */
     protected boolean validCreditCardFormat(String ccNum) {
-        
+
         StringBuilder digitsOnly = new StringBuilder();
         char c;
         for (int i = 0; i < ccNum.length(); i++) {
@@ -102,12 +102,12 @@ public class CreditCardValidationRule extends BaseValidationRule {
                 digitsOnly.append(c);
             }
         }
-    
+
         int sum = 0;
         int digit = 0;
         int addend = 0;
         boolean timesTwo = false;
-    
+
         for (int i = digitsOnly.length() - 1; i >= 0; i--) {
             // guaranteed to be an int
             digit = Integer.valueOf(digitsOnly.substring(i, i + 1));
@@ -123,10 +123,10 @@ public class CreditCardValidationRule extends BaseValidationRule {
             timesTwo = !timesTwo;
         }
 
-        return sum % 10 == 0; 
-    
+        return sum % 10 == 0;
+
     }
-    
+
     /**
      * {@inheritDoc}
      */

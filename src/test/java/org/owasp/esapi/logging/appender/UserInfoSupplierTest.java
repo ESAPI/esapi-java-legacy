@@ -31,65 +31,65 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @PowerMockIgnore("javax.security.*") //Required since User extends javax.security.Principal
 public class UserInfoSupplierTest {
     private static final String ESAPI_SESSION_ATTR = "ESAPI_SESSION";
-    
+
     @Rule
     public TestName testName = new TestName();
-    
+
     private Authenticator mockAuth;
     private User mockUser;
-    
+
     @Before
     public void before() throws Exception {
-        mockAuth =mock(Authenticator.class); 
+        mockAuth =mock(Authenticator.class);
         mockUser =mock(User.class);
-        
+
         mockStatic(ESAPI.class);
         when(ESAPI.class, "authenticator").thenReturn(mockAuth);
-        
+
         when(mockUser.getAccountName()).thenReturn(testName.getMethodName() + "-USER");
-        
-         
+
+
         when(mockAuth.getCurrentUser()).thenReturn(mockUser);
     }
-    
+
     @Test
     public void testHappyPath() throws Exception {
         UserInfoSupplier uis = new UserInfoSupplier();
         uis.setLogUserInfo(true);
         String result = uis.get();
-        
+
         assertEquals(testName.getMethodName() + "-USER", result);
-        
+
         verify(mockAuth,times(1)).getCurrentUser();
         verify(mockUser,times(1)).getAccountName();
-        
+
         verifyNoMoreInteractions(mockAuth, mockUser);
     }
-    
+
     @Test
     public void testLogUserOff() {
         UserInfoSupplier uis = new UserInfoSupplier();
         uis.setLogUserInfo(false);
         String result = uis.get();
-        
+
         assertTrue(result.isEmpty());
         verify(mockAuth,times(1)).getCurrentUser();
-        
+
         verifyNoMoreInteractions(mockAuth, mockUser);
     }
-    
+
     @Test
     public void testLogUserNull() {
         when(mockAuth.getCurrentUser()).thenReturn(null);
         UserInfoSupplier uis = new UserInfoSupplier();
         uis.setLogUserInfo(true);
         String result = uis.get();
-        
+
         assertEquals("#ANONYMOUS#", result);
-        
+
         verify(mockAuth,times(1)).getCurrentUser();
-        
+
         verifyNoMoreInteractions(mockAuth,  mockUser);
     }
-    
+
 }

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright &copy; 2010 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and
  * accept the LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @created 2010
  */
 package org.owasp.esapi.crypto;
@@ -79,7 +79,7 @@ import org.owasp.esapi.errors.ValidationException;
  * is, the value is not checked, so beware! When rendering these values, output
  * encoding may be required to prevent XSS. Use ESAPI's {@code Encoder} for that.
  * <p>
- * This entire semicolon-separated string is then encrypted via one of the 
+ * This entire semicolon-separated string is then encrypted via one of the
  * {@code Encryptor.encrypt()} methods and then base64-encoded, serialized
  * IV + ciphertext + MAC representation as determined by
  * {@code CipherTextasPortableSerializedByteArray()} is used as the
@@ -100,17 +100,17 @@ import org.owasp.esapi.errors.ValidationException;
 public class CryptoToken {
     /** Represents an anonymous user. */
     public static final String ANONYMOUS_USER = "<anonymous>";
-    
+
     // Default expiration time
     private static final long DEFAULT_EXP_TIME = 5 * 60 * 1000;  // 5 min == 300 milliseconds
     private static final String DELIM = ";";                     // field delimiter
     private static final char DELIM_CHAR = ';';                  // field delim as a char
     private static final char QUOTE_CHAR = '\\';                 // char used to quote delimiters, '=' and itself.
-    
+
         // OPEN ISSUE: Should we make these 2 regex's properties in ESAPI.properties???
     private static final String ATTR_NAME_REGEX = "[A-Za-z0-9_.-]+"; // One or more alphanumeric, underscore, periods, or hyphens.
     private static final String USERNAME_REGEX = "[a-z][a-z0-9_.@-]*";
-    
+
     private static Logger logger = ESAPI.getLogger("CryptoToken");
 
     private String username = ANONYMOUS_USER;        // Default user name if not set. Always lower case.
@@ -121,10 +121,10 @@ public class CryptoToken {
     private transient SecretKey secretKey = null;
     private Pattern attrNameRegex = Pattern.compile(ATTR_NAME_REGEX);
     private Pattern userNameRegex = Pattern.compile(USERNAME_REGEX);
-    
+
     /**
      * Create a cryptographic token using default secret key from the
-     * <b>ESAPI.properties</b> property <b>Encryptor.MasterKey</b>. 
+     * <b>ESAPI.properties</b> property <b>Encryptor.MasterKey</b>.
      */
     public CryptoToken() {
         secretKey = getDefaultSecretKey(
@@ -137,7 +137,7 @@ public class CryptoToken {
     // Create using specified SecretKey
     /**
      * Create a cryptographic token using specified {@code SecretKey}.
-     * 
+     *
      * @param skey  The specified {@code SecretKey} to use to encrypt the token.
      */
     public CryptoToken(SecretKey skey) {
@@ -149,7 +149,7 @@ public class CryptoToken {
         expirationTime = now + DEFAULT_EXP_TIME;
     }
 
-    /** 
+    /**
      * Create using previously encrypted token encrypted with default secret
      * key from <b>ESAPI.properties</b>.
      * @param token A previously encrypted token returned by one of the
@@ -180,10 +180,10 @@ public class CryptoToken {
         }
     }
 
-    /** 
+    /**
      * Create cryptographic token using previously encrypted token that was
      * encrypted with specified secret key.
-     * 
+     *
      * @param token A previously encrypted token returned by one of the
      *              {@code getToken()} or {@code updateToken()} methods.
      * @throws EncryptionException  Thrown if they are any problems while decrypting
@@ -227,7 +227,7 @@ public class CryptoToken {
     public String getUserAccountName() {
         return ( (username != null) ? username : ANONYMOUS_USER );
     }
-    
+
     /**
      * Set the user account name associated with this cryptographic token
      * object. The user account name is converted to lower case.
@@ -243,10 +243,10 @@ public class CryptoToken {
         if ( userAccountName == null ) {
             throw new IllegalArgumentException("User account name may not be null.");
         }
-        
+
         // Converting to lower case first allows a simpler regex.
         String userAcct = userAccountName.toLowerCase();
-        
+
         // Check to make sure that attribute name is valid as per our regex.
         Matcher userNameChecker = userNameRegex.matcher(userAcct);
         if ( userNameChecker.matches() ) {
@@ -265,7 +265,7 @@ public class CryptoToken {
     public boolean isExpired() {
         return System.currentTimeMillis() > expirationTime;
     }
-    
+
     /**
      * Set expiration time to expire in 'interval' seconds (NOT milliseconds).
      * @param intervalSecs  Number of seconds in the future from current date/time
@@ -274,7 +274,7 @@ public class CryptoToken {
     public void setExpiration(int intervalSecs) throws IllegalArgumentException
     {
         int intervalMillis = intervalSecs * 1000;   // Need to convert secs to millisec.
-        
+
         // Don't want to use assertion here, because if they are disabled,
         // this would result in setting the expiration time prior to the
         // current time, hence it would already be expired.
@@ -288,7 +288,7 @@ public class CryptoToken {
         preAdd(now, intervalMillis);
         expirationTime = now + intervalMillis;
     }
-    
+
     /**
      * Set expiration time for a specific date/time.
      * @param expirationDate    The date/time at which the token will fail. Must
@@ -304,10 +304,10 @@ public class CryptoToken {
         long expTime = expirationDate.getTime();
         if ( expTime <= curTime ) {
             throw new IllegalArgumentException("Expiration date must be after current date/time.");
-        }        
+        }
         expirationTime = expTime;
     }
-    
+
     /**
      * Return the expiration time in milliseconds since epoch time (midnight,
      * January 1, 1970 UTC).
@@ -320,7 +320,7 @@ public class CryptoToken {
         assert expirationTime > 0L : "Programming error: Expiration time <= 0";
         return expirationTime;
     }
-    
+
     /**
      * Return the expiration time as a {@code Date}.
      * @return The {@code Date} object representing the expiration time.
@@ -344,7 +344,7 @@ public class CryptoToken {
         }
         if ( value == null ) {
             throw new ValidationException("Null attribute VALUE encountered for attr name " + name,
-                                          "Attribute VALUE may not be null; attr name: " + name);            
+                                          "Attribute VALUE may not be null; attr name: " + name);
         }
         // NOTE: OTOH, it *is* VALID if the _value_ is empty! Null values cause too much trouble
         // to make it worth the effort of getting it to work consistently.
@@ -359,12 +359,12 @@ public class CryptoToken {
                                           ATTR_NAME_REGEX);
         }
     }
-    
+
     /**
      * Add the specified collection of attributes to the current attributes.
      * If there are duplicate attributes specified, they will replace any
      * existing ones.
-     * 
+     *
      * @param attrs Name/value pairs of attributes to add or replace the existing
      *              attributes. Map must be non-null, but may be empty.
      * @throws ValidationException Thrown if one of the keys in the specified
@@ -387,7 +387,7 @@ public class CryptoToken {
         }
         return;
     }
-    
+
     /**
      * Retrieve the attribute with the specified name.
      * @param name  The attribute name.
@@ -397,13 +397,13 @@ public class CryptoToken {
     public String getAttribute(String name) {
         return attributes.get(name);
     }
-    
+
     /**
      * Retrieve a {@code Map} that is a clone of all the attributes. A <i>copy</i>
      * is returned so that the attributes in {@code CrytpToken} are unaffected
      * by alterations made the returned {@code Map}. (Otherwise, multi-threaded code
      * could get trick.
-     * 
+     *
      * @return  A {@code Map} of all the attributes.
      * @see #getAttribute(String)
      */
@@ -412,7 +412,7 @@ public class CryptoToken {
         // Unfortunately, this requires a cast, which requires us to supress warnings.
         return (Map<String, String>) attributes.clone();
     }
-    
+
     /**
      * Removes all the attributes (if any) associated with this token. Note
      * that this does not clear / reset the user account name or expiration time.
@@ -440,7 +440,7 @@ public class CryptoToken {
      *      SecretKey aliceSecretKey = ...  // Shared with Alice
      *      SecretKey bobSecretKey = ...;   // Shared with Carol
      *      CryptoToken cryptoToken = new CryptoToken(aliceSecretKey, tokenFromAlice);
-     *      
+     *
      *      // Re-encrypt for Carol using my (Bob's) key...
      *      String tokenForCarol = cryptoToken.getToken(bobSecretKey);
      *      // send tokenForCarol to Carol ...
@@ -466,12 +466,12 @@ public class CryptoToken {
     public String getToken(SecretKey skey) throws EncryptionException {
         return createEncryptedToken(skey);
     }
-    
+
     /**
      * Update the (current) expiration time by adding the specified number of
      * seconds to it and then re-encrypting with the current {@code SecretKey}
      * that was used to construct this object.
-     * 
+     *
      * @param additionalSecs    The additional number of seconds to add to the
      *                          current expiration time. This number must be
      *                          &gt;= 0 or otherwise an {@code IllegalArgumentException}
@@ -493,7 +493,7 @@ public class CryptoToken {
         if ( additionalSecs < 0) {
             throw new IllegalArgumentException("additionalSecs argument must be >= 0.");
         }
-        
+
         // Avoid integer overflow. This could happen if one first calls
         // setExpiration(Date) with a date far into the future. We want
         // to avoid overflows as they might lead to security vulnerabilities.
@@ -503,14 +503,14 @@ public class CryptoToken {
             //       'long'. Could convert to Date first, and use
             //       setExpiration(Date) but that hardly seems worth the trouble.
         expirationTime = curExpTime + (additionalSecs * 1000);
-        
+
         if ( isExpired() ) {
             // Too bad there is no ProcrastinationException ;-)
             expirationTime = curExpTime;    // Restore the original value (which still may
                                             // be expired.
             throw new ValidationException("Token timed out.",
                     "Cryptographic token not increased to sufficient value to prevent timeout.");
-            
+
         }
             // Don't change anything else (user acct name, attributes, skey, etc.)
         return getToken();
@@ -519,14 +519,14 @@ public class CryptoToken {
     /**
      * Return the new encrypted token as a base64-encoded string, encrypted with
      * the specified {@code SecretKey} with which this object was constructed.
-     * 
+     *
      * @return The newly encrypted token.
      * @see #getToken(SecretKey)
      */
     public String getToken() throws EncryptionException {
         return createEncryptedToken(secretKey);
     }
-   
+
     // Create the actual encrypted token based on the specified SecretKey.
     // This method will ensure that the decrypted token always ends with an
     // unquoted delimiter.
@@ -537,7 +537,7 @@ public class CryptoToken {
         //          If so, then updateToken() should also be revisited.
         sb.append( getExpiration() ).append( DELIM );
         sb.append( getQuotedAttributes() );
-        
+
         Encryptor encryptor = ESAPI.encryptor();
         CipherText ct = encryptor.encrypt(skey, new PlainText( sb.toString() ) );
         String b64 =
@@ -545,7 +545,7 @@ public class CryptoToken {
                                             false);
         return b64;
     }
-    
+
     // Return a string of all the attributes, properly quoted. This is used in
     // creating the encrypted token. Note that this method ensures that the
     // quoted attribute string always ends with an (quoted) delimiter.
@@ -563,7 +563,7 @@ public class CryptoToken {
         }
         return sb.toString();
     }
-    
+
     // Do NOT define a toString() method as there may be sensitive
     // information contained in the attribute names. If we absolutely
     // need this, then only return the username and expiration time, and
@@ -572,8 +572,8 @@ public class CryptoToken {
     /*
      * public String toString() { return null; }
      */
-    
-    
+
+
     // Quote any special characters in value.
     private static String quoteAttributeValue(String value) {
         if ( value == null ) {
@@ -592,7 +592,7 @@ public class CryptoToken {
         }
         return sb.toString();
     }
-    
+
     // Parse the possibly quoted value and return the unquoted value.
     private static String parseQuotedValue(String quotedValue) {
         StringBuilder sb = new StringBuilder();
@@ -608,7 +608,7 @@ public class CryptoToken {
         }
         return sb.toString();
     }
-    
+
     /*
      * Decrypt the encrypted token and parse it into the individual components.
      * The string should always end with a semicolon (;) even when there are
@@ -682,9 +682,9 @@ public class CryptoToken {
                 fields.add( record );
                 fieldNo++;
                 prevPos = curPos;
-            } 
+            }
         }
-        
+
         Object[] objArray = fields.toArray();
         if ( fieldNo != objArray.length ) {
             String exm = "Programming error???: Mismatch of delimited field count.";
@@ -698,7 +698,7 @@ public class CryptoToken {
         username = ((String)(objArray[0])).toLowerCase();
         String expTime = (String)objArray[1];
         expirationTime = Long.parseLong(expTime);
-        
+
         for( int i = 2; i < objArray.length; i++ ) {
             String nvpair = (String)objArray[i];
             int equalsAt = nvpair.indexOf("=");
@@ -726,7 +726,7 @@ public class CryptoToken {
         }
         return;
     }
-    
+
     private SecretKey getDefaultSecretKey(String encryptAlgorithm) {
         if ( encryptAlgorithm == null ) {
             throw new IllegalArgumentException("Encryption algorithm cannot be null");
@@ -745,7 +745,7 @@ public class CryptoToken {
         // decryption.
         return new SecretKeySpec(skey, encryptAlgorithm );
     }
-    
+
     // Check precondition to see if addition of two operands will result in
     // arithmetic overflow. Note that the operands are of two different
     // integral types. I.e., check to see if:

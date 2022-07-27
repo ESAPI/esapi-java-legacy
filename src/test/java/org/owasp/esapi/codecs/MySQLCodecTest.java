@@ -17,7 +17,7 @@ import org.powermock.reflect.Whitebox;
 /**
  * Tests to show {@link MySQLCodec} with {@link Mode#ANSI}
  * comply with the OWASP Escaping recommendations
- * 
+ *
  * https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet#MySQL_Escaping
  *
  */
@@ -65,7 +65,7 @@ public class MySQLCodecTest {
     /**
      * ANSI
      * Test showing that for characters up to 256, the only encoded value is the single tick.
-     * 
+     *
      * when the single tick is encoded, it is updated to be double tick.  All other characters remain unchanged.
      */
     @Test
@@ -93,7 +93,7 @@ public class MySQLCodecTest {
     public void testAnsiEncodeWithImmuneSet() {
         //The only value that is encoded is single tick. The immunity list does not impact normal capability in ANSI mode
         char[] immuneChars = new char[] {15, 91,150, 255};
-        
+
         for (char refChar : immuneChars) {
             int ref = refChar;
             String charAsString = "" + refChar;
@@ -165,12 +165,12 @@ public class MySQLCodecTest {
 
         }
     }
-    
+
     @Test
     public void testStandardEncodeWithImmuneSet() {
         //These values normally fall under the encodeNonAlphaNumeric test content.
         char[] immuneChars = new char[] {15, 91,150, 255};
-        
+
         for (char refChar : immuneChars) {
             int ref = refChar;
             String charAsString = "" + refChar;
@@ -199,7 +199,7 @@ public class MySQLCodecTest {
             Matcher<String> encodeExpect = new IsEqual<>(expected);
             Matcher<String> decodeExpect = new IsEqual<>(charAsString);
             errorCollector.checkThat(encodeMsg, uitMySqlStandard.encode(EMPTY_CHAR_ARRAY, charAsString), encodeExpect);
-            errorCollector.checkThat(decodeMsg, uitMySqlStandard.decode(expected), decodeExpect);   
+            errorCollector.checkThat(decodeMsg, uitMySqlStandard.decode(expected), decodeExpect);
         }
     }
 
@@ -210,16 +210,16 @@ public class MySQLCodecTest {
     public void testAnsiDecodePushbackSequenceNullFirstElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn(null);
-        
+
         Character decChar = uitAnsi.decodeCharacter(mockPushback);
         Assert.assertNull(decChar);
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(1)).next();
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
-        
+
     }
-    
+
     /**
      * If the first character is a single tick, and the second character is null, null is expected
      */
@@ -227,16 +227,16 @@ public class MySQLCodecTest {
     public void testAnsiDecodePushbackSequenceNullSecondElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn(null);
-        
+
         Character decChar = uitAnsi.decodeCharacter(mockPushback);
         Assert.assertNull(decChar);
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(2)).next();
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
-        
+
     }
-    
+
     /**
      * If the first character is a single tick and the second character is NOT a single tick (escaped tick), then null is expected.
      */
@@ -244,14 +244,14 @@ public class MySQLCodecTest {
     public void testAnsiDecodePushbackSequenceNonTickSecondElmentReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn('A');
-        
+
         Character decChar = uitAnsi.decodeCharacter(mockPushback);
         Assert.assertNull(decChar);
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(2)).next();
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
-        
+
     }
     /**
      * If two single ticks are read in sequence, a single tick is expected.
@@ -260,14 +260,14 @@ public class MySQLCodecTest {
     public void testAnsiDecodePushbackSequenceReturnsSingleTick() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('\'').thenReturn('\'');
-        
+
         Character decChar = uitAnsi.decodeCharacter(mockPushback);
         Assert.assertEquals('\'', decChar.charValue());
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(2)).next();
         Mockito.verify(mockPushback, Mockito.times(0)).reset();
-        
+
     }
 
     /**
@@ -277,16 +277,16 @@ public class MySQLCodecTest {
     public void testAnsiDecodePushbackSequenceNonTickFirstElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('A');
-        
+
         Character decChar = uitAnsi.decodeCharacter(mockPushback);
         Assert.assertNull(decChar);
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(1)).next();
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
-        
+
     }
-    
+
     /**
      * If the first character is null, null is expected
      */
@@ -294,14 +294,14 @@ public class MySQLCodecTest {
     public void testStandardDecodePushbackSequenceNullFirstElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn(null);
-        
+
         Character decChar = uitMySqlStandard.decodeCharacter(mockPushback);
         Assert.assertNull(decChar);
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(1)).next();
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
-        
+
     }
     /**
      * If the first character is a backslash, and the second character is null, null is expected
@@ -310,37 +310,37 @@ public class MySQLCodecTest {
     public void testStandardDecodePushbackSequenceNullSecondElementReturnsNull() {
         PushbackSequence<Character> mockPushback = Mockito.mock(PushbackSequence.class);
         Mockito.when(mockPushback.next()).thenReturn('\\').thenReturn(null);
-        
+
         Character decChar = uitMySqlStandard.decodeCharacter(mockPushback);
         Assert.assertNull(decChar);
-        
+
         Mockito.verify(mockPushback, Mockito.times(1)).mark();
         Mockito.verify(mockPushback, Mockito.times(2)).next();
         Mockito.verify(mockPushback, Mockito.times(1)).reset();
-        
+
     }
-    
+
     @Test
     public void testCreateAnsiByInt() {
         MySQLCodec codec = new MySQLCodec(MySQLCodec.ANSI_MODE);
         Object configMode = Whitebox.getInternalState(codec, "mode");
         Assert.assertEquals(Mode.ANSI, configMode);
     }
-    
+
     @Test
     public void testCreateStandardByInt() {
         MySQLCodec codec = new MySQLCodec(MySQLCodec.MYSQL_MODE);
         Object configMode = Whitebox.getInternalState(codec, "mode");
         Assert.assertEquals(Mode.STANDARD, configMode);
     }
-    
+
     @Test
     public void testCreateUnsupportedModeByInt() {
         exEx.expect(IllegalArgumentException.class);
         String message = String.format("No Mode for %s. Valid references are MySQLStandard: %s or ANSI: %s", Integer.MIN_VALUE, MySQLCodec.MYSQL_MODE, MySQLCodec.ANSI_MODE);
         exEx.expectMessage(message);
         new MySQLCodec(Integer.MIN_VALUE);
-       
+
     }
     private static class InclusiveRangePair {
         private final int upperInclusive;

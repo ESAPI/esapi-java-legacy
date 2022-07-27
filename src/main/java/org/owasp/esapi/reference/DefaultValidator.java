@@ -88,7 +88,7 @@ import org.owasp.esapi.reference.validation.StringValidationRule;
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jim Manico (jim@manico.net) <a href="http://www.manico.net">Manico.net</a>
- * @author Matt Seil (mseil .at. acm.org) 
+ * @author Matt Seil (mseil .at. acm.org)
  *
  * @since June 1, 2007
  * @see org.owasp.esapi.Validator
@@ -349,14 +349,14 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      */
     @Override
     public Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException {
-        
+
         ValidationErrorList vel = new ValidationErrorList();
         Date validDate =  getValidDate(context, input, format, allowNull, vel);
-        
+
         if (vel.isEmpty()) {
             return validDate;
         }
-        
+
         throw vel.errors().get(0);
     }
 
@@ -1354,7 +1354,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     private final boolean isEmpty(char[] input) {
         return (input==null || input.length == 0);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1367,12 +1367,12 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
             URI compliantURI = null == input ? new URI("") :  this.getRfcCompliantURI(input);
             if(null != compliantURI && input != null){
                 String canonicalizedURI = encoder.getCanonicalizedURI(compliantURI);
-                //if getCanonicalizedURI doesn't throw an IntrusionException, then the URI contains no mixed or 
-                //double-encoding attacks.  
+                //if getCanonicalizedURI doesn't throw an IntrusionException, then the URI contains no mixed or
+                //double-encoding attacks.
                 logger.debug(Logger.SECURITY_SUCCESS, "We did not detect any mixed or multiple encoding in the uri:[" + input + "]");
                 Validator v = ESAPI.validator();
-                //This part will use the regex from validation.properties.  This regex should be super-simple, and 
-                //used mainly to restrict certain parts of a URL.  
+                //This part will use the regex from validation.properties.  This regex should be super-simple, and
+                //used mainly to restrict certain parts of a URL.
                 Pattern p = ESAPI.securityConfiguration().getValidationPattern( "URL" );
                 if(p != null){
                     //We're doing this instead of using the normal validator API, because it will canonicalize the input again
@@ -1387,18 +1387,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
                     isValid = true;
                 }
             }
-            
+
         }catch (IntrusionException e){
             logger.error(Logger.SECURITY_FAILURE, e.getMessage());
             isValid = false;
         } catch (URISyntaxException e) {
             logger.error(Logger.EVENT_FAILURE, e.getMessage());
         }
-        
-        
+
+
         return isValid;
     }
-    
+
     /**
      * {@inheritDoc}
      */

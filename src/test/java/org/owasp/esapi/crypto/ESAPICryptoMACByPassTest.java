@@ -1,7 +1,7 @@
 /*
  * OWASP Enterprise Security API (ESAPI) - Google issue # 306.
  * (i.e., GitHub issue 312).
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -10,14 +10,14 @@
  * ESAPI is published by OWASP under the new BSD license. You should read
  * and accept the LICENSE before you use, modify, and/or redistribute this
  * software.
- * 
+ *
  * Full credit for this JUnit to illustrate what is now Google Issue # 306
  * goes to Philippe Arteau <philippe.arteau@gmail.com>. Originally
  * published 2013/08/21 to ESAPI-DEV mailing list. Shows that both
  * ESAPI 2.0 and 2.0.1 is vulnerable. Minor tweaks by Kevin W. Wall.
  *
  * Original class name: SignatureByPassTest.
- * 
+ *
  * NOTE: If this test fails, your version of ESAPI is vulnerable (or you have
  *          it configured not to require a MAC which you should NOT do).
  */

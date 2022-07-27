@@ -51,7 +51,7 @@ public interface HTTPUtilities
      * Calls addCookie with the *current* request.
      *
      * @param cookie The cookie to add
-     * 
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void addCookie(Cookie cookie);
@@ -230,7 +230,7 @@ public interface HTTPUtilities
 
     /**
      * Calls getCookie with the *current* response.
-     * 
+     *
      * @param name The cookie to get
      * @return the requested cookie value
      * @throws ValidationException
@@ -278,7 +278,7 @@ public interface HTTPUtilities
      *
      * @return List of new File objects from upload
      * @throws ValidationException if the file fails validation
-     * 
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     List getFileUploads() throws ValidationException;
@@ -558,9 +558,9 @@ public interface HTTPUtilities
 
     /**
      * Calls setNoCacheHeaders with the *current* response.
-     * 
+     *
      * ~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
-     * company's stated security policies.  
+     * company's stated security policies.
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -568,11 +568,11 @@ public interface HTTPUtilities
     String setRememberToken(String password, int maxAge, String domain, String path);
 
     /**
-     * 
+     *
      */
     String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path);
 
-    
+
     /**
      * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
      * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
@@ -589,7 +589,7 @@ public interface HTTPUtilities
      * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser();
      *
      *~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
-     * company's stated security policies.  
+     * company's stated security policies.
      *
      * @param request
      * @param password the user's password

@@ -17,7 +17,7 @@ import org.owasp.esapi.codecs.*;
 /**
  * Parameterized test to verify that the Immunity parameter for a codec
  * encode/decode event works as expected on a series of special characters.
- *  
+ *
  * @author jeremiah.j.stacey@gmail.com
  * @since 2.1.0.1
  *
@@ -100,7 +100,7 @@ public class CodecImmunityTest {
     }
 
     private static Collection<Object[]> fullCharacterCodecValidation(Collection<AbstractCodec> codecs) {
-        char[] holyCowTesting = StringUtilities.union(EncoderConstants.CHAR_ALPHANUMERICS, EncoderConstants.CHAR_SPECIALS); 
+        char[] holyCowTesting = StringUtilities.union(EncoderConstants.CHAR_ALPHANUMERICS, EncoderConstants.CHAR_SPECIALS);
         Collection<Object[]> params = new ArrayList<Object[]>();
         for (Codec codec: codecs) {
             params.addAll(buildImmunitiyValidation(codec, holyCowTesting, "Full_ALPHA_AND_SPECIALS"));
@@ -118,7 +118,7 @@ public class CodecImmunityTest {
         this.string = toTest;
         /**
          * The Immunity character array is every character in the String we're testing.
-         * 
+         *
          */
         this.immunityList = toTest.toCharArray();
     }

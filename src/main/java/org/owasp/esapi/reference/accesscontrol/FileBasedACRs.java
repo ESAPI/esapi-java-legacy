@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Mike Fauzy <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
@@ -37,7 +37,7 @@ import org.owasp.esapi.errors.IntrusionException;
 // CHECKME: If this exists for backward compatibility, should this
 //          class be deprecated??? If so, mark it using annotation.
 /**
- * This class exists for backwards compatibility with the AccessController 1.0 
+ * This class exists for backwards compatibility with the AccessController 1.0
  * reference implementation.
  *
  * This reference implementation uses a simple model for specifying a set of
@@ -78,7 +78,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * the AccessController interface. These files are located in the ESAPI
  * resources directory as specified when the JVM was started. The use of a
  * default deny rule is STRONGLY recommended. The file format is as follows:
- * 
+ *
  * <pre>
  * path          | role,role   | allow/deny | comment
  * ------------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * /admin        | admin       | allow      | only admin role can access /admin
  * /             | any         | deny       | default deny rule
  * </pre>
- * 
+ *
  * To find the matching rules, this implementation follows the general approach
  * used in Java EE when matching HTTP requests to servlets in web.xml. The four
  * mapping rules are used in the following order:
@@ -97,7 +97,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * <li>extension match, beginning *., e.g. *.css</li>
  * <li>default rule, specified by the single character pattern /</li>
  * </ul>
- * 
+ *
  * @author Mike Fauzy (mike.fauzy@aspectsecurity.com)
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  * @since June 1, 2007
@@ -146,17 +146,17 @@ public class FileBasedACRs {
         }
         return matchRule(functionMap, functionName);
     }
-  
+
     /**
     * TODO Javadoc
     */
     public boolean isAuthorizedForData(String action, Object data) throws AccessControlException{
         if (dataMap==null || dataMap.isEmpty()) {
             dataMap = loadDataRules("DataAccessRules.txt");
-        }        
-        return matchRule(dataMap, (Class)data, action);        
+        }
+        return matchRule(dataMap, (Class)data, action);
     }
-    
+
     /**
     * TODO Javadoc
     */
@@ -170,7 +170,7 @@ public class FileBasedACRs {
     /**
     * TODO Javadoc
     */
-    public boolean isAuthorizedForService(String serviceName) throws AccessControlException {        
+    public boolean isAuthorizedForService(String serviceName) throws AccessControlException {
         if (serviceMap==null || serviceMap.isEmpty()) {
             serviceMap = loadRules("ServiceAccessRules.txt");
         }
@@ -179,17 +179,17 @@ public class FileBasedACRs {
 
     /**
      * Checks to see if the current user has access to the specified data, File, Object, etc.
-     * If the User has access, as specified by the map parameter, this method returns true.  If the 
+     * If the User has access, as specified by the map parameter, this method returns true.  If the
      * User does not have access or an exception is thrown, false is returned.
-     * 
+     *
      * @param map
      *       the map containing access rules
      * @param path
      *       the path of the requested File, URL, Object, etc.
-     * 
-     * @return 
+     *
+     * @return
      *         true, if the user has access, false otherwise
-     * 
+     *
      */
     private boolean matchRule(Map map, String path) {
         // get users roles
@@ -199,21 +199,21 @@ public class FileBasedACRs {
         Rule rule = searchForRule(map, roles, path);
         return rule.allow;
     }
-    
+
     /**
      * Checks to see if the current user has access to the specified Class and action.
      * If the User has access, as specified by the map parameter, this method returns true.
      * If the User does not have access or an exception is thrown, false is returned.
-     * 
+     *
      * @param map
      *       the map containing access rules
      * @param clazz
      *       the Class being requested for access
      * @param action
      *          the action the User has asked to perform
-     * @return 
+     * @return
      *         true, if the user has access, false otherwise
-     * 
+     *
      */
     private boolean matchRule(Map map, Class clazz, String action) {
         // get users roles
@@ -229,17 +229,17 @@ public class FileBasedACRs {
      * e.g. /access/login - longest path prefix match, beginning / and ending
      * /*, e.g. /access/* or /* - extension match, beginning *., e.g. *.css -
      * default servlet, specified by the single character pattern /
-     * 
+     *
      * @param map
      *       the map containing access rules
      * @param roles
      *       the roles of the User being checked for access
      * @param path
      *       the File, URL, Object, etc. being checked for access
-     * 
-     * @return 
+     *
+     * @return
      *       the rule stating whether to allow or deny access
-     * 
+     *
      */
     private Rule searchForRule(Map map, Set roles, String path) {
         String canonical = ESAPI.encoder().canonicalize(path);
@@ -248,7 +248,7 @@ public class FileBasedACRs {
         if ( part == null ) {
             part = "";
         }
-        
+
         while (part.endsWith("/")) {
             part = part.substring(0, part.length() - 1);
         }
@@ -256,7 +256,7 @@ public class FileBasedACRs {
         if (part.indexOf("..") != -1) {
             throw new IntrusionException("Attempt to manipulate access control path", "Attempt to manipulate access control path: " + path );
         }
-        
+
         // extract extension if any
         String extension = "";
         int extIndex = part.lastIndexOf(".");
@@ -284,22 +284,22 @@ public class FileBasedACRs {
         if ( slash == -1 ) {
             return deny;
         }
-        
+
         // if there are more parts, strip off the last part and recurse
         part = part.substring(0, part.lastIndexOf('/'));
-        
+
         // return default deny
         if (part.length() <= 1) {
             return deny;
         }
-        
+
         return searchForRule(map, roles, part);
     }
-    
+
     /**
-     * Search for rule. Searches the specified access map to see if any of the roles specified have 
+     * Search for rule. Searches the specified access map to see if any of the roles specified have
      * access to perform the specified action on the specified Class.
-     * 
+     *
      * @param map
      *      the map containing access rules
      * @param roles
@@ -308,10 +308,10 @@ public class FileBasedACRs {
      *      the Class being requested for access
      * @param action
      *         the action the User has asked to perform
-     * 
-     * @return 
+     *
+     * @return
      *         the rule that allows the specified roles access to perform the requested action on the specified Class, or null if access is not granted
-     * 
+     *
      */
     private Rule searchForRule(Map map, Set roles, Class clazz, String action) {
 
@@ -324,15 +324,15 @@ public class FileBasedACRs {
     }
 
     /**
-     * Return true if there is overlap between the two sets.  This method merely checks to see if 
+     * Return true if there is overlap between the two sets.  This method merely checks to see if
      * ruleRoles contains any of the roles listed in userRoles.
-     * 
+     *
      * @param ruleRoles
      *      the rule roles
      * @param userRoles
      *      the user roles
-     * 
-     * @return 
+     *
+     * @return
      *         true, if any roles exist in both Sets.  False otherwise.
      */
     private boolean overlap(Set ruleRoles, Set userRoles) {
@@ -348,16 +348,16 @@ public class FileBasedACRs {
         }
         return false;
     }
-    
+
     /**
      * This method merely checks to see if ruleActions contains the action requested.
-     * 
+     *
      * @param ruleActions
      *      actions listed for a rule
      * @param action
      *      the action requested that will be searched for in ruleActions
-     * 
-     * @return 
+     *
+     * @return
      *         true, if any action exists in ruleActions.  False otherwise.
      */
     private boolean overlap( List ruleActions, String action){
@@ -365,46 +365,46 @@ public class FileBasedACRs {
             return true;
         return false;
     }
-        
+
     /**
      * Checks that the roles passed in contain only letters, numbers, and underscores.  Also checks that
-     * roles are no more than 10 characters long.  If a role does not pass validation, it is not included in the 
+     * roles are no more than 10 characters long.  If a role does not pass validation, it is not included in the
      * list of roles returned by this method.  A log warning is also generated for any invalid roles.
-     * 
+     *
      * @param roles
      *         roles to validate according to criteria started above
      * @return
      *         a List of roles that are valid according to the criteria stated above.
-     * 
+     *
      */
     private List validateRoles(List roles){
-        List ret = new ArrayList();    
+        List ret = new ArrayList();
         for(int x = 0; x < roles.size(); x++){
             String canonical = ESAPI.encoder().canonicalize(((String)roles.get(x)).trim());
 
             if(!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController", canonical, "RoleName", 20, false)) {
                 logger.warning( Logger.SECURITY_FAILURE, "Role: " + ((String)roles.get(x)).trim() + " is invalid, so was not added to the list of roles for this Rule.");
-            } else { 
+            } else {
                 ret.add(canonical.trim());
             }
         }
         return ret;
     }
-    
+
     /**
      * Loads access rules by storing them in a hashmap.  This method begins reading the File specified by
      * the ruleset parameter, ignoring any lines that begin with '#' characters as comments.  Sections of the access rules file
      * are split by the pipe character ('|').  The method loads all paths, replacing '\' characters with '/' for uniformity then loads
-     * the list of comma separated roles. The roles are validated to be sure they are within a 
+     * the list of comma separated roles. The roles are validated to be sure they are within a
      * length and character set, specified in the validateRoles(String) method.  Then the permissions are stored for each item in the rules list.
      * If the word "allow" appears on the line, the specified roles are granted access to the data - otherwise, they will be denied access.
-     * 
-     * Each path may only appear once in the access rules file.  Any entry, after the first, containing the same path will be logged and ignored. 
-     *  
+     *
+     * Each path may only appear once in the access rules file.  Any entry, after the first, containing the same path will be logged and ignored.
+     *
      * @param ruleset
      *      the name of the data that contains access rules
-     * 
-     * @return 
+     *
+     * @return
      *         a hash map containing the ruleset
      */
     private Map loadRules(String ruleset) {
@@ -420,12 +420,12 @@ public class FileBasedACRs {
                     String[] parts = line.split("\\|");
                     // fix Windows paths
                     rule.path = parts[0].trim().replaceAll("\\\\", "/");
-                    
+
                     List roles = commaSplit(parts[1].trim().toLowerCase());
                     roles = validateRoles(roles);
                     for(int x = 0; x < roles.size(); x++)
                         rule.roles.add(((String)roles.get(x)).trim());
-                    
+
                     String action = parts[2].trim();
                     rule.allow = action.equalsIgnoreCase("allow");
                     if (map.containsKey(rule.path)) {
@@ -448,19 +448,19 @@ public class FileBasedACRs {
         }
         return map;
     }
-    
+
     /**
      * Loads access rules by storing them in a hashmap.  This method begins reading the File specified by
      * the ruleset parameter, ignoring any lines that begin with '#' characters as comments.  Sections of the access rules file
-     * are split by the pipe character ('|').  The method then loads all Classes, loads the list of comma separated roles, then the list of comma separated actions.  
-     * The roles are validated to be sure they are within a length and character set, specified in the validateRoles(String) method.  
-     * 
-     * Each path may only appear once in the access rules file.  Any entry, after the first, containing the same path will be logged and ignored. 
-     *  
+     * are split by the pipe character ('|').  The method then loads all Classes, loads the list of comma separated roles, then the list of comma separated actions.
+     * The roles are validated to be sure they are within a length and character set, specified in the validateRoles(String) method.
+     *
+     * Each path may only appear once in the access rules file.  Any entry, after the first, containing the same path will be logged and ignored.
+     *
      * @param ruleset
      *      the name of the data that contains access rules
-     * 
-     * @return 
+     *
+     * @return
      *         a hash map containing the ruleset
      */
     private Map loadDataRules(String ruleset) {
@@ -476,27 +476,27 @@ public class FileBasedACRs {
                     Rule rule = new Rule();
                     String[] parts = line.split("\\|");
                     rule.clazz = Class.forName(parts[0].trim());
-                    
+
                     List roles = commaSplit(parts[1].trim().toLowerCase());
                     roles = validateRoles(roles);
                     for(int x = 0; x < roles.size(); x++)
                         rule.roles.add(((String)roles.get(x)).trim());
-                    
+
                     List action = commaSplit(parts[2].trim().toLowerCase());
                     for(int x = 0; x < action.size(); x++)
                         rule.actions.add(((String) action.get(x)).trim());
-                    
+
                     if (map.containsKey(rule.path)) {
                         logger.warning( Logger.SECURITY_FAILURE, "Problem in access control file. Duplicate rule ignored: " + rule);
                     } else {
-                        map.put(rule.clazz, rule);        
+                        map.put(rule.clazz, rule);
                     }
                 }
             }
         } catch (Exception e) {
             logger.warning( Logger.SECURITY_FAILURE, "Problem in access control file : " + ruleset, e );
         } finally {
-            
+
             try {
                 if (is != null) {
                     is.close();
@@ -510,7 +510,7 @@ public class FileBasedACRs {
 
     /**
      * This method splits a String by the ',' and returns the result as a List.
-     * 
+     *
      * @param input
      *         the String to split by ','
      * @return
@@ -520,29 +520,29 @@ public class FileBasedACRs {
         String[] array = input.split(",");
         return Arrays.asList(array);
     }
-    
+
     /**
      * The Class Rule.
      */
     private class Rule {
 
-        
+
         protected String path = "";
 
-        
+
         protected Set roles = new HashSet();
 
-        
+
         protected boolean allow = false;
-        
-        
+
+
         protected Class clazz = null;
-        
-        
+
+
         protected List actions = new ArrayList();
 
         /**
-         * 
+         *
          * Creates a new Rule object.
          */
         protected Rule() {

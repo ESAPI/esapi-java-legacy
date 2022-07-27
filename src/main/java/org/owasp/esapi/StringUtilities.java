@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 /**
  * String utilities used in various filters.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  * href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -31,9 +31,9 @@ public class StringUtilities {
     public static String replaceLinearWhiteSpace( String input ) {
         return p.matcher(input).replaceAll( " " );
     }
-    
+
     /**
-     * Removes all unprintable characters from a string 
+     * Removes all unprintable characters from a string
      * and replaces with a space.
      * @param input
      * @return the stripped value
@@ -51,16 +51,16 @@ public class StringUtilities {
         return sb.toString();
     }
 
-    
+
     /**
      * Union multiple character arrays.
-     * 
+     *
      * @param list the char[]s to union
      * @return the union of the char[]s
      */
     public static char[] union(char[]... list) {
         StringBuilder sb = new StringBuilder();
-        
+
         for (char[] characters : list) {
             for ( char c : characters ) {
                 if ( !contains( sb, c ) )

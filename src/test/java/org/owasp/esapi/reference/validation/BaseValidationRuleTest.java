@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Ben Sleek <a href="http://www.spartasystems.com">Sparta Systems</a>
  * @created 2015
  */
@@ -52,7 +52,7 @@ public class BaseValidationRuleTest {
 
     private BaseValidationRule uit = mock(BaseValidationRule.class, CALLS_REAL_METHODS);
     @Test
-    public void testCtrNullTypeName() throws Exception { 
+    public void testCtrNullTypeName() throws Exception {
         String typename = null;
         BaseValidationRule rule = mock(BaseValidationRule.class, withSettings()
                 .useConstructor(typename)
@@ -72,7 +72,7 @@ public class BaseValidationRuleTest {
         assertEquals(typename, rule.getTypeName());
         assertNull(rule.getEncoder());
     }
-    
+
     @Test
     public void testCtrNullTypenameNullEncoder() {
         String typename = null;
@@ -108,7 +108,7 @@ public class BaseValidationRuleTest {
 
     @Test
     public void testSetTypeNameNull() {
-        uit.setTypeName(null); 
+        uit.setTypeName(null);
         assertNull(uit.getTypeName());
     }
 
@@ -219,11 +219,11 @@ public class BaseValidationRuleTest {
     }
 
     /* *************************
-     * TO DISCUSS 
+     * TO DISCUSS
      * FIXME
      * Tests below this block are items which are valid against the current implementation, but have side effects
      * or unclear results under certain conditions.
-     * 
+     *
      * Once Items are discussed and understood they should probably be well-commented and moved out of this area.
      */
 
@@ -236,13 +236,13 @@ public class BaseValidationRuleTest {
         /*
          * Side-effect of ValidationErrorList. If the same context is used against a BaseValidationRule multiple times resulting in exception, the ValidationErrorList impl will blow up.
          * This can be an unclear event at runtime if a single BaseValidationRule instance is shared in an application and multiple parts happen to use the same contextual string to capture failure events.
-         * 
+         *
          */
         uit.getValid(STR_VAL, STR_VAL, vel);
     }
 
     //None of the Whitelist content belongs in this class, IMO.
-    
+
     @Test
     public void testWhitelistCharArrayCleansString() {
         String myString = "AAAGaaadBBB12345*";
@@ -281,7 +281,7 @@ public class BaseValidationRuleTest {
     }
 
     @Test
-    
+
     public void testWhitelistSetExtendedCharacterSets() {
         String myString = "𡘾𦴩<𥻂";
         //(55365 56894) (55387 56617) 60 (55383 57026)

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007-2019 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2009
  */
@@ -21,19 +21,19 @@ import org.owasp.esapi.codecs.Codec;
 /**
  * A parameterized string that uses escaping to make untrusted data safe before combining it with
  * a command or query intended for use in an interpreter.
- * <pre> 
+ * <pre>
  * PreparedString div = new PreparedString( "&lt;a href=\"http:\\\\example.com?id=?\" onmouseover=\"alert('?')\"&gt;test&lt;/a&gt;", new HTMLEntityCodec() );
  * div.setURL( 1, request.getParameter( "url" ), new PercentCodec() );
  * div.set( 2, request.getParameter( "message" ), new JavaScriptCodec() );
  * out.println( div.toString() );
- * 
+ *
  * // escaping for SQL
  * PreparedString query = new PreparedString( "SELECT * FROM users WHERE name='?' AND password='?'", new OracleCodec() );
  * query.set( 1, request.getParameter( "name" ) );
  * query.set( 2, request.getParameter( "pass" ) );
  * stmt.execute( query.toString() );
  * </pre>
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  */
@@ -45,7 +45,7 @@ public class PreparedString {
     private final static char[] IMMUNE = {};
 
     /**
-     * Create a PreparedString with the supplied template and Codec. The template should use the 
+     * Create a PreparedString with the supplied template and Codec. The template should use the
      * default parameter placeholder character (?) in the place where actual parameters are to be inserted.
      * The supplied Codec will be used to escape characters in calls to set, unless a specific Codec is
      * provided to override it.
@@ -89,9 +89,9 @@ public class PreparedString {
         parts.add( str.substring(index) );
         parameters = new String[pcount];
     }
-    
+
     /**
-     * Set the parameter at index with supplied value using the default Codec to escape. 
+     * Set the parameter at index with supplied value using the default Codec to escape.
      * @param index
      * @param value
      */
@@ -102,9 +102,9 @@ public class PreparedString {
         String encoded = codec.encode( IMMUNE, value );
         parameters[index-1] = encoded;
     }
-    
+
     /**
-     * Set the parameter at index with supplied value using the supplied Codec to escape. 
+     * Set the parameter at index with supplied value using the supplied Codec to escape.
      * @param index
      * @param value
      * @param codec
@@ -116,7 +116,7 @@ public class PreparedString {
         String encoded = codec.encode( IMMUNE, value );
         parameters[index-1] = encoded;
     }
-    
+
     /**
      * Render the PreparedString by combining the template with properly escaped parameters.
      */

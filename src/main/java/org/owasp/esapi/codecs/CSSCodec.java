@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP) Enterprise Security API
  * (ESAPI) project. For details, please see <a
  * href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
- * 
+ *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the LICENSE
  * before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -21,7 +21,7 @@ import org.owasp.esapi.codecs.ref.EncodingPatternPreservation;
 
 /**
  * Implementation of the Codec interface for backslash encoding used in CSS.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -33,16 +33,16 @@ public class CSSCodec extends AbstractCharacterCodec
     //rgb (###,###,###) OR rgb(###%,###%,###%)
     //([rR][gG][bB])\s*\(\s*\d{1,3}\s*(\%)?\s*,\s*\d{1,3}\s*(\%)?\s*,\s*\d{1,3}\s*(\%)?\s*\)
     private static final String RGB_TRPLT = "([rR][gG][bB])\\s*\\(\\s*\\d{1,3}\\s*(\\%)?\\s*,\\s*\\d{1,3}\\s*(\\%)?\\s*,\\s*\\d{1,3}\\s*(\\%)?\\s*\\)";
-    private static final Pattern RGB_TRPLT_PATTERN = Pattern.compile(RGB_TRPLT); 
-    
+    private static final Pattern RGB_TRPLT_PATTERN = Pattern.compile(RGB_TRPLT);
+
     @Override
     public String encode(char[] immune, String input) {
          EncodingPatternPreservation tripletCheck = new EncodingPatternPreservation(RGB_TRPLT_PATTERN);
-         
+
          String inputChk = tripletCheck.captureAndReplaceMatches(input);
-         
+
          String result = super.encode(immune, inputChk);
-         
+
          return tripletCheck.restoreOriginalContent(result);
     }
     /**
@@ -57,21 +57,21 @@ public class CSSCodec extends AbstractCharacterCodec
         if ( containsCharacter(c, immune ) ) {
             return ""+c;
         }
-        
+
         // check for alphanumeric characters
         String hex = super.getHexForNonAlphanumeric(c);
         if ( hex == null ) {
             return ""+c;
         }
-        
+
         // return the hex and end in whitespace to terminate
         return "\\" + hex + " ";
     }
 
-    
+
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns the decoded version of the character starting at index,
      * or null if no decoding is possible.
      */
@@ -185,7 +185,7 @@ public class CSSCodec extends AbstractCharacterCodec
         {
             // parse the hex digit and create a character
             int i = Integer.parseInt(sb.toString(), 16);
-    
+
             if (Character.isValidCodePoint(i))
                 return (char)i;
             return REPLACEMENT;

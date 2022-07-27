@@ -11,14 +11,14 @@ import org.owasp.esapi.errors.AccessControlException;
 
 final public class ACRPolicyFileLoader {
     protected final Logger logger = ESAPI.getLogger("ACRPolicyFileLoader");
-    
+
     public PolicyDTO load() throws AccessControlException {
         PolicyDTO policyDTO = new PolicyDTO();
         XMLConfiguration config;
-        File file = ESAPI.securityConfiguration().getResourceFile("ESAPI-AccessControlPolicy.xml"); 
+        File file = ESAPI.securityConfiguration().getResourceFile("ESAPI-AccessControlPolicy.xml");
         try
         {
-            config = new XMLConfiguration(file);            
+            config = new XMLConfiguration(file);
         }
         catch(ConfigurationException cex)
         {
@@ -26,7 +26,7 @@ final public class ACRPolicyFileLoader {
                 throw new AccessControlException("Unable to load configuration file for the following: " + "ESAPI-AccessControlPolicy.xml", "", cex);
             }
             throw new AccessControlException("Unable to load configuration file from the following location: " + file.getAbsolutePath(), "", cex);
-        } 
+        }
 
         Object property = config.getProperty("AccessControlRules.AccessControlRule[@name]");
         logger.info(Logger.EVENT_SUCCESS, "Loading Property: " + property);
@@ -34,12 +34,12 @@ final public class ACRPolicyFileLoader {
         if(property instanceof Collection) {
             numberOfRules = ((Collection)property).size();
         } //implied else property == null -> return new PolicyDTO
-                 
+
         String ruleName = "";
         String ruleClass = "";
         Object rulePolicyParameter = null;
         int currentRule = 0;
-        try {            
+        try {
             logger.info(Logger.EVENT_SUCCESS, "Number of rules: " + numberOfRules);
             for(currentRule = 0; currentRule < numberOfRules; currentRule++) {
                 logger.trace(Logger.EVENT_SUCCESS, "----");
@@ -52,12 +52,12 @@ final public class ACRPolicyFileLoader {
                 policyDTO.addAccessControlRule(
                         ruleName,
                         ruleClass,
-                        rulePolicyParameter);                
+                        rulePolicyParameter);
             }
             logger.info(Logger.EVENT_SUCCESS, "policyDTO loaded: " + policyDTO);
         } catch (Exception e) {
-            throw new AccessControlException("Unable to load AccessControlRule parameter. " + 
-                    " Rule number: " + currentRule + 
+            throw new AccessControlException("Unable to load AccessControlRule parameter. " +
+                    " Rule number: " + currentRule +
                     " Probably: Rule.name: " + ruleName +
                     " Probably: Rule.class: " + ruleClass +
                     e.getMessage(), "", e);
@@ -73,15 +73,15 @@ final public class ACRPolicyFileLoader {
         if(property == null) {
             return null;
         }
-        
-        int numberOfProperties = 0;        
+
+        int numberOfProperties = 0;
         if(property instanceof Collection) {
-            numberOfProperties = ((Collection)property).size(); 
+            numberOfProperties = ((Collection)property).size();
         } else {
             numberOfProperties = 1;
         }
         logger.info(Logger.EVENT_SUCCESS, "Number of properties: " + numberOfProperties);
-        
+
         if(numberOfProperties < 1) {
             return null;
         }
@@ -91,9 +91,9 @@ final public class ACRPolicyFileLoader {
             parametersLoaderClassName = "org.owasp.esapi.reference.accesscontrol.policyloader.DynaBeanACRParameterLoader";
         }
         logger.info(Logger.EVENT_SUCCESS, "Parameters Loader:" + parametersLoaderClassName);
-        ACRParameterLoader acrParamaterLoader = 
+        ACRParameterLoader acrParamaterLoader =
             (ACRParameterLoader)
             Class.forName(parametersLoaderClassName).newInstance();
-        return acrParamaterLoader.getParameters(config, currentRule);        
+        return acrParamaterLoader.getParameters(config, currentRule);
     }
 }

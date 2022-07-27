@@ -1,18 +1,18 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2017 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Matt Seil (mseil .at. owasp.org)
  * @updated 2017
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
@@ -23,7 +23,7 @@ package org.owasp.esapi.codecs;
  * The pushback string is used by Codecs to allow them to push decoded
  * characters back onto a string for further decoding. This is necessary to
  * detect double-encoding.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com)
  *         <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -40,7 +40,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#index()
      */
     public int index() {
@@ -49,7 +49,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#hasNext()
      */
     public boolean hasNext() {
@@ -70,7 +70,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#next()
      */
     public Character next() {
@@ -93,7 +93,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#nextHex()
      */
     public Character nextHex() {
@@ -109,7 +109,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#nextOctal()
      */
     public Character nextOctal() {
@@ -126,7 +126,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
     /**
      * Returns true if the parameter character is a hexidecimal digit 0 through
      * 9, a through f, or A through F.
-     * 
+     *
      * @param c
       * @return true if it is a hexidecimal digit, false otherwise.
      */
@@ -140,7 +140,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /**
      * Returns true if the parameter character is an octal digit 0 through 7.
-     * 
+     *
      * @param c
       * @return true if it is an octal digit, false otherwise.
      */
@@ -154,7 +154,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#peek()
      */
     public Character peek() {
@@ -175,7 +175,7 @@ public class PushbackString extends AbstractPushbackSequence<Character> {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.owasp.esapi.codecs.PushbackSequence#peek(char)
      */
     public boolean peek(Character c) {

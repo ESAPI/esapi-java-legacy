@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package org.owasp.esapi.util;
 
@@ -9,20 +9,20 @@ import java.util.Set;
 
 /**
  * @author Neil Matatall (neil.matatall .at. gmail.com)
- * 
+ *
  * Are these necessary?  Are there any libraries or java.lang classes to take
  * care of the conversions?
- * 
+ *
  * FIXME: we can convert to using this, but it requires that the array be of Character, not char
  *      new HashSet(Arrays.asList(array))
- * 
+ *
  */
 public class CollectionsUtil
 {
     private static final char[] EMPTY_CHAR_ARRAY = new char[0];
 
     /**
-     * Converts an array of chars to a Set of Characters. 
+     * Converts an array of chars to a Set of Characters.
      * @param array the contents of the new Set
      * @return a Set containing the elements in the array
      */

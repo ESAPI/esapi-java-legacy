@@ -28,16 +28,16 @@ import org.owasp.esapi.errors.AccessControlException;
 /**
  * Abstract Implementation of the AccessReferenceMap.
  * <br>
- * Implementation offers default synchronization on all public API 
+ * Implementation offers default synchronization on all public API
  * to assist with thread safety.
  * <br>
- * For complex interactions spanning multiple calls, it is recommended 
+ * For complex interactions spanning multiple calls, it is recommended
  * to add a synchronized block around all invocations to maintain intended data integrity.
- * 
+ *
  * <pre>
  * public MyClassUsingAARM {
  *  private AbstractAccessReferenceMap<Object> aarm;
- * 
+ *
  *  public void replaceAARMDirect(Object oldDirect, Object newDirect) {
  *     synchronized (aarm) {
  *        aarm.removeDirectReference(oldDirect);
@@ -181,23 +181,23 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
    public final synchronized void update(Set directReferences) {
        Map<Object,K> new_dtoi = new HashMap<Object,K>( directReferences.size() );
        Map<K,Object> new_itod = new HashMap<K,Object>( directReferences.size() );
-       
+
        Set<Object> newDirect = new HashSet<>(directReferences);
        Set<Object> dtoiCurrent = new HashSet<>(dtoi.keySet());
 
        //Preserve all keys that are in the new set
        dtoiCurrent.retainAll(newDirect);
-       
+
        //Transfer existing values into the new map
        for (Object current: dtoiCurrent) {
            K idCurrent = dtoi.get(current);
            new_dtoi.put(current, idCurrent);
            new_itod.put(idCurrent, current);
        }
-       
+
        //Trim the new map to only new values
        newDirect.removeAll(dtoiCurrent);
-       
+
        //Add new values with new indirect keys to the new map
        for (Object newD : newDirect) {
            K idCurrent;
@@ -205,11 +205,11 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
                idCurrent = getUniqueReference();
                //Unlikey, but just in case we generate the exact same key multiple times...
            } while (dtoi.containsValue(idCurrent));
-           
+
            new_dtoi.put(newD, idCurrent);
            new_itod.put(idCurrent, newD);
        }
-    
+
        dtoi = new_dtoi;
        itod = new_itod;
    }

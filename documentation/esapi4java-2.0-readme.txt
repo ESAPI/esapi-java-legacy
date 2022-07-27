@@ -7,7 +7,7 @@ Here are the most significant directories and files included the zip file for th
 
 File / Directory                                                        Description
 =========================================================================================
-<root>/	
+<root>/
 |
 +---configuration/                                                      Directory of ESAPI configuration files
 |     |

@@ -99,7 +99,7 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
     }
 
     /**
-     * Methods loads configuration from .xml file. 
+     * Methods loads configuration from .xml file.
      * @param file
      * @throws ConfigurationException if there is a problem loading the specified configuration file.
      */

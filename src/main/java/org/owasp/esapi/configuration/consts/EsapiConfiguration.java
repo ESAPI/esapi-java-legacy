@@ -1,7 +1,7 @@
 package org.owasp.esapi.configuration.consts;
 
 /**
- * Enum used for initialization of esapi configuration files. 
+ * Enum used for initialization of esapi configuration files.
  *
  * @since 2.2
  */
@@ -11,7 +11,7 @@ public enum EsapiConfiguration {
     DEVTEAM_ESAPI_CFG("org.owasp.esapi.devteam", 2);
 
     /**
-     * Key of system property pointing to path esapi to configuration file. 
+     * Key of system property pointing to path esapi to configuration file.
      */
     String configName;
 

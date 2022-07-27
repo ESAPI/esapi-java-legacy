@@ -1,6 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -31,12 +31,12 @@ import org.owasp.esapi.errors.EncryptionException;
  * All the cryptographic operations use the default cryptographic properties;
  * e.g., default cipher transformation, default key size, default IV type (where
  * applicable), etc.
- * 
+ *
  * @author kevin.w.wall@gmail.com
  * @since 2.0
  */
 public class CryptoHelper {
-    
+
     private static final Logger logger = ESAPI.getLogger("CryptoHelper");
 
     // TODO: Also consider supplying implementation of RFC 2898 / PKCS#5 PBKDF2
@@ -101,7 +101,7 @@ public class CryptoHelper {
      * It is used by ESAPI's reference crypto implementation class {@code JavaEncryptor}
      * and might be useful for someone implementing their own replacement class, but
      * generally it is not something that is useful to application client code.
-     * 
+     *
      * @param keyDerivationKey  A key used as an input to a key derivation function
      *                          to derive other keys. This is the key that generally
      *                          is created using some key generation mechanism such as
@@ -218,7 +218,7 @@ public class CryptoHelper {
             ESAPI.securityConfiguration().getAdditionalAllowedCipherModes();
         return extraCipherModes.contains( cipherMode );
     }
-    
+
     /**
      * Check to see if a Message Authentication Code (MAC) is required
      * for a given {@code CipherText} object and the current ESAPI.property
@@ -247,7 +247,7 @@ public class CryptoHelper {
         // additional computing time.
         return ( !preferredCipherMode && wantsMAC );
     }
-    
+
     /**
      * If a Message Authentication Code (MAC) is required for the specified
      * {@code CipherText} object, then attempt to validate the MAC that
@@ -257,7 +257,7 @@ public class CryptoHelper {
      * @param sk    The {@code SecretKey} used to derived a key to check
      *              the authenticity via the MAC.
      * @param ct    The {@code CipherText} that we are checking for a
-     *              valid MAC. 
+     *              valid MAC.
      *
      * @return  True is returned if a MAC is required and it is valid as
      *          verified using a key derived from the specified
@@ -282,7 +282,7 @@ public class CryptoHelper {
         }
         return true;
     }
-    
+
     /**
      * Overwrite a byte array with a specified byte. This is frequently done
      * to a plaintext byte array so the sensitive data is not lying around
@@ -294,7 +294,7 @@ public class CryptoHelper {
     {
         Arrays.fill(bytes, x);
     }
-    
+
     /**
      * Overwrite a byte array with the byte containing '*'. That is, call
      * <pre>
@@ -306,11 +306,11 @@ public class CryptoHelper {
     {
         overwrite(bytes, (byte)'*');
     }
-    
+
     // These provide for a bit more type safety when copying bytes around.
     /**
      * Same as {@code System.arraycopy(src, 0, dest, 0, length)}.
-     * 
+     *
      * @param      src      the source array.
      * @param      dest     the destination array.
      * @param      length   the number of array elements to be copied.
@@ -323,7 +323,7 @@ public class CryptoHelper {
     {
         System.arraycopy(src, 0, dest, 0, length);
     }
-    
+
     /**
      * Same as {@code copyByteArray(src, dest, src.length)}.
      * @param      src      the source array.
@@ -337,12 +337,12 @@ public class CryptoHelper {
     {
         copyByteArray(src, dest, src.length);
     }
-    
+
     /**
      * A "safe" array comparison that is not vulnerable to side-channel
      * "timing attacks". All comparisons of non-null, equal length bytes should
      * take same amount of time. We use this for cryptographic comparisons.
-     * 
+     *
      * @param b1   A byte array to compare.
      * @param b2   A second byte array to compare.
      * @return     {@code true} if both byte arrays are null or if both byte
@@ -363,7 +363,7 @@ public class CryptoHelper {
         }
         return java.security.MessageDigest.isEqual(b1, b2);
     }
-  
+
     /**
      * Is this particular KDF version number one that is sane? For that, we
      * just make sure it is inbounds of the valid range which is:
@@ -385,7 +385,7 @@ public class CryptoHelper {
                 throws IllegalArgumentException
     {
         boolean ret = true;
-        
+
         if ( kdfVers < KeyDerivationFunction.originalVersion || kdfVers > 99991231 ) {
             ret = false;
         } else if ( restrictToCurrent ) {
@@ -396,14 +396,14 @@ public class CryptoHelper {
         } else {                    // False, so throw or not.
             logger.warning(Logger.SECURITY_FAILURE, "Possible data tampering. Encountered invalid KDF version #. " +
                            ( throwIfError ? "Throwing IllegalArgumentException" : "" ));
-            if ( throwIfError ) {    
+            if ( throwIfError ) {
                 throw new IllegalArgumentException("Version (" + kdfVers + ") invalid. " +
                     "Must be date in format of YYYYMMDD between " + KeyDerivationFunction.originalVersion + "and 99991231.");
             }
         }
         return false;
     }
-    
+
     /**
      * Prevent public, no-argument CTOR from being auto-generated. Public CTOR
      * is not needed as all methods are static.

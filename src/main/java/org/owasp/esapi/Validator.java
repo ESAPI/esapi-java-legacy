@@ -63,7 +63,7 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)} with {@code canonicalize=true}
      * and returns true if no exceptions are thrown.
-     * 
+     *
      * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;
@@ -615,7 +615,7 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField). 
+     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
      *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual input data to validate.
@@ -1037,10 +1037,10 @@ public interface Validator {
 
     /**
      * Parses and ensures that the URI in question is a valid RFC-3986 URI.  This simplifies
-     * the kind of regex required for subsequent validation to mitigate regex-based DoS attacks.  
-     * 
+     * the kind of regex required for subsequent validation to mitigate regex-based DoS attacks.
+     *
      * @see <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986.</a>
-     * 
+     *
      * @param context
      *          A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
      *          This value is used by any logging or error handling that is done with respect to the value passed in.
@@ -1056,11 +1056,11 @@ public interface Validator {
 
     /**
      * Will return a {@code URI} object that will represent a fully parsed and legal URI
-     * as specified in RFC-3986.  
-     *  
+     * as specified in RFC-3986.
+     *
      * @param input String
-     * @return URI object representing a parsed URI, or {@code null} if the URI was non-compliant in some way.  
+     * @return URI object representing a parsed URI, or {@code null} if the URI was non-compliant in some way.
      */
     URI getRfcCompliantURI(String input);
-    
+
 }

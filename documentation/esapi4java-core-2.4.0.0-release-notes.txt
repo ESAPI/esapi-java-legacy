@@ -13,7 +13,7 @@ Do NOT:  Do NOT use GitHub Issues to ask questions about this of future releases
 
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
-This is a very important ESAPI release as it is the first release to be FULLY INCOMPATIBLE WITH JAVA 1.7!  This was expedited in response to some dependencies to resolve prior CVEs (see release notes in 2.3.0.0) that could not be updated as those versions required a JDK > 1.7 which we were forced to.  The slightly premature update to Java 1.8 is done to address CVE-2022-28366 that had to be fixed with a version of the transitive depenedency via AntiSamy of NekoHTML that was Java 1.8+ only.  (Wrapped into issue #682)  It is important to note that the solution to fix CVE-2022-28366 does not exist in ESAPI 2.3.0.0 and there is no intention to fix it for Java 1.7.    
+This is a very important ESAPI release as it is the first release to be FULLY INCOMPATIBLE WITH JAVA 1.7!  This was expedited in response to some dependencies to resolve prior CVEs (see release notes in 2.3.0.0) that could not be updated as those versions required a JDK > 1.7 which we were forced to.  The slightly premature update to Java 1.8 is done to address CVE-2022-28366 that had to be fixed with a version of the transitive depenedency via AntiSamy of NekoHTML that was Java 1.8+ only.  (Wrapped into issue #682)  It is important to note that the solution to fix CVE-2022-28366 does not exist in ESAPI 2.3.0.0 and there is no intention to fix it for Java 1.7.
 
 =================================================================================================================
 
@@ -33,10 +33,10 @@ ESAPI 2.4.0.0 release (current / new release):
 
 Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
-644             Do not include a logging implementation as a dependency slf4j-simple 
+644             Do not include a logging implementation as a dependency slf4j-simple
 672             (wontfix) HTMLEntityCodec Bug Decoding "Left Angular Bracket" Symbol
 679             Completely remove support for fixed IVs and throw a ConfigurationException if encountered.
-682             Update baseline to Java 1.8 
+682             Update baseline to Java 1.8
 
 -----------------------------------------------------------------------------
 
@@ -44,21 +44,21 @@ Issue #         GitHub Issue Title
 
 -----------------------------------------------------------------------------
 
-1) This is the first ESAPI release that does not support Java 1.7.  This library will no longer work if your application is that old.  
+1) This is the first ESAPI release that does not support Java 1.7.  This library will no longer work if your application is that old.
 
                                         !!!!! VULNERABILITY ALERTS !!!!!
 
-2) This release fixes the known vulnerability ESAPI 2.3.0.0 that had to wait until we supported Java 8 to be patched. The patch was in Neko-HtmlUntil and was fixed in version 2.27, which required Java 8 or later. It was a transitive dependency via AntiSamy and we picked it up by updating to AntiSamy 1.6.8.  This was a DoS vulnerability discovered in HtmlUnit-Neko affecting all versions up to 2.26.  Full details from MITRE are here:  https://cve.mitre.org/cgi-bin/cvename.cgi?name=2022-28366  
+2) This release fixes the known vulnerability ESAPI 2.3.0.0 that had to wait until we supported Java 8 to be patched. The patch was in Neko-HtmlUntil and was fixed in version 2.27, which required Java 8 or later. It was a transitive dependency via AntiSamy and we picked it up by updating to AntiSamy 1.6.8.  This was a DoS vulnerability discovered in HtmlUnit-Neko affecting all versions up to 2.26.  Full details from MITRE are here:  https://cve.mitre.org/cgi-bin/cvename.cgi?name=2022-28366
 
-3) This release also patches the (known, but forgotten?) XSS vulnerability ESAPI 2.3.0.0 in AntiSamy 1.6.7 but was fixed in 1.6.8.  (The 2.3.0.0 release notes have been updated to mention this.) Full details from MITRE are here:  https://cve.mitre.org/cgi-bin/cvename.cgi?name=2022-29577  
+3) This release also patches the (known, but forgotten?) XSS vulnerability ESAPI 2.3.0.0 in AntiSamy 1.6.7 but was fixed in 1.6.8.  (The 2.3.0.0 release notes have been updated to mention this.) Full details from MITRE are here:  https://cve.mitre.org/cgi-bin/cvename.cgi?name=2022-29577
 
 -----------------------------------------------------------------------------
 
 Developer Activity Report (Changes between release 2.3.0.0 and 2.4.0.0, i.e., between 2022-04-17 and 2022-04-24)
 
 Special thanks to Dave Wichers and Sebastian Pessaro from AntiSamy for their work to provide version 1.6.8 which patched 2 CVEs.
-Special thanks to Jeremiah J. Stacey for his work to update and prep the library to support java 1.8.  (He literally created the PR the day after 2.3.0.0's release.)  
-Special thanks to Kevin Wall for support in pushing out this release.  
+Special thanks to Jeremiah J. Stacey for his work to update and prep the library to support java 1.8.  (He literally created the PR the day after 2.3.0.0's release.)
+Special thanks to Kevin Wall for support in pushing out this release.
 
 
 -----------------------------------------------------------------------------

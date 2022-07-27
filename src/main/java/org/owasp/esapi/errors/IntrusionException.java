@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -25,7 +25,7 @@ import org.owasp.esapi.Logger;
  * <P>
  * Unlike other exceptions in the ESAPI, the IntrusionException is a RuntimeException so that it can be thrown from
  * anywhere and will not require a lot of special exception handling.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class IntrusionException extends EnterpriseSecurityRuntimeException {
@@ -43,7 +43,7 @@ public class IntrusionException extends EnterpriseSecurityRuntimeException {
 
     /**
      * Creates a new instance of IntrusionException.
-     * 
+     *
      * @param userMessage
      *            the message to display to users
      * @param logMessage
@@ -57,12 +57,12 @@ public class IntrusionException extends EnterpriseSecurityRuntimeException {
 
     /**
      * Instantiates a new intrusion exception.
-     * 
+     *
      * @param userMessage
      *            the message to display to users
      * @param logMessage
      *               the message logged
-     * @param cause 
+     * @param cause
      *              the cause
      */
     public IntrusionException(String userMessage, String logMessage, Throwable cause) {
@@ -73,7 +73,7 @@ public class IntrusionException extends EnterpriseSecurityRuntimeException {
 
     /**
      * Returns a String containing a message that is safe to display to users
-     * 
+     *
      * @return a String containing a message that is safe to display to users
      */
     public String getUserMessage() {
@@ -82,7 +82,7 @@ public class IntrusionException extends EnterpriseSecurityRuntimeException {
 
     /**
      * Returns a String that is safe to display in logs, but probably not to users
-     * 
+     *
      * @return a String containing a message that is safe to display in logs, but probably not to users
      */
     public String getLogMessage() {

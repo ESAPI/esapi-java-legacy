@@ -27,9 +27,9 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
      * Key for user in session
      */
     protected static final String USER = "ESAPIUserSessionKey";
-    
+
     private final Logger logger = ESAPI.getLogger("Authenticator");
-    
+
     /**
      * The currentUser ThreadLocal variable is used to make the currentUser available to any call in any part of an
      * application. Otherwise, each thread would have to pass the User object through the calltree to any methods that
@@ -53,14 +53,14 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
             super.set(newUser);
         }
     }
-    
+
     /**
      *
      */
     public AbstractAuthenticator() {
         super();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -68,14 +68,14 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         // logger.logWarning(Logger.SECURITY, "************Clearing threadlocals. Thread" + Thread.currentThread().getName() );
         currentUser.setUser(null);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean exists(String accountName) {
         return getUser(accountName) != null;
     }
-    
+
     /**
      * {@inheritDoc}
      * <p/>
@@ -89,7 +89,7 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         }
         return user;
     }
-    
+
     /**
      * Gets the user from session.
      *
@@ -102,7 +102,7 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         if (session == null) return null;
         return ESAPI.httpUtilities().getSessionAttribute(USER);
     }
-    
+
     /**
      * Returns the user if a matching remember token is found, or null if the token
      * is missing, token is corrupt, token is expired, account name does not match
@@ -117,7 +117,7 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
             HTTPUtilities utils =ESAPI.httpUtilities();
             String token = utils.getCookie(ESAPI.currentRequest(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME);
             if (token == null) return null;
-            
+
             // See Google Issue 144 regarding first URLDecode the token and THEN unsealing.
             // Note that this Google Issue was marked as "WontFix".
 
@@ -147,7 +147,7 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         ESAPI.httpUtilities().killCookie(ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME);
         return null;
     }
-    
+
     /**
      * Utility method to extract credentials and verify them.
      *
@@ -183,14 +183,14 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         request.setAttribute(user.getCSRFToken(), "authenticated");
         return user;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public User login() throws AuthenticationException {
         return login(ESAPI.currentRequest(), ESAPI.currentResponse());
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -279,7 +279,7 @@ public abstract class AbstractAuthenticator implements org.owasp.esapi.Authentic
         setCurrentUser(user);
         return user;
     }
-    
+
     /**
      * {@inheritDoc}
      */

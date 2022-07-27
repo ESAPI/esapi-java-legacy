@@ -18,13 +18,13 @@ public class FileTestUtils
 
     /*
         Rational for switching from SecureRandom to Random:
-        
+
         This is used for generating filenames for temporary
         directories. Originally this was using SecureRandom for
         this to make /tmp races harder. This is not necessary as
         mkdir always returns false if if the directory already
         exists.
-        
+
         Additionally, SecureRandom for some reason on Linux
         is appears to be reading from /dev/random instead of
         /dev/urandom. As such, the many calls for temporary

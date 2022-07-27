@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -39,14 +39,14 @@ import junit.framework.TestSuite;
 
 /**
  * The Class AccessReferenceMapTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class EnterpriseSecurityExceptionTest extends TestCase {
-    
+
     /**
      * Instantiates a new access reference map test.
-     * 
+     *
      * @param testName
      *            the test name
      */
@@ -72,7 +72,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
 
     /**
      * Suite.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
@@ -80,10 +80,10 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         return suite;
     }
 
-    
+
     /**
      * Test of update method, of class org.owasp.esapi.AccessReferenceMap.
-     * 
+     *
      */
     public void testExceptions() {
         System.out.println("exceptions");
@@ -119,7 +119,7 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         e = new ValidationException("m1","m2",new Throwable());
         e = new ValidationException("m1","m2","context");
         e = new ValidationException("m1","m2",new Throwable(),"context");
-         
+
         e = new IntegrityException();
         e = new IntegrityException("m1","m2");
         e = new IntegrityException("m1","m2",new Throwable());
@@ -153,5 +153,5 @@ public class EnterpriseSecurityExceptionTest extends TestCase {
         assertEquals( ex.getUserMessage(), "m1" );
         assertEquals( ex.getLogMessage(), "m2" );
     }
-    
+
 }

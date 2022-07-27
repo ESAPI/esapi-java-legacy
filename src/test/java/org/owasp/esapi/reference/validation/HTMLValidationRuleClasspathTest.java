@@ -60,11 +60,11 @@ public class HTMLValidationRuleClasspathTest {
      * actually <i>use</i> it for anything.
      */
     private static final String ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION = "antisamy-esapi-CP.xml";
- 
+
     private static class ConfOverride extends SecurityConfigurationWrapper {
         private String desiredReturnAction = "clean";
         private String desiredReturnConfigurationFile = null;
-        
+
         ConfOverride(SecurityConfiguration orig, String desiredReturnAction, String desiredReturnConfigurationFile) {
             super(orig);
             this.desiredReturnAction = desiredReturnAction;
@@ -100,14 +100,14 @@ public class HTMLValidationRuleClasspathTest {
         );
     }
 
-    
+
     @Test
     public void checkPolicyExceptionWithBadConfig() throws Exception {
         ESAPI.override(null);
         thrownEx.expect(PolicyException.class);
         HTMLValidationRule.loadAntisamyPolicy(INVALID_ANTISAMY_POLICY_FILE);
     }
-    
+
     @Test
     public void testGetValid() throws Exception {
         System.out.println("getValidCP");

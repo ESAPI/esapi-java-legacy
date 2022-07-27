@@ -32,7 +32,7 @@ import org.owasp.esapi.codecs.Codec;
  */
 @RunWith(Parameterized.class)
 public abstract class AbstractCodecStringTest {
-   
+
     protected static class CodecStringTestTuple {
         /** Codec reference to be tested.*/
         public Codec codec;
@@ -44,10 +44,10 @@ public abstract class AbstractCodecStringTest {
         public String decodedValue;
         /** Optional field to override the toString value of this tuple. */
         public String description;
-        
+
         /**Default public constructor.*/
         public CodecStringTestTuple() { /* No Op*/ }
-        
+
         /** {@inheritDoc}*/
         @Override
         public String toString() {
@@ -58,25 +58,25 @@ public abstract class AbstractCodecStringTest {
     private final String input;
     private final char[] encodeImmune;
     private final String decodedValue;
-    
+
     public AbstractCodecStringTest(CodecStringTestTuple tuple) {
         this.codec = tuple.codec;
         this.input = tuple.input;
         this.decodedValue = tuple.decodedValue;
         this.encodeImmune = tuple.encodeImmune;
     }
-    
+
 
     /** Checks that when the input is decoded using the specified codec, that the return matches the expected decoded value.*/
     @Test
     public void testDecode() {
         assertEquals(decodedValue, codec.decode(input));
     }
-  
+
     /** Checks that when the decoded value is encoded (using immunity), that the return matches the provided input.*/
     @Test
     public void testEncode() {
         assertEquals(input, codec.encode(encodeImmune, decodedValue));
     }
-    
+
 }

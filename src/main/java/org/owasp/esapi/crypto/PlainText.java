@@ -31,9 +31,9 @@ public final class PlainText implements Serializable {
 
     private static final long serialVersionUID = 20090921;
     private static Logger logger = ESAPI.getLogger("PlainText");
-    
+
     private byte[] rawBytes = null;
-    
+
     /**
      * Construct a {@code PlainText} object from a {@code String}.
      * @param str    The {@code String} that is converted to a UTF-8 encoded
@@ -68,7 +68,7 @@ public final class PlainText implements Serializable {
         rawBytes = new byte[ b.length ];
         System.arraycopy(b, 0, rawBytes, 0, b.length);
     }
-    
+
     /**
      * Convert the {@code PlainText} object to a UTF-8 encoded {@code String}.
      * @return    A {@code String} representing the {@code PlainText} object.
@@ -82,7 +82,7 @@ public final class PlainText implements Serializable {
             throw new RuntimeException("Can't find UTF-8 byte-encoding!", e);
         }
     }
-    
+
     /**
      * Convert the {@code PlainText} object to a byte array.
      * @return    A byte array representing the {@code PlainText} object.
@@ -92,7 +92,7 @@ public final class PlainText implements Serializable {
         System.arraycopy(rawBytes, 0, bytes, 0, rawBytes.length);
         return bytes;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -109,7 +109,7 @@ public final class PlainText implements Serializable {
         }
         return result;
     }
-    
+
     /**
      * Same as {@code this.toString().hashCode()}.
      * @return    {@code this.toString().hashCode()}.
@@ -117,20 +117,20 @@ public final class PlainText implements Serializable {
     @Override public int hashCode() {
         return this.toString().hashCode();
     }
-    
+
     /**
      * Return the length of the UTF-8 encoded byte array representing this
      * object. Note that if this object was constructed with the constructor
      * {@code PlainText(String str)}, then this length might not necessarily
      * agree with {@code str.length()}.
-     * 
+     *
      * @return    The length of the UTF-8 encoded byte array representing this
      *             object.
      */
     public int length() {
         return rawBytes.length;
     }
-    
+
     // DISCUSS: Should we set 'rawBytes' to null??? Won't make it eligible for
     //            GC unless this PlainText object is set to null which can't do
     //            from here. If we set it to null, most methods will cause
@@ -143,7 +143,7 @@ public final class PlainText implements Serializable {
         CryptoHelper.overwrite( rawBytes );
         // rawBytes = null;                    // See above comment re: discussion.
     }
-    
+
     /**
      * Needed for correct definition of equals for general classes.
      * (Technically not needed for 'final' classes though like this class

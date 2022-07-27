@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -51,7 +51,7 @@ import javax.servlet.http.Part;
 
 /**
  * The Class MockHttpServletRequest.
- * 
+ *
  * @author jwilliams
  */
 public class MockHttpServletRequest implements HttpServletRequest
@@ -114,7 +114,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
     /**
      * Adds the parameter.
-     * 
+     *
      * @param name the name
      * @param value the value
      */
@@ -131,7 +131,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
     /**
      * removeParameter removes the parameter name from the parameters map if it exists
-     *  
+     *
      * @param name
      *             parameter name to be removed
      */
@@ -141,7 +141,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
     /**
      * Adds the header.
-     * 
+     *
      * @param name the name
      * @param value the value
      */
@@ -172,7 +172,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
     /**
      * Sets the cookies.
-     * 
+     *
      * @param list the new cookies
      */
     public void setCookies(ArrayList<Cookie> list) {
@@ -214,7 +214,7 @@ public class MockHttpServletRequest implements HttpServletRequest
 
     /**
      * {@inheritDoc}
-     * @param name 
+     * @param name
      * @return The requested header value.
      */
     public String getHeader(String name) {

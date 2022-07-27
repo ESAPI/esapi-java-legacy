@@ -71,7 +71,7 @@ public class PersistedEncryptedData
         fos.close();
         return serializedBytes.length;
     }
- 
+
     /** Read the specified file name containing encoded encrypted data,
      *  and then decode it and decrypt it to retrieve the original plaintext.
      *

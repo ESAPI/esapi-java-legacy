@@ -41,7 +41,7 @@ until these deprecated methods are removed, but it will be a minumum of 2 years
 or 1 major release [e.g., 3.x], whichever comes first. Also, we may not
 necessarily remove all of them at once, depending on community feedback.)
 
-DefaultSecurityConfiguration implements the new contract. New contract methods implementations work as described in 
+DefaultSecurityConfiguration implements the new contract. New contract methods implementations work as described in
 'Multiple configuration files support' paragraph.
 
 ## Multiple configuration files support
@@ -49,7 +49,7 @@ DefaultSecurityConfiguration implements the new contract. New contract methods i
 EsapiPropertyManager is the new implementation for getting properties, which uses prioritized property loaders (each one associated with a specific configuration file). This allows to have multiple configuration files existing with priority connected to each one. At this moment, there
 are two configuration files possible to use, the path to them is set through following Java
 system properties:
- 
+
 * org.owasp.esapi.opsteam = <full_path_to_file> (higher priority config)
 * org.owasp.esapi.devteam = <full_path_to_file> (lower priority config)
 
@@ -86,9 +86,9 @@ ESAPI.securityConfiguration().getBooleanProp("propertyXXX");
 where "propertyXXX" is some property name relevant to ESAPI (and
 in this case, one that would hold a boolean value). See ESAPI.properties
 for a list of current property names known to ESAPI.
- 
+
 In above example, following happens:
-  
+
 1. org.owasp.esapi.opsteam configuration is used to get propertyXXX and return it as boolean.
 2. If (1) fails to find property, org.owasp.esapi.devteam is used to get propertyXXX and return it as boolean.
 3. If (2) fails to find property, ESAPI.properties is used to get propertyXXX and return it as boolean.

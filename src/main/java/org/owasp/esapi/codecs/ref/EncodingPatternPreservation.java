@@ -29,7 +29,7 @@ public class EncodingPatternPreservation {
 
     /**
      * Constructor.
-     * 
+     *
      * @param pattern Pattern identifying content being replaced.
      */
     public EncodingPatternPreservation(Pattern pattern) {
@@ -39,11 +39,11 @@ public class EncodingPatternPreservation {
     /**
      * Replaces each matching instance of this instance's Pattern with an
      * identifiable replacement marker. <br>
-     * 
+     *
      * <br>
      * After the encoding process is complete, use
      * {@link #restoreOriginalContent(String)} to re-insert the original data.
-     * 
+     *
      * @param input String to adjust
      * @return The adjusted String
      */
@@ -62,7 +62,7 @@ public class EncodingPatternPreservation {
             if (replaceContent != null) {
                 replacedContentList.add(replaceContent);
                 inputCpy = inputCpy.replaceFirst(noEncodeContent.pattern(), replacementMarker);
-            }            
+            }
         }
 
         return inputCpy;
@@ -71,7 +71,7 @@ public class EncodingPatternPreservation {
     /**
      * Replaces each instance of the {@link #replacementMarker} with the original
      * content, as captured by {@link #captureAndReplaceMatches(String)}
-     * 
+     *
      * @param input String to restore.
      * @return String reference with all values replaced.
      */
@@ -88,7 +88,7 @@ public class EncodingPatternPreservation {
 
     /**
      * Allows the marker used as a replacement to be altered.
-     * 
+     *
      * @param marker String replacment to use for regex matches.
      */
     public void setReplacementMarker(String marker) {

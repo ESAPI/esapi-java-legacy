@@ -26,13 +26,13 @@ public class EventTypeLogSupplierTest {
         paramSets.add(new Object[] {Logger.SECURITY_FAILURE,Logger.SECURITY_FAILURE.toString()});
         paramSets.add(new Object[] {Logger.SECURITY_SUCCESS,Logger.SECURITY_SUCCESS.toString()});
         paramSets.add(new Object[] {null, Logger.EVENT_UNSPECIFIED.toString()});
-        
+
         return paramSets;
     }
-    
+
     private final EventType eventType;
     private final String expectedResult;
-    
+
     public EventTypeLogSupplierTest(EventType eventType, String result) {
         this.eventType = eventType;
         this.expectedResult = result;
@@ -42,5 +42,5 @@ public class EventTypeLogSupplierTest {
         EventTypeLogSupplier supplier = new EventTypeLogSupplier(eventType);
         assertEquals(expectedResult, supplier.get());
     }
-    
+
 }

@@ -30,7 +30,7 @@ public class DefaultAccessController implements AccessController {
 
     private DefaultAccessController() throws AccessControlException {
         ACRPolicyFileLoader policyDescriptor = new ACRPolicyFileLoader();
-        PolicyDTO policyDTO = policyDescriptor.load();        
+        PolicyDTO policyDTO = policyDescriptor.load();
         ruleMap = policyDTO.getAccessControlRules();
     }
 
@@ -42,18 +42,18 @@ public class DefaultAccessController implements AccessController {
             AccessControlRule rule = (AccessControlRule)ruleMap.get(key);
             if(rule == null) {
                 throw new AccessControlException("Access Denied",
-                        "AccessControlRule was not found for key: " + key); 
+                        "AccessControlRule was not found for key: " + key);
             }
             if(logger.isDebugEnabled()){ logger.debug(Logger.EVENT_SUCCESS, "Evaluating Authorization Rule \"" + key + "\" Using class: " + rule.getClass().getCanonicalName()); }
             return rule.isAuthorized(runtimeParameter);
         } catch(Exception e) {
             try {
                 //Log the exception by throwing and then catching it.
-                //TODO figure out what which string goes where.        
+                //TODO figure out what which string goes where.
                 throw new AccessControlException("Access Denied",
                     "An unhandled Exception was " +
-                    "caught, so access is denied.",  
-                    e);    
+                    "caught, so access is denied.",
+                    e);
             } catch(AccessControlException ace) {
                 //the exception was just logged. There's nothing left to do.
             }
@@ -67,25 +67,25 @@ public class DefaultAccessController implements AccessController {
         try {
             AccessControlRule rule = (AccessControlRule)ruleMap.get(key);
             if(rule == null) {
-                throw new AccessControlException("Access Denied", 
-                        "AccessControlRule was not found for key: " + key); 
+                throw new AccessControlException("Access Denied",
+                        "AccessControlRule was not found for key: " + key);
             }
             if(logger.isDebugEnabled()){ logger.debug(Logger.EVENT_SUCCESS, "Asserting Authorization Rule \"" + key + "\" Using class: " + rule.getClass().getCanonicalName()); }
             isAuthorized = rule.isAuthorized(runtimeParameter);
         } catch(Exception e) {
-            //TODO figure out what which string goes where.        
+            //TODO figure out what which string goes where.
             throw new AccessControlException("Access Denied", "An unhandled Exception was " +
                     "caught, so access is denied." +
                     "AccessControlException.",
                     e);
         }
         if(!isAuthorized) {
-            throw new AccessControlException("Access Denied", 
-                    "Access Denied for key: " + key + 
+            throw new AccessControlException("Access Denied",
+                    "Access Denied for key: " + key +
                     " runtimeParameter: " + runtimeParameter);
         }
     }
-    
+
     /** {@inheritDoc} */
     public void assertAuthorizedForData(String action, Object data)
             throws AccessControlException {

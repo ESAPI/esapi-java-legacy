@@ -46,10 +46,10 @@ public class CipherSpecTest extends TestCase {
     @After public void tearDown() throws Exception {
         // none
     }
-    
+
     /** Test CipherSpec(String cipherXform, int keySize, int blockSize, final byte[] iv) */
     @Test public void testCipherSpecStringIntIntByteArray() {
-        
+
         cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
         assertTrue( cipherSpec != null );
         cipherSpec = null;
@@ -77,7 +77,7 @@ public class CipherSpecTest extends TestCase {
         assertTrue( cipherSpec != null );
         assertTrue( cipherSpec.getCipherAlgorithm().equals("Blowfish"));
         assertTrue( cipherSpec.getCipherMode().equals("OFB8"));
-        
+
         cipherSpec = new CipherSpec(dfltAESCipher, 256);
         assertTrue( cipherSpec != null );
         assertTrue( cipherSpec.getCipherAlgorithm().equals("AES"));
@@ -91,7 +91,7 @@ public class CipherSpecTest extends TestCase {
         assertTrue( myIV != null );
         assertTrue( myIV.length > 0 );
         cipherSpec = new CipherSpec(myIV);
-        assertTrue( cipherSpec.getKeySize() == 
+        assertTrue( cipherSpec.getKeySize() ==
                         ESAPI.securityConfiguration().getEncryptionKeyLength() );
         assertTrue( cipherSpec.getCipherTransformation().equals(
                         ESAPI.securityConfiguration().getCipherTransformation() ) );
@@ -102,7 +102,7 @@ public class CipherSpecTest extends TestCase {
         cipherSpec = new CipherSpec( dfltECBCipher );
         assertTrue( cipherSpec.getCipherTransformation().equals("AES/ECB/NoPadding") );
         assertTrue( cipherSpec.getIV() == null );
-    
+
         cipherSpec = new CipherSpec(dfltOtherCipher);
         assertTrue( cipherSpec.getCipherMode().equals("OFB8") );
     }
@@ -112,7 +112,7 @@ public class CipherSpecTest extends TestCase {
         cipherSpec = new CipherSpec();
         cipherSpec.setCipherTransformation("AlgName/Mode/Padding");
         cipherSpec.getCipherAlgorithm().equals("AlgName/Mode/Padding");
-        
+
         try {
                 // Don't use null here as compiling JUnit tests disables assertion
                 // checking so we get a NullPointerException here instead.
@@ -202,7 +202,7 @@ public class CipherSpecTest extends TestCase {
         assertTrue( cipherSpec.requiresIV() == false );
         assertTrue( new CipherSpec(dfltOtherCipher).requiresIV() );
     }
-    
+
     /** Test serialization */
     @Test public void testSerialization() {
         String filename = "cipherspec.ser";
@@ -217,7 +217,7 @@ public class CipherSpecTest extends TestCase {
             //       Guess what? We don't care!!!
             serializedFile.delete();
 
-            
+
             cipherSpec = new CipherSpec( "AES/CBC/NoPadding",  128,  8, myIV);
             FileOutputStream fos = new FileOutputStream(filename);
             ObjectOutputStream out = new ObjectOutputStream(fos);
@@ -235,7 +235,7 @@ public class CipherSpecTest extends TestCase {
             // compare them via their string representations.
             assertEquals("Serialized restored CipherSpec differs from saved CipherSpec",
                          cipherSpec.toString(), restoredCipherSpec.toString() );
-            
+
             success = true;
         } catch(IOException ex) {
             ex.printStackTrace(System.err);
@@ -258,7 +258,7 @@ public class CipherSpecTest extends TestCase {
             }
         }
     }
-    
+
     /**
      * Run all the test cases in this suite.
      * This is to allow running from {@code org.owasp.esapi.AllTests}.

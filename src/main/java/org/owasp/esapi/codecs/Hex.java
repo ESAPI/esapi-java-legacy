@@ -1,6 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -13,7 +13,7 @@ package org.owasp.esapi.codecs;
 public class Hex {
 
     /** Output byte representation as hexadecimal representation.
-     * 
+     *
      * @param b                Bytes to encode to hexadecimal representation.
      * @param leading0x        If true, return with leading "0x".
      * @return                Hexadecimal representation of specified bytes.
@@ -37,7 +37,7 @@ public class Hex {
     /**
      * Output byte representation as hexadecimal representation.
      * Alias for <code>toHex()</code> method.
-     * 
+     *
      * @param b                Bytes to encode to hexadecimal representation.
      * @param leading0x        If true, return with leading "0x".
      * @return                Hexadecimal representation of specified bytes.
@@ -53,7 +53,7 @@ public class Hex {
      * in dealing with things like keys, initialization vectors, etc. For
      * example, the string "0x0000face" is going to return a byte array
      * whose length is 4, not 2.
-     * 
+     *
      * @param hexStr    Hexadecimal-encoded string, with or without leading "0x".
      * @return            The equivalent byte array.
      */
@@ -74,9 +74,9 @@ public class Hex {
 
     /** Decode hexadecimal-encoded string and return raw byte array.
      * Alias for <code>fromHex()</code> method.
-     * 
+     *
      * @param hexStr    Hexadecimal-encoded string, with or without leading "0x".
-     * @return            The equivalent byte array. 
+     * @return            The equivalent byte array.
      */
     public static byte[] decode(String hexStr) {
         return fromHex(hexStr);

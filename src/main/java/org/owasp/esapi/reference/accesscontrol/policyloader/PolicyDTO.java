@@ -18,7 +18,7 @@ final public class PolicyDTO {
     public PolicyDTO() {
         this.accessControlRules = new HashMap();
     }
-    
+
     public Map getAccessControlRules() {
         return accessControlRules;
     }
@@ -31,12 +31,12 @@ final public class PolicyDTO {
         }
         Constructor accessControlRuleConstructor;
         try {
-            
-            
+
+
             Class accessControlRuleClass = Class.forName(accessControlRuleClassName, false, this.getClass().getClassLoader());
             accessControlRuleConstructor = accessControlRuleClass
                     .getConstructor();
-            AccessControlRule accessControlRule = 
+            AccessControlRule accessControlRule =
                 (AccessControlRule) accessControlRuleConstructor
                     .newInstance();
             accessControlRule.setPolicyParameters(policyParameter);
@@ -45,7 +45,7 @@ final public class PolicyDTO {
             throw new AccessControlException(
                     "Unable to create Access Control Rule for key: \"" + key
                             + "\" with policyParameters: \"" + policyParameter + "\"",
-                    "", 
+                    "",
                     e);
         }
     }

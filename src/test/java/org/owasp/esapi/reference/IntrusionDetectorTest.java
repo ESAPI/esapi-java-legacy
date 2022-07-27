@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -32,14 +32,14 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 
 /**
  * The Class IntrusionDetectorTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class IntrusionDetectorTest extends TestCase {
 
     /**
      * Instantiates a new intrusion detector test.
-     * 
+     *
      * @param testName
      *            the test name
      */
@@ -67,7 +67,7 @@ public class IntrusionDetectorTest extends TestCase {
 
     /**
      * Suite.
-     * 
+     *
      * @return the test
      */
     public static Test suite() {
@@ -78,7 +78,7 @@ public class IntrusionDetectorTest extends TestCase {
 
     /**
      * Test of addException method, of class org.owasp.esapi.IntrusionDetector.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -95,7 +95,7 @@ public class IntrusionDetectorTest extends TestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         user.loginWithPassword("addException");
-        
+
         // Now generate some exceptions to disable account
         for ( int i = 0; i < ESAPI.securityConfiguration().getQuota(IntegrityException.class.getName()).count; i++ ) {
             // EnterpriseSecurityExceptions are added to IntrusionDetector automatically
@@ -104,10 +104,10 @@ public class IntrusionDetectorTest extends TestCase {
         assertFalse( user.isLoggedIn() );
     }
 
-    
+
     /**
      * Test of addEvent method, of class org.owasp.esapi.IntrusionDetector.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -121,12 +121,12 @@ public class IntrusionDetectorTest extends TestCase {
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
         user.loginWithPassword("addEvent");
-        
+
         // Now generate some events to disable user account
         for ( int i = 0; i < ESAPI.securityConfiguration().getQuota("event.test").count; i++ ) {
             ESAPI.intrusionDetector().addEvent("test", "test message");
         }
         assertFalse( user.isEnabled() );
     }
-    
+
 }

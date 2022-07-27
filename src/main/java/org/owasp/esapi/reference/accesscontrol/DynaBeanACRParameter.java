@@ -9,18 +9,18 @@ import org.apache.commons.beanutils.LazyDynaMap;
 import org.owasp.esapi.reference.accesscontrol.policyloader.PolicyParameters;
 
 /**
- * A DynaBean comes from the apache bean utils. It is basically a 
- * convenient way to dynamically assign getters and setters. Essentially, 
+ * A DynaBean comes from the apache bean utils. It is basically a
+ * convenient way to dynamically assign getters and setters. Essentially,
  * the way we use DynaBean is a HashMap that can be set to read only.
  * @author Mike H. Fauzy
  */
 public class DynaBeanACRParameter implements PolicyParameters {
     protected LazyDynaMap policyProperties;
-    
+
     public DynaBeanACRParameter() {
         policyProperties = new LazyDynaMap();
     }
-    
+
     /* (non-Javadoc)
      * @see org.owasp.esapi.reference.accesscontrol.policyloader.PolicyParameters#get(java.lang.String)
      */
@@ -107,7 +107,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
     public Date getDate(String key) {
         return (Date)get(key);
     }
-    
+
     /**
      * Convenience method to avoid common casts. Note that the time object
      * is the same as a date object
@@ -117,7 +117,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
     public Date getTime(String key) {
         return (Date)get(key);
     }
-    
+
     /**
      * Convenience method to avoid common casts.
      * @param key
@@ -126,7 +126,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
     public String getString(String key) {
         return (String)get(key);
     }
-    
+
     /**
      * Convenience method to avoid common casts.
      * @param key
@@ -135,7 +135,7 @@ public class DynaBeanACRParameter implements PolicyParameters {
     public String getString(String key, String defaultValue) {
         return (String)get(key) == null ? defaultValue : (String)get(key);
     }
-    
+
     /**
      * Convenience method to avoid common casts.
      * @param key
@@ -144,15 +144,15 @@ public class DynaBeanACRParameter implements PolicyParameters {
     public String[] getStringArray(String key) {
         return (String[])get(key);
     }
-    
+
     /**
      * Convenience method to avoid common casts.
      * @param key
-     * @return The value of the specified key, returned generically as an Object. 
+     * @return The value of the specified key, returned generically as an Object.
      */
     public Object getObject(String key) {
         return get(key);
-    }    
+    }
 
     /* (non-Javadoc)
      * @see org.owasp.esapi.reference.accesscontrol.policyloader.PolicyParameters#set(java.lang.String, java.lang.Object)
@@ -166,18 +166,18 @@ public class DynaBeanACRParameter implements PolicyParameters {
     public void put(String key, Object value) throws IllegalArgumentException {
         set(key, value);
     }
-    
+
     /**
-     * This makes the map itself read only, but the mutability of objects 
-     * that this map contains is not affected. Specifically, properties 
-     * cannot be added or removed and the reference cannot be changed to 
-     * a different object, but this does not change whether the values that the 
-     * object contains can be changed. 
+     * This makes the map itself read only, but the mutability of objects
+     * that this map contains is not affected. Specifically, properties
+     * cannot be added or removed and the reference cannot be changed to
+     * a different object, but this does not change whether the values that the
+     * object contains can be changed.
      */
     public void lock() {
         policyProperties.setRestricted(true);
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         Iterator keys = policyProperties.getMap().keySet().iterator();

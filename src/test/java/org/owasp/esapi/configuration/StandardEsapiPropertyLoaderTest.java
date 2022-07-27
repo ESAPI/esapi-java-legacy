@@ -29,14 +29,14 @@ public class StandardEsapiPropertyLoaderTest {
         DEVTEAM_CFG = System.getProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(),"");
         OPSTEAM_CFG = System.getProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(),"");
     }
-    
+
     @AfterClass
     public static void restoreEsapiConfigurations() {
          System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), DEVTEAM_CFG);
          System.setProperty(EsapiConfiguration.OPSTEAM_ESAPI_CFG.getConfigName(), OPSTEAM_CFG);
     }
 
-    
+
     @Before
     public void init() {
         System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), "");
@@ -139,7 +139,7 @@ public class StandardEsapiPropertyLoaderTest {
     public void testGetIntProp() {
         // given
         String propertyKey = "int_property";
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -156,7 +156,7 @@ public class StandardEsapiPropertyLoaderTest {
     public void testIntPropertyNotFound() throws ConfigurationException {
         // given
         String propertyKey = "non-existing-key";
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -189,7 +189,7 @@ public class StandardEsapiPropertyLoaderTest {
         // given
         String propertyKey = "string_property";
         String expectedValue = "test_string_property";
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -197,7 +197,7 @@ public class StandardEsapiPropertyLoaderTest {
             fail( e.getMessage() );
         }
         String propertyValue = testPropertyLoader.getStringProp(propertyKey);
-        
+
         // then
         assertEquals(expectedValue, propertyValue);
     }
@@ -206,7 +206,7 @@ public class StandardEsapiPropertyLoaderTest {
     public void testStringPropertyNotFound() throws ConfigurationException {
         // given
         String propertyKey = "non-existing-key";
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -226,7 +226,7 @@ public class StandardEsapiPropertyLoaderTest {
         int priority = 1;
         String propertyKey = "boolean_property";
         boolean expectedValue = true;
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -234,7 +234,7 @@ public class StandardEsapiPropertyLoaderTest {
             fail( e.getMessage() );
         }
         boolean value = testPropertyLoader.getBooleanProp(propertyKey);
-        
+
         // then
         assertEquals(expectedValue, value);
     }
@@ -282,7 +282,7 @@ public class StandardEsapiPropertyLoaderTest {
                 "esapi" + File.separator + "ESAPI-test.properties";
         int priority = 1;
         String propertyKey = "non-existing-key";
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -317,14 +317,14 @@ public class StandardEsapiPropertyLoaderTest {
                 "esapi" + File.separator + "ESAPI-test.properties";
         int priority = 1;
         String propertyKey = "string_property";
-        
+
         byte[] expectedValue = new byte[0];
         try {
             expectedValue = ESAPI.encoder().decodeFromBase64("test_string_property");
         } catch (IOException e) {
             fail(e.getMessage());
         }
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
@@ -332,7 +332,7 @@ public class StandardEsapiPropertyLoaderTest {
             fail( e.getMessage() );
         }
         byte[] value = testPropertyLoader.getByteArrayProp(propertyKey);
-        
+
         // then
         assertEquals(expectedValue, value);
     }
@@ -343,7 +343,7 @@ public class StandardEsapiPropertyLoaderTest {
         String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
                 "esapi" + File.separator + "ESAPI-test.properties";        int priority = 1;
         String propertyKey = "non-existing-key";
-        
+
         // when
         try {
             testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);

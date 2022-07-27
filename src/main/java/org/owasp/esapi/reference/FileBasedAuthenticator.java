@@ -252,9 +252,9 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         if (password1 == null) {
             throw new AuthenticationCredentialsException("Invalid account name", "Attempt to create account " + accountName + " with a null password");
         }
-        
+
         DefaultUser user = new DefaultUser(accountName);
-        
+
         verifyPasswordStrength(null, password1, user);
 
         if (!password1.equals(password2)) {
@@ -389,7 +389,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         return null;
     }
 
- 
+
 
     /**
      * {@inheritDoc}
@@ -666,7 +666,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             return sb.toString().substring(0, sb.length() - 1);
         }
         return "";
-        
+
     }
 
     /**
@@ -741,9 +741,9 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
         if (strength < 16) {
             throw new AuthenticationCredentialsException("Invalid password", "New password is not long and complex enough");
         }
-        
+
         String accountName = user.getAccountName();
-        
+
         //jtm - 11/3/2010 - fix for bug http://code.google.com/p/owasp-esapi-java/issues/detail?id=108
         if (accountName.equalsIgnoreCase(newPassword)) {
             //password can't be account name

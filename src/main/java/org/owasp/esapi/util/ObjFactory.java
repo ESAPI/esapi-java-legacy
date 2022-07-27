@@ -1,6 +1,6 @@
 /*
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
@@ -53,7 +53,7 @@ public class ObjFactory {
 
     /**
      * Create an object based on the <code>className</code> parameter.
-     * 
+     *
      * @param className    The name of the class to construct. Should be a fully qualified name and
      *                     generally the same as type <code>T</code>
      * @param typeName    A type name used in error messages / exceptions.

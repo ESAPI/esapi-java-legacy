@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2009 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2009
  */
@@ -34,7 +34,7 @@ import org.owasp.esapi.waf.rules.Rule;
  * being protected by the WAF. It contains logic for the response building API in order
  * to allow the WAF rules regarding responses to work. Much of the work is delegated to
  * other classes, especially InterceptingServletOutputStream
- * 
+ *
  * @author Arshan Dabirsiaghi
  *
  */
@@ -52,9 +52,9 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     public InterceptingHTTPServletResponse(HttpServletResponse response, boolean buffering, List<Rule> cookieRules) throws IOException {
 
         super(response);
-        
+
         this.contentType = response.getContentType();
-        
+
         this.isos = new InterceptingServletOutputStream(response.getOutputStream(), buffering);
         this.ipw = new InterceptingPrintWriter(new PrintWriter(isos));
 
@@ -122,7 +122,7 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     public void addCookie(Cookie cookie) {
         addCookie(cookie, cookie.getMaxAge()<=0);
     }
-    
+
     public void addCookie(Cookie cookie, boolean isSession) {
 
         boolean addSecureFlag = cookie.getSecure();

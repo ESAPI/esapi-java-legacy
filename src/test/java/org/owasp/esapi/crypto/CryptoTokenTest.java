@@ -15,7 +15,7 @@ import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.ValidationException;
 
 public class CryptoTokenTest {
-    
+
     private SecretKey skey1 = null;
     private SecretKey skey2 = null;
 
@@ -58,7 +58,7 @@ public class CryptoTokenTest {
         assertEquals( ctok.getUserAccountName(), CryptoToken.ANONYMOUS_USER);
         assertFalse( ctok.isExpired() );
         long expTime1 = ctok.getExpiration();
-        
+
         CryptoToken ctok2 = null;
         try {
             if ( sk == null ) {
@@ -135,7 +135,7 @@ public class CryptoTokenTest {
 
         assertTrue( ctok.isExpired() );
         assertTrue( ctok2.isExpired() );
-        
+
         try {
             ctok2.updateToken(2);
         } catch (EncryptionException e) {
@@ -201,7 +201,7 @@ public class CryptoTokenTest {
         } catch (ValidationException e) {
             ;   // Success
         }
-        
+
     }
 
     @Test
@@ -245,7 +245,7 @@ public class CryptoTokenTest {
             ;   // Success
         } catch (Exception e) {
             fail("Caught unexpected exception: " + e);
-        }   
+        }
     }
 
 
@@ -262,7 +262,7 @@ public class CryptoTokenTest {
         } catch (Exception e) {
             fail("Caught unexpected exception: " + e);
         }
-        
+
         // Test case where attr name does not match regex "[A-Za-z0-9_.-]+".
         // Expect ValidationException.
         try {
@@ -273,7 +273,7 @@ public class CryptoTokenTest {
         } catch (Exception e) {
             fail("Caught unexpected exception: " + e);
         }
-        
+
         // Test case where attr VALUE is not. Expect ValidationException.
         try {
             ctok.setAttribute("myAttr", null);
@@ -293,7 +293,7 @@ public class CryptoTokenTest {
 
             ctok.setAttribute("complexAttr", complexValue);
             ctok.setAttribute("..--__", ""); // Ugly weird but legal attr name; empty is legal value.
-            
+
             for ( int i = 0; i < attrValues.length; i++ ) {
                 String attrName = "attr" + i;
                 String attrVal  = attrValues[i];
@@ -303,7 +303,7 @@ public class CryptoTokenTest {
 
             String tokenVal = ctok.getToken();
             assertNotNull("tokenVal should not be null", tokenVal);
-            
+
             CryptoToken ctok2 = new CryptoToken(tokenVal);
 
             String weirdAttr = ctok2.getAttribute("..--__");
@@ -337,7 +337,7 @@ public class CryptoTokenTest {
     // public Map<String, String> getAttributes()
     @Test
     public final void testAddandGetAttributes() {
-        CryptoToken ctok = new CryptoToken();       
+        CryptoToken ctok = new CryptoToken();
         Map<String, String> origAttrs = null;
 
         try {
@@ -348,7 +348,7 @@ public class CryptoTokenTest {
             String val = ctok.getAttribute("attr2");
             assertTrue("Attribute map not cloned; crypto token attr changed!",
                        val.equals("value2") );  // Confirm original attr2 did not change
-            
+
             origAttrs.put("attr3", "value3");
             origAttrs.put("attr4", "value4");
             ctok.addAttributes(origAttrs);
@@ -361,11 +361,11 @@ public class CryptoTokenTest {
         } catch (EncryptionException e) {
             fail("Caught unexpected EncryptionException: " + e);
         }
-        
+
         Map<String, String> extractedAttrs = ctok.getAttributes();
         assertTrue("Expected extracted attrs to be equal to original attrs",
                    origAttrs.equals(extractedAttrs));
-                
+
         origAttrs.put("/illegalAttrName/", "someValue");
         try {
             ctok.addAttributes(origAttrs);
@@ -376,7 +376,7 @@ public class CryptoTokenTest {
             e.printStackTrace(System.err);
             fail("Caught unexpected exception: " + e);
         }
-        
+
         origAttrs.clear();
         CryptoToken ctok2 = null;
         try {
@@ -385,7 +385,7 @@ public class CryptoTokenTest {
         } catch (EncryptionException e) {
             fail("Unexpected EncryptionException");
         }
-        
+
         try {
             ctok2.addAttributes(origAttrs);     // Add (empty) attribute map
         } catch (ValidationException e) {

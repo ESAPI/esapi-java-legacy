@@ -184,7 +184,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
      *
      * For JDK 1.5 compatibility, this method has been overridden convert the Reader
      * into an InputStream and call the superclass constructor.
-     * 
+     *
      * @throws IOException Thrown if {@code Reader} input stream invalid or does not
      *                        correspond to Java properties file format.
      */
@@ -256,7 +256,7 @@ public class ReferenceEncryptedProperties extends java.util.Properties implement
     /**
      * This method has been overridden to only accept Strings for key and value, and to encrypt
      * those Strings before storing them. Outside classes should always use {@code setProperty}
-     * to add values to the Properties map. If an outside class does erroneously call this method 
+     * to add values to the Properties map. If an outside class does erroneously call this method
      * with non-String parameters an {@code IllegalArgumentException} will be thrown.
      *
      * @param key    A String key to add

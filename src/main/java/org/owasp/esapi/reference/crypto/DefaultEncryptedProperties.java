@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -43,7 +43,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * encrypted properties file. A better approach would be to allow unencrypted
  * properties in the file and to encrypt them the first time the file is
  * accessed.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author kevin.w.wall@gmail.com
@@ -89,7 +89,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
             CipherText restoredCipherText = CipherText.fromPortableSerializedBytes(serializedCiphertext);
             progressMark++;
             PlainText plaintext           = ESAPI.encryptor().decrypt(restoredCipherText);
-            
+
             return plaintext.toString();
         } catch (Exception e) {
             throw new EncryptionException("Property retrieval failure",
@@ -158,13 +158,13 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
     }
 
     /**
-     * Loads encrypted properties file based on the location passed in args then prompts the 
-     * user to input key-value pairs.  When the user enters a null or blank key, the values 
+     * Loads encrypted properties file based on the location passed in args then prompts the
+     * user to input key-value pairs.  When the user enters a null or blank key, the values
      * are stored to the properties file.
-     * 
+     *
      * @param args
      *            the location of the properties file to load and write to
-     * 
+     *
      * @throws Exception
      *             Any exception thrown
      * @deprecated Use {@code EncryptedPropertiesUtils} instead, which allows creating, reading,
@@ -185,7 +185,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
             in = new FileInputStream(f);
             out = new FileOutputStream(f);
 
-            ep.load(in);   
+            ep.load(in);
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             String key = null;
             do {
@@ -204,7 +204,7 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
             try { if ( in != null ) in.close(); } catch( Exception e ) {}
             try { if ( out != null ) out.close(); } catch( Exception e ) {}
         }
-        
+
         Iterator<?> i = ep.keySet().iterator();
         while (i.hasNext()) {
             String k = (String) i.next();

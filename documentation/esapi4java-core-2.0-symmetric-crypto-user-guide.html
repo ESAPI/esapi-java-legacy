@@ -353,7 +353,7 @@ are ones that you would replace.</P>
 <H2>How the Old (Deprecated) Methods Were Used</H2>
 <P>To encrypt / decrypt using the String-based, deprecated methods
 carried over from ESAPI 1.4, code similar to the following would be
-used. 
+used.
 </P>
 <PRE>    String myplaintext = &quot;My plaintext&quot;;
     try {
@@ -411,10 +411,10 @@ resulting in (possibly complete) leakage of the corresponding plaintext.
 <P>Using the new encryption / decryption methods is somewhat more
 complicated, but this is in part because they are more flexible and
 that flexibility means that more information needs to be communicated
-as to the details of the encryption. 
+as to the details of the encryption.
 </P>
 <P>A code snippet using the new methods that use the master
-encryption key would look something like this: 
+encryption key would look something like this:
 </P>
 <PRE>    String myplaintext = &quot;My plaintext&quot;;
     try {
@@ -432,7 +432,7 @@ methods may not, and 2) it provides for <I>authenticity</I> <I><B>and</B></I>
 mode is chosen.</P>
 <P>Also, these new methods allow a general byte array to be
 encrypted, not just a Java String. If one needed to encrypt a byte
-array with the old deprecated method, one would first have to use 
+array with the old deprecated method, one would first have to use
 </P>
 <PRE>    byte[] plaintextByteArray = { /* byte array to be encrypted */ };
     String plaintext = new String(plaintextByteArray, &quot;UTF-8&quot;);</PRE><P>
@@ -541,7 +541,7 @@ to encrypt both bank account numbers and credit card numbers. The
 encrypted bank account numbers are to be sent to one recipient and
 the encrypted credit card numbers are to be sent to a different
 recipient. Obviously in such cases, you do not want to share the same
-key for both recipients. 
+key for both recipients.
 </P>
 <P>In ESAPI 1.4 there was not much you can do, but in ESAPI 2.0 and
 later, there are new encryption / decryption methods that allow you
@@ -553,14 +553,14 @@ will assume that secret keys are first generated, and then
 distributed to the recipients out-of-band. On you could distribute
 them dynamically via asymmetric encryption assuming that you've
 previously exchanged public keys with the recipients.)</P>
-<P>The following illustrates how these new methods might be used. 
+<P>The following illustrates how these new methods might be used.
 </P>
 <P>First, we would generate some appropriate secret keys and
 distribute them securely (e.g., perhaps over SSL/TLS) or exchange
 them earlier out-of-band to the intended recipients. (E.g., one could
 put them on two separate thumb drives and use a trusted courier to
 distribute them to the recipients or one could use PGP-mail or S/MIME
-to securely email them, etc.) 
+to securely email them, etc.)
 </P>
 <PRE>    // Generate two random, 128-bit AES keys to be distributed out-of-band.
     import javax.crypto.SecretKey;
@@ -587,10 +587,10 @@ to securely email them, etc.)
 Second, these keys would be printed out and stored somewhere secure
 by our application, perhaps using something like ESAPI's
 <CODE>EncryptedProperties</CODE> class, where they could later be
-retrieved and used. 
+retrieved and used.
 </P>
 <P>In the following code, we assume that the <CODE>SecretKey</CODE>
-values have already been initialized elsewhere. 
+values have already been initialized elsewhere.
 </P>
 <PRE>    SecretKey bankAcctKey = ...;        // These might be read from EncryptedProperties
     SecretKey credCardKey = ...;        // or from a restricted database, etc.

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.HashMap;
 /**
  * Reference implementation of the User interface. This implementation is serialized into a flat file in a simple format.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Chris Schmidt (chrisisbeef .at. gmail.com) <a href="http://www.digital-ritual.com">Digital Ritual Software</a>
  * @since June 1, 2007
@@ -45,13 +45,13 @@ public class DefaultUser implements User, Serializable {
 
     /** The idle timeout length specified in the ESAPI config file. */
     private static final int IDLE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionIdleTimeoutLength();
-    
+
     /** The absolute timeout length specified in the ESAPI config file. */
     private static final int ABSOLUTE_TIMEOUT_LENGTH = ESAPI.securityConfiguration().getSessionAbsoluteTimeoutLength();
-    
+
     /** The logger used by the class. */
     private transient final Logger logger = ESAPI.getLogger("DefaultUser");
-    
+
     /** This user's account id. */
     long accountId = 0;
 
@@ -87,27 +87,27 @@ public class DefaultUser implements User, Serializable {
 
     /** The last failed login time for this user. */
     private Date lastFailedLoginTime = new Date(0);
-    
+
     /** The expiration date/time for this user's account. */
     private Date expirationTime = new Date(Long.MAX_VALUE);
 
     /** The sessions this user is associated with */
     private transient Set<HttpSession> sessions = new HashSet<HttpSession>();
-    
-    /** The event map for this User */ 
+
+    /** The event map for this User */
     private transient HashMap eventMap = new HashMap();
-    
+
     /* A flag to indicate that the password must be changed before the account can be used. */
     // private boolean requiresPasswordChange = true;
-    
+
     /** The failed login count for this user's account. */
     private int failedLoginCount = 0;
-    
+
     /** This user's Locale. */
     private Locale locale;
-    
+
     private static final int MAX_ROLE_LENGTH = 250;
-    
+
     /**
      * Instantiates a new user.
      *
@@ -162,7 +162,7 @@ public class DefaultUser implements User, Serializable {
         enabled = false;
         logger.info( Logger.SECURITY_SUCCESS, "Account disabled: " + getAccountName() );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -205,10 +205,10 @@ public class DefaultUser implements User, Serializable {
     public int getFailedLoginCount() {
         return failedLoginCount;
     }
-    
+
     /**
      * Set the failed login count
-     * 
+     *
      * @param count
      *             the number of failed logins
      */
@@ -253,14 +253,14 @@ public class DefaultUser implements User, Serializable {
     public String getName() {
         return this.getAccountName();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Set<String> getRoles() {
         return Collections.unmodifiableSet(roles);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -274,21 +274,21 @@ public class DefaultUser implements User, Serializable {
     public void addSession( HttpSession s ) {
         sessions.add( s );
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public void removeSession( HttpSession s ) {
         sessions.remove( s );
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public Set getSessions() {
         return sessions;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -386,28 +386,28 @@ public class DefaultUser implements User, Serializable {
             incrementFailedLoginCount();
             throw new AuthenticationLoginException( "Login failed", "Missing password: " + accountName  );
         }
-        
+
         // don't let disabled users log in
         if ( !isEnabled() ) {
             setLastFailedLoginTime(new Date());
             incrementFailedLoginCount();
             throw new AuthenticationLoginException("Login failed", "Disabled user attempt to login: " + accountName );
         }
-        
+
         // don't let locked users log in
         if ( isLocked() ) {
             setLastFailedLoginTime(new Date());
             incrementFailedLoginCount();
             throw new AuthenticationLoginException("Login failed", "Locked user attempt to login: " + accountName );
         }
-        
+
         // don't let expired users log in
         if ( isExpired() ) {
             setLastFailedLoginTime(new Date());
             incrementFailedLoginCount();
             throw new AuthenticationLoginException("Login failed", "Expired user attempt to login: " + accountName );
         }
-        
+
         logout();
 
         if ( verifyPassword( password ) ) {
@@ -427,14 +427,14 @@ public class DefaultUser implements User, Serializable {
             throw new AuthenticationLoginException("Login failed", "Incorrect password provided for " + getAccountName() );
         }
     }
- 
+
 
     /**
      * {@inheritDoc}
      */
     public void logout() {
         ESAPI.httpUtilities().killCookie( ESAPI.currentRequest(), ESAPI.currentResponse(), HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME );
-        
+
         HttpSession session = ESAPI.currentRequest().getSession(false);
         if (session != null) {
             removeSession(session);
@@ -456,14 +456,14 @@ public class DefaultUser implements User, Serializable {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * In this implementation, we have chosen to use a random token that is
      * stored in the User object. Note that it is possible to avoid the use of
      * server side state by using either the hash of the users's session id or
      * an encrypted token that includes a timestamp and the user's IP address.
      * user's IP address. A relatively short 8 character string has been chosen
      * because this token will appear in all links and forms.
-     * 
+     *
      * @return the string
      */
     public String resetCSRFToken() {
@@ -479,8 +479,8 @@ public class DefaultUser implements User, Serializable {
     private void setAccountId(long accountId) {
         this.accountId = accountId;
     }
-    
-    
+
+
     /**
      * {@inheritDoc}
      */
@@ -510,7 +510,7 @@ public class DefaultUser implements User, Serializable {
         this.lastFailedLoginTime = lastFailedLoginTime;
         logger.info(Logger.SECURITY_SUCCESS, "Set last failed login time to " + lastFailedLoginTime + " for " + getAccountName() );
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -571,14 +571,14 @@ public class DefaultUser implements User, Serializable {
         this.failedLoginCount = 0;
         logger.info( Logger.SECURITY_SUCCESS, "Account unlocked: " + getAccountName() );
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public boolean verifyPassword(String password) {
         return ESAPI.authenticator().verifyPassword(this, password);
     }
-    
+
     /**
      * Override clone and make final to prevent duplicate user objects.
      * @return Nothing, as clone() is not supported for this class. A CloneNotSupportedException is always thrown for this class.
@@ -600,9 +600,9 @@ public class DefaultUser implements User, Serializable {
     public void setLocale(Locale locale) {
         this.locale = locale;
     }
-    
+
     public HashMap getEventMap() {
         return eventMap;
     }
-    
+
 }

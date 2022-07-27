@@ -46,7 +46,7 @@ Issue #			GitHub Issue Title
 37		RandomAccessReferenceMap.update() can randomly corrupt the map
 71		java.lang.ExceptionInInitializerError in 2.0 version
 129		Add Logging support for SLF4J
-157		minimum-config deployment fails 
+157		minimum-config deployment fails
 188		SecurityWrapperRequest seems to mishandle/swallow allowNull argument
 209		Build an encoding function specific to HTTP/Response Splitting (tactical remediation)
 213		Provide a taglib descriptor (.tld file)
@@ -116,7 +116,7 @@ Issue #			GitHub Issue Title
 386		Avoid using System.err in EsapiPropertyManager
 387		&#39;mvn site&#39; fails for FindBugs report, causing &#39;site&#39; goal to fail
 389		Provide an option for the encodeForLDAP method to not encode wildcard characters
-394		Refactor Validator.getCanonicalizedUri into Encoder.  
+394		Refactor Validator.getCanonicalizedUri into Encoder.
 395		Issues when I am passing htttp://localhost:8080/user=admin&amp;prodversion=no
 396		Trust Boundary Violation - while triggering veracode
 397		Update Resource path search to maintain legacy behavior in DefaultSecurityConfiguration.java
@@ -128,7 +128,7 @@ Issue #			GitHub Issue Title
 417		Add additional protection against CVE-2016-1000031
 422		Inconsistent dependency structure and vulnerable xml (xerces, xalan, xml-apis ...) dependencies
 424		issue with Filename encoding for executeSystemCommand
-425		Project build error: Non-resolvable parent POM for org.owasp.esapi:esapi:2.1.0.2-SNAPSHOT: Could not transfer artifact 
+425		Project build error: Non-resolvable parent POM for org.owasp.esapi:esapi:2.1.0.2-SNAPSHOT: Could not transfer artifact
 427		HTTP cookie validation rules too restrictive?
 429		Miscellaneous updates to pom.xml
 432		ESAPI.properties not found.
@@ -140,7 +140,7 @@ Issue #			GitHub Issue Title
 442		Remove deprecated fields in Encoder interface
 444		Delete deprecated method Base64.decodeToObject() and related methods
 445		A bunch of dependencies are out of date , I will list them below with the associated vulnerability
-447		can&#39;t generate MasterKey / MasterSalt 
+447		can&#39;t generate MasterKey / MasterSalt
 448		Clean up pom.xml
 454		about code eclipse formatter template question
 455		New release for mitigation of CVEs
@@ -194,7 +194,7 @@ Issue #			GitHub Issue Title
 
     Issue 483     More miscellaneous prep work for ESAPI 2.2.0.0 release
         Specifically, CipherText.getSerialVersionUID() and DefaultSecurityConfiguration.MAX_FILE_NAME_LENGTH have actually been deleted from the ESAPI code base. For the former, use CipherText.cipherTextVersion() instead. For the latter, there is no replacement. (This wasn't being used, but it was set to 1000 in case you're wondering.)
-        
+
 * Various properties in ESAPI.properties were changed in a way that might affect your application:
     Issue 439		Tighten ESAPI defaults to disallow dubious file suffixes
 
@@ -220,10 +220,10 @@ Issue #			GitHub Issue Title
                                                     Validator.HTTPQueryString=^([a-zA-Z0-9_\\-]{1,32}=[\\p{L}\\p{N}.\\-/+=_ !$*?@%]*&?)*$
                                                 (Left as an exercise for the reader to figure out what exactly this means. ;-)
             Validator.HTTPURI:              Changed to be much more restrictive; i.e., changed from:
-                                                    Validator.HTTPURI=^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]*$ 
+                                                    Validator.HTTPURI=^[a-zA-Z0-9()\\-=\\*\\.\\?;,+\\/:&_ ]*$
                                                 to:
                                                     Validator.HTTPURI=^/([a-zA-Z0-9.\\-_]*/?)*$
-            
+
 * Other changes:
     Issue 500		Suppress noise from ESAPI searching for properties and stop ignoring important IOExceptions
 
@@ -241,7 +241,7 @@ Issue #			GitHub Issue Title
 
         Other changes in this release, some of which not tracked via GitHub issues
 
-* Updated minimal version of Maven from 3.0 to 3.1 required to build ESAPI. 
+* Updated minimal version of Maven from 3.0 to 3.1 required to build ESAPI.
 * Miscellaneous minor javadoc fixes and updates.
 * Added the Maven plug-in for OWASP Dependency Check so 3rd party dependencies can be kept up-to-date.
 * Updated .gitignore file with additional files to be ignored.

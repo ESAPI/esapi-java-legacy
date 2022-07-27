@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2009 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  */
 package org.owasp.esapi.codecs;
 
@@ -60,7 +60,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Encodes a Character using XML entities as necessary.
      *
      * @param immune characters that should not be encoded as entities
@@ -80,10 +80,10 @@ public class XMLEntityCodec extends AbstractCharacterCodec
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
-     * 
+     *
      * Legal formats:
      * <ul>
      *     <li>&amp;#dddd;</li>
@@ -261,7 +261,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
     }
 
     /**
-     * 
+     *
      * Converts the rest of a named entity to a character.
      * null if no decoding is possible.
      * @param input The input to read from. It is assumed that input

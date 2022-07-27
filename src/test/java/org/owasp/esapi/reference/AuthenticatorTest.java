@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -55,12 +55,12 @@ import org.owasp.esapi.http.MockHttpServletResponse;
 
 /**
  * The Class AuthenticatorTest.
- * 
+ *
  * @author Jeff Williams (jeff.williams@aspectsecurity.com)
  */
 public class AuthenticatorTest {
     private static Authenticator instance;
-    /** 
+    /**
      * User session information is stored on a per-thread basis.  So long as this has potential to run single threaded then we'll maintain a synchronous nature execution.
      * This is done to prevent tests corrupting each others states since all will be executed on a limited set of Threads within the JVM.
      */
@@ -82,7 +82,7 @@ public class AuthenticatorTest {
     public void setup() throws InterruptedException {
         while (!threadIsolation.tryAcquire(500, TimeUnit.MILLISECONDS)) {
             //Spurious Interrupt Guard
-        }       
+        }
     }
 
     @After
@@ -102,10 +102,10 @@ public class AuthenticatorTest {
         }
     }
 
-    
+
     /**
      * Test of createAccount method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      * @throws EncryptionException
@@ -158,12 +158,12 @@ public class AuthenticatorTest {
     /**
      * Test of generateStrongPassword method, of class
      * org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
     @Test public void testGenerateStrongPassword() throws AuthenticationException {
-        System.out.println("generateStrongPassword");        
+        System.out.println("generateStrongPassword");
         String oldPassword = "iiiiiiiiii";  // i is not allowed in passwords - this prevents failures from containing pieces of old password
         String newPassword = null;
         String username = "FictionalEsapiUser";
@@ -187,7 +187,7 @@ public class AuthenticatorTest {
 
     /**
      * Test of getCurrentUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      *
      * @throws Exception
      */
@@ -196,7 +196,7 @@ public class AuthenticatorTest {
         String username1 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         String username2 = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         User user1 = instance.createUser(username1, "getCurrentUser", "getCurrentUser");
-        User user2 = instance.createUser(username2, "getCurrentUser", "getCurrentUser");        
+        User user2 = instance.createUser(username2, "getCurrentUser", "getCurrentUser");
         user1.enable();
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
@@ -206,7 +206,7 @@ public class AuthenticatorTest {
         assertEquals( currentUser, user1 );
         instance.setCurrentUser( user2 );
         assertFalse( currentUser.getAccountName().equals( user2.getAccountName() ) );
-        
+
         Runnable echo = new Runnable() {
             public void run() {
                 User a = null;
@@ -239,7 +239,7 @@ public class AuthenticatorTest {
 
     /**
      * Test of getUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -251,7 +251,7 @@ public class AuthenticatorTest {
         assertNotNull(instance.getUser( accountName ));
         assertNull(instance.getUser( ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS) ));
     }
-    
+
     /**
      *
      * @throws org.owasp.esapi.errors.AuthenticationException
@@ -265,7 +265,7 @@ public class AuthenticatorTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
         ESAPI.httpUtilities().setCurrentHTTP(request, response);
-        
+
         System.out.println("getUserFromRememberToken - expecting failure");
         request.setCookie( HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, "ridiculous" );
         try {
@@ -285,12 +285,12 @@ public class AuthenticatorTest {
         User test2 = instance.login( request, response );
         assertSame( user, test2 );
     }
-    
 
-    
+
+
     /**
      * Test get user from session.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -313,7 +313,7 @@ public class AuthenticatorTest {
 
     /**
      * Test get user names.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -332,7 +332,7 @@ public class AuthenticatorTest {
             assertTrue(names.contains(testnames[i].toLowerCase()));
         }
     }
-    
+
     /**
      * Test of hashPassword method, of class org.owasp.esapi.Authenticator.
      *
@@ -349,7 +349,7 @@ public class AuthenticatorTest {
 
     /**
      * Test of login method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -368,10 +368,10 @@ public class AuthenticatorTest {
         assertTrue( test.isLoggedIn() );
         assertSame(user, test);
     }
-    
+
     /**
      * Test of removeAccount method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -387,7 +387,7 @@ public class AuthenticatorTest {
 
     /**
      * Test of saveUsers method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -403,10 +403,10 @@ public class AuthenticatorTest {
         assertNull( instance.getUser(accountName) );
     }
 
-    
+
     /**
      * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      * @throws InterruptedException Thrown if test is interrupted while awaiting completion of child threads.
@@ -423,7 +423,7 @@ public class AuthenticatorTest {
         userOne.loginWithPassword("getCurrentUser");
         User currentUser = instance.getCurrentUser();
         assertEquals( currentUser, userOne );
-        User userTwo = instance.createUser(user2, "getCurrentUser", "getCurrentUser");        
+        User userTwo = instance.createUser(user2, "getCurrentUser", "getCurrentUser");
         instance.setCurrentUser( userTwo );
         assertFalse( currentUser.getAccountName().equals( userTwo.getAccountName() ) );
         final CountDownLatch latch = new CountDownLatch(10);
@@ -450,15 +450,15 @@ public class AuthenticatorTest {
             new Thread( echo ).start();
         }
         while(!latch.await(500, TimeUnit.MILLISECONDS)) {
-            //Spurious Interrupt Guard. 
+            //Spurious Interrupt Guard.
         }
     }
-    
+
 
 
     /**
      * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -482,7 +482,7 @@ public class AuthenticatorTest {
 
     /**
      * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -505,10 +505,10 @@ public class AuthenticatorTest {
             // expected
         }
     }
-    
+
     /**
      * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -533,7 +533,7 @@ public class AuthenticatorTest {
     }
     /**
      * Test of setCurrentUser method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
@@ -559,19 +559,19 @@ public class AuthenticatorTest {
             // expected
         }
     }
-    
-    
-    
+
+
+
     /**
      * Test of validatePasswordStrength method, of class
      * org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws AuthenticationException
      *             the authentication exception
      */
     @Test public void testValidatePasswordStrength() throws AuthenticationException {
         System.out.println("validatePasswordStrength");
-        
+
         String username = "FictionalEsapiUser";
         User user = new DefaultUser(username);
 
@@ -650,7 +650,7 @@ public class AuthenticatorTest {
 
     /**
      * Test of exists method, of class org.owasp.esapi.Authenticator.
-     * 
+     *
      * @throws Exception
      *             the exception
      */
@@ -673,7 +673,7 @@ public class AuthenticatorTest {
         String accountName = ESAPI.randomizer().getRandomString(8, EncoderConstants.CHAR_ALPHANUMERICS);
         String password = instance.generateStrongPassword();
         String role = "test";
-        
+
         // test wrong parameters - missing role parameter
         String[] badargs = { accountName, password };
         FileBasedAuthenticator.main( badargs );
@@ -692,6 +692,6 @@ public class AuthenticatorTest {
         assertTrue( u2.isInRole(role));
         assertEquals( instance.hashPassword(password, accountName), ((FileBasedAuthenticator)instance).getHashedPassword(u2) );
     }
-    
-    
+
+
 }

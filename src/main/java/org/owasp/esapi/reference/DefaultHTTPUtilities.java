@@ -256,7 +256,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * This implementation ignores the built-in isSecure() method
      * and uses the URL to determine if the request was transmitted over SSL.
      * This is because SSL may have been terminated somewhere outside the
@@ -430,7 +430,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         while ( i.hasNext() ) {
             try {
                 Map.Entry entry = (Map.Entry)i.next();
-                
+
                     // What do these need to be URL encoded? They are encrypted!
                 String name = ESAPI.encoder().encodeForURL( entry.getKey().toString() );
                 String value = ESAPI.encoder().encodeForURL( entry.getValue().toString() );
@@ -790,7 +790,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             if ( cookies != null ) {
              for (Cookie cooky : cookies)
              {
-                if (!cooky.getName().equals(ESAPI.securityConfiguration().getHttpSessionIdName())) 
+                if (!cooky.getName().equals(ESAPI.securityConfiguration().getHttpSessionIdName()))
                 {
                    params.append("+").append(cooky.getName()).append("=").append(cooky.getValue());
                             }
@@ -971,12 +971,12 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             return null;
         }
     }
-    
-    
+
+
     public String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path){
         String rval = "";
         User user = ESAPI.authenticator().getCurrentUser();
-        
+
         try{
             killCookie(request,response, REMEMBER_TOKEN_COOKIE_NAME);
             // seal already contains random data
@@ -1001,8 +1001,8 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
             return null;
         }
-        
-        
+
+
         return rval;
     }
 
@@ -1074,9 +1074,9 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     {
         return (T) request.getAttribute( key );
     }
-    
+
     /////////////////////
-    
+
     /* Helper method to encrypt using new Encryptor encryption methods and
      * return the serialized ciphertext as a hex-encoded string.
      */
@@ -1086,7 +1086,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         byte[] serializedCiphertext = ct.asPortableSerializedByteArray();
         return Hex.encode(serializedCiphertext, false);
     }
-    
+
     /* Helper method to decrypt a hex-encode serialized ciphertext string and
      * to decrypt it using the new Encryptor decryption methods.
      */

@@ -8,7 +8,7 @@ public class CSSCodecTest {
     private static final char[] IMMUNE_STUB = new char[0];
     /** Unit In Test*/
     private CSSCodec uit = new CSSCodec();
-    
+
     @Test
     public void testCSSTripletLeadString() {
         assertEquals("rgb(255,255,255)\\21 ", uit.encode(IMMUNE_STUB, "rgb(255,255,255)!"));

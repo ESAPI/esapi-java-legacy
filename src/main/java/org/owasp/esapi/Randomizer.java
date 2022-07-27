@@ -92,7 +92,7 @@ public interface Randomizer {
 
     /**
      * Returns an unguessable random filename with the specified extension.  This method could call
-     * getRandomString(length, charset) from this Class with the desired length and alphanumerics as the charset 
+     * getRandomString(length, charset) from this Class with the desired length and alphanumerics as the charset
      * then merely append "." + extension.
      *
      * @param extension
@@ -123,7 +123,7 @@ public interface Randomizer {
 
     /**
      * Generates a random GUID.  This method could use a hash of random Strings, the current time,
-     * and any other random data available.  The format is a well-defined sequence of 32 hex digits 
+     * and any other random data available.  The format is a well-defined sequence of 32 hex digits
      * grouped into chunks of 8-4-4-4-12.
      * <p>
      * For more information including algorithms used to create <tt>UUID</tt>s,

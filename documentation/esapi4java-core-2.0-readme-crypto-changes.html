@@ -63,7 +63,7 @@ encrypted with the same key, those identical blocks of ciphertext
 always encrypt to the same ciphertext block, thus revealing patterns
 in the plaintext input. For example, these images from Wikipedia's
 <A HREF="http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation">Block
-cipher modes of operation</A> illustrate this point well: 
+cipher modes of operation</A> illustrate this point well:
 </P>
 <TABLE BORDER=0 CELLPADDING=4 CELLSPACING=0>
 	<TR>
@@ -92,7 +92,7 @@ cipher modes of operation</A> illustrate this point well:
 <P>Ciphertext encrypted with ECB cipher mode are also subject to
 &quot;block replay attacks&quot;. See Bruce Schneier's <A HREF="http://www.google.com/url?sa=t&amp;source=web&amp;ct=res&amp;cd=2&amp;url=http%3A%2F%2Fbooks.google.com%2Fbooks%3Fid%3DA6ZO2D6ayNwC%26pg%3DPT216%26lpg%3DPT216%26dq%3Decb%2B%2522block%2Breplay%2522%26source%3Dbl%26ots%3DiEbAWQpu0e%26sig%3D8xiUva4XKaAOfPJEPsULPAJPk88%26hl%3Den%26ei%3Da6yISoLQPJOuMI-Z_OkE%26sa%3DX%26oi%3Dbook_result%26ct%3Dresult%26resnum%3D2&amp;ei=a6yISoLQPJOuMI-Z_OkE&amp;rct=j&amp;q=ecb+%22block+replay%22&amp;usg=AFQjCNF-IjrE4dL7M2LELh48hYPP6A_bpQ"><I>Applied
 Cryptography: protocols, algorithms, and source code</I> </A>for
-details. 
+details.
 </P>
 <P>In both ESAPI 2.0-rc1 and 2.0-rc2, one can choose other block
 ciphers (e.g. Blowfish) or other key sizes (e.g., 512-bit AES), but
@@ -123,7 +123,7 @@ are many. Here are some of the main issues:</P>
 </OL>
 <H2>The Encryption Changes in ESAPI 2.0-rc3 and Later</H2>
 <P>Briefly speaking, the changes being implemented for ESAPI Java 2.0
-are: 
+are:
 </P>
 <OL>
 	<LI><P STYLE="margin-bottom: 0in">Starting in ESAPI Java 2.0-rc3,
@@ -156,7 +156,7 @@ are:
 	response was deafening. There literally was but a single response
 	and that was to kill off <CODE>LegacyJavaEncryptor</CODE><CODE><FONT FACE="Thorndale AMT, serif">.</FONT></CODE>
 	(By this time, the two symmetric encryption interfaces in <CODE>Encryptor</CODE>
-	had already been deprecated.) 
+	had already been deprecated.)
 	</P>
 	<LI><P>The byte-encoding has been changed from native byte encoding
 	to UTF-8 byte-encoding throughout ESAPI 2.0 and not just for
@@ -167,7 +167,7 @@ are:
 	guaranteed.</P>
 </OL>
 <H2>The Good, the Bad, and the Ugly</H2>
-<P>Or put another way, there are always trade-offs to be made... 
+<P>Or put another way, there are always trade-offs to be made...
 </P>
 <H3>The Good</H3>
 <P>We get improved security by encouraging the use of stronger cipher
@@ -205,9 +205,9 @@ file.)</P>
 both to encrypt and decrypt. While it is not required that the IV be
 kept secret from adversaries, there are some attacks that are
 possible if the adversary is permitted to alter the IV at will and
-observe the results of the ensuing decryption attempt. 
+observe the results of the ensuing decryption attempt.
 </P>
-<P>So that leaves two choices for the IV: 
+<P>So that leaves two choices for the IV:
 </P>
 <UL>
 	<LI><P STYLE="margin-bottom: 0in">Using a <I><B>fixed IV</B></I>:
@@ -223,7 +223,7 @@ observe the results of the ensuing decryption attempt.
 	persisted (e.g., to a database) or transmitted to the recipient this
 	random IV must be stored / made known. Therefore, the raw ciphertext
 	can no longer suffice; whatever random IV that was chosen must be
-	communicated. 
+	communicated.
 	</P>
 </UL>
 <P>Likewise, the use of padding is going to add some overhead to the
@@ -360,7 +360,7 @@ between 1 to the cipher block size (in bits) / 8 bytes. For AES, the
 cipher block size is 128-bits, but more typically, a cipher's block
 size is 64-bits so the padding would be between 1 to 16 bytes for AES
 and 1 to 8 bytes for a 64-bit block size cipher and the IV would be
-IV would be 16 bytes for AES and 8 bytes for most other ciphers. 
+IV would be 16 bytes for AES and 8 bytes for most other ciphers.
 </P>
 <H3>The Ugly</H3>
 <P>Well, so far, this &quot;bad&quot; news may be bad for you but
@@ -370,7 +370,7 @@ recoding of your database table sizes.</P>
 <P>But wait Skippy, don't go running off just quite yet. As Robert
 Heinlein wrote in his 1966 novel <I>The Moon is a Harsh Mistress</I>
 &quot;There ain't no such thing as a free lunch&quot;. (Some of us
-more hardened cynics know it more commonly as <I>TANSTAAFL</I>.) 
+more hardened cynics know it more commonly as <I>TANSTAAFL</I>.)
 </P>
 <P>As mentioned earlier, backward compatibility with ESAPI 1.4
 (originally planned via <CODE>LegacyJavaEncryptor</CODE>) has been
@@ -395,11 +395,11 @@ and ciphertext (<CODE>CipherText)</CODE> class to coalesce all this
 complexity of handling the ciphertext result from encryption
 operations. And then there are new encryption and decryption methods
 for the <CODE>Encryptor</CODE> interface. Specifically, the encrypt
-and decrypt methods have been generalized as: 
+and decrypt methods have been generalized as:
 </P>
 <PRE STYLE="margin-left: 0.49in"><FONT COLOR="#000000"><FONT FACE="Monospace">CipherText encrypt(SecretKey key, PlainText plaintext)</FONT></FONT>
 <FONT COLOR="#000000">        <FONT FACE="Monospace">throws EncryptionException;</FONT></FONT></PRE><P STYLE="margin-bottom: 0in">
-and 
+and
 </P>
 <PRE STYLE="margin-left: 0.49in"><FONT COLOR="#000000"><FONT FACE="Monospace">PlainText decrypt(SecretKey key, CipherText ciphertext)</FONT></FONT>
 <FONT COLOR="#000000">        <FONT FACE="Monospace">throws EncryptionException</FONT></FONT></PRE><P>
@@ -409,7 +409,7 @@ argument and instead use the <FONT FACE="DejaVu Sans Mono, sans-serif">SecretKey
 based on <FONT FACE="DejaVu Sans Mono, sans-serif">Encryptor.MasterKey</FONT>.)</P>
 <P>The two existing interfaces from ESAPI 1.4 and earlier:</P>
 <PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">String encrypt(String plaintext) throws EncryptionException</PRE><P STYLE="margin-bottom: 0in">
-and 
+and
 </P>
 <PRE STYLE="margin-left: 0.49in; margin-bottom: 0.2in">String decrypt(String ciphertext) throws EncryptionException</PRE><P>
 are still supported but have been <I>deprecated</I>, mainly because

@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Mike Fauzy <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
@@ -45,7 +45,7 @@ import java.util.regex.Pattern;
  * <br><br>
  * The ESAPI reference implementation (DefaultSecurityConfiguration.java) does
  * <i>not</i> encrypt its properties file.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -54,107 +54,107 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the application name, used for logging
-     * 
+     *
      * @return the name of the current application
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getApplicationName();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Logging implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getLogImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Authentication implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getAuthenticationImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Encoder implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getEncoderImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Access Control implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getAccessControlImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Intrusion Detection implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getIntrusionDetectionImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Randomizer implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getRandomizerImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Encryption implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getEncryptionImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI Validation implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getValidationImplementation();
-    
+
     /**
      * Returns the validation pattern for a particular type
      * @param typeName
      * @return the validation pattern
      */
     Pattern getValidationPattern( String typeName );
-    
+
     /**
      * Determines whether ESAPI will accept "lenient" dates when attempt
      * to parse dates. Controlled by ESAPI property
      * {@code Validator.AcceptLenientDates}, which defaults to {@code false}
      * if unset.
-     * 
+     *
      * @return True if lenient dates are accepted; false otherwise.
      * @see java.text.DateFormat#setLenient(boolean)
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     boolean getLenientDatesAccepted();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI OS Execution implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getExecutorImplementation();
-    
+
     /**
      * Returns the fully qualified classname of the ESAPI HTTPUtilities implementation.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getHTTPUtilitiesImplementation();
-    
+
     /**
      * Gets the master key. This password is used to encrypt/decrypt other files or types
      * of data that need to be protected by your application.
-     * 
+     *
      * @return the current master key
      * @deprecated Use SecurityConfiguration.getByteArrayProp("appropriate_esapi_prop_name") instead.
      */
@@ -166,7 +166,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @return the upload directory
      */
     File getUploadDirectory();
-    
+
     /**
      * Retrieves the temp directory to use when uploading files, as specified in ESAPI.properties.
      * @return the temp directory
@@ -180,17 +180,17 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * ciphers supporting multiple key sizes. (Note that there is also an <b>Encryptor.MinEncryptionKeyLength</b>,
      * which is the <i>minimum</i> key size (in bits) that ESAPI will support
      * for encryption. (There is no miminimum for decryption.)
-     * 
+     *
      * @return the key length (in bits)
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     int getEncryptionKeyLength();
-    
+
     /**
-     * Gets the master salt that is used to salt stored password hashes and any other location 
+     * Gets the master salt that is used to salt stored password hashes and any other location
      * where a salt is needed.
-     * 
+     *
      * @return the current master salt
      * @deprecated Use SecurityConfiguration.getByteArrayProp("appropriate_esapi_prop_name") instead.
      */
@@ -199,21 +199,21 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the allowed executables to run with the Executor.
-     * 
+     *
      * @return a list of the current allowed file extensions
      */
     List<String> getAllowedExecutables();
 
     /**
      * Gets the allowed file extensions for files that are uploaded to this application.
-     * 
+     *
      * @return a list of the current allowed file extensions
      */
     List<String> getAllowedFileExtensions();
 
     /**
      * Gets the maximum allowed file upload size.
-     * 
+     *
      * @return the current allowed file upload size
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
@@ -222,7 +222,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the name of the password parameter used during user authentication.
-     * 
+     *
      * @return the name of the password parameter
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -231,7 +231,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the name of the username parameter used during user authentication.
-     * 
+     *
      * @return the name of the username parameter
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -243,7 +243,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * mostly used for compatibility with ESAPI 1.4; ESAPI 2.0 prefers to
      * use "cipher transformation" since it supports multiple cipher modes
      * and padding schemes.
-     * 
+     *
      * @return the current encryption algorithm
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -267,7 +267,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * actual block size. When requesting such a mode, you may optionally
      * specify the number of bits to be processed at a time. This generally must
      * be an integral multiple of 8-bits so that it can specify a whole number
-     * of octets. 
+     * of octets.
      * </p><p>
      * Examples are:
      * <pre>
@@ -293,13 +293,13 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      */
     @Deprecated
     String getCipherTransformation();
-    
+
     /**
      * Set the cipher transformation. This allows a different cipher transformation
      * to be used without changing the {@code ESAPI.properties} file. For instance
      * you may normally want to use AES/CBC/PKCS5Padding, but have some legacy
      * encryption where you have ciphertext that was encrypted using 3DES.
-     * 
+     *
      * @param cipherXform    The new cipher transformation. See
      *                         {@link #getCipherTransformation} for format. If
      *                         {@code null} is passed as the parameter, the cipher
@@ -342,7 +342,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      */
     @Deprecated
     String getPreferredJCEProvider();
-    
+
 // TODO - DISCUSS: Where should this web page (below) go? Maybe with the Javadoc? But where?
 //                   Think it makes more sense as part of the release notes, but OTOH, I
 //                   really don't want to rewrite this as a Wiki page either.
@@ -379,7 +379,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      */
     @Deprecated
     boolean overwritePlainText();
-    
+
     /**
      * Get a string indicating how to compute an Initialization Vector (IV).
      * Currently supported modes are "random" to generate a random IV or
@@ -393,17 +393,17 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * since release 2.2.0.0). An <b>ESAPI.properties</b> value of {@code fixed} for the property
      * {@code Encryptor.ChooseIVMethod} will now result in a {@code ConfigurationException}
      * being thrown.
-     * 
+     *
      * @return A string specifying the IV type. Should be "random". Anything
      * else should fail with a {@code ConfigurationException} being thrown.
-     * 
+     *
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      *             This method will be removed in a future release as it is now moot since
      *             it can <i>only</i> legitimately have the single value of "random".
      */
     @Deprecated
     String getIVType();
-    
+
     /**
      * Return a {@code List} of strings of combined cipher modes that support
      * <b>both</b> confidentiality and authenticity. These would be preferred
@@ -415,7 +415,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * The list is taken from the comma-separated list of cipher modes specified
      * by the ESAPI property
      * {@code Encryptor.cipher_modes.combined_modes}.
-     * 
+     *
      * @return The parsed list of comma-separated cipher modes if the property
      * was specified in {@code ESAPI.properties}; otherwise the empty list is
      * returned.
@@ -431,7 +431,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * The list is taken from the comma-separated list of cipher modes specified
      * by the ESAPI property
      * {@code Encryptor.cipher_modes.additional_allowed}.
-     * 
+     *
      * @return The parsed list of comma-separated cipher modes if the property
      * was specified in {@code ESAPI.properties}; otherwise the empty list is
      * returned.
@@ -442,7 +442,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the hashing algorithm used by ESAPI to hash data.
-     * 
+     *
      * @return the current hashing algorithm
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -451,7 +451,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the hash iterations used by ESAPI to hash data.
-     * 
+     *
      * @return the current hashing algorithm
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
@@ -461,22 +461,22 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     /**
      * Retrieve the Pseudo Random Function (PRF) used by the ESAPI
      * Key Derivation Function (KDF).
-     * 
+     *
      * @return    The KDF PRF algorithm name.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getKDFPseudoRandomFunction();
-    
+
     /**
      * Gets the character encoding scheme supported by this application. This is used to set the
      * character encoding scheme on requests and responses when setCharacterEncoding() is called
-     * on SafeRequests and SafeResponses. This scheme is also used for encoding/decoding URLs 
+     * on SafeRequests and SafeResponses. This scheme is also used for encoding/decoding URLs
      * and any other place where the current encoding scheme needs to be known.
      * <br><br>
-     * Note: This does not get the configured response content type. That is accessed by calling 
+     * Note: This does not get the configured response content type. That is accessed by calling
      * getResponseContentType().
-     * 
+     *
      * @return the current character encoding scheme
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -503,14 +503,14 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Returns the List of Codecs to use when canonicalizing data
-     * 
+     *
      * @return the codec list
      */
     List<String> getDefaultCanonicalizationCodecs();
 
     /**
      * Gets the digital signature algorithm used by ESAPI to generate and verify signatures.
-     * 
+     *
      * @return the current digital signature algorithm
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -519,16 +519,16 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Gets the digital signature key length used by ESAPI to generate and verify signatures.
-     * 
+     *
      * @return the current digital signature key length
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     int getDigitalSignatureKeyLength();
-           
+
     /**
      * Gets the random number generation algorithm used to generate random numbers where needed.
-     * 
+     *
      * @return the current random number generation algorithm
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -536,9 +536,9 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     String getRandomAlgorithm();
 
     /**
-     * Gets the number of login attempts allowed before the user's account is locked. If this 
+     * Gets the number of login attempts allowed before the user's account is locked. If this
      * many failures are detected within the alloted time period, the user's account will be locked.
-     * 
+     *
      * @return the number of failed login attempts that cause an account to be locked
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
@@ -546,10 +546,10 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     int getAllowedLoginAttempts();
 
     /**
-     * Gets the maximum number of old password hashes that should be retained. These hashes can 
+     * Gets the maximum number of old password hashes that should be retained. These hashes can
      * be used to ensure that the user doesn't reuse the specified number of previous passwords
      * when they change their password.
-     * 
+     *
      * @return the number of old hashed passwords to retain
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
@@ -558,18 +558,18 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Allows for complete disabling of all intrusion detection mechanisms
-     * 
+     *
      * @return true if intrusion detection should be disabled
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     boolean getDisableIntrusionDetection();
-    
+
     /**
      * Gets the intrusion detection quota for the specified event.
-     * 
+     *
      * @param eventName the name of the event whose quota is desired
-     * 
+     *
      * @return the Quota that has been configured for the specified type of event
      */
     Threshold getQuota(String eventName);
@@ -581,7 +581,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * @return A {@code File} object representing the specified file name or null if not found.
      */
     File getResourceFile( String filename );
-    
+
     /**
      * Returns true if session cookies are required to have HttpOnly flag set.
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
@@ -628,17 +628,17 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
 
     /**
      * Sets the ESAPI resource directory.
-     * 
+     *
      * @param dir The location of the resource directory.
      */
     void setResourceDirectory(String dir);
-    
+
     /**
      * Gets the content type for responses used when setSafeContentType() is called.
      * <br><br>
-     * Note: This does not get the configured character encoding scheme. That is accessed by calling 
+     * Note: This does not get the configured character encoding scheme. That is accessed by calling
      * getCharacterEncoding().
-     * 
+     *
      * @return The current content-type set for responses.
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
@@ -646,60 +646,60 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     String getResponseContentType();
 
     /**
-     * This method returns the configured name of the session identifier, 
+     * This method returns the configured name of the session identifier,
      * likely "JSESSIONID" though this can be overridden.
-     * 
+     *
      * @return The name of the session identifier, like "JSESSIONID"
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     String getHttpSessionIdName();
-    
+
     /**
      * Gets the length of the time to live window for remember me tokens (in milliseconds).
-     * 
+     *
      * @return The time to live length for generated "remember me" tokens.
      */
     // OPEN ISSUE: Can we replace w/ SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead?
     long getRememberTokenDuration();
 
-    
+
     /**
      * Gets the idle timeout length for sessions (in milliseconds). This is the amount of time that a session
      * can live before it expires due to lack of activity. Applications or frameworks could provide a reauthenticate
      * function that enables a session to continue after reauthentication.
-     * 
+     *
      * @return The session idle timeout length.
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     int getSessionIdleTimeoutLength();
-    
+
     /**
      * Gets the absolute timeout length for sessions (in milliseconds). This is the amount of time that a session
-     * can live before it expires regardless of the amount of user activity. Applications or frameworks could 
+     * can live before it expires regardless of the amount of user activity. Applications or frameworks could
      * provide a reauthenticate function that enables a session to continue after reauthentication.
-     * 
+     *
      * @return The session absolute timeout length.
      * @deprecated Use SecurityConfiguration.getIntProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     int getSessionAbsoluteTimeoutLength();
-    
-    
+
+
     /**
      * Returns whether HTML entity encoding should be applied to log entries.
-     * 
+     *
      * @return True if log entries are to be HTML Entity encoded. False otherwise.
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
     @Deprecated
     boolean getLogEncodingRequired();
-    
+
     /**
      * Returns whether ESAPI should log the application name. This might be clutter in some
      * single-server/single-app environments.
-     * 
+     *
      * @return True if ESAPI should log the application name, False otherwise
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
@@ -709,7 +709,7 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     /**
      * Returns whether ESAPI should log the server IP. This might be clutter in some
      * single-server environments.
-     * 
+     *
      * @return True if ESAPI should log the server IP and port, False otherwise
      * @deprecated Use SecurityConfiguration.getBooleanProp("appropriate_esapi_prop_name") instead.
      */
@@ -717,35 +717,35 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     boolean getLogServerIP();
 
     /**
-     * Models a simple threshold as a count and an interval, along with a set of actions to take if 
+     * Models a simple threshold as a count and an interval, along with a set of actions to take if
      * the threshold is exceeded. These thresholds are used to define when the accumulation of a particular event
      * has met a set number within the specified time period. Once a threshold value has been met, various
      * actions can be taken at that point.
      */
     class Threshold {
-        
+
         /** The name of this threshold. */
         public String name = null;
-        
+
         /** The count at which this threshold is triggered. */
         public int count = 0;
-        
-        /** 
+
+        /**
          * The time frame within which 'count' number of actions has to be detected in order to
          * trigger this threshold.
          */
         public long interval = 0;
-        
+
         /**
-         * The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but 
-         * your implementation could have this be a list of any type of 'actions' you wish to define. 
+         * The list of actions to take if the threshold is met. It is expected that this is a list of Strings, but
+         * your implementation could have this be a list of any type of 'actions' you wish to define.
          */
         public List<String> actions = null;
 
         /**
          * Constructs a threshold that is composed of its name, its threshold count, the time window for
          * the threshold, and the actions to take if the threshold is triggered.
-         * 
+         *
          * @param name The name of this threshold.
          * @param count The count at which this threshold is triggered.
          * @param interval The time frame within which 'count' number of actions has to be detected in order to

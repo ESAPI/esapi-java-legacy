@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 
 public class CryptoDiscoverer {
     private static String EOL = System.getProperty("line.separator", "\n");
-    
+
     public static void main(String... args) {
         String provider = ".*";
         String algorithm = ".*";

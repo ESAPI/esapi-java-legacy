@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2009 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Arshan Dabirsiaghi <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2009
  */
@@ -38,9 +38,9 @@ import org.apache.commons.fileupload.util.Streams;
 /**
  * The wrapper for the HttpServletRequest object which will be passed to the application
  * being protected by the WAF. It contains logic for parsing multipart parameters out of
- * the request and provided downstream application logic a way of accessing it like it 
+ * the request and provided downstream application logic a way of accessing it like it
  * hasn't been touched.
- * 
+ *
  * @author Arshan Dabirsiaghi
  *
  */
@@ -49,27 +49,27 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
     private Vector<Parameter> allParameters;
     private Vector<String> allParameterNames;
     private static int CHUNKED_BUFFER_SIZE = 1024;
-    
+
     private boolean isMultipart = false;
     private RandomAccessFile requestBody;
     private RAFInputStream is;
-    
+
     public ServletInputStream getInputStream() throws IOException {
-        
+
         if ( isMultipart ) {
-            return is;    
+            return is;
         } else {
             return super.getInputStream();
         }
-        
+
     }
-    
+
     public BufferedReader getReader() throws IOException {
         String enc = getCharacterEncoding();
         if(enc == null) enc = "UTF-8";
         return new BufferedReader(new InputStreamReader(getInputStream(), enc));
     }
-    
+
     public InterceptingHTTPServletRequest(HttpServletRequest request) throws FileUploadException, IOException {
 
         super(request);
@@ -100,7 +100,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
         if ( isMultipart ) {
 
             requestBody = new RandomAccessFile( File.createTempFile("oew","mpc"), "rw");
-            
+
             byte buffer[] = new byte[CHUNKED_BUFFER_SIZE];
 
             long size = 0;
@@ -110,12 +110,12 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
                 len = request.getInputStream().read(buffer, 0, CHUNKED_BUFFER_SIZE);
                 if ( len != -1 ) {
                     size += len;
-                    requestBody.write(buffer,0,len);    
+                    requestBody.write(buffer,0,len);
                 }
             }
-            
+
             is = new RAFInputStream(requestBody);
-            
+
             ServletFileUpload sfu = new ServletFileUpload();
             FileItemIterator iter = sfu.getItemIterator(this);
 
@@ -141,13 +141,13 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
                      * This is a multipart content that is not a
                      * regular form field. Nothing to do here.
                      */
-                    
+
                 }
 
             }
-            
+
             requestBody.seek(0);
-            
+
         }
 
     }
@@ -160,20 +160,20 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
                 return p.getValue();
             }
         }
-        
+
         return null;
     }
 
     public Enumeration getDictionaryParameterNames() {
         return allParameterNames.elements();
     }
-    
-    
+
+
     private class RAFInputStream extends ServletInputStream {
-        
+
         RandomAccessFile raf;
         boolean isDone = false;
-        
+
         public RAFInputStream(RandomAccessFile raf) throws IOException {
             this.raf = raf;
             this.raf.seek(0);
@@ -184,7 +184,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
             isDone = rval == -1;
             return rval;
         }
-        
+
         public synchronized void reset() throws IOException {
             raf.seek(0);
             isDone=false;
@@ -205,5 +205,5 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
             //NO-OP.  Unused in this scope
         }
     }
-    
+
 }

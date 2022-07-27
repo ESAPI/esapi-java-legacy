@@ -29,7 +29,7 @@ import org.owasp.esapi.codecs.abstraction.AbstractCodecCharacterTest;
 
 /**
  *  Codec validation focused on the PercentCodec Character-based api.
- *  
+ *
  */
 public class PercentCodecCharacterTest extends AbstractCodecCharacterTest {
     @Parameters(name = "{0}")

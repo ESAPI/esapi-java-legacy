@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -28,7 +28,7 @@ import org.owasp.esapi.errors.EncryptionException;
 /**
  * Reference implementation of the Randomizer interface. This implementation builds on the JCE provider to provide a
  * cryptographically strong source of entropy. The specific algorithm used is configurable in ESAPI.properties.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
  * @see org.owasp.esapi.Randomizer
@@ -83,21 +83,21 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
     public boolean getRandomBoolean() {
         return secureRandom.nextBoolean();
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public int getRandomInteger(int min, int max) {
         return secureRandom.nextInt(max - min) + min;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public long getRandomLong() {
-        return secureRandom.nextLong();    
+        return secureRandom.nextLong();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -114,14 +114,14 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         logger.debug(Logger.SECURITY_SUCCESS, "Generated new random filename: " + fn );
         return fn;
     }
-    
+
     /**
      * {@inheritDoc}
      */
     public String getRandomGUID() throws EncryptionException {
         return UUID.randomUUID().toString();
     }
-        
+
     /**
      * {@inheritDoc}
      */
@@ -130,5 +130,5 @@ public class DefaultRandomizer implements org.owasp.esapi.Randomizer {
         secureRandom.nextBytes(result);
         return result;
     }
-        
+
 }

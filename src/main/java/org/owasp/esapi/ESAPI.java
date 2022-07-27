@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2008 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Mike Fauzy <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @author Rogan Dawes <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2008
@@ -33,7 +33,7 @@ public final class ESAPI {
      */
     private ESAPI() {
     }
-    
+
     /**
      * Clears the current User, HttpRequest, and HttpResponse associated with the current thread. This method
      * MUST be called as some containers do not properly clear threadlocal variables when the execution of
@@ -69,7 +69,7 @@ public final class ESAPI {
     public static HttpServletRequest currentRequest() {
         return httpUtilities().getCurrentRequest();
     }
-    
+
     /**
      * Get the current HTTP Servlet Response being generated.
      * @return the current HTTP Servlet Response.
@@ -77,16 +77,16 @@ public final class ESAPI {
     public static HttpServletResponse currentResponse() {
         return httpUtilities().getCurrentResponse();
     }
-    
+
     /**
-     * @return the current ESAPI AccessController object being used to maintain the access control rules for this application. 
+     * @return the current ESAPI AccessController object being used to maintain the access control rules for this application.
      */
     public static AccessController accessController() {
         return ObjFactory.make( securityConfiguration().getAccessControlImplementation(), "AccessController" );
     }
 
     /**
-     * @return the current ESAPI Authenticator object being used to authenticate users for this application. 
+     * @return the current ESAPI Authenticator object being used to authenticate users for this application.
      */
     public static Authenticator authenticator() {
         return ObjFactory.make( securityConfiguration().getAuthenticationImplementation(), "Authenticator" );
@@ -95,50 +95,50 @@ public final class ESAPI {
     /**
      * The ESAPI Encoder is primarilly used to provide <i>output</i> encoding to
      * prevent Cross-Site Scripting (XSS).
-     * @return the current ESAPI Encoder object being used to encode and decode data for this application. 
+     * @return the current ESAPI Encoder object being used to encode and decode data for this application.
      */
     public static Encoder encoder() {
         return ObjFactory.make( securityConfiguration().getEncoderImplementation(), "Encoder" );
     }
 
     /**
-     * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application. 
+     * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application.
      */
     public static Encryptor encryptor() {
         return ObjFactory.make( securityConfiguration().getEncryptionImplementation(), "Encryptor" );
     }
 
     /**
-     * @return the current ESAPI Executor object being used to safely execute OS commands for this application. 
+     * @return the current ESAPI Executor object being used to safely execute OS commands for this application.
      */
     public static Executor executor() {
         return ObjFactory.make( securityConfiguration().getExecutorImplementation(), "Executor" );
     }
 
     /**
-     * @return the current ESAPI HTTPUtilities object being used to safely access HTTP requests and responses 
-     * for this application. 
+     * @return the current ESAPI HTTPUtilities object being used to safely access HTTP requests and responses
+     * for this application.
      */
     public static HTTPUtilities httpUtilities() {
         return ObjFactory.make( securityConfiguration().getHTTPUtilitiesImplementation(), "HTTPUtilities" );
     }
 
     /**
-     * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application. 
+     * @return the current ESAPI IntrusionDetector being used to monitor for intrusions in this application.
      */
     public static IntrusionDetector intrusionDetector() {
         return ObjFactory.make( securityConfiguration().getIntrusionDetectionImplementation(), "IntrusionDetector" );
     }
 
     /**
-     * Get the current LogFactory being used by ESAPI. If there isn't one yet, it will create one, and then 
+     * Get the current LogFactory being used by ESAPI. If there isn't one yet, it will create one, and then
      * return this same LogFactory from then on.
      * @return The current LogFactory being used by ESAPI.
      */
     private static LogFactory logFactory() {
         return ObjFactory.make( securityConfiguration().getLogImplementation(), "LogFactory" );
     }
-    
+
     /**
      * @param clazz The class to associate the logger with.
      * @return The current Logger associated with the specified class.
@@ -146,7 +146,7 @@ public final class ESAPI {
     public static Logger getLogger(Class clazz) {
         return logFactory().getLogger(clazz);
     }
-    
+
     /**
      * @param moduleName The module to associate the logger with.
      * @return The current Logger associated with the specified module.
@@ -154,16 +154,16 @@ public final class ESAPI {
     public static Logger getLogger(String moduleName) {
         return logFactory().getLogger(moduleName);
     }
-    
+
     /**
      * @return The default Logger.
      */
     public static Logger log() {
         return logFactory().getLogger("DefaultLogger");
     }
-    
+
     /**
-     * @return the current ESAPI Randomizer being used to generate random numbers in this application. 
+     * @return the current ESAPI Randomizer being used to generate random numbers in this application.
      */
     public static Randomizer randomizer() {
         return ObjFactory.make( securityConfiguration().getRandomizerImplementation(), "Randomizer" );
@@ -172,8 +172,8 @@ public final class ESAPI {
     private static volatile SecurityConfiguration overrideConfig = null;
 
     /**
-     * @return the current ESAPI SecurityConfiguration being used to manage the security configuration for 
-     * ESAPI for this application. 
+     * @return the current ESAPI SecurityConfiguration being used to manage the security configuration for
+     * ESAPI for this application.
      */
     public static SecurityConfiguration securityConfiguration() {
         // copy the volatile into a non-volatile to prevent TOCTTOU race condition
@@ -186,7 +186,7 @@ public final class ESAPI {
     }
 
     /**
-     * @return the current ESAPI Validator being used to validate data in this application. 
+     * @return the current ESAPI Validator being used to validate data in this application.
      */
     public static Validator validator() {
         return ObjFactory.make( securityConfiguration().getValidationImplementation(), "Validator" );

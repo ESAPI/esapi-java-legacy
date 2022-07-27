@@ -29,7 +29,7 @@ public class LogPrefixAppenderTest {
 
     @Rule
     public TestName testName = new TestName();
-    
+
     private String testLoggerName = testName.getMethodName() + "-LOGGER";
     private String testLogMessage =  testName.getMethodName() + "-MESSAGE";
     private String testApplicationName = testName.getMethodName() + "-APPLICATION_NAME";
@@ -46,7 +46,7 @@ public class LogPrefixAppenderTest {
         uisSpy = spy(new UserInfoSupplier());
         cisSpy = spy(new ClientInfoSupplier());
         sisSpy = spy(new ServerInfoSupplier(testName.getMethodName()));
-        
+
         testLoggerName = testName.getMethodName() + "-LOGGER";
         testLogMessage =  testName.getMethodName() + "-MESSAGE";
         testApplicationName =  testName.getMethodName() + "-APPLICATION_NAME";
@@ -71,7 +71,7 @@ public class LogPrefixAppenderTest {
         verify(sisSpy, times(1)).setLogServerIp(true);
         verify(sisSpy, times(1)).setLogApplicationName(true, testApplicationName);
     }
-    
+
     @Test
     public void testCtrArgFalsePassthroughToDelegates() throws Exception {
         when(etlsSpy.get()).thenReturn(ETL_RESULT);
@@ -92,7 +92,7 @@ public class LogPrefixAppenderTest {
         verify(sisSpy, times(1)).setLogServerIp(false);
         verify(sisSpy, times(1)).setLogApplicationName(false, null);
     }
-    
+
     @Test
     public void testDelegateCtrArgs() throws Exception {
         ArgumentCaptor<EventType> eventTypeCapture = ArgumentCaptor.forClass(EventType.class);
@@ -119,7 +119,7 @@ public class LogPrefixAppenderTest {
     public void testLogContentWhenUserInfoEmpty() throws Exception {
         runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,SIS_RESULT, "[EVENT_TYPE CLIENT_INFO -> SERVER_INFO]");
     }
-    
+
     @Test
     public void testLogContentWhenClientInfoEmptyAndServerInfoEmpty() throws Exception {
         runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,EMPTY_RESULT, "[EVENT_TYPE USER_INFO]");
@@ -139,7 +139,7 @@ public class LogPrefixAppenderTest {
     public void testLogContentWhenServerInfoEmpty() throws Exception {
         runTest(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, "[EVENT_TYPE USER_INFO:CLIENT_INFO]");
     }
-    
+
     @Test
     public void testLogContentWhenUserInfoEmptyAndClientInfoEmptyAndServerInfoEmpty() throws Exception {
         runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, "[EVENT_TYPE]");
@@ -160,7 +160,7 @@ public class LogPrefixAppenderTest {
         //Since everything is mocked these booleans don't much matter aside from the later verifies
         LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
         String result =   lpa.appendTo(testLoggerName, testEventType, testLogMessage);
-        
+
         assertEquals(exResult + " " + testName.getMethodName() + "-MESSAGE", result);
     }
 }

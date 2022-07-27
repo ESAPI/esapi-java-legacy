@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -39,7 +39,7 @@ import org.owasp.esapi.errors.IntrusionException;
  * user's session, so that it will be properly cleaned up when the session is
  * terminated. State is not otherwise persisted, so attacks that span sessions
  * will not be detectable.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
@@ -52,7 +52,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
 
     public DefaultIntrusionDetector() {
     }
-    
+
     /**
      * {@inheritDoc}
      *
@@ -60,21 +60,21 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
     public void addException(Exception e) {
         if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-        
+
         if ( e instanceof EnterpriseSecurityException ) {
             logger.warning( Logger.SECURITY_FAILURE, ((EnterpriseSecurityException)e).getLogMessage(), e );
         } else {
             logger.warning( Logger.SECURITY_FAILURE, e.getMessage(), e );
         }
 
-        // add the exception to the current user, which may trigger a detector 
+        // add the exception to the current user, which may trigger a detector
         User user = ESAPI.authenticator().getCurrentUser();
         String eventName = e.getClass().getName();
 
         if ( e instanceof IntrusionException) {
             return;
         }
-        
+
         // add the exception to the user's store, handle IntrusionException if thrown
         try {
             addSecurityEvent(user, eventName);
@@ -94,10 +94,10 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
     public void addEvent(String eventName, String logMessage) throws IntrusionException {
         if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-        
+
         logger.warning( Logger.SECURITY_FAILURE, "Security event " + eventName + " received : " + logMessage );
 
-        // add the event to the current user, which may trigger a detector 
+        // add the event to the current user, which may trigger a detector
         User user = ESAPI.authenticator().getCurrentUser();
         try {
             addSecurityEvent(user, "event." + eventName);
@@ -115,7 +115,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
     /**
      * Take a specified security action.  In this implementation, acceptable
      * actions are: log, disable, logout.
-     * 
+     *
      * @param action
      *         the action to take (log, disable, logout)
      * @param message
@@ -123,7 +123,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
     private void takeSecurityAction( String action, String message ) {
         if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-        
+
         if ( action.equals( "log" ) ) {
             logger.fatal( Logger.SECURITY_FAILURE, "INTRUSION - " + message );
         }
@@ -141,7 +141,7 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      /**
      * Adds a security event to the user.  These events are used to check that the user has not
      * reached the security thresholds set in the properties file.
-     * 
+     *
      * @param user
      *             The user that caused the event.
      * @param eventName
@@ -149,11 +149,11 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
      */
     private void addSecurityEvent(User user, String eventName) {
         if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-        
+
         if ( user.isAnonymous() ) return;
-        
+
         HashMap eventMap = user.getEventMap();
-        
+
         // if there is a threshold, then track this event
         Threshold threshold = ESAPI.securityConfiguration().getQuota( eventName );
         if ( threshold != null ) {
@@ -176,14 +176,14 @@ public class DefaultIntrusionDetector implements org.owasp.esapi.IntrusionDetect
         }
         public void increment(int count, long interval) throws IntrusionException {
             if (ESAPI.securityConfiguration().getDisableIntrusionDetection()) return;
-            
+
             Date now = new Date();
             times.add( 0, now );
             while ( times.size() > count ) times.remove( times.size()-1 );
             if ( times.size() == count ) {
                 Date past = (Date)times.get( count-1 );
                 long plong = past.getTime();
-                long nlong = now.getTime(); 
+                long nlong = now.getTime();
                 if ( nlong - plong < interval * 1000 ) {
                     throw new IntrusionException( "Threshold exceeded", "Exceeded threshold for " + key );
                 }

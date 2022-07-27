@@ -1,18 +1,18 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2017 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Matt Seil (mseil .at. owasp.org)
- * @created 2017 
- * 
+ * @created 2017
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
@@ -26,13 +26,13 @@ import java.util.Map.Entry;
 
 /**
  * Implementation of the Codec interface for HTML entity encoding.
- * 
+ *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
  * @since June 1, 2007
- * 
- * @author Matt Seil (mseil .at. owasp.org) (mseil .at. owasp.org) 
- * 
+ *
+ * @author Matt Seil (mseil .at. owasp.org) (mseil .at. owasp.org)
+ *
  * @see org.owasp.esapi.Encoder
  */
 public class HTMLEntityCodec extends AbstractIntegerCodec
@@ -52,11 +52,11 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 
     /**
      * Given an array of {@code char}, scan the input {@code String} and encode unsafe
-     * codePoints, except for codePoints passed into the {@code char} array.  
+     * codePoints, except for codePoints passed into the {@code char} array.
      * <br/><br/>
-     * WARNING:  This method will silently discard any code point per the 
-     * call to {@code Character.isValidCodePoint( int )} method.  
-     * 
+     * WARNING:  This method will silently discard any code point per the
+     * call to {@code Character.isValidCodePoint( int )} method.
+     *
      * {@inheritDoc}
      */
     @Override
@@ -65,16 +65,16 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         for(int offset  = 0; offset < input.length(); ){
             final int point = input.codePointAt(offset);
             if(Character.isValidCodePoint(point)){
-                sb.append(encodeCharacter(immune, point));    
+                sb.append(encodeCharacter(immune, point));
             }
             offset += Character.charCount(point);
         }
         return sb.toString();
     }
-    
+
     /**
      * {@inheritDoc}
-     * 
+     *
      * Encodes a codePoint for safe use in an HTML entity field.
      * @param immune
      */
@@ -82,43 +82,43 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
     public String encodeCharacter( char[] immune, int codePoint ) {
 
         // check for immune characters
-        // Cast the codePoint to a char because we want to limit immunity to the BMP field only.  
+        // Cast the codePoint to a char because we want to limit immunity to the BMP field only.
         if ( containsCharacter( (char) codePoint, immune ) && Character.isValidCodePoint(codePoint)) {
             return new StringBuilder().appendCodePoint(codePoint).toString();
         }
-        
+
         // check for alphanumeric characters
         String hex = super.getHexForNonAlphanumeric(codePoint);
         if ( hex == null && Character.isValidCodePoint(codePoint)) {
             return new StringBuilder().appendCodePoint(codePoint).toString();
         }
         // check for illegal characters
-        if ( ( codePoint <= 0x1f 
-                && codePoint != '\t' 
-                && codePoint != '\n' 
-                && codePoint != '\r' ) 
+        if ( ( codePoint <= 0x1f
+                && codePoint != '\t'
+                && codePoint != '\n'
+                && codePoint != '\r' )
                 || ( codePoint >= 0x7f && codePoint <= 0x9f ) )
         {
             hex = REPLACEMENT_HEX;    // Let's entity encode this instead of returning it
             codePoint = REPLACEMENT_CHAR;
         }
-        
+
         // check if there's a defined entity
         String entityName = characterToEntityMap.get(codePoint);
         if (entityName != null) {
             return "&" + entityName + ";";
         }
-        
+
         // return the hex entity as suggested in the spec
         return "&#x" + hex + ";";
     }
-    
+
     /**
      * {@inheritDoc}
-     * 
+     *
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
-     * 
+     *
      * Formats all are legal both with and without semi-colon, upper/lower case:
      *   &#dddd;
      *   &#xhhhh;
@@ -131,20 +131,20 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
             input.reset();
             return null;
         }
-        
+
         // if this is not an encoded character, return null
         if (first != '&' ) {
             input.reset();
             return null;
         }
-        
+
         // test for numeric encodings
         Integer second = input.next();
         if ( second == null ) {
             input.reset();
             return null;
         }
-        
+
         if (second == '#' ) {
             // handle numbers
             Integer c = getNumericEntity( input );
@@ -158,13 +158,13 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         input.reset();
         return null;
     }
-    
+
     /**
      * getNumericEntry checks input to see if it is a numeric entity
-     * 
+     *
      * @param input
      *             The input to test for being a numeric entity
-     *  
+     *
      * @return
      *             null if input is null, the character of input after decoding
      */
@@ -181,28 +181,28 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
 
     /**
      * Parse a decimal number, such as those from JavaScript's String.fromCharCode(value)
-     * 
+     *
      * @param input
      *             decimal encoded string, such as 65
      * @return
-     *             character representation of this decimal value, e.g. A 
+     *             character representation of this decimal value, e.g. A
      * @throws NumberFormatException
      */
     private Integer parseNumber( PushbackSequence<Integer> input ) {
         StringBuilder sb = new StringBuilder();
         while( input.hasNext() ) {
             Integer c = input.peek();
-            
+
             // if character is a digit then add it on and keep going
             if ( Character.isDigit( c ) && Character.isValidCodePoint(c) ) {
                 sb.appendCodePoint( c );
                 input.next();
-                
+
             // if character is a semi-colon, eat it and quit
             } else if (c == ';' ) {
                 input.next();
                 break;
-                
+
             // otherwise just quit
             } else {
                 break;
@@ -218,10 +218,10 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         }
             return null;
         }
-    
+
     /**
      * Parse a hex encoded entity
-     * 
+     *
      * @param input
      *             Hex encoded input (such as 437ae;)
      * @return
@@ -232,18 +232,18 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         StringBuilder sb = new StringBuilder();
         while( input.hasNext() ) {
             Integer c = input.peek();
-            
+
             // if character is a hex digit then add it on and keep going
             //This statement implicitly tests for Character.isValidCodePoint(int)
             if ( "0123456789ABCDEFabcdef".indexOf(c) != -1 ) {
                 sb.appendCodePoint( c );
                 input.next();
-                
+
             // if character is a semi-colon, eat it and quit
             } else if (c == ';' ) {
                 input.next();
                 break;
-                
+
             // otherwise just quit
             } else {
                 break;
@@ -259,12 +259,12 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         }
             return null;
         }
-    
+
     /**
-     * 
+     *
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
-     * 
+     *
      * Formats all are legal both with and without semi-colon, upper/lower case:
      *   &aa;
      *   &aaa;
@@ -282,7 +282,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         StringBuilder possible = new StringBuilder();
         Entry<CharSequence, Integer> entry;
         int len;
-        
+
         // kludge around PushbackString....
         len = Math.min(input.remainder().length(), entityToCharacterTrie.getMaxKeyLength());
         for(int i=0;i<len;i++){

@@ -8,7 +8,7 @@ ESAPI for Java - 2.1.0 Release Notes
    deprecated more than 2 years ago and they are known to be insecure
    (they are vulnerable to padding oracle attacks), the ESAPI team has
    decided to remove them in accordance to their support policy.
-   
+
    See comments for issue #306 for further details, as well as additional
    safety precautions that you may wish to take in the unlikely, but possible
    event that this vulnerability resulted in an actual security breach.
@@ -64,5 +64,5 @@ NOTE: A follow-up patch release is scheduled within the next few months to
       based on findings in Google Issue # 306. I will periodically try
       to keep the ESAPI mailing lists updated with the progress so watch
       there for emerging details and anticipated schedule.
-      
+
 -Kevin W. Wall <kevin.w.wall@gmail.com>, 2013-08-30

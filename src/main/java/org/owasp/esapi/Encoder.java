@@ -1,15 +1,15 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
- * 
+ *
  * This file is part of the Open Web Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
  * Copyright (c) 2007-2019 - The OWASP Foundation
- * 
+ *
  * The ESAPI is published by OWASP under the BSD license. You should read and accept the
  * LICENSE before you use, modify, and/or redistribute this software.
- * 
+ *
  * @author Jeff Williams <a href="http://www.aspectsecurity.com">Aspect Security</a>
  * @created 2007
  */
@@ -148,7 +148,7 @@ import org.owasp.esapi.errors.EncodingException;
  * <a href="https://beefproject.com/" target="_blank" rel="noopener noreferrer">BeEF - The Browser Exploitation Framework Project</a>.
  * </li>
  * </ul>
- * 
+ *
  * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross-Site Scripting Prevention Cheat Sheet</a>
  * @see <a href="https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data">OWASP Proactive Controls: C4: Encode and Escape Data</a>
  * @see <a href="https://www.onwebsecurity.com/security/properly-encoding-and-escaping-for-the-web.html" target="_blank" rel="noopener noreferrer">Properly encoding and escaping for the web</a>
@@ -156,7 +156,7 @@ import org.owasp.esapi.errors.EncodingException;
  * @since June 1, 2007
  */
 public interface Encoder {
-    
+
     /**
      * This method is equivalent to calling {@code Encoder.canonicalize(input, restrictMultiple, restrictMixed);}.
      *
@@ -177,23 +177,23 @@ public interface Encoder {
      *
      * @see #canonicalize(String, boolean, boolean)
      * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
-     * 
+     *
      * @param input the text to canonicalize
      * @return a String containing the canonicalized text
      */
     String canonicalize(String input);
-    
+
     /**
      * This method is the equivalent to calling {@code Encoder.canonicalize(input, strict, strict);}.
      *
      * @see #canonicalize(String, boolean, boolean)
      * @see <a href="http://www.w3.org/TR/html4/interact/forms.html#h-17.13.4">W3C specifications</a>
-     *  
-     * @param input 
+     *
+     * @param input
      *      the text to canonicalize
-     * @param strict 
+     * @param strict
      *      true if checking for multiple and mixed encoding is desired, false otherwise
-     * 
+     *
      * @return a String containing the canonicalized text
      */
     String canonicalize(String input, boolean strict);
@@ -281,7 +281,7 @@ public interface Encoder {
      *     String url = ESAPI.encoder().canonicalize( request.getParameter("url"), false, false);
      * </pre>
      * <b>WARNING #1!!!</b> Please note that this method is incompatible with URLs and if there exist any HTML Entities
-     * that correspond with parameter values in a URL such as "&amp;para;" in a URL like 
+     * that correspond with parameter values in a URL such as "&amp;para;" in a URL like
      * "https://foo.com/?bar=foo&amp;parameter=wrong" you will get a mixed encoding validation exception.
      * <p>
      * If you wish to canonicalize a URL/URI use the method {@code Encoder.getCanonicalizedURI(URI dirtyUri);}
@@ -310,30 +310,30 @@ public interface Encoder {
 
     /**
      * Encode data for use in Cascading Style Sheets (CSS) content.
-     * 
+     *
      * @see <a href="http://www.w3.org/TR/CSS21/syndata.html#escaped-characters">CSS Syntax [w3.org]</a>
-     * 
-     * @param untrustedData 
+     *
+     * @param untrustedData
      *      the untrusted data to output encode for CSS
-     * 
+     *
      * @return the untrusted data safely output encoded for use in a CSS
      */
     String encodeForCSS(String untrustedData);
 
     /**
      * Encode data for use in HTML using HTML entity encoding
-     * <p> 
+     * <p>
      * Note that the following characters:
      * 00-08, 0B-0C, 0E-1F, and 7F-9F
-     * <p>cannot be used in HTML. 
-     * 
-     * @see <a href="http://en.wikipedia.org/wiki/Character_encodings_in_HTML">HTML Encodings [wikipedia.org]</a> 
+     * <p>cannot be used in HTML.
+     *
+     * @see <a href="http://en.wikipedia.org/wiki/Character_encodings_in_HTML">HTML Encodings [wikipedia.org]</a>
      * @see <a href="http://www.w3.org/TR/html4/sgml/sgmldecl.html">SGML Specification [w3.org]</a>
      * @see <a href="http://www.w3.org/TR/REC-xml/#charsets">XML Specification [w3.org]</a>
-     * 
-     * @param untrustedData 
+     *
+     * @param untrustedData
      *      the untrusted data to output encode for HTML
-     * 
+     *
      * @return the untrusted data safely output encoded for use in a HTML
      */
     String encodeForHTML(String untrustedData);
@@ -344,35 +344,35 @@ public interface Encoder {
      * @return the newly decoded <code>String</code>
      */
     String decodeForHTML(String input);
-        
+
     /**
      * Encode data for use in HTML attributes.
-     * 
-     * @param untrustedData 
+     *
+     * @param untrustedData
      *      the untrusted data to output encode for an HTML attribute
-     * 
+     *
      * @return the untrusted data safely output encoded for use in a use as an HTML attribute
      */
     String encodeForHTMLAttribute(String untrustedData);
 
 
     /**
-     * Encode data for insertion inside a data value or function argument in JavaScript. Including user data 
+     * Encode data for insertion inside a data value or function argument in JavaScript. Including user data
      * directly inside a script is quite dangerous. Great care must be taken to prevent including user data
      * directly into script code itself, as no amount of encoding will prevent attacks there.
-     * 
-     * Please note there are some JavaScript functions that can never safely receive untrusted data 
+     *
+     * Please note there are some JavaScript functions that can never safely receive untrusted data
      * as input – even if the user input is encoded.
-     * 
+     *
      * For example:
      * <pre>
      *  &lt;script&gt;
      *    &nbsp;&nbsp;window.setInterval('&lt;%= EVEN IF YOU ENCODE UNTRUSTED DATA YOU ARE XSSED HERE %&gt;');
      *  &lt;/script&gt;
      * </pre>
-     * @param untrustedData 
+     * @param untrustedData
      *          the untrusted data to output encode for JavaScript
-     * 
+     *
      * @return the untrusted data safely output encoded for use in a use in JavaScript
      */
     String encodeForJavaScript(String untrustedData);
@@ -381,119 +381,119 @@ public interface Encoder {
      * Encode data for insertion inside a data value in a Visual Basic script. Putting user data directly
      * inside a script is quite dangerous. Great care must be taken to prevent putting user data
      * directly into script code itself, as no amount of encoding will prevent attacks there.
-     * 
+     *
      * This method is not recommended as VBScript is only supported by Internet Explorer
-     * 
-     * @param untrustedData 
+     *
+     * @param untrustedData
      *      the untrusted data to output encode for VBScript
-     * 
+     *
      * @return the untrusted data safely output encoded for use in a use in VBScript
      */
     String encodeForVBScript(String untrustedData);
 
 
     /**
-     * Encode input for use in a SQL query, according to the selected codec 
+     * Encode input for use in a SQL query, according to the selected codec
      * (appropriate codecs include the MySQLCodec and OracleCodec).
-     * 
+     *
      * This method is not recommended. The use of the {@code PreparedStatement}
-     * interface is the preferred approach. However, if for some reason 
-     * this is impossible, then this method is provided as a weaker 
-     * alternative. 
-     * 
+     * interface is the preferred approach. However, if for some reason
+     * this is impossible, then this method is provided as a weaker
+     * alternative.
+     *
      * The best approach is to make sure any single-quotes are double-quoted.
      * Another possible approach is to use the {escape} syntax described in the
      * JDBC specification in section 1.5.6.
      *
      * However, this syntax does not work with all drivers, and requires
      * modification of all queries.
-     * 
+     *
      * @see <a href="https://download.oracle.com/otn-pub/jcp/jdbc-4_2-mrel2-spec/jdbc4.2-fr-spec.pdf">JDBC Specification</a>
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html">java.sql.PreparedStatement</a>
-     *  
-     * @param codec 
+     *
+     * @param codec
      *      a Codec that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
-     * @param input 
+     * @param input
      *      the text to encode for SQL
-     * 
+     *
      * @return input encoded for use in SQL
      */
     String encodeForSQL(Codec codec, String input);
 
     /**
-     * Encode for an operating system command shell according to the selected codec (appropriate codecs include the WindowsCodec and UnixCodec). 
+     * Encode for an operating system command shell according to the selected codec (appropriate codecs include the WindowsCodec and UnixCodec).
      *
-     * Please note the following recommendations before choosing to use this method: 
-     * 
+     * Please note the following recommendations before choosing to use this method:
+     *
      * 1)      It is strongly recommended that applications avoid making direct OS system calls if possible as such calls are not portable, and they are potentially unsafe. Please use language provided features if at all possible, rather than native OS calls to implement the desired feature.
      * 2)      If an OS call cannot be avoided, then it is recommended that the program to be invoked be invoked directly (e.g., System.exec("nameofcommand" + "parameterstocommand");) as this avoids the use of the command shell. The "parameterstocommand" should of course be validated before passing them to the OS command.
      * 3)      If you must use this method, then we recommend validating all user supplied input passed to the command shell as well, in addition to using this method in order to make the command shell invocation safe.
-     *  
+     *
      * An example use of this method would be: System.exec("dir " + ESAPI.encodeForOS(WindowsCodec, "parameter(s)tocommandwithuserinput");
-     * 
-     * @param codec 
+     *
+     * @param codec
      *      a Codec that declares which operating system 'input' is being encoded for (ie. Windows, Unix, etc.)
-     * @param input 
+     * @param input
      *      the text to encode for the command shell
-     * 
+     *
      * @return input encoded for use in command shell
      */
     String encodeForOS(Codec codec, String input);
 
     /**
      * Encode data for use in LDAP queries. Wildcard (*) characters will be encoded.
-     * 
-     * @param input 
+     *
+     * @param input
      *      the text to encode for LDAP
-     * 
+     *
      * @return input encoded for use in LDAP
      */
     String encodeForLDAP(String input);
 
     /**
      * Encode data for use in LDAP queries. You have the option whether or not to encode wildcard (*) characters.
-     * 
-     * @param input 
+     *
+     * @param input
      *      the text to encode for LDAP
-     * @param encodeWildcards 
+     * @param encodeWildcards
      *      whether or not wildcard (*) characters will be encoded.
      *
      * @return input encoded for use in LDAP
      */
     String encodeForLDAP(String input, boolean encodeWildcards);
-     
+
     /**
      * Encode data for use in an LDAP distinguished name.
-     * 
-     *  @param input 
+     *
+     *  @param input
      *          the text to encode for an LDAP distinguished name
-     * 
+     *
      *  @return input encoded for use in an LDAP distinguished name
      */
     String encodeForDN(String input);
 
     /**
      * Encode data for use in an XPath query.
-     * 
-     * NB: The reference implementation encodes almost everything and may over-encode. 
-     * 
+     *
+     * NB: The reference implementation encodes almost everything and may over-encode.
+     *
      * The difficulty with XPath encoding is that XPath has no built in mechanism for escaping
      * characters. It is possible to use XQuery in a parameterized way to
-     * prevent injection. 
-     * 
+     * prevent injection.
+     *
      * For more information, refer to <a
      * href="http://www.ibm.com/developerworks/xml/library/x-xpathinjection.html">this
      * article</a> which specifies the following list of characters as the most
      * dangerous: ^&"*';<>(). <a
      * href="http://www.packetstormsecurity.org/papers/bypass/Blind_XPath_Injection_20040518.pdf">This
      * paper</a> suggests disallowing ' and " in queries.
-     * 
+     *
      * @see <a href="http://www.ibm.com/developerworks/xml/library/x-xpathinjection.html">XPath Injection [ibm.com]</a>
      * @see <a href="http://www.packetstormsecurity.org/papers/bypass/Blind_XPath_Injection_20040518.pdf">Blind XPath Injection [packetstormsecurity.org]</a>
-     *  
+     *
      * @param input
      *      the text to encode for XPath
-     * @return 
+     * @return
      *      input encoded for use in XPath
      */
     String encodeForXPath(String input);
@@ -507,12 +507,12 @@ public interface Encoder {
      * hopefully rare case that you need to make sure that data is safe for
      * inclusion in an XML document and cannot use a parser, this method provides
      * a safe mechanism to do so.
-     * 
+     *
      * @see <a href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
-     * 
+     *
      * @param input
      *          the text to encode for XML
-     * 
+     *
      * @return
      *          input encoded for use in XML
      */
@@ -527,13 +527,13 @@ public interface Encoder {
      * hopefully rare case that you need to make sure that data is safe for
      * inclusion in an XML document and cannot use a parse, this method provides
      * a safe mechanism to do so.
-     * 
+     *
      * @see <a href="https://www.w3.org/TR/REC-xml/#charencoding">Character Encoding in Entities</a>
-     * 
+     *
      * @param input
      *          the text to encode for use as an XML attribute
-     * 
-     * @return 
+     *
+     * @return
      *          input encoded for use in an XML attribute
      */
     String encodeForXMLAttribute(String input);
@@ -542,16 +542,16 @@ public interface Encoder {
      * Encode for use in a URL. This method performs <a
      * href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding</a>
      * on the entire string.
-     * 
+     *
      * @see <a href="http://en.wikipedia.org/wiki/Percent-encoding">URL encoding</a>
-     * 
-     * @param input 
+     *
+     * @param input
      *      the text to encode for use in a URL
-     * 
-     * @return input 
+     *
+     * @return input
      *      encoded for use in a URL
-     * 
-     * @throws EncodingException 
+     *
+     * @throws EncodingException
      *      if encoding fails
      */
     String encodeForURL(String input) throws EncodingException;
@@ -560,47 +560,47 @@ public interface Encoder {
      * Decode from URL. Implementations should first canonicalize and
      * detect any double-encoding. If this check passes, then the data is decoded using URL
      * decoding.
-     * 
-     * @param input 
+     *
+     * @param input
      *      the text to decode from an encoded URL
-     * 
-     * @return 
+     *
+     * @return
      *      the decoded URL value
-     * 
-     * @throws EncodingException 
+     *
+     * @throws EncodingException
      *      if decoding fails
      */
     String decodeFromURL(String input) throws EncodingException;
 
     /**
      * Encode for Base64.
-     * 
-     * @param input 
+     *
+     * @param input
      *      the text to encode for Base64
      * @param wrap
      *      the encoder will wrap lines every 64 characters of output
-     * 
+     *
      * @return input encoded for Base64
      */
     String encodeForBase64(byte[] input, boolean wrap);
 
     /**
      * Decode data encoded with BASE-64 encoding.
-     * 
-     * @param input 
+     *
+     * @param input
      *      the Base64 text to decode
-     * 
+     *
      * @return input decoded from Base64
-     * 
+     *
      * @throws IOException
      */
     byte[] decodeFromBase64(String input) throws IOException;
 
     /**
-     * Get a version of the input URI that will be safe to run regex and other validations against.  
-     * It is not recommended to persist this value as it will transform user input.  This method 
+     * Get a version of the input URI that will be safe to run regex and other validations against.
+     * It is not recommended to persist this value as it will transform user input.  This method
      * will not test to see if the URI is RFC-3986 compliant.
-     * 
+     *
      * @param dirtyUri
      *      the tainted URI
      * @return The canonicalized URI

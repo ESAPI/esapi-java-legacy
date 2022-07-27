@@ -23,7 +23,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ObjFactory.class})
 public class DateValidationRulePowerMockTest {
-    
+
     @Rule
     public TestName testName = new TestName();
     private Encoder mockEncoder;
@@ -31,111 +31,111 @@ public class DateValidationRulePowerMockTest {
     private DateValidationRule uit;
     @Mock
     private SecurityConfiguration mockSecConfig;
-    
+
     @Before
     public void configureStaticContexts() throws Exception {
         PowerMockito.mockStatic(ObjFactory.class);
         PowerMockito.when(ObjFactory.class, "make", ArgumentMatchers.anyString(), ArgumentMatchers.eq("SecurityConfiguration")).thenReturn(mockSecConfig);
-        
+
         mockEncoder = Mockito.mock(Encoder.class);
         testFormat = Mockito.spy(testFormat);
     }
-    
+
     @Test
     public void testSetDateFormatLenientTrueFromCtr() {
         Mockito.when(mockSecConfig.getLenientDatesAccepted()).thenReturn(true);
-        
+
         testFormat.setLenient(false);
         Mockito.reset(testFormat);
-        
+
         uit = new DateValidationRule(testName.getMethodName(), mockEncoder, testFormat);
-        
+
         Assert.assertTrue(testFormat.isLenient());
-       
+
         Mockito.verify(mockSecConfig, Mockito.times(1)).getLenientDatesAccepted();
         Mockito.verify(testFormat, Mockito.times(1)).setLenient(true);
         Mockito.verify(testFormat, Mockito.times(0)).setLenient(false);
-        
+
         PowerMockito.verifyStatic(ObjFactory.class, VerificationModeFactory.times(1));
         ObjFactory.make(ArgumentMatchers.anyString(), ArgumentMatchers.eq("SecurityConfiguration"));
-        
+
         PowerMockito.verifyNoMoreInteractions(ObjFactory.class);
-        
-       
+
+
     }
-    
+
     @Test
     public void testSetDateFormatLenientFalseFromCtr() {
         Mockito.when(mockSecConfig.getLenientDatesAccepted()).thenReturn(false);
-        
+
         testFormat.setLenient(true);
         Mockito.reset(testFormat);
-        
+
         uit = new DateValidationRule(testName.getMethodName(), mockEncoder, testFormat);
-        
+
         Assert.assertFalse(testFormat.isLenient());
-       
+
         Mockito.verify(mockSecConfig, Mockito.times(1)).getLenientDatesAccepted();
         Mockito.verify(testFormat, Mockito.times(0)).setLenient(true);
         Mockito.verify(testFormat, Mockito.times(1)).setLenient(false);
-        
+
         PowerMockito.verifyStatic(ObjFactory.class, VerificationModeFactory.times(1));
         ObjFactory.make(ArgumentMatchers.anyString(), ArgumentMatchers.eq("SecurityConfiguration"));
-        
+
         PowerMockito.verifyNoMoreInteractions(ObjFactory.class);
     }
-    
+
     @Test
     public void testSetDateFormatLenientFalseFromSetter() {
         Mockito.when(mockSecConfig.getLenientDatesAccepted()).thenReturn(false);
-        
+
         uit = new DateValidationRule(testName.getMethodName(), mockEncoder, testFormat);
-        
+
         //Configuration is lenient=false
         testFormat.setLenient(true);
         Mockito.reset(testFormat, mockSecConfig);
         Assert.assertTrue(testFormat.isLenient());
-        
+
         Mockito.when(mockSecConfig.getLenientDatesAccepted()).thenReturn(false);
-        
+
         uit.setDateFormat(testFormat);
-        
+
         Assert.assertFalse(testFormat.isLenient());
-        
+
         Mockito.verify(mockSecConfig, Mockito.times(1)).getLenientDatesAccepted();
         Mockito.verify(testFormat, Mockito.times(0)).setLenient(true);
         Mockito.verify(testFormat, Mockito.times(1)).setLenient(false);
-        
+
         PowerMockito.verifyStatic(ObjFactory.class, VerificationModeFactory.times(2));
         ObjFactory.make(ArgumentMatchers.anyString(), ArgumentMatchers.eq("SecurityConfiguration"));
-        
+
         PowerMockito.verifyNoMoreInteractions(ObjFactory.class);
     }
-    
+
     @Test
     public void testSetDateFormatLenientTrueFromSetter() {
         Mockito.when(mockSecConfig.getLenientDatesAccepted()).thenReturn(true);
-        
+
         uit = new DateValidationRule(testName.getMethodName(), mockEncoder, testFormat);
-        
+
         //Configuration is lenient=true
         testFormat.setLenient(false);
         Mockito.reset(testFormat, mockSecConfig);
         Assert.assertFalse(testFormat.isLenient());
-        
+
         Mockito.when(mockSecConfig.getLenientDatesAccepted()).thenReturn(true);
-        
+
         uit.setDateFormat(testFormat);
-        
+
         Assert.assertTrue(testFormat.isLenient());
-        
+
         Mockito.verify(mockSecConfig, Mockito.times(1)).getLenientDatesAccepted();
         Mockito.verify(testFormat, Mockito.times(1)).setLenient(true);
         Mockito.verify(testFormat, Mockito.times(0)).setLenient(false);
-        
+
         PowerMockito.verifyStatic(ObjFactory.class, VerificationModeFactory.times(2));
         ObjFactory.make(ArgumentMatchers.anyString(), ArgumentMatchers.eq("SecurityConfiguration"));
-        
+
         PowerMockito.verifyNoMoreInteractions(ObjFactory.class);
     }
 }
