@@ -81,7 +81,10 @@ Steps to work with ESAPI:
        'issue-#' where '#' is the GitHub issue # is will be working on, but
        you can call it whatever. E.g.,
             git checkout -b issue-#
-    4. Work on the GitHub issue on this newly created issue-# branch.
+    4. Work on the GitHub issue on this newly created issue-# branch. Be sure
+       that you also create new JUnit tests as required that confirm that the
+       issue is corrected, or if you are introducing new functionality, ensure
+       that functionality is sufficiently covered.
     5. Make sure everything builds correctly and all the JUnit tests pass
        ('mvn test'). [Note: There are some known issues with test failures if
        your are running under Windows and your local ESAPI Git repo located
@@ -104,11 +107,16 @@ Steps to work with ESAPI:
             $ git remote -v | grep origin       # Confirm 'origin' refers to YOUR PERSONAL GitHub repo
             $ git push origin issue-444         # Push the committed changes on the 'issue-444' branch
     9. Go to your personal, forked ESAPI GitHub repo (web interface) and create a
-       'Pull Request' from your 'issue-#' branch.
+       'Pull Request' (PR) from your 'issue-#' branch.
    10. Back on your local personal laptop / desktop, merge your issue branch with
        your local 'develop' branch. I.e.,
             $ git checkout develop
             $ git merge issue-444
+   11. Do not remove your branch on your forked repository until your PR from your
+       branch has been merged into the ESAPI/esapi-java/legacy 'develop' branch.
+       Note at least one the 3 main contributors on will review your commits before
+       merging them and they may do a formal code review and request further changes.
+       Once they are satisfied, they will merge your PR.
 
 In theory, you can do all this 'git' magic from Eclipse and presumably other
 IDEs like Oracle NetBeans or IntelliJ IDEA). From Eclipse, it is right-click
