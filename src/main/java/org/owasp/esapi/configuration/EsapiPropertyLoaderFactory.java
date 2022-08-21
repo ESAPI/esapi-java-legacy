@@ -52,7 +52,7 @@ public class EsapiPropertyLoaderFactory {
             return new StandardEsapiPropertyLoader(cfgPath, cfg.getPriority());
         } else {
             throw new ConfigurationException("The extension of given configuration path [ " + cfgPath + " ] is not supported." +
-                    "\nOnly .xml or .properties file extensions are supported.");
+                    "Only .xml or .properties file extensions are supported.");
         }
     }
 
