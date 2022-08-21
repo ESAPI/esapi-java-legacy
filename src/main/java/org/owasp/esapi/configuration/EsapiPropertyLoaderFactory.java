@@ -51,8 +51,8 @@ public class EsapiPropertyLoaderFactory {
         if (PROPERTIES.getTypeName().equalsIgnoreCase(fileExtension)) {
             return new StandardEsapiPropertyLoader(cfgPath, cfg.getPriority());
         } else {
-            throw new ConfigurationException("Configuration storage type [" + fileExtension + "] is not " +
-                    "supported");
+            throw new ConfigurationException("The extension of given configuration path [ " + cfgPath + " ] is not supported." +
+                    "\nOnly .xml or .properties file extensions are supported.");
         }
     }
 
