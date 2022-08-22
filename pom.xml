@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
@@ -26,12 +26,12 @@
     <licenses>
         <license>
             <name>BSD</name>
-            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <url>https://www.opensource.org/licenses/bsd-license.php</url>
             <comments>Code License - New BSD License</comments>
         </license>
         <license>
             <name>Creative Commons 3.0 BY-SA</name>
-            <url>http://creativecommons.org/licenses/by-sa/3.0/</url>
+            <url>https://creativecommons.org/licenses/by-sa/3.0/</url>
             <comments>Content License - Create Commons 3.0 BY-SA</comments>
         </license>
     </licenses>
@@ -693,9 +693,16 @@
             </plugin>
 
             <plugin>
+                <!-- Note: This uses the maven-fluido-skin version specified next. The skin is referenced in src/site/site.xml. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>4.0.0-M2</version>
+                <version>4.0.0-M3</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.skins</groupId>
+                <artifactId>maven-fluid-skin</artifactId>
+                <version>1.11.1</version>
             </plugin>
 
             <plugin>
@@ -768,10 +775,11 @@
 
     <reporting>
         <plugins>
-            <plugin>
+            <!-- plugin>
+                This is broken currently, in the mvn site output, so commenting out.
                 <groupId>net.sourceforge.maven-taglib</groupId>
                 <artifactId>maven-taglib-plugin</artifactId>
-            </plugin>
+            </plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changelog-plugin</artifactId>
