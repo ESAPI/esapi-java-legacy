@@ -58,6 +58,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
             throw new IllegalArgumentException("Unable to lookup SLF4J level mapping for esapi value of " + esapiLevel);
         }
         if (handler.isEnabled(logger)) {
+            type = type == null ? org.owasp.esapi.Logger.EVENT_UNSPECIFIED : type;
             String fullMessage = appender.appendTo(logger.getName(), type, message);
             String cleanString = scrubber.cleanMessage(fullMessage);
 
@@ -65,6 +66,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
             handler.log(logger, typeMarker, cleanString);
         }
     }
+
     @Override
     public void log(Logger logger, int esapiLevel, EventType type, String message, Throwable throwable) {
         Slf4JLogLevelHandler handler = esapiSlfLevelMap.get(esapiLevel);
@@ -72,6 +74,7 @@ public class Slf4JLogBridgeImpl implements Slf4JLogBridge {
             throw new IllegalArgumentException("Unable to lookup SLF4J level mapping for esapi value of " + esapiLevel);
         }
         if (handler.isEnabled(logger)) {
+            type = type == null ? org.owasp.esapi.Logger.EVENT_UNSPECIFIED : type;
             String fullMessage = appender.appendTo(logger.getName(), type, message);
             String cleanString = scrubber.cleanMessage(fullMessage);
 
