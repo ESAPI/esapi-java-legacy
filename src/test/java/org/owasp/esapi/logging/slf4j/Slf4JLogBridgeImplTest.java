@@ -176,19 +176,4 @@ public class Slf4JLogBridgeImplTest {
         Assert.assertEquals(computedEventType.toString(), markerCapture.getValue().getName());
     }
 
-    @Test
-    public void testNullEventTypeErrorLogLevelUsesFailure() {
-        EventType computedEventType = Logger.EVENT_FAILURE;
-
-        //Setup for Delegate Handler
-        ArgumentCaptor<Marker> markerCapture = ArgumentCaptor.forClass(Marker.class);
-        Mockito.when(mockHandler.isEnabled(mockSlf4JLogger)).thenReturn(true);
-
-        bridge.log(mockSlf4JLogger, Logger.ERROR, null, testName.getMethodName());
-
-        Mockito.verify(mockHandler).log(ArgumentMatchers.any(), markerCapture.capture(), ArgumentMatchers.any());
-        Mockito.verify(mockAppender).appendTo(ArgumentMatchers.any(), ArgumentMatchers.eq(computedEventType), ArgumentMatchers.any());
-
-        Assert.assertEquals(computedEventType.toString(), markerCapture.getValue().getName());
-    }
 }

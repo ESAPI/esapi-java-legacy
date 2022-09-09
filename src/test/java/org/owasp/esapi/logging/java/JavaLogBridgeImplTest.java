@@ -153,4 +153,10 @@ public class JavaLogBridgeImplTest {
 
     }
 
+    @Test
+    public void testNullEventTypeWorks()
+    {
+        // would throw an exception if the null wasn't handled properly
+        bridge.log(javaLogSpy, Logger.ALL, null, testName.getMethodName());
+    }
 }
