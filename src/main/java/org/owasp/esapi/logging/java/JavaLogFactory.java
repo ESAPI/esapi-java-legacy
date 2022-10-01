@@ -93,6 +93,12 @@ public class JavaLogFactory implements LogFactory {
      * @param logManager LogManager which is being configured.
      */
     /*package*/ static void readLoggerConfiguration(LogManager logManager) {
+        if (System.getProperties().keySet().stream().anyMatch(propKey ->
+        "java.util.logging.config.class".equals(propKey) || "java.util.logging.config.file".equals(propKey))) {
+            // LogManager has external configuration.  Do not load ESAPI defaults.
+            // See javadoc for the LogManager class for more information on properties.
+            return;
+        }
         /*
          * This will load the logging properties file to control the format of the output for Java logs.
          */
