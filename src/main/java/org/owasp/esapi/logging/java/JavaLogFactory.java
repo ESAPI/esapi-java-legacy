@@ -25,6 +25,7 @@ import java.util.logging.LogManager;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.PropNames;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
@@ -102,6 +103,18 @@ public class JavaLogFactory implements LogFactory {
         "java.util.logging.config.class".equals(propKey) || "java.util.logging.config.file".equals(propKey))) {
             // LogManager has external configuration.  Do not load ESAPI defaults.
             // See javadoc for the LogManager class for more information on properties.
+            boolean isStartupSysoutDisabled = Boolean.valueOf(System.getProperty(PropNames.DISCARD_LOGSPECIAL, Boolean.FALSE.toString()));
+            if (!isStartupSysoutDisabled) {
+                String logManagerPreferredMsg = String.format("[ESAPI-STARTUP] ESAPI JavaLogFactory Configuration will not be applied. "
+                        + "java.util.LogManager configuration Detected. "
+                        + "{\"java.util.logging.config.class\":\"%s\",\"java.util.logging.config.file\":\"%s\"}",
+                        System.getProperty("java.util.logging.config.class"), System.getProperty("java.util.logging.config.file"));
+
+                System.out.println(logManagerPreferredMsg);
+                // ::SAMPLE OUTPUT::
+                //[ESAPI-STARTUP] ESAPI JavaLogFactory Configuration will not be applied.  java.util.LogManager configuration Detected.{"java.util.logging.config.class":"some.defined.value","java.util.logging.config.file":"null"}
+            }
+
             return;
         }
         /*
