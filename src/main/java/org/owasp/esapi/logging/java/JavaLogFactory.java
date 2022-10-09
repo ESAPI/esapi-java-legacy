@@ -48,9 +48,9 @@ import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
  * Options for customizing this configuration (in recommended order)
  * <ol>
  * <li>Consider using the <i>SLF4JLogFactory</i> with a java-logging implementation.</li>
- * <li>Configure java LogManager system properties as defined by the <i>java.util.logging.LogManager</i> API</li>
+ * <li>Configure the runtime startup command to set the desired system properties for the <i>java.util.logging.LogManager</i> instance.  EG: <code>-Djava.util.logging.config.file=/custom/file/path.properties</code></li>
  * <li>Overwrite the esapi-java-logging.properties file with the desired logging configurations. <br>A default file implementation is available in the configuration jar on GitHub under the 'Releases'</li>
- * <li>Specifically set the system property for LogManager in the custom-code solution to prevent ESAPI JavaLogFactory from overriding project configuration</li>
+ * <li>Apply custom-code solution to set the system properties for the <i>java.util.logging.LogManager</i> at runtime. EG: <code>System.setProperty("java.util.logging.config.file", "/custom/file/path.properties");</code></li>
  * <li>Create a custom JavaLogFactory class in client project baseline and update the ESAPI.properties configuration to use that reference.</li>
  * </ol>
  *
