@@ -49,6 +49,59 @@ public class JavaLogFactoryTest {
     public ExpectedException exEx = ExpectedException.none();
 
     @Test
+    public void testLogManagerConfigurationAsClass() throws Exception {
+        String propKey = "java.util.logging.config.class";
+        //If defined, grab the value; otherwise, set to a known value to allow for prop to be cleared.
+        String sysDefault = System.getProperties().stringPropertyNames().contains(propKey) ? System.getProperty(propKey) : testName.getMethodName();
+
+        System.setProperty(propKey, "some.defined.value");
+        LogManager testLogManager = new LogManager() {
+            @Override
+            public void readConfiguration(InputStream ins) throws IOException, SecurityException {
+                throw new IOException(testName.getMethodName());
+            }
+        };
+
+        try {
+            // This would throw an IOException if the LogManager was not being respected since no esapi-java-logging file is specified
+            JavaLogFactory.readLoggerConfiguration(testLogManager);
+        } finally {
+            //Restore original prop values
+            if (testName.getMethodName().equals(sysDefault))
+                System.clearProperty(propKey);
+            else {
+                System.setProperty(propKey, sysDefault);
+            }
+        }
+    }
+
+    @Test
+    public void testLogManagerConfigurationAsFile() throws Exception {
+        String propKey = "java.util.logging.config.file";
+        //If defined, grab the value; otherwise, set to a known value to allow for prop to be cleared.
+        String sysDefault = System.getProperties().stringPropertyNames().contains(propKey) ? System.getProperty(propKey) : testName.getMethodName();
+
+        System.setProperty(propKey, "some.defined.value");
+        LogManager testLogManager = new LogManager() {
+            @Override
+            public void readConfiguration(InputStream ins) throws IOException, SecurityException {
+                throw new IOException(testName.getMethodName());
+            }
+        };
+
+        try {
+            // This would throw an IOException if the LogManager was not being respected since no esapi-java-logging file is specified
+            JavaLogFactory.readLoggerConfiguration(testLogManager);
+        } finally {
+            //Restore original prop values
+            if (testName.getMethodName().equals(sysDefault)) {
+                System.clearProperty(propKey);
+            } else {
+                System.setProperty(propKey, sysDefault);
+            } 
+        }
+    }
+    @Test
     public void testConfigurationExceptionOnMissingConfiguration() throws Exception {
         final IOException originException = new IOException(testName.getMethodName());
 
@@ -65,7 +118,7 @@ public class JavaLogFactoryTest {
         exEx.expectCause(new CustomMatcher<Throwable>("Check for IOException") {
             @Override
             public boolean matches(Object item) {
-               return item instanceof IOException;
+                return item instanceof IOException;
             }
         });
 

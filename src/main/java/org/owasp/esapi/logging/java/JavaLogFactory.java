@@ -25,6 +25,7 @@ import java.util.logging.LogManager;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.PropNames;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
@@ -43,10 +44,17 @@ import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
 
 /**
  * LogFactory implementation which creates JAVA supporting Loggers.
- *
- * This implementation requires that a file named 'esapi-java-logging.properties' exists on the classpath.
- * <br>
- * A default file implementation is available in the configuration jar on GitHub under the 'Releases'
+ * <br><br>
+ * Options for customizing this configuration (in recommended order)
+ * <ol>
+ * <li>Consider using the <i>SLF4JLogFactory</i> with a java-logging implementation.</li>
+ * <li>Configure the runtime startup command to set the desired system properties for the <i>java.util.logging.LogManager</i> instance.  EG: <code>-Djava.util.logging.config.file=/custom/file/path.properties</code></li>
+ * <li>Overwrite the esapi-java-logging.properties file with the desired logging configurations. <br>A default file implementation is available in the configuration jar on GitHub under the 'Releases'</li>
+ * <li>Apply custom-code solution to set the system properties for the <i>java.util.logging.LogManager</i> at runtime. EG: <code>System.setProperty("java.util.logging.config.file", "/custom/file/path.properties");</code></li>
+ * <li>Create a custom JavaLogFactory class in client project baseline and update the ESAPI.properties configuration to use that reference.</li>
+ * </ol>
+ * 
+ * @see <a href="https://github.com/ESAPI/esapi-java-legacy/wiki/Configuration-Reference:-JavaLogFactory">ESAPI Wiki - Configuration Reference: JavaLogFactory</a>
  *
  */
 public class JavaLogFactory implements LogFactory {
@@ -93,6 +101,24 @@ public class JavaLogFactory implements LogFactory {
      * @param logManager LogManager which is being configured.
      */
     /*package*/ static void readLoggerConfiguration(LogManager logManager) {
+        if (System.getProperties().keySet().stream().anyMatch(propKey ->
+        "java.util.logging.config.class".equals(propKey) || "java.util.logging.config.file".equals(propKey))) {
+            // LogManager has external configuration.  Do not load ESAPI defaults.
+            // See javadoc for the LogManager class for more information on properties.
+            boolean isStartupSysoutDisabled = Boolean.valueOf(System.getProperty(PropNames.DISCARD_LOGSPECIAL, Boolean.FALSE.toString()));
+            if (!isStartupSysoutDisabled) {
+                String logManagerPreferredMsg = String.format("[ESAPI-STARTUP] ESAPI JavaLogFactory Configuration will not be applied. "
+                        + "java.util.LogManager configuration Detected. "
+                        + "{\"java.util.logging.config.class\":\"%s\",\"java.util.logging.config.file\":\"%s\"}",
+                        System.getProperty("java.util.logging.config.class"), System.getProperty("java.util.logging.config.file"));
+
+                System.out.println(logManagerPreferredMsg);
+                // ::SAMPLE OUTPUT::
+                //[ESAPI-STARTUP] ESAPI JavaLogFactory Configuration will not be applied.  java.util.LogManager configuration Detected.{"java.util.logging.config.class":"some.defined.value","java.util.logging.config.file":"null"}
+            }
+
+            return;
+        }
         /*
          * This will load the logging properties file to control the format of the output for Java logs.
          */
