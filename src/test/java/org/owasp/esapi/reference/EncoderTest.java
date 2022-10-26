@@ -38,11 +38,13 @@ import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
 import org.owasp.esapi.codecs.OracleCodec;
+import org.owasp.esapi.codecs.JSONCodec;
 import org.owasp.esapi.codecs.PushbackString;
 import org.owasp.esapi.codecs.UnixCodec;
 import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.SecurityConfigurationWrapper;
 
@@ -764,7 +766,7 @@ public class EncoderTest extends TestCase {
         assertEquals(orig, win.decode(enc));
         assertEquals(orig, win.decode(orig));
 
-     // TODO: Check that these are acceptable for Windows
+        // TODO: Check that these are acceptable for Windows
         assertEquals("c^:^\\jeff", instance.encodeForOS(win, "c:\\jeff"));
         assertEquals("c^:^\\jeff", win.encode(immune, "c:\\jeff"));
         assertEquals("dir^ ^&^ foo", instance.encodeForOS(win, "dir & foo"));
@@ -798,7 +800,7 @@ public class EncoderTest extends TestCase {
         assertEquals(orig, unix.decode(enc));
         assertEquals(orig, unix.decode(orig));
 
-     // TODO: Check that these are acceptable for Unix hosts
+        // TODO: Check that these are acceptable for Unix hosts
         assertEquals("c\\:\\\\jeff", instance.encodeForOS(unix, "c:\\jeff"));
         assertEquals("c\\:\\\\jeff", unix.encode(immune, "c:\\jeff"));
         assertEquals("dir\\ \\&\\ foo", instance.encodeForOS(unix, "dir & foo"));
@@ -1014,7 +1016,7 @@ public class EncoderTest extends TestCase {
         } catch( IntrusionException iex) {
             caughtExpected = true;
         }
-        assertEquals( true, caughtExpected );   // Verify it threw an IntrusionException
+        assertTrue( caughtExpected );   // Verify it threw an IntrusionException
 
         // Now set up a case where (via the Encoder.DefaultCodecList property)
         // where "UnixCodec" is added on to the standard list of 3 normal codecs
@@ -1048,6 +1050,341 @@ public class EncoderTest extends TestCase {
             caughtExpected = true;
         }
 
-        assertEquals( true, caughtExpected );   // Verify it threw an IntrusionException
+        assertTrue( caughtExpected );   // Verify it threw an IntrusionException
     }
+
+    /**
+     * Test of encodeForJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testEncodeForJSON_EmptyStrings() {
+        System.out.println("testEncodeForJSON_EmptyStrings");
+        Encoder instance = ESAPI.encoder();
+
+        // Empty strings
+        assertEquals( null, instance.encodeForJSON(null) );
+        assertEquals( "", instance.encodeForJSON("") );
+        assertEquals( " ", instance.encodeForJSON(" ") );
+    }
+
+    /**
+     * Test of encodeForJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testEncodeForJSON_7BitClean() {
+        System.out.println("testEncodeForJSON_7BitClean");
+        Encoder instance = ESAPI.encoder();
+
+        // Walk a message without escaped characters
+        String message = "Now is the time for all good men to come to the aide of their country.";
+        for ( int i = 1; i < message.length(); ++i ) {
+            final String substring = message.substring(0, i);
+            assertEquals( substring, instance.encodeForJSON(substring) );
+        }
+    }
+
+    /**
+     * Test of encodeForJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testEncodeForJSON_2CharEscapeSequences() {
+        System.out.println("testEncodeForJSON_2CharEscapeSequences");
+        Encoder instance = ESAPI.encoder();
+
+        // Two-character sequence escape representations of some
+        // popular characters
+        assertEquals( "\\b", instance.encodeForJSON("\b") );
+        assertEquals( "\\f", instance.encodeForJSON("\f") );
+        assertEquals( "\\r", instance.encodeForJSON("\r") );
+        assertEquals( "\\n", instance.encodeForJSON("\n") );
+        assertEquals( "\\t", instance.encodeForJSON("\t") );
+        assertEquals( "\\\"", instance.encodeForJSON("\"") );
+        assertEquals( "\\/",  instance.encodeForJSON("/" ) );
+        assertEquals( "\\\\", instance.encodeForJSON("\\") );
+    }
+
+    /**
+     * Test of encodeForJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testEncodeForJSON_ControlCharacters() {
+        System.out.println("testEncodeForJSON_ControlCharacters");
+        Encoder instance = ESAPI.encoder();
+
+        // All Unicode characters may be placed within the quotation marks,
+        // except for the characters that MUST be escaped: quotation mark,
+        // reverse solidus, and the control characters (U+0000 through U+001F).
+        for ( int i = 0; i <= 0x1f; ++i ) {
+            final char ch = (char)i;
+            if( ch == '\b' || ch == '\f' || ch == '\r' || ch == '\n' || ch == '\t' ) {
+                continue;
+            }
+
+            final String str1 = String.format( "\\u%04x", i );
+            final String str2 = Character.toString( ch );
+            assertEquals( str1, instance.encodeForJSON(str2) );
+        }
+    }
+
+    /**
+     * Test of encodeForJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testEncodeForJSON_PrintableChars() {
+        System.out.println("testEncodeForJSON_PrintableChars");
+        Encoder instance = ESAPI.encoder();
+
+        // And the remainder of printable characters
+        for ( int i = 32; i <= 126; ++i ) {
+            final char ch = (char)i;
+            if( ch == '/' || ch == '\\' || ch == '\"' ) {
+                continue;
+            }
+
+            final String str = Character.toString( ch );
+            assertEquals( str, instance.encodeForJSON(str) );
+        }
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_EmptyStrings() {
+        System.out.println("testDecodeFromJSON_EmptyStrings");
+        Encoder instance = ESAPI.encoder();
+
+        // Empty strings
+        assertEquals( null, instance.decodeFromJSON(null) );
+        assertEquals( "", instance.decodeFromJSON("") );
+        assertEquals( " ", instance.decodeFromJSON(" ") );
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_7BitClean() {
+        System.out.println("testDecodeFromJSON_7BitClean");
+        Encoder instance = ESAPI.encoder();
+
+        // Walk a message without escaped characters
+        String message = "Now is the time for all good men to come to the aide of their country.";
+        for ( int i = 1; i < message.length(); ++i ) {
+            final String substring = message.substring(0, i);
+            assertEquals( substring, instance.decodeFromJSON(substring) );
+        }
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_2CharEscapeSequences() {
+        System.out.println("testDecodeFromJSON_2CharEscapeSequences");
+        Encoder instance = ESAPI.encoder();
+
+        // Two-character sequence escape representations of some
+        // popular characters
+        assertEquals( "\b", instance.decodeFromJSON("\\b") );
+        assertEquals( "\f", instance.decodeFromJSON("\\f") );
+        assertEquals( "\r", instance.decodeFromJSON("\\r") );
+        assertEquals( "\n", instance.decodeFromJSON("\\n") );
+        assertEquals( "\t", instance.decodeFromJSON("\\t") );
+        assertEquals( "\"", instance.decodeFromJSON("\\\"") );
+        assertEquals( "/",  instance.decodeFromJSON("\\/" ) );
+        assertEquals( "\\", instance.decodeFromJSON("\\\\") );
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_ControlCharacters() {
+        System.out.println("testDecodeFromJSON_ControlCharacters");
+        Encoder instance = ESAPI.encoder();
+
+        // All Unicode characters may be placed within the quotation marks,
+        // except for the characters that MUST be escaped: quotation mark,
+        // reverse solidus, and the control characters (U+0000 through U+001F).
+        for ( int i = 0; i <= 0x1f; ++i ) {
+            final String str = String.format( "\\u%04x", i );
+            final Character ch = (char)i;
+
+            assertEquals( Character.toString(ch), instance.decodeFromJSON(str) );
+        }
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_PrintableChars() {
+        System.out.println("testDecodeFromJSON_PrintableChars");
+        Encoder instance = ESAPI.encoder();
+
+        // And the remainder of printable characters
+        for ( int i = 32; i <= 126; ++i ) {
+            final String str = String.format( "\\u%04x", i );
+            final Character ch = (char)i;
+
+            assertEquals( Character.toString(ch), instance.decodeFromJSON(str) );
+        }
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_Slashes() {
+        System.out.println("testDecodeFromJSON_Slashes");
+        Encoder instance = ESAPI.encoder();
+
+        // And a couple extra for good measure...
+        assertEquals( "\\", instance.decodeFromJSON("\\u005c") );
+        assertEquals( "\\", instance.decodeFromJSON("\\u005C") );
+        assertEquals( "\\\\", instance.decodeFromJSON("\\u005c\\u005c") );
+        assertEquals( "\\\\", instance.decodeFromJSON("\\u005C\\u005C") );
+    }
+
+    /**
+     * Test of decodeFromJSON method, of class org.owasp.esapi.Encoder.
+     */
+    public void testDecodeFromJSON_Malformed() {
+        System.out.println("testDecodeFromJSON_Malformed");
+        Encoder instance = ESAPI.encoder();
+
+        // Malformed. No '\a' or \c' popular characters
+        boolean exceptionThrown = false;
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\a");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. No '\a' or \c' popular characters
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\c");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u0");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u00");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u005");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u0nnnABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u00nnABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. Must have 4 hex digits
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\u005nABCDEFGHIJKLMNOPQRSTUVWXYZ");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+
+        // Malformed. The '\U' must be lowercase
+        try {
+            exceptionThrown = false;
+            String unused = instance.decodeFromJSON("\\U005C");
+        }
+        catch (IllegalArgumentException e) {
+            exceptionThrown = true;
+        }
+        assertTrue( exceptionThrown );
+    }
+
+    /**
+     * Test of encodeForJSON and decodeFromJSON methods, of class org.owasp.esapi.Encoder.
+     * https://github.com/ESAPI/esapi-java-legacy/pull/722#discussion_r922860329
+     */
+    public void testRoundtripWithJSON_SupplementaryUnicode () {
+        System.out.println("testRoundtripWithJSON_SupplementaryUnicode");
+        Encoder instance = ESAPI.encoder();
+
+        // U+1F602 is "\uD83D\uDE02" in Java
+        // https://www.fileformat.info/info/unicode/char/1f602/index.htm
+        final String FACE_WITH_TEARS_OF_JOY = "\uD83D\uDE02";
+        assertEquals( FACE_WITH_TEARS_OF_JOY, instance.decodeFromJSON(instance.encodeForJSON(FACE_WITH_TEARS_OF_JOY)) );
+    }
+
+    /**
+     * Test of encodeForJSON and decodeFromJSON methods, of class org.owasp.esapi.Encoder.
+     */
+    public void testRoundtripWithJSON_Random6CharEscapes () {
+        System.out.println("testRoundtripWithJSON_Random6CharEscapes");
+        Encoder instance = ESAPI.encoder();
+
+        // Walk a message without escaped characters
+        final String str1 = "Now is the time for all good men to come to the aide of their country.";
+
+        StringBuilder sb = new StringBuilder();
+        Randomizer prng = ESAPI.randomizer();
+
+        for ( int i = 0; i < str1.length(); ++i ) {
+            // Perform 6-character escaping on a character with probability 1/4
+            final boolean encode = prng.getRandomBoolean() & prng.getRandomBoolean();
+            if ( encode ) {
+                sb.append( String.format("\\u%04x", (int)str1.charAt(i)) );
+            }
+            else {
+                sb.append( str1.charAt(i) );
+            }
+        }
+
+        final String str2 = sb.toString();
+        assertEquals( str1, instance.decodeFromJSON(str2) );
+    }
+
 }

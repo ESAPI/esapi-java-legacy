@@ -42,6 +42,7 @@ import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.codecs.XMLEntityCodec;
+import org.owasp.esapi.codecs.JSONCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
@@ -79,6 +80,7 @@ public class DefaultEncoder implements Encoder {
     private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
     private VBScriptCodec vbScriptCodec = new VBScriptCodec();
     private CSSCodec cssCodec = new CSSCodec();
+    private JSONCodec jsonCodec = new JSONCodec();
 
     private final Logger logger = ESAPI.getLogger("Encoder");
 
@@ -86,7 +88,7 @@ public class DefaultEncoder implements Encoder {
      *  Character sets that define characters (in addition to alphanumerics) that are
      * immune from encoding in various formats
      */
-    private final static char[]     IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
+    private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
     private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
     private final static char[] IMMUNE_CSS = { '#' };
     private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '_' };
@@ -96,6 +98,7 @@ public class DefaultEncoder implements Encoder {
     private final static char[] IMMUNE_OS = { '-' };
     private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
     private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
+    private final static char[] IMMUNE_JSON = { };
 
 
     /**
@@ -630,4 +633,25 @@ public class DefaultEncoder implements Encoder {
       }
       return query_pairs;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String encodeForJSON(String input) {
+        if( input == null ) {
+            return null;
+        }
+        return jsonCodec.encode(IMMUNE_JSON, input);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String decodeFromJSON(String input) {
+        if( input == null ) {
+            return null;
+        }
+        return jsonCodec.decode(input);
+    }
+
 }

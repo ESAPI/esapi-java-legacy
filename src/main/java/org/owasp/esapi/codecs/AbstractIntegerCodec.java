@@ -25,6 +25,9 @@ package org.owasp.esapi.codecs;
  * points cannot be represented by a {@code char}, this class remedies that by parsing string
  * data as codePoints as opposed to a stream of {@code char}s.
  *
+ * WARNING:  This class will silently discard an invalid code point according to
+ * the result of {@code Character.isValidCodePoint( int )} method.
+ *
  * @author Matt Seil (mseil .at. owasp.org)
  * @since 2017 -- Adapted from Jeff Williams' original {@code Codec} class.
  */
