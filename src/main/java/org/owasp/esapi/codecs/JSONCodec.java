@@ -155,65 +155,66 @@ public class JSONCodec extends AbstractIntegerCodec {
      *     if an invalid character sequence is encountered
      */
     public Integer decodeCharacter( PushbackSequence<Integer> input )
-        throws IllegalArgumentException {
+            throws IllegalArgumentException {
 
         input.mark();
 
         Integer first = input.next(), second = null;
+
+        //Ensure both first and second characters are not null before attempting to decode.
         if ( first == null || first.intValue() != '\\' ) {
             input.reset();
             return null;
         }
+        if ( (second = input.next()) == null ) {
+            throw new IllegalArgumentException( "Invalid JSON escape representation");
+        }
 
-        String errorMessage = null;
+        Integer decodedRef = null;
 
-        try
-        {
-            errorMessage = "Invalid JSON escape representation";
-
-            if ( (second = input.next()) == null ) {
-                throw new IllegalArgumentException();
-            }
-
-            // Per the RFC... Two-character sequence escape representations of some popular characters
-            switch ( second.intValue() ) {
-                case 'b': return (int)'\b';
-                case 'f': return (int)'\f';
-                case 'r': return (int)'\r';
-                case 'n': return (int)'\n';
-                case 't': return (int)'\t';
-                case '"': return (int)'\"';
-                case '/': return  (int)'/';
-                case '\\': return (int)'\\';
-            }
-
-            errorMessage = "Invalid JSON two-character escape representation";
-
+        // Per the RFC... Two-character sequence escape representations of some popular characters
+        switch ( second.intValue() ) {
+        case 'b':
+            decodedRef = (int)'\b';
+            break;
+        case 'f':
+            decodedRef = (int)'\f';
+            break;
+        case 'r':
+            decodedRef = (int)'\r';
+            break;
+        case 'n':
+            decodedRef = (int)'\n';
+            break;
+        case 't':
+            decodedRef = (int)'\t';
+            break;
+        case '"':
+            decodedRef = (int)'\"';
+            break;
+        case '/':
+            decodedRef =  (int)'/';
+            break;
+        case '\\':
+            decodedRef = (int)'\\';
+            break;
+        case 'u':
             // Per the RFC... All characters may be escaped as a six-character sequence: a reverse solidus,
             // followed by the lowercase letter u, followed by four hexadecimal digits that encode the
             // character's code point. The hexadecimal letters A through F can be uppercase or lowercase.
             // So, for example, a string containing only a single reverse solidus character may be represented
             // as "\u005C".
-            if ( second.intValue() == 'u' ) {
-
-                errorMessage = "Invalid JSON six-character escape representation";
-
-                return (convertToInt( input.next() ) << 12) +
-                       (convertToInt( input.next() ) <<  8) +
-                       (convertToInt( input.next() ) <<  4) +
-                       (convertToInt( input.next() ) <<  0);
-            }
-
-            // Do nothing. Fall into throw below.
-        }
-        catch (IllegalArgumentException e)
-        {
-            // Do nothing. Fall into throw below.
+            decodedRef = (convertToInt( input.next() ) << 12) +
+                (convertToInt( input.next() ) <<  8) +
+                (convertToInt( input.next() ) <<  4) +
+                (convertToInt( input.next() ) <<  0);
+            break;
+        default:
+            input.reset();
+            throw new IllegalArgumentException( "Invalid JSON two-character escape representation: " + String.format("'%s%s'", (char) first.intValue(), (char) second.intValue()) );
         }
 
-        // Catch all. The escaped character sequence was invalid.
-        input.reset();
-        throw new IllegalArgumentException( errorMessage );
+        return decodedRef;
     }
 
     protected int charToCodepoint( Character ch ) {
