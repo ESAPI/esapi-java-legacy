@@ -211,7 +211,7 @@ public class JSONCodec extends AbstractIntegerCodec {
             break;
         default:
             input.reset();
-            throw new IllegalArgumentException( "Invalid JSON two-character escape representation: " + String.format("'%s%s'", (char) first.intValue(), (char) second.intValue()) );
+            throw new IllegalArgumentException( "Invalid JSON two-character escape representation: " + String.format("'%c%c'", (char) first.intValue(), (char) second.intValue()) );
         }
 
         return decodedRef;
