@@ -92,8 +92,10 @@ public class JSONCodec extends AbstractIntegerCodec {
 
         // Per the docs for HTMLEntityCodec: "WARNING: This method will silently discard
         // invalid code points per the call to Character.isValidCodePoint( int ) method.
-        // WARNING!! Character based Codecs will silently transform code points that are
-        // not legal UTF code points into garbage data as they will cast them to chars.
+
+        // WARNING!! Character based Codecs will only handle the byte range of 0-65535 (0x0-0xffff).
+        // Passing any data represented by a higher numerical value will result in a downcast thus
+        // destroying the original data with undefined results.
         if ( Character.isValidCodePoint( codePoint ) == false ) {
             // throw new IllegalArgumentException( "Invalid codepoint '" + String.format("0x%04X", codePoint) + "'." );
             return "";
