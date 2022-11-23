@@ -473,13 +473,11 @@
                 <artifactId>findsecbugs-plugin</artifactId>
                 <version>${version.findsecbugs}</version>
             </plugin>
-
             <plugin>
-                <groupId>net.sourceforge.maven-taglib</groupId>
-                <artifactId>maven-taglib-plugin</artifactId>
-                <version>2.4</version>
+                <groupId>io.github.weblegacy</groupId>
+                <artifactId>taglib-maven-plugin</artifactId>
+                <version>2.6</version>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changelog-plugin</artifactId>
@@ -775,11 +773,10 @@
 
     <reporting>
         <plugins>
-            <!-- plugin>
-                This is broken currently, in the mvn site output, so commenting out.
-                <groupId>net.sourceforge.maven-taglib</groupId>
-                <artifactId>maven-taglib-plugin</artifactId>
-            </plugin -->
+	     <plugin>
+	            <groupId>io.github.weblegacy</groupId>
+                <artifactId>taglib-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changelog-plugin</artifactId>
