@@ -45,6 +45,7 @@ import org.owasp.esapi.errors.EncodingException;
  * <li>JavaScript Escaping</li>
  * <li>MySQL Database Escaping</li>
  * <li>Oracle Database Escaping</li>
+ * <li>JSON Escaping</li>
  * <li>Percent Encoding (aka URL Encoding)</li>
  * <li>Unix Shell Escaping</li>
  * <li>VBScript Escaping</li>
@@ -557,6 +558,22 @@ public interface Encoder {
     String encodeForURL(String input) throws EncodingException;
 
     /**
+     * Encode data for use in JSON strings. This method performs <a
+     * href="https://datatracker.ietf.org/doc/html/rfc8259#section-7">String escaping</a>
+     * on the entire string according to RFC 8259, Section 7.
+     *
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-7">RFC 8259,
+     * The JavaScript Object Notation (JSON) Data Interchange Format, Section 7</a>
+     *
+     * @param input
+     *      the text to escape for JSON string
+     *
+     * @return input
+     *      escaped for use in JSON string
+     */
+    String encodeForJSON(String input);
+
+    /**
      * Decode from URL. Implementations should first canonicalize and
      * detect any double-encoding. If this check passes, then the data is decoded using URL
      * decoding.
@@ -607,4 +624,19 @@ public interface Encoder {
      */
     String getCanonicalizedURI(URI dirtyUri);
 
+    /**
+     * Decode data encoded for JSON strings. This method removes <a
+     * href="https://datatracker.ietf.org/doc/html/rfc8259#section-7">String escaping</a>
+     * on the entire string according to RFC 8259, Section 7.
+     *
+     * @see <a href="https://datatracker.ietf.org/doc/html/rfc8259#section-7">RFC 8259,
+     * The JavaScript Object Notation (JSON) Data Interchange Format, Section 7</a>
+     *
+     * @param input
+     *      the JSON string to decode
+     *
+     * @return input
+     *      decoded from JSON string
+     */
+    String decodeFromJSON(String input);
 }
