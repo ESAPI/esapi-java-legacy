@@ -84,7 +84,7 @@ public class JSONCodec extends AbstractIntegerCodec {
      * the result of {@code Character.isValidCodePoint( int )} method.
      *
      * @param immune character array of whitelist characters which should not be encoded
-     * @param c the character to encode if not in the immune list
+     * @param codePoint the character codepoint to encode if not in the immune list
      * @return encoded character if the character is special, and the character otherwise.
      */
     public String encodeCharacter( char[] immune, int codePoint )
