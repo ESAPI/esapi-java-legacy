@@ -136,9 +136,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	    <version.jmh>1.35</version.jmh>
+	    <version.jmh>1.36</version.jmh>
         <version.powermock>2.0.9</version.powermock>
-        <version.spotbugs>4.7.1</version.spotbugs>
+        <version.spotbugs>4.7.3</version.spotbugs>
         <version.findsecbugs>1.12.0</version.findsecbugs>
         <version.spotbugs.maven>4.7.3.0</version.spotbugs.maven>
         <version.surefire>3.0.0-M7</version.surefire>
@@ -148,17 +148,6 @@
             <!-- n the previous release notes file under the 'documentation/' directory. -->
         <date.prev_release>2021-05-24 00:00:00</date.prev_release>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Required to eliminate dependency convergence issue in AntiSamy 1.7.0 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents.core5</groupId>
-                <artifactId>httpcore5</artifactId>
-                <version>5.1.4</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -182,7 +171,7 @@
         <dependency>
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
-            <version>1.3.7</version>
+            <version>1.3.8</version>
             <exclusions>
                 <!-- excluded because we directly import newer versions. -->
                 <exclusion>
@@ -259,12 +248,12 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.4</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
