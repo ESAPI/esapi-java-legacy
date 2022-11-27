@@ -108,11 +108,11 @@ Jeff-Walker       2              3              1
 HenriquePinto333  2              1              1
 davewichers       2              3              1
 xeno6696         31              6              1
-kwwall            6              4              0
+kwwall           17              9              0
 ========================================================
                              Total Merged PRs: 11
 
-    (Note: Total # commits as reflected in CHANGELOG [see below] are less since commits from PRs are generally "squashed".)
+    (Note: Total # commits as reflected in CHANGELOG [see below] are less since commits from PRs are generally "squashed" when the are merged.)
 -----------------------------------------------------------------------------
 
 CHANGELOG:      Create your own. May I suggest:
