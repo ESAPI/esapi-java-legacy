@@ -9,8 +9,6 @@ mvnQuietTest.sh     -- Run 'mvn test' from bash with logSpecial output suppresse
 createVarsFile.sh   -- Bash script to create a vars.2.x.y.z file that is 'sourced' by the 'newReleaseNotes.sh' script.
 esapi4java-core-TEMPLATE-release-notes.txt - Basic template used to create the new release notes file.
 newReleaseNotes.sh  -- Bash script to create the release notes boillerplate from the provided release argument and the TEMPLATE file.
-vars.2.2.3.0        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
-vars.2.2.3.1        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
-vars.2.3.0.0        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
-vars.2.4.0.0        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
+vars.2.?.?.?        -- File that is 'sourced' (as in "source ./filename") and used with newReleaseNotes.sh
+                       and is associated with the release number associated with the file name.
 vars.template       -- Template to construct the release specific vars files
