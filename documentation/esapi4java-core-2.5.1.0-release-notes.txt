@@ -14,10 +14,11 @@ This is a patch release with the primary intent of updating some dependencies, s
         - An update to AntiSamy:        1.7.0  --> 1.7.2
         - An update to SLFJ4 API:       1.7.36 --> 2.0.4    (Note: 2.0.5 is available and likely would would result in "convergence" issues with the version AntiSamy 1.7.2 pulls in)
     * A new codec (org.owasp.esapi.codecs.JSONCodec) is provided that provides JSON output encoding as per section 7 of RFC 8259. It is made available via Encoder.encodeForJSON(). (Note unlike other encoders, there is no corresponding decoder (i.e., decodeForJSON()) made available. Since that would normally be done by your JavaScript code, it wasn't deemed essential.
+    * Executing 'mvn site' now creates Javadoc for the ESAPI tag library (GitHub issue #733).
 
 For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode SourceClear, OWASP Dependency Check, etc., you will notice that the 4 Log4J 1.x related CVEs are no longer flagged. This is because we have finally removed the Log4J 1.2.17 dependency in ESAPI 2.5.0.0.
 
-Any remaining flagged vulnerabilities (e.g., CVE-2020-7791 for transitive dependency batik-i18n-1.14) are believed to be false postives.
+Any remaining flagged vulnerabilities (e.g., CVE-2017-10355 for transitive dependency apache:xerces2_java:2.12.2) are believed to be false postives.
 
 You are encouraged to review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md and email us or contact us in our GitHub Discussions page if you have questions.
 
