@@ -599,7 +599,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     /**
      * {@inheritDoc}
      */
-    @Override
+    @Override   
     public boolean isValidFileName(String context, String input, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
         return isValidFileName( context, input, ESAPI.securityConfiguration().getAllowedFileExtensions(), allowNull, errors );
     }
