@@ -4,7 +4,6 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.errors.ValidationException;
 import org.owasp.esapi.reference.DefaultValidator;
 
 
@@ -26,15 +25,12 @@ public class ValidStringValidator implements ConstraintValidator<ValidString, St
     }
  
     @Override
-    public boolean isValid(String input, ConstraintValidatorContext constraintContext) {
+    public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = DefaultValidator.getInstance().isValidInput(context, input, type, maxLength, allowNull, canonicalize, errorList);
         
         if(!valid){
-            for (ValidationException vex : errorList.errors()) {
-                String errorMessage = vex.getLogMessage();
-                constraintContext.buildConstraintViolationWithTemplate(errorMessage).addConstraintViolation();
-            }
+            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
         }
         
         return valid;

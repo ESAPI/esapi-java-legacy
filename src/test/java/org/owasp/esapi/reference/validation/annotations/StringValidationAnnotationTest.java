@@ -64,7 +64,7 @@ public class StringValidationAnnotationTest extends TestCase {
 
 class Person {
 
-    @ValidString(context = "name", type = "SafeString", maxLength = 32)
+    @ValidString(context = "name", type = "SafeString", maxLength = 32, allowNull = false)
     private String name;
 
     public String getName() {

@@ -34,7 +34,7 @@ public @interface ValidString {
 
     int maxLength();
 
-    boolean allowNull() default false;
+    boolean allowNull();
 
     boolean canonicalize() default true;
 
