@@ -54,7 +54,7 @@ Required Software:
     this.]
 
 Building ESAPI:
-    https://www.owasp.org/index.php/ESAPI-Building briefly discusses how to
+    https://github.com/ESAPI/esapi-java-legacy/wiki/Building-ESAPI briefly discusses how to
     build ESAPI via Maven.
 
     Also https://github.com/ESAPI/esapi-java-legacy/wiki/Using-ESAPI-for-Java-with-Eclipse
