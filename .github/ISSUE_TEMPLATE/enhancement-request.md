@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 
-[**NOTE:** Please do NOT just ask general questions here as they will _not_ be answered. Instead, please use the GitHub Discussions and create a new topic under 'Questions and Answers".
+[**NOTE:** Please do NOT just ask general questions here as they will _not_ be answered. Instead, please use the GitHub Discussions and create a new topic under 'Questions and Answers". Also, we are aware the problems with ESAPI and Jakarta EE, so please do NOT create a new issue for that. To follow the status, please see GitHub Discussion https://github.com/ESAPI/esapi-java-legacy/discussions/768.
 Please delete any irrelevant portion of this template before submitting your GitHub issue. Thanks.]
 
 **Is your feature request related to a problem? Please describe.**
