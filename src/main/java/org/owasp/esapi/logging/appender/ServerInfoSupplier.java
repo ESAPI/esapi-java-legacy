@@ -51,9 +51,11 @@ public class ServerInfoSupplier     // implements Supplier<String>
     public String get() {
         // log server, port, app name, module name -- server:80/app/module
         StringBuilder appInfo = new StringBuilder();
-        HttpServletRequest request = ESAPI.currentRequest();
-        if (request != null && logServerIP) {
-            appInfo.append(request.getLocalAddr()).append(":").append(request.getLocalPort());
+        if (logServerIP) {
+            HttpServletRequest request = ESAPI.currentRequest();
+            if (request != null) {
+                appInfo.append(request.getLocalAddr()).append(":").append(request.getLocalPort());
+            }
         }
         if (logAppName) {
             appInfo.append("/").append(applicationName);
