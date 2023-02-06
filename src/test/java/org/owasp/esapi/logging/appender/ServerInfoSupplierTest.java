@@ -72,7 +72,7 @@ public class ServerInfoSupplierTest {
 
     @Test
     public void verifyOutputNullAppName() throws Exception {
-        when(ESAPI.class, "currentRequest").thenReturn(null);
+        when(ESAPI.class, "currentRequest").thenReturn(request);
         when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
         when(request.getLocalPort()).thenReturn(99999);
 
