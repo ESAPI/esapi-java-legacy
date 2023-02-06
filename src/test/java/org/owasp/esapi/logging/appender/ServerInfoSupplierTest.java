@@ -25,14 +25,14 @@ public class ServerInfoSupplierTest {
     private HttpServletRequest request;
 
     @Before
-    public void buildStaticMocks() throws Exception {
+    public void buildStaticMocks() {
         request = mock(HttpServletRequest.class);
         mockStatic(ESAPI.class);
-        when(ESAPI.class, "currentRequest").thenReturn(request);
     }
 
     @Test
-    public void verifyFullOutput() {
+    public void verifyFullOutput() throws Exception {
+        when(ESAPI.class, "currentRequest").thenReturn(request);
         when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
         when(request.getLocalPort()).thenReturn(99999);
 
@@ -57,7 +57,8 @@ public class ServerInfoSupplierTest {
     }
 
     @Test
-    public void verifyOutputNoAppName() {
+    public void verifyOutputNoAppName() throws Exception {
+        when(ESAPI.class, "currentRequest").thenReturn(request);
         when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
         when(request.getLocalPort()).thenReturn(99999);
 
@@ -70,7 +71,8 @@ public class ServerInfoSupplierTest {
     }
 
     @Test
-    public void verifyOutputNullAppName() {
+    public void verifyOutputNullAppName() throws Exception {
+        when(ESAPI.class, "currentRequest").thenReturn(null);
         when(request.getLocalAddr()).thenReturn("LOCAL_ADDR");
         when(request.getLocalPort()).thenReturn(99999);
 
