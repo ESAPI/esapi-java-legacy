@@ -226,7 +226,7 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <exclusions>
                 <!-- excluded because we directly import newer version. -->
                 <exclusion>
