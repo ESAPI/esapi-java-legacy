@@ -2,6 +2,7 @@
 /target
 /.settings/**
 .classpath
+.java-version
 .project
 *.swp
 *~
