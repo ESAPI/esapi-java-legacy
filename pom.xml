@@ -136,12 +136,12 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	    <version.jmh>1.36</version.jmh>
-        <version.findsecbugs>1.12.0</version.findsecbugs>
-        <version.fluido>1.11.1</version.fluido>
+        <version.jmh>1.36</version.jmh>
+        <version.findsecbugs>2.0.0-M3</version.findsecbugs>
+        <version.fluido>2.0.0-M3</version.fluido>
         <version.powermock>2.0.9</version.powermock>
         <version.spotbugs>4.7.3</version.spotbugs>
-        <version.spotbugs.maven>4.7.3.0</version.spotbugs.maven>
+        <version.spotbugs.maven>4.7.3.2</version.spotbugs.maven>
         <version.surefire>3.0.0-M9</version.surefire>
         <project.java.target>1.8</project.java.target>
             <!-- TODO: Be sure to update. Should be date of previous official release -->
@@ -162,7 +162,11 @@
             <artifactId>javax.servlet.jsp-api</artifactId>
             <version>2.3.3</version>
             <scope>provided</scope>
-              <exclusions>
+            <!-- Note: Because this dependency is provided, this exclusion doesn't actually do anything.
+                 But we include it so the convergence report will report 100% convergence.
+                 Deleting this does not cause the convergence check to fail.
+            -->
+            <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
@@ -185,10 +189,6 @@
                     -->
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -213,6 +213,10 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
+                <!-- Note: Because the following dependency is marked as provided to commons-configuration,
+                     this exclusion doesn't actually do anything. But we include it so the convergence report
+                     will report 100% convergence. Deleting this does not cause the convergence check to fail.
+                -->
                 <exclusion>
                     <groupId>xml-apis</groupId>
                     <artifactId>xml-apis</artifactId>
@@ -228,13 +232,6 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
             <version>1.5</version>
-            <exclusions>
-                <!-- excluded because we directly import newer version. -->
-                <exclusion>
-                    <groupId>commons-io</groupId>
-                    <artifactId>commons-io</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -250,11 +247,18 @@
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
             <version>1.7.2</version>
+            <exclusions>
+                <!-- excluded because we directly import newer version below. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.4</version>
+            <version>2.0.6</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -483,7 +487,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <source>${project.java.target}</source>
                     <target>${project.java.target}</target>
@@ -544,14 +548,12 @@
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
                     <version>1.22</version>
                   </dependency>
-
                 </dependencies>
+
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
-                        <goals>
-                          <goal>enforce</goal>
-                        </goals>
+                        <goals><goal>enforce</goal></goals>
                         <configuration>
                           <rules>
                             <requireMavenVersion>
@@ -575,7 +577,7 @@
                                 JAVA_HOME environment variable is pointed to a JDK1.8 or later distribution.
                             </message>
                           </requireJavaVersion>
-                           <enforceBytecodeVersion>
+                          <enforceBytecodeVersion>
                             <maxJdkVersion>${project.java.target}</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
                             <ignoredScopes/><!--  'test' scopes not ignored so we can actually test on Java 8. -->
@@ -681,10 +683,11 @@
             </plugin>
 
             <plugin>
-                <!-- Note: This uses the maven-fluido-skin version specified next. The skin is referenced in src/site/site.xml. -->
+                <!-- Note: This uses the maven-fluido-skin version specified next.
+                     The skin is referenced in src/site/site.xml. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>4.0.0-M3</version>
+                <version>4.0.0-M5</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.maven.skins</groupId>
@@ -745,7 +748,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>8.1.0</version>
+                <version>8.1.2</version>
                 <configuration>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
@@ -764,8 +767,8 @@
 
     <reporting>
         <plugins>
-	     <plugin>
-	            <groupId>io.github.weblegacy</groupId>
+         <plugin>
+                <groupId>io.github.weblegacy</groupId>
                 <artifactId>taglib-maven-plugin</artifactId>
             </plugin>
             <plugin>
