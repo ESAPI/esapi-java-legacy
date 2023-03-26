@@ -7,7 +7,7 @@ scripts - Some scripts to run that interact with the Java examples (but see
 
 
 NOTE:   All scripts are meant to be run under *nix (or using something like
-        Cygwin under Windows) from under the 'scripts' directory using either
+        Cygwin or WSL under Windows) from under the 'scripts' directory using either
         bash or KornShell
 
         E.g., to compile the Java examples, execute:
@@ -17,8 +17,8 @@ NOTE:   All scripts are meant to be run under *nix (or using something like
                 $ # "Dot" the appropriate environment file. Either
                 $ #     . ./setenv-zip.sh
                 $ # if ESAPI downloaded via zip file or
-                $ #     . ./setenv-svn.sh
-                $ # if ESAPI downloaded from SVN repository. For the
+                $ #     . ./setenv-git.sh
+                $ # if ESAPI downloaded from a Git or Svn repository. For the
                 $ # example of this README file, we will assume it was
                 $ # downloaded via the zip file.
                 $ . ./setenv-zip.sh
@@ -29,9 +29,9 @@ NOTE:   All scripts are meant to be run under *nix (or using something like
 
 
         Note that as delivered, these scripts are configured to run from
-        Eclipse or Maven as pulled directly from the ESAPI Subversion
-        repository or from pulled down from the zip file on Google Code at:
-            http://code.google.com/p/owasp-esapi-java/downloads/list
+        Eclipse or Maven as pulled directly from the ESAPI GitHub
+        repository or from pulled down from the zip file on GitHub at:
+            https://github.com/ESAPI/esapi-java-legacy/archive/refs/heads/develop.zip
 
         If you get it from any other place, then all bets are off.
                             -- Kevin Wall <kevin.w.wall@gmail.com>
