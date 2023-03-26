@@ -12,6 +12,15 @@ A Special Note on GitHub Authentication:
     Please see https://github.blog/2020-12-15-token-authentication-requirements-for-git-operations/
     for details and plan accordingly.
 
+A Special Note Regarding Making Commits for PRs
+    Shortly after the 2.5.1.0 ESAPI release in late November 2022, the ESAPI
+    team decided to lock down the 'develop' amd 'main' branches. Merges from
+    PRs are done to the 'develop' branch. That means that if you intend to
+    contribute to ESAPI, you must be signing your commits. Please see the
+    GitHub instructions at
+        https://docs.github.com/en/authentication/managing-commit-signature-verification/signing-commits
+    for details.
+
 
 Finding Something Interesting to Work on:
 
