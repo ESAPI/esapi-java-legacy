@@ -4,6 +4,11 @@ import java.util.Set;
 
 import org.owasp.esapi.errors.ValidationException;
 
+/**
+ * A ValidationRule performs syntax and possibly semantic validation of a single piece of data from an untrusted source.
+ *
+ * @since ESAPI 2.0GA
+ */
 public interface ValidationRule {
 
     /**
