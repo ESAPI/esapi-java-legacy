@@ -647,7 +647,6 @@
                <configuration>
                  <source>8</source>
                  <doclint>none</doclint>
-                 <includeDependencySources>true</includeDependencySources>
                </configuration>
                <!-- generate esapi-VERSION.javadoc.jar -->
                <executions>
