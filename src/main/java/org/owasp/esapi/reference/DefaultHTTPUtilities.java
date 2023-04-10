@@ -41,6 +41,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.PropNames;
 import org.owasp.esapi.SecurityConfiguration;
 import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.User;
@@ -50,6 +51,7 @@ import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.AccessControlException;
 import org.owasp.esapi.errors.AuthenticationException;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.EncryptionException;
 import org.owasp.esapi.errors.IntegrityException;
@@ -139,6 +141,36 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     /** The max bytes. */
     static final int maxBytes = ESAPI.securityConfiguration().getAllowedFileUploadSize();
 
+    /** The max # of files per request. */
+    static int maxFiles = 20;   // Same as default in configuration/esapi/ESAPI.properties
+
+    static boolean fileUploadAllowAnonymousUsers = true;
+    
+    static {
+        // OPENISSUE - Not sure if we should log this. I can throw because the
+        // property is not set in ESAPI.properties, but it can also throw
+        // because ESAPI.properties can't be found. If the latter is the case,
+        // then trying to log it would cause another ConfigurationException to
+        // be thrown while trying do the logging making the exception stack
+        // traces even more obtuse. And I don't want to spend then next 5 years
+        // answering Stack Overflow questions about that.
+        try {
+            maxFiles = ESAPI.securityConfiguration().getIntProp( PropNames.MAX_UPLOAD_FILE_COUNT );
+        } catch ( ConfigurationException ex ) {
+            // TODO: Figure out what we want to do log this. See OPENISSUE, above.
+            System.err.println("WARNING: Caught exception looking for property " + PropNames.MAX_UPLOAD_FILE_COUNT +
+                    " in ESAPI.properties. Using hard-coded default of " + maxFiles +
+                    "; exception was: " + ex);
+        }
+        try {
+            fileUploadAllowAnonymousUsers = ESAPI.securityConfiguration().getBooleanProp( PropNames.FILEUPLOAD_ALLOW_ANONYMOUS_USERS );
+        } catch ( ConfigurationException ex ) {
+            // This likely will be the normal case (because ESAPI clients seldom update
+            // their ESAPI.properties file from release to release. Therefore, I am
+            // going to ignore it, and we silently go with the default of 'false'.
+            ;      // Intentionally ignore!
+        }
+    }
 
     /*
      * The currentRequest ThreadLocal variable is used to make the currentRequest available to any call in any part of an
@@ -159,7 +191,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     /**
      * No arg constructor.
      */
-    public DefaultHTTPUtilities() {
+    public DefaultHTTPUtilities() {     // Public CTOR for singletons. SMH. Sigh.
     }
 
 
@@ -545,6 +577,16 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             finalDir = ESAPI.securityConfiguration().getUploadDirectory();
         }
 
+        // Check if this user should be blocked from file upload access. See allowUserFileUploadAccess() and comments
+        // around 'HttpUtilities.FileUploadAllowAnonymousUser' in ESAPI.properties file for details.
+        if ( ! allowUserFileUploadAccess() ) {
+            final String authZErrorMsg = "Upload failed. Anonymous user disallowed by ESAPI property " +
+                                          "'HttpUtilities.FileUploadAllowAnonymousUser'; attempted file upload blocked.";
+            logger.warning(Logger.SECURITY_FAILURE, authZErrorMsg);
+            throw new java.security.AccessControlException( authZErrorMsg );
+        }
+
+
         List<File> newFiles = new ArrayList<File>();
         String dfiPrevValue = "false";   // Fail safely in case of Java Security Manager & weird security policy
         try {
@@ -555,11 +597,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
                 throw new ValidationUploadException("Upload failed", "Not a multipart request");
             }
 
-            // this factory will store ALL files in the temp directory,
-            // regardless of size
+            // this factory will store ALL files in the temp directory, regardless of size
             DiskFileItemFactory factory = new DiskFileItemFactory(0, tempDir);
             ServletFileUpload upload = new ServletFileUpload(factory);
             upload.setSizeMax(maxBytes);
+            upload.setFileCountMax(maxFiles);   // Required to address CVE-2023-24998.
 
             // Create a progress listener
             ProgressListener progressListener = new ProgressListener() {
@@ -1097,5 +1139,38 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         PlainText plaintext = ESAPI.encryptor().decrypt(restoredCipherText);
         return plaintext.toString();
     }
-}
 
+    /* Helper method, currently used only to check if we allow anonymous
+     * (i.e., unauthenticated) users to perform file uploads.
+     * The default is do allow anonymous users. We start to see if the property
+     * specified by "HttpUtilities.FileUploadAllowAnonymousUser" is set to
+     * {@code true} (which is the default). If that is true, we immediately
+     * return true as no further authentication check is required. However, if
+     * that property is false, then we check if the user is authenticated (i.e.,
+     * the returned {@code User} object is not null).
+     */
+    private boolean allowUserFileUploadAccess() {
+        if ( fileUploadAllowAnonymousUsers ) {
+            return true;    // Okay to allow anonymous users
+        }
+
+        // Check if the current user is authenticated as per ESAPI Authenticator.
+        User currentUser = ESAPI.authenticator().getCurrentUser();
+
+        if ( ! currentUser.isAnonymous() ) {
+                // FIXME / OPENISSUE: @jeremiahjstacey - I think this should be set to 'debug'
+                // rather than 'info' level because I figured that the web / app
+                // server access logs should pick up the the authenticated user
+                // and log it along with whatever the HTTP request is,
+                // presumably including the authenticated user account name. However,
+                // I was unable to change 'src/test/resources/esapi-java-logging.properties'
+                // from 'INFO' level to 'DEBUG' level and then get log statement to show up in
+                // the JUnit test 'HTTPUtilitiesTest.java'. Any idea why? I
+                // thought that would work.
+            logger.info(Logger.SECURITY_SUCCESS, "Allowing authenticated user '" + currentUser.getAccountName() +
+                                                  " to upload file(s) via getFileUploads method.");
+            return true;       // User is authenticated, so allow access.
+        }
+        return false;   // User not authenticated; deny access.
+    }
+}
