@@ -1,0 +1,189 @@
+Release notes for ESAPI 2.5.2.0
+    Release date: 2023-03-31
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.5.1.0, 2022-11-27
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+This is a patch release with the primary intent of updating some dependencies, one with a known DoS vulnerability. From a vulnerability perspective, it addresses CVE-2023-24998 by upgrading to version 1.5 of Apache Commons File Uploads and adding the necessary call to FileBaseUpload.setFileCountMax().
+
+If you are not updating from the previous ESAPI release (2.5.1.0), you should go back and FIRST read all the subsequent release notes in turn. For instance, if you are currently on release 2.3.0.0 and upgrading to this release (2.5.2.0), you should MINIMALLY
+read the sections "Changes Requiring Special Attention" in each of the subsequent release notes. So, going from release 2.3.0.0 to 2.5.2.0, you should in turn, read:
+
+    esapi4java-core-2.4.0.0-release-notes.txt
+    esapi4java-core-2.5.0.0-release-notes.txt
+    esapi4java-core-2.5.1.0-release-notes.txt
+    esapi4java-core-2.5.2.0-release-notes.txt
+
+in that order. YOU HAVE BEEN WARNED!!!
+
+If your SCA tool is reporting any CVE from a direct or transitive dependency in ESAPI, before reporting it as an GitHub issue, please make sure that you review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md. Please email us or contact us in our GitHub Discussions page if you have questions about this. See also the SECURITY.md file to report any security issues with ESAPI.
+
+
+=================================================================================================================
+
+Basic ESAPI facts
+-----------------
+
+ESAPI 2.5.1.0 release:
+     207 Java source files
+    4292 JUnit tests in 131 Java source files (0 tests skipped)
+
+ESAPI 2.5.2.0 release: (unchanged since previous release)
+     207 Java source files
+    4293 JUnit tests in 131 Java source files (0 tests skipped, 1 commented out)
+
+7 GitHub Issues closed in this release, including those we've decided not to fix (marked 'wontfix' and 'falsepositive').
+(Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D2022-11-27)
+
+Issue #         GitHub Issue Title
+----------------------------------------------------------------------------------------------
+773             Esapi giving issue working with graal native image bug
+770             latest version of ESAPI 2.5.1.0 not working with spring boot 3.0, it gives classNotFound for javax.servlet. duplicate enhancement
+769             ESAPI 2.5.1.0 not working with spring boot 3.0, spring 6 bug
+767             Add support for Jakarta Servlet API Specification enhancement [converted to Discussion #768]
+764             unable to locate resource: esapi-java-logging.properties
+761             JavaLogFactory is not loaded from ESAPI.properties file bug
+760             Could not initialize class org. Owasp. Esapi. Reference. DefaultValidator bug
+
+-----------------------------------------------------------------------------
+
+        Changes Requiring Special Attention
+
+-----------------------------------------------------------------------------
+
+Important JDK Support Announcement
+* ESAPI 2.3.0.0 was the last Java release to support Java 7. ESAPI 2.4.0 requires using Java 8 or later. See the ESAPI 2.4.0.0 release notes (https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.4.0.0-release-notes.txt) for details as to the reason.
+    - This means if your project requires Java 7, you must use ESAPI 2.3.0.0 or earlier.
+* We are aware that ESAPI does not support Spring Boot 3.x or later or Spring Framework 6.x or later.
+    - This is because these projects use a version of Jakarta Servlet API that is incompatible with the the Java EE Servlet API. (The package names are different!)
+    - See Discussion #768 for more details. Please do NOT report this as an issue.
+
+Important ESAPI Logging Changes
+
+* Since ESAPI 2.5.0.0, support for logging directly via Log4J 1 has been removed. (This was two years after it haveing first been deprecated.) Thus, you only choice of ESAPI logging are
+    - java.util.logging (JUL), which as been the default since ESAPI 2.2.1.0.
+        * Set ESAPI.Logger=org.owasp.esapi.logging.java.JavaLogFactory in your ESAPI.properties file.
+    - SLF4J (which your choice of supported SLF4J logging implemmentation)
+        * Set ESAPI.Logger=org.owasp.esapi.logging.slf4j.Slf4JLogFactory in your ESAPI.properties file.
+* Logger configuration notes - If you are migrating from prior to ESAPI 2.2.1.1, you will need to update your ESAPI.properties file as logging-related configuration as per the ESAPI 2.2.1.1 release notes, which may be found at:
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.1.1-release-notes.txt#L39-L78
+
+If you use ESAPI 2.5.0.0 or later, you will get an ClassNotFoundException as the root cause if you still have your ESAPI.Logger property set to use Log4J because the org.owasp.esapi.logger.log4j.Log4JFactory class has been completely removed from the ESAPI jar.  If you are dead set on continuing to use Log4J 1, you ought to be able to do so via SLF4J. The set up for Log4J 1 (which has not be tested), should be similar to configure ESAPI to use SLF4J with Log4J 2 as described here:
+    https://github.com/ESAPI/esapi-java-legacy/wiki/Using-ESAPI-with-SLF4J#slf4j-using-log4j-2x
+
+-----------------------------------------------------------------------------
+
+        Remaining Known Issues / Problems
+
+-----------------------------------------------------------------------------
+None known, other than the remaining open issues on GitHub.
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, some of which not tracked via GitHub issues
+
+-----------------------------------------------------------------------------
+
+* Minor updates to README.md file with respect to version information.
+
+-----------------------------------------------------------------------------
+
+Developer Activity Report (Changes between release 2.5.1.0 and 2.5.2.0, i.e., between 2022-11-27 and 2023-03-31)
+Generated manually based on merged PRs.  All errors are the fault of kwwall and his inability to do simple arithmetic.
+
+@@@@ TODO: Complete the TBD entries.
+Developer       Total       Total # of Unique   # Merged
+(GitHub ID)     commits       Files Changed        PRs
+========================================================
+davewichers      7              3                   2
+josephWitthuhnTR 2              2                   1
+dependabot       1              1                   1
+@@@@kwwall           TBD            TBD                 2
+========================================================
+                                Total merged PRs:   6
+
+-----------------------------------------------------------------------------
+
+CHANGELOG:      Create your own. May I suggest:
+
+        git log --stat --since=2022-11-27 --reverse --pretty=medium
+
+    which will show all the commits since just after the previous (2.5.1.0) release.
+
+    Alternately, you can download the most recent ESAPI source and run
+
+        mvn site
+
+    which will create a CHANGELOG file named 'target/site/changelog.html'
+
+
+-----------------------------------------------------------------------------
+
+Direct and Transitive Runtime and Test Dependencies:
+
+        $ mvn -B dependency:tree
+        ...
+        [INFO] --- maven-dependency-plugin:3.5.0:tree (default-cli) @ esapi ---
+        [INFO] org.owasp.esapi:esapi:jar:2.5.2.0-SNAPSHOT
+        [INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+        [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
+        [INFO] +- xom:xom:jar:1.3.8:compile
+        [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+        [INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+        [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
+        [INFO] +- commons-configuration:commons-configuration:jar:1.10:compile
+        [INFO] +- commons-lang:commons-lang:jar:2.6:compile
+        [INFO] +- commons-fileupload:commons-fileupload:jar:1.5:compile
+        [INFO] +- org.apache.commons:commons-collections4:jar:4.4:compile
+        [INFO] +- org.apache-extras.beanshell:bsh:jar:2.0b6:compile
+        [INFO] +- org.owasp.antisamy:antisamy:jar:1.7.2:compile
+        [INFO] |  +- net.sourceforge.htmlunit:neko-htmlunit:jar:2.66.0:compile
+        [INFO] |  +- org.apache.httpcomponents.client5:httpclient5:jar:5.2:compile
+        [INFO] |  |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.2:compile
+        [INFO] |  +- org.apache.httpcomponents.core5:httpcore5:jar:5.2:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-css:jar:1.16:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.16:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-util:jar:1.16:compile
+        [INFO] |  |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.16:compile
+        [INFO] |  |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.16:compile
+        [INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.7:compile
+        [INFO] |  +- xerces:xercesImpl:jar:2.12.2:compile
+        [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
+        [INFO] +- org.slf4j:slf4j-api:jar:2.0.6:compile
+        [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
+        [INFO] +- commons-io:commons-io:jar:2.11.0:compile
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.7.3:compile
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+        [INFO] +- commons-codec:commons-codec:jar:1.15:test
+        [INFO] +- junit:junit:jar:4.13.2:test
+        [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+        [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
+        [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
+        [INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.9:test
+        [INFO] |  \- org.powermock:powermock-api-support:jar:2.0.9:test
+        [INFO] +- org.mockito:mockito-core:jar:3.12.4:test
+        [INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.13:test
+        [INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.13:test
+        [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+        [INFO] +- org.powermock:powermock-core:jar:2.0.9:test
+        [INFO] |  \- org.javassist:javassist:jar:3.27.0-GA:test
+        [INFO] +- org.powermock:powermock-module-junit4:jar:2.0.9:test
+        [INFO] |  \- org.powermock:powermock-module-junit4-common:jar:2.0.9:test
+        [INFO] +- org.powermock:powermock-reflect:jar:2.0.9:test
+        [INFO] \- org.openjdk.jmh:jmh-core:jar:1.36:test
+        [INFO]    +- net.sf.jopt-simple:jopt-simple:jar:5.0.4:test
+        [INFO]    \- org.apache.commons:commons-math3:jar:3.2:test
+
+-----------------------------------------------------------------------------
+
+Acknowledgments:
+    Thanks to my ESAPI co-contributors Matt Seil, Jeremiah Stacey, as well as all the ESAPI users who make our efforts worthwhile.  Without you, there would be little point in maintaining this project.  Lastly, a special shout-out to Joseph Witthuhn for submitting 2 PRs for this release.
+
+A special thanks to the ESAPI community from the ESAPI project co-leaders:
+    Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!
+    Matt Seil (xeno6696)
