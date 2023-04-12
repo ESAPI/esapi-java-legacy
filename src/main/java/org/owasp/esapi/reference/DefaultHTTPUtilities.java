@@ -1158,16 +1158,19 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         User currentUser = ESAPI.authenticator().getCurrentUser();
 
         if ( ! currentUser.isAnonymous() ) {
-                // FIXME / OPENISSUE: @jeremiahjstacey - I think this should be set to 'debug'
-                // rather than 'info' level because I figured that the web / app
-                // server access logs should pick up the the authenticated user
-                // and log it along with whatever the HTTP request is,
-                // presumably including the authenticated user account name. However,
-                // I was unable to change 'src/test/resources/esapi-java-logging.properties'
-                // from 'INFO' level to 'DEBUG' level and then get log statement to show up in
-                // the JUnit test 'HTTPUtilitiesTest.java'. Any idea why? I
-                // thought that would work.
-            logger.info(Logger.SECURITY_SUCCESS, "Allowing authenticated user '" + currentUser.getAccountName() +
+                //
+                // The logging here is set to 'debug' rather than 'info'
+                // because I figured that the web / app server access logs
+                // should pick up the the authenticated user and log it
+                // along with whatever the HTTP request is, presumably including
+                // the authenticated user account name.
+                //
+                // If you are using JUL for logging and want to see this debug
+                // output, you need to change both instances of 'INFO' in your
+                // 'esapi-java-logging.properties' from 'INFO' to 'FINE' (not
+                // 'DEBUG', which isn't a thing in JUL).
+                //
+            logger.debug(Logger.SECURITY_SUCCESS, "Allowing authenticated user '" + currentUser.getAccountName() +
                                                   " to upload file(s) via getFileUploads method.");
             return true;       // User is authenticated, so allow access.
         }
