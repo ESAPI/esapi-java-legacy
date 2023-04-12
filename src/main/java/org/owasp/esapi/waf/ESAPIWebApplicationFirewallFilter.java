@@ -137,7 +137,7 @@ public class ESAPIWebApplicationFirewallFilter implements Filter {
 		 */
 		this.fc = fc;
 
-		logger.debug(Logger.EVENT_SUCCESS, ">> Initializing WAF");
+		logger.debug(Logger.EVENT_SUCCESS, ">> Initializing ESAPI WAF");
 		/*
 		 * Pull logging file. -- We now ignore this arg, but will log something
          * letting users know we are ignoring it, because many of them never

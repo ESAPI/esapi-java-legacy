@@ -16,10 +16,22 @@ Executive Summary: Important Things to Note for this Release
 @@@@ View previous release notes to see examples of what to put here. This is typical. YMMV.
 @@@@ Obviously, you should summarize any major changes / new features here.
 This is a patch release with the primary intent of updating some dependencies, some with known vulnerabilities. Details follow.
+@@@@ Provide a sentence or to 
 
-For those of you using a Software Configuration Analysis (SCA) services such as Snyk, BlackDuck, Veracode SourceClear, OWASP Dependency Check, etc., you will notice that the 4 Log4J 1.x related CVEs are no longer flagged. This is because we have finally removed the Log4J 1.2.17 dependency in ESAPI 2.5.0.0.
+Notes if you are not updating from the immediate previous release. release ${PREV_VERSION}:
+    * You need to read through the series of release notes FIRST, going in order.
+    * For example, if you were updating from an older ESAPI release (say, 2.3.0.0), you should go back and FIRST read all the subsequent release notes in turn. For instance, if you are currently on release 2.3.0.0 and upgrading to (say) release 2.x.y.z, you should MINIMALLY read the sections "Changes Requiring Special Attention" in each of the subsequent release notes. So, going from release 2.3.0.0 to 2.x.y.z, you should in turn, read:
 
-Any remaining flagged vulnerabilities (e.g., CVE-2020-7791 for transitive dependency batik-i18n-1.14) are believed to be false postives.
+    esapi4java-core-2.4.0.0-release-notes.txt
+    esapi4java-core-2.5.0.0-release-notes.txt
+    esapi4java-core-2.5.1.0-release-notes.txt
+    esapi4java-core-2.5.2.0-release-notes.txt
+    ...etc., up through the current set of release notes...
+    esapi4java-core-2.x.y.z-release-notes.txt
+
+in that order. YOU HAVE BEEN WARNED!!! (These release notes are too large to put all this in a given document; very few read them thoroughly as it is.)
+
+If your SCA tool is reporting any CVE from a direct or transitive dependency in ESAPI, before reporting it as an GitHub issue, please make sure that you review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md. Please email us or contact us in our GitHub Discussions page if you have questions about this. See also the SECURITY.md file to report any security issues with ESAPI.
 
 You are encouraged to review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md and email us or contact us in our GitHub Discussions page if you have questions.
 

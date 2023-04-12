@@ -10,19 +10,21 @@
 
 if [[ -z "$esapi_classpath" ]]
 then
-    echo 2>&1 "esapi_classpath not set. Did you dot the appropriate env file?"
-    echo 2>&1 "If you are using ESAPI from downloaded zip file, use:"
-    echo 2>&1 "        . ./setenv-zip.sh"
-    echo 2>&1 "If you are using ESAPI pulled from SVN repository, use:"
-    echo 2>&1 "        . ./setenv-svn.sh"
+    echo >&2 "esapi_classpath not set. Did you dot the appropriate env file?"
+    echo >&2 "If you are using ESAPI from downloaded zip file, use:"
+    echo >&2 "        . ./setenv-zip.sh"
+    echo >&2 "If you are using ESAPI pulled from SVN repository, use:"
+    echo >&2 "        . ./setenv-git.sh"
     exit 1
 fi
 
 cd ../java
-set -x
 # Since this is just an illustration, we will use the test ESAPI.properties in
 # $esapi_resources_test. That way, it won't matter if the user has neglected
 # to run the 'setMasterKey.sh' example before running this one.
+echo "Using your TEST version of ESAPI.properties file: $esapi_resources_test/ESAPI.properties"
+set -x
 java -Dorg.owasp.esapi.resources="$esapi_resources_test" \
+     -Djava.util.logging.config.file="$esapi_resources/esapi-java-logging.properties" \
      -ea -classpath "$esapi_classpath" \
      PersistedEncryptedData "$@"
