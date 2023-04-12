@@ -53,6 +53,7 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+// import org.junit.Ignore;     // Doesn't seem to work with TestSuite.
 import org.junit.Rule;
 import org.junit.rules.ExpectedException;
 /**
@@ -702,16 +703,26 @@ public class HTTPUtilitiesTest extends TestCase
      *  information so that any further HTTP requests are made as an anonymous
      *  user.
      *
-     *  Hoever, there is a concern here. I is not clear whether or not this
+     *  However, there is a concern here. I is not clear whether or not this
      *  would have unintended consequences because I don't this assumptions can
      *  be made about the specific order these test cases within a test suite
      *  are executed in.
      *
-     *  Consequently, I am commenting out the actual test and it hasn't been
-     *  testsed.
+     *  Consequently, I ignoring this specific test by commenting it out for the
+     *  concerns mentioned above. Unfortunately, the @Ignore annotation from
+     *  JUnit 4 doesn't work here; apparently, it doesn't play nicely with the JUnit 3
+     *  construct of
+     *      public static Test suite() {
+     *          return new TestSuite(HTTPUtilitiesTest.class);
+     *      }
+     *
+     *  Note, however, the test does give the expected results and fails the
+     *  upload as intended.
      */
-/************************ KWWALL commented out. Talk to Jeremiah about this.
+/********************* KWWALL Commented Out - Do not delete this comment or test! *************
     public void testGetFileUploadsUnauthenticatedUser() throws Exception {
+        System.out.print( "testGetFileUploadsUnauthenticatedUser" );
+
         File home = null;
 
             // Clear the current user info making it effective an anonymous user again.
@@ -746,7 +757,6 @@ public class HTTPUtilitiesTest extends TestCase
         {
             FileTestUtils.deleteRecursively(home);
         }
-
     }
-**************************************************************************/
+********************* KWWALL End Commented Out Code ********************/
 }
