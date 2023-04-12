@@ -9,7 +9,7 @@ Previous release: ESAPI 2.5.1.0, 2022-11-27
 
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
-This is a patch release with the primary intent of updating some dependencies, one with a known DoS vulnerability. From a vulnerability perspective, it addresses CVE-2023-24998 by upgrading to version 1.5 of Apache Commons File Uploads and adding the necessary call to FileBaseUpload.setFileCountMax().
+This is a patch release with the primary intent of updating some dependencies, one with a known DoS vulnerability and a more recent one with a potential RCE. From a vulnerability perspective, it addresses CVE-2023-24998 by upgrading to version 1.5 of Apache Commons File Uploads and adding the necessary call to FileBaseUpload.setFileCountMax(). It also updates to version 1.7.3 of AntiSamy to address CVE-2023-26119, a vulnerability in one of their dependencies.
 
 If you are not updating from the previous ESAPI release (2.5.1.0), you should go back and FIRST read all the subsequent release notes in turn. For instance, if you are currently on release 2.3.0.0 and upgrading to this release (2.5.2.0), you should MINIMALLY
 read the sections "Changes Requiring Special Attention" in each of the subsequent release notes. So, going from release 2.3.0.0 to 2.5.2.0, you should in turn, read:
@@ -102,7 +102,7 @@ Developer       Total       Total # of Unique   # Merged
 davewichers      2              4                   2
 josephWitthuhnTR 2              2                   1
 dependabot       1              1                   1
-kwwall          34             31                   2
+kwwall          36             31                   2
 ========================================================
                                 Total merged PRs:   6
 
