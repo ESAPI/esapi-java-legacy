@@ -93,7 +93,7 @@ None known, other than the remaining open issues on GitHub.
 
 -----------------------------------------------------------------------------
 
-Developer Activity Report (Changes between release 2.5.1.0 and 2.5.2.0, i.e., between 2022-11-27 and 2023-04-12)
+Developer Activity Report (Changes between release 2.5.1.0 and 2.5.2.0, i.e., between 2022-11-27-ish and 2023-04-12)
 Generated manually based on merged PRs.  All errors are the fault of kwwall and his inability to do simple arithmetic.
 
 Developer       Total       Total # of Unique   # Merged
@@ -102,7 +102,7 @@ Developer       Total       Total # of Unique   # Merged
 davewichers      2              4                   2
 josephWitthuhnTR 2              2                   1
 dependabot       1              1                   1
-kwwall          36             31                   2
+kwwall          40             31                   2
 ========================================================
                                 Total merged PRs:   6
 
