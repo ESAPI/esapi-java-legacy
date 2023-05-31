@@ -309,7 +309,7 @@ public class DefaultEncoder implements Encoder {
         // TODO: replace with LDAP codec
         StringBuilder sb = new StringBuilder();
         // According to Microsoft docs [1,2], the forward slash ('/') MUST be escaped.
-        // According to RFC 4513 Section 3 [3], the forward slash (and other characters) MAY be escaped.
+        // According to RFC 4515 Section 3 [3], the forward slash (and other characters) MAY be escaped.
         // Since Microsoft is a MUST, escape forward slash for all implementations. Also see discussion at [4].
         // [1] https://docs.microsoft.com/en-us/windows/win32/adsi/search-filter-syntax
         // [2] https://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
