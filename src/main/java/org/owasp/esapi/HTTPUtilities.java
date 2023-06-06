@@ -320,7 +320,7 @@ public interface HTTPUtilities
      * in your <b>ESAPI.properties</b> file.
      * <p/><p>
      * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the
-     * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}
+     * {@link jakarta.servlet.http.HttpServletRequest HttpServletRequest}
      * object. If the ESAPI property <b>HttpUtilities.FileUploadAllowAnonymousUser</b> is set to {@code false} (the
      * default is {@code true}), then {@code getFileUploads} will call {@code ESAPI.authenticator().getCurrentUser()}
      * to check if the user is authenticated. If that property is set to {@code false} and a call to that function returns
@@ -708,7 +708,7 @@ public interface HTTPUtilities
     * @param    key
     *           The key that references the session attribute
     * @return   The requested object.
-    * @see      HTTPUtilities#getSessionAttribute(javax.servlet.http.HttpSession, String)
+    * @see      HTTPUtilities#getSessionAttribute(jakarta.servlet.http.HttpSession, String)
     */
     <T> T getSessionAttribute( String key );
 

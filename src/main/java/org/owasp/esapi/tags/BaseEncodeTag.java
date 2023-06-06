@@ -42,7 +42,7 @@ public abstract class BaseEncodeTag extends BodyTagSupport
      * After tag body parsing handler. This provides the necessary
      * plubming to allow subclasses to just concern themselves with
      * encoding a single string.
-     * @return {@link javax.servlet.jsp.tagext.Tag#SKIP_BODY}
+     * @return {@link jakarta.servlet.jsp.tagext.Tag#SKIP_BODY}
      * @throws JspTagException if writing to the bodyContent's
      * enclosing writer throws an IOException.
      */

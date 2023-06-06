@@ -35,7 +35,7 @@ public class MockFilterChain implements FilterChain {
      * @param request
      * @param response
      * @throws java.io.IOException
-     * @throws javax.servlet.ServletException
+     * @throws jakarta.servlet.ServletException
      */
     public void doFilter( ServletRequest request, ServletResponse response ) throws IOException, ServletException {
         System.out.println( "CHAIN received " + request.getClass().getName() + " and is issuing " + response.getClass().getName() );

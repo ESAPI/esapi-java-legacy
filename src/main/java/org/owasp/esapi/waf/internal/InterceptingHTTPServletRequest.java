@@ -33,7 +33,6 @@ import org.apache.commons.fileupload2.FileItemIterator;
 import org.apache.commons.fileupload2.FileItemStream;
 import org.apache.commons.fileupload2.FileUploadException;
 import org.apache.commons.fileupload2.jaksrvlt.JakSrvltFileUpload;
-import org.apache.commons.fileupload2.servlet.ServletFileUpload;
 import org.apache.commons.fileupload2.util.Streams;
 
 /**

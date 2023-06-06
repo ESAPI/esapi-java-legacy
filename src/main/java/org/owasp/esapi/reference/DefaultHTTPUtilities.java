@@ -38,7 +38,6 @@ import org.apache.commons.fileupload2.FileItem;
 import org.apache.commons.fileupload2.ProgressListener;
 import org.apache.commons.fileupload2.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload2.jaksrvlt.JakSrvltFileUpload;
-import org.apache.commons.fileupload2.servlet.ServletFileUpload;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
