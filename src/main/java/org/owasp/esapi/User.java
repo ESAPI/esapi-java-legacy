@@ -19,7 +19,7 @@ import org.owasp.esapi.errors.AuthenticationException;
 import org.owasp.esapi.errors.AuthenticationHostException;
 import org.owasp.esapi.errors.EncryptionException;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.*;

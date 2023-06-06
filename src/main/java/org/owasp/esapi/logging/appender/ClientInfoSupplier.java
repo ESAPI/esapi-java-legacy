@@ -18,8 +18,8 @@ package org.owasp.esapi.logging.appender;
 // Uncomment and use once ESAPI supports Java 8 as the minimal baseline.
 // import java.util.function.Supplier;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.User;

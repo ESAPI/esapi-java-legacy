@@ -20,10 +20,10 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 
 import org.owasp.esapi.waf.rules.AddHTTPOnlyFlagRule;
 import org.owasp.esapi.waf.rules.AddSecureFlagRule;

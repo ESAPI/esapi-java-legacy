@@ -20,13 +20,12 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DoNothingAction;
-import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
 
 /**

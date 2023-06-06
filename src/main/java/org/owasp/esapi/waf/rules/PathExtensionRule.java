@@ -17,8 +17,8 @@ package org.owasp.esapi.waf.rules;
 
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.actions.DefaultAction;

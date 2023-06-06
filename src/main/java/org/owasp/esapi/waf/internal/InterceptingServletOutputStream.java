@@ -20,8 +20,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 /**
  * This class was inspired by ModSecurity for Java by Ivan Ristic. We hook

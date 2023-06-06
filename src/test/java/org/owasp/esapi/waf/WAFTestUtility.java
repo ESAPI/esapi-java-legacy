@@ -17,16 +17,13 @@
 package org.owasp.esapi.waf;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.FilterConfig;
+import jakarta.servlet.FilterConfig;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.http.MockFilterChain;
-import org.owasp.esapi.http.MockFilterConfig;
 import org.owasp.esapi.http.MockHttpServletRequest;
 import org.owasp.esapi.http.MockHttpServletResponse;
 

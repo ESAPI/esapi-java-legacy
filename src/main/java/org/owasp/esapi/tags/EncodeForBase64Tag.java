@@ -2,7 +2,7 @@ package org.owasp.esapi.tags;
 
 import java.io.UnsupportedEncodingException;
 
-import javax.servlet.jsp.JspTagException;
+import jakarta.servlet.jsp.JspTagException;
 
 import org.owasp.esapi.Encoder;
 

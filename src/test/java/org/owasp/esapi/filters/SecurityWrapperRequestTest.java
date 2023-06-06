@@ -24,8 +24,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.owasp.esapi.PropNames.DISABLE_INTRUSION_DETECTION;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.junit.Before;
 import org.junit.Rule;

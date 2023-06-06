@@ -18,9 +18,9 @@ package org.owasp.esapi.tags;
 
 import java.io.IOException;
 
-import javax.servlet.jsp.JspTagException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.JspTagException;
+import jakarta.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;

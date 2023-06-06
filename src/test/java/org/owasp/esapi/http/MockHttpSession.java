@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * The Class MockHttpSession.
@@ -125,17 +125,6 @@ public class MockHttpSession implements HttpSession {
      * {@inheritDoc}
      */
     public ServletContext getServletContext() {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated
-     */
-        @Deprecated
-    // need the full class here as for whatever stupid reason you can't
-    // seem to @SuppressWarnings{'deprecation'} on the import... *sigh*
-    public javax.servlet.http.HttpSessionContext getSessionContext() {
         return null;
     }
 

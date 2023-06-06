@@ -9,18 +9,13 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.when;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.owasp.esapi.Authenticator;
 import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Randomizer;
 import org.owasp.esapi.User;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;

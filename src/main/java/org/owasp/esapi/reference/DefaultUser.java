@@ -22,7 +22,7 @@ import org.owasp.esapi.Logger;
 import org.owasp.esapi.User;
 import org.owasp.esapi.errors.*;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.Set;
 import java.util.HashSet;

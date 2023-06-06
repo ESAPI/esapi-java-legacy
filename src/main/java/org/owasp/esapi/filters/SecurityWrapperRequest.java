@@ -25,13 +25,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
@@ -528,20 +528,6 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
         return getHttpServletRequest().getReader();
     }
 
-    // CHECKME: Should this be deprecated since ServletRequest.getRealPath(String)
-    //          is deprecated? Should use ServletContext.getRealPath(String) instead.
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     * @param path A virtual path on a web or application server; e.g., "/index.htm".
-     * @return Returns a String containing the real path for a given virtual path.
-     * @deprecated in servlet spec 2.1. Use {@link javax.servlet.ServletContext#getRealPath(String)} instead.
-     */
-    @SuppressWarnings({"deprecation"})
-    @Deprecated
-    public String getRealPath(String path) {
-        return getHttpServletRequest().getRealPath(path);
-    }
-
     /**
      * Same as HttpServletRequest, no security changes required.
      * @return Returns the IP address of the client or last proxy that sent the request.
@@ -766,17 +752,6 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
      */
     public boolean isRequestedSessionIdFromCookie() {
         return getHttpServletRequest().isRequestedSessionIdFromCookie();
-    }
-
-    /**
-     * Same as HttpServletRequest, no security changes required.
-     * @return Whether the requested session id is from the URL
-     * @deprecated in servlet spec 2.1. Use {@link #isRequestedSessionIdFromURL()} instead.
-     */
-    @SuppressWarnings({"deprecation"})
-    @Deprecated
-    public boolean isRequestedSessionIdFromUrl() {
-        return getHttpServletRequest().isRequestedSessionIdFromUrl();
     }
 
     /**

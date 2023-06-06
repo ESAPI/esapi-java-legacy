@@ -24,16 +24,17 @@ import java.io.RandomAccessFile;
 import java.util.Enumeration;
 import java.util.Vector;
 
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
+import jakarta.servlet.ReadListener;
+import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.fileupload.util.Streams;
+import org.apache.commons.fileupload2.FileItemIterator;
+import org.apache.commons.fileupload2.FileItemStream;
+import org.apache.commons.fileupload2.FileUploadException;
+import org.apache.commons.fileupload2.jaksrvlt.JakSrvltFileUpload;
+import org.apache.commons.fileupload2.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.util.Streams;
 
 /**
  * The wrapper for the HttpServletRequest object which will be passed to the application
@@ -95,7 +96,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
          * Get all the multipart fields.
          */
 
-        isMultipart = ServletFileUpload.isMultipartContent(request);
+        isMultipart = JakSrvltFileUpload.isMultipartContent(request);
 
         if ( isMultipart ) {
 
@@ -116,7 +117,7 @@ public class InterceptingHTTPServletRequest extends HttpServletRequestWrapper {
 
             is = new RAFInputStream(requestBody);
 
-            ServletFileUpload sfu = new ServletFileUpload();
+            JakSrvltFileUpload sfu = new JakSrvltFileUpload();
             FileItemIterator iter = sfu.getItemIterator(this);
 
             while(iter.hasNext()) {

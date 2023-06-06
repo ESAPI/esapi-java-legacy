@@ -19,7 +19,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.FilterConfig;
+import jakarta.servlet.FilterConfig;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

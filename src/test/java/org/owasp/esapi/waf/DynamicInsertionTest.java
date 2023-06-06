@@ -18,11 +18,11 @@ package org.owasp.esapi.waf;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.http.MockFilterChain;
 import org.owasp.esapi.http.MockHttpServletRequest;

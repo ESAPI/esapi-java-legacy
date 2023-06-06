@@ -17,10 +17,10 @@ package org.owasp.esapi.http;
 
 import java.io.IOException;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
 
 /**
  *
@@ -32,7 +32,7 @@ public class MockRequestDispatcher implements RequestDispatcher {
      *
      * @param request
      * @param response
-     * @throws javax.servlet.ServletException
+     * @throws jakarta.servlet.ServletException
      * @throws java.io.IOException
      */
     public void forward(ServletRequest request, ServletResponse response) throws ServletException, IOException {
@@ -43,7 +43,7 @@ public class MockRequestDispatcher implements RequestDispatcher {
      *
      * @param request
      * @param response
-     * @throws javax.servlet.ServletException
+     * @throws jakarta.servlet.ServletException
      * @throws java.io.IOException
      */
     public void include(ServletRequest request, ServletResponse response) throws ServletException, IOException {

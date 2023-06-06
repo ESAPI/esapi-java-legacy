@@ -8,8 +8,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.owasp.esapi.PropNames.DISABLE_INTRUSION_DETECTION;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -780,7 +780,7 @@ public class SecurityWrapperResponseTest {
         Mockito.doCallRealMethod().when(spyResp).sendError(200);
         spyResp.sendError(200);
 
-        verify(servResp, times(1)).sendError(200, "HTTP error code: 200");;
+        verify(servResp, times(1)).sendError(200, "HTTP error code: 200");
     }
 
     @Test
@@ -789,10 +789,10 @@ public class SecurityWrapperResponseTest {
         servResp = spy(servResp);
         SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
         SecurityWrapperResponse spyResp = spy(resp);
-        Mockito.doCallRealMethod().when(spyResp).setStatus(200);;
+        Mockito.doCallRealMethod().when(spyResp).setStatus(200);
         spyResp.setStatus(200);
 
-        verify(servResp, times(1)).setStatus(200);;
+        verify(servResp, times(1)).setStatus(200);
     }
 
     @Test
@@ -801,9 +801,9 @@ public class SecurityWrapperResponseTest {
         servResp = spy(servResp);
         SecurityWrapperResponse resp = new SecurityWrapperResponse(servResp);
         SecurityWrapperResponse spyResp = spy(resp);
-        Mockito.doCallRealMethod().when(spyResp).setStatus(200, "foo");;
+        Mockito.doCallRealMethod().when(spyResp).setStatus(200, "foo");
         spyResp.setStatus(200, "foo");
 
-        verify(servResp, times(1)).sendError(200, "foo");;
+        verify(servResp, times(1)).sendError(200, "foo");
     }
 }

@@ -33,21 +33,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
+import jakarta.servlet.*;
+
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
 
 /**
  * The Class MockHttpServletRequest.
@@ -706,6 +700,42 @@ public class MockHttpServletRequest implements HttpServletRequest
     @Override
     public ServletContext getServletContext() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ServletConnection getServletConnection() {
+        return new ServletConnection() {
+
+            @Override
+            public String getConnectionId() {
+                return MockHttpServletRequest.this.getRequestId();
+            }
+
+            @Override
+            public String getProtocol() {
+                return MockHttpServletRequest.this.getProtocol();
+            }
+
+            @Override
+            public String getProtocolConnectionId() {
+                return MockHttpServletRequest.this.getProtocolRequestId();
+            }
+
+            @Override
+            public boolean isSecure() {
+                return MockHttpServletRequest.this.isSecure();
+            }
+        };
+    }
+
+    @Override
+    public String getRequestId() {
+        return "";
+    }
+
+    @Override
+    public String getProtocolRequestId() {
+        return "";
     }
 
     @Override

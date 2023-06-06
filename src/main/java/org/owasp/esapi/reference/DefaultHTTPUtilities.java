@@ -27,17 +27,18 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.ProgressListener;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.fileupload2.FileItem;
+import org.apache.commons.fileupload2.ProgressListener;
+import org.apache.commons.fileupload2.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload2.jaksrvlt.JakSrvltFileUpload;
+import org.apache.commons.fileupload2.servlet.ServletFileUpload;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.HTTPUtilities;
 import org.owasp.esapi.Logger;
@@ -593,13 +594,13 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             dfiPrevValue = System.getProperty(DISKFILEITEM_SERIALIZABLE);
             System.setProperty(DISKFILEITEM_SERIALIZABLE, "false");
             final HttpSession session = request.getSession(false);
-            if (!ServletFileUpload.isMultipartContent(request)) {
+            if (!JakSrvltFileUpload.isMultipartContent(request)) {
                 throw new ValidationUploadException("Upload failed", "Not a multipart request");
             }
 
             // this factory will store ALL files in the temp directory, regardless of size
             DiskFileItemFactory factory = new DiskFileItemFactory(0, tempDir);
-            ServletFileUpload upload = new ServletFileUpload(factory);
+            JakSrvltFileUpload upload = new JakSrvltFileUpload(factory);
             upload.setSizeMax(maxBytes);
             upload.setFileCountMax(maxFiles);   // Required to address CVE-2023-24998.
 
