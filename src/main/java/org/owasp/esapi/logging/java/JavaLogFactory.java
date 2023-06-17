@@ -53,7 +53,7 @@ import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
  * <li>Apply custom-code solution to set the system properties for the <i>java.util.logging.LogManager</i> at runtime. EG: <code>System.setProperty("java.util.logging.config.file", "/custom/file/path.properties");</code></li>
  * <li>Create a custom JavaLogFactory class in client project baseline and update the ESAPI.properties configuration to use that reference.</li>
  * </ol>
- * 
+ *
  * @see <a href="https://github.com/ESAPI/esapi-java-legacy/wiki/Configuration-Reference:-JavaLogFactory">ESAPI Wiki - Configuration Reference: JavaLogFactory</a>
  *
  */
