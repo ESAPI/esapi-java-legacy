@@ -16,7 +16,7 @@ Executive Summary: Important Things to Note for this Release
 @@@@ View previous release notes to see examples of what to put here. This is typical. YMMV.
 @@@@ Obviously, you should summarize any major changes / new features here.
 This is a patch release with the primary intent of updating some dependencies, some with known vulnerabilities. Details follow.
-@@@@ Provide a sentence or to 
+@@@@ Provide a sentence or to
 
 Notes if you are not updating from the immediate previous release. release ${PREV_VERSION}:
     * You need to read through the series of release notes FIRST, going in order.

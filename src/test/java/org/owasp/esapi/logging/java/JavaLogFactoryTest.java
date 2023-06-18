@@ -98,7 +98,7 @@ public class JavaLogFactoryTest {
                 System.clearProperty(propKey);
             } else {
                 System.setProperty(propKey, sysDefault);
-            } 
+            }
         }
     }
     @Test

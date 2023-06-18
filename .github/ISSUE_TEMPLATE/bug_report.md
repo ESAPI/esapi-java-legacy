@@ -7,7 +7,7 @@ assignees: ''
 
 ---
 # NOTE: Ware aware the problems with ESAPI and Jakarta EE, so please do NOT create a new issue for that.
-To follow the status of that, please see GitHub Discussion https://github.com/ESAPI/esapi-java-legacy/discussions/768. 
+To follow the status of that, please see GitHub Discussion https://github.com/ESAPI/esapi-java-legacy/discussions/768.
 
 **Describe the bug**
 A clear and concise description of what the bug is.

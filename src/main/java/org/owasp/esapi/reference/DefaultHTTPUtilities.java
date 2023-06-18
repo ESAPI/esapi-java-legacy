@@ -145,7 +145,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
     static int maxFiles = 20;   // Same as default in configuration/esapi/ESAPI.properties
 
     static boolean fileUploadAllowAnonymousUsers = true;
-    
+
     static {
         // OPENISSUE - Not sure if we should log this. I can throw because the
         // property is not set in ESAPI.properties, but it can also throw
