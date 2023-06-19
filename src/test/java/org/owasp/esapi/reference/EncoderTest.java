@@ -633,6 +633,8 @@ public class EncoderTest extends TestCase {
         assertEquals("Forward slash for \\/Microsoft\\/ \\/AD\\/", instance.encodeForDN("Forward slash for /Microsoft/ /AD/"));
         assertEquals("RFC 4514, Section 4", "CN=James \\\"Jim\\\" Smith\\, III,DC=example,DC=net",
             "CN=" + instance.encodeForDN("James \"Jim\" Smith, III") + ",DC=" + instance.encodeForDN("example") + ",DC=" + instance.encodeForDN("net"));
+        assertEquals("RFC 4514, Section 4", "CN=Lu\\c4\\8di\\c4\\87",
+            "CN=" + instance.encodeForDN("\u004C\u0075\u010D\u0069\u0107"));
     }
 
     /**
