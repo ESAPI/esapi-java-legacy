@@ -444,15 +444,36 @@ public interface Encoder {
     /**
      * Encode data for use in LDAP queries. Wildcard (*) characters will be encoded.
      *
+     * This encoder operates according to RFC 4515, Section 3. RFC 4515 says the following character ranges
+     * are valid: 0x01-0x27, 0x2B-0x5B and 0x5D-0x7F. Characters outside the ranges are hex encoded, and they
+     * include 0x00 (NUL), 0x28 (LPAREN), 0x29 (RPAREN), 0x2A (ASTERISK), and 0x5C (ESC). The encoder will also
+     * encode 0x2F (FSLASH), which is required by Microsoft Active Directory.
+     *
+     * NB: At ESAPI 2.5.3, {@code encodeForLDAP} began strict conformance with RFC 4515. Characters above 0x7F
+     * are converted to UTF-8, and then the byte sequences are hex encoded according to the RFC.
+     *
      * @param input
      *      the text to encode for LDAP
      *
      * @return input encoded for use in LDAP
+     *
+     * @see <a href="https://www.ietf.org/rfc/rfc4515.txt">RFC 4515, Lightweight Directory Access Protocol
+     * (LDAP): String Representation of Search Filters</a>
+     *
+     * @since ESAPI 1.3
      */
     String encodeForLDAP(String input);
 
     /**
      * Encode data for use in LDAP queries. You have the option whether or not to encode wildcard (*) characters.
+     *
+     * This encoder operates according to RFC 4515, Section 3. RFC 4515 says the following character ranges
+     * are valid: 0x01-0x27, 0x2B-0x5B and 0x5D-0x7F. Characters outside the ranges are hex encoded, and they
+     * include 0x00 (NUL), 0x28 (LPAREN), 0x29 (RPAREN), 0x2A (ASTERISK), and 0x5C (ESC). The encoder will also
+     * encode 0x2F (FSLASH), which is required by Microsoft Active Directory.
+     *
+     * NB: At ESAPI 2.5.3, {@code encodeForLDAP} began strict conformance with RFC 4515. Characters above 0x7F
+     * are converted to UTF-8, and then the byte sequences are hex encoded according to the RFC.
      *
      * @param input
      *      the text to encode for LDAP
@@ -460,16 +481,36 @@ public interface Encoder {
      *      whether or not wildcard (*) characters will be encoded.
      *
      * @return input encoded for use in LDAP
+     *
+     * @see <a href="https://www.ietf.org/rfc/rfc4515.txt">RFC 4515, Lightweight Directory Access Protocol
+     * (LDAP): String Representation of Search Filters</a>
+     *
+     * @since ESAPI 1.3
      */
     String encodeForLDAP(String input, boolean encodeWildcards);
 
     /**
      * Encode data for use in an LDAP distinguished name.
      *
+     * This encoder operates according to RFC 4514, Section 3. RFC 4514 says the following character ranges
+     * are valid: 0x01-0x21, 0x23-0x2A, 0x2D-0x3A, 0x3D, 0x3F-0x5B, 0x5D-0x7F. Characters outside the ranges
+     * are hex encoded, and they include 0x00 (NUL), 0x22 (DQUOTE), 0x2B (PLUS), 0x2C (COMMA),
+     * 0x3B (SEMI), 0x3C (LANGLE), 0x3E (RANGLE) and 0x5C (ESC). The encoder will also encode 0x2F (FSLASH),
+     * which is required by Microsoft Active Directory. The leading and trailing characters in a distinguished
+     * name string will also have 0x20 (SPACE) and 0x23 (SHARP) encoded.
+     *
+     * NB: At ESAPI 2.5.3, {@code encodeForDN} began strict conformance with RFC 4514. Characters above 0x7F
+     * are converted to UTF-8, and then the byte sequences are hex encoded according to the RFC.
+     *
      *  @param input
      *          the text to encode for an LDAP distinguished name
      *
      *  @return input encoded for use in an LDAP distinguished name
+     *
+     *  @see <a href="https://www.ietf.org/rfc/rfc4514.txt">RFC 4514, Lightweight Directory Access Protocol
+     *  (LDAP): String Representation of Distinguished Names</a>
+     *
+     *  @since ESAPI 1.3
      */
     String encodeForDN(String input);
 

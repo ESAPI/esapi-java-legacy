@@ -311,6 +311,7 @@ public class DefaultEncoder implements Encoder {
         // According to Microsoft docs [1,2], the forward slash ('/') MUST be escaped.
         // According to RFC 4515 Section 3 [3], the forward slash (and other characters) MAY be escaped.
         // Since Microsoft is a MUST, escape forward slash for all implementations. Also see discussion at [4].
+        // Characters above 0x7F are converted to UTF-8 and then hex encoded in the default case.
         // [1] https://docs.microsoft.com/en-us/windows/win32/adsi/search-filter-syntax
         // [2] https://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
         // [3] https://tools.ietf.org/search/rfc4515#section-3
@@ -343,7 +344,18 @@ public class DefaultEncoder implements Encoder {
                     sb.append("\\00");
                     break;
                 default:
-                    sb.append(c);
+                    if (c >= 0x80) {
+                        try {
+                            final byte[] u = String.valueOf(c).getBytes("UTF-8");
+                            for (byte b : u) {
+                                sb.append(String.format("\\%02x", b));
+                            }
+                        } catch (UnsupportedEncodingException ex) {
+                            // UTF-8 is always supported
+                        }
+                    } else {
+                        sb.append(c);
+                    }
             }
         }
         return sb.toString();
@@ -365,6 +377,9 @@ public class DefaultEncoder implements Encoder {
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             switch (c) {
+            case '\0':
+                sb.append("\\00");
+                break;
             case '\\':
                 sb.append("\\\\");
                 break;
@@ -390,7 +405,18 @@ public class DefaultEncoder implements Encoder {
                 sb.append("\\;");
                 break;
             default:
-                sb.append(c);
+                if (c >= 0x80) {
+                    try {
+                        final byte[] u = String.valueOf(c).getBytes("UTF-8");
+                        for (byte b : u) {
+                            sb.append(String.format("\\%02x", b));
+                        }
+                    } catch (UnsupportedEncodingException ex) {
+                        // UTF-8 is always supported
+                    }
+                } else {
+                    sb.append(c);
+                }
             }
         }
         // add the trailing backslash if needed
