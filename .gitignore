@@ -17,3 +17,4 @@ bin/
 ciphertext-portable.ser
 ReferenceEncryptedProperties.test.txt
 test.out
+.DS_Store
