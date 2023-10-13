@@ -528,46 +528,113 @@ public class EncoderTest extends TestCase {
 
     /**
      * Test of encodeForLDAP method, of class org.owasp.esapi.Encoder.
+     *
+     * Additional tests: https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
      */
     public void testEncodeForLDAP() {
         System.out.println("encodeForLDAP");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForLDAP(null));
-        assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��"));
-        assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
-        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �"));
+        assertEquals("No special characters to escape", "Hi This is a test", instance.encodeForLDAP("Hi This is a test"));
+        assertEquals("No special characters to escape", "Hi This is a test \u0007f", instance.encodeForLDAP("Hi This is a test \u0007f"));
+        assertEquals("Special characters to escape", "Hi This is a test \\c2\\80", instance.encodeForLDAP("Hi This is a test \u0080"));
+        assertEquals("Special characters to escape", "Hi This is a test \\c3\\bf", instance.encodeForLDAP("Hi This is a test \u00FF"));
+        assertEquals("Special characters to escape", "Hi This is a test \\df\\bf", instance.encodeForLDAP("Hi This is a test \u07FF"));
+        assertEquals("Special characters to escape", "Hi This is a test \\e0\\a0\\80", instance.encodeForLDAP("Hi This is a test \u0800"));
+        assertEquals("Special characters to escape", "Hi This is a test \\e0\\a3\\bf", instance.encodeForLDAP("Hi This is a test \u08FF"));
+        assertEquals("Special characters to escape", "Hi This is a test \\e7\\bf\\bf", instance.encodeForLDAP("Hi This is a test \u7FFF"));
+        assertEquals("Special characters to escape", "Hi This is a test \\e8\\80\\80", instance.encodeForLDAP("Hi This is a test \u8000"));
+        assertEquals("Special characters to escape", "Hi This is a test \\e8\\bf\\bf", instance.encodeForLDAP("Hi This is a test \u8FFF"));
+        assertEquals("Special characters to escape", "Hi This is a test \\ef\\bf\\bf", instance.encodeForLDAP("Hi This is a test \uFFFF"));
+        assertEquals("Special characters to escape", "Hi This is a test #\\ef\\bf\\bd\\ef\\bf\\bd", instance.encodeForLDAP("Hi This is a test #��"));
+        assertEquals("NUL", "Hi \\00", instance.encodeForLDAP("Hi \u0000"));
+        assertEquals("LPAREN", "Hi \\28", instance.encodeForLDAP("Hi ("));
+        assertEquals("RPAREN", "Hi \\29", instance.encodeForLDAP("Hi )"));
+        assertEquals("ASTERISK", "Hi \\2a", instance.encodeForLDAP("Hi *"));
+        assertEquals("SLASH", "Hi \\2f", instance.encodeForLDAP("Hi /"));
+        assertEquals("ESC", "Hi \\5c", instance.encodeForLDAP("Hi \\"));
+        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is \\2a a \\5c test # \\ef\\bf\\bd \\ef\\bf\\bd \\ef\\bf\\bd", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �"));
         assertEquals("Hi \\28This\\29 =", instance.encodeForLDAP("Hi (This) ="));
         assertEquals("Forward slash for \\2fMicrosoft\\2f \\2fAD\\2f", instance.encodeForLDAP("Forward slash for /Microsoft/ /AD/"));
+        assertEquals("RFC 4515, Section 4", "(cn=Babs Jensen)", "(cn=" + instance.encodeForLDAP("Babs Jensen") + ")");
     }
 
     /**
      * Test of encodeForLDAP method with without encoding wildcard characters, of class org.owasp.esapi.Encoder.
+     *
+     * Additional tests: https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
      */
     public void testEncodeForLDAPWithoutEncodingWildcards() {
         System.out.println("encodeForLDAPWithoutEncodingWildcards");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForLDAP(null, false));
-        assertEquals("No special characters to escape", "Hi This is a test #��", instance.encodeForLDAP("Hi This is a test #��", false));
-        assertEquals("Zeros", "Hi \\00", instance.encodeForLDAP("Hi \u0000", false));
-        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is * a \\5c test # � � �", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �", false));
+        assertEquals("No special characters to escape", "Hi This is a test", instance.encodeForLDAP("Hi This is a test"));
+        assertEquals("No special characters to escape", "Hi This is a test \u0007f", instance.encodeForLDAP("Hi This is a test \u0007f", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\c2\\80", instance.encodeForLDAP("Hi This is a test \u0080", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\c3\\bf", instance.encodeForLDAP("Hi This is a test \u00FF", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\df\\bf", instance.encodeForLDAP("Hi This is a test \u07FF", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\e0\\a0\\80", instance.encodeForLDAP("Hi This is a test \u0800", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\e0\\a3\\bf", instance.encodeForLDAP("Hi This is a test \u08FF", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\e7\\bf\\bf", instance.encodeForLDAP("Hi This is a test \u7FFF", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\e8\\80\\80", instance.encodeForLDAP("Hi This is a test \u8000", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\e8\\bf\\bf", instance.encodeForLDAP("Hi This is a test \u8FFF", false));
+        assertEquals("Special characters to escape", "Hi This is a test \\ef\\bf\\bf", instance.encodeForLDAP("Hi This is a test \uFFFF", false));
+        assertEquals("Special characters to escape", "Hi This is a test #\\ef\\bf\\bd\\ef\\bf\\bd", instance.encodeForLDAP("Hi This is a test #��", false));
+        assertEquals("NUL", "Hi \\00", instance.encodeForLDAP("Hi \u0000", false));
+        assertEquals("LPAREN", "Hi \\28", instance.encodeForLDAP("Hi (", false));
+        assertEquals("RPAREN", "Hi \\29", instance.encodeForLDAP("Hi )", false));
+        assertEquals("ASTERISK", "Hi *", instance.encodeForLDAP("Hi *", false));
+        assertEquals("SLASH", "Hi \\2f", instance.encodeForLDAP("Hi /", false));
+        assertEquals("ESC", "Hi \\5c", instance.encodeForLDAP("Hi \\", false));
+        assertEquals("LDAP Christams Tree", "Hi \\28This\\29 = is * a \\5c test # \\ef\\bf\\bd \\ef\\bf\\bd \\ef\\bf\\bd", instance.encodeForLDAP("Hi (This) = is * a \\ test # � � �", false));
         assertEquals("Forward slash for \\2fMicrosoft\\2f \\2fAD\\2f", instance.encodeForLDAP("Forward slash for /Microsoft/ /AD/"));
+        assertEquals("RFC 4515, Section 4", "(&(objectClass=Person)(|(sn=Jensen)(cn=Babs J*)))",
+            "(&(objectClass=" + instance.encodeForLDAP("Person") + ")(|(sn=" + instance.encodeForLDAP("Jensen") + ")(cn=" + instance.encodeForLDAP("Babs J*", false) + ")))");
+        assertEquals("RFC 4515, Section 4", "(o=univ*of*mich*)",
+            "(o=" + instance.encodeForLDAP("univ*of*mich*", false) + ")");
     }
 
     /**
      * Test of encodeForDN method, of class org.owasp.esapi.Encoder.
+     *
+     * Additional tests: https://www.cl.cam.ac.uk/~mgk25/ucs/examples/UTF-8-test.txt
      */
     public void testEncodeForDN() {
         System.out.println("encodeForDN");
         Encoder instance = ESAPI.encoder();
         assertEquals(null, instance.encodeForDN(null));
-        assertEquals("No special characters to escape", "Hello�", instance.encodeForDN("Hello�"));
-        assertEquals("leading #", "\\# Hello�", instance.encodeForDN("# Hello�"));
-        assertEquals("leading space", "\\ Hello�", instance.encodeForDN(" Hello�"));
-        assertEquals("trailing space", "Hello�\\ ", instance.encodeForDN("Hello� "));
+        assertEquals("No special characters to escape", "Hello", instance.encodeForDN("Hello"));
+        assertEquals("No special characters to escape", "Hello \u0007f", instance.encodeForDN("Hello \u0007f"));
+        assertEquals("Special characters to escape", "Hello \\c2\\80", instance.encodeForDN("Hello \u0080"));
+        assertEquals("Special characters to escape", "Hello \\c3\\bf", instance.encodeForDN("Hello \u00FF"));
+        assertEquals("Special characters to escape", "Hello \\df\\bf", instance.encodeForDN("Hello \u07FF"));
+        assertEquals("Special characters to escape", "Hello \\e0\\a0\\80", instance.encodeForDN("Hello \u0800"));
+        assertEquals("Special characters to escape", "Hello \\e0\\a3\\bf", instance.encodeForLDAP("Hello \u08FF"));
+        assertEquals("Special characters to escape", "Hello \\e7\\bf\\bf", instance.encodeForDN("Hello \u7FFF"));
+        assertEquals("Special characters to escape", "Hello \\e8\\80\\80", instance.encodeForDN("Hello \u8000"));
+        assertEquals("Special characters to escape", "Hello \\e8\\bf\\bf", instance.encodeForDN("Hello \u8FFF"));
+        assertEquals("Special characters to escape", "Hello \\ef\\bf\\bf", instance.encodeForDN("Hello \uFFFF"));
+        assertEquals("Special characters to escape", "Hello\\ef\\bf\\bd", instance.encodeForDN("Hello�"));
+        assertEquals("NUL", "Hi \\00", instance.encodeForDN("Hi \u0000"));
+        assertEquals("DQUOTE", "Hi \\\"", instance.encodeForDN("Hi \""));
+        assertEquals("PLUS", "Hi \\+", instance.encodeForDN("Hi +"));
+        assertEquals("COMMA", "Hi \\,", instance.encodeForDN("Hi ,"));
+        assertEquals("SLASH", "Hi \\/", instance.encodeForDN("Hi /"));
+        assertEquals("SEMI", "Hi \\;", instance.encodeForDN("Hi ;"));
+        assertEquals("LANGLE", "Hi \\<", instance.encodeForDN("Hi <"));
+        assertEquals("RANGLE", "Hi \\>", instance.encodeForDN("Hi >"));
+        assertEquals("ESC", "Hi \\\\", instance.encodeForDN("Hi \\"));
+        assertEquals("leading #", "\\# Hello\\ef\\bf\\bd", instance.encodeForDN("# Hello�"));
+        assertEquals("leading space", "\\ Hello\\ef\\bf\\bd", instance.encodeForDN(" Hello�"));
+        assertEquals("trailing space", "Hello\\ef\\bf\\bd\\ ", instance.encodeForDN("Hello� "));
         assertEquals("less than greater than", "Hello\\<\\>", instance.encodeForDN("Hello<>"));
         assertEquals("only 3 spaces", "\\  \\ ", instance.encodeForDN("   "));
         assertEquals("Christmas Tree DN", "\\ Hello\\\\ \\+ \\, \\\"World\\\" \\;\\ ", instance.encodeForDN(" Hello\\ + , \"World\" ; "));
         assertEquals("Forward slash for \\/Microsoft\\/ \\/AD\\/", instance.encodeForDN("Forward slash for /Microsoft/ /AD/"));
+        assertEquals("RFC 4514, Section 4", "CN=James \\\"Jim\\\" Smith\\, III,DC=example,DC=net",
+            "CN=" + instance.encodeForDN("James \"Jim\" Smith, III") + ",DC=" + instance.encodeForDN("example") + ",DC=" + instance.encodeForDN("net"));
+        assertEquals("RFC 4514, Section 4", "CN=Lu\\c4\\8di\\c4\\87",
+            "CN=" + instance.encodeForDN("\u004C\u0075\u010D\u0069\u0107"));
     }
 
     /**
