@@ -106,9 +106,9 @@ public final class JavaEncryptor implements Encryptor {
     // digital signatures
     private static PrivateKey privateKey = null;
     private static PublicKey publicKey = null;
-    private static String signatureAlgorithm = "SHA1withDSA";
-    private static String randomAlgorithm = "SHA1PRNG";
-    private static int signatureKeyLength = 1024;
+    private static String signatureAlgorithm = "SHA256withDSA";
+    private static String randomAlgorithm = "SHA1PRNG";     // SHA1 is fine as a CSRNG.
+    private static int signatureKeyLength = 2048;
 
     // hashing
     private static String hashAlgorithm = "SHA-512";
