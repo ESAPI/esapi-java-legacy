@@ -304,7 +304,13 @@ public interface Validator {
      * and returns true if no exceptions are thrown.
      *
      * @throws IntrusionException Input likely indicates an attack.
+     *
+     * @deprecated Deprecated as of ESAPI 2.5.3.0. This method will be removed in 1 year
+     * after this ESAPI 2.5.3.0 release.
+     *
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm">GitHub Security Advisory: Validator.isValidSafeHTML is being deprecated and will be deleted in 1 year</a>
      */
+    @Deprecated
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
     /**
@@ -315,7 +321,13 @@ public interface Validator {
      * and returns true if no exceptions are thrown.
      *
      * @throws IntrusionException Input likely indicates an attack.
+     *
+     * @deprecated Deprecated as of ESAPI 2.5.3.0. This method will be removed in 1 year
+     * after this ESAPI 2.5.3.0 release.
+     *
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm">GitHub Security Advisory: Validator.isValidSafeHTML is being deprecated and will be deleted in 1 year</a>
      */
+    @Deprecated
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
