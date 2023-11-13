@@ -101,6 +101,15 @@ to be using such classes directly in your code. At the ESAPI team's discretion,
 it will also not apply for any known exploitable vulnerabilities for which
 no available workaround exists.
 
+## Exceptions to Deprecation Policy
+We will make some exceptions to the normal 2 year period. In particular, in the
+cases were we believe that keeping a specific deprecated class or method around
+can introduce security issues (generally because many of you have a habit of
+completely ignoring deprecation warnings), we sometimes will shorten that 2 year
+period. When we decide to do that, we will announce that as part of the
+deprecation message.
+
+## Log4J 1.x Removal
 **IMPORTANT NOTES:** As of ESAPI 2.5.0.0, all the Log4J 1.x related code
 has been removed from the ESAPI code base (with the exception of some
 references in documentation). If you must, you still should be able to
