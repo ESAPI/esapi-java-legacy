@@ -136,6 +136,12 @@ Direct and Transitive Runtime and Test Dependencies:
 
         $ mvn -B dependency:tree
 @@@@ Include output from 'mvn -B dependency:tree' here
+@@@@ RECOMMENDATION: Run the above only after ensuring you are using the latest 
+@@@@                 plugins and dependencies so you only have to do this once.
+@@@@                 Check via:
+@@@@                    mvn -U versions:display-plugin-updates
+@@@@                    mvn -U versions:display-dependency-updates
+@@@@                    mvn -U versions:display-property-updates
 
 -----------------------------------------------------------------------------
 
