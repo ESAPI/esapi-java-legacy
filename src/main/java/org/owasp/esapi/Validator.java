@@ -338,7 +338,7 @@ public interface Validator {
      * <p>
      * The default behavior of this check depends on the {@code antisamy-esapi.xml} AntiSamy policy configuration file
      * (or an alternate filename, specified via the "Validator.HtmlValidationConfigurationFile" property in your
-     * {@ESAPI.properties} file. Implementors wishing to alter the AntiSamy policy configuration file should
+     * {@code ESAPI.properties} file. Implementors wishing to alter the AntiSamy policy configuration file should
      * reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
      * on how to do HTML validation in a allow-list way, as this is an extremely difficult problem.
      *
@@ -368,7 +368,7 @@ public interface Validator {
      * <p>
      * The default behavior of this check depends on the {@code antisamy-esapi.xml} AntiSamy policy configuration file
      * (or an alternate filename, specified via the "Validator.HtmlValidationConfigurationFile" property in your
-     * {@ESAPI.properties} file. Implementors wishing to alter the AntiSamy policy configuration file should
+     * {@code ESAPI.properties} file. Implementors wishing to alter the AntiSamy policy configuration file should
      * reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
      * on how to do HTML validation in a allow-list way, as this is an extremely difficult problem.
      * <p>
