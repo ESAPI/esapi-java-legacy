@@ -111,7 +111,7 @@ public interface Validator {
      * @param allowNull
      *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
      *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
-     * @param errorList The error list to which any {@Code ValidationException} messages are added.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
@@ -163,7 +163,7 @@ public interface Validator {
      *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      * @param canonicalize
      *         If true, the {@code input} if first canonicalized before being validated.
-     * @param errorList The error list to which any {@Code ValidationException} messages are added.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
@@ -384,7 +384,7 @@ public interface Validator {
      * @param allowNull
      *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
      *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
-     * @param errorList The error list to which any {@Code ValidationException} messages are added.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @return A string representing the canonicalized and sanitized input that is safe for rendering in an HTML context.
      *
@@ -660,7 +660,7 @@ public interface Validator {
      * @param allowNull
      *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
      *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
-     * @param errorList The error list to which any {@Code ValidationException} messages are added.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
@@ -708,7 +708,7 @@ public interface Validator {
      * @param allowNull
      *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
      *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
-     * @param errorList The error list to which any {@Code ValidationException} messages are added.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
