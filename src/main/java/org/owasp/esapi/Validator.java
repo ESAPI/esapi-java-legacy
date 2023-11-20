@@ -60,13 +60,13 @@ public interface Validator {
 
     /**
      * Add a validation rule to the registry using the "type name" of the rule as the key.
-     * @param The {@link ValidationRule} to add.
+     * @param rule The {@link ValidationRule} to add.
      */
     void addRule( ValidationRule rule );
 
     /**
      * Get a validation rule from the registry with the "type name" of the rule as the key.
-     * @param The "type" name of the {@Vlink ValidationRule} to retrieve.
+     * @param name The "type" name of a {@link ValidationRule} to retrieve.
      */
     ValidationRule getRule( String name );
 
