@@ -1,0 +1,173 @@
+@@@@ IMPORTANT: Be sure to 1) save in DOS text format, and 2) Delete this line and others starting with @@@@
+@@@@             Edit this file in vim with       :set tw=0
+@@@@            Meant to be used with   scripts/newReleaseNotes.sh and the 'vars.*' scripts there.
+@@@@    There are specific references to ESAPI 2.5.0.0 and other old releases in this file. Do NOT change the version #s. They are there for a reason.
+Release notes for ESAPI 2.5.3.0
+    Release date: 2023-11-22
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.5.2.0, 2023-04-12
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+@@@@ View previous release notes to see examples of what to put here. This is typical. YMMV.
+@@@@ Obviously, you should summarize any major changes / new features here.
+This is a patch release with the primary intent of updating some dependencies, some with known vulnerabilities. Details follow.
+@@@@ Provide a sentence or to
+* This is a patch release, with the primary intent of updating ESAPI's AntiSamy dependency from 1.7.3 to 1.7.4. AntiSamy 1.7.4 was released to address an XSS vulnerability in AntiSamy (CVE-2023-43643). Testing ESAPI's use of AntiSamy along with ESAPI's default antsamy-esapi.xml AntiSamy policy file, shows there is no exploitable path of this CVE via ESAPI. This is because ESAPI's AntiSamy policy file is ultra-strict. (Of course, YMMV if you are not using the default AntiSamy policy file or are customized it to disable the 'preserveComments' directive.)
+* We have deprecated both of ESAPI's Validator.isValidSafeHTML interfaces, as we discovered that they cannot be guaranteed safe. Note that we intend to REMOVE both of these interfaces one year after the ESAPI 2.5.3.0 release. For more details, see GitHub Security Advisory https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm. There is also an accompanying "ESAPI Security Bulletin 12" (https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin12.pdf). The Security Bulletin explains why we did not submit this as a CVE as well as explains some potential workarounds that may work for you.
+* Changed ESAPI so that the default RSA modulus length (sometimes referred to as the key size) from 1024-bits to 2048-bits. Note that if you are using an old version of ESAPI.properties file prior to 2.5.3.0 and are using any of the Encryptor interfaces that directly or indirectly use digital signatures (i.e., sign, verifySignature, seal, unseal, verifySeal), you may wish to consider updating properties:
+        Encryptor.DigitalSignatureAlgorithm=SHA256withDSA       # The old SHA1withDSA doesn't support 2048-bit RSA modulus length
+        Encryptor.DigitalSignatureKeyLength=2048
+    Note that if you have persisted previous digital signatures that you must continue to verify, you will have to regenerate them.
+@@@@    NOTE: This might be reserved for a 2.6.0.0 release, in which case the next line should be removed.
+* Thanks to a PR by @jcputney (PR #799), I have attempted to upload additional artifacts to Maven Central that will be a transformed jar suitable for use with the new 'jakarata.servlet' changes for Jakarata EE 9 and later. (Previously, 'javax.servlet' was the name space). Because we are still supporting JDK 8 at this point, we still need to support the 'javax.servlet' namespace as well. In addition to the standard jar artifacts, there should be a new esapi-<release>-jakarta.jar (which uses 'jakarta.servlet' instead of 'javax.servlet' namespace) as well as corresponding *-javadoc.jar and *-sources.jar files. I am not sure it will work as we have no tests for it, but looing at the binaries, it seems like it should.
+    For additional details, see:
+        https://github.com/ESAPI/esapi-java-legacy/pull/799
+        https://github.com/ESAPI/esapi-java-legacy/discussions/768
+
+Notes if you are not updating from the immediate previous release. release 2.5.2.0:
+    * You need to read through the series of release notes FIRST, going in order.
+    * For example, if you were updating from an older ESAPI release (say, 2.3.0.0), you should go back and FIRST read all the subsequent release notes in turn. For instance, if you are currently on release 2.3.0.0 and upgrading to (say) release 2.x.y.z, you should MINIMALLY read the sections "Changes Requiring Special Attention" in each of the subsequent release notes. So, going from release 2.3.0.0 to 2.x.y.z, you should in turn, read:
+
+    esapi4java-core-2.4.0.0-release-notes.txt
+    esapi4java-core-2.5.0.0-release-notes.txt
+    esapi4java-core-2.5.1.0-release-notes.txt
+    esapi4java-core-2.5.2.0-release-notes.txt
+    ...etc., up through the current set of release notes...
+    esapi4java-core-2.x.y.z-release-notes.txt
+
+in that order. YOU HAVE BEEN WARNED!!! (These release notes are too large to put all this in a given document; very few read them thoroughly as it is.)
+
+If your SCA tool is reporting any CVE from a direct or transitive dependency in ESAPI, before reporting it as an GitHub issue, please make sure that you review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md. Please email us or contact us in our GitHub Discussions page if you have questions about this. See also the SECURITY.md file to report any security issues with ESAPI.
+
+You are encouraged to review the vulnerability analysis written up in https://github.com/ESAPI/esapi-java-legacy/blob/develop/Vulnerability-Summary.md and email us or contact us in our GitHub Discussions page if you have questions.
+
+
+=================================================================================================================
+
+Basic ESAPI facts
+-----------------
+
+ESAPI 2.5.2.0 release:
+     207 Java source files
+    4293 JUnit tests in 131 Java source files (0 tests skipped, 1 commented out)
+
+ESAPI 2.5.3.0 release:
+     207 Java source files
+    4293 JUnit tests in 131 Java source files (0 failures, 0 errors, 0 tests skipped)
+
+8 GitHub Issues closed in this release, including those we've decided not to fix (marked 'wontfix' and 'falsepositive').
+(Reference: https://github.com/ESAPI/esapi-java-legacy/issues?q=is%3Aissue+state%3Aclosed+updated%3A%3E%3D2023-04-12)
+
+Issue #         GitHub Issue Title
+----------------------------------------------------------------------------------------------
+@@@@ Capture issue #s and 1 line desription from above GitHub url
+@@@@ Insert here and massage until it looks pretty. Recommend alignment with spaces instead of tabs.
+560             Could not initialize class org.owasp.esapi.logging.java.JavaLogFactory (ESAPI 2.2.1.0)
+760             Could not initialize class org. Owasp. Esapi. Reference. DefaultValidator
+775             Add documenttion to CONTRIBUTING-TO-ESAPI.txt to mention signed commits are now required.
+792             хз
+796             Logs printed using println() are always printed and no option to disable them.
+798             Insecure default signature key length
+805             Does esapi-java-legacy support jDK17
+808             Fix typo in comment in validation.properties files
+812             Fix Encoder.encodeForLDAP and Encoder.encodeForDN so they are strictly conformant with Section 3 of RFC 4515
+
+-----------------------------------------------------------------------------
+
+        Changes Requiring Special Attention
+
+-----------------------------------------------------------------------------
+@@@@ NOTE any special notes here. Probably leave this one, but I would suggest noting additions BEFORE this.
+
+Important JDK Support Announcement
+* ESAPI 2.3.0.0 was the last Java release to support Java 7. ESAPI 2.4.0 requires using Java 8 or later. See the ESAPI 2.4.0.0 release notes (https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.4.0.0-release-notes.txt) for details as to the reason.
+    - This means if your project requires Java 7, you must use ESAPI 2.3.0.0 or earlier.
+
+Important ESAPI Logging Changes
+
+* Since ESAPI 2.5.0.0, support for logging directly via Log4J 1 has been removed. (This was two years after it haveing first been deprecated.) Thus, you only choice of ESAPI logging are
+    - java.util.logging (JUL), which as been the default since ESAPI 2.2.1.0.
+        * Set ESAPI.Logger=org.owasp.esapi.logging.java.JavaLogFactory in your ESAPI.properties file.
+    - SLF4J (which your choice of supported SLF4J logging implemmentation)
+        * Set ESAPI.Logger=org.owasp.esapi.logging.slf4j.Slf4JLogFactory in your ESAPI.properties file.
+* Logger configuration notes - If you are migrating from prior to ESAPI 2.2.1.1, you will need to update your ESAPI.properties file as logging-related configuration as per the ESAPI 2.2.1.1 release notes, which may be found at:
+    https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.2.1.1-release-notes.txt#L39-L78
+
+If you use ESAPI 2.5.0.0 or later, you will get an ClassNotFoundException as the root cause if you still have your ESAPI.Logger property set to use Log4J because the org.owasp.esapi.logger.log4j.Log4JFactory class has been completely removed from the ESAPI jar.  If you are dead set on continuing to use Log4J 1, you ought to be able to do so via SLF4J. The set up for Log4J 1 (which has not be tested), should be similar to configure ESAPI to use SLF4J with Log4J 2 as described here:
+    https://github.com/ESAPI/esapi-java-legacy/wiki/Using-ESAPI-with-SLF4J#slf4j-using-log4j-2x
+
+-----------------------------------------------------------------------------
+
+        Remaining Known Issues / Problems
+
+-----------------------------------------------------------------------------
+The effect of upgrade to AntiSamy 1.7.4 in ESAPI 2.5.3.0 can result in ESAPI's Validator.getValidSafeHTML returning a different cleansed (i.e., sanitized) string than previous versions of ESAPI which used earlier versions of AntiSamy did. There presently is no concern for alarm as all these observed different sanitized strings returned by AntiSamy 1.7.4 still all appear to be "safe"; they are just different than before. However, as a result, this could break any regression tests that you previously had that involved ESAPI's Validator.getValidSafeHTML. See https://github.com/nahsra/antisamy/issues/389 and https://github.com/nahsra/antisamy/pull/388 for additional details.
+
+-----------------------------------------------------------------------------
+
+        Other changes in this release, some of which not tracked via GitHub issues
+
+-----------------------------------------------------------------------------
+
+* Minor updates to README.md file with respect to version information.
+
+-----------------------------------------------------------------------------
+
+Developer Activity Report (Changes between release 2.5.2.0 and 2.5.3.0, i.e., between 2023-04-12 and 2023-11-22)
+Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
+
+@@@@
+@@@@ This section needs to be manually updated.
+@@@@ See file:///home/wallk/work/esapi-work/kww-2.5.3.0-prep/target/site/dev-activity.html for assistance.
+@@@@
+Developer       Total       Total Number        # Merged
+(GitHub ID)     commits   of Files Changed        PRs
+========================================================
+kwwall          36	             37             2
+noloader	     6	             12             3
+preetgami      	 1                1             1
+robstoll         2                2             1
+jcputney         1                1             1
+========================================================
+                                    Total PRs:  8
+
+-----------------------------------------------------------------------------
+
+CHANGELOG:      Create your own. May I suggest:
+
+        git log --stat --since=2023-04-12 --reverse --pretty=medium
+
+    which will show all the commits since just after the previous (2.5.2.0) release.
+
+    Alternately, you can download the most recent ESAPI source and run
+
+        mvn site
+
+    which will create a CHANGELOG file named 'target/site/changelog.html'
+
+
+-----------------------------------------------------------------------------
+
+Direct and Transitive Runtime and Test Dependencies:
+
+        $ mvn -B dependency:tree
+@@@@ Include output from 'mvn -B dependency:tree' here
+@@@@ TODO _after_ running:
+@@@@    mvn -U versions:display-plugin-updates
+@@@@    mvn -U versions:display-dependency-updates
+@@@@    mvn -U versions:display-property-updates
+
+-----------------------------------------------------------------------------
+
+@@@@ Review these notes, especially the reference to the AntiSamy version information.
+Acknowledgments:
+    Thanks to @noloader, @preetgami, and @jcputney for submitting PRs to help move ESAPI forward.  And thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
+
+A special thanks to the ESAPI community from the ESAPI project co-leaders:
+    Kevin W. Wall (kwwall) <== The irresponsible party for these release notes!
+    Matt Seil (xeno6696)
