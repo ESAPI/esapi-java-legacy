@@ -171,16 +171,17 @@ public class JavaLogFactoryTest {
      */
     @Test
     public void checkPassthroughAppenderConstruct() throws Exception {
-        LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, true, "");
+        LogPrefixAppender stubAppender = new LogPrefixAppender(true, true, true, true, "", false);
         ArgumentCaptor<Boolean> userInfoCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Boolean> clientInfoCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Boolean> serverInfoCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<Boolean> logAppNameCapture = ArgumentCaptor.forClass(Boolean.class);
         ArgumentCaptor<String> appNameCapture = ArgumentCaptor.forClass(String.class);
+        ArgumentCaptor<Boolean> omitEventTypeInLogsCapture = ArgumentCaptor.forClass(Boolean.class);
 
-        PowerMockito.whenNew(LogPrefixAppender.class).withArguments(userInfoCapture.capture(), clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture()).thenReturn(stubAppender);
+        PowerMockito.whenNew(LogPrefixAppender.class).withArguments(userInfoCapture.capture(), clientInfoCapture.capture(), serverInfoCapture.capture(), logAppNameCapture.capture(), appNameCapture.capture(), omitEventTypeInLogsCapture.capture()).thenReturn(stubAppender);
 
-        LogAppender appender = JavaLogFactory.createLogAppender(true, true, false, true, testName.getMethodName());
+        LogAppender appender = JavaLogFactory.createLogAppender(true, true, false, true, testName.getMethodName(), false);
 
         Assert.assertEquals(stubAppender, appender);
         Assert.assertTrue(userInfoCapture.getValue());
@@ -188,6 +189,7 @@ public class JavaLogFactoryTest {
         Assert.assertFalse(serverInfoCapture.getValue());
         Assert.assertTrue(logAppNameCapture.getValue());
         Assert.assertEquals(testName.getMethodName(), appNameCapture.getValue());
+        Assert.assertEquals(omitEventTypeInLogsCapture.getValue(), false);
     }
 
 

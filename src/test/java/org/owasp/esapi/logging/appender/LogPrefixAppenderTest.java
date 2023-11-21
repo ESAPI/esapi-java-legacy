@@ -26,6 +26,7 @@ public class LogPrefixAppenderTest {
     private static final String CIS_RESULT = "CLIENT_INFO";
     private static final String UIS_RESULT = "USER_INFO";
     private static final String SIS_RESULT = "SERVER_INFO";
+    private static final boolean NOT_OMIT_EVENT_TYPE = false;
 
     @Rule
     public TestName testName = new TestName();
@@ -63,7 +64,7 @@ public class LogPrefixAppenderTest {
         whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
         whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
-        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName);
+        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName, false);
         lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         verify(uisSpy, times(1)).setLogUserInfo(true);
@@ -84,7 +85,7 @@ public class LogPrefixAppenderTest {
         whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
         whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
-        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null, false);
         lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         verify(uisSpy, times(1)).setLogUserInfo(false);
@@ -102,7 +103,7 @@ public class LogPrefixAppenderTest {
         whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
         whenNew(ServerInfoSupplier.class).withArguments(logNameCapture.capture()).thenReturn(sisSpy);
 
-        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName);
+        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName, false);
         lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         assertEquals(testEventType, eventTypeCapture.getValue());
@@ -110,43 +111,53 @@ public class LogPrefixAppenderTest {
     }
 
     @Test
+    public void testOmitEventTypeInLogs() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, true, "");
+    }
+
+    @Test
+    public void testNotOmitEventTypeInLogs() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE]");
+    }
+
+    @Test
     public void testLogContentWhenClientInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,SIS_RESULT, "[EVENT_TYPE USER_INFO -> SERVER_INFO]");
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,SIS_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE USER_INFO -> SERVER_INFO]");
     }
 
 
     @Test
     public void testLogContentWhenUserInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,SIS_RESULT, "[EVENT_TYPE CLIENT_INFO -> SERVER_INFO]");
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,SIS_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE CLIENT_INFO -> SERVER_INFO]");
     }
 
     @Test
     public void testLogContentWhenClientInfoEmptyAndServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,EMPTY_RESULT, "[EVENT_TYPE USER_INFO]");
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE USER_INFO]");
     }
 
     @Test
     public void testLogContentWhenUserInfoEmptyAndServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,EMPTY_RESULT, "[EVENT_TYPE CLIENT_INFO]");
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE CLIENT_INFO]");
     }
 
     @Test
     public void testLogContentWhenUserInfoAndClientInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, "[EVENT_TYPE -> SERVER_INFO]");
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE -> SERVER_INFO]");
     }
 
     @Test
     public void testLogContentWhenServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, "[EVENT_TYPE USER_INFO:CLIENT_INFO]");
+        runTest(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE USER_INFO:CLIENT_INFO]");
     }
 
     @Test
     public void testLogContentWhenUserInfoEmptyAndClientInfoEmptyAndServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, "[EVENT_TYPE]");
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE]");
     }
 
 
-    private void runTest(String typeResult, String userResult, String clientResult, String serverResult, String exResult) throws Exception{
+    private void runTest(String typeResult, String userResult, String clientResult, String serverResult, boolean omitEventTypeInLogs, String exResult) throws Exception{
         when(etlsSpy.get()).thenReturn(typeResult);
         when(uisSpy.get()).thenReturn(userResult);
         when(cisSpy.get()).thenReturn(clientResult);
@@ -158,9 +169,17 @@ public class LogPrefixAppenderTest {
         whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
         //Since everything is mocked these booleans don't much matter aside from the later verifies
-        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
-        String result =   lpa.appendTo(testLoggerName, testEventType, testLogMessage);
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null, omitEventTypeInLogs);
+        String actualResult =   lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
-        assertEquals(exResult + " " + testName.getMethodName() + "-MESSAGE", result);
+        StringBuilder expectedResult = new StringBuilder();
+        if (!exResult.isEmpty()) {
+            expectedResult.append(exResult);
+            expectedResult.append(" ");
+        }
+        expectedResult.append(testName.getMethodName());
+        expectedResult.append("-MESSAGE");
+
+        assertEquals(expectedResult.toString() , actualResult);
     }
 }

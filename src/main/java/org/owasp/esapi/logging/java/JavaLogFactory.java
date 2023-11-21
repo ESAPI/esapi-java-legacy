@@ -41,6 +41,7 @@ import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
 import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
 import static org.owasp.esapi.PropNames.APPLICATION_NAME;
 import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
+import static org.owasp.esapi.PropNames.OMIT_EVENT_TYPE_IN_LOGS;
 
 /**
  * LogFactory implementation which creates JAVA supporting Loggers.
@@ -79,7 +80,8 @@ public class JavaLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
+        boolean omitEventTypeInLogs = ESAPI.securityConfiguration().getBooleanProp(OMIT_EVENT_TYPE_IN_LOGS);
+        JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, omitEventTypeInLogs);
 
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, JavaLogLevelHandlers.ALWAYS);
@@ -156,11 +158,12 @@ public class JavaLogFactory implements LogFactory {
      * @param logApplicationName
      * @param logServerIp
      * @param logClientInfo
+     * @param omitEventTypeInLogs
      *
      * @return LogAppender instance.
      */
-    /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
+    /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean omitEventTypeInLogs) {
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, omitEventTypeInLogs);
     }
 
 

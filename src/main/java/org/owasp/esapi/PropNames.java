@@ -111,6 +111,7 @@ public final class PropNames {
     public static final String LOG_ENCODING_REQUIRED                                                            = "Logger.LogEncodingRequired";
     public static final String LOG_APPLICATION_NAME                                                             = "Logger.LogApplicationName";
     public static final String LOG_SERVER_IP                                                                    = "Logger.LogServerIP";
+    public static final String OMIT_EVENT_TYPE_IN_LOGS                                                          = "Logger.OmitEventTypeInLogs";
 
     public static final String VALIDATION_PROPERTIES                                                            = "Validator.ConfigurationFile";
     public static final String VALIDATION_PROPERTIES_MULTIVALUED                                                = "Validator.ConfigurationFile.MultiValued";

@@ -35,6 +35,8 @@ public class LogPrefixAppender implements LogAppender {
     private final boolean logApplicationName;
     /** Application Name to record. */
     private final String appName;
+    /** Whether to omit event type in logs or not. */
+    private final boolean omitEventTypeInLogs;
 
     /**
      * Ctr.
@@ -44,17 +46,23 @@ public class LogPrefixAppender implements LogAppender {
      * @param logServerIp        Whether or not to record server ip information
      * @param logApplicationName Whether or not to record application name
      * @param appName            Application Name to record.
+     * @param omitEventTypeInLogs Application Name to record.
      */
-    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
+    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean omitEventTypeInLogs) {
         this.logUserInfo = logUserInfo;
         this.logClientInfo = logClientInfo;
         this.logServerIp = logServerIp;
         this.logApplicationName = logApplicationName;
         this.appName = appName;
+        this.omitEventTypeInLogs = omitEventTypeInLogs;
     }
 
     @Override
     public String appendTo(String logName, EventType eventType, String message) {
+        if (omitEventTypeInLogs) {
+            return message;
+        }
+
         EventTypeLogSupplier eventTypeSupplier = new EventTypeLogSupplier(eventType);
 
         UserInfoSupplier userInfoSupplier = new UserInfoSupplier();
