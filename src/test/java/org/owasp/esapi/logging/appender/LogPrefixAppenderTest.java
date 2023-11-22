@@ -18,6 +18,8 @@ import org.owasp.esapi.Logger.EventType;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import java.lang.reflect.Field;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(LogPrefixAppender.class)
 public class LogPrefixAppenderTest {
@@ -26,7 +28,6 @@ public class LogPrefixAppenderTest {
     private static final String CIS_RESULT = "CLIENT_INFO";
     private static final String UIS_RESULT = "USER_INFO";
     private static final String SIS_RESULT = "SERVER_INFO";
-    private static final boolean NOT_OMIT_EVENT_TYPE = false;
 
     @Rule
     public TestName testName = new TestName();
@@ -64,7 +65,7 @@ public class LogPrefixAppenderTest {
         whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
         whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
-        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName, false);
+        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName);
         lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         verify(uisSpy, times(1)).setLogUserInfo(true);
@@ -85,7 +86,7 @@ public class LogPrefixAppenderTest {
         whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
         whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
-        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null, false);
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
         lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         verify(uisSpy, times(1)).setLogUserInfo(false);
@@ -103,7 +104,7 @@ public class LogPrefixAppenderTest {
         whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
         whenNew(ServerInfoSupplier.class).withArguments(logNameCapture.capture()).thenReturn(sisSpy);
 
-        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName, false);
+        LogPrefixAppender lpa = new LogPrefixAppender(true, true,true,true, testApplicationName);
         lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         assertEquals(testEventType, eventTypeCapture.getValue());
@@ -111,49 +112,64 @@ public class LogPrefixAppenderTest {
     }
 
     @Test
-    public void testOmitEventTypeInLogs() throws Exception {
+    public void testLongContentWithOmitEventTypeInLogs() throws Exception {
         runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, true, "");
     }
 
     @Test
-    public void testNotOmitEventTypeInLogs() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE]");
+    public void testLongContentWithOmitEventTypeInLogsAndUserInfo() throws Exception {
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT, EMPTY_RESULT, true, "[USER_INFO]");
+    }
+
+    @Test
+    public void testLongContentWithOmitEventTypeInLogsAndClientInfo() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT, EMPTY_RESULT, true, "[CLIENT_INFO]");
+    }
+
+    @Test
+    public void testLongContentWithOmitEventTypeInLogsAndServerInfo() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, true, "[-> SERVER_INFO]");
+    }
+
+    @Test
+    public void testLongContentWithoutOmitEventTypeInLogs() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, false, "[EVENT_TYPE]");
     }
 
     @Test
     public void testLogContentWhenClientInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,SIS_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE USER_INFO -> SERVER_INFO]");
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,SIS_RESULT, false, "[EVENT_TYPE USER_INFO -> SERVER_INFO]");
     }
 
 
     @Test
     public void testLogContentWhenUserInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,SIS_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE CLIENT_INFO -> SERVER_INFO]");
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,SIS_RESULT, false, "[EVENT_TYPE CLIENT_INFO -> SERVER_INFO]");
     }
 
     @Test
     public void testLogContentWhenClientInfoEmptyAndServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE USER_INFO]");
+        runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,EMPTY_RESULT, false, "[EVENT_TYPE USER_INFO]");
     }
 
     @Test
     public void testLogContentWhenUserInfoEmptyAndServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE CLIENT_INFO]");
+        runTest(ETL_RESULT, EMPTY_RESULT, CIS_RESULT,EMPTY_RESULT, false, "[EVENT_TYPE CLIENT_INFO]");
     }
 
     @Test
     public void testLogContentWhenUserInfoAndClientInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE -> SERVER_INFO]");
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, false, "[EVENT_TYPE -> SERVER_INFO]");
     }
 
     @Test
     public void testLogContentWhenServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE USER_INFO:CLIENT_INFO]");
+        runTest(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, false, "[EVENT_TYPE USER_INFO:CLIENT_INFO]");
     }
 
     @Test
     public void testLogContentWhenUserInfoEmptyAndClientInfoEmptyAndServerInfoEmpty() throws Exception {
-        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, NOT_OMIT_EVENT_TYPE, "[EVENT_TYPE]");
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, false, "[EVENT_TYPE]");
     }
 
 
@@ -169,7 +185,11 @@ public class LogPrefixAppenderTest {
         whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
 
         //Since everything is mocked these booleans don't much matter aside from the later verifies
-        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null, omitEventTypeInLogs);
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null);
+
+        // Using reflection API to set omitEventTypeInLogs field in LogPrefixAppender.
+        setOmitEventTypeInLogsFieldUsingReflection(lpa, omitEventTypeInLogs);
+
         String actualResult =   lpa.appendTo(testLoggerName, testEventType, testLogMessage);
 
         StringBuilder expectedResult = new StringBuilder();
@@ -181,5 +201,11 @@ public class LogPrefixAppenderTest {
         expectedResult.append("-MESSAGE");
 
         assertEquals(expectedResult.toString() , actualResult);
+    }
+
+    private static void setOmitEventTypeInLogsFieldUsingReflection(LogPrefixAppender lpa, boolean omitEventTypeInLogs) throws NoSuchFieldException, IllegalAccessException {
+        Field omitEventTypeInLogsField = lpa.getClass().getDeclaredField("omitEventTypeInLogs");
+        omitEventTypeInLogsField.setAccessible(true);
+        omitEventTypeInLogsField.setBoolean(lpa,omitEventTypeInLogs);
     }
 }

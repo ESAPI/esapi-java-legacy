@@ -15,7 +15,11 @@
 
 package org.owasp.esapi.logging.appender;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger.EventType;
+import org.owasp.esapi.errors.ConfigurationException;
+
+import static org.owasp.esapi.PropNames.OMIT_EVENT_TYPE_IN_LOGS;
 
 /**
  * LogAppender Implementation which can prefix the common logger information for
@@ -36,7 +40,17 @@ public class LogPrefixAppender implements LogAppender {
     /** Application Name to record. */
     private final String appName;
     /** Whether to omit event type in logs or not. */
-    private final boolean omitEventTypeInLogs;
+    private static boolean omitEventTypeInLogs;
+
+    static {
+
+        try {
+            omitEventTypeInLogs =
+                    ESAPI.securityConfiguration().getBooleanProp(OMIT_EVENT_TYPE_IN_LOGS);
+        } catch (ConfigurationException ex) {
+            omitEventTypeInLogs = false;
+        }
+    }
 
     /**
      * Ctr.
@@ -46,23 +60,17 @@ public class LogPrefixAppender implements LogAppender {
      * @param logServerIp        Whether or not to record server ip information
      * @param logApplicationName Whether or not to record application name
      * @param appName            Application Name to record.
-     * @param omitEventTypeInLogs Application Name to record.
      */
-    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean omitEventTypeInLogs) {
+    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
         this.logUserInfo = logUserInfo;
         this.logClientInfo = logClientInfo;
         this.logServerIp = logServerIp;
         this.logApplicationName = logApplicationName;
         this.appName = appName;
-        this.omitEventTypeInLogs = omitEventTypeInLogs;
     }
 
     @Override
     public String appendTo(String logName, EventType eventType, String message) {
-        if (omitEventTypeInLogs) {
-            return message;
-        }
-
         EventTypeLogSupplier eventTypeSupplier = new EventTypeLogSupplier(eventType);
 
         UserInfoSupplier userInfoSupplier = new UserInfoSupplier();
@@ -75,7 +83,7 @@ public class LogPrefixAppender implements LogAppender {
         serverInfoSupplier.setLogServerIp(logServerIp);
         serverInfoSupplier.setLogApplicationName(logApplicationName, appName);
 
-        String eventTypeMsg = eventTypeSupplier.get().trim();
+        String eventTypeMsg = omitEventTypeInLogs ? "" : eventTypeSupplier.get().trim();
         String userInfoMsg = userInfoSupplier.get().trim();
         String clientInfoMsg = clientInfoSupplier.get().trim();
         String serverInfoMsg = serverInfoSupplier.get().trim();
@@ -89,7 +97,7 @@ public class LogPrefixAppender implements LogAppender {
         String[] optionalPrefixContent = new String[] {userInfoMsg + clientInfoMsg, serverInfoMsg};
 
         StringBuilder logPrefix = new StringBuilder();
-        //EventType is always appended
+
         logPrefix.append(eventTypeMsg);
 
         for (String element : optionalPrefixContent) {
@@ -99,6 +107,11 @@ public class LogPrefixAppender implements LogAppender {
             }
         }
 
-        return String.format(RESULT_FORMAT, logPrefix.toString(), message);
+        if (logPrefix.toString().trim().isEmpty()) {
+            // if there isn't any log prefix we just send back the message without touching it
+            return message;
+        }
+
+        return String.format(RESULT_FORMAT, logPrefix.toString().trim(), message);
     }
 }
