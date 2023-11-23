@@ -109,8 +109,6 @@ public class LogPrefixAppenderTest {
         assertEquals(testLoggerName, logNameCapture.getValue());
     }
 
-
-
     @Test
     public void testLogContentWhenClientInfoEmpty() throws Exception {
         runTest(ETL_RESULT, UIS_RESULT, EMPTY_RESULT,SIS_RESULT, "[EVENT_TYPE USER_INFO -> SERVER_INFO]");

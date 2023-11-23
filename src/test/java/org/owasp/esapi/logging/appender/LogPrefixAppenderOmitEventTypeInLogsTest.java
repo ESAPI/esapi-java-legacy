@@ -1,12 +1,10 @@
 package org.owasp.esapi.logging.appender;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentCaptor;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.Logger.EventType;
@@ -15,12 +13,8 @@ import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.lang.reflect.Field;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.owasp.esapi.PropNames.OMIT_EVENT_TYPE_IN_LOGS;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
