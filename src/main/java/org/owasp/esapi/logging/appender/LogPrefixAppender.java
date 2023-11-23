@@ -107,11 +107,7 @@ public class LogPrefixAppender implements LogAppender {
             }
         }
 
-        if (logPrefix.toString().trim().isEmpty()) {
-            // if there isn't any log prefix we just send back the message without touching it
-            return message;
-        }
-
-        return String.format(RESULT_FORMAT, logPrefix.toString().trim(), message);
+        String prefix = logPrefix.toString().trim();
+        return prefix.isEmpty() ? message : String.format(RESULT_FORMAT, prefix, message);
     }
 }
