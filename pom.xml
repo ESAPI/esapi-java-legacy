@@ -256,6 +256,21 @@
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-css</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-css</artifactId>
+            <version>1.17</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-logging</groupId>
+                    <artifactId>commons-logging</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
@@ -950,6 +965,74 @@
                     </plugin>
             -->
 
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jakarta</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.transformer</groupId>
+                        <artifactId>transformer-maven-plugin</artifactId>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <rules>
+                                <jakartaDefaults>true</jakartaDefaults>
+                            </rules>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>jakarta</classifier>
+                                    <artifact>
+                                        <groupId>org.owasp.esapi</groupId>
+                                        <artifactId>esapi</artifactId>
+                                        <version>${project.version}</version>
+                                    </artifact>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>javadoc-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <classifier>jakarta-javadoc</classifier>
+                                    <artifact>
+                                        <groupId>org.owasp.esapi</groupId>
+                                        <artifactId>esapi</artifactId>
+                                        <version>${project.version}</version>
+                                        <classifier>javadoc</classifier>
+                                    </artifact>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>source-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <classifier>jakarta-sources</classifier>
+                                    <artifact>
+                                        <groupId>org.owasp.esapi</groupId>
+                                        <artifactId>esapi</artifactId>
+                                        <version>${project.version}</version>
+                                        <classifier>sources</classifier>
+                                    </artifact>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>
