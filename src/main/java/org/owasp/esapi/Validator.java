@@ -1,7 +1,7 @@
 /**
  * OWASP Enterprise Security API (ESAPI)
  *
- * This file is part of the Open Web Application Security Project (OWASP)
+ * This file is part of the Open Worldwide Application Security Project (OWASP)
  * Enterprise Security API (ESAPI) project. For details, please see
  * <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
  *
@@ -36,11 +36,21 @@ import org.owasp.esapi.errors.ValidationException;
  * this interface returns boolean results because not all validation problems
  * are security issues. Boolean returns allow developers to handle both valid
  * and invalid results more cleanly than exceptions.
- * <P>
- * Implementations must adopt a "whitelist" approach to validation where a
+ * <p>
+ * Implementations must adopt a "allow-list" approach to validation where a
  * specific pattern or character set is matched. "Blacklist" approaches that
  * attempt to identify the invalid or disallowed characters are much more likely
  * to allow a bypass with encoding or other tricks.
+ * </p><p>
+ * <b>CAUTION:</b> There are many methods that take multiple (or only!) {@code String}
+ * arguments. Be careful that you do not mix up the order of these, because for
+ * some methods such as {@code isValidSafeHTML} if you were to confuse the order of
+ * {@code context} and {@code input} arguments, you would not be verifying what
+ * you thought you were and it could have serious security consequences as a
+ * result. When there are 2 these {@code String} parameters&mdash;{@code context} and
+ * {@code input} arguments&mdash;the * {@code context} argument is always first.
+ * See the individual method documentation for additional details.
+ * </p>
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -50,11 +60,13 @@ public interface Validator {
 
     /**
      * Add a validation rule to the registry using the "type name" of the rule as the key.
+     * @param rule The {@link ValidationRule} to add.
      */
     void addRule( ValidationRule rule );
 
     /**
      * Get a validation rule from the registry with the "type name" of the rule as the key.
+     * @param name The "type" name of a {@link ValidationRule} to retrieve.
      */
     ValidationRule getRule( String name );
 
@@ -64,6 +76,18 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)} with {@code canonicalize=true}
      * and returns true if no exceptions are thrown.
      *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param type
+     *        The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws IntrusionException;
@@ -75,6 +99,20 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)} with {@code canonicalize=true}
      * and returns true if no exceptions are thrown.
      *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param type
+     *        The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
+     *
      * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
@@ -85,28 +123,72 @@ public interface Validator {
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}
      * and returns true if no exceptions are thrown.
      *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param type
+     *        The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param canonicalize
+     *         If true, the {@code input} if first canonicalized before being validated.
+     *
      * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid,
+     * Returns true if {@code input} is valid;
      * any validation exceptions are added to the supplied {@code errorList}.
      * <p>
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}
      * and returns true if no exceptions are thrown.
+     *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param type
+     *        The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param canonicalize
+     *         If true, the {@code input} if first canonicalized before being validated.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns validated canonicalized {@code input} as a String.
+     * Returns the validated, canonicalized {@code input} as a String.
      * <p>
      * Calls {@link #getValidInput(String, String, String, int, boolean, boolean)}
      * with {@code canonicalize=true}.
      *
-     * @throws ValidationException Input is invalid.
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param type
+     *        The regular expression name which maps to the actual regular expression from "ESAPI.properties".
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     *
+     * @throws ValidationException Input is invalid, based on the regex associated with {@code type}.
      * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
@@ -134,7 +216,7 @@ public interface Validator {
      *
      * @return The canonicalized user input.
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid, based on the regex associated with {@code type}.
      * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidInput(String context, String input, String type, int maxLength, boolean allowNull, boolean canonicalize) throws ValidationException, IntrusionException;
@@ -200,7 +282,7 @@ public interface Validator {
      *
      * @return A valid date as a {@link java.util.Date}
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid, based on the regex associated with {@code type}.
      * @throws IntrusionException Input likely indicates an attack.
      */
     Date getValidDate(String context, String input, DateFormat format, boolean allowNull) throws ValidationException, IntrusionException;
@@ -222,7 +304,13 @@ public interface Validator {
      * and returns true if no exceptions are thrown.
      *
      * @throws IntrusionException Input likely indicates an attack.
+     *
+     * @deprecated Deprecated as of ESAPI 2.5.3.0. This method will be removed in 1 year
+     * after this ESAPI 2.5.3.0 release.
+     *
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm">GitHub Security Advisory: Validator.isValidSafeHTML is being deprecated and will be deleted in 1 year</a>
      */
+    @Deprecated
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
     /**
@@ -233,43 +321,72 @@ public interface Validator {
      * and returns true if no exceptions are thrown.
      *
      * @throws IntrusionException Input likely indicates an attack.
+     *
+     * @deprecated Deprecated as of ESAPI 2.5.3.0. This method will be removed in 1 year
+     * after this ESAPI 2.5.3.0 release.
+     *
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm">GitHub Security Advisory: Validator.isValidSafeHTML is being deprecated and will be deleted in 1 year</a>
      */
+    @Deprecated
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns canonicalized and validated "safe" HTML that does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else.
+     * Canonicalize and then sanitize the input so that it is "safe" for renderinger in an HTML context (i.e., that
+     * it does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else). Note that the resulting
+     * returned value may omit input that is considered dangerous and cannot be safely sanitized and other input
+     * that gets HTML encoded (e.g., a single quote (') might get chaged to "&quot;").
      * <p>
-     * The default behavior of this check depends on the {@code antisamy-esapi.xml} configuration.
-     * Implementors should reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
-     * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
+     * The default behavior of this check depends on the {@code antisamy-esapi.xml} AntiSamy policy configuration file
+     * (or an alternate filename, specified via the "Validator.HtmlValidationConfigurationFile" property in your
+     * {@code ESAPI.properties} file. Implementors wishing to alter the AntiSamy policy configuration file should
+     * reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
+     * on how to do HTML validation in a allow-list way, as this is an extremely difficult problem.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
      *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual user input data to validate.
      * @param maxLength
-     *         The maximum String length allowed.
+     *         The maximum {@code String} length allowed for {@code input}.
      * @param allowNull
      *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
      *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
-     * @return Valid safe HTML
+     * @return A string representing the canonicalized and sanitized input that is safe for rendering in an HTML context.
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid, based on the regex associated with {@code type}.
      * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws ValidationException, IntrusionException;
 
     /**
-     * Returns canonicalized and validated "safe" HTML that does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else,
-     * any validation exceptions are added to the supplied {@code errorList}.
+     * Canonicalize and then sanitize the input so that it is "safe" for renderinger in an HTML context (i.e., that
+     * it does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else). Note that the resulting
+     * returned value may omit input that is considered dangerous and cannot be safely sanitized and other input
+     * that gets HTML encoded (e.g., a single quote (') might get chaged to "&quot;").
      * <p>
-     * The default behavior of this check depends on the {@code antisamy-esapi.xml} configuration.
-     * Implementors should reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
-     * on how to do HTML validation in a whitelist way, as this is an extremely difficult problem.
+     * The default behavior of this check depends on the {@code antisamy-esapi.xml} AntiSamy policy configuration file
+     * (or an alternate filename, specified via the "Validator.HtmlValidationConfigurationFile" property in your
+     * {@code ESAPI.properties} file. Implementors wishing to alter the AntiSamy policy configuration file should
+     * reference the <a href="https://owasp.org/www-project-antisamy/">OWASP AntiSamy project</a> for ideas
+     * on how to do HTML validation in a allow-list way, as this is an extremely difficult problem.
      * <p>
      * Calls {@link #getValidSafeHTML(String, String, int, boolean)}.
+     *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "LoginPage_UsernameField").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
+     *
+     * @return A string representing the canonicalized and sanitized input that is safe for rendering in an HTML context.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
@@ -303,7 +420,7 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         A descriptive name of the parameter that you are validating (e.g., PaymentPage_CreditCard).
      *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual user input data to validate.
@@ -313,7 +430,7 @@ public interface Validator {
      *
      * @return A valid credit card number
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid because it doesn't appear to be a valid credit card account number.
      * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidCreditCard(String context, String input, boolean allowNull) throws ValidationException, IntrusionException;
@@ -367,7 +484,7 @@ public interface Validator {
      *
      * @return A valid directory path
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid (e.g., the provided input is not a directory).
      * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidDirectoryPath(String context, String input, File parent, boolean allowNull) throws ValidationException, IntrusionException;
@@ -459,7 +576,9 @@ public interface Validator {
      *
      * @return A valid file name
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid (e.g., {@code input} refers to a non-existant file, does not have a
+     *         valid file extension as per {@code allowedExtensions}, does not match the canonicalized path,
+     *         exceeds a maximum length of 255 characters, etc.
      * @throws IntrusionException Input likely indicates an attack.
      */
     String getValidFileName(String context, String input, List<String> allowedExtensions, boolean allowNull) throws ValidationException, IntrusionException;
@@ -516,16 +635,32 @@ public interface Validator {
      *
      * @return A validated number as a double.
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is invalid; that is, not a number in the range
+     *         of [{@code minValue}, {@code maxValue}].
      * @throws IntrusionException Input likely indicates an attack.
      */
     Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException;
 
     /**
-     * Returns a validated number as a double within the range of minValue to maxValue,
-     * any validation exceptions are added to the supplied {@code errorList}.
+     * Returns a validated number as a double within the range of
+     * [{@code minValue}, {@code maxValue}]; any validation
+     * exceptions are added to the supplied {@code errorList}.
      * <p>
      * Calls {@link #getValidNumber(String, String, long, long, boolean)}.
+     *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "OrderPage_Quantity").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param minValue
+     *         Lowest legal value for input.
+     * @param maxValue
+     *         Highest legal value for input.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
@@ -536,6 +671,19 @@ public interface Validator {
      * <p>
      * Calls {@link #getValidInteger(String, String, int, int, boolean)},
      * and returns true if no exceptions are thrown.
+     *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "OrderPage_Quantity").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param minValue
+     *         Lowest legal value for input.
+     * @param maxValue
+     *         Highest legal value for input.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
      *
      * @throws IntrusionException Input likely indicates an attack.
      */
@@ -548,6 +696,20 @@ public interface Validator {
      * Calls {@link #getValidInteger(String, String, int, int, boolean)}
      * and returns true if no exceptions are thrown.
      *
+     * @param context
+     *         A descriptive name of the parameter that you are validating (e.g., "OrderPage_Quantity").
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate.
+     * @param minValue
+     *         Lowest legal value for input.
+     * @param maxValue
+     *         Highest legal value for input.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
+     *
      * @throws IntrusionException Input likely indicates an attack.
      */
     boolean isValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
@@ -559,7 +721,7 @@ public interface Validator {
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
      * @param context
-     *         A descriptive name of the parameter that you are validating (e.g., LoginPage_UsernameField).
+     *         A descriptive name of the parameter that you are validating (e.g., OrderPage_Quantity).
      *         This value is used by any logging or error handling that is done with respect to the value passed in.
      * @param input
      *         The actual input data to validate.
@@ -573,7 +735,7 @@ public interface Validator {
      *
      * @return A validated number as an integer.
      *
-     * @throws ValidationException Input is invalid.
+     * @throws ValidationException Input is not a valid integer in the range of [{@code minValue}, {@code maxValue}].
      * @throws IntrusionException Input likely indicates an attack.
      */
     Integer getValidInteger(String context, String input, int minValue, int maxValue, boolean allowNull) throws ValidationException, IntrusionException;

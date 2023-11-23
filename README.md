@@ -45,7 +45,7 @@ Development for the "next generation" of ESAPI (starting with ESAPI 3.0), will b
 GitHub repository at [https://github.com/ESAPI/esapi-java](https://github.com/ESAPI/esapi-java).
 
 **IMPORTANT NOTES:**
-* The default branch for ESAPI legacy is the 'develop' branch (rather than the 'main' (formerly 'master') branch), where future development, bug fixes, etc. are now being done. The 'main' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.5.2.0 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
+* The default branch for ESAPI legacy is the 'develop' branch (rather than the 'main' (formerly 'master') branch), where future development, bug fixes, etc. are now being done. The 'main' branch is now marked as "protected"; it reflects the latest stable ESAPI release (2.5.3.0 as of this date). Note that this change of making the 'develop' branch the default may affect any pull requests that you were intending to make.
 * Also, the *minimal* baseline Java version to use ESAPI is now Java 8. (This was changed from Java 7 during the 2.4.0.0 release.)
 * Support was dropped for Log4J 1 during ESAPI 2.5.0.0 release. If you need it, configure it via SLF4J. See  the
   [2.5.0.0 release notes](https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.5.0.0-release-notes.txt)
@@ -79,7 +79,7 @@ link to the specific release notes.
   Starting with release 2.4.0.0, Java 8 or later is required.
 
 # Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.5.2.0.
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.5.3.0.
 All the *regular* ESAPI jars, with the exception of the ESAPI configuration
 jar (i.e., esapi-2.#.#.#-configuration.jar) and its associated detached
 GPG signature, are available from Maven Central. The ESAPI configuration
@@ -101,6 +101,15 @@ to be using such classes directly in your code. At the ESAPI team's discretion,
 it will also not apply for any known exploitable vulnerabilities for which
 no available workaround exists.
 
+## Exceptions to Deprecation Policy
+We will make some exceptions to the normal 2 year period. In particular, in the
+cases were we believe that keeping a specific deprecated class or method around
+can introduce security issues (generally because many of you have a habit of
+completely ignoring deprecation warnings), we sometimes will shorten that 2 year
+period. When we decide to do that, we will announce that as part of the
+deprecation message.
+
+## Log4J 1.x Removal
 **IMPORTANT NOTES:** As of ESAPI 2.5.0.0, all the Log4J 1.x related code
 has been removed from the ESAPI code base (with the exception of some
 references in documentation). If you must, you still should be able to
