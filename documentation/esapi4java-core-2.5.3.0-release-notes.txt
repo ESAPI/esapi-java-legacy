@@ -1,9 +1,5 @@
-@@@@ IMPORTANT: Be sure to 1) save in DOS text format, and 2) Delete this line and others starting with @@@@
-@@@@             Edit this file in vim with       :set tw=0
-@@@@            Meant to be used with   scripts/newReleaseNotes.sh and the 'vars.*' scripts there.
-@@@@    There are specific references to ESAPI 2.5.0.0 and other old releases in this file. Do NOT change the version #s. They are there for a reason.
 Release notes for ESAPI 2.5.3.0
-    Release date: 2023-11-22
+    Release date: 2023-11-24
     Project leaders:
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Matt Seil <matt.seil@owasp.org>
@@ -13,17 +9,13 @@ Previous release: ESAPI 2.5.2.0, 2023-04-12
 
 Executive Summary: Important Things to Note for this Release
 ------------------------------------------------------------
-@@@@ View previous release notes to see examples of what to put here. This is typical. YMMV.
-@@@@ Obviously, you should summarize any major changes / new features here.
-This is a patch release with the primary intent of updating some dependencies, some with known vulnerabilities. Details follow.
-@@@@ Provide a sentence or to
-* This is a patch release, with the primary intent of updating ESAPI's AntiSamy dependency from 1.7.3 to 1.7.4. AntiSamy 1.7.4 was released to address an XSS vulnerability in AntiSamy (CVE-2023-43643). Testing ESAPI's use of AntiSamy along with ESAPI's default antsamy-esapi.xml AntiSamy policy file, shows there is no exploitable path of this CVE via ESAPI. This is because ESAPI's AntiSamy policy file is ultra-strict. (Of course, YMMV if you are not using the default AntiSamy policy file or are customized it to disable the 'preserveComments' directive.)
+This is a patch release with the primary intent of providing a Jakarta compatible version of ESAPI (see ESAPI Discussion https://github.com/ESAPI/esapi-java-legacy/discussions/768) as well as updating some dependencies, some with known vulnerabilities. Details follow.
+* We updated ESAPI's AntiSamy dependency from 1.7.3 to 1.7.4. AntiSamy 1.7.4 was released to address an XSS vulnerability in AntiSamy (CVE-2023-43643). Testing ESAPI's use of AntiSamy along with ESAPI's default antsamy-esapi.xml AntiSamy policy file, indicated there was no exploitable path of this CVE via ESAPI. This is because ESAPI's AntiSamy policy file is ultra-strict. (Of course, YMMV if you are not using the default AntiSamy policy file or are customized it to disable the 'preserveComments' directive.)
 * We have deprecated both of ESAPI's Validator.isValidSafeHTML interfaces, as we discovered that they cannot be guaranteed safe. Note that we intend to REMOVE both of these interfaces one year after the ESAPI 2.5.3.0 release. For more details, see GitHub Security Advisory https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm. There is also an accompanying "ESAPI Security Bulletin 12" (https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin12.pdf). The Security Bulletin explains why we did not submit this as a CVE as well as explains some potential workarounds that may work for you.
 * Changed ESAPI so that the default RSA modulus length (sometimes referred to as the key size) from 1024-bits to 2048-bits. Note that if you are using an old version of ESAPI.properties file prior to 2.5.3.0 and are using any of the Encryptor interfaces that directly or indirectly use digital signatures (i.e., sign, verifySignature, seal, unseal, verifySeal), you may wish to consider updating properties:
         Encryptor.DigitalSignatureAlgorithm=SHA256withDSA       # The old SHA1withDSA doesn't support 2048-bit RSA modulus length
         Encryptor.DigitalSignatureKeyLength=2048
     Note that if you have persisted previous digital signatures that you must continue to verify, you will have to regenerate them.
-@@@@    NOTE: This might be reserved for a 2.6.0.0 release, in which case the next line should be removed.
 * Thanks to a PR by @jcputney (PR #799), I have attempted to upload additional artifacts to Maven Central that will be a transformed jar suitable for use with the new 'jakarata.servlet' changes for Jakarata EE 9 and later. (Previously, 'javax.servlet' was the name space). Because we are still supporting JDK 8 at this point, we still need to support the 'javax.servlet' namespace as well. In addition to the standard jar artifacts, there should be a new esapi-<release>-jakarta.jar (which uses 'jakarta.servlet' instead of 'javax.servlet' namespace) as well as corresponding *-javadoc.jar and *-sources.jar files. I am not sure it will work as we have no tests for it, but looing at the binaries, it seems like it should.
     For additional details, see:
         https://github.com/ESAPI/esapi-java-legacy/pull/799
@@ -65,8 +57,6 @@ ESAPI 2.5.3.0 release:
 
 Issue #         GitHub Issue Title
 ----------------------------------------------------------------------------------------------
-@@@@ Capture issue #s and 1 line desription from above GitHub url
-@@@@ Insert here and massage until it looks pretty. Recommend alignment with spaces instead of tabs.
 560             Could not initialize class org.owasp.esapi.logging.java.JavaLogFactory (ESAPI 2.2.1.0)
 760             Could not initialize class org. Owasp. Esapi. Reference. DefaultValidator
 775             Add documenttion to CONTRIBUTING-TO-ESAPI.txt to mention signed commits are now required.
@@ -82,7 +72,8 @@ Issue #         GitHub Issue Title
         Changes Requiring Special Attention
 
 -----------------------------------------------------------------------------
-@@@@ NOTE any special notes here. Probably leave this one, but I would suggest noting additions BEFORE this.
+Deprecated methods to be removed 1 year after the 2.5.3.0 release
+* As of the ESAPI 2.5.3.0 release, both Validator.isValidSafeHTML have been deprecated and will be removed one year after the 2.5.3.0 release date.
 
 Important JDK Support Announcement
 * ESAPI 2.3.0.0 was the last Java release to support Java 7. ESAPI 2.4.0 requires using Java 8 or later. See the ESAPI 2.4.0.0 release notes (https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/esapi4java-core-2.4.0.0-release-notes.txt) for details as to the reason.
@@ -118,17 +109,13 @@ The effect of upgrade to AntiSamy 1.7.4 in ESAPI 2.5.3.0 can result in ESAPI's V
 
 -----------------------------------------------------------------------------
 
-Developer Activity Report (Changes between release 2.5.2.0 and 2.5.3.0, i.e., between 2023-04-12 and 2023-11-22)
+Developer Activity Report (Changes between release 2.5.2.0 and 2.5.3.0, i.e., between 2023-04-12 and 2023-11-24)
 Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
 
-@@@@
-@@@@ This section needs to be manually updated.
-@@@@ See file:///home/wallk/work/esapi-work/kww-2.5.3.0-prep/target/site/dev-activity.html for assistance.
-@@@@
 Developer       Total       Total Number        # Merged
 (GitHub ID)     commits   of Files Changed        PRs
 ========================================================
-kwwall          36	             37             2
+kwwall          40	             37             2
 noloader	     6	             12             3
 preetgami      	 1                1             1
 robstoll         2                2             1
@@ -156,15 +143,65 @@ CHANGELOG:      Create your own. May I suggest:
 Direct and Transitive Runtime and Test Dependencies:
 
         $ mvn -B dependency:tree
-@@@@ Include output from 'mvn -B dependency:tree' here
-@@@@ TODO _after_ running:
-@@@@    mvn -U versions:display-plugin-updates
-@@@@    mvn -U versions:display-dependency-updates
-@@@@    mvn -U versions:display-property-updates
-
+        ...
+        [INFO] --- maven-dependency-plugin:3.6.1:tree (default-cli) @ esapi ---
+        [INFO] org.owasp.esapi:esapi:jar:2.5.3.0
+        [INFO] +- javax.servlet:javax.servlet-api:jar:3.1.0:provided
+        [INFO] +- javax.servlet.jsp:javax.servlet.jsp-api:jar:2.3.3:provided
+        [INFO] +- xom:xom:jar:1.3.9:compile
+        [INFO] +- commons-beanutils:commons-beanutils:jar:1.9.4:compile
+        [INFO] |  +- commons-logging:commons-logging:jar:1.2:compile
+        [INFO] |  \- commons-collections:commons-collections:jar:3.2.2:compile
+        [INFO] +- commons-configuration:commons-configuration:jar:1.10:compile
+        [INFO] +- commons-lang:commons-lang:jar:2.6:compile
+        [INFO] +- commons-fileupload:commons-fileupload:jar:1.5:compile
+        [INFO] +- org.apache.commons:commons-collections4:jar:4.4:compile
+        [INFO] +- org.apache-extras.beanshell:bsh:jar:2.0b6:compile
+        [INFO] +- org.owasp.antisamy:antisamy:jar:1.7.4:compile
+        [INFO] |  +- org.htmlunit:neko-htmlunit:jar:3.6.0:compile
+        [INFO] |  +- org.apache.httpcomponents.client5:httpclient5:jar:5.2.1:compile
+        [INFO] |  |  \- org.apache.httpcomponents.core5:httpcore5-h2:jar:5.2:compile
+        [INFO] |  +- org.apache.httpcomponents.core5:httpcore5:jar:5.2.3:compile
+        [INFO] |  +- org.apache.xmlgraphics:batik-css:jar:1.17:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-shared-resources:jar:1.17:compile
+        [INFO] |  |  +- org.apache.xmlgraphics:batik-util:jar:1.17:compile
+        [INFO] |  |  |  +- org.apache.xmlgraphics:batik-constants:jar:1.17:compile
+        [INFO] |  |  |  \- org.apache.xmlgraphics:batik-i18n:jar:1.17:compile
+        [INFO] |  |  \- org.apache.xmlgraphics:xmlgraphics-commons:jar:2.9:compile
+        [INFO] |  +- xerces:xercesImpl:jar:2.12.2:compile
+        [INFO] |  \- xml-apis:xml-apis-ext:jar:1.3.04:compile
+        [INFO] +- org.slf4j:slf4j-api:jar:2.0.6:compile
+        [INFO] +- xml-apis:xml-apis:jar:1.4.01:compile
+        [INFO] +- commons-io:commons-io:jar:2.14.0:compile
+        [INFO] +- com.github.spotbugs:spotbugs-annotations:jar:4.8.1:compile
+        [INFO] |  \- com.google.code.findbugs:jsr305:jar:3.0.2:compile
+        [INFO] +- commons-codec:commons-codec:jar:1.15:test
+        [INFO] +- junit:junit:jar:4.13.2:test
+        [INFO] +- org.bouncycastle:bcprov-jdk15on:jar:1.70:test
+        [INFO] +- org.hamcrest:hamcrest-core:jar:2.2:test
+        [INFO] |  \- org.hamcrest:hamcrest:jar:2.2:test
+        [INFO] +- org.powermock:powermock-api-mockito2:jar:2.0.9:test
+        [INFO] |  \- org.powermock:powermock-api-support:jar:2.0.9:test
+        [INFO] +- org.mockito:mockito-core:jar:3.12.4:test
+        [INFO] |  +- net.bytebuddy:byte-buddy:jar:1.11.13:test
+        [INFO] |  +- net.bytebuddy:byte-buddy-agent:jar:1.11.13:test
+        [INFO] |  \- org.objenesis:objenesis:jar:3.2:test
+        [INFO] +- org.powermock:powermock-core:jar:2.0.9:test
+        [INFO] |  \- org.javassist:javassist:jar:3.27.0-GA:test
+        [INFO] +- org.powermock:powermock-module-junit4:jar:2.0.9:test
+        [INFO] |  \- org.powermock:powermock-module-junit4-common:jar:2.0.9:test
+        [INFO] +- org.powermock:powermock-reflect:jar:2.0.9:test
+        [INFO] \- org.openjdk.jmh:jmh-core:jar:1.37:test
+        [INFO]    +- net.sf.jopt-simple:jopt-simple:jar:5.0.4:test
+        [INFO]    \- org.apache.commons:commons-math3:jar:3.6.1:test
+        [INFO] ------------------------------------------------------------------------
+        [INFO] BUILD SUCCESS
+        [INFO] ------------------------------------------------------------------------
+        [INFO] Total time:  1.701 s
+        [INFO] Finished at: 2023-11-24T13:01:00-05:00
+        [INFO] ------------------------------------------------------------------------
 -----------------------------------------------------------------------------
 
-@@@@ Review these notes, especially the reference to the AntiSamy version information.
 Acknowledgments:
     Thanks to @noloader, @preetgami, and @jcputney for submitting PRs to help move ESAPI forward.  And thanks to Matt Seil, Jeremiah Stacey, and all the ESAPI users who make this worthwhile. This is for you.
 
