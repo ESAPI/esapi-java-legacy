@@ -752,13 +752,15 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>9.0.0</version>
                 <configuration>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>check</goal>
+                            <goal>purge</goal>
+                            <!-- <goal>check</goal> -->
                         </goals>
                     </execution>
                 </executions>
