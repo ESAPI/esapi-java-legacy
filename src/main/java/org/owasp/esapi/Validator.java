@@ -1,4 +1,4 @@
-/**
+/*
  * OWASP Enterprise Security API (ESAPI)
  *
  * This file is part of the Open Worldwide Application Security Project (OWASP)
@@ -298,34 +298,87 @@ public interface Validator {
     Date getValidDate(String context, String input, DateFormat format, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid.
+     * Returns {@code true} if the parameter {@code input} is valid and <i>presumably</i> safe.
      * <p>
-     * Calls {@link #getValidSafeHTML(String, String, int, boolean)},
-     * and returns true if no exceptions are thrown.
+     * <b>WARNING:</b> Note that the only safe way to use this method is if you
+     * instead of using the passed-in parameter '{@code input}' (which should
+     * not be completely trusted as-is, regardless of whether this method returns
+     * {@code true}), you first sanitize (i.e., cleanse) the parameter '{@code input}'
+     * by first by calling one of the {@code getValidSafeHTML} methods on it. For
+     * additional details explaining the rationale for this, please see the referenced
+     * ESAPI Security Bulletin 12 in the referenced GitHub Security Advisory
+     * mentioned in the "See Also" section below.
      *
-     * @throws IntrusionException Input likely indicates an attack.
+     * @param context
+     *         A descriptive tag name for the input that you are validating (e.g., user_comment).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate. Note that the expectation
+     *         is that this input is allowed to contain "safe" HTML markup,
+     *         otherwise you should not be using this {@code Validator} method
+     *         at all.
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     *
+     * @return True if the {@code input} is <i>presumably</i> safe, otherwise false.
+     *
+     * @throws IntrusionException The parameter {@code input} likely indicates an attack.
      *
      * @deprecated Deprecated as of ESAPI 2.5.3.0. This method will be removed in 1 year
-     * after this ESAPI 2.5.3.0 release.
+     * after the ESAPI 2.5.3.0 release date (2023-11-24).
      *
-     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm">GitHub Security Advisory: Validator.isValidSafeHTML is being deprecated and will be deleted in 1 year</a>
-     */
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm"
+     * target="_blank" rel="noreferrer noopener">GitHub Security Advisory: Validator.isValidSafeHTML
+     * is being deprecated and will be deleted in 1 year</a>
+     */ 
     @Deprecated
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) throws IntrusionException;
 
     /**
-     * Returns true if {@code input} is valid,
-     * any validation exceptions are added to the supplied {@code errorList}.
+     * Returns {@code true} if the parameter {@code input} is valid and <i>presumably</i> safe.
+     * Any exceptions are added to the supplied {@code errorList} parameter.
      * <p>
-     * Calls {@link #getValidSafeHTML(String, String, int, boolean)}
+     * <p>
+     * Calls {@link #getValidSafeHTML(String, String, int, boolean)},
      * and returns true if no exceptions are thrown.
+     * <p>
+     * <b>WARNING:</b> Note that the only safe way to use this method is if you
+     * instead of using the passed-in parameter '{@code input}' (which should
+     * not be completely trusted as-is, regardless of whether this method returns
+     * {@code true}), you first sanitize (i.e., cleanse) the parameter '{@code input}'
+     * by first by calling one of the {@code getValidSafeHTML} methods on it. For
+     * additional details explaining the rationale for this, please see the referenced
+     * ESAPI Security Bulletin 12 in the referenced GitHub Security Advisory
+     * mentioned in the "See Also" section below.
      *
-     * @throws IntrusionException Input likely indicates an attack.
+     * @param context
+     *         A descriptive tag name for the input that you are validating (e.g., user_comment).
+     *         This value is used by any logging or error handling that is done with respect to the value passed in.
+     * @param input
+     *         The actual user input data to validate. Note that the expectation
+     *         is that this input is allowed to contain "safe" HTML markup,
+     *         otherwise you should not be using this {@code Validator} method
+     *         at all.
+     * @param maxLength
+     *         The maximum {@code String} length allowed for {@code input}.
+     * @param allowNull
+     *         If {@code allowNull} is true then an input that is NULL or an empty string will be legal.
+     *         If {@code allowNull} is false then NULL or an empty String will throw a ValidationException.
+     * @param errorList The error list to which any {@code ValidationException} messages are added.
+     *
+     * @return True if the {@code input} is <i>presumably</i> safe, otherwise false.
+     *
+     * @throws IntrusionException The parameter {@code input} likely indicates an attack.
      *
      * @deprecated Deprecated as of ESAPI 2.5.3.0. This method will be removed in 1 year
-     * after this ESAPI 2.5.3.0 release.
+     * after the ESAPI 2.5.3.0 release date (2023-11-24).
      *
-     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm">GitHub Security Advisory: Validator.isValidSafeHTML is being deprecated and will be deleted in 1 year</a>
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm"
+     * target="_blank" rel="noreferrer noopener">GitHub Security Advisory: Validator.isValidSafeHTML
+     * is being deprecated and will be deleted in 1 year</a>
      */
     @Deprecated
     boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errorList) throws IntrusionException;
