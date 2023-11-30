@@ -20,10 +20,14 @@ public interface ValidationRule {
      *            the value to be parsed
      * @return a validated value
      * @throws ValidationException
-     *             if any validation rules fail, <i>except</i> if the
+     *             Thrown if any validation rules fail, <i>except</i> when the
      *             <b>{@code ESAPI.properties}></b> property
-     *             "Validator.ValidationRule.getValid.ignore509Fix" is set to
-     *             {@code true}, which is the default behavior for ESAPI 2.x
+     *             "Validator.HtmlValidationAction" is set to
+     *             {@code clean}. The default <b>{@code ESAPI.properties}></b> property file
+     *             has "Validator.HtmlValidationAction" is set to {@code throw}, which results
+     *             in a {@code ValidationException} being thrown if any of the validation rules
+     *             fail.
+     *             
      *             releases. See ESAPI GitHub Issues
      *             <a href="https://github.com/ESAPI/esapi-java-legacy/issues/509}>509</a>
      *             and <a href="https://github.com/ESAPI/esapi-java-legacy/issues/521">521</a>
