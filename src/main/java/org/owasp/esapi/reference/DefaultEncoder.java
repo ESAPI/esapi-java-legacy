@@ -491,6 +491,9 @@ public class DefaultEncoder implements Encoder {
      * This will extract each piece of a URI according to parse zone as specified in <a href="https://www.ietf.org/rfc/rfc3986.txt">RFC-3986</a> section 3,
      * and it will construct a canonicalized String representing a version of the URI that is safe to
      * run regex against.
+	 * 
+	 * NOTE:  This method will obey the ESAPI.properties configurations for allowing
+	 * Mixed and Multiple Encoding URLs.  
      *
      * @param dirtyUri
      * @return Canonicalized URI string.
