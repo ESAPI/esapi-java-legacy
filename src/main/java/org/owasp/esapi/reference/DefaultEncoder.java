@@ -522,7 +522,6 @@ public class DefaultEncoder implements Encoder {
         parseMap.put(UriSegment.SCHEME, dirtyUri.getScheme());
         //authority   = [ userinfo "@" ] host [ ":" port ]
         parseMap.put(UriSegment.AUTHORITY, dirtyUri.getRawAuthority());
-        parseMap.put(UriSegment.SCHEMSPECIFICPART, dirtyUri.getRawSchemeSpecificPart());
         parseMap.put(UriSegment.HOST, dirtyUri.getHost());
         //if port is undefined, it will return -1
         Integer port = new Integer(dirtyUri.getPort());
@@ -530,9 +529,6 @@ public class DefaultEncoder implements Encoder {
         parseMap.put(UriSegment.PATH, dirtyUri.getRawPath());
         parseMap.put(UriSegment.QUERY, dirtyUri.getRawQuery());
         parseMap.put(UriSegment.FRAGMENT, dirtyUri.getRawFragment());
-
-        //Now we canonicalize each part and build our string.
-        StringBuilder sb = new StringBuilder();
 
         //Replace all the items in the map with canonicalized versions.
 
@@ -542,8 +538,7 @@ public class DefaultEncoder implements Encoder {
         boolean allowMixed = sg.getBooleanProp("Encoder.AllowMixedEncoding");
         boolean allowMultiple = sg.getBooleanProp("Encoder.AllowMultipleEncoding");
         for(UriSegment seg: set){
-            String value = canonicalize(parseMap.get(seg), allowMultiple, allowMixed);
-            value = value == null ? "" : value;
+        	String value = "";
             //In the case of a uri query, we need to break up and canonicalize the internal parts of the query.
             if(seg == UriSegment.QUERY && null != parseMap.get(seg)){
                 StringBuilder qBuilder = new StringBuilder();
@@ -571,6 +566,10 @@ public class DefaultEncoder implements Encoder {
                 } catch (UnsupportedEncodingException e) {
                     logger.debug(Logger.EVENT_FAILURE, "decoding error when parsing [" + dirtyUri.toString() + "]");
                 }
+            } else {
+            	String extractedInput = parseMap.get(seg);
+                value = canonicalize(extractedInput, allowMultiple, allowMixed);
+                value = value == null ? "" : value;
             }
             //Check if the port is -1, if it is, omit it from the output.
             if(seg == UriSegment.PORT){
@@ -592,11 +591,16 @@ public class DefaultEncoder implements Encoder {
      */
     protected String buildUrl(Map<UriSegment, String> parseMap){
         StringBuilder sb = new StringBuilder();
-        sb.append(parseMap.get(UriSegment.SCHEME))
-        .append("://")
+        boolean schemePresent = parseMap.get(UriSegment.SCHEME).equals("") ? false : true;
+        
+        if(schemePresent) {
+        	sb.append(parseMap.get(UriSegment.SCHEME))
+        	.append("://");
+        }
+        
         //can't use SCHEMESPECIFICPART for this, because we need to canonicalize all the parts of the query.
         //USERINFO is also deprecated.  So we technically have more than we need.
-        .append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).equals("") ? "" : parseMap.get(UriSegment.AUTHORITY))
+        sb.append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).equals("") ? "" : parseMap.get(UriSegment.AUTHORITY))
         .append(parseMap.get(UriSegment.PATH) == null || parseMap.get(UriSegment.PATH).equals("") ? ""  : parseMap.get(UriSegment.PATH))
         .append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).equals("")
                 ? "" : "?" + parseMap.get(UriSegment.QUERY))
