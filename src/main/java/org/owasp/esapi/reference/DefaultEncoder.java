@@ -42,6 +42,7 @@ import org.owasp.esapi.codecs.JavaScriptCodec;
 import org.owasp.esapi.codecs.PercentCodec;
 import org.owasp.esapi.codecs.VBScriptCodec;
 import org.owasp.esapi.codecs.XMLEntityCodec;
+import org.owasp.esapi.codecs.JSONCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 
@@ -79,6 +80,7 @@ public class DefaultEncoder implements Encoder {
     private JavaScriptCodec javaScriptCodec = new JavaScriptCodec();
     private VBScriptCodec vbScriptCodec = new VBScriptCodec();
     private CSSCodec cssCodec = new CSSCodec();
+    private JSONCodec jsonCodec = new JSONCodec();
 
     private final Logger logger = ESAPI.getLogger("Encoder");
 
@@ -86,7 +88,7 @@ public class DefaultEncoder implements Encoder {
      *  Character sets that define characters (in addition to alphanumerics) that are
      * immune from encoding in various formats
      */
-    private final static char[]     IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
+    private final static char[] IMMUNE_HTML = { ',', '.', '-', '_', ' ' };
     private final static char[] IMMUNE_HTMLATTR = { ',', '.', '-', '_' };
     private final static char[] IMMUNE_CSS = { '#' };
     private final static char[] IMMUNE_JAVASCRIPT = { ',', '.', '_' };
@@ -96,6 +98,7 @@ public class DefaultEncoder implements Encoder {
     private final static char[] IMMUNE_OS = { '-' };
     private final static char[] IMMUNE_XMLATTR = { ',', '.', '-', '_' };
     private final static char[] IMMUNE_XPATH = { ',', '.', '-', '_', ' ' };
+    private final static char[] IMMUNE_JSON = { };
 
 
     /**
@@ -306,8 +309,9 @@ public class DefaultEncoder implements Encoder {
         // TODO: replace with LDAP codec
         StringBuilder sb = new StringBuilder();
         // According to Microsoft docs [1,2], the forward slash ('/') MUST be escaped.
-        // According to RFC 4513 Section 3 [3], the forward slash (and other characters) MAY be escaped.
+        // According to RFC 4515 Section 3 [3], the forward slash (and other characters) MAY be escaped.
         // Since Microsoft is a MUST, escape forward slash for all implementations. Also see discussion at [4].
+        // Characters above 0x7F are converted to UTF-8 and then hex encoded in the default case.
         // [1] https://docs.microsoft.com/en-us/windows/win32/adsi/search-filter-syntax
         // [2] https://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
         // [3] https://tools.ietf.org/search/rfc4515#section-3
@@ -340,7 +344,18 @@ public class DefaultEncoder implements Encoder {
                     sb.append("\\00");
                     break;
                 default:
-                    sb.append(c);
+                    if (c >= 0x80) {
+                        try {
+                            final byte[] u = String.valueOf(c).getBytes("UTF-8");
+                            for (byte b : u) {
+                                sb.append(String.format("\\%02x", b));
+                            }
+                        } catch (UnsupportedEncodingException ex) {
+                            // UTF-8 is always supported
+                        }
+                    } else {
+                        sb.append(c);
+                    }
             }
         }
         return sb.toString();
@@ -362,6 +377,9 @@ public class DefaultEncoder implements Encoder {
         for (int i = 0; i < input.length(); i++) {
             char c = input.charAt(i);
             switch (c) {
+            case '\0':
+                sb.append("\\00");
+                break;
             case '\\':
                 sb.append("\\\\");
                 break;
@@ -387,7 +405,18 @@ public class DefaultEncoder implements Encoder {
                 sb.append("\\;");
                 break;
             default:
-                sb.append(c);
+                if (c >= 0x80) {
+                    try {
+                        final byte[] u = String.valueOf(c).getBytes("UTF-8");
+                        for (byte b : u) {
+                            sb.append(String.format("\\%02x", b));
+                        }
+                    } catch (UnsupportedEncodingException ex) {
+                        // UTF-8 is always supported
+                    }
+                } else {
+                    sb.append(c);
+                }
             }
         }
         // add the trailing backslash if needed
@@ -637,4 +666,25 @@ public class DefaultEncoder implements Encoder {
       }
       return query_pairs;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String encodeForJSON(String input) {
+        if( input == null ) {
+            return null;
+        }
+        return jsonCodec.encode(IMMUNE_JSON, input);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String decodeFromJSON(String input) {
+        if( input == null ) {
+            return null;
+        }
+        return jsonCodec.decode(input);
+    }
+
 }

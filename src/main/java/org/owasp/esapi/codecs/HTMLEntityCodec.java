@@ -54,8 +54,8 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
      * Given an array of {@code char}, scan the input {@code String} and encode unsafe
      * codePoints, except for codePoints passed into the {@code char} array.
      * <br/><br/>
-     * WARNING:  This method will silently discard any code point per the
-     * call to {@code Character.isValidCodePoint( int )} method.
+     * WARNING: This method will silently discard an invalid code point according to
+     * the result of {@code Character.isValidCodePoint( int )} method.
      *
      * {@inheritDoc}
      */

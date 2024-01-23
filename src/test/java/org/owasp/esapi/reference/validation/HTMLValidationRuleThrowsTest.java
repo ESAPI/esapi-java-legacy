@@ -143,6 +143,12 @@ public class HTMLValidationRuleThrowsTest {
         }
     }
 
+    /**
+     * @deprecated because Validator.isValidSafeHTML is deprecated.
+     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean)
+     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean,org.owasp.esapi.ValidationErrorList)
+     */
+    @Deprecated
     @Test
     public void testIsValidSafeHTML() {
         System.out.println("isValidSafeHTML");

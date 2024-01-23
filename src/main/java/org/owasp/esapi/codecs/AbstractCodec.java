@@ -58,8 +58,10 @@ public abstract class AbstractCodec<T> implements Codec<T> {
     /**
      * {@inheritDoc}
      * </p><p>
-     * <b>WARNING!!</b>  {@code Character} based {@code Codec}s will silently transform code points that are not
-     * legal UTF code points into garbage data as they will cast them to {@code char}s.
+     * <b>WARNING!!</b>  {@code Character} based {@code Codec}s will only handle the byte range of
+     * 0-65535 (0x0-0xffff).  Passing any data represented by a higher numerical value will result in
+     * a downcast thus destroying the original data with undefined results.
+     * <p>
      * Also, if you are implementing an {@code Integer} based codec, these will be silently discarded
      * based on the return from {@code Character.isValidCodePoint( int )}.  This is the preferred
      * behavior moving forward.

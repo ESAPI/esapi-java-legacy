@@ -9,11 +9,11 @@ USAGE="Usage: encryptedProperties.sh {-display|-create} [encrypted_properties_fi
 
 if [[ -z "$esapi_classpath" ]]
 then
-    echo 2>&1 "esapi_classpath not set. Did you dot the appropriate env file?"
-    echo 2>&1 "If you are using ESAPI from downloaded zip file, use:"
-    echo 2>&1 "        . ./setenv-zip.sh"
-    echo 2>&1 "If you are using ESAPI pulled from SVN repository, use:"
-    echo 2>&1 "        . ./setenv-svn.sh"
+    echo >&2 "esapi_classpath not set. Did you dot the appropriate env file?"
+    echo >&2 "If you are using ESAPI from downloaded zip file, use:"
+    echo >&2 "        . ./setenv-zip.sh"
+    echo >&2 "If you are using ESAPI pulled from SVN repository, use:"
+    echo >&2 "        . ./setenv-git.sh"
     exit 1
 fi
 
@@ -60,11 +60,14 @@ else
     echo "The property value will be encrypted and the value will be in plaintext"
     echo "and they will be placed in the specified output file."
     echo "End entering key/value pairs by entering an empty key & value."
+    echo
+    echo "Using your TEST version of ESAPI.properties file: $esapi_resources_test/ESAPI.properties"
     echo ===========================================================
     echo
     echo "Hit <Enter> to continue..."; read GO
     set -x
     java -Dorg.owasp.esapi.resources="$esapi_resources_test" \
+         -Djava.util.logging.config.file="$esapi_resources/esapi-java-logging.properties" \
          -classpath "$esapi_classpath" \
       org.owasp.esapi.reference.crypto.DefaultEncryptedProperties "$filename" &&
       echo "Output of encrypted properties in file: $filename"

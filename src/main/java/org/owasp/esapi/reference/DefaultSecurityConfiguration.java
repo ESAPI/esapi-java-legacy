@@ -1076,7 +1076,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * {@inheritDoc}
      */
     public int getDigitalSignatureKeyLength() {
-        return getESAPIProperty(DIGITAL_SIGNATURE_KEY_LENGTH, 1024);
+        return getESAPIProperty(DIGITAL_SIGNATURE_KEY_LENGTH, 2048);
     }
 
     /**

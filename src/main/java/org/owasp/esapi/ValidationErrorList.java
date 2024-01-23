@@ -31,9 +31,9 @@ import org.owasp.esapi.errors.ValidationException;
  * attempts, your controller code would look something like:
  *
  * <PRE>
- * ValidationErrorList() errorList = new ValidationErrorList();.
- * String name  = getValidInput("Name", form.getName(), "SomeESAPIRegExName1", 255, false, errorList);
- * String address = getValidInput("Address", form.getAddress(), "SomeESAPIRegExName2", 255, false, errorList);
+ * ValidationErrorList() errorList = new ValidationErrorList();
+ * String name  = ESAPI.validator().getValidInput("Name", form.getName(), "SomeESAPIRegExName1", 255, false, errorList);
+ * String address = ESAPI.validator().getValidInput("Address", form.getAddress(), "SomeESAPIRegExName2", 255, false, errorList);
  * Integer weight = getValidInteger("Weight", form.getWeight(), 1, 1000000000, false, errorList);
  * Integer sortOrder = getValidInteger("Sort Order", form.getSortOrder(), -100000, +100000, false, errorList);
  * request.setAttribute( "ERROR_LIST", errorList );

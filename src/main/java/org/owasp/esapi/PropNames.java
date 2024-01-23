@@ -100,6 +100,8 @@ public final class PropNames {
     public static final String UPLOAD_TEMP_DIRECTORY                                                            = "HttpUtilities.UploadTempDir";
     public static final String APPROVED_UPLOAD_EXTENSIONS                                                       = "HttpUtilities.ApprovedUploadExtensions";
     public static final String MAX_UPLOAD_FILE_BYTES                                                            = "HttpUtilities.MaxUploadFileBytes";
+    public static final String MAX_UPLOAD_FILE_COUNT                                                            = "HttpUtilities.MaxUploadFileCount";
+    public static final String FILEUPLOAD_ALLOW_ANONYMOUS_USERS                                                 = "HttpUtilities.FileUploadAllowAnonymousUser";
     public static final String RESPONSE_CONTENT_TYPE                                                            = "HttpUtilities.ResponseContentType";
     public static final String HTTP_SESSION_ID_NAME                                                             = "HttpUtilities.HttpSessionIdName";
 

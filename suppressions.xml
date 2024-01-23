@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- OWASP Dependency Check suppression file for ESAPI. -->
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-    <suppress>
-        <notes><![CDATA[
-            ESAPI does not use this jar directly. It is a transitive dependency of AntiSamy and (as per Dave Wichers on
-            the AntiSamy team), it does not impact AntiSamy, and therefore does not impact ESAPI.
-
-             file name: batik-i18n-1.14.jar
-        ]]></notes>
-        <packageUrl regex="true">^pkg:maven/org\.apache\.xmlgraphics/batik\-i18n@.*$</packageUrl>
-        <cve>CVE-2020-7791</cve>
-    </suppress>
-
 
         <!-- NOTE: These 4 suppression rules are redundant. Will decide later which one to keep. -->
     <suppress>

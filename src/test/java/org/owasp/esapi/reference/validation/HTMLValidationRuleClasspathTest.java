@@ -36,28 +36,39 @@ import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
 import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_CONFIGURATION_FILE;
 
 /**
- * The Class HTMLValidationRuleThrowsTest.
- *
- * Based on original test cases, testGetValidSafeHTML() and
- * testIsValidSafeHTML() from ValidatorTest by
+ * The class {@code HTMLValidationRuleClasspathTest} is used to test ESAPI where
+ * the AntiSamy policy file is located in a non-standard place. It is based
+ * on te original test cases, testGetValidSafeHTML() and
+ * testIsValidSafeHTML() from the file {@code ValidatorTest} originally written
+ * by
  *      Mike Fauzy (mike.fauzy@aspectsecurity.com) and
  *      Jeff Williams (jeff.williams@aspectsecurity.com)
- * that were originally part of src/test/java/org/owasp/esapi/reference/ValidatorTest.java.
+ * that were originally part of "src/test/java/org/owasp/esapi/reference/ValidatorTest.java".
  *
- * This class tests the cases where the new ESAPI.property
- *      Validator.HtmlValidationAction
+ * This class tests the case of a non-standard AntiSamy policy file along with
+ * the case where the new ESAPI.property
+ *      {@code Validator.HtmlValidationAction}
  * is set to "throw", which causes certain calls to
  * ESAPI.validator().getValidSafeHTML() or ESAPI.validator().isValidSafeHTML()
  * to throw a ValidationException rather than simply logging a warning and returning
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
+ *
+ * It should be noted that several of the tests in this file are deprecated because
+ * they use {@code Validator.isValidSafeHTML} which is deprecated. See the
+ * deprecation warnings for those methods respective Javadoc for further
+ * details.
  */
 public class HTMLValidationRuleClasspathTest {
-    /** The intentionally non-compliant AntiSamy policy file. We don't intend to
-     * actually <i>use</i> it for anything.
+    /** The intentionally non-compliant (to the AntiSamy XSD) AntiSamy policy file. We don't intend to
+     * actually <i>use</i> it for anything other than to test that we report
+     * non-compliant AntiSamy policy files in a sane manner.
      */
     private static final String INVALID_ANTISAMY_POLICY_FILE = "antisamy-InvalidPolicy.xml";
-    /** The intentionally non-compliant AntiSamy policy file. We don't intend to
-     * actually <i>use</i> it for anything.
+
+    /** A compliant AntiSamy policy file that is just located in a non-standard
+     * place. We don't intend to * actually <i>use</i> it for anything other
+     * than testing. Otherwise, it's mostly identical to the AntiSamy policy
+     * file "src/test/resources/esapi/antisamy-esapi.xml".
      */
     private static final String ANTISAMY_POLICY_FILE_NONSTANDARD_LOCATION = "antisamy-esapi-CP.xml";
 
@@ -131,6 +142,7 @@ public class HTMLValidationRuleClasspathTest {
 
         String[] testInput = {
                                 // These first two don't cause AntiSamy to throw.
+                                // They are only listed here for completeness.
                         // "Test. <a href=\"http://www.aspectsecurity.com\">Aspect Security</a>",
                         // "Test. <<div on<script></script>load=alert()",
                         "Test. <script>alert(document.cookie)</script>",
@@ -165,6 +177,12 @@ public class HTMLValidationRuleClasspathTest {
         }
     }
 
+    /**
+     * @deprecated because Validator.isValidSafeHTML is deprecated.
+     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean)
+     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean,org.owasp.esapi.ValidationErrorList)
+     */
+    @Deprecated
     @Test
     public void testIsValidSafeHTML() {
         System.out.println("isValidSafeHTML");

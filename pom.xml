@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.5.1.0-SNAPSHOT</version>
+    <version>2.5.4.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <distributionManagement>
@@ -17,21 +17,15 @@
         </repository>
     </distributionManagement>
 
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
-
     <licenses>
         <license>
             <name>BSD</name>
-            <url>http://www.opensource.org/licenses/bsd-license.php</url>
+            <url>https://www.opensource.org/licenses/bsd-license.php</url>
             <comments>Code License - New BSD License</comments>
         </license>
         <license>
             <name>Creative Commons 3.0 BY-SA</name>
-            <url>http://creativecommons.org/licenses/by-sa/3.0/</url>
+            <url>https://creativecommons.org/licenses/by-sa/3.0/</url>
             <comments>Content License - Create Commons 3.0 BY-SA</comments>
         </license>
     </licenses>
@@ -48,7 +42,7 @@
     </description>
 
     <organization>
-        <name>The Open Web Application Security Project (OWASP)</name>
+        <name>The Open Worldwide Application Security Project (OWASP)</name>
         <url>https://owasp.org/</url>
     </organization>
 
@@ -136,29 +130,19 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	    <version.jmh>1.35</version.jmh>
+        <version.jmh>1.37</version.jmh>
+        <version.findsecbugs>2.0.0-M3</version.findsecbugs>
+        <version.fluido>2.0.0-M8</version.fluido>
         <version.powermock>2.0.9</version.powermock>
-        <version.spotbugs>4.7.1</version.spotbugs>
-        <version.findsecbugs>1.12.0</version.findsecbugs>
-        <version.spotbugs.maven>4.7.1.0</version.spotbugs.maven>
-        <version.surefire>3.0.0-M7</version.surefire>
+        <version.spotbugs>4.8.2</version.spotbugs>
+        <version.spotbugs.maven>4.8.2.0</version.spotbugs.maven>
+        <version.surefire>3.2.2</version.surefire>
         <project.java.target>1.8</project.java.target>
             <!-- TODO: Be sure to update. Should be date of previous official release -->
             <!-- Exact date in the form 'yyyy-dd-yy 00:00:00' should be used. You can find the previous release date -->
-            <!-- n the previous release notes file under the 'documentation/' directory. -->
-        <date.prev_release>2021-05-24 00:00:00</date.prev_release>
+            <!-- in the previous release notes file under the 'documentation/' directory. -->
+        <date.prev_release>2023-11-24 00:00:00</date.prev_release>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- Required to eliminate dependency convergence issue in AntiSamy 1.7.0 -->
-            <dependency>
-                <groupId>org.apache.httpcomponents.core5</groupId>
-                <artifactId>httpcore5</artifactId>
-                <version>5.1.4</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -172,7 +156,11 @@
             <artifactId>javax.servlet.jsp-api</artifactId>
             <version>2.3.3</version>
             <scope>provided</scope>
-              <exclusions>
+            <!-- Note: Because this dependency is provided, this exclusion doesn't actually do anything.
+                 But we include it so the convergence report will report 100% convergence.
+                 Deleting this does not cause the convergence check to fail.
+            -->
+            <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>
                     <artifactId>javax.servlet-api</artifactId>
@@ -182,23 +170,15 @@
         <dependency>
             <groupId>xom</groupId>
             <artifactId>xom</artifactId>
-            <version>1.3.7</version>
+            <version>1.3.9</version>
             <exclusions>
-                <!-- excluded because we directly import newer versions. -->
-                <exclusion>
-                    <groupId>xalan</groupId>
-                    <artifactId>xalan</artifactId>
-                </exclusion>
                 <exclusion>
                     <!-- xom tries to pull this in, but a newer version is in Java 7 and later
-                         so we want to exclude this transitive dependency.
+                         so we want to exclude this transitive dependency. Don't need to include
+                         it explicity since we use the one from the JDK.
                     -->
                     <groupId>xerces</groupId>
                     <artifactId>xercesImpl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -223,6 +203,10 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
+                <!-- Note: Because the following dependency is marked as provided to commons-configuration,
+                     this exclusion doesn't actually do anything. But we include it so the convergence report
+                     will report 100% convergence. Deleting this does not cause the convergence check to fail.
+                -->
                 <exclusion>
                     <groupId>xml-apis</groupId>
                     <artifactId>xml-apis</artifactId>
@@ -237,9 +221,9 @@
         <dependency>
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
-            <version>1.4</version>
+            <version>1.5</version>
             <exclusions>
-                <!-- excluded because we directly import newer version. -->
+                <!-- excluded because we directly import newer version below. -->
                 <exclusion>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
@@ -259,12 +243,19 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.7.0</version>
+            <version>1.7.4</version>
+            <exclusions>
+                <!-- excluded because we directly import newer version below. -->
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.36</version>
+            <version>2.0.6</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
@@ -283,9 +274,14 @@
              This is to force patched versions of these libraries with known CVEs against them.
         -->
         <dependency>
+            <!-- We include this, because Commons File Upload still includes an
+                 old one, but AntiSamy 1.7.4 includes a newer one (2.14.0), which causes the goal
+                 org.apache.maven.plugins:maven-enforcer-plugin:3.3.0:enforce to fail
+                 in DependencyConvergence.
+            -->
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>2.14.0</version>
         </dependency>
 
         <!-- SpotBugs dependencies -->
@@ -300,7 +296,7 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-            <version>1.15</version>
+            <version>1.16.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -417,22 +413,22 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-assembly-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.6.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-dependency-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.6.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-release-plugin</artifactId>
-                    <version>3.0.0-M6</version>
+                    <version>3.0.1</version>
                 </plugin>
                 <plugin>
                      <groupId>org.codehaus.mojo</groupId>
                      <artifactId>versions-maven-plugin</artifactId>
-                     <version>2.11.0</version>
+                     <version>2.16.2</version>
                      <configuration>
                          <rulesUri>file:${project.basedir}/versionRuleset.xml</rulesUri>
                      </configuration>
@@ -445,7 +441,7 @@
             <plugin>
                 <groupId>org.cyclonedx</groupId>
                 <artifactId>cyclonedx-maven-plugin</artifactId>
-                <version>2.7.1</version>
+                <version>2.7.10</version>
                 <executions>
                   <execution>
                     <phase>package</phase>
@@ -473,13 +469,11 @@
                 <artifactId>findsecbugs-plugin</artifactId>
                 <version>${version.findsecbugs}</version>
             </plugin>
-
             <plugin>
-                <groupId>net.sourceforge.maven-taglib</groupId>
-                <artifactId>maven-taglib-plugin</artifactId>
-                <version>2.4</version>
+                <groupId>io.github.weblegacy</groupId>
+                <artifactId>taglib-maven-plugin</artifactId>
+                <version>2.6</version>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-changelog-plugin</artifactId>
@@ -489,13 +483,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.2</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.10.1</version>
+                <version>3.11.0</version>
                 <configuration>
                     <source>${project.java.target}</source>
                     <target>${project.java.target}</target>
@@ -529,7 +523,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.1</version>
             </plugin>
 
             <plugin>
@@ -544,26 +538,24 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.4.1</version>
                 <dependencies>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>extra-enforcer-rules</artifactId>
-                    <version>1.6.0</version>
+                    <version>1.7.0</version>
                   </dependency>
                   <dependency>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>animal-sniffer-enforcer-rule</artifactId>
-                    <version>1.21</version>
+                    <version>1.23</version>
                   </dependency>
-
                 </dependencies>
+
                 <executions>
                     <execution>
                         <id>enforce-maven</id>
-                        <goals>
-                          <goal>enforce</goal>
-                        </goals>
+                        <goals><goal>enforce</goal></goals>
                         <configuration>
                           <rules>
                             <requireMavenVersion>
@@ -587,7 +579,7 @@
                                 JAVA_HOME environment variable is pointed to a JDK1.8 or later distribution.
                             </message>
                           </requireJavaVersion>
-                           <enforceBytecodeVersion>
+                          <enforceBytecodeVersion>
                             <maxJdkVersion>${project.java.target}</maxJdkVersion>
                             <ignoreOptionals>true</ignoreOptionals>
                             <ignoredScopes/><!--  'test' scopes not ignored so we can actually test on Java 8. -->
@@ -620,7 +612,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
-                <version>3.0.1</version>
+                <version>3.1.0</version>
                 <executions>
                   <execution>
                     <id>sign-artifacts</id>
@@ -633,13 +625,13 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>3.1.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>3.2.2</version>
+                <version>3.3.0</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -653,7 +645,7 @@
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-javadoc-plugin</artifactId>
-               <version>3.4.0</version>
+               <version>3.6.2</version>
                <configuration>
                  <source>8</source>
                  <doclint>none</doclint>
@@ -671,37 +663,46 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-jxr-plugin</artifactId>
-              <version>3.2.0</version>
+              <version>3.3.1</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-pmd-plugin</artifactId>
-                <version>3.17.0</version>
+                <version>3.21.2</version>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-project-info-reports-plugin</artifactId>
-               <version>3.4.0</version>
+               <version>3.5.0</version>
             </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>3.2.0</version>
+                <version>3.3.1</version>
             </plugin>
 
             <plugin>
+                <!-- Note: This uses the maven-fluido-skin version specified next.
+                     The skin is referenced in src/site/site.xml. -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-site-plugin</artifactId>
-                <version>4.0.0-M2</version>
+                <version>4.0.0-M12</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.maven.skins</groupId>
+                        <artifactId>maven-fluido-skin</artifactId>
+                        <version>${version.fluido}</version>
+                    </dependency>
+                </dependencies>
             </plugin>
 
             <plugin>
                <groupId>org.apache.maven.plugins</groupId>
                <artifactId>maven-source-plugin</artifactId>
-               <version>3.2.1</version>
+               <version>3.3.0</version>
                <executions>
                  <execution>
                    <id>attach-sources</id>
@@ -749,15 +750,17 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>7.1.1</version>
+                <version>9.0.6</version>
                 <configuration>
+                    <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
                     <failBuildOnCVSS>1.0</failBuildOnCVSS>
                     <suppressionFiles>./suppressions.xml</suppressionFiles>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
-                            <goal>check</goal>
+                            <goal>purge</goal>
+                            <!-- <goal>check</goal> -->
                         </goals>
                     </execution>
                 </executions>
@@ -768,9 +771,9 @@
 
     <reporting>
         <plugins>
-            <plugin>
-                <groupId>net.sourceforge.maven-taglib</groupId>
-                <artifactId>maven-taglib-plugin</artifactId>
+         <plugin>
+                <groupId>io.github.weblegacy</groupId>
+                <artifactId>taglib-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -943,6 +946,75 @@
                     </plugin>
             -->
 
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jakarta</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.eclipse.transformer</groupId>
+                        <artifactId>transformer-maven-plugin</artifactId>
+                        <version>0.5.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <rules>
+                                <jakartaDefaults>true</jakartaDefaults>
+                            </rules>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <classifier>jakarta</classifier>
+                                    <artifact>
+                                        <groupId>org.owasp.esapi</groupId>
+                                        <artifactId>esapi</artifactId>
+                                        <version>${project.version}</version>
+                                    </artifact>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>javadoc-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <classifier>jakarta-javadoc</classifier>
+                                    <artifact>
+                                        <groupId>org.owasp.esapi</groupId>
+                                        <artifactId>esapi</artifactId>
+                                        <version>${project.version}</version>
+                                        <classifier>javadoc</classifier>
+                                    </artifact>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>source-jar</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                                <configuration>
+                                    <skip>false</skip>
+                                    <classifier>jakarta-sources</classifier>
+                                    <artifact>
+                                        <groupId>org.owasp.esapi</groupId>
+                                        <artifactId>esapi</artifactId>
+                                        <version>${project.version}</version>
+                                        <classifier>sources</classifier>
+                                    </artifact>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

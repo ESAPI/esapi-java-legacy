@@ -417,7 +417,7 @@ public interface User extends Principal, Serializable {
      * always a real user, the ANONYMOUS user is better than using null to represent
      * this.
      */
-    User ANONYMOUS = new User() {
+    final User ANONYMOUS = new User() {
 
         private static final long serialVersionUID = -1850916950784965502L;
 
