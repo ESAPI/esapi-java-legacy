@@ -362,6 +362,10 @@ public class HTMLValidationRuleCleanTest {
     //
     // See AntiSamy GitHub issue #380 (https://github.com/nahsra/antisamy/issues/389) for more details.
     //
+    // The output has changed again as of AntiSamy 1.7.5. The expected output is now:
+    //      Walert(1)
+    // See AntiSamy Release notes for 1.7.5 (https://github.com/nahsra/antisamy/releases/tag/v1.7.5)
+    //
     // Also, this test, which originally used Validator.isValidSafeHTML(), has been
     // changed to use Validator.getValidSafeHTML() instead because Validator.isValidSafeHTML()
     // has been deprecated. See GitHub Security Advisory
@@ -375,7 +379,8 @@ public class HTMLValidationRuleCleanTest {
         ValidationErrorList errors = new ValidationErrorList();
         String input = "<select<style/>W<xmp<script>alert(1)</script>";
         // String expected = "W&lt;script&gt;alert(1)&lt;/script&gt;";        // Before AntiSamy 1.7.4
-        String expected = "W&lt;xmp&lt;script&gt;alert(1)&lt;/script&gt;";    // AntiSamy 1.7.4 (and later?)
+        // String expected = "W&lt;xmp&lt;script&gt;alert(1)&lt;/script&gt;";    // AntiSamy 1.7.4
+        String expected = "Walert(1)";                                      // AntiSamy 1.7.5 (and later?)
         String output = instance.getValidSafeHTML("escaping style tag attack with script tag", input, 250, false, errors);
         assertEquals(expected, output);
         assertTrue(errors.size() == 0);
@@ -392,6 +397,10 @@ public class HTMLValidationRuleCleanTest {
     //
     // See AntiSamy GitHub issue #380 (https://github.com/nahsra/antisamy/issues/389) for more details.
     //
+    // The output has changed again as of AntiSamy 1.7.5. The expected output is now:
+    //      kinput/onfocus=alert(1)&gt;
+    // See AntiSamy Release notes for 1.7.5 (https://github.com/nahsra/antisamy/releases/tag/v1.7.5)
+    //
     // Also, this test, which originally used Validator.isValidSafeHTML(), has been
     // changed to use Validator.getValidSafeHTML() instead because Validator.isValidSafeHTML()
     // has been deprecated. See GitHub Security Advisory
@@ -405,7 +414,8 @@ public class HTMLValidationRuleCleanTest {
         String input = "<select<style/>k<input<</>input/onfocus=alert(1)>";
 
         // String expected = "k&lt;input/onfocus=alert(1)&gt;";    // Before AntiSamy 1.7.4
-        String expected = "k&lt;input&lt;&lt;/&gt;input/onfocus=alert(1)&gt;";    // AntiSamy 1.7.4 (and later?)
+        // String expected = "k&lt;input&lt;&lt;/&gt;input/onfocus=alert(1)&gt;";    // AntiSamy 1.7.4
+        String expected = "kinput/onfocus=alert(1)&gt;";    // AntiSamy 1.7.5 (and later?)
         String output = instance.getValidSafeHTML("escaping style tag attack with onfocus attribute", input, 250, false, errors);
         assertEquals(expected, output);
         assertTrue(errors.size() == 0);
