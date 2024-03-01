@@ -145,6 +145,11 @@ public class LogPrefixAppenderTest {
         runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, "[EVENT_TYPE]");
     }
 
+    @Test
+    public void testLongContentWithoutOmitEventTypeInLogs() throws Exception {
+        runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, "[EVENT_TYPE]");
+    }
+
 
     private void runTest(String typeResult, String userResult, String clientResult, String serverResult, String exResult) throws Exception{
         when(etlsSpy.get()).thenReturn(typeResult);

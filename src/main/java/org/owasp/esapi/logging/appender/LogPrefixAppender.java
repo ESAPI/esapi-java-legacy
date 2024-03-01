@@ -15,7 +15,11 @@
 
 package org.owasp.esapi.logging.appender;
 
+import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger.EventType;
+import org.owasp.esapi.errors.ConfigurationException;
+
+import static org.owasp.esapi.PropNames.OMIT_EVENT_TYPE_IN_LOGS;
 
 /**
  * LogAppender Implementation which can prefix the common logger information for
@@ -35,6 +39,18 @@ public class LogPrefixAppender implements LogAppender {
     private final boolean logApplicationName;
     /** Application Name to record. */
     private final String appName;
+    /** Whether to omit event type in logs or not. */
+    private static boolean omitEventTypeInLogs;
+
+    static {
+
+        try {
+            omitEventTypeInLogs =
+                    ESAPI.securityConfiguration().getBooleanProp(OMIT_EVENT_TYPE_IN_LOGS);
+        } catch (ConfigurationException ex) {
+            omitEventTypeInLogs = false;
+        }
+    }
 
     /**
      * Ctr.
@@ -67,7 +83,7 @@ public class LogPrefixAppender implements LogAppender {
         serverInfoSupplier.setLogServerIp(logServerIp);
         serverInfoSupplier.setLogApplicationName(logApplicationName, appName);
 
-        String eventTypeMsg = eventTypeSupplier.get().trim();
+        String eventTypeMsg = omitEventTypeInLogs ? "" : eventTypeSupplier.get().trim();
         String userInfoMsg = userInfoSupplier.get().trim();
         String clientInfoMsg = clientInfoSupplier.get().trim();
         String serverInfoMsg = serverInfoSupplier.get().trim();
@@ -81,7 +97,7 @@ public class LogPrefixAppender implements LogAppender {
         String[] optionalPrefixContent = new String[] {userInfoMsg + clientInfoMsg, serverInfoMsg};
 
         StringBuilder logPrefix = new StringBuilder();
-        //EventType is always appended
+
         logPrefix.append(eventTypeMsg);
 
         for (String element : optionalPrefixContent) {
@@ -91,6 +107,7 @@ public class LogPrefixAppender implements LogAppender {
             }
         }
 
-        return String.format(RESULT_FORMAT, logPrefix.toString(), message);
+        String prefix = logPrefix.toString().trim();
+        return prefix.isEmpty() ? message : String.format(RESULT_FORMAT, prefix, message);
     }
 }
