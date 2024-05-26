@@ -23,12 +23,10 @@ import static org.owasp.esapi.PropNames.LOG_USER_INFO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
@@ -58,6 +56,8 @@ import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
  *
  */
 public class JavaLogFactory implements LogFactory {
+    /**Consistent message offered as a part of the ConfigurationException which is thrown if esapi-java-logging.properties is found on the path. */
+    private static final String PROPERTY_CONFIG_MSG = "esapi-java-logging.properties is no longer supported.  See https://github.com/ESAPI/esapi-java-legacy/wiki/Configuring-the-JavaLogFactory for information on corrective actions.";
     /** Immune characters for the codec log scrubber for JAVA context.*/
     private static final char[] IMMUNE_JAVA_HTML = {',', '.', '-', '_', ' ' };
     /** Codec being used to clean messages for logging.*/
@@ -103,14 +103,14 @@ public class JavaLogFactory implements LogFactory {
         try (InputStream stream = JavaLogFactory.class.getClassLoader().
                 getResourceAsStream("esapi-java-logging.properties")) {
             if (stream != null) {
-                throw new ConfigurationException("esapi-java-logging.properties is no longer supported.  See https://github.com/ESAPI/esapi-java-legacy/wiki/Configuring-the-JavaLogFactory for information on corrective actions.");
+                throw new ConfigurationException(PROPERTY_CONFIG_MSG);
             }
 
         } catch (IOException ioe) {
             // This is a little strange, I know.
             // If the IOException is thrown, then the file actually exists but is malformatted or has some other issue.
             // The file should not exist at all, so use the same message as above but include the original exception in the log as well.
-            throw new ConfigurationException("esapi-java-logging.properties is no longer supported.  See https://github.com/ESAPI/esapi-java-legacy/wiki/Configuring-the-JavaLogFactory for information on corrective actions.", ioe);
+            throw new ConfigurationException(PROPERTY_CONFIG_MSG, ioe);
         }
     }
 
