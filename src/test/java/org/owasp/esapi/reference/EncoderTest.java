@@ -15,25 +15,21 @@
  */
 package org.owasp.esapi.reference;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.List;
 
+import org.junit.Ignore;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.EncoderConstants;
-import org.owasp.esapi.codecs.CSSCodec;
+import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.SecurityConfigurationWrapper;
 import org.owasp.esapi.codecs.Codec;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.codecs.MySQLCodec;
@@ -45,8 +41,7 @@ import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.Randomizer;
-import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.SecurityConfigurationWrapper;
+
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -747,6 +742,7 @@ public class EncoderTest extends TestCase {
             fail();
         }
         try {
+        	//FIXME:  Rewrite this to use expected Exceptions.  
             instance.decodeFromURL( "%3xridiculous" );
             fail();
         } catch( Exception e ) {
@@ -985,6 +981,50 @@ public class EncoderTest extends TestCase {
         assertEquals(expectedUri, e.getCanonicalizedURI(uri));
 
     }
+    
+    public void testGetCanonicalizedUriWithAnHTMLEntityCollision() throws Exception {
+        System.out.println("GetCanonicalizedUriWithAnHTMLEntityCollision");
+        Encoder e = ESAPI.encoder();
+
+        String expectedUri = "http://palpatine@foobar.com/path_to/resource?foo=bar&para1=test";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.
+        String input = "http://palpatine@foobar.com/path_to/resource?foo=bar&para1=test";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+
+    }	
+    
+    @org.junit.Ignore("Pre-check in unit test for issue #826")
+    public void Issue826GetCanonicalizedUriWithMultipleEncoding() throws Exception {
+        System.out.println("GetCanonicalizedUriWithAnHTMLEntityCollision");
+        Encoder e = ESAPI.encoder();
+        String expectedUri = "http://palpatine@foobar.com/path_to/resource?foo=bar&para1=&amp;amp;amp;test";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.
+        String input = "http://palpatine@foobar.com/path_to/resource?foo=bar&para1=&amp;amp;amp;test";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+
+    }	
+	    public void testGetCanonicalizedUriWithMultQueryParams() throws Exception {
+        System.out.println("getCanonicalizedUri");
+        Encoder e = ESAPI.encoder();
+
+        String expectedUri = "http://palpatine@foo bar.com/path_to/resource?foo=bar&bar=foo#frag";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.
+        String input = "http://palpatine@foo%20bar.com/path_to/resource?foo=bar&bar=foo#frag";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+
+    }
 
     public void testGetCanonicalizedUriPiazza() throws Exception {
         System.out.println("getCanonicalizedUriPiazza");
@@ -999,6 +1039,41 @@ public class EncoderTest extends TestCase {
         System.out.println(uri.toString());
         assertEquals(expectedUri, e.getCanonicalizedURI(uri));
 
+    }
+    
+    public void testIssue824() throws Exception {
+        System.out.println("getCanonicalizedUriPiazza");
+        Encoder e = ESAPI.encoder();
+
+        String expectedUri = "/webapp/ux/home?d=1705914006565&status=login&ticket=1705914090394_HzJpTROVfhW-JhRW0OqDbHu7tWXXlgrKSUmOzIMsZNCcUIiYGMXX_Q==&newsess=false&roleid=DP010101/0007&origin=ourprogram";
+        //Please note that section 3.2.1 of RFC-3986 explicitly states not to encode
+        //password information as in http://palpatine:password@foo.com, and this will
+        //not appear in the userinfo field.
+        String input = "/webapp/ux/home?d=1705914006565&status=login&ticket=1705914090394_HzJpTROVfhW-JhRW0OqDbHu7tWXXlgrKSUmOzIMsZNCcUIiYGMXX_Q%3D%3D&newsess=false&roleid=DP010101/0007&origin=ourprogram";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+
+    }
+	
+    @org.junit.Ignore("Pre-check in unit test for issue #826")
+	public void Issue826GetCanonicalizedDoubleAmpersand() throws Exception {
+        System.out.println("getCanonicalizedDoubleAmpersand");
+        Encoder e = ESAPI.encoder();
+        String expectedUri = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft%2C&html=&amp;contentLaunched";
+        //http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft,&html=null&=null&amp;contentLaunched=null
+        /*
+         * In this case, the URI class should break up the HTML entity in the query so 
+         */
+        String input = "http://127.0.0.1:3000/campaigns?goal=all&section=active&sort-by=-id&status=Draft%2C&html=&&amp;contentLaunched";
+        URI uri = new URI(input);
+        System.out.println(uri.toString());
+        try {
+        	assertEquals(expectedUri, e.getCanonicalizedURI(uri));
+        	fail();
+        } catch (Exception ex) {
+        	//Expected 
+        }
     }
 
     public void testGetCanonicalizedUriWithMailto() throws Exception {
