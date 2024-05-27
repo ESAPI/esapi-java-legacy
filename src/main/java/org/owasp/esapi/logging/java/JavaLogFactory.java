@@ -14,18 +14,23 @@
  */
 package org.owasp.esapi.logging.java;
 
+import static org.owasp.esapi.PropNames.APPLICATION_NAME;
+import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
+import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
+import static org.owasp.esapi.PropNames.LOG_ENCODING_REQUIRED;
+import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
+import static org.owasp.esapi.PropNames.LOG_USER_INFO;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.LogManager;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
-import org.owasp.esapi.PropNames;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
 import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
@@ -34,13 +39,6 @@ import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
 import org.owasp.esapi.logging.cleaning.CompositeLogScrubber;
 import org.owasp.esapi.logging.cleaning.LogScrubber;
 import org.owasp.esapi.logging.cleaning.NewlineLogScrubber;
-
-import static org.owasp.esapi.PropNames.LOG_ENCODING_REQUIRED;
-import static org.owasp.esapi.PropNames.LOG_USER_INFO;
-import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
-import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
-import static org.owasp.esapi.PropNames.APPLICATION_NAME;
-import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
 
 /**
  * LogFactory implementation which creates JAVA supporting Loggers.
@@ -58,6 +56,8 @@ import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
  *
  */
 public class JavaLogFactory implements LogFactory {
+    /**Consistent message offered as a part of the ConfigurationException which is thrown if esapi-java-logging.properties is found on the path. */
+    private static final String PROPERTY_CONFIG_MSG = "esapi-java-logging.properties is no longer supported.  See https://github.com/ESAPI/esapi-java-legacy/wiki/Configuring-the-JavaLogFactory for information on corrective actions.";
     /** Immune characters for the codec log scrubber for JAVA context.*/
     private static final char[] IMMUNE_JAVA_HTML = {',', '.', '-', '_', ' ' };
     /** Codec being used to clean messages for logging.*/
@@ -93,43 +93,24 @@ public class JavaLogFactory implements LogFactory {
 
         LOG_BRIDGE = new JavaLogBridgeImpl(JAVA_LOG_APPENDER, JAVA_LOG_SCRUBBER, levelLookup);
 
-        readLoggerConfiguration(LogManager.getLogManager());
-    }
-
-    /**
-     * Attempts to load the expected property file path into the provided LogManager reference.
-     * @param logManager LogManager which is being configured.
-     */
-    /*package*/ static void readLoggerConfiguration(LogManager logManager) {
-        if (System.getProperties().keySet().stream().anyMatch(propKey ->
-        "java.util.logging.config.class".equals(propKey) || "java.util.logging.config.file".equals(propKey))) {
-            // LogManager has external configuration.  Do not load ESAPI defaults.
-            // See javadoc for the LogManager class for more information on properties.
-            boolean isStartupSysoutDisabled = Boolean.valueOf(System.getProperty(PropNames.DISCARD_LOGSPECIAL, Boolean.FALSE.toString()));
-            if (!isStartupSysoutDisabled) {
-                String logManagerPreferredMsg = String.format("[ESAPI-STARTUP] ESAPI JavaLogFactory Configuration will not be applied. "
-                        + "java.util.LogManager configuration Detected. "
-                        + "{\"java.util.logging.config.class\":\"%s\",\"java.util.logging.config.file\":\"%s\"}",
-                        System.getProperty("java.util.logging.config.class"), System.getProperty("java.util.logging.config.file"));
-
-                System.out.println(logManagerPreferredMsg);
-                // ::SAMPLE OUTPUT::
-                //[ESAPI-STARTUP] ESAPI JavaLogFactory Configuration will not be applied.  java.util.LogManager configuration Detected.{"java.util.logging.config.class":"some.defined.value","java.util.logging.config.file":"null"}
-            }
-
-            return;
-        }
         /*
-         * This will load the logging properties file to control the format of the output for Java logs.
+         * esapi-java-logging.properties file may lead to confusing logging behavior
+         * by overriding desired configurations provided through Java's LogManager class.
+         * 
+         * Verify the file is not present and fail if found to enforce understanding of
+         * the configuration method.
          */
         try (InputStream stream = JavaLogFactory.class.getClassLoader().
                 getResourceAsStream("esapi-java-logging.properties")) {
-            if (stream == null) {
-                throw new ConfigurationException("Unable to locate resource: esapi-java-logging.properties");
+            if (stream != null) {
+                throw new ConfigurationException(PROPERTY_CONFIG_MSG);
             }
-            logManager.readConfiguration(stream);
+
         } catch (IOException ioe) {
-            throw new ConfigurationException("Failed to load esapi-java-logging.properties.", ioe);
+            // This is a little strange, I know.
+            // If the IOException is thrown, then the file actually exists but is malformatted or has some other issue.
+            // The file should not exist at all, so use the same message as above but include the original exception in the log as well.
+            throw new ConfigurationException(PROPERTY_CONFIG_MSG, ioe);
         }
     }
 
