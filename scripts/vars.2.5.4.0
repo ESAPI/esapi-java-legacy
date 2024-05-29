@@ -8,7 +8,7 @@ VERSION=2.5.4.0
 PREV_VERSION=2.5.3.1
 
 # Release date of current version in yyyy-mm-dd format
-YYYY_MM_DD_RELEASE_DATE=2024-05-28
+YYYY_MM_DD_RELEASE_DATE=2024-05-29
 
 # Previous ESAPI release date in same format
 PREV_RELEASE_DATE=2023-12-01
