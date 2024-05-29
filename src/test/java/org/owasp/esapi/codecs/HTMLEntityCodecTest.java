@@ -49,23 +49,4 @@ public class HTMLEntityCodecTest {
         String input = bmp + nonBMP;
         assertEquals(expected, codec.encode(new char[0], input));
     }
-    
-    @Test
-    /**
-     * TODO:  The following methods are unit tests I'm checking in for an issue to be worked and fixed.  
-     */
-    @Ignore("Pre check-in for issue #827")
-    public void testIssue827() {
-    	String input = "/webapp/ux/home?d=1705914006565&status=login&ticket=1705914090394_HzJpTROVfhW-JhRW0OqDbHu7tWXXlgrKSUmOzIMsZNCcUIiYGMXX_Q%3D%3D&newsess=false&roleid=DP010101/0007&origin=ourprogram";
-    	String expected = input;  
-    	assertEquals(expected, codec.decode(input));
-    }
-    
-    @Test
-    @Ignore("Pre check-in for issue #827")
-    public void testIssue827OnlyOR() {
-    	String input = "&origin=ourprogram";
-    	String expected = input;  
-    	assertEquals(expected, codec.decode(input));
-    }
 }
