@@ -96,9 +96,15 @@ link to the specific release notes.
   (at least the beginning portion) for some important notes that likely will affect your use of ESAPI! You have been warned!!!
 * ESAPI 2.3.0.0 is the last release to support Java 7 as the minimal JDK.
   Starting with release 2.4.0.0, Java 8 or later is required.
+* Starting with ESAPI 2.5.4.0, if you were using ESAPI's default logger, JUL
+  (i.e., you had the property **ESAPI.Logger** set to "org.owasp.esapi.logging.java.JavaLogFactory"),
+  then you must remove (or rename) the old ESAPI configuration file **esapi-java-logger.properties**.
+  Failure to do so will cause ESAPI to throw a `ConfigurationException`, thereby
+  preventing your application from starting. For important additional details, please see
+  the ESAPI GitHub Discussion https://github.com/ESAPI/esapi-java-legacy/discussions/841.
 
 # Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.5.3.1.
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.5.4.0.
 All the *regular* ESAPI jars, with the exception of the ESAPI configuration
 jar (i.e., esapi-2.#.#.#-configuration.jar) and its associated detached
 GPG signature, are available from Maven Central. The ESAPI configuration
