@@ -14,18 +14,37 @@ OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web ap
 </tr>
 </table>
 
-# Special note regarding Spring Boot 3, Spring 6, Tomcat 10 and other applications / libraries requiring Jakarta EE
-<table border=<5>
-<tr>
-<td>
-<b>IMPORTANT:</b> We are aware that all versions of ESAPI (unless you are using very select parts) do not work with Jakarta EE. Jakarta EE relies on <b>jakarta.servlet-api</b>. ESAPI is built to use <b>javax.servlet-api</b>. This causes things like Spring Boot 3, Spring 6, Tomcat 10, the latest version of Jetty, etc. to fail to load certain (well, many) ESAPI classes. The reason for this is that the package names between these 2 libraryes are different! The dependency <b>javax.servlet-api</b> has a package namespace of <code>javax.servlet</code>. The <b>jakarta.servlet-api</b> library is using the package namespace of <code>jakarta.servlet</code>. So references to things like <code>ServletRequest</code>, <code>ServletResponse</code>, etc. in ESAPI are using <code>javax.servlet.ServletRequest</code> and <code>javax.servlet.ServletResponse</code> respectively. We cannot make it work for both at once and we will not stop supporting <b>javax.servlet-api</b>, which is what most of our existing ESAPI clients are using.
-<p>
-Therefore <b>PLEASE STOP</b> sending us emails and/or creating GitHub issues regarding this! Instead, please
-read ongoing the GitHub discussion https://github.com/ESAPI/esapi-java-legacy/discussions/768 for further details.
-</p>
-</td>
-</tr>
-</table>
+# Jakarta EE Support
+**IMPORTANT:**
+ESAPI has supported the Jakarta Servlet API (i.e., **jakarta.servlet.api**) since release
+2.5.3.0.  (Unfortunately, we were just forgot to note that in this **README** file. Duh!)
+
+Therefore, for release 2.5.3.0 and later versions of ESAPI, ESAPI ought to be able to support Spring Boot 3, Spring 6, Tomcat 10,
+and other applications or libraries requiring Jarkata EE. (If you find a case where it does
+not, please file a GitHub issue for it.)
+
+The ESAPI jar file supporting Jakarta will be named esapi-_version_-jakarta.jar. To use that
+specific Jakarta version of ESAPI, in Maven, you would specify your ESAPI dependency in your
+**pom.xml** as:
+```xml
+<dependency>
+    <groupId>org.owasp.esapi</groupId>
+    <artifactId>esapi</artifactId>
+    <version>2.5.3.0-SNAPSHOT</version>
+    <classifier>jakarta</classifier>
+</dependency>
+```
+(or any other version later than 2.5.3.0). Thanks to Jonathon Putney for creating a PR to
+fix this. There is a long discussion in GitHub Discussion [#768](https://github.com/ESAPI/esapi-java-legacy/discussions/768)
+where this was first announced, for those of you have insomnia or really long attention
+spans and are interested in the approaches that were tried.
+
+Of course, ESAPI also still continues to support the older Java EE Servlet API (i.e., **javax.servlet** namespace) as well. In
+fact, without the
+```xml
+<classifier>jakarta</classifier>
+```
+that's the version that will be used by default.
 
 # A word about ESAPI vulnerabilities
 A summary of all the vulnerabilities that we have written about in either the
