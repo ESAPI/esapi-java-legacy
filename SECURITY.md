@@ -1,11 +1,19 @@
 # Security Policy
 
+In general, because the ESAPI core development is so small (3 people, all
+working full time jobs), we can only support the latest version of ESAPI.
+If you are locked in to some previous version and are unable to upgrade
+to the latest version, perhaps one or more of us might consider back-porting
+a patch (especially if it is the only way to address an ESAPI vulnerability),
+but if it is anything but trivial, we would charge a TBD consulting fee.
+
 ## Supported Versions
+
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.5.1.0 (latest) | :white_check_mark: |
-| 2.1.0.1-2.5.0.0  | :x:, upgrade to latest release |
+| 2.5.4.0 (latest) | :white_check_mark: |
+| 2.1.0.1-2.5.3.1  | :x:, upgrade to latest release |
 | <= 1.4.x  | :x:, no longer supported AT ALL |
 
 ## Reporting a Vulnerability
