@@ -45,5 +45,20 @@
         ]]></notes>
         <cve>CVE-2017-10355</cve>
     </suppress>
-
+    <suppress>
+        <notes><![CDATA[
+            FP per Depencency Check GitHub Issue #6704
+            pkg:maven/commons-configuration/commons-configuration@1.10
+        ]]></notes>
+        <sha1>2b36e4adfb66d966c5aef2d73deb6be716389dc9</sha1>
+        <vulnerabilityName>CVE-2024-29131</vulnerabilityName>
+   </suppress>
+    <suppress>
+        <notes><![CDATA[
+            FP per Depencency Check GitHub Issue #6704
+            pkg:maven/commons-configuration/commons-configuration@1.10
+        ]]></notes>
+        <sha1>2b36e4adfb66d966c5aef2d73deb6be716389dc9</sha1>
+        <vulnerabilityName>CVE-2024-29133</vulnerabilityName>
+   </suppress>
 </suppressions>
