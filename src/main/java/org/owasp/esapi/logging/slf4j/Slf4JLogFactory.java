@@ -36,6 +36,7 @@ import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
 import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
 import static org.owasp.esapi.PropNames.APPLICATION_NAME;
 import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
+import static org.owasp.esapi.PropNames.LOG_IGNORE_PREFIX;
 import org.slf4j.LoggerFactory;
 /**
  * LogFactory implementation which creates SLF4J supporting Loggers.
@@ -69,7 +70,8 @@ public class Slf4JLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
+        boolean logIgnorePrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_IGNORE_PREFIX);
+        SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logIgnorePrefix);
 
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, Slf4JLogLevelHandlers.TRACE);
@@ -114,6 +116,19 @@ public class Slf4JLogFactory implements LogFactory {
         return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
     }
 
+    /**
+     * Populates the default log appender for use in factory-created loggers.
+     * @param appName
+     * @param logApplicationName
+     * @param logServerIp
+     * @param logClientInfo
+     * @param logIgnorePrefix
+     *
+     * @return LogAppender instance.
+     */
+    /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean logIgnorePrefix) {
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logIgnorePrefix);
+    }
 
     @Override
     public Logger getLogger(String moduleName) {

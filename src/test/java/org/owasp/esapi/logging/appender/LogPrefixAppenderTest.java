@@ -34,6 +34,7 @@ public class LogPrefixAppenderTest {
     private String testLogMessage =  testName.getMethodName() + "-MESSAGE";
     private String testApplicationName = testName.getMethodName() + "-APPLICATION_NAME";
     private EventType testEventType = Logger.EVENT_UNSPECIFIED;
+    private boolean testIgnorePrefix = true;
 
     private EventTypeLogSupplier etlsSpy;
     private ClientInfoSupplier cisSpy;
@@ -145,7 +146,6 @@ public class LogPrefixAppenderTest {
         runTest(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, "[EVENT_TYPE]");
     }
 
-
     private void runTest(String typeResult, String userResult, String clientResult, String serverResult, String exResult) throws Exception{
         when(etlsSpy.get()).thenReturn(typeResult);
         when(uisSpy.get()).thenReturn(userResult);
@@ -163,4 +163,57 @@ public class LogPrefixAppenderTest {
 
         assertEquals(exResult + " " + testName.getMethodName() + "-MESSAGE", result);
     }
+
+    @Test
+    public void testLogContentWhenServerInfoEmptyAndIgnoreLogPrefix() throws Exception {
+        runTestWithLogPrefixIgnore(ETL_RESULT, UIS_RESULT, CIS_RESULT, EMPTY_RESULT, true, "[ USER_INFO:CLIENT_INFO]");
+    }
+
+    @Test
+    public void testLogContentWhenUserInfoEmptyAndServerInfoEmptyAndIgnoreLogPrefix() throws Exception {
+        runTestWithLogPrefixIgnore(ETL_RESULT, EMPTY_RESULT, CIS_RESULT, EMPTY_RESULT, true, "[ CLIENT_INFO]");
+    }
+
+    @Test
+    public void testLogContentWhenUserInfoEmptyAndClientInfoEmptyAndIgnoreLogPrefix() throws Exception {
+        runTestWithLogPrefixIgnore(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, SIS_RESULT, true, "[ -> SERVER_INFO]");
+    }
+
+    @Test
+    public void testLogContentWhenClientInfoEmptyAndServerInfoEmptyAndIgnoreLogPrefix() throws Exception {
+        runTestWithLogPrefixIgnore(ETL_RESULT, UIS_RESULT, EMPTY_RESULT, EMPTY_RESULT, true, "[ USER_INFO]");
+    }
+
+    @Test
+    public void testLogContentWhenUserInfoEmptyAndClientInfoEmptyAndServerInfoEmptyAndIgnoreLogPrefix() throws Exception {
+        runTestWithLogPrefixIgnore(ETL_RESULT, EMPTY_RESULT, EMPTY_RESULT, EMPTY_RESULT, true, "");
+    }
+
+    private void runTestWithLogPrefixIgnore(String typeResult, String userResult, String clientResult, String serverResult, boolean ignoreLogPrefix, String exResult) throws Exception{
+        etlsSpy.setIgnoreLogEventType(ignoreLogPrefix);
+        when(etlsSpy.get()).thenReturn(typeResult);
+
+        when(uisSpy.get()).thenReturn(userResult);
+        when(cisSpy.get()).thenReturn(clientResult);
+
+        sisSpy.setIgnoreLogName(ignoreLogPrefix);
+        when(sisSpy.get()).thenReturn(serverResult);
+
+        whenNew(EventTypeLogSupplier.class).withArguments(testEventType).thenReturn(etlsSpy);
+        whenNew(UserInfoSupplier.class).withNoArguments().thenReturn(uisSpy);
+        whenNew(ClientInfoSupplier.class).withNoArguments().thenReturn(cisSpy);
+        whenNew(ServerInfoSupplier.class).withArguments(testLoggerName).thenReturn(sisSpy);
+
+        //Since everything is mocked these booleans don't much matter aside from the later verifies
+        LogPrefixAppender lpa = new LogPrefixAppender(false, false, false, false, null, true);
+        String result =   lpa.appendTo(testLoggerName, testEventType, testLogMessage);
+
+        if (exResult.isEmpty()) {
+            assertEquals( testName.getMethodName() + "-MESSAGE", result);
+        }
+        else {
+            assertEquals(exResult + " " + testName.getMethodName() + "-MESSAGE", result);
+        }
+    }
+
 }

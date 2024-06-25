@@ -30,18 +30,27 @@ public class EventTypeLogSupplier // implements Supplier<String>
 {
     /** EventType reference to supply log representation of. */
     private final EventType eventType;
+    /** Whether to log or not the event type */
+    private boolean ignoreLogEventType = false;
 
     /**
      * Ctr
      *
-     * @param evtyp EventType reference to supply log representation for
+     * @param eventType EventType reference to supply log representation for
      */
-    public EventTypeLogSupplier(EventType evtyp) {
-        this.eventType = evtyp == null ? Logger.EVENT_UNSPECIFIED : evtyp;
+    public EventTypeLogSupplier(EventType eventType) {
+        this.eventType = eventType == null ? Logger.EVENT_UNSPECIFIED : eventType;
     }
 
     // @Override    -- Uncomment when we switch to Java 8 as minimal baseline.
     public String get() {
+        if (this.ignoreLogEventType) {
+            return "";
+        }
         return eventType.toString();
+    }
+
+    public void setIgnoreLogEventType(boolean ignoreLogEventType) {
+        this.ignoreLogEventType = ignoreLogEventType;
     }
 }

@@ -20,6 +20,7 @@ import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
 import static org.owasp.esapi.PropNames.LOG_ENCODING_REQUIRED;
 import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
 import static org.owasp.esapi.PropNames.LOG_USER_INFO;
+import static org.owasp.esapi.PropNames.LOG_IGNORE_PREFIX;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +80,8 @@ public class JavaLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
+        boolean logIgnorePrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_IGNORE_PREFIX);
+        JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logIgnorePrefix);
 
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, JavaLogLevelHandlers.ALWAYS);
@@ -142,6 +144,20 @@ public class JavaLogFactory implements LogFactory {
      */
     /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
         return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
+    }
+
+    /**
+     * Populates the default log appender for use in factory-created loggers.
+     * @param appName
+     * @param logApplicationName
+     * @param logServerIp
+     * @param logClientInfo
+     * @param logIgnorePrefix
+     *
+     * @return LogAppender instance.
+     */
+    /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean logIgnorePrefix) {
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logIgnorePrefix);
     }
 
 
