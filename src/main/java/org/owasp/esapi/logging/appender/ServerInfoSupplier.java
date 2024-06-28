@@ -35,7 +35,7 @@ public class ServerInfoSupplier     // implements Supplier<String>
     /** The application name to log. */
     private String applicationName = "";
     /** Whether to log the Name */
-    private boolean ignoreLogName = false;
+    private boolean logLogName = true;
     /** Reference to the associated logname/module name. */
     private final String logName;
 
@@ -68,7 +68,7 @@ public class ServerInfoSupplier     // implements Supplier<String>
             }
         }
 
-        if (!this.ignoreLogName) {
+        if (this.logLogName) {
             appInfo.append("/").append(logName);
         }
 
@@ -87,10 +87,10 @@ public class ServerInfoSupplier     // implements Supplier<String>
     /**
      * Specify whether the instance should record the prefix.
      *
-     * @param ignoreLogName {@code true} to record
+     * @param logLogName {@code true} to record
      */
-    public void setIgnoreLogName(boolean ignoreLogName) {
-        this.ignoreLogName = ignoreLogName;
+    public void setLogLogName(boolean logLogName) {
+        this.logLogName = logLogName;
     }
 
     /**

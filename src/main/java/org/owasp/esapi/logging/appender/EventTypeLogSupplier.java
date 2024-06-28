@@ -31,7 +31,7 @@ public class EventTypeLogSupplier // implements Supplier<String>
     /** EventType reference to supply log representation of. */
     private final EventType eventType;
     /** Whether to log or not the event type */
-    private boolean ignoreLogEventType = false;
+    private boolean logEventType = true;
 
     /**
      * Ctr
@@ -44,13 +44,10 @@ public class EventTypeLogSupplier // implements Supplier<String>
 
     // @Override    -- Uncomment when we switch to Java 8 as minimal baseline.
     public String get() {
-        if (this.ignoreLogEventType) {
-            return "";
-        }
-        return eventType.toString();
+        return logEventType ? eventType.toString() : "";
     }
 
-    public void setIgnoreLogEventType(boolean ignoreLogEventType) {
-        this.ignoreLogEventType = ignoreLogEventType;
+    public void setLogEventType(boolean logEventType) {
+        this.logEventType = logEventType;
     }
 }

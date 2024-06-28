@@ -36,7 +36,7 @@ public class LogPrefixAppender implements LogAppender {
     /** Application Name to record. */
     private final String appName;
     /** Whether or not to print the prefix. */
-    private final boolean ignoreLogPrefix;
+    private final boolean logPrefix;
 
     /**
      * Ctr.
@@ -53,7 +53,7 @@ public class LogPrefixAppender implements LogAppender {
         this.logServerIp = logServerIp;
         this.logApplicationName = logApplicationName;
         this.appName = appName;
-        this.ignoreLogPrefix = false;
+        this.logPrefix = true;
     }
 
     /**
@@ -64,21 +64,21 @@ public class LogPrefixAppender implements LogAppender {
      * @param logServerIp        Whether or not to record server ip information
      * @param logApplicationName Whether or not to record application name
      * @param appName            Application Name to record.
-     * @param ignoreLogPrefix    Whether or not to print the prefix
+     * @param logPrefix          Whether or not to print the prefix
      */
-    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean ignoreLogPrefix) {
+    public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean logPrefix) {
         this.logUserInfo = logUserInfo;
         this.logClientInfo = logClientInfo;
         this.logServerIp = logServerIp;
         this.logApplicationName = logApplicationName;
         this.appName = appName;
-        this.ignoreLogPrefix = ignoreLogPrefix;
+        this.logPrefix = logPrefix;
     }
 
     @Override
     public String appendTo(String logName, EventType eventType, String message) {
         EventTypeLogSupplier eventTypeSupplier = new EventTypeLogSupplier(eventType);
-        eventTypeSupplier.setIgnoreLogEventType(this.ignoreLogPrefix);
+        eventTypeSupplier.setLogEventType(this.logPrefix);
 
         UserInfoSupplier userInfoSupplier = new UserInfoSupplier();
         userInfoSupplier.setLogUserInfo(logUserInfo);
@@ -89,7 +89,7 @@ public class LogPrefixAppender implements LogAppender {
         ServerInfoSupplier serverInfoSupplier = new ServerInfoSupplier(logName);
         serverInfoSupplier.setLogServerIp(logServerIp);
         serverInfoSupplier.setLogApplicationName(logApplicationName, appName);
-        serverInfoSupplier.setIgnoreLogName(ignoreLogPrefix);
+        serverInfoSupplier.setLogLogName(logPrefix);
 
         String eventTypeMsg = eventTypeSupplier.get().trim();
         String userInfoMsg = userInfoSupplier.get().trim();
@@ -104,22 +104,20 @@ public class LogPrefixAppender implements LogAppender {
 
         String[] optionalPrefixContent = new String[] {userInfoMsg + clientInfoMsg, serverInfoMsg};
 
-        StringBuilder logPrefix = new StringBuilder();
+        StringBuilder logPrefixBuilder = new StringBuilder();
         //EventType is always appended (unless we specifically asked not to Log Prefix)
-        if (!this.ignoreLogPrefix) {
-            logPrefix.append(eventTypeMsg);
+        if (this.logPrefix) {
+            logPrefixBuilder.append(eventTypeMsg);
         }
 
         for (String element : optionalPrefixContent) {
             if (!element.isEmpty()) {
-                logPrefix.append(" ");
-                logPrefix.append(element);
+                logPrefixBuilder.append(" ");
+                logPrefixBuilder.append(element);
             }
         }
 
-        if (logPrefix.toString().isEmpty()) {
-            return message;
-        }
-        return String.format(RESULT_FORMAT, logPrefix.toString(), message);
+        String logPrefixContent = logPrefixBuilder.toString();
+        return logPrefixContent.trim().isEmpty() ? message : String.format(RESULT_FORMAT, logPrefixContent, message);
     }
 }

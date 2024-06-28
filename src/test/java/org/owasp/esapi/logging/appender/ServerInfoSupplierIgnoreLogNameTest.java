@@ -39,7 +39,7 @@ public class ServerInfoSupplierIgnoreLogNameTest {
         ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
         sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
         sis.setLogServerIp(true);
-        sis.setIgnoreLogName(true);
+        sis.setLogLogName(false);
 
         String result = sis.get();
         assertEquals("LOCAL_ADDR:99999/" + testName.getMethodName() + "-APPLICATION",
@@ -52,7 +52,7 @@ public class ServerInfoSupplierIgnoreLogNameTest {
         ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
         sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
         sis.setLogServerIp(true);
-        sis.setIgnoreLogName(true);
+        sis.setLogLogName(false);
 
         String result = sis.get();
         assertEquals("/" + testName.getMethodName() + "-APPLICATION", result);
@@ -67,7 +67,7 @@ public class ServerInfoSupplierIgnoreLogNameTest {
         ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
         sis.setLogApplicationName(false, null);
         sis.setLogServerIp(true);
-        sis.setIgnoreLogName(true);
+        sis.setLogLogName(false);
 
         String result = sis.get();
         assertEquals("LOCAL_ADDR:99999", result);
@@ -82,7 +82,7 @@ public class ServerInfoSupplierIgnoreLogNameTest {
         ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
         sis.setLogApplicationName(true, null);
         sis.setLogServerIp(true);
-        sis.setIgnoreLogName(true);
+        sis.setLogLogName(false);
 
         String result = sis.get();
         assertEquals("LOCAL_ADDR:99999/null", result);
@@ -93,7 +93,7 @@ public class ServerInfoSupplierIgnoreLogNameTest {
         ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
         sis.setLogApplicationName(true, testName.getMethodName() + "-APPLICATION");
         sis.setLogServerIp(false);
-        sis.setIgnoreLogName(true);
+        sis.setLogLogName(false);
 
         String result = sis.get();
         assertEquals("/" + testName.getMethodName() + "-APPLICATION", result);
@@ -105,7 +105,7 @@ public class ServerInfoSupplierIgnoreLogNameTest {
         ServerInfoSupplier sis = new ServerInfoSupplier(testName.getMethodName());
         sis.setLogApplicationName(false, null);
         sis.setLogServerIp(false);
-        sis.setIgnoreLogName(true);
+        sis.setLogLogName(false);
 
         String result = sis.get();
         assertEquals("", result);

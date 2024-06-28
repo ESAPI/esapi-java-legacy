@@ -35,10 +35,11 @@ public class EventTypeLogSupplierIgnoreEventTypeTest {
         this.eventType = eventType;
         this.expectedResult = result;
     }
+
     @Test
     public void testEventTypeLogIgnoreEventType() {
         EventTypeLogSupplier supplier = new EventTypeLogSupplier(eventType);
-        supplier.setIgnoreLogEventType(true);
+        supplier.setLogEventType(false);
         assertEquals(expectedResult, supplier.get());
     }
 }
