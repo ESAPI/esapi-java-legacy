@@ -58,14 +58,9 @@ public class ServerInfoSupplier     // implements Supplier<String>
                 appInfo.append(request.getLocalAddr()).append(":").append(request.getLocalPort());
             }
         }
-
+        
         if (this.logAppName) {
-            if (this.applicationName != null && !this.applicationName.isEmpty()) {
-                appInfo.append("/").append(this.applicationName);
-            }
-            else if (this.applicationName == null) {
-                appInfo.append("/").append(this.applicationName);
-            }
+            appInfo.append("/").append(this.applicationName);
         }
 
         if (this.logLogName) {

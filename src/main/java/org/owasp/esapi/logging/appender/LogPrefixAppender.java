@@ -39,7 +39,7 @@ public class LogPrefixAppender implements LogAppender {
     private final boolean logPrefix;
 
     /**
-     * Ctr.
+     * Constructor
      *
      * @param logUserInfo      Whether or not to record user information
      * @param logClientInfo      Whether or not to record client information
@@ -54,7 +54,7 @@ public class LogPrefixAppender implements LogAppender {
     }
 
     /**
-     * Ctr.
+     * Constructor
      *
      * @param logUserInfo        Whether or not to record user information
      * @param logClientInfo      Whether or not to record client information
