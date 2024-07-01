@@ -34,7 +34,6 @@ public class LogPrefixAppenderTest {
     private String testLogMessage =  testName.getMethodName() + "-MESSAGE";
     private String testApplicationName = testName.getMethodName() + "-APPLICATION_NAME";
     private EventType testEventType = Logger.EVENT_UNSPECIFIED;
-    //private boolean testIgnorePrefix = true;
 
     private EventTypeLogSupplier etlsSpy;
     private ClientInfoSupplier cisSpy;

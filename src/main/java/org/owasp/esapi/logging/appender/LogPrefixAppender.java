@@ -46,14 +46,11 @@ public class LogPrefixAppender implements LogAppender {
      * @param logServerIp        Whether or not to record server ip information
      * @param logApplicationName Whether or not to record application name
      * @param appName            Application Name to record.
+     * @param logPrefix          is set by default to true
      */
+    @SuppressWarnings("JavadocReference")
     public LogPrefixAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName) {
-        this.logUserInfo = logUserInfo;
-        this.logClientInfo = logClientInfo;
-        this.logServerIp = logServerIp;
-        this.logApplicationName = logApplicationName;
-        this.appName = appName;
-        this.logPrefix = true;
+        this(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, true);
     }
 
     /**
