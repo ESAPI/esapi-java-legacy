@@ -1441,8 +1441,17 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         try {
             return esapiPropertyManager.getBooleanProp(propertyName);
         } catch (ConfigurationException ex) {
+
             String property = properties.getProperty( propertyName );
             if ( property == null ) {
+                if (propertyName.startsWith("Logger.")) {
+                    if (propertyName.equals("Logger.LogEncodingRequired")) {
+                        return Boolean.FALSE;
+                    }
+                    else {
+                        return Boolean.TRUE;
+                    }
+                }
                 throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " not found in ESAPI.properties");
             }
             if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes" ) ) {
@@ -1450,6 +1459,15 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             }
             if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase( "no" ) ) {
                 return false;
+            }
+
+            if (propertyName.startsWith("Logger.")) {
+                if (propertyName.equals("Logger.LogEncodingRequired")) {
+                    return Boolean.FALSE;
+                }
+                else {
+                    return Boolean.TRUE;
+                }
             }
             throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " has incorrect " +
                     "type");
