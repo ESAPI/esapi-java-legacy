@@ -7,7 +7,7 @@
   ~ Enterprise Security API (ESAPI) project. For details, please see
   ~ <a href="http://www.owasp.org/index.php/ESAPI">http://www.owasp.org/index.php/ESAPI</a>.
   ~
-  ~ Copyright (c) 2007 - The OWASP Foundation
+  ~ Copyright (c) 2007-2024 - The OWASP Foundation
   ~
   ~ The ESAPI is published by OWASP under the BSD license. You should read and accept the
   ~ LICENSE before you use, modify, and/or redistribute this software.
@@ -22,7 +22,7 @@
 	xsi:schemaLocation="
 		http://java.sun.com/xml/ns/j2ee
 		http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
-	version="2.0">
+	version="2.x">
 	<description>
 		OWASP Enterprise Security API (ESAPI) provides
 		a JSP Tag Library that supplies easy access to
@@ -30,6 +30,8 @@
 		functions. These can be used to properly escape user
 		supplied data at display time so that it cannot be used
 		in injection attacks like Cross Site Scripting (XSS).
+        This tag library applies to all of ESAPI 2.x versions. Its
+        interface hasn't changed since 2.0.
 	</description>
 	<display-name>OWASP ESAPI</display-name>
 	<tlib-version>2.0</tlib-version>
