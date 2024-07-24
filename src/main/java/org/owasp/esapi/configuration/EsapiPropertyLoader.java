@@ -34,6 +34,13 @@ public interface EsapiPropertyLoader {
     public Boolean getBooleanProp(String propertyName) throws ConfigurationException;
 
     /**
+     * Get any Boolean type property from security configuration.
+     * If property does not exist in configuration or has incorrect type, defaultValue is returned
+     * @return property value.
+     */
+    public Boolean getBooleanProp(String propertyName, Boolean defaultValue);
+
+    /**
      * Get any property from security configuration. As every property can be returned as string, this method
      * throws exception only when property does not exist.
      *

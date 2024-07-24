@@ -70,7 +70,7 @@ public class Slf4JLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        boolean logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX);
+        boolean logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX, true);
         SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logPrefix);
 
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
