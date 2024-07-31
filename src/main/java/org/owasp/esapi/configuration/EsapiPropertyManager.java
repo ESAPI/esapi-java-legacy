@@ -82,11 +82,7 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
     @Override
     public Boolean getBooleanProp(String propertyName, Boolean defaultValue) {
         for (AbstractPrioritizedPropertyLoader loader : loaders) {
-            try {
-                return loader.getBooleanProp(propertyName);
-            } catch (ConfigurationException e) {
-                return defaultValue;
-            }
+            return loader.getBooleanProp(propertyName, defaultValue);
         }
         return defaultValue;
     }
