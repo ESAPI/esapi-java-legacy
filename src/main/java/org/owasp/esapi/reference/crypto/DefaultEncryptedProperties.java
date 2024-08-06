@@ -206,9 +206,8 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
             try { if ( out != null ) out.close(); } catch( Exception e ) {}
         }
 
-        Iterator<?> i = ep.keySet().iterator();
-        while (i.hasNext()) {
-            String k = (String) i.next();
+        for (Object o : ep.keySet()) {
+            String k = (String) o;
             String value = ep.getProperty(k);
             System.out.println("   " + k + "=" + value);
         }
