@@ -29,6 +29,7 @@ import java.util.Set;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.crypto.CipherText;
 import org.owasp.esapi.crypto.PlainText;
 import org.owasp.esapi.errors.EncryptionException;
@@ -193,10 +194,10 @@ public class DefaultEncryptedProperties implements org.owasp.esapi.EncryptedProp
                 key = br.readLine();
                 System.out.print("Enter value: ");
                 String value = br.readLine();
-                if (key != null && key.length() > 0 && value != null && value.length() > 0) {
+                if (!StringUtilities.isEmpty(key) && !StringUtilities.isEmpty(value)) {
                     ep.setProperty(key, value);
                 }
-            } while (key != null && key.length() > 0);
+            } while (!StringUtilities.isEmpty(key));
             ep.store(out, "Encrypted Properties File");
         } finally {
             // FindBugs and PMD both complain about these next lines, that they may
