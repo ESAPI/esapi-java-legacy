@@ -89,7 +89,7 @@ public class EncodingPatternPreservation {
     /**
      * Allows the marker used as a replacement to be altered.
      *
-     * @param marker String replacment to use for regex matches.
+     * @param marker String replacement to use for regex matches.
      */
     public void setReplacementMarker(String marker) {
         if (!replacedContentList.isEmpty()) {
