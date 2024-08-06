@@ -39,7 +39,7 @@ public class CipherTextSerializer {
     // accommodate any differences.
     //        Previous versions:    20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
     //                            20130830 - Fix to issue #306 (release 2.1.0)
-    // We check that in an static initialization block below.
+    // We check that in a static initialization block below.
     public  static final  int cipherTextSerializerVersion = 20130830; // Current version. Format: YYYYMMDD, max is 99991231.
     private static final long serialVersionUID = cipherTextSerializerVersion;
 
