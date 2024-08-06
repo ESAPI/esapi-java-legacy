@@ -19,7 +19,7 @@ public class EsapiPropertyLoaderFactory {
     public static AbstractPrioritizedPropertyLoader createPropertyLoader(EsapiConfiguration cfg)
             throws ConfigurationException, IOException {
         String cfgPath = System.getProperty(cfg.getConfigName());
-        if ( cfgPath == null || cfgPath.equals("") ) {
+        if ( cfgPath == null || cfgPath.isEmpty() ) {
             // TODO / FIXME:
             // This case was previously a warning, but it should NOT have been
             // since these system properties are optional. Most people just use
