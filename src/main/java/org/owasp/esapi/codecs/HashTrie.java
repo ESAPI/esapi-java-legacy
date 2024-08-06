@@ -549,7 +549,7 @@ public class HashTrie<T> implements Trie<T>
 
     /**
      * Get the number of entries.
-     * @return the number or entries.
+     * @return the number of entries.
      */
     public int size()
     {
