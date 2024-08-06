@@ -40,9 +40,9 @@ public class CollectionsUtil
     }
 
     /**
-     * Convert a char array to a unmodifiable Set.
+     * Convert a char array to an unmodifiable Set.
      * @param array the contents of the new Set
-     * @return a unmodifiable Set containing the elements in the
+     * @return an unmodifiable Set containing the elements in the
      * array.
      */
     public static Set<Character> arrayToUnmodifiableSet(char...array)
@@ -76,7 +76,7 @@ public class CollectionsUtil
     /**
      * Convert a String to a set of characters.
      * @param str The string to convert
-     * @return A set containing the characters in str. A empty set
+     * @return A set containing the characters in str. An empty set
      *     is returned if str is null.
      */
     public static Set<Character> strToSet(String str)
@@ -92,9 +92,9 @@ public class CollectionsUtil
     }
 
     /**
-     * Convert a String to a unmodifiable set of characters.
+     * Convert a String to an unmodifiable set of characters.
      * @param str The string to convert
-     * @return A set containing the characters in str. A empty set
+     * @return A set containing the characters in str. An empty set
      *     is returned if str is null.
      */
     public static Set<Character> strToUnmodifiableSet(String str)
