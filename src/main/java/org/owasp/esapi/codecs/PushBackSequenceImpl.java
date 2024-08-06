@@ -60,9 +60,9 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
     }
 
       /**
-      * Returns true if the parameter character is a hexidecimal digit 0 through 9, a through f, or A through F.
+      * Returns true if the parameter character is a hexadecimal digit 0 through 9, a through f, or A through F.
       * @param c
-      * @return true if it is a hexidecimal digit, false otherwise.
+      * @return true if it is a hexadecimal digit, false otherwise.
       */
      public static boolean isHexDigit( Integer c ) {
         if ( c == null ) return false;
