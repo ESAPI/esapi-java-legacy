@@ -376,13 +376,13 @@ public class FileBasedACRs {
      *         a List of roles that are valid according to the criteria stated above.
      *
      */
-    private List validateRoles(List roles){
-        List ret = new ArrayList();
-        for (Object role : roles) {
-            String canonical = ESAPI.encoder().canonicalize(((String) role).trim());
+    private List<String> validateRoles(List<String> roles){
+        List<String> ret = new ArrayList<>();
+        for (String role : roles) {
+            String canonical = ESAPI.encoder().canonicalize(role.trim());
 
             if (!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController", canonical, "RoleName", 20, false)) {
-                logger.warning( Logger.SECURITY_FAILURE, "Role: " + ((String) role).trim() + " is invalid, so was not added to the list of roles for this Rule.");
+                logger.warning( Logger.SECURITY_FAILURE, "Role: " + role.trim() + " is invalid, so was not added to the list of roles for this Rule.");
             } else {
                 ret.add(canonical.trim());
             }
@@ -420,10 +420,10 @@ public class FileBasedACRs {
                     // fix Windows paths
                     rule.path = parts[0].trim().replaceAll("\\\\", "/");
 
-                    List roles = commaSplit(parts[1].trim().toLowerCase());
+                    List<String> roles = commaSplit(parts[1].trim().toLowerCase());
                     roles = validateRoles(roles);
                     for(int x = 0; x < roles.size(); x++)
-                        rule.roles.add(((String)roles.get(x)).trim());
+                        rule.roles.add(roles.get(x).trim());
 
                     String action = parts[2].trim();
                     rule.allow = action.equalsIgnoreCase("allow");
@@ -515,7 +515,7 @@ public class FileBasedACRs {
      * @return
      *         a List where each entry was on either side of a ',' in the original String
      */
-    private List commaSplit(String input){
+    private List<String> commaSplit(String input){
         String[] array = input.split(",");
         return Arrays.asList(array);
     }
