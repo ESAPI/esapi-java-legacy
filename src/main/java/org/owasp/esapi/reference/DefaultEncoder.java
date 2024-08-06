@@ -370,7 +370,7 @@ public class DefaultEncoder implements Encoder {
         }
         // TODO: replace with DN codec
         StringBuilder sb = new StringBuilder();
-        if ((input.length() > 0) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
+        if ((!input.isEmpty()) && ((input.charAt(0) == ' ') || (input.charAt(0) == '#'))) {
             sb.append('\\'); // add the leading backslash if needed
         }
         // See discussion of forward slash ('/') in encodeForLDAP()
