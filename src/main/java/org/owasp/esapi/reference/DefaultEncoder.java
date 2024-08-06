@@ -620,7 +620,7 @@ public class DefaultEncoder implements Encoder {
      */
     protected String buildUrl(Map<UriSegment, String> parseMap){
         StringBuilder sb = new StringBuilder();
-        boolean schemePresent = parseMap.get(UriSegment.SCHEME).equals("") ? false : true;
+        boolean schemePresent = parseMap.get(UriSegment.SCHEME).isEmpty() ? false : true;
         
         if(schemePresent) {
         	sb.append(parseMap.get(UriSegment.SCHEME))
