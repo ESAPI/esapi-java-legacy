@@ -210,8 +210,8 @@ public class ObjFactory {
 
     /**
      * Wrapped data, contains the method object and the method is static method or not.<br>
-     * The goal to store the boolean value in field staticMethod is reduce the check times: check once, use many times.<br>
-     * The goal to store the exception in field nonStaticException is reduce the cost of new Exception(): create once, use many times.
+     * The goal to store the boolean value in field staticMethod is to reduce the check times: check once, use many times.<br>
+     * The goal to store the exception in field nonStaticException is to reduce the cost of new Exception(): create once, use many times.
      */
     private static class MethodWrappedInfo {
         private Method method;
