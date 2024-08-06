@@ -9,9 +9,9 @@ import java.util.Set;
 
 public interface Trie<T> extends Map<CharSequence,T>
 {
-    public Map.Entry<CharSequence,T> getLongestMatch(CharSequence key);
-    public Map.Entry<CharSequence,T> getLongestMatch(PushbackReader keyIn) throws IOException;
-    public int getMaxKeyLength();
+    Map.Entry<CharSequence,T> getLongestMatch(CharSequence key);
+    Map.Entry<CharSequence,T> getLongestMatch(PushbackReader keyIn) throws IOException;
+    int getMaxKeyLength();
 
     static class TrieProxy<T> implements Trie<T>
     {
@@ -158,7 +158,7 @@ public interface Trie<T> extends Map<CharSequence,T>
         }
     }
 
-    public static class Util
+    static class Util
     {
         private Util()
         {
