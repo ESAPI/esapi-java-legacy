@@ -80,7 +80,7 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     }
 
     public ServletOutputStream getOutputStream() throws IllegalStateException, IOException {
-        if ( alreadyCalledWriter == true ) {
+        if (alreadyCalledWriter) {
             throw new IllegalStateException();
         }
 
@@ -90,7 +90,7 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
     }
 
     public PrintWriter getWriter() throws IOException {
-        if ( alreadyCalledOutputStream == true ) {
+        if (alreadyCalledOutputStream) {
             throw new IllegalStateException();
         }
         alreadyCalledWriter = true;
