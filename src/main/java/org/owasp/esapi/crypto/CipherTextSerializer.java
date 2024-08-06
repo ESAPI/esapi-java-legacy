@@ -212,7 +212,7 @@ public class CipherTextSerializer {
     private void writeString(ByteArrayOutputStream baos, String str) {
         byte[] bytes;
         try {
-            if ( str == null || str.length() == 0 ) {
+            if ( str == null || str.isEmpty() ) {
                 throw new IllegalArgumentException("Program error? writeString: str is null or empty!");
             }
             bytes = str.getBytes("UTF8");
