@@ -71,7 +71,7 @@ import org.owasp.esapi.errors.ValidationException;
  * will also be quoted using '\'. Hence if original name/value pair were
  * <b>name=ab=xy\;</b> * this would be represented as <b>name=ab\=xy\\\;</b>.
  * To ensure things are "safe" (from a security perspective), attribute
- * <i>names</i> must conform the the Java regular expression
+ * <i>names</i> must conform to the Java regular expression
  * <pre>
  *          [A-Za-z0-9_\.-]+
  * </pre>
