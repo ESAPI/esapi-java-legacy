@@ -96,7 +96,7 @@ public class JSONCodec extends AbstractIntegerCodec {
         // WARNING!! Character based Codecs will only handle the byte range of 0-65535 (0x0-0xffff).
         // Passing any data represented by a higher numerical value will result in a downcast thus
         // destroying the original data with undefined results.
-        if ( Character.isValidCodePoint( codePoint ) == false ) {
+        if ( !Character.isValidCodePoint(codePoint) ) {
             // throw new IllegalArgumentException( "Invalid codepoint '" + String.format("0x%04X", codePoint) + "'." );
             return "";
         }
