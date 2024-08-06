@@ -7,7 +7,7 @@ import javax.servlet.jsp.JspTagException;
 import org.owasp.esapi.Encoder;
 
 /**
- * JSP tag that encode's it's body using Base64.
+ * JSP tag that encodes its body using Base64.
  */
 public class EncodeForBase64Tag extends BaseEncodeTag
 {
