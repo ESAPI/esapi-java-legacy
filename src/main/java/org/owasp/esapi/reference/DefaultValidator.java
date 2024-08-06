@@ -1072,7 +1072,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
         // verify ALL required parameters are present
         Set<String> missing = new HashSet<String>(required);
         missing.removeAll(actualNames);
-        if (missing.size() > 0) {
+        if (!missing.isEmpty()) {
             throw new ValidationException( context + ": Invalid HTTP request missing parameters", "Invalid HTTP request missing parameters " + missing + ": context=" + context, context );
         }
 
@@ -1080,7 +1080,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
         Set<String> extra = new HashSet<String>(actualNames);
         extra.removeAll(required);
         extra.removeAll(optional);
-        if (extra.size() > 0) {
+        if (!extra.isEmpty()) {
             throw new ValidationException( context + ": Invalid HTTP request extra parameters " + extra, "Invalid HTTP request extra parameters " + extra + ": context=" + context, context );
         }
     }
@@ -1347,7 +1347,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * @return boolean response if input is empty or not
      */
     private final boolean isEmpty(String input) {
-        return (input==null || input.trim().length() == 0);
+        return (input==null || input.trim().isEmpty());
     }
 
     /**
