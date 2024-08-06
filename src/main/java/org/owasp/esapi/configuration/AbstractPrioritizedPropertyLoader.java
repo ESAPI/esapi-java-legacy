@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Abstrace class that supports two "levels" of priorities for ESAPI properties.
+ * Abstract class that supports two "levels" of priorities for ESAPI properties.
  * The higher level is the property file supported by an "operations" team and
  * the lower level is the property file intended to be supported by the
  * "development" team. ESAPI properties defined in the lower level properties
