@@ -17,6 +17,7 @@ package org.owasp.esapi.reference;
 
 import org.owasp.esapi.*;
 import org.owasp.esapi.errors.*;
+import org.owasp.esapi.util.NullSafe;
 
 import java.io.*;
 import java.util.*;
@@ -312,7 +313,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             if (!currentHash.equals(verifyHash)) {
                 throw new AuthenticationCredentialsException("Password change failed", "Authentication failed for password change on user: " + accountName);
             }
-            if (newPassword == null || newPassword2 == null || !newPassword.equals(newPassword2)) {
+            if (!NullSafe.equals(newPassword, newPassword2)) {
                 throw new AuthenticationCredentialsException("Password change failed", "Passwords do not match for password change on user: " + accountName);
             }
             verifyPasswordStrength(currentPassword, newPassword, user);
