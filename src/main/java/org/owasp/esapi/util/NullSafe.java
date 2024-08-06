@@ -1,5 +1,7 @@
 package org.owasp.esapi.util;
 
+import java.util.Objects;
+
 public class NullSafe
 {
     /**
@@ -17,13 +19,7 @@ public class NullSafe
      */
     public static boolean equals(Object a, Object b)
     {
-        if(a==b)    // short cut same object
-            return true;
-        if(a == null)
-            return (b == null);
-        if(b == null)
-            return false;
-        return a.equals(b);
+        return Objects.equals(a, b);
     }
 
     /**
