@@ -63,7 +63,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
      * please see the Manual at
      * @link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi
      *
-     * Currently the only supported modes are:
+     * Currently, the only supported modes are:
      * ANSI
      * STANDARD
      */
