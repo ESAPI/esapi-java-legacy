@@ -70,10 +70,10 @@ public class ObjFactory {
         Object obj = null;
         String errMsg = null;
         try {
-            if (null == className || "".equals(className) ) {
+            if (null == className || className.isEmpty() ) {
                 throw new IllegalArgumentException("Classname cannot be null or empty.");
             }
-            if (null == typeName || "".equals(typeName) ) {
+            if (null == typeName || typeName.isEmpty() ) {
                 // No big deal...just use "[unknown?]" for this as it's only for an err msg.
                 typeName = "[unknown?]";    // CHECKME: Any better suggestions?
             }
