@@ -292,7 +292,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
         input.next();    // read &
         for(int i=0;i<len;i++)
             input.next();
-        input.next();    // read semicolen
+        input.next();    // read semicolon
         return entry.getValue();
     }
 }
