@@ -49,7 +49,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
     private static final HashTrie<Character> entityToCharacterMap;
 
     static
-    {    // populate entitites
+    {    // populate entities
         entityToCharacterMap = new HashTrie<Character>();
         entityToCharacterMap.put("lt", '<');
         entityToCharacterMap.put("gt", '>');
