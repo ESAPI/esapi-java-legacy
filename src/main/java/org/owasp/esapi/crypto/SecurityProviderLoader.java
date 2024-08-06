@@ -33,7 +33,7 @@ public class SecurityProviderLoader  {
         // Load the table with known providers. We load the (short) JCE name
         // and the corresponding provider class. We don't 'new' the actual
         // class name here because that would mean we would have to have all
-        // these jars. Instead we use reflection and do it dynamically only
+        // these jars. Instead, we use reflection and do it dynamically only
         // when SecurityProviderLoader.insertProviderAt() is called because
         // presumably they will have the jar in their classpath for the
         // provider they wish to use.
