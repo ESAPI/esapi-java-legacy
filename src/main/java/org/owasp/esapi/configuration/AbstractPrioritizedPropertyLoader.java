@@ -42,7 +42,7 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
 
     /**
      * Get priority of this property loader. If two and more loaders can return value for the same property key,
-     * the one with highest priority will be chosen.
+     * the one with the highest priority will be chosen.
      * @return priority of this property loader
      */
     public int priority() {
