@@ -62,7 +62,7 @@ public class RequestRateThrottleFilter implements Filter
      * Checks to see if the current session has exceeded the allowed number
      * of requests in the specified time period. If the threshold has been
      * exceeded, then a short error message is written to the output stream and
-     * no further processing is done on the request. Otherwise the request is
+     * no further processing is done on the request. Otherwise, the request is
      * processed as normal.
      * @param request
      * @param response
