@@ -34,8 +34,8 @@ import org.owasp.esapi.errors.EncryptionException;
  */
 public class CipherTextSerializer {
     // This should be *same* version as in CipherText & KeyDerivationFunction as
-    // these versions all need to work together.  Therefore, when one changes one
-    // one these versions, the other should be reviewed and changed as well to
+    // these versions all need to work together.  Therefore, when someone changes one
+    // of these versions, the other should be reviewed and changed as well to
     // accommodate any differences.
     //        Previous versions:    20110203 - Original version (ESAPI releases 2.0 & 2.0.1)
     //                            20130830 - Fix to issue #306 (release 2.1.0)
