@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.waf.actions.Action;
 import org.owasp.esapi.waf.configuration.AppGuardianConfiguration;
 import org.owasp.esapi.waf.internal.InterceptingHTTPServletResponse;
@@ -43,7 +44,7 @@ public abstract class Rule {
     }
 
     protected void setId(String id) {
-        if ( id == null || "".equals(id) )
+        if ( StringUtilities.isEmpty(id) )
             return;
 
         this.id = id;
