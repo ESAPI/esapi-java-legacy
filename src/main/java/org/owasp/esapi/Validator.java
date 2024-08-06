@@ -387,7 +387,7 @@ public interface Validator {
      * Canonicalize and then sanitize the input so that it is "safe" for renderinger in an HTML context (i.e., that
      * it does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else). Note that the resulting
      * returned value may omit input that is considered dangerous and cannot be safely sanitized and other input
-     * that gets HTML encoded (e.g., a single quote (') might get chaged to "&quot;").
+     * that gets HTML encoded (e.g., a single quote (') might get changed to "&quot;").
      * <p>
      * The default behavior of this check depends on the {@code antisamy-esapi.xml} AntiSamy policy configuration file
      * (or an alternate filename, specified via the "Validator.HtmlValidationConfigurationFile" property in your
@@ -417,7 +417,7 @@ public interface Validator {
      * Canonicalize and then sanitize the input so that it is "safe" for renderinger in an HTML context (i.e., that
      * it does not contain unwanted scripts in the body, attributes, CSS, URLs, or anywhere else). Note that the resulting
      * returned value may omit input that is considered dangerous and cannot be safely sanitized and other input
-     * that gets HTML encoded (e.g., a single quote (') might get chaged to "&quot;").
+     * that gets HTML encoded (e.g., a single quote (') might get changed to "&quot;").
      * <p>
      * The default behavior of this check depends on the {@code antisamy-esapi.xml} AntiSamy policy configuration file
      * (or an alternate filename, specified via the "Validator.HtmlValidationConfigurationFile" property in your
