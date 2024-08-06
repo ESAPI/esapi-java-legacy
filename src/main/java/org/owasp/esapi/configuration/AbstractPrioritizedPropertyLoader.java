@@ -73,7 +73,7 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
             if ( file.canRead() ) {
                 loadPropertiesFromFile(file);
             } else {
-                throw new IOException("Can't read specificied configuration file: " + filename);
+                throw new IOException("Can't read specified configuration file: " + filename);
             }
         } else {
             throw new FileNotFoundException("Specified configuration file " + filename + " does not exist or not regular file");
