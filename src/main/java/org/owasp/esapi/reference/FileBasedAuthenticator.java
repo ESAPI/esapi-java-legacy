@@ -480,7 +480,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
                 reader = new BufferedReader(new FileReader(userDB));
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    if (line.length() > 0 && line.charAt(0) != '#') {
+                    if (!line.isEmpty() && line.charAt(0) != '#') {
                         DefaultUser user = createUser(line);
                         if (map.containsKey(new Long(user.getAccountId()))) {
                             logger.fatal(Logger.SECURITY_FAILURE, "Problem in user file. Skipping duplicate user: " + user, null);
