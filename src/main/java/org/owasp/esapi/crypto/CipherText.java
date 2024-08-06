@@ -789,7 +789,7 @@ public final class CipherText implements Serializable {
      * <pre>
      *      HMAC-SHA1(nonce, IV + plaintext)
      * </pre>
-     * Note that <i>only</i> HMAC-SHA1 is used for the MAC calcuation. Unlike
+     * Note that <i>only</i> HMAC-SHA1 is used for the MAC calculation. Unlike
      * the PRF used for derived key generation in the {@code KeyDerivationFunction}
      * class, the user cannot change the algorithm used to compute the MAC itself.
      * One reason for that is that we don't want the MAC value to be excessively
