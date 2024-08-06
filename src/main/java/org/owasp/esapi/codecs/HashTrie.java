@@ -346,7 +346,7 @@ public class HashTrie<T> implements Trie<T>
             if(value != null)
                 // MUST toString here
                 keys.add(key.toString());
-            if(nextMap != null && nextMap.size() > 0)
+            if(nextMap != null && !nextMap.isEmpty())
             {
                 key.append('X');
                 for(Map.Entry<Character,Node<T>> entry : nextMap.entrySet())
@@ -372,7 +372,7 @@ public class HashTrie<T> implements Trie<T>
             if(value != null)
                 // MUST toString here
                 entries.add(new Entry(key.toString(),value));
-            if(nextMap != null && nextMap.size() > 0)
+            if(nextMap != null && !nextMap.isEmpty())
             {
                 key.append('X');
                 for(Map.Entry<Character,Node<T>> entry : nextMap.entrySet())
