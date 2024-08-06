@@ -89,7 +89,7 @@ package org.owasp.esapi;
  * the basis for its logging implementation. Both provided implementations implement requirements #1 through #5 above.
  * </p><p>
  * <i>Customization</i>: It is expected that most organizations may wish to implement their own custom {@code Logger} class in
- * order to integrate ESAPI logging with their specific logging infrastructure. The ESAPI feference implementations
+ * order to integrate ESAPI logging with their specific logging infrastructure. The ESAPI reference implementations
  * can serve as a useful starting point to intended to provide a simple functional example of an implementation, but
  * they are also largely usable out-of-the-box with some additional minimal log configuration.
  *
