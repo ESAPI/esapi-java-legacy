@@ -339,9 +339,8 @@ public class FileBasedACRs {
         if (ruleRoles.contains("any")) {
             return true;
         }
-        Iterator i = userRoles.iterator();
-        while (i.hasNext()) {
-            String role = (String) i.next();
+        for (Object userRole : userRoles) {
+            String role = (String) userRole;
             if (ruleRoles.contains(role)) {
                 return true;
             }
@@ -379,11 +378,11 @@ public class FileBasedACRs {
      */
     private List validateRoles(List roles){
         List ret = new ArrayList();
-        for(int x = 0; x < roles.size(); x++){
-            String canonical = ESAPI.encoder().canonicalize(((String)roles.get(x)).trim());
+        for (Object role : roles) {
+            String canonical = ESAPI.encoder().canonicalize(((String) role).trim());
 
-            if(!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController", canonical, "RoleName", 20, false)) {
-                logger.warning( Logger.SECURITY_FAILURE, "Role: " + ((String)roles.get(x)).trim() + " is invalid, so was not added to the list of roles for this Rule.");
+            if (!ESAPI.validator().isValidInput("Validating user roles in FileBasedAccessController", canonical, "RoleName", 20, false)) {
+                logger.warning( Logger.SECURITY_FAILURE, "Role: " + ((String) role).trim() + " is invalid, so was not added to the list of roles for this Rule.");
             } else {
                 ret.add(canonical.trim());
             }
