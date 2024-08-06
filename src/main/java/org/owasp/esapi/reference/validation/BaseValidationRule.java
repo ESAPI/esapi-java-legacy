@@ -123,7 +123,7 @@ public abstract class BaseValidationRule implements ValidationRule {
     }
 
     /**
-     * The method is similar to ValidationRuile.getSafe except that it returns a
+     * The method is similar to {@link ValidationRule#getSafe} except that it returns a
      * harmless object that <b>may or may not have any similarity to the original
      * input (in some cases you may not care)</b>. In most cases this should be the
      * same as the getSafe method only instead of throwing an exception, return
