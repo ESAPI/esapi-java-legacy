@@ -79,7 +79,7 @@ public class RandomAccessReferenceMap extends AbstractAccessReferenceMap<String>
       {
          candidate = ESAPI.randomizer().getRandomString(6, EncoderConstants.CHAR_ALPHANUMERICS);
       }
-      while (itod.keySet().contains(candidate));
+      while (itod.containsKey(candidate));
       return candidate;
    }
 }
