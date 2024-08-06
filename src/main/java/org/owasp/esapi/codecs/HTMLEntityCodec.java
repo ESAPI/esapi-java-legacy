@@ -320,7 +320,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
     }
 
     /**
-     * Build a unmodifiable Map from entity Character to Name.
+     * Build an unmodifiable Map from entity Character to Name.
      * @return Unmodifiable map.
      */
     private static synchronized Map<Integer,String> mkCharacterToEntityMap()
@@ -584,7 +584,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
     }
 
     /**
-     * Build a unmodifiable Trie from entitiy Name to Character
+     * Build an unmodifiable Trie from entitiy Name to Character
      * @return Unmodifiable trie.
      */
     private static synchronized Trie<Integer> mkEntityToCharacterTrie()
