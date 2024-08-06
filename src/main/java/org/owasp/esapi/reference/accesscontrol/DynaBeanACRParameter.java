@@ -180,10 +180,10 @@ public class DynaBeanACRParameter implements PolicyParameters {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        Iterator keys = policyProperties.getMap().keySet().iterator();
+        Iterator<String> keys = policyProperties.getMap().keySet().iterator();
         String currentKey;
         while(keys.hasNext()) {
-            currentKey = (String)keys.next();
+            currentKey = keys.next();
             sb.append(currentKey);
             sb.append("=");
             sb.append(policyProperties.get(currentKey));
