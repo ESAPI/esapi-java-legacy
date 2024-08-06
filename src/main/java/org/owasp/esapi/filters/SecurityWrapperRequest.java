@@ -628,7 +628,7 @@ public class SecurityWrapperRequest extends HttpServletRequestWrapper implements
     /**
      * Returns the URL from the HttpServletRequest after canonicalizing and
      * filtering out any dangerous characters.
-     * @return The currect request URL
+     * @return The current request URL
      */
     public StringBuffer getRequestURL() {
         String url = getHttpServletRequest().getRequestURL().toString();
