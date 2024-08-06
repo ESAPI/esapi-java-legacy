@@ -62,12 +62,12 @@ public class SafeFile extends File {
 
     private void doDirCheck(String path) throws ValidationException {
         Matcher m1 = DIR_BLACKLIST_PAT.matcher( path );
-        if ( null != m1 && m1.find() ) {
+        if ( m1.find() ) {
             throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains illegal character: " + m1.group() );
         }
 
         Matcher m2 = PERCENTS_PAT.matcher( path );
-        if (null != m2 &&  m2.find() ) {
+        if ( m2.find() ) {
             throw new ValidationException( "Invalid directory", "Directory path (" + path + ") contains encoded characters: " + m2.group() );
         }
 
