@@ -190,7 +190,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
             sb.append(c);
         }
         if(c==null)
-            return null;    // not ';' termintated
+            return null;    // not ';' terminated
         if(sb.length()<=0)    // no digits
             return null;
         try
@@ -247,7 +247,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
             }
         }
         if(c==null)
-            return null;    // not ';' termintated
+            return null;    // not ';' terminated
         if(sb.length()<=0)    // no digits
             return null;
         try
