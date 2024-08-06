@@ -381,7 +381,7 @@ public class DefaultUser implements User, Serializable {
      * {@inheritDoc}
      */
     public void loginWithPassword(String password) throws AuthenticationException {
-        if ( password == null || password.equals("") ) {
+        if ( password == null || password.isEmpty() ) {
             setLastFailedLoginTime(new Date());
             incrementFailedLoginCount();
             throw new AuthenticationLoginException( "Login failed", "Missing password: " + accountName  );
