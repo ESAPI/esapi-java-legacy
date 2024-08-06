@@ -36,13 +36,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Encoder;
-import org.owasp.esapi.Logger;
-import org.owasp.esapi.SecurityConfiguration;
-import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.ValidationRule;
-import org.owasp.esapi.Validator;
+import org.owasp.esapi.*;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.errors.ValidationAvailabilityException;
 import org.owasp.esapi.errors.ValidationException;
@@ -1377,7 +1371,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     @Override
     public boolean isValidURI(String context, String input, boolean allowNull) {
         boolean isValid = false;
-        boolean inputIsNullOrEmpty = input == null || "".equals(input);
+        boolean inputIsNullOrEmpty = StringUtilities.isEmpty(input);
         Encoder encoder = ESAPI.encoder();
         try{
             URI compliantURI = null == input ? new URI("") :  this.getRfcCompliantURI(input);
