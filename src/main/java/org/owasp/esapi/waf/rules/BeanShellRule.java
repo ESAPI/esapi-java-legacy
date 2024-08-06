@@ -106,7 +106,7 @@ public class BeanShellRule extends Rule {
             br = new BufferedReader(new FileReader(f));
             String line;
             while ((line = br.readLine()) != null) {
-                sb.append(line + System.getProperty("line.separator"));
+                sb.append(line).append(System.getProperty("line.separator"));
             }
 
         } finally {
