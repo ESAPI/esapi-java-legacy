@@ -253,7 +253,7 @@ public class FileBasedACRs {
             part = part.substring(0, part.length() - 1);
         }
 
-        if (part.indexOf("..") != -1) {
+        if (part.contains("..")) {
             throw new IntrusionException("Attempt to manipulate access control path", "Attempt to manipulate access control path: " + path );
         }
 
