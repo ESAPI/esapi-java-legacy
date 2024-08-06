@@ -128,7 +128,7 @@ public class CryptoHelper {
      *                         be a common encoding supported by all Java implementations. Support
      *                         for it is usually in rt.jar.) This exception is also thrown if the
      *                         requested {@code keySize} parameter exceeds the length of the number of
-     *                         bytes provded in the {@code keyDerivationKey} parameter.
+     *                         bytes provided in the {@code keyDerivationKey} parameter.
      * @throws InvalidKeyException     Likely indicates a coding error. Should not happen.
      * @throws EncryptionException  Throw for some precondition violations.
      * @deprecated Use same method in {@code KeyDerivationFunction} instead. This method will be <b>removed</b> as of
