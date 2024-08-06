@@ -566,7 +566,7 @@ public class CryptoToken {
     // Do NOT define a toString() method as there may be sensitive
     // information contained in the attribute names. If we absolutely
     // need this, then only return the username and expiration time, and
-    // _maybe_ the attribute names, but not there values. And obviously,
+    // _maybe_ the attribute names, but not their values. And obviously,
     // we NEVER want to include the SecretKey should we decide to do this.
     /*
      * public String toString() { return null; }
