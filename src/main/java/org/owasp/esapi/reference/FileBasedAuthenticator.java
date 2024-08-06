@@ -659,15 +659,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
      * @return a comma separated list containing the values in c
      */
     private String dump(Collection<String> c) {
-        StringBuilder sb = new StringBuilder();
-        for (String s : c) {
-            sb.append(s).append(",");
-        }
-        if ( c.size() > 0) {
-            return sb.toString().substring(0, sb.length() - 1);
-        }
-        return "";
-
+        return String.join(",", c);
     }
 
     /**
