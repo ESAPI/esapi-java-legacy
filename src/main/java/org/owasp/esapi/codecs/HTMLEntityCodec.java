@@ -99,7 +99,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
                 && codePoint != '\r' )
                 || ( codePoint >= 0x7f && codePoint <= 0x9f ) )
         {
-            hex = REPLACEMENT_HEX;    // Let's entity encode this instead of returning it
+            hex = REPLACEMENT_HEX;    // Lets entity encode this instead of returning it
             codePoint = REPLACEMENT_CHAR;
         }
 
