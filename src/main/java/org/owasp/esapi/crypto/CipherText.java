@@ -484,7 +484,7 @@ public final class CipherText implements Serializable {
             return true;
         } else {
                 // This *used* to be the case (for versions 2.0 and 2.0.1) where we tried to
-                // accomodate the deprecated decrypt() method from ESAPI 1.4. Unfortunately,
+                // accommodate the deprecated decrypt() method from ESAPI 1.4. Unfortunately,
                 // that was an EPIC FAIL. (See Google Issue # 306 for details.)
             logger.warning(Logger.SECURITY_FAILURE, "MAC may have been tampered with (e.g., length set to 0).");
             return false;    // Deprecated decrypt() method removed, so now return false.
