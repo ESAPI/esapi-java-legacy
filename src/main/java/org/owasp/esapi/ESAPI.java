@@ -93,7 +93,7 @@ public final class ESAPI {
     }
 
     /**
-     * The ESAPI Encoder is primarilly used to provide <i>output</i> encoding to
+     * The ESAPI Encoder is primarily used to provide <i>output</i> encoding to
      * prevent Cross-Site Scripting (XSS).
      * @return the current ESAPI Encoder object being used to encode and decode data for this application.
      */
