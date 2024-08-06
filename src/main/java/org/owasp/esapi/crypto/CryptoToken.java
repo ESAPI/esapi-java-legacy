@@ -409,7 +409,7 @@ public class CryptoToken {
      */
     @SuppressWarnings("unchecked")
     public Map<String, String> getAttributes() {
-        // Unfortunately, this requires a cast, which requires us to supress warnings.
+        // Unfortunately, this requires a cast, which requires us to suppress warnings.
         return (Map<String, String>) attributes.clone();
     }
 
