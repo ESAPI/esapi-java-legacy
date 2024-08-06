@@ -172,7 +172,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             String output = outputBuffer.toString();
             String errors = errorsBuffer.toString();
             int exitValue = process.exitValue();
-            if ( errors != null && errors.length() > 0 ) {
+            if (errors.length() > 0) {
                 String logErrors = errors;
                 final int MAX_LEN = 256;
                 if (logErrors.length() > MAX_LEN) {
