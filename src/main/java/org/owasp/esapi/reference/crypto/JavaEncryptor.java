@@ -183,22 +183,19 @@ public final class JavaEncryptor implements Encryptor {
                 //       contained in this provider, but Set<String> seems
                 //       more appropriate. But that's why we need the cast below.
                 System.out.println("===== Provider " + i + ":" + providers[i].getName() + " ======");
-                Iterator<Object> it = providers[i].keySet().iterator();
-                while (it.hasNext()) {
-                    String key = (String)it.next();
-                    String value = providers[i].getProperty( key );
+                for (Object o : providers[i].keySet()) {
+                    String key = (String) o;
+                    String value = providers[i].getProperty(key);
                     tm.put(key, value);
-                    System.out.println("\t\t   " + key + " -> "+ value );
+                    System.out.println("\t\t   " + key + " -> " + value);
                 }
             }
 
             Set< Entry<String,String> > keyValueSet = tm.entrySet();
-            Iterator<Entry<String, String>> it = keyValueSet.iterator();
-            while( it.hasNext() ) {
-                Map.Entry<String,String> entry = it.next();
+            for (Entry<String, String> entry : keyValueSet) {
                 String key = entry.getKey();
                 String value = entry.getValue();
-                System.out.println( "   " + key + " -> "+ value );
+                System.out.println("   " + key + " -> " + value);
             }
         } else {
             // Used to print a similar line to use '-print' even when it was specified.
