@@ -54,7 +54,7 @@ public class PercentCodec extends AbstractCharacterCodec
      * @return str encoded in UTF-8 as bytes.
      * @throws IllegalStateException wrapped {@link
      *    UnsupportedEncodingException} if
-     *    {@link String.getBytes(String)} throws it.
+     *    {@link String#getBytes(String)} throws it.
      */
     private static byte[] toUtf8Bytes(String str)
     {
