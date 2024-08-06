@@ -92,7 +92,7 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false, errors);
 
         // if there are no errors, then just set a cookie header
-        if (errors.size() == 0) {
+        if (errors.isEmpty()) {
             String header = createCookieHeader(name, value, maxAge, domain, path, secure);
             this.addHeader("Set-Cookie", header);
             return;
