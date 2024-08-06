@@ -360,7 +360,7 @@ public class HashTrie<T> implements Trie<T>
         }
 
         /**
-         * Recursively build a entry set.
+         * Recursively build an entry set.
          * @param key StringBuilder with our key.
          * @param entries Set to add to
          * @return entries with additions
@@ -487,7 +487,7 @@ public class HashTrie<T> implements Trie<T>
     }
 
     /**
-     * Remove a entry.
+     * Remove an entry.
      * @return previous value
      * @throws UnsupportedOperationException always.
      */
