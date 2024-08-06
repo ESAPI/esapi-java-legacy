@@ -360,9 +360,7 @@ public class FileBasedACRs {
      *         true, if any action exists in ruleActions.  False otherwise.
      */
     private boolean overlap( List ruleActions, String action){
-        if( ruleActions.contains(action) )
-            return true;
-        return false;
+        return ruleActions.contains(action);
     }
 
     /**
