@@ -206,7 +206,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
      * Get a List of the specified User's old password hashes.  This will not return the User's current
      * password hash.
      *
-     * @param user he user whose old password hashes should be returned
+     * @param user the user whose old password hashes should be returned
      * @return the specified User's old password hashes
      */
     List<String> getOldPasswordHashes(User user) {
