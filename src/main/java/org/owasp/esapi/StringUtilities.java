@@ -185,9 +185,9 @@ public class StringUtilities {
      */
     public static boolean notNullOrEmpty(String str, boolean trim) {
         if ( trim ) {
-            return !( str == null || str.trim().equals("") );
+            return !( str == null || str.trim().isEmpty() );
         } else {
-            return !( str == null || str.equals("") );
+            return !( str == null || str.isEmpty() );
         }
     }
 
