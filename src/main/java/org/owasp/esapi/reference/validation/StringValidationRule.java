@@ -194,7 +194,7 @@ public class StringValidationRule extends BaseValidationRule {
      * checks input lengths
      * @param context The context to include in exception messages
      * @param input the input to check
-     * @param orig A origional input to include in exception
+     * @param orig An original input to include in exception
      *    messages. This is not included if it is the same as
      *    input.
      * @return input upon a successful check
@@ -229,7 +229,7 @@ public class StringValidationRule extends BaseValidationRule {
      * checks input emptiness
      * @param context The context to include in exception messages
      * @param input the input to check
-     * @param orig A origional input to include in exception
+     * @param orig An original input to include in exception
      *    messages. This is not included if it is the same as
      *    input.
      * @return input upon a successful check
