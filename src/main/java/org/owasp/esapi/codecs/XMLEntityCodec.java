@@ -153,9 +153,9 @@ public class XMLEntityCodec extends AbstractCharacterCodec
     }
 
     /**
-     * Convert a integer code point to a Character.
+     * Convert an integer code point to a Character.
      * @param i the integer
-     * @return i as a Character or null if i is a invalid code point
+     * @return i as a Character or null if i is an invalid code point
      *     or outside of the Java char range.
      */
     private static Character int2char(int i)
