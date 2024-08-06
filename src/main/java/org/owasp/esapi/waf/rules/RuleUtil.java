@@ -31,11 +31,9 @@ public class RuleUtil {
 
     public static boolean isInList(Map m, String s) {
 
-        Iterator it = m.keySet().iterator();
-
-        while( it.hasNext() ) {
-            String key = (String)it.next();
-            if ( key.equals(s) ) {
+        for (Object o : m.keySet()) {
+            String key = (String) o;
+            if (key.equals(s)) {
                 return true;
             }
         }
