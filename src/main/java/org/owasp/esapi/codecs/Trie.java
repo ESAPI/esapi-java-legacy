@@ -13,7 +13,7 @@ public interface Trie<T> extends Map<CharSequence,T>
     Map.Entry<CharSequence,T> getLongestMatch(PushbackReader keyIn) throws IOException;
     int getMaxKeyLength();
 
-    static class TrieProxy<T> implements Trie<T>
+    class TrieProxy<T> implements Trie<T>
     {
         private Trie<T> wrapped;
 
@@ -115,7 +115,7 @@ public interface Trie<T> extends Map<CharSequence,T>
         }
     }
 
-    static class Unmodifiable<T> extends TrieProxy<T>
+    class Unmodifiable<T> extends TrieProxy<T>
     {
         Unmodifiable(Trie<T> toWrap)
         {
@@ -158,7 +158,7 @@ public interface Trie<T> extends Map<CharSequence,T>
         }
     }
 
-    static class Util
+    class Util
     {
         private Util()
         {
