@@ -91,7 +91,7 @@ package org.owasp.esapi;
  * <i>Customization</i>: It is expected that most organizations may wish to implement their own custom {@code Logger} class in
  * order to integrate ESAPI logging with their specific logging infrastructure. The ESAPI feference implementations
  * can serve as a useful starting point to intended to provide a simple functional example of an implementation, but
- * they are also largely usuable out-of-the-box with some additional minimal log configuration.
+ * they are also largely usable out-of-the-box with some additional minimal log configuration.
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  * href="http://www.aspectsecurity.com">Aspect Security</a>
