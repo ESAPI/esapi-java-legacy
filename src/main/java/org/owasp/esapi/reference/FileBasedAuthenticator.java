@@ -696,7 +696,7 @@ public class FileBasedAuthenticator extends AbstractAuthenticator {
             int length = oldPassword.length();
             for (int i = 0; i < length - 2; i++) {
                 String sub = oldPassword.substring(i, i + 3);
-                if (newPassword.indexOf(sub) > -1) {
+                if (newPassword.contains(sub)) {
                     throw new AuthenticationCredentialsException("Invalid password", "New password cannot contain pieces of old password");
                 }
             }
