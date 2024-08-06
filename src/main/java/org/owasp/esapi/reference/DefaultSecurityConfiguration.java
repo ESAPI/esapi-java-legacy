@@ -965,7 +965,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             // Special case... means set it to original value from ESAPI.properties
             cipherXformCurrent = cipherXformFromESAPIProp;
         } else {
-            if ( cipherXform.trim().equals("") ) {
+            if ( cipherXform.trim().isEmpty() ) {
                 throw new ConfigurationException("Cipher transformation cannot be just white space or empty string");
             }
             cipherXformCurrent = cipherXform;   // Note: No other sanity checks!!!
