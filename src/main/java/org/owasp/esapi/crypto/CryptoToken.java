@@ -385,7 +385,6 @@ public class CryptoToken {
             String value = entry.getValue();
             setAttribute(key, value);
         }
-        return;
     }
 
     /**
@@ -724,7 +723,6 @@ public class CryptoToken {
             }
             attributes.put(name, value);
         }
-        return;
     }
 
     private SecretKey getDefaultSecretKey(String encryptAlgorithm) {
