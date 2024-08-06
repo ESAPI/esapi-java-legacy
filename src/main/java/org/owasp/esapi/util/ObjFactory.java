@@ -9,6 +9,7 @@
  */
 package org.owasp.esapi.util;
 
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.errors.ConfigurationException;
 
 import java.lang.reflect.Method;
@@ -70,10 +71,10 @@ public class ObjFactory {
         Object obj = null;
         String errMsg = null;
         try {
-            if (null == className || className.isEmpty() ) {
+            if (StringUtilities.isEmpty(className) ) {
                 throw new IllegalArgumentException("Classname cannot be null or empty.");
             }
-            if (null == typeName || typeName.isEmpty() ) {
+            if (StringUtilities.isEmpty(typeName) ) {
                 // No big deal...just use "[unknown?]" for this as it's only for an err msg.
                 typeName = "[unknown?]";    // CHECKME: Any better suggestions?
             }
