@@ -584,7 +584,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
     }
 
     /**
-     * Build an unmodifiable Trie from entitiy Name to Character
+     * Build an unmodifiable Trie from entity Name to Character
      * @return Unmodifiable trie.
      */
     private static synchronized Trie<Integer> mkEntityToCharacterTrie()
