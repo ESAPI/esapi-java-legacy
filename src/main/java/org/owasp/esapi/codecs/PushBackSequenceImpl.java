@@ -30,7 +30,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
             return save;
         }
         if ( input == null ) return null;
-        if ( input.length() == 0 ) return null;
+        if ( input.isEmpty() ) return null;
         if ( index >= input.length() ) return null;
         final Integer point = input.codePointAt(index);
         index += Character.charCount(point);
@@ -88,7 +88,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
     public Integer peek() {
         if ( pushback != null ) return pushback;
         if ( input == null ) return null;
-        if ( input.length() == 0 ) return null;
+        if ( input.isEmpty() ) return null;
         if ( index >= input.length() ) return null;
         return input.codePointAt(index);
     }
@@ -101,7 +101,7 @@ public class PushBackSequenceImpl extends AbstractPushbackSequence<Integer>{
     public boolean peek( Integer c ) {
         if ( pushback != null && pushback.intValue() == c ) return true;
         if ( input == null ) return false;
-        if ( input.length() == 0 ) return false;
+        if ( input.isEmpty() ) return false;
         if ( index >= input.length() ) return false;
         return input.codePointAt(index) == c;
     }
