@@ -147,7 +147,7 @@ public class CSSCodec extends AbstractCharacterCodec
         switch(second)
         {    // special whitespace cases. I assume they mean
             // for all of these to qualify as a "new
-            // line." Otherwise there is no specification
+            // line." Otherwise, there is no specification
             // of what to do for \f
             case '\r':
                 if(input.peek('\n'))
