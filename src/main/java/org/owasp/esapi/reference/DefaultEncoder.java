@@ -629,11 +629,11 @@ public class DefaultEncoder implements Encoder {
         
         //can't use SCHEMESPECIFICPART for this, because we need to canonicalize all the parts of the query.
         //USERINFO is also deprecated.  So we technically have more than we need.
-        sb.append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).equals("") ? "" : parseMap.get(UriSegment.AUTHORITY))
-        .append(parseMap.get(UriSegment.PATH) == null || parseMap.get(UriSegment.PATH).equals("") ? ""  : parseMap.get(UriSegment.PATH))
-        .append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).equals("")
+        sb.append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).isEmpty() ? "" : parseMap.get(UriSegment.AUTHORITY))
+        .append(parseMap.get(UriSegment.PATH) == null || parseMap.get(UriSegment.PATH).isEmpty() ? ""  : parseMap.get(UriSegment.PATH))
+        .append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).isEmpty()
                 ? "" : "?" + parseMap.get(UriSegment.QUERY))
-        .append((parseMap.get(UriSegment.FRAGMENT) == null) || parseMap.get(UriSegment.FRAGMENT).equals("")
+        .append((parseMap.get(UriSegment.FRAGMENT) == null) || parseMap.get(UriSegment.FRAGMENT).isEmpty()
                 ? "": "#" + parseMap.get(UriSegment.FRAGMENT))
         ;
         return sb.toString();
