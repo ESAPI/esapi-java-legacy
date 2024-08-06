@@ -87,7 +87,7 @@ public class CreditCardValidationRule extends BaseValidationRule {
     }
 
     /**
-     * Performs additional validation on the card nummber.
+     * Performs additional validation on the card number.
      * This implementation performs Luhn algorithm checking
      * @param ccNum number to be validated
      * @return true if the ccNum passes the Luhn Algorithm
