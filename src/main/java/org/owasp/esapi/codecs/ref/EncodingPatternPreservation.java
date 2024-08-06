@@ -77,7 +77,7 @@ public class EncodingPatternPreservation {
      */
     public String restoreOriginalContent(String input) {
         String result = input;
-        while (replacedContentList.size() > 0) {
+        while (!replacedContentList.isEmpty()) {
             String origValue = replacedContentList.remove(0);
             result = result.replaceFirst(replacementMarker, origValue);
         }
