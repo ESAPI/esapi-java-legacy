@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * A generic object factory to create an object of class T. T must be a concrete
- * class that has a no-argument public constructor or a implementor of the Singleton pattern
+ * class that has a no-argument public constructor or an implementor of the Singleton pattern
  * that has a no-arg static getInstance method. If the class being created has a getInstance
  * method, it will be used as a singleton and newInstance() will never be called on the
  * class no matter how many times it comes through this factory.
