@@ -226,7 +226,7 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
         String cookieValue = ESAPI.validator().getValidInput("cookie value", value, "HTTPCookieValue", sc.getIntProp("HttpUtilities.MaxHeaderValueSize"), false, errors);
 
         // if there are no errors, then set the cookie either with a header or normally
-        if (errors.size() == 0) {
+        if (errors.isEmpty()) {
             if ( ESAPI.securityConfiguration().getForceHttpOnlyCookies() ) {
                 String header = createCookieHeader(cookieName, cookieValue, maxAge, domain, path, secure);
                 addHeader(response, "Set-Cookie", header);
