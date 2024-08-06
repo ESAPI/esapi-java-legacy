@@ -519,7 +519,7 @@ public interface Encoder {
      *
      * NB: The reference implementation encodes almost everything and may over-encode.
      *
-     * The difficulty with XPath encoding is that XPath has no built in mechanism for escaping
+     * The difficulty with XPath encoding is that XPath has no built-in mechanism for escaping
      * characters. It is possible to use XQuery in a parameterized way to
      * prevent injection.
      *
