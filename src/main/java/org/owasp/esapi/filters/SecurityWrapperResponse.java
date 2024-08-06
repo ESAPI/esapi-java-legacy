@@ -127,23 +127,24 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
         // create the special cookie header instead of creating a Java cookie
         // Set-Cookie:<name>=<value>[; <name>=<value>][; expires=<date>][;
         // domain=<domain_name>][; path=<some_path>][; secure][;HttpOnly
-        String header = name + "=" + value;
+        StringBuilder header = new StringBuilder()
+                .append(name).append("=").append(value);
         if (maxAge >= 0) {
-            header += "; Max-Age=" + maxAge;
+            header.append("; Max-Age=").append(maxAge);
         }
         if (domain != null) {
-            header += "; Domain=" + domain;
+            header.append("; Domain=").append(domain);
         }
         if (path != null) {
-            header += "; Path=" + path;
+            header.append("; Path=").append(path);
         }
         if ( secure || ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceSecureCookies") ) {
-            header += "; Secure";
+            header.append("; Secure");
         }
         if ( ESAPI.securityConfiguration().getBooleanProp("HttpUtilities.ForceHttpOnlyCookies") ) {
-            header += "; HttpOnly";
+            header.append("; HttpOnly");
         }
-        return header;
+        return header.toString();
     }
 
     /**
