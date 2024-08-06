@@ -19,7 +19,7 @@ package org.owasp.esapi.tags;
 import org.owasp.esapi.Encoder;
 
 /**
- * JSP tag that encode's it's body for use in VBScript.
+ * JSP tag that encodes its body for use in VBScript.
  */
 public class EncodeForVBScriptTag extends BaseEncodeTag
 {
