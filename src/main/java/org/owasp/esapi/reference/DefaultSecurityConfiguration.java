@@ -1123,8 +1123,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      */
     public boolean getDisableIntrusionDetection() {
         String value = properties.getProperty( DISABLE_INTRUSION_DETECTION );
-        if ("true".equalsIgnoreCase(value)) return true;
-        return false;    // Default result
+        return "true".equalsIgnoreCase(value);
     }
 
     /**
