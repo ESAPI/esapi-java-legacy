@@ -319,7 +319,7 @@ public class KeyDerivationFunction {
             throw new IllegalArgumentException("Key size (" + keySize +
                                                ") must be a even multiple of 8-bits.");
         }
-        if ( purpose == null || "".equals(purpose) ) {
+        if ( purpose == null || purpose.isEmpty() ) {
             throw new IllegalArgumentException("Purpose may not be null or empty.");
         }
 
