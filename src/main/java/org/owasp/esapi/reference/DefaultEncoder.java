@@ -602,7 +602,7 @@ public class DefaultEncoder implements Encoder {
             }
             //Check if the port is -1, if it is, omit it from the output.
             if(seg == UriSegment.PORT){
-                if("-1" == parseMap.get(seg)){
+                if("-1".equals(parseMap.get(seg))){
                     value = "";
                 }
             }
