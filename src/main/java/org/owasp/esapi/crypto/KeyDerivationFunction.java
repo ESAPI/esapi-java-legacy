@@ -441,7 +441,7 @@ public class KeyDerivationFunction {
         // Of course, in reality, trying to stomp these bits out is probably not
         // realistic because the JIT is likely toing to be smart enough to
         // optimize this loop away. We probably could try to outsmart it, by
-        // (say) writing out the overwritten bits to /dev/null, but then even
+        // (say) writing out the overwritten bits to /dev/null, but even
         // then we'd still probably have to overwrite with random bits rather
         // than all null chars. How much is enough? Who knows? But it does point
         // to a serious limitation in Java and many other languages that one
