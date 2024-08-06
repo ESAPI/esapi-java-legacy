@@ -62,7 +62,7 @@ public class IPRule extends Rule {
         if ( (!useExactPath && path.matcher(uri).matches()) ||
              ( useExactPath && exactPath.equals(uri)) ) {
 
-            String sourceIP = request.getRemoteAddr() + "";
+            String sourceIP = request.getRemoteAddr();
 
             if ( ipHeader != null ) {
                 sourceIP = request.getHeader(ipHeader);
