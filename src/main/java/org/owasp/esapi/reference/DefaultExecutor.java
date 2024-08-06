@@ -118,10 +118,7 @@ public class DefaultExecutor implements org.owasp.esapi.Executor {
             }
 
             // escape any special characters in the parameters
-            for ( int i = 0; i < params.size(); i++ ) {
-                String param = (String)params.get(i);
-                params.set( i, ESAPI.encoder().encodeForOS(codec, param));
-            }
+            params.replaceAll(param -> ESAPI.encoder().encodeForOS(codec, (String) param));
 
             // working directory must exist
             if (!workdir.exists()) {
