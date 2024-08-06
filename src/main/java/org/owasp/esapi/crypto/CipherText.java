@@ -539,7 +539,7 @@ public final class CipherText implements Serializable {
     {
         if ( ! macComputed() ) {
             if ( ciphertext == null || ciphertext.length == 0 ) {
-                throw new EncryptionException("Encryption faled; no ciphertext",
+                throw new EncryptionException("Encryption failed; no ciphertext",
                                               "Ciphertext may not be null or 0 length!");
             }
             if ( isCollected(CipherTextFlags.CIPHERTEXT) ) {
@@ -573,7 +573,7 @@ public final class CipherText implements Serializable {
         }
         if ( ! macComputed() ) {
             if ( ciphertext == null || ciphertext.length == 0 ) {
-                throw new EncryptionException("Encryption faled; no ciphertext",
+                throw new EncryptionException("Encryption failed; no ciphertext",
                                               "Ciphertext may not be null or 0 length!");
             }
             if ( iv == null || iv.length == 0 ) {
