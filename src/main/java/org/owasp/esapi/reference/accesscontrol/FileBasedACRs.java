@@ -472,14 +472,14 @@ public class FileBasedACRs {
                     String[] parts = line.split("\\|");
                     rule.clazz = Class.forName(parts[0].trim());
 
-                    List roles = commaSplit(parts[1].trim().toLowerCase());
+                    List<String> roles = commaSplit(parts[1].trim().toLowerCase());
                     roles = validateRoles(roles);
-                    for(int x = 0; x < roles.size(); x++)
-                        rule.roles.add(((String)roles.get(x)).trim());
+                    for (String role : roles)
+                        rule.roles.add(role.trim());
 
-                    List action = commaSplit(parts[2].trim().toLowerCase());
-                    for(int x = 0; x < action.size(); x++)
-                        rule.actions.add(((String) action.get(x)).trim());
+                    List<String> action = commaSplit(parts[2].trim().toLowerCase());
+                    for (String s : action)
+                        rule.actions.add(s.trim());
 
                     if (map.containsKey(rule.path)) {
                         logger.warning( Logger.SECURITY_FAILURE, "Problem in access control file. Duplicate rule ignored: " + rule);
@@ -525,7 +525,7 @@ public class FileBasedACRs {
         protected String path = "";
 
 
-        protected Set roles = new HashSet();
+        protected Set<String> roles = new HashSet<>();
 
 
         protected boolean allow = false;
@@ -534,7 +534,7 @@ public class FileBasedACRs {
         protected Class clazz = null;
 
 
-        protected List actions = new ArrayList();
+        protected List<String> actions = new ArrayList<>();
 
         /**
          *
