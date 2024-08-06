@@ -207,7 +207,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
      * Converts the rest of a hexadecimal numeric entity to a character.
      * @param input The input to read from. It is assumed that input
      *     is positioned at the character after the &amp;#[xX]
-     * @return The character decoded or null on failutre.
+     * @return The character decoded or null on failure.
      */
     private static Character parseHex(PushbackSequence<Character> input)
     {
@@ -266,7 +266,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
      * null if no decoding is possible.
      * @param input The input to read from. It is assumed that input
      *     is positioned at the character after the &amp;.
-     * @return The character decoded or null on failutre.
+     * @return The character decoded or null on failure.
      */
     private Character getNamedEntity(PushbackSequence<Character> input)
     {
