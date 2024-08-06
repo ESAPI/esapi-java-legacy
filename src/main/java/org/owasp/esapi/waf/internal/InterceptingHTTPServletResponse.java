@@ -61,12 +61,11 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
         addSecureFlagRules = new ArrayList<AddSecureFlagRule>();
         addHTTPOnlyFlagRules = new ArrayList<AddHTTPOnlyFlagRule>();
 
-        for(int i=0;i<cookieRules.size();i++) {
-            Rule r = cookieRules.get(i);
-            if ( r instanceof AddSecureFlagRule ) {
-                addSecureFlagRules.add((AddSecureFlagRule)r);
-            } else if ( r instanceof AddHTTPOnlyFlagRule ) {
-                addHTTPOnlyFlagRules.add((AddHTTPOnlyFlagRule)r);
+        for (Rule r : cookieRules) {
+            if (r instanceof AddSecureFlagRule) {
+                addSecureFlagRules.add((AddSecureFlagRule) r);
+            } else if (r instanceof AddHTTPOnlyFlagRule) {
+                addHTTPOnlyFlagRules.add((AddHTTPOnlyFlagRule) r);
             }
         }
     }
@@ -129,18 +128,16 @@ public class InterceptingHTTPServletResponse extends HttpServletResponseWrapper 
         boolean addHTTPOnlyFlag = false;
 
         if ( ! cookie.getSecure() && addSecureFlagRules != null ) {
-            for(int i=0;i<addSecureFlagRules.size();i++) {
-                AddSecureFlagRule asfr = addSecureFlagRules.get(i);
-                if ( asfr.doesCookieMatch(cookie.getName())) {
+            for (AddSecureFlagRule asfr : addSecureFlagRules) {
+                if (asfr.doesCookieMatch(cookie.getName())) {
                     addSecureFlag = true;
                 }
             }
         }
 
         if ( addHTTPOnlyFlagRules != null ) {
-            for(int i=0;i<addHTTPOnlyFlagRules.size();i++) {
-                AddHTTPOnlyFlagRule ashr = addHTTPOnlyFlagRules.get(i);
-                if ( ashr.doesCookieMatch(cookie.getName())) {
+            for (AddHTTPOnlyFlagRule ashr : addHTTPOnlyFlagRules) {
+                if (ashr.doesCookieMatch(cookie.getName())) {
                     addHTTPOnlyFlag = true;
                 }
             }
