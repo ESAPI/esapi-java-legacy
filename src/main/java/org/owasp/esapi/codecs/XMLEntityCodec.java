@@ -204,7 +204,7 @@ public class XMLEntityCodec extends AbstractCharacterCodec
     }
 
     /**
-     * Converts the rest of a hexidecimal numeric entity to a character.
+     * Converts the rest of a hexadecimal numeric entity to a character.
      * @param input The input to read from. It is assumed that input
      *     is positioned at the character after the &amp;#[xX]
      * @return The character decoded or null on failutre.
