@@ -1138,7 +1138,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
             String[] actionList = actionString.split(",");
             actions = Arrays.asList(actionList);
         }
-        if ( count > 0 && interval > 0 && actions.size() > 0 ) {
+        if ( count > 0 && interval > 0 && !actions.isEmpty() ) {
             return new Threshold(eventName, count, interval, actions);
         }
         return null;
