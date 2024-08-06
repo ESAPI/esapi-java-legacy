@@ -56,7 +56,7 @@ public class CryptoHelper {
     public static SecretKey generateSecretKey(String alg, int keySize)
         throws EncryptionException
     {
-        if ( alg == null || alg.equals("") ) {
+        if ( alg == null || alg.isEmpty() ) {
             throw new IllegalArgumentException("Algorithm must not be null or empty."); // Avoid later possibly ambiguous NPE.
         }
         if ( keySize <= 0 ) {
@@ -189,7 +189,7 @@ public class CryptoHelper {
         if ( cipherMode == null ) {
             throw new IllegalArgumentException("Cipher mode may not be null");
         }
-        if ( cipherMode.equals("") ) {
+        if ( cipherMode.isEmpty() ) {
             throw new IllegalArgumentException("Cipher mode may not be empty string");
         }
         List<String> combinedCipherModes =
