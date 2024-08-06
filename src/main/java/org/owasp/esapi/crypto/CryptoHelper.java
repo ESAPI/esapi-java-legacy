@@ -50,7 +50,7 @@ public class CryptoHelper {
      * @param keySize    The key size, in bits.
      * @return    A random {@code SecretKey} is returned.
      * @throws EncryptionException Thrown if cannot create secret key conforming to
-     *                 requested algorithm with requested size. Typically this is caused by
+     *                 requested algorithm with requested size. Typically, this is caused by
      *                 specifying an unavailable algorithm or invalid key size.
      */
     public static SecretKey generateSecretKey(String alg, int keySize)
