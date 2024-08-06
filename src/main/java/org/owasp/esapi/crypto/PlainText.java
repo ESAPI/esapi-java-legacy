@@ -16,7 +16,7 @@ import org.owasp.esapi.Logger;
  * an {@code UnsupportedEncodingException}. However, UTF-8 encoding
  * should be a standard encoding for all Java installations, so an
  * {@code UnsupportedEncodingException} never actually be thrown. Therefore,
- * in order to to keep client code uncluttered, any possible
+ * in order to keep client code uncluttered, any possible
  * {@code UnsupportedEncodingException}s will be first logged, and then
  * re-thrown as a {@code RuntimeException} with the original
  * {@code UnsupportedEncodingException} as the cause.
