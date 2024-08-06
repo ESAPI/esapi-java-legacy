@@ -254,7 +254,7 @@ public class CryptoHelper {
      * should be embedded within the {@code CipherText} object by using a
      * derived key based on the specified {@code SecretKey}.
      *
-     * @param sk    The {@code SecretKey} used to derived a key to check
+     * @param sk    The {@code SecretKey} used to derive a key to check
      *              the authenticity via the MAC.
      * @param ct    The {@code CipherText} that we are checking for a
      *              valid MAC.
