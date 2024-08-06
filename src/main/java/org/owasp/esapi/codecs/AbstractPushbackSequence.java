@@ -61,7 +61,7 @@ public abstract class AbstractPushbackSequence<T> implements PushbackSequence<T>
             return true;
         if (input == null)
             return false;
-        if (input.length() == 0)
+        if (input.isEmpty())
             return false;
         if (index >= input.length())
             return false;
