@@ -396,7 +396,7 @@ public class HashTrie<T> implements Trie<T>
     }
 
     /**
-     * Get the key value entry who's key is the longest prefix match.
+     * Get the key value entry whose key is the longest prefix match.
      * @param key The key to lookup
      * @return Entry with the longest matching key.
      */
@@ -408,7 +408,7 @@ public class HashTrie<T> implements Trie<T>
     }
 
     /**
-     * Get the key value entry who's key is the longest prefix match.
+     * Get the key value entry whose key is the longest prefix match.
      * @param keyIn Pushback reader to read the key from. This should
      * have a buffer at least as large as {@link #getMaxKeyLength()}
      * or an IOException may be thrown backing up.
