@@ -412,7 +412,7 @@ public class FileBasedACRs {
             is = ESAPI.securityConfiguration().getResourceStream(ruleset);
             String line = "";
             while ((line = ESAPI.validator().safeReadLine(is, 500)) != null) {
-                if (line.length() > 0 && line.charAt(0) != '#') {
+                if (!line.isEmpty() && line.charAt(0) != '#') {
                     Rule rule = new Rule();
                     String[] parts = line.split("\\|");
                     // fix Windows paths
@@ -469,7 +469,7 @@ public class FileBasedACRs {
             is = ESAPI.securityConfiguration().getResourceStream(ruleset);
             String line = "";
             while ((line = ESAPI.validator().safeReadLine(is, 500)) != null) {
-                if (line.length() > 0 && line.charAt(0) != '#') {
+                if (!line.isEmpty() && line.charAt(0) != '#') {
                     Rule rule = new Rule();
                     String[] parts = line.split("\\|");
                     rule.clazz = Class.forName(parts[0].trim());
