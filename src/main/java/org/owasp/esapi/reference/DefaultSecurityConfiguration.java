@@ -1255,7 +1255,7 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         if ( p != null ) return p;
 
         // compile a new pattern
-        if ( value == null || value.equals( "" ) ) return null;
+        if ( value == null || value.isEmpty() ) return null;
         try {
             Pattern q = Pattern.compile(value);
             patternCache.put( value, q );
