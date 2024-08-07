@@ -53,23 +53,23 @@ public class HTTPMethodRule extends Rule {
         String uri = request.getRequestURI();
         String method = request.getMethod();
 
-        if ( path == null || path.matcher(uri).matches() ) {
-            /*
-             *    Order allow, deny.
-             */
+        if (path != null && !path.matcher(uri).matches()) {
+            return new DoNothingAction();
+        }
+        /*
+         *    Order allow, deny.
+         */
 
-            if ( allowedMethods != null && allowedMethods.matcher(method).matches() ) {
-                return new DoNothingAction();
-            } else if ( allowedMethods != null ) {
-                log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
-                return new DefaultAction();
-            }
+        if ( allowedMethods != null && allowedMethods.matcher(method).matches() ) {
+            return new DoNothingAction();
+        } else if ( allowedMethods != null ) {
+            log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
+            return new DefaultAction();
+        }
 
-            if ( deniedMethods != null && deniedMethods.matcher(method).matches() ) {
-                log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
-                return new DefaultAction();
-            }
-
+        if ( deniedMethods != null && deniedMethods.matcher(method).matches() ) {
+            log(request,"Disallowed HTTP method '" + request.getMethod() + "' found for URL: " + request.getRequestURL());
+            return new DefaultAction();
         }
 
         return new DoNothingAction();
