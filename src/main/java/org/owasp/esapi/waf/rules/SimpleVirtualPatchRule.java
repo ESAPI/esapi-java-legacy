@@ -61,77 +61,74 @@ public class SimpleVirtualPatchRule extends Rule {
 
             return new DoNothingAction();
 
+        }
+
+        /*
+         * Decide which parameters/headers to act on.
+         */
+        String target = null;
+        Enumeration en = null;
+        boolean parameter = true;
+
+        if ( variable.startsWith(REQUEST_PARAMETERS)) {
+
+            target = variable.substring(REQUEST_PARAMETERS.length());
+            en = request.getParameterNames();
+
+        } else if ( variable.startsWith(REQUEST_HEADERS) ) {
+
+            parameter = false;
+            target = variable.substring(REQUEST_HEADERS.length());
+            en = request.getHeaderNames();
+
         } else {
+            log(request, "Patch failed (improperly configured variable '" + variable + "')");
+            return new DefaultAction();
+        }
 
-            /*
-             * Decide which parameters/headers to act on.
-             */
-            String target = null;
-            Enumeration en = null;
-            boolean parameter = true;
+        /*
+         * If it contains a regex character, it's a regex. Loop through elements and grab any matches.
+         */
+        if ( target.contains("*") || target.contains("?") ) {
 
-            if ( variable.startsWith(REQUEST_PARAMETERS)) {
+            target = target.replaceAll("\\*", ".*");
+            Pattern p = Pattern.compile(target);
+            while (en.hasMoreElements() ) {
+                String s = (String)en.nextElement();
+                String value = null;
+                if ( p.matcher(s).matches() ) {
+                    if ( parameter ) {
+                        value = request.getDictionaryParameter(s);
+                    } else {
+                        value = request.getHeader(s);
+                    }
+                    if ( value != null && ! valid.matcher(value).matches() ) {
+                        log(request, "Virtual patch tripped on variable '" + variable + "' (specifically '" + s + "'). User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
+                        return new DefaultAction();
+                    }
+                }
+            }
 
-                target = variable.substring(REQUEST_PARAMETERS.length());
-                en = request.getParameterNames();
+            return new DoNothingAction();
 
-            } else if ( variable.startsWith(REQUEST_HEADERS) ) {
+        }
 
-                parameter = false;
-                target = variable.substring(REQUEST_HEADERS.length());
-                en = request.getHeaderNames();
-
+        if ( parameter ) {
+            String value = request.getDictionaryParameter(target);
+            if ( value == null || valid.matcher(value).matches() ) {
+                return new DoNothingAction();
             } else {
-                log(request, "Patch failed (improperly configured variable '" + variable + "')");
+                log(request, "Virtual patch tripped on parameter '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
                 return new DefaultAction();
             }
-
-            /*
-             * If it contains a regex character, it's a regex. Loop through elements and grab any matches.
-             */
-            if ( target.contains("*") || target.contains("?") ) {
-
-                target = target.replaceAll("\\*", ".*");
-                Pattern p = Pattern.compile(target);
-                while (en.hasMoreElements() ) {
-                    String s = (String)en.nextElement();
-                    String value = null;
-                    if ( p.matcher(s).matches() ) {
-                        if ( parameter ) {
-                            value = request.getDictionaryParameter(s);
-                        } else {
-                            value = request.getHeader(s);
-                        }
-                        if ( value != null && ! valid.matcher(value).matches() ) {
-                            log(request, "Virtual patch tripped on variable '" + variable + "' (specifically '" + s + "'). User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
-                            return new DefaultAction();
-                        }
-                    }
-                }
-
+        } else {
+            String value = request.getHeader(target);
+            if ( value == null || valid.matcher(value).matches() ) {
                 return new DoNothingAction();
-
             } else {
-
-                if ( parameter ) {
-                    String value = request.getDictionaryParameter(target);
-                    if ( value == null || valid.matcher(value).matches() ) {
-                        return new DoNothingAction();
-                    } else {
-                        log(request, "Virtual patch tripped on parameter '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
-                        return new DefaultAction();
-                    }
-                } else {
-                    String value = request.getHeader(target);
-                    if ( value == null || valid.matcher(value).matches() ) {
-                        return new DoNothingAction();
-                    } else {
-                        log(request, "Virtual patch tripped on header '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
-                        return new DefaultAction();
-                    }
-                }
+                log(request, "Virtual patch tripped on header '" + target + "'. User input was '" + value + "' and legal pattern was '" + valid.pattern() + "': " + message);
+                return new DefaultAction();
             }
-
         }
 
     }
