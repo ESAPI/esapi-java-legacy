@@ -1586,18 +1586,16 @@ public class Base64
          */
         public void flushBase64() throws java.io.IOException
         {
-            if( position > 0 )
-            {
-                if( encode )
-                {
-                    out.write( encode3to4( b4, buffer, position, options ) );
-                    position = 0;
-                }   // end if: encoding
-                else
-                {
-                    throw new java.io.IOException( "Base64 input not properly padded." );
-                }   // end else: decoding
-            }   // end if: buffer partially full
+            if (position <= 0) {
+                // buffer partially full
+                return;
+            }
+            if( encode ) {
+                out.write( encode3to4( b4, buffer, position, options ) );
+                position = 0;
+            } else {
+                throw new java.io.IOException( "Base64 input not properly padded." );
+            }
 
         }   // end flush
 
