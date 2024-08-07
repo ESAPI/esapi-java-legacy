@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -688,9 +687,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
         }
 
         // verify extensions
-        Iterator<String> i = allowedExtensions.iterator();
-        while (i.hasNext()) {
-            String ext = i.next();
+        for (String ext : allowedExtensions) {
             if (input.toLowerCase().endsWith(ext.toLowerCase())) {
                 return canonical;
             }
