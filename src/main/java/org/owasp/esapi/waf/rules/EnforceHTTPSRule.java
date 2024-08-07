@@ -54,38 +54,33 @@ public class EnforceHTTPSRule extends Rule {
             InterceptingHTTPServletResponse response,
             HttpServletResponse httpResponse) {
 
-        if ( ! request.isSecure() ) {
-
-            if ( path.matcher(request.getRequestURI()).matches() ) {
-
-                for (Object o : exceptions) {
-
-                    if (o instanceof String) {
-                        if (((String) o).equalsIgnoreCase(request.getRequestURI())) {
-                            return new DoNothingAction();
-                        }
-                    } else if (o instanceof Pattern) {
-                        if (((Pattern) o).matcher(request.getRequestURI()).matches()) {
-                            return new DoNothingAction();
-                        }
-                    }
-
-                }
-
-                log(request,"Insecure request to resource detected in URL: '" + request.getRequestURL() + "'");
-
-                if ( "redirect".equals(action) ) {
-                    RedirectAction ra = new RedirectAction();
-                    ra.setRedirectURL(request.getRequestURL().toString().replaceFirst("http", "https"));
-                    return ra;
-                }
-
-                return new DefaultAction();
-
-            }
+        if (request.isSecure() || !path.matcher(request.getRequestURI()).matches()) {
+            return new DoNothingAction();
         }
 
-        return new DoNothingAction();
+        for (Object o : exceptions) {
+
+            if (o instanceof String) {
+                if (((String) o).equalsIgnoreCase(request.getRequestURI())) {
+                    return new DoNothingAction();
+                }
+            } else if (o instanceof Pattern) {
+                if (((Pattern) o).matcher(request.getRequestURI()).matches()) {
+                    return new DoNothingAction();
+                }
+            }
+
+        }
+
+        log(request,"Insecure request to resource detected in URL: '" + request.getRequestURL() + "'");
+
+        if ( "redirect".equals(action) ) {
+            RedirectAction ra = new RedirectAction();
+            ra.setRedirectURL(request.getRequestURL().toString().replaceFirst("http", "https"));
+            return ra;
+        }
+
+        return new DefaultAction();
 
     }
 }
