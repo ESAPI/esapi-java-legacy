@@ -832,34 +832,32 @@ public class Base64
         int    i         = 0;
         byte   sbiCrop   = 0;
         byte   sbiDecode = 0;
-        for( i = off; i < off+len; i++ )
-        {
+        for (i = off; i < off+len; i++) {
             sbiCrop = (byte)(source[i] & 0x7f); // Only the low seven bits
             sbiDecode = DECODABET[ sbiCrop ];
 
-            if( sbiDecode >= WHITE_SPACE_ENC ) // White space, Equals sign or better
-            {
-                if( sbiDecode >= EQUALS_SIGN_ENC )
-                {
-                    b4[ b4Posn++ ] = sbiCrop;
-                    if( b4Posn > 3 )
-                    {
-                        outBuffPosn += decode4to3( b4, 0, outBuff, outBuffPosn, options );
-                        b4Posn = 0;
-
-                        // If that was the equals sign, break out of 'for' loop
-                        if( sbiCrop == EQUALS_SIGN )
-                            break;
-                    }   // end if: quartet built
-
-                }   // end if: equals sign or better
-
-            }   // end if: white space, equals sign or better
-            else
-            {
+            if (sbiDecode < WHITE_SPACE_ENC) {
                 logger.error( Logger.SECURITY_FAILURE, "Bad Base64 input character at " + i + ": " + source[i] + "(decimal)" );
                 return null;
-            }   // end else:
+            }
+
+            if (sbiDecode < EQUALS_SIGN_ENC) {
+                continue;
+            }
+
+            b4[ b4Posn++ ] = sbiCrop;
+            if (b4Posn <= 3) {
+                continue;
+            }
+
+            outBuffPosn += decode4to3( b4, 0, outBuff, outBuffPosn, options );
+            b4Posn = 0;
+
+            // If that was the equals sign, break out of 'for' loop
+            if (sbiCrop == EQUALS_SIGN) {
+                break;
+            }
+
         }   // each input character
 
         byte[] out = new byte[ outBuffPosn ];
