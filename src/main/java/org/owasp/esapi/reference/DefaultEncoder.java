@@ -620,21 +620,31 @@ public class DefaultEncoder implements Encoder {
      * @return The canonicalized URL.
      */
     protected String buildUrl(Map<UriSegment, String> parseMap){
-        StringBuilder sb = new StringBuilder();
-        boolean schemePresent = !parseMap.get(UriSegment.SCHEME).isEmpty();
-        
-        if(schemePresent) {
-        	sb.append(parseMap.get(UriSegment.SCHEME))
-        	.append("://");
-        }
-        
         //can't use SCHEMESPECIFICPART for this, because we need to canonicalize all the parts of the query.
         //USERINFO is also deprecated.  So we technically have more than we need.
-        sb.append(StringUtilities.isEmpty(parseMap.get(UriSegment.AUTHORITY)) ? "" : parseMap.get(UriSegment.AUTHORITY))
-        .append(StringUtilities.isEmpty(parseMap.get(UriSegment.PATH)) ? ""  : parseMap.get(UriSegment.PATH))
-        .append(StringUtilities.isEmpty(parseMap.get(UriSegment.QUERY)) ? "" : "?" + parseMap.get(UriSegment.QUERY))
-        .append(StringUtilities.isEmpty(parseMap.get(UriSegment.FRAGMENT)) ? "": "#" + parseMap.get(UriSegment.FRAGMENT))
-        ;
+
+        StringBuilder sb = new StringBuilder();
+
+        String scheme = parseMap.get(UriSegment.SCHEME);
+        if(!scheme.isEmpty()) {
+        	sb.append(scheme).append("://");
+        }
+        String authority = parseMap.get(UriSegment.AUTHORITY);
+        if(!StringUtilities.isEmpty(authority)) {
+            sb.append(authority);
+        }
+        String path = parseMap.get(UriSegment.PATH);
+        if(!StringUtilities.isEmpty(path)) {
+            sb.append(path);
+        }
+        String query = parseMap.get(UriSegment.QUERY);
+        if(!StringUtilities.isEmpty(query)) {
+            sb.append("?").append(query);
+        }
+        String fragment = parseMap.get(UriSegment.FRAGMENT);
+        if(!StringUtilities.isEmpty(fragment)) {
+            sb.append("#").append(fragment);
+        }
         return sb.toString();
     }
 
