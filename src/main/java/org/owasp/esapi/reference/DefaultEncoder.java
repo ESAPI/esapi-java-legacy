@@ -34,6 +34,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Encoder;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.SecurityConfiguration;
+import org.owasp.esapi.StringUtilities;
 import org.owasp.esapi.codecs.Base64;
 import org.owasp.esapi.codecs.CSSCodec;
 import org.owasp.esapi.codecs.Codec;
@@ -629,12 +630,10 @@ public class DefaultEncoder implements Encoder {
         
         //can't use SCHEMESPECIFICPART for this, because we need to canonicalize all the parts of the query.
         //USERINFO is also deprecated.  So we technically have more than we need.
-        sb.append(parseMap.get(UriSegment.AUTHORITY) == null || parseMap.get(UriSegment.AUTHORITY).isEmpty() ? "" : parseMap.get(UriSegment.AUTHORITY))
-        .append(parseMap.get(UriSegment.PATH) == null || parseMap.get(UriSegment.PATH).isEmpty() ? ""  : parseMap.get(UriSegment.PATH))
-        .append(parseMap.get(UriSegment.QUERY) == null || parseMap.get(UriSegment.QUERY).isEmpty()
-                ? "" : "?" + parseMap.get(UriSegment.QUERY))
-        .append((parseMap.get(UriSegment.FRAGMENT) == null) || parseMap.get(UriSegment.FRAGMENT).isEmpty()
-                ? "": "#" + parseMap.get(UriSegment.FRAGMENT))
+        sb.append(StringUtilities.isEmpty(parseMap.get(UriSegment.AUTHORITY)) ? "" : parseMap.get(UriSegment.AUTHORITY))
+        .append(StringUtilities.isEmpty(parseMap.get(UriSegment.PATH)) ? ""  : parseMap.get(UriSegment.PATH))
+        .append(StringUtilities.isEmpty(parseMap.get(UriSegment.QUERY)) ? "" : "?" + parseMap.get(UriSegment.QUERY))
+        .append(StringUtilities.isEmpty(parseMap.get(UriSegment.FRAGMENT)) ? "": "#" + parseMap.get(UriSegment.FRAGMENT))
         ;
         return sb.toString();
     }
