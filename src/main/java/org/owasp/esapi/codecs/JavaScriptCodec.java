@@ -112,27 +112,19 @@ public class JavaScriptCodec extends AbstractCharacterCodec {
         // \0 collides with the octal decoder and is non-standard
         // if ( second.charValue() == '0' ) {
         //    return Character.valueOf( (char)0x00 );
-        if (second == 'b' ) {
-            return 0x08;
-        } else if (second == 't' ) {
-            return 0x09;
-        } else if (second == 'n' ) {
-            return 0x0a;
-        } else if (second == 'v' ) {
-            return 0x0b;
-        } else if (second == 'f' ) {
-            return 0x0c;
-        } else if (second == 'r' ) {
-            return 0x0d;
-        } else if (second == '\"' ) {
-            return 0x22;
-        } else if (second == '\'' ) {
-            return 0x27;
-        } else if (second == '\\' ) {
-            return 0x5c;
+        switch (second) {
+            case 'b': return 0x08;
+            case 't': return 0x09;
+            case 'n': return 0x0a;
+            case 'v': return 0x0b;
+            case 'f': return 0x0c;
+            case 'r': return 0x0d;
+            case '\"': return 0x22;
+            case '\'': return 0x27;
+            case '\\': return 0x5c;
+        }
 
-        // look for \\xXX format
-        } else if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
+        if ( Character.toLowerCase( second.charValue() ) == 'x' ) {
             // Search for exactly 2 hex digits following
             StringBuilder sb = new StringBuilder();
             for ( int i=0; i<2; i++ ) {
