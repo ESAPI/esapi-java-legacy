@@ -58,18 +58,14 @@ public class EnforceHTTPSRule extends Rule {
 
             if ( path.matcher(request.getRequestURI()).matches() ) {
 
-                Iterator<Object> it = exceptions.iterator();
+                for (Object o : exceptions) {
 
-                while(it.hasNext()){
-
-                    Object o = it.next();
-
-                    if ( o instanceof String ) {
-                        if ( ((String)o).equalsIgnoreCase(request.getRequestURI()) ) {
+                    if (o instanceof String) {
+                        if (((String) o).equalsIgnoreCase(request.getRequestURI())) {
                             return new DoNothingAction();
                         }
-                    } else if ( o instanceof Pattern ) {
-                        if ( ((Pattern)o).matcher(request.getRequestURI()).matches() ) {
+                    } else if (o instanceof Pattern) {
+                        if (((Pattern) o).matcher(request.getRequestURI()).matches()) {
                             return new DoNothingAction();
                         }
                     }
