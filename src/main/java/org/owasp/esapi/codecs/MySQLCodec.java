@@ -272,30 +272,19 @@ public class MySQLCodec extends AbstractCharacterCodec {
             return null;
         }
 
-        if ( second.charValue() == '0' ) {
-            return Character.valueOf( (char)0x00 );
-        } else if ( second.charValue() == 'b' ) {
-            return Character.valueOf( (char)0x08 );
-        } else if ( second.charValue() == 't' ) {
-            return Character.valueOf( (char)0x09 );
-        } else if ( second.charValue() == 'n' ) {
-            return Character.valueOf( (char)0x0a );
-        } else if ( second.charValue() == 'r' ) {
-            return Character.valueOf( (char)0x0d );
-        } else if ( second.charValue() == 'Z' ) {
-            return Character.valueOf( (char)0x1a );
-        } else if ( second.charValue() == '\"' ) {
-            return Character.valueOf( (char)0x22 );
-        } else if ( second.charValue() == '%' ) {
-            return Character.valueOf( (char)0x25 );
-        } else if ( second.charValue() == '\'' ) {
-            return Character.valueOf( (char)0x27 );
-        } else if ( second.charValue() == '\\' ) {
-            return Character.valueOf( (char)0x5c );
-        } else if ( second.charValue() == '_' ) {
-            return Character.valueOf( (char)0x5f );
-        } else {
-            return second;
+        switch (second) {
+            case '0': return (char) 0x00;
+            case 'b': return (char) 0x08;
+            case 't': return (char) 0x09;
+            case 'n': return (char) 0x0a;
+            case 'r': return (char) 0x0d;
+            case 'Z': return (char) 0x1a;
+            case '\"': return (char) 0x22;
+            case '%': return (char) 0x25;
+            case '\'': return (char) 0x27;
+            case '\\': return (char) 0x5c;
+            case '_': return (char) 0x5f;
+            default: return second;
         }
     }
 
