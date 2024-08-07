@@ -266,21 +266,22 @@ public class CryptoHelper {
      */
     public static boolean isCipherTextMACvalid(SecretKey sk, CipherText ct)
     {
-        if ( CryptoHelper.isMACRequired( ct ) ) {
-            try {
-                KeyDerivationFunction kdf = new KeyDerivationFunction( ct.getKDF_PRF() );
-                SecretKey authKey = kdf.computeDerivedKey(sk, ct.getKeySize(), "authenticity");
-                boolean validMAC = ct.validateMAC( authKey );
-                return validMAC;
-            } catch (Exception ex) {
-                // Error on side of security. If this fails and can't verify MAC
-                // assume it is invalid. Note that CipherText.toString() does not
-                // print the actual ciphertext.
-                logger.warning(Logger.SECURITY_FAILURE, "Unable to validate MAC for ciphertext " + ct, ex);
-                return false;
-            }
+        if (!CryptoHelper.isMACRequired(ct)) {
+            return true;
         }
-        return true;
+
+        try {
+            KeyDerivationFunction kdf = new KeyDerivationFunction( ct.getKDF_PRF() );
+            SecretKey authKey = kdf.computeDerivedKey(sk, ct.getKeySize(), "authenticity");
+            boolean validMAC = ct.validateMAC( authKey );
+            return validMAC;
+        } catch (Exception ex) {
+            // Error on side of security. If this fails and can't verify MAC
+            // assume it is invalid. Note that CipherText.toString() does not
+            // print the actual ciphertext.
+            logger.warning(Logger.SECURITY_FAILURE, "Unable to validate MAC for ciphertext " + ct, ex);
+            return false;
+        }
     }
 
     /**
