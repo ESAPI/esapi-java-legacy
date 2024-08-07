@@ -174,19 +174,20 @@ public class MySQLCodec extends AbstractCharacterCodec {
      *             Encoded Character
      */
     private String encodeCharacterMySQL( Character c ) {
-        char ch = c.charValue();
-        if ( ch == 0x00 ) return "\\0";
-        if ( ch == 0x08 ) return "\\b";
-        if ( ch == 0x09 ) return "\\t";
-        if ( ch == 0x0a ) return "\\n";
-        if ( ch == 0x0d ) return "\\r";
-        if ( ch == 0x1a ) return "\\Z";
-        if ( ch == 0x22 ) return "\\\"";
-        if ( ch == 0x25 ) return "\\%";
-        if ( ch == 0x27 ) return "\\'";
-        if ( ch == 0x5c ) return "\\\\";
-        if ( ch == 0x5f ) return "\\_";
-        return "\\" + c;
+        switch (c) {
+            case 0x00: return "\\0";
+            case 0x08: return "\\b";
+            case 0x09: return "\\t";
+            case 0x0a: return "\\n";
+            case 0x0d: return "\\r";
+            case 0x1a: return "\\Z";
+            case 0x22: return "\\\"";
+            case 0x25: return "\\%";
+            case 0x27: return "\\'";
+            case 0x5c: return "\\\\";
+            case 0x5f: return "\\_";
+            default: return "\\" + c;
+        }
     }
 
     /**
