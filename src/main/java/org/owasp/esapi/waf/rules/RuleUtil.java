@@ -90,7 +90,7 @@ public class RuleUtil {
      */
     public static boolean isInList(Enumeration en, String s) {
 
-        for(; en.hasMoreElements();) {
+        while (en.hasMoreElements()) {
 
             Object o = en.nextElement();
 
