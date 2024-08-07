@@ -1267,81 +1267,10 @@ public class Base64
         public int read() throws java.io.IOException
         {
             // Do we need to get data?
-            if( position < 0 )
-            {
-                if( encode )
-                {
-                    byte[] b3 = new byte[3];
-                    int numBinaryBytes = 0;
-                    for( int i = 0; i < 3; i++ )
-                    {
-                        try
-                        {
-                            int b = in.read();
-
-                            // If end of stream, b is -1.
-                            if( b >= 0 )
-                            {
-                                b3[i] = (byte)b;
-                                numBinaryBytes++;
-                            }   // end if: not end of stream
-
-                        }   // end try: read
-                        catch( java.io.IOException e )
-                        {
-                            // Only a problem if we got no data at all.
-                            if( i == 0 )
-                                throw e;
-
-                        }   // end catch
-                    }   // end for: each needed input byte
-
-                    if( numBinaryBytes > 0 )
-                    {
-                        encode3to4( b3, 0, numBinaryBytes, buffer, 0, options );
-                        position = 0;
-                        numSigBytes = 4;
-                    }   // end if: got data
-                    else
-                    {
-                        return -1;
-                    }   // end else
-                }   // end if: encoding
-
-                // Else decoding
-                else
-                {
-                    byte[] b4 = new byte[4];
-                    int i = 0;
-                    for( i = 0; i < 4; i++ )
-                    {
-                        // Read four "meaningful" bytes:
-                        int b = 0;
-                        do{ b = in.read(); }
-                        while( b >= 0 && decodabet[ b & 0x7f ] <= WHITE_SPACE_ENC );
-
-                        if( b < 0 )
-                            break; // Reads a -1 if end of stream
-
-                        b4[i] = (byte)b;
-                    }   // end for: each needed input byte
-
-                    if( i == 4 )
-                    {
-                        numSigBytes = decode4to3( b4, 0, buffer, 0, options );
-                        position = 0;
-                    }   // end if: got four characters
-                    else if( i == 0 ){
-                        return -1;
-                    }   // end else if: also padded correctly
-                    else
-                    {
-                        // Must have broken out from above.
-                        throw new java.io.IOException( "Improperly padded Base64 input." );
-                    }   // end
-
-                }   // end else: decode
-            }   // end else: get data
+            if( position < 0 ) {
+                Integer data = encode ? encode() : decode();
+                if (data != null) return data;
+            }
 
             // Got data?
             if( position >= 0 )
@@ -1378,6 +1307,77 @@ public class Base64
                 throw new java.io.IOException( "Error in Base64 code reading stream." );
             }   // end else
         }   // end read
+
+        private Integer encode() throws java.io.IOException {
+            byte[] b3 = new byte[3];
+            int numBinaryBytes = 0;
+            for( int i = 0; i < 3; i++ )
+            {
+                try
+                {
+                    int b = in.read();
+
+                    // If end of stream, b is -1.
+                    if( b >= 0 )
+                    {
+                        b3[i] = (byte)b;
+                        numBinaryBytes++;
+                    }   // end if: not end of stream
+
+                }   // end try: read
+                catch( java.io.IOException e )
+                {
+                    // Only a problem if we got no data at all.
+                    if( i == 0 )
+                        throw e;
+
+                }   // end catch
+            }   // end for: each needed input byte
+
+            if( numBinaryBytes > 0 )
+            {
+                encode3to4( b3, 0, numBinaryBytes, buffer, 0, options );
+                position = 0;
+                numSigBytes = 4;
+            }   // end if: got data
+            else
+            {
+                return -1;
+            }   // end else
+            return null;
+        }
+
+        private Integer decode() throws java.io.IOException {
+            byte[] b4 = new byte[4];
+            int i = 0;
+            for( i = 0; i < 4; i++ )
+            {
+                // Read four "meaningful" bytes:
+                int b = 0;
+                do{ b = in.read(); }
+                while( b >= 0 && decodabet[ b & 0x7f ] <= WHITE_SPACE_ENC );
+
+                if( b < 0 )
+                    break; // Reads a -1 if end of stream
+
+                b4[i] = (byte)b;
+            }   // end for: each needed input byte
+
+            if( i == 4 )
+            {
+                numSigBytes = decode4to3( b4, 0, buffer, 0, options );
+                position = 0;
+            }   // end if: got four characters
+            else if( i == 0 ){
+                return -1;
+            }   // end else if: also padded correctly
+            else
+            {
+                // Must have broken out from above.
+                throw new java.io.IOException( "Improperly padded Base64 input." );
+            }   // end
+            return null;
+        }
 
         /**
          * Calls {@link #read()} repeatedly until the end of stream
