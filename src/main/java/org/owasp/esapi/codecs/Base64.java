@@ -1273,39 +1273,34 @@ public class Base64
             }
 
             // Got data?
-            if( position >= 0 )
-            {
-                // End of relevant data?
-                if( /*!encode &&*/ position >= numSigBytes )
-                    return -1;
-
-                if( encode && breakLines && lineLength >= MAX_LINE_LENGTH )
-                {
-                    lineLength = 0;
-                    return '\n';
-                }   // end if
-                else
-                {
-                    lineLength++;   // This isn't important when decoding
-                                    // but throwing an extra "if" seems
-                                    // just as wasteful.
-
-                    int b = buffer[ position++ ];
-
-                    if( position >= bufferLength )
-                        position = -1;
-
-                    return b & 0xFF; // This is how you "cast" a byte that's
-                                     // intended to be unsigned.
-                }   // end else
-            }   // end if: position >= 0
-
-            // Else error
-            else
-            {
+            if (position < 0) {
                 // When JDK1.4 is more accepted, use an assertion here.
-                throw new java.io.IOException( "Error in Base64 code reading stream." );
-            }   // end else
+                throw new IOException( "Error in Base64 code reading stream." );
+            }
+
+            // End of relevant data?
+            if (/*!encode &&*/ position >= numSigBytes) {
+                return -1;
+            }
+
+            if (encode && breakLines && lineLength >= MAX_LINE_LENGTH) {
+                lineLength = 0;
+                return '\n';
+            }
+
+            lineLength++;   // This isn't important when decoding
+            // but throwing an extra "if" seems
+            // just as wasteful.
+
+            int b = buffer[ position++ ];
+
+            if (position >= bufferLength) {
+                position = -1;
+            }
+
+            return b & 0xFF; // This is how you "cast" a byte that's
+            // intended to be unsigned.
+
         }   // end read
 
         private Integer encode() throws java.io.IOException {
