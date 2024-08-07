@@ -746,9 +746,7 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      */
     @Override
     public Double getValidNumber(String context, String input, long minValue, long maxValue, boolean allowNull) throws ValidationException, IntrusionException {
-        Double minDoubleValue = new Double(minValue);
-        Double maxDoubleValue = new Double(maxValue);
-        return getValidDouble(context, input, minDoubleValue.doubleValue(), maxDoubleValue.doubleValue(), allowNull);
+        return getValidDouble(context, input, (double) minValue, (double) maxValue, allowNull);
     }
 
     /**
