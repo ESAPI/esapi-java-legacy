@@ -43,41 +43,40 @@ public class RuleUtil {
 
     public static boolean isInList(Collection c, String s) {
 
-        Iterator it = c.iterator();
+        for (Object o : c) {
 
-        while(it.hasNext()) {
+            if (o instanceof String) {
 
-            Object o = it.next();
-
-            if ( o instanceof String ) {
-
-                if ( s.equals((String)o)) {
+                if (s.equals((String) o)) {
                     return true;
                 }
 
-            } else if ( o instanceof Integer ) {
+            } else if (o instanceof Integer) {
 
                 try {
-                    if ( Integer.parseInt(s) == ((Integer)o).intValue() ) {
+                    if (Integer.parseInt(s) == ((Integer) o).intValue()) {
                         return true;
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
 
-            } else if ( o instanceof Long ) {
+            } else if (o instanceof Long) {
 
                 try {
-                    if ( Long.parseLong(s) == ((Long)o).longValue() ) {
+                    if (Long.parseLong(s) == ((Long) o).longValue()) {
                         return true;
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
 
-            } else if ( o instanceof Double ) {
+            } else if (o instanceof Double) {
 
                 try {
-                    if ( Double.compare(Double.parseDouble(s), ((Double)o).doubleValue()) ==  0 ) {
+                    if (Double.compare(Double.parseDouble(s), ((Double) o).doubleValue()) == 0) {
                         return true;
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                }
             }
 
         }
