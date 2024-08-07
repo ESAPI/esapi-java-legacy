@@ -3,6 +3,8 @@ package org.owasp.esapi.codecs;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 
+import java.io.IOException;
+
 // CHECKME: Version at http://iharder.net/base64 is up to v2.3.3. Some semantic changes
 // starting with v2.3. Should we upgrade and then add ESAPI logging or stay at 2.2.2 base?
 // I think that really depends on how much OWASP ESAPI plans on tracking changes to this
@@ -1498,55 +1500,58 @@ public class Base64
          * @throws java.io.IOException
          * @since 1.3
          */
-        public void write(int theByte) throws java.io.IOException
-        {
-            // Encoding suspended?
-            if( suspendEncoding )
-            {
+        public void write(int theByte) throws java.io.IOException {
+            if( suspendEncoding ) {
                 super.out.write( theByte );
                 return;
-            }   // end if: supsended
+            }
 
-            // Encode?
-            if( encode )
-            {
-                buffer[ position++ ] = (byte)theByte;
-                if( position >= bufferLength )  // Enough to encode.
-                {
-                    out.write( encode3to4( b4, buffer, bufferLength, options ) );
-
-                    lineLength += 4;
-                    if( breakLines && lineLength >= MAX_LINE_LENGTH )
-                    {
-                        out.write( NEW_LINE );
-                        lineLength = 0;
-                    }   // end if: end of line
-
-                    position = 0;
-                }   // end if: enough to output
-            }   // end if: encoding
-
-            // Else, Decoding
-            else
-            {
-                // Meaningful Base64 character?
-                if( decodabet[ theByte & 0x7f ] > WHITE_SPACE_ENC )
-                {
-                    buffer[ position++ ] = (byte)theByte;
-                    if( position >= bufferLength )  // Enough to output.
-                    {
-                        int len = Base64.decode4to3( buffer, 0, b4, 0, options );
-                        out.write( b4, 0, len );
-                        //out.write( Base64.decode4to3( buffer ) );
-                        position = 0;
-                    }   // end if: enough to output
-                }   // end if: meaningful base64 character
-                else if( decodabet[ theByte & 0x7f ] != WHITE_SPACE_ENC )
-                {
-                    throw new java.io.IOException( "Invalid character in Base64 data." );
-                }   // end else: not white space either
-            }   // end else: decoding
+            if( encode ) {
+                encode(theByte);
+            } else {
+                decode(theByte);
+            }
         }   // end write
+
+        private void encode(int theByte) throws IOException {
+            buffer[ position++ ] = (byte) theByte;
+
+            if (position < bufferLength) {
+                // not enough to encode.
+                return;
+            }
+
+            out.write( encode3to4( b4, buffer, bufferLength, options ) );
+
+            lineLength += 4;
+            if( breakLines && lineLength >= MAX_LINE_LENGTH ) {
+                out.write( NEW_LINE );
+                lineLength = 0;
+            }
+
+            position = 0;
+        }
+
+        private void decode(int theByte) throws IOException {
+            // Meaningful Base64 character?
+            if(decodabet[ theByte & 0x7f ] < WHITE_SPACE_ENC) {
+                throw new IOException( "Invalid character in Base64 data." );
+            }
+
+            if (decodabet[theByte & 0x7f] == WHITE_SPACE_ENC) {
+                return;
+            }
+
+            buffer[ position++ ] = (byte) theByte;
+            if (position < bufferLength) {
+                // not enough to output
+                return;
+            }
+            int len = Base64.decode4to3( buffer, 0, b4, 0, options );
+            out.write( b4, 0, len );
+            //out.write( Base64.decode4to3( buffer ) );
+            position = 0;
+        }
 
         /**
          * Calls {@link #write(int)} repeatedly until <var>len</var>
