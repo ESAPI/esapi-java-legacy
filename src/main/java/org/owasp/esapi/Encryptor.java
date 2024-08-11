@@ -162,8 +162,8 @@ public interface Encryptor {
      * </p>
      * @param ciphertext The {@code CipherText} object to be decrypted.
      * @return The {@code PlainText} object resulting from decrypting the specified
-     *            ciphertext. Note that the returned plaintext byte array
-     *            should be converted to a Java String using
+     *            ciphertext. Note that if it is desired to convert the returned
+     *            plaintext byte array to a Java String it should be done using
      *            {@code new String(byte[], "UTF-8");} rather than simply using
      *            {@code new String(byte[]);} which uses native encoding and may
      *            not be portable across hardware and/or OS platforms.
@@ -186,8 +186,8 @@ public interface Encryptor {
      * @param key        The {@code SecretKey} to use for encrypting the plaintext.
      * @param ciphertext The {@code CipherText} object to be decrypted.
      * @return The {@code PlainText} object resulting from decrypting the specified
-     *            ciphertext. Note that the returned plaintext byte array
-     *            should be converted to a Java String using
+     *            ciphertext. Note that if it is desired to convert the returned
+     *            plaintext byte array to a Java String it should be done using
      *            {@code new String(byte[], "UTF-8");} rather than simply using
      *            {@code new String(byte[]);} which uses native encoding and may
      *            not be portable across hardware and/or OS platforms.
