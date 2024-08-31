@@ -47,7 +47,7 @@ fact, without the
 that's the version that will be used by default.
 
 # Quickstart - Maven Example
-#### Step 1: Add the required maven dependencies
+### Step 1: Add the required maven dependencies
 ```xml
 <dependency>
     <groupId>org.owasp.esapi</groupId>
@@ -62,11 +62,11 @@ that's the version that will be used by default.
     <scope>provided</scope>
 </dependency>
 ```
-#### Step 2: Download the ESAPI.properties and validation.properties from below locations and put it in your classpath.
+### Step 2: Download the ESAPI.properties and validation.properties from below locations and put it in your classpath.
 [ESAPI.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/ESAPI.properties) <br/>
 [validation.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/validation.properties)
 
-#### Step 3: Let's say, you want to remediate log injection vulnerabilities. Below is an example to achieve it.
+### Step 3: Let's say, you want to remediate log injection vulnerabilities. Below is an example to achieve it.
 ```code
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
