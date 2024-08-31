@@ -46,6 +46,41 @@ fact, without the
 ```
 that's the version that will be used by default.
 
+# Quickstart - Maven Example
+#### Step 1: Add the required maven dependencies
+```xml
+<dependency>
+    <groupId>org.owasp.esapi</groupId>
+    <artifactId>esapi</artifactId>
+    <version>2.5.4.0</version>
+    <classifier>jakarta</classifier>
+</dependency>
+<dependency>
+    <groupId>jakarta.servlet</groupId>
+    <artifactId>jakarta.servlet-api</artifactId>
+    <version>6.1.0</version>
+    <scope>provided</scope>
+</dependency>
+```
+#### Step 2: Download the ESAPI.properties and validation.properties from below locations and put it in your classpath.
+[ESAPI.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/ESAPI.properties) <br/>
+[validation.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/validation.properties)
+
+#### Step 3: Let's say, you want to remediate log injection vulnerabilities. Below is an example to achieve it.
+```code
+import org.owasp.esapi.ESAPI;
+import org.owasp.esapi.Logger;
+
+public class Example {
+   private static Logger LOGGER = ESAPI.getLogger(Example.class);
+   public void printLog(){
+		LOGGER.info(Logger.EVENT_SUCCESS, "Log injection remediated !");
+   }
+}
+```
+
+
+
 # A word about ESAPI vulnerabilities
 A summary of all the vulnerabilities that we have written about in either the
 ESAPI Security Bulletins or in the GitHub Security Advisories may be found
