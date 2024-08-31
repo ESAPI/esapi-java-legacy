@@ -78,9 +78,6 @@ public class Example {
    }
 }
 ```
-
-
-
 # A word about ESAPI vulnerabilities
 A summary of all the vulnerabilities that we have written about in either the
 ESAPI Security Bulletins or in the GitHub Security Advisories may be found
