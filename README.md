@@ -47,7 +47,7 @@ fact, without the
 that's the version that will be used by default.
 
 # Quickstart - Maven Example
-### Step 1: Add the required maven dependencies
+### Step 1: Add the required maven dependencies.
 ```xml
 <dependency>
     <groupId>org.owasp.esapi</groupId>
