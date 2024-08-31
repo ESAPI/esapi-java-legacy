@@ -30,7 +30,7 @@ specific Jakarta version of ESAPI, in Maven, you would specify your ESAPI depend
 <dependency>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.5.3.0-SNAPSHOT</version>
+    <version>2.5.4.0</version>
     <classifier>jakarta</classifier>
 </dependency>
 ```
