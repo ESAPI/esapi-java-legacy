@@ -559,11 +559,6 @@ public class SecurityConfigurationWrapper implements SecurityConfiguration
     }
 
     @Override
-    public Boolean getBooleanProp(String propertyName, Boolean defaultValue) {
-        return wrapped.getBooleanProp(propertyName, defaultValue);
-    }
-
-    @Override
     public String getStringProp(String propertyName) throws ConfigurationException {
         return wrapped.getStringProp(propertyName);
     }

@@ -80,18 +80,6 @@ public class EsapiPropertyManager implements EsapiPropertyLoader {
      * {@inheritDoc}
      */
     @Override
-    public Boolean getBooleanProp(String propertyName, Boolean defaultValue) {
-        for (AbstractPrioritizedPropertyLoader loader : loaders) {
-            return loader.getBooleanProp(propertyName, defaultValue);
-        }
-        return defaultValue;
-    }
-
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getStringProp(String propertyName) throws ConfigurationException {
         for (AbstractPrioritizedPropertyLoader loader : loaders) {
             try {

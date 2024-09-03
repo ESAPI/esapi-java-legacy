@@ -255,42 +255,6 @@ public class XmlEsapiPropertyLoaderTest {
     }
 
     @Test
-    public void testGetBooleanPropWithDefaultValueTrue() {
-        // given
-        String key = "boolean_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanPropWithDefaultValueFalse() {
-        // given
-        String key = "boolean_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
     public void testGetBooleanYesProperty() {
         // given
         String key = "boolean_yes_property";
@@ -303,42 +267,6 @@ public class XmlEsapiPropertyLoaderTest {
             fail( e.getMessage() );
         }
         boolean value = testPropertyLoader.getBooleanProp(key);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanYesPropertyWithDefaultValueTrue() {
-        // given
-        String key = "boolean_yes_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanYesPropertyWithDefaultValueFalse() {
-        // given
-        String key = "boolean_yes_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
 
         // then
         assertEquals(expectedValue, value);
@@ -362,42 +290,6 @@ public class XmlEsapiPropertyLoaderTest {
         assertEquals(expectedValue, value);
     }
 
-    @Test
-    public void testGetBooleanNoPropertyWithDefaultValueTrue() {
-        // given
-        String key = "boolean_no_property";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanNoPropertyWithDefaultValueFalse() {
-        // given
-        String key = "boolean_no_property";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
     @Test(expected = ConfigurationException.class)
     public void testBooleanPropertyNotFound() throws ConfigurationException {
         // given
@@ -414,45 +306,6 @@ public class XmlEsapiPropertyLoaderTest {
         // then expect exception
     }
 
-    @Test
-    public void testBooleanPropertyNotFoundWithDefaultValueTrue() {
-        // given
-        String key = "non-existing-key";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-
-
-        // then expect exception
-    }
-
-    @Test
-    public void testBooleanPropertyNotFoundWithDefaultValueFalse() {
-        // given
-        String key = "non-existing-key";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
     @Test(expected = ConfigurationException.class)
     public void testIncorrectBooleanPropertyType() throws ConfigurationException {
         // given
@@ -467,42 +320,6 @@ public class XmlEsapiPropertyLoaderTest {
         testPropertyLoader.getBooleanProp(key);
 
         // then expect exception
-    }
-
-    @Test
-    public void testIncorrectBooleanPropertyTypeWithDefaultValueTrue() {
-        // given
-        String key = "invalid_boolean_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testIncorrectBooleanPropertyTypeWithDefaultValueFalse() {
-        // given
-        String key = "invalid_boolean_property";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new XmlEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
-
-        // then
-        assertEquals(expectedValue, value);
     }
 
     @Test

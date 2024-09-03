@@ -240,48 +240,6 @@ public class StandardEsapiPropertyLoaderTest {
     }
 
     @Test
-    public void testGetBooleanPropWithDefaultValueTrue() {
-        // given
-        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
-                "esapi" + File.separator + "ESAPI-test.properties";
-        int priority = 1;
-        String propertyKey = "boolean_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(propertyKey,true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanPropWithDefaultValueFalse() {
-        // given
-        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
-                "esapi" + File.separator + "ESAPI-test.properties";
-        int priority = 1;
-        String propertyKey = "boolean_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(propertyKey,false);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
     public void testGetBooleanYesProperty() {
         // given
         String key = "boolean_yes_property";
@@ -300,42 +258,6 @@ public class StandardEsapiPropertyLoaderTest {
     }
 
     @Test
-    public void testGetBooleanYesPropertyWithDefaultValueTrue() {
-        // given
-        String key = "boolean_yes_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key,true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanYesPropertyWithDefaultValueFalse() {
-        // given
-        String key = "boolean_yes_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key,false);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
     public void testGetBooleanNoProperty() {
         // given
         String key = "boolean_no_property";
@@ -348,42 +270,6 @@ public class StandardEsapiPropertyLoaderTest {
             fail( e.getMessage() );
         }
         boolean value = testPropertyLoader.getBooleanProp(key);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanNoPropertyWithDefaultValueTrue() {
-        // given
-        String key = "boolean_no_property";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testGetBooleanNoPropertyWithDefaultValueFalse() {
-        // given
-        String key = "boolean_no_property";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
 
         // then
         assertEquals(expectedValue, value);
@@ -408,48 +294,6 @@ public class StandardEsapiPropertyLoaderTest {
         // then expect exception
     }
 
-    @Test
-    public void testBooleanPropertyNotFoundWithDefaultValueTrue() {
-        // given
-        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
-                "esapi" + File.separator + "ESAPI-test.properties";
-        int priority = 1;
-        String propertyKey = "non-existing-key";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(propertyKey, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testBooleanPropertyNotFoundWithDefaultValueFalse() {
-        // given
-        String filename = "src" + File.separator + "test" + File.separator + "resources" + File.separator +
-                "esapi" + File.separator + "ESAPI-test.properties";
-        int priority = 1;
-        String propertyKey = "non-existing-key";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(propertyKey, false);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
     @Test(expected = ConfigurationException.class)
     public void testIncorrectBooleanPropertyType() throws ConfigurationException {
         // given
@@ -464,42 +308,6 @@ public class StandardEsapiPropertyLoaderTest {
         testPropertyLoader.getBooleanProp(key);
 
         // then expect exception
-    }
-
-    @Test
-    public void testIncorrectBooleanPropertyTypeWithDefaultValueTrue() {
-        // given
-        String key = "invalid_boolean_property";
-        boolean expectedValue = true;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, true);
-
-        // then
-        assertEquals(expectedValue, value);
-    }
-
-    @Test
-    public void testIncorrectBooleanPropertyTypeWithDefaultValueFalse() {
-        // given
-        String key = "invalid_boolean_property";
-        boolean expectedValue = false;
-
-        // when
-        try {
-            testPropertyLoader = new StandardEsapiPropertyLoader(filename, priority);
-        } catch ( IOException e ) {
-            fail( e.getMessage() );
-        }
-        boolean value = testPropertyLoader.getBooleanProp(key, false);
-
-        // then
-        assertEquals(expectedValue, value);
     }
 
     @Test

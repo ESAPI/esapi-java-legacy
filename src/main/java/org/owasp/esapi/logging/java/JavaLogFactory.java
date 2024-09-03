@@ -80,7 +80,16 @@ public class JavaLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        boolean logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX, true);
+
+        boolean logPrefix = true;
+        try {
+            logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX);
+        } catch (ConfigurationException ex) {
+            System.out.println("ESAPI: Failed to read Log Prefix configuration. Defaulting to enabled" +
+                    ". Caught " + ex.getClass().getName() +
+                    "; exception message was: " + ex);
+        }
+
         JAVA_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logPrefix);
 
         Map<Integer, JavaLogLevelHandler> levelLookup = new HashMap<>();

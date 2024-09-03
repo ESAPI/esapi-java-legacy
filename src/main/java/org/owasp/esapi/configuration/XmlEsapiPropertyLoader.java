@@ -90,24 +90,6 @@ public class XmlEsapiPropertyLoader extends AbstractPrioritizedPropertyLoader {
      * {@inheritDoc}
      */
     @Override
-    public Boolean getBooleanProp(String propertyName, Boolean defaultValue) {
-        String property = properties.getProperty(propertyName);
-        if (property == null) {
-            return defaultValue;
-        }
-        if (property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes")) {
-            return true;
-        }
-        if (property.equalsIgnoreCase("false") || property.equalsIgnoreCase("no")) {
-            return false;
-        }
-        return defaultValue;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getStringProp(String propertyName) throws ConfigurationException {
         String property = properties.getProperty(propertyName);
         if (property == null) {

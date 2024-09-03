@@ -288,46 +288,6 @@ public class EsapiPropertyManagerTest {
         assertEquals(expectedPropertyValue, propertyValue);
     }
 
-
-    @Test
-    public void testBooleanPropFoundInLoaderWithDefaultValueTrue() {
-        // given
-        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), xmlFilename1);
-        String propertyKey = "boolean_property";
-        boolean expectedPropertyValue = true;
-
-        // when
-        try {
-            testPropertyManager = new EsapiPropertyManager();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        boolean propertyValue = testPropertyManager.getBooleanProp(propertyKey, true);
-
-        // then
-        assertEquals(expectedPropertyValue, propertyValue);
-    }
-
-    @Test
-    public void testBooleanPropFoundInLoaderWithDefaultValueFalse() {
-        // given
-        System.setProperty(EsapiConfiguration.DEVTEAM_ESAPI_CFG.getConfigName(), xmlFilename1);
-        String propertyKey = "boolean_property";
-        boolean expectedPropertyValue = true;
-
-        // when
-        try {
-            testPropertyManager = new EsapiPropertyManager();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-        boolean propertyValue = testPropertyManager.getBooleanProp(propertyKey, false);
-
-        // then
-        assertEquals(expectedPropertyValue, propertyValue);
-    }
-
-
     @Test(expected = ConfigurationException.class)
     public void testBooleanPropertyNotFoundByLoaderAndThrowException() {
         // given
@@ -342,44 +302,6 @@ public class EsapiPropertyManagerTest {
         testPropertyManager.getBooleanProp(propertyKey);
 
         // then expect exception
-    }
-
-    @Test
-    public void testBooleanPropertyNotFoundByLoaderWithDefaultValueTrue() {
-        // given
-        String propertyKey = "non.existing.property";
-        boolean expectedPropertyValue = true;
-
-        // when
-        try {
-            testPropertyManager = new EsapiPropertyManager();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-
-        boolean propertyValue = testPropertyManager.getBooleanProp(propertyKey, true);
-
-        // then
-        assertEquals(expectedPropertyValue, propertyValue);
-    }
-
-    @Test
-    public void testBooleanPropertyNotFoundByLoaderWithDefaultValueFalse() {
-        // given
-        String propertyKey = "non.existing.property";
-        boolean expectedPropertyValue = false;
-
-        // when
-        try {
-            testPropertyManager = new EsapiPropertyManager();
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
-
-        boolean propertyValue = testPropertyManager.getBooleanProp(propertyKey, false);
-
-        // then
-        assertEquals(expectedPropertyValue, propertyValue);
     }
 
     @Test

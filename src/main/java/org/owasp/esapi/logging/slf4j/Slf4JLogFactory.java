@@ -23,6 +23,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.appender.LogPrefixAppender;
 import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
@@ -70,7 +71,16 @@ public class Slf4JLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        boolean logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX, true);
+
+        boolean logPrefix = true;
+        try {
+            logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX);
+        } catch (ConfigurationException ex) {
+            System.out.println("ESAPI: Failed to read Log Prefix configuration. Defaulting to enabled" +
+                    ". Caught " + ex.getClass().getName() +
+                    "; exception message was: " + ex);
+        }
+
         SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logPrefix);
 
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();

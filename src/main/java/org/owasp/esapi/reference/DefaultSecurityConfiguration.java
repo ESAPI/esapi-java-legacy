@@ -1464,32 +1464,6 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
      * 3.) In ESAPI.properties
      */
     @Override
-    public Boolean getBooleanProp(String propertyName, Boolean defaultValue) {
-        try {
-            return esapiPropertyManager.getBooleanProp(propertyName);
-        } catch (ConfigurationException ex) {
-            String property = properties.getProperty(propertyName);
-            if ( property == null ) {
-                return defaultValue;
-            }
-            if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes") ) {
-                return true;
-            }
-            if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase("no") ) {
-                return false;
-            }
-            return defaultValue;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     * Looks for property in three configuration files in following order:
-     * 1.) In file defined as org.owasp.esapi.opsteam system property
-     * 2.) In file defined as org.owasp.esapi.devteam system property
-     * 3.) In ESAPI.properties
-     */
-    @Override
     public String getStringProp(String propertyName) throws ConfigurationException {
         try {
             return esapiPropertyManager.getStringProp(propertyName);
