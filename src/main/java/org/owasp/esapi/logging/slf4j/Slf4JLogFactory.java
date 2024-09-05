@@ -23,6 +23,7 @@ import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.LogFactory;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.codecs.HTMLEntityCodec;
+import org.owasp.esapi.errors.ConfigurationException;
 import org.owasp.esapi.logging.appender.LogAppender;
 import org.owasp.esapi.logging.appender.LogPrefixAppender;
 import org.owasp.esapi.logging.cleaning.CodecLogScrubber;
@@ -36,6 +37,7 @@ import static org.owasp.esapi.PropNames.LOG_CLIENT_INFO;
 import static org.owasp.esapi.PropNames.LOG_APPLICATION_NAME;
 import static org.owasp.esapi.PropNames.APPLICATION_NAME;
 import static org.owasp.esapi.PropNames.LOG_SERVER_IP;
+import static org.owasp.esapi.PropNames.LOG_PREFIX;
 import org.slf4j.LoggerFactory;
 /**
  * LogFactory implementation which creates SLF4J supporting Loggers.
@@ -69,7 +71,17 @@ public class Slf4JLogFactory implements LogFactory {
         boolean logApplicationName = ESAPI.securityConfiguration().getBooleanProp(LOG_APPLICATION_NAME);
         String appName = ESAPI.securityConfiguration().getStringProp(APPLICATION_NAME);
         boolean logServerIp = ESAPI.securityConfiguration().getBooleanProp(LOG_SERVER_IP);
-        SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
+
+        boolean logPrefix = true;
+        try {
+            logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX);
+        } catch (ConfigurationException ex) {
+            System.out.println("ESAPI: Failed to read Log Prefix configuration " + LOG_PREFIX + ". Defaulting to enabled" +
+                    ". Caught " + ex.getClass().getName() +
+                    "; exception message was: " + ex);
+        }
+
+        SLF4J_LOG_APPENDER = createLogAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logPrefix);
 
         Map<Integer, Slf4JLogLevelHandler> levelLookup = new HashMap<>();
         levelLookup.put(Logger.ALL, Slf4JLogLevelHandlers.TRACE);
@@ -114,6 +126,19 @@ public class Slf4JLogFactory implements LogFactory {
         return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName);
     }
 
+    /**
+     * Populates the default log appender for use in factory-created loggers.
+     * @param appName
+     * @param logApplicationName
+     * @param logServerIp
+     * @param logClientInfo
+     * @param logPrefix
+     *
+     * @return LogAppender instance.
+     */
+    /*package*/ static LogAppender createLogAppender(boolean logUserInfo, boolean logClientInfo, boolean logServerIp, boolean logApplicationName, String appName, boolean logPrefix) {
+        return new LogPrefixAppender(logUserInfo, logClientInfo, logServerIp, logApplicationName, appName, logPrefix);
+    }
 
     @Override
     public Logger getLogger(String moduleName) {
