@@ -76,7 +76,7 @@ public class Slf4JLogFactory implements LogFactory {
         try {
             logPrefix = ESAPI.securityConfiguration().getBooleanProp(LOG_PREFIX);
         } catch (ConfigurationException ex) {
-            System.out.println("ESAPI: Failed to read Log Prefix configuration. Defaulting to enabled" +
+            System.out.println("ESAPI: Failed to read Log Prefix configuration " + LOG_PREFIX + ". Defaulting to enabled" +
                     ". Caught " + ex.getClass().getName() +
                     "; exception message was: " + ex);
         }
