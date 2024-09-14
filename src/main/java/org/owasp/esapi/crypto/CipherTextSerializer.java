@@ -26,7 +26,7 @@ import org.owasp.esapi.errors.EncryptionException;
  * and do not have extensive support for the various implementation languages which ESAPI
  * supports. (Perhaps wishful thinking that other ESAPI implementations such as
  * ESAPI for .NET, ESAPI for C, ESAPI for C++, etc. will all support a single, common
- * serialization technique so they could exchange encrypted data.)
+ * serialization technique, so they could exchange encrypted data.)
  *
  * @author kevin.w.wall@gmail.com
  * @since 2.0
@@ -207,7 +207,7 @@ public class CipherTextSerializer {
 
     // All strings are written as UTF-8 encoded byte streams with the
     // length prepended before it as a short. The prepended length is
-    // more for the benefit of languages like C so they can pre-allocate
+    // more for the benefit of languages like C, so they can pre-allocate
     // char arrays without worrying about buffer overflows.
     private void writeString(ByteArrayOutputStream baos, String str) {
         byte[] bytes;
@@ -405,7 +405,7 @@ public class CipherTextSerializer {
                 // Fixed in ESAPI crypto version 20130839. Previously is didn't really matter
                 // because there was only one version (20110203) and it defaulted to that
                 // version, which was the current version. But we don't want that as now there
-                // are two versions and we could be decrypting data encrypted using the previous
+                // are two versions, and we could be decrypting data encrypted using the previous
                 // version.
             ct.setKDF_PRF(kdfPrf);
             ct.setKDFVersion(kdfVers);

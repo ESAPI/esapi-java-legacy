@@ -377,7 +377,7 @@ public interface HTTPUtilities
      * everything to keey your application and environment secure. Some of the more obvious omissions are the
      * absence of examining the actual file content to determine the actual file type or running some AV scan
      * on the uploaded files. You have to add that functionality to you if you want or need that. Some
-     * reasource that you may find usefule are:
+     * resource that you may find useful are:
      * <ul>
      *   <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html">OWASP File Upload Cheat Sheet</a></li>
      *   <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html">OWASP Denial of Service Cheat Sheet</a></li>

@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Properties;
 
 /**
- * Abstrace class that supports two "levels" of priorities for ESAPI properties.
+ * Abstract class that supports two "levels" of priorities for ESAPI properties.
  * The higher level is the property file supported by an "operations" team and
  * the lower level is the property file intended to be supported by the
  * "development" team. ESAPI properties defined in the lower level properties
@@ -42,7 +42,7 @@ public abstract class AbstractPrioritizedPropertyLoader implements EsapiProperty
 
     /**
      * Get priority of this property loader. If two and more loaders can return value for the same property key,
-     * the one with highest priority will be chosen.
+     * the one with the highest priority will be chosen.
      * @return priority of this property loader
      */
     public int priority() {

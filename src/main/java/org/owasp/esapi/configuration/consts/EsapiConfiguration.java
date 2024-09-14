@@ -16,7 +16,7 @@ public enum EsapiConfiguration {
     String configName;
 
     /**
-     * Priority of configuration (higher numer - higher priority).
+     * Priority of configuration (higher number - higher priority).
      */
     int priority;
 

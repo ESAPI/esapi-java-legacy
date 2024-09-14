@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 import org.owasp.esapi.Logger.EventType;
 
 /**
- * Contract for translating an ESAPI log event into an Java log event.
+ * Contract for translating an ESAPI log event into a Java log event.
  *
  */
 public interface JavaLogBridge {

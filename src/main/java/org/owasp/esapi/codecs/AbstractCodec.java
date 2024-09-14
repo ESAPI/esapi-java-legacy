@@ -25,7 +25,7 @@ package org.owasp.esapi.codecs;
  * <p>
  * Be sure to see the several <b>WARNING</b>s associated with the detailed
  * method descriptions. You will not find that in the "Method Summary" section
- * of the javadoc because that only shows the intial sentence.
+ * of the javadoc because that only shows the initial sentence.
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -96,7 +96,7 @@ public abstract class AbstractCodec<T> implements Codec<T> {
 
 
     /**
-     * To prevent accidental footgun usage and calling
+     * To prevent accidental usage and calling
      * {@link #encodeCharacter( char[], int)} when called with {@code char} and
      * {@code char} is first silently converted to {@code int} and then the
      * unexpected method is called.

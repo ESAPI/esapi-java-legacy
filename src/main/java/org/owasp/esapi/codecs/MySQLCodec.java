@@ -63,7 +63,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
      * please see the Manual at
      * @link http://dev.mysql.com/doc/refman/5.0/en/server-sql-mode.html#sqlmode_ansi
      *
-     * Currently the only supported modes are:
+     * Currently, the only supported modes are:
      * ANSI
      * STANDARD
      */
@@ -195,7 +195,7 @@ public class MySQLCodec extends AbstractCharacterCodec {
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
      *
-     * Formats all are legal (case sensitive)
+     * Formats all are legal (case-sensitive)
      *   In ANSI_MODE '' decodes to '
      *   In MYSQL_MODE \x decodes to x (or a small list of specials)
      */

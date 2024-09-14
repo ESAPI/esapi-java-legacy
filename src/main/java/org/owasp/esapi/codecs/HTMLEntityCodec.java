@@ -119,7 +119,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
      * Returns the decoded version of the character starting at index, or
      * null if no decoding is possible.
      *
-     * Formats all are legal both with and without semi-colon, upper/lower case:
+     * Formats all are legal both with and without semicolon, upper/lower case:
      *   &#dddd;
      *   &#xhhhh;
      *   &name;
@@ -198,7 +198,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
                 sb.appendCodePoint( c );
                 input.next();
 
-            // if character is a semi-colon, eat it and quit
+            // if character is a semicolon, eat it and quit
             } else if (c == ';' ) {
                 input.next();
                 break;
@@ -239,7 +239,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
                 sb.appendCodePoint( c );
                 input.next();
 
-            // if character is a semi-colon, eat it and quit
+            // if character is a semicolon, eat it and quit
             } else if (c == ';' ) {
                 input.next();
                 break;
@@ -312,7 +312,7 @@ public class HTMLEntityCodec extends AbstractIntegerCodec
         for(int i=0;i<len;i++)
             input.next();
 
-        // check for a trailing semicolen
+        // check for a trailing semicolon
         if(input.peek(Integer.valueOf(';')))
             input.next();
 

@@ -148,7 +148,7 @@ public interface Authenticator {
      * <p>
      * <b>WARNING:</b> The implementation of this method as defined in the
      * default reference implementation class, {@code FileBasedAuthenticator},
-     * uses a password hash algorthim that is known to be weak. You are advised
+     * uses a password hash algorithm that is known to be weak. You are advised
      * to replace the default reference implementation class with your own custom
      * implementation that uses a stronger password hashing algorithm.
      * See class comments in * {@code FileBasedAuthenticator} for further details.

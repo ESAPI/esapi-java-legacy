@@ -6,7 +6,7 @@ import org.owasp.esapi.Encoder;
 import org.owasp.esapi.errors.EncodingException;
 
 /**
- * JSP tag that encode's it's body for use in a URL.
+ * JSP tag that encodes its body for use in a URL.
  */
 public class EncodeForURLTag extends BaseEncodeTag
 {
