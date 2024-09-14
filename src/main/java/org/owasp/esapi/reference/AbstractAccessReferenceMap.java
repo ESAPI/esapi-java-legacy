@@ -90,9 +90,9 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     *            the direct references
     * @deprecated This constructor internally calls the abstract method
     *    {@link #getUniqueReference()}. Since this is a constructor, any
-    *    subclass that implements getUniqueReference() has not had it's
+    *    subclass that implements getUniqueReference() has not had its
     *    own constructor run. This leads to strange bugs because subclass
-    *    internal state is initializaed after calls to getUniqueReference()
+    *    internal state is initialized after calls to getUniqueReference()
     *    have already happened. If this constructor is desired in a
     *    subclass, consider running {@link #update(Set)} in the subclass
     *    constructor instead.
@@ -108,7 +108,7 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     * Instantiates a new access reference map with the specified size allotment
     * and initializes the map with the passed in references. Note that if you pass
     * in an initialSize that is less than the size of the passed in set, the map will
-    * need to be resized while it is being loaded with the references so it is
+    * need to be resized while it is being loaded with the references, so it is
     * best practice to verify that the size being passed in is always larger than
     * the size of the set that is being passed in.
     *
@@ -119,9 +119,9 @@ public abstract class AbstractAccessReferenceMap<K> implements AccessReferenceMa
     *
     * @deprecated This constructor internally calls the abstract method
     *    {@link #getUniqueReference()}. Since this is a constructor, any
-    *    subclass that implements getUniqueReference() has not had it's
+    *    subclass that implements getUniqueReference() has not had its
     *    own constructor run. This leads to strange bugs because subclass
-    *    internal state is initializaed after calls to getUniqueReference()
+    *    internal state is initialized after calls to getUniqueReference()
     *    have already happened. If this constructor is desired in a
     *    subclass, consider running {@link #update(Set)} in the subclass
     *    constructor instead.

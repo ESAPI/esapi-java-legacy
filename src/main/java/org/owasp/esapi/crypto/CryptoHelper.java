@@ -50,7 +50,7 @@ public class CryptoHelper {
      * @param keySize    The key size, in bits.
      * @return    A random {@code SecretKey} is returned.
      * @throws EncryptionException Thrown if cannot create secret key conforming to
-     *                 requested algorithm with requested size. Typically this is caused by
+     *                 requested algorithm with requested size. Typically, this is caused by
      *                 specifying an unavailable algorithm or invalid key size.
      */
     public static SecretKey generateSecretKey(String alg, int keySize)
@@ -128,7 +128,7 @@ public class CryptoHelper {
      *                         be a common encoding supported by all Java implementations. Support
      *                         for it is usually in rt.jar.) This exception is also thrown if the
      *                         requested {@code keySize} parameter exceeds the length of the number of
-     *                         bytes provded in the {@code keyDerivationKey} parameter.
+     *                         bytes provided in the {@code keyDerivationKey} parameter.
      * @throws InvalidKeyException     Likely indicates a coding error. Should not happen.
      * @throws EncryptionException  Throw for some precondition violations.
      * @deprecated Use same method in {@code KeyDerivationFunction} instead. This method will be <b>removed</b> as of
@@ -254,7 +254,7 @@ public class CryptoHelper {
      * should be embedded within the {@code CipherText} object by using a
      * derived key based on the specified {@code SecretKey}.
      *
-     * @param sk    The {@code SecretKey} used to derived a key to check
+     * @param sk    The {@code SecretKey} used to derive a key to check
      *              the authenticity via the MAC.
      * @param ct    The {@code CipherText} that we are checking for a
      *              valid MAC.

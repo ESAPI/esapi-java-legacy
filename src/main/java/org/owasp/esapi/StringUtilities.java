@@ -90,7 +90,7 @@ public class StringUtilities {
     }
 
     /**
-     * Returns the replace value if the value of test is null, "null", or ""
+     * Returns {@code replace} if {@code test} is null, "null" (case-insensitive), or blank, otherwise {@code test}
      *
      * @param test The value to test
      * @param replace The replacement value

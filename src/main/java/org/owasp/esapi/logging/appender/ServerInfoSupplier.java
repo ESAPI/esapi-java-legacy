@@ -34,7 +34,8 @@ public class ServerInfoSupplier     // implements Supplier<String>
     private boolean logAppName = true;
     /** The application name to log. */
     private String applicationName = "";
-
+    /** Whether to log the Name */
+    private boolean logLogName = true;
     /** Reference to the associated logname/module name. */
     private final String logName;
 
@@ -57,10 +58,14 @@ public class ServerInfoSupplier     // implements Supplier<String>
                 appInfo.append(request.getLocalAddr()).append(":").append(request.getLocalPort());
             }
         }
-        if (logAppName) {
-            appInfo.append("/").append(applicationName);
+        
+        if (this.logAppName) {
+            appInfo.append("/").append(this.applicationName);
         }
-        appInfo.append("/").append(logName);
+
+        if (this.logLogName) {
+            appInfo.append("/").append(logName);
+        }
 
         return appInfo.toString();
     }
@@ -72,6 +77,15 @@ public class ServerInfoSupplier     // implements Supplier<String>
      */
     public void setLogServerIp(boolean log) {
         this.logServerIP = log;
+    }
+
+    /**
+     * Specify whether the instance should record the prefix.
+     *
+     * @param logLogName {@code true} to record
+     */
+    public void setLogLogName(boolean logLogName) {
+        this.logLogName = logLogName;
     }
 
     /**

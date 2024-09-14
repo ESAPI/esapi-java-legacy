@@ -380,7 +380,7 @@ public interface User extends Principal, Serializable {
     /**
      * Set the time of the last failed login for this user.
      *
-     * @param lastFailedLoginTime the date and time when the user just failed to login correctly.
+     * @param lastFailedLoginTime the date and time when the user just failed to authenticate correctly.
      */
     void setLastFailedLoginTime(Date lastFailedLoginTime);
 

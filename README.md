@@ -17,7 +17,7 @@ OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web ap
 # Jakarta EE Support
 **IMPORTANT:**
 ESAPI has supported the Jakarta Servlet API (i.e., **jakarta.servlet.api**) since release
-2.5.3.0.  (Unfortunately, we were just forgot to note that in this **README** file. Duh!)
+2.5.3.0.  (Unfortunately, this information was previously missing in this **README** file.)
 
 Therefore, for release 2.5.3.0 and later versions of ESAPI, ESAPI ought to be able to support Spring Boot 3, Spring 6, Tomcat 10,
 and other applications or libraries requiring Jarkata EE. (If you find a case where it does

@@ -1441,14 +1441,14 @@ public class DefaultSecurityConfiguration implements SecurityConfiguration {
         try {
             return esapiPropertyManager.getBooleanProp(propertyName);
         } catch (ConfigurationException ex) {
-            String property = properties.getProperty( propertyName );
+            String property = properties.getProperty(propertyName);
             if ( property == null ) {
                 throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " not found in ESAPI.properties");
             }
-            if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes" ) ) {
+            if ( property.equalsIgnoreCase("true") || property.equalsIgnoreCase("yes") ) {
                 return true;
             }
-            if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase( "no" ) ) {
+            if ( property.equalsIgnoreCase("false") || property.equalsIgnoreCase("no") ) {
                 return false;
             }
             throw new ConfigurationException( "SecurityConfiguration for " + propertyName + " has incorrect " +

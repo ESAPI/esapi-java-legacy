@@ -3,7 +3,7 @@ package org.owasp.esapi.tags;
 import org.owasp.esapi.Encoder;
 
 /**
- * JSP tag that encode's it's body for use in a XML attribute.
+ * JSP tag that encodes its body for use in a XML attribute.
  */
 public class EncodeForXMLAttributeTag extends BaseEncodeTag
 {

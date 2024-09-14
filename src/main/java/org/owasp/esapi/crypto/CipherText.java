@@ -494,7 +494,7 @@ public final class CipherText implements Serializable {
     /**
      * Return this {@code CipherText} object as a portable (i.e., network byte
      * ordered) serialized byte array. Note this is <b>not</b> the same as
-     * returning a serialized object using Java serialization. Instead this
+     * returning a serialized object using Java serialization. Instead, this
      * is a representation that all ESAPI implementations will use to pass
      * ciphertext between different programming language implementations.
      *
