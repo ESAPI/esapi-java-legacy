@@ -52,9 +52,10 @@ that's the version that will be used by default.
 <dependency>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.5.4.0</version>
+    <version>2.5.3.0 [or later]</version>
     <classifier>jakarta</classifier>
 </dependency>
+<!-- Add the below dependency if the not using JakartaEE -->
 <dependency>
     <groupId>jakarta.servlet</groupId>
     <artifactId>jakarta.servlet-api</artifactId>
@@ -62,7 +63,7 @@ that's the version that will be used by default.
     <scope>provided</scope>
 </dependency>
 ```
-### Step 2: Download the ESAPI.properties and validation.properties from below locations and put it in your classpath.
+### Step 2: Create 2 properties file namely: ESAPI.properties and validation.properties and add them to your classpath. You can refer to below for boilerplate configurations.
 [ESAPI.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/ESAPI.properties) <br/>
 [validation.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/validation.properties)
 
@@ -78,6 +79,8 @@ public class Example {
    }
 }
 ```
+For more examples, please visit [https://owasp.org/www-project-enterprise-security-api/](https://owasp.org/www-project-enterprise-security-api/).
+
 # A word about ESAPI vulnerabilities
 A summary of all the vulnerabilities that we have written about in either the
 ESAPI Security Bulletins or in the GitHub Security Advisories may be found
