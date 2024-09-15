@@ -6,7 +6,7 @@ Enterprise Security API for Java (Legacy)
 [![Coverity Status](https://scan.coverity.com/projects/8517/badge.svg)](https://scan.coverity.com/projects/bkimminich-esapi-java-legacy)
 [![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/137/badge)](https://bestpractices.coreinfrastructure.org/projects/137)
 
-<table border=10>
+<table border=10">
 <tr>
 <td>
 OWASP® ESAPI (The OWASP Enterprise Security API) is a free, open source, web application security control library that makes it easier for programmers to write lower-risk applications. The ESAPI for Java library is designed to make it easier for programmers to retrofit security into existing applications. ESAPI for Java also serves as a solid foundation for new development.
@@ -47,7 +47,7 @@ fact, without the
 that's the version that will be used by default.
 
 # Quickstart - Maven Example
-### Step 1: Add the required maven dependencies.
+#### Step 1: Add the required maven dependencies.
 <details>
 
 ```xml
@@ -68,7 +68,7 @@ that's the version that will be used by default.
 
 </details>
 
-### Step 2: Create 2 properties file namely: ESAPI.properties and validation.properties and add them to your classpath. You can refer to below for boilerplate configurations.
+#### Step 2: Create 2 properties file namely: ESAPI.properties and validation.properties and add them to your classpath. You can refer to below for boilerplate configurations.
 <details>
 	
 [ESAPI.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/ESAPI.properties) <br/>
@@ -76,7 +76,7 @@ that's the version that will be used by default.
 
 </details>
 
-### Step 3: Let's say, you want to remediate log injection vulnerabilities. Below is an example to achieve it.
+#### Step 3: Let's say, you want to remediate log injection vulnerabilities. Below is an example to achieve it.
 <details>
 	
 ```code
