@@ -1,5 +1,8 @@
 This directory is for utilities used for building / packaging / releasing ESAPI.
 
+The scripts and configuration files in this directory are mostly used to create ESAPI release notes.
+(The 2 'mvnQuietTest' scripts are the major exceptions to that.)
+
 ========================
 
 README.txt          -- This readme file.
