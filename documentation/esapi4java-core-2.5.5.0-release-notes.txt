@@ -108,9 +108,9 @@ Developer           Total       Total Number        # Merged
 DebajitKumarPhukan   7              1                   1
 DarioViva42         57             44                   1
 mickeyz07           10             12                   1
-kwwall               2              2                   1
+kwwall              11              8                   2
 ============================================================
-                                            Total PRs:  4
+                                            Total PRs:  5
 
 -----------------------------------------------------------------------------
 
