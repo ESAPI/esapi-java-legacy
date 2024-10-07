@@ -48,6 +48,8 @@ ESAPI ${PREV_VERSION} release:
 
 ESAPI ${VERSION} release:
 @@@@ Count them and run 'mvn test' to get the # of tests.
+@@@@ Count Java source files by executing:
+@@@@        find src/main -type f -name '*.java' | wc -l
     #### Java source files
     #### JUnit tests in #### Java source files
 

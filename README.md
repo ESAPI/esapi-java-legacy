@@ -30,7 +30,7 @@ specific Jakarta version of ESAPI, in Maven, you would specify your ESAPI depend
 <dependency>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.5.4.0</version>
+    <version>2.5.5.0</version>  <!-- Preferably the latest version, but > 2.5.3.0 -->
     <classifier>jakarta</classifier>
 </dependency>
 ```
@@ -46,40 +46,6 @@ fact, without the
 ```
 that's the version that will be used by default.
 
-# Quickstart - Maven Example
-### Step 1: Add the required maven dependencies.
-```xml
-<dependency>
-    <groupId>org.owasp.esapi</groupId>
-    <artifactId>esapi</artifactId>
-    <version>2.5.3.0 [or later]</version>
-    <classifier>jakarta</classifier>
-</dependency>
-<!-- Add the below dependency if the not using JakartaEE -->
-<dependency>
-    <groupId>jakarta.servlet</groupId>
-    <artifactId>jakarta.servlet-api</artifactId>
-    <version>6.1.0</version>
-    <scope>provided</scope>
-</dependency>
-```
-### Step 2: Create 2 properties file namely: ESAPI.properties and validation.properties and add them to your classpath. You can refer to below for boilerplate configurations.
-[ESAPI.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/ESAPI.properties) <br/>
-[validation.properties](https://github.com/ESAPI/esapi-java-legacy/blob/develop/configuration/esapi/validation.properties)
-
-### Step 3: Let's say, you want to remediate log injection vulnerabilities. Below is an example to achieve it.
-```code
-import org.owasp.esapi.ESAPI;
-import org.owasp.esapi.Logger;
-
-public class Example {
-   private static Logger LOGGER = ESAPI.getLogger(Example.class);
-   public void printLog(){
-		LOGGER.info(Logger.EVENT_SUCCESS, "Log injection remediated !");
-   }
-}
-```
-For more examples, please visit [https://owasp.org/www-project-enterprise-security-api/](https://owasp.org/www-project-enterprise-security-api/).
 
 # A word about ESAPI vulnerabilities
 A summary of all the vulnerabilities that we have written about in either the
@@ -118,7 +84,7 @@ The ESAPI release notes may be found in ESAPI's "documentation" directory. They 
 See the GitHub [Releases](https://github.com/ESAPI/esapi-java-legacy/releases) information for a list of releases which generally
 link to the specific release notes.
 
-### Really IMPORTANT information in release notes
+### Really IMPORTANT information in release notes - Ignore at your peril
 * Starting with ESAPI 2.2.1.0, important details changed reading the ESAPI
   Logger. If you have are getting things like ClassNotFoundException, you
   probably have not read it. Please be sure to read this specific section
@@ -175,6 +141,30 @@ has been removed from the ESAPI code base (with the exception of some
 references in documentation). If you must, you still should be able to
 use Log4J 1.x logging via ESAPI SLF4J support. See the ESAPI 2.5.0.0 release
 notes for further details.
+
+# Quickstart - Maven Example
+### Step 1: Add the required dependencies.
+See https://mvnrepository.com/artifact/org.owasp.esapi/esapi/latest, the tab for
+whatever build tool you are using. If you need the Jakarta version, make sure to
+add
+```xml
+    <classifier>jakarta</classifier>
+```
+and include whatever jakara.servlet:jakarta.servlet-api version you are using with
+```xml
+    <scope>provided</scope>
+```
+### Step 2: Obtain the 2 properties files ESAPI.properties and validation.properties
+1. Download these 2 files from the ESAPI release that you are using from https://github.com/ESAPI/esapi-java-legacy/releases
+   and download the esapi-<release>-configuration.jar file (and the .asc file if you wish to confirm the GPG signature).
+2. Unjar that configuration file that you just downloaded and find the 2
+   properties files under the "configuration/esapi" subdirectory where you
+   unjarred the config jar.
+3. Read through Javadoc for [DefaultSecurityConfiguration](https://javadoc.io/static/org.owasp.esapi/esapi/2.5.4.0/org/owasp/esapi/reference/DefaultSecurityConfiguration.html)
+   to understand the ways that ESAPI locates these files and then use the mechanism that works best for you. Copy the 2 properties
+   files from the 'configuration/esapi' directory to the directory where you
+   choose to have them reside. Note that you may also edit them to customize
+   them according to your needs.
 
 # Contributing to ESAPI legacy
 ### How can I contribute or help with fix bugs?
@@ -249,19 +239,6 @@ does not pull in any additional 3rd party libraries, toss it out there for
 discussion or even show us how it works with a PR. (Note that we vet all pull
 requests, including coding style of any contributions, so please use the same
 coding style found in the files you are already editing.)
-
-# Ancient History
-### What happened to Google code?
-In mid-2014 ESAPI migrated all code and issues from Google Code to GitHub. This migration was completed in November 2014.
-
-### What about the issues still located on Google Code?
-All issues from Google Code have been migrated to GitHub issues. We now
-use GitHut Issues for reporting everything *except* security vulnerabilities.
-Other bug tracking sites are undoubtedly more advanced, but as developers,
-we do not want to spent time having to close issues from multiple bug-tracking
-systems. Therefore, until the synchronization happens with the Atlassian Jira
-instance that we have (but are not using; see GitHub issue #371), please
-ONLY use GitHub Issues for reporting bugs.
 
 # References: Where to Find More Information on ESAPI
 **OWASP Wiki:** https://owasp.org/www-project-enterprise-security-api/
