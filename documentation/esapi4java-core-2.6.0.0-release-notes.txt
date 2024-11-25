@@ -100,7 +100,7 @@ Figures do not include rejected PRs.
 Developer       Total       Total Number        # Merged
 (GitHub ID)     commits   of Files Changed        PRs
 ========================================================
-kwwall           12              11               1
+kwwall           15              13               1
 ========================================================
                                       Total PRs:  1
 
