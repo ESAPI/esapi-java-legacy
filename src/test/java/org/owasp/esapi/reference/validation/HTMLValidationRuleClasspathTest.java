@@ -47,16 +47,11 @@ import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_CONFIGURATION_
  *
  * This class tests the case of a non-standard AntiSamy policy file along with
  * the case where the new ESAPI.property
- *      {@code Validator.HtmlValidationAction}
+ *      <b>Validator.HtmlValidationAction</b>
  * is set to "throw", which causes certain calls to
- * ESAPI.validator().getValidSafeHTML() or ESAPI.validator().isValidSafeHTML()
+ *      {@code ESAPI.validator().getValidSafeHTML()}
  * to throw a ValidationException rather than simply logging a warning and returning
  * the cleansed (sanitizied) output when certain unsafe input is encountered.
- *
- * It should be noted that several of the tests in this file are deprecated because
- * they use {@code Validator.isValidSafeHTML} which is deprecated. See the
- * deprecation warnings for those methods respective Javadoc for further
- * details.
  */
 public class HTMLValidationRuleClasspathTest {
     /** The intentionally non-compliant (to the AntiSamy XSD) AntiSamy policy file. We don't intend to
@@ -177,32 +172,4 @@ public class HTMLValidationRuleClasspathTest {
         }
     }
 
-    /**
-     * @deprecated because Validator.isValidSafeHTML is deprecated.
-     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean)
-     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean,org.owasp.esapi.ValidationErrorList)
-     */
-    @Deprecated
-    @Test
-    public void testIsValidSafeHTML() {
-        System.out.println("isValidSafeHTML");
-        Validator instance = ESAPI.validator();
-        thrownEx = ExpectedException.none();    // Not expecting any exceptions here.
-
-        assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
-        assertFalse(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
-        assertFalse(instance.isValidSafeHTML("test", "Test. <div style={xss:expression(xss)}>", 100, false));
-        assertFalse(instance.isValidSafeHTML("test", "Test. <s%00cript>alert(document.cookie)</script>", 100, false));
-        assertFalse(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
-        assertFalse(instance.isValidSafeHTML("test", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false));
-
-        ValidationErrorList errors = new ValidationErrorList();
-        assertFalse(instance.isValidSafeHTML("test1", "Test. <script>alert(document.cookie)</script>", 100, false, errors));
-        assertFalse(instance.isValidSafeHTML("test2", "Test. <div style={xss:expression(xss)}>", 100, false, errors));
-        assertFalse(instance.isValidSafeHTML("test3", "Test. <s%00cript>alert(document.cookie)</script>", 100, false, errors));
-        assertFalse(instance.isValidSafeHTML("test4", "Test. <s\tcript>alert(document.cookie)</script>", 100, false, errors));
-        assertFalse(instance.isValidSafeHTML("test5", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue( errors.size() == 5 );
-    }
 }
