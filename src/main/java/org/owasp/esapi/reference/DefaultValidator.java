@@ -99,9 +99,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
     private static Logger logger = ESAPI.log();
     private static volatile Validator instance = null;
     private static boolean alreadyLogged = false;
-    private static String deprecationWarning = "WARNING: You are using the Validator.isValidSafeHTML interface, " +
-        "which has been deprecated and should be avoided. See GitHub Security Advisory " +
-        "https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm for details.";
 
     public static Validator getInstance() {
         if ( instance == null ) {
@@ -377,47 +374,6 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
         }
         // error has been added to list, so return null
         return safeDate;
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * This implementation does not throw {@link IntrusionException}.
-     */
-    @Override
-    public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull) {
-        // Ensure a message about deprecation is logged once if this or the
-        // other isValidSafeHTML method is called.
-        if ( ! alreadyLogged ) {
-            logger.always(Logger.SECURITY_AUDIT, deprecationWarning);
-            alreadyLogged = true;
-        }
-        try {
-            getValidSafeHTML( context, input, maxLength, allowNull);
-            return true;
-        } catch( Exception e ) {
-            return false;
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isValidSafeHTML(String context, String input, int maxLength, boolean allowNull, ValidationErrorList errors) throws IntrusionException {
-        // Ensure a message about deprecation is logged once if this or the
-        // other isValidSafeHTML method is called.
-        if ( ! alreadyLogged ) {
-            logger.always(Logger.SECURITY_AUDIT, deprecationWarning);
-            alreadyLogged = true;
-        }
-        try {
-            getValidSafeHTML( context, input, maxLength, allowNull);
-            return true;
-        } catch( ValidationException e ) {
-            errors.addError(context, e);
-            return false;
-        }
     }
 
     /**

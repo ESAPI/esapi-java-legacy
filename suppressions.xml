@@ -11,13 +11,15 @@
             We are suppressing this because it is believed by the ESAPI and AntiSamy teams that it is a false positive.
             Dependency Check itself doesn't flag this and neither does Snyk. Dependency Check reports it because it is reported
             directly by Sonatype's OSS Index. For futher details, see
-            https://ossindex.sonatype.org/vulnerability/sonatype-2017-0348?component-type=maven&component-name=xerces%2FxercesImpl
+            https://ossindex.sonatype.org/vulnerability/CVE-2017-10355?component-type=maven&component-name=xerces/xercesImpl
+            and https://github.com/OSSIndex/vulns/issues/328#issuecomment-1287175491.
 
             OSS Index seems to have the wrong CPE. They have 'cpe:2.3:a:xerces:xercesImpl:2.12.2:*:*:*:*:*:*:*', whereas the CPE IDs
             associated with NVD are 'cpe:2.3:a:apache:xerces-j:2.12.2:*:*:*:*:*:*:*' and
-            'cpe:2.3:a:apache:xerces2_java:2.12.2:*:*:*:*:*:*:*'.
+            'cpe:2.3:a:apache:xerces2_java:2.12.2:*:*:*:*:*:*:*'. (Note: as of Nov 2024, none of the CPEs even mention Xerces, but
+            rather seem to only refer to the JREs.)
 
-            Note also that this has been reported as GitHub issue #a 4614
+            Note also that this has been reported as GitHub issue # 4614 for OWASP Dependency Check. For details, see
             https://github.com/jeremylong/DependencyCheck/issues/4614
             ]]></notes>
         <sha1>f051f988aa2c9b4d25d05f95742ab0cc3ed789e2</sha1>

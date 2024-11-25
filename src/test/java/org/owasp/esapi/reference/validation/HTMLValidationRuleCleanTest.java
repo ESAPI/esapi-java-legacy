@@ -56,9 +56,9 @@ import static org.junit.Assert.fail;
  * that were originally part of src/test/java/org/owasp/esapi/reference/ValidatorTest.java.
  *
  * This class tests the cases where the new ESAPI.property
- *      Validator.HtmlValidationAction
+ *      <b>Validator.HtmlValidationAction</b>
  * is set to "clean", which causes certain calls to
- * ESAPI.validator().getValidSafeHTML() or ESAPI.validator().isValidSafeHTML()
+ *      {@code ESAPI.validator().getValidSafeHTML()}
  * to simply log a warning and return the cleansed (sanitized) output rather
  * than throwing a ValidationException when certain unsafe input is
  * encountered.
@@ -275,53 +275,6 @@ public class HTMLValidationRuleCleanTest {
     }
     ////////////////////////////////////////
 
-    /**
-     * @deprecated because Validator.isValidSafeHTML is deprecated.
-     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean)
-     * @see org.owasp.esapi.Validator#isValidSafeHTML(String,String,int,boolean,org.owasp.esapi.ValidationErrorList)
-     */
-    @Deprecated
-    @Test
-    public void testIsValidSafeHTML() {
-        System.out.println("testIsValidSafeHTML");
-        Validator instance = ESAPI.validator();
-
-        assertTrue(instance.isValidSafeHTML("test", "<b>Jeff</b>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <script>alert(document.cookie)</script>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <div style={xss:expression(xss)}>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <s%00cript>alert(document.cookie)</script>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <s\tcript>alert(document.cookie)</script>", 100, false));
-        assertTrue(instance.isValidSafeHTML("test", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false));
-
-        ValidationErrorList errors = new ValidationErrorList();
-        assertTrue(instance.isValidSafeHTML("test1", "<b>Jeff</b>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test2", "<a href=\"http://www.aspectsecurity.com\">Aspect Security</a>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test3", "Test. <script>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test4", "Test. <div style={xss:expression(xss)}>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test5", "Test. <s%00cript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test6", "Test. <s\tcript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(instance.isValidSafeHTML("test7", "Test. <s\r\n\0cript>alert(document.cookie)</script>", 100, false, errors));
-        assertTrue(errors.size() == 0);
-
-        // Extracted from testIEConditionalComment().
-        String input = "<!--[if gte IE 4]>\r\n <SCRIPT>alert('XSS');</SCRIPT>\r\n<![endif]-->";
-        boolean isSafe = instance.isValidSafeHTML("test12", input, 100, false, errors);
-        assertTrue(instance.isValidSafeHTML("test12", input, 100, false, errors)); // Safe bc "" gets returned!!!
-
-        // Extracted from testNekoDOSWithAnHTMLComment()
-        errors = new ValidationErrorList();
-        input = "<!--><?a/";
-        assertTrue(instance.isValidSafeHTML("test11", input, 100, false, errors)); // Safe bc "" gets returned!!!
-        assertTrue(errors.size() == 0);
-
-        // Extracted from testESAPI_CVE_2022_24891() 
-        String expectedSafeText = "This is safe from XSS. Trust us!";
-        String badVoodoo = "<a href=\"javascript&#00058alert(1)>" + expectedSafeText + "</a>";
-        boolean result = instance.isValidSafeHTML("CVE-2021-35043", badVoodoo, 200, false);
-        assertTrue( result );
-    }
-
     // This test has been significantly changed because as on AntiSamy 1.7.4
     // (first used with ESAPI 2.5.3.0) has changed the results of
     // Validator.getValidSafeHTMLfor this output. Prior to AntiSamy 1.7.4, the
@@ -335,7 +288,7 @@ public class HTMLValidationRuleCleanTest {
     //
     // Also, this test, which originally used Validator.isValidSafeHTML(), has been
     // changed to use Validator.getValidSafeHTML() instead because Validator.isValidSafeHTML()
-    // has been deprecated. See GitHub Security Advisory
+    // has been removed as of ESAPI 2.6.0.0. See GitHub Security Advisory
     // https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm
     // and the referenced ESAPI Security Bulletin mentioned therein.
     @Test
@@ -368,7 +321,7 @@ public class HTMLValidationRuleCleanTest {
     //
     // Also, this test, which originally used Validator.isValidSafeHTML(), has been
     // changed to use Validator.getValidSafeHTML() instead because Validator.isValidSafeHTML()
-    // has been deprecated. See GitHub Security Advisory
+    // has been removed as of ESAPI 2.6.0.0. See GitHub Security Advisory
     // https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm
     // and the referenced ESAPI Security Bulletin mentioned therein.
     @Test
@@ -403,7 +356,7 @@ public class HTMLValidationRuleCleanTest {
     //
     // Also, this test, which originally used Validator.isValidSafeHTML(), has been
     // changed to use Validator.getValidSafeHTML() instead because Validator.isValidSafeHTML()
-    // has been deprecated. See GitHub Security Advisory
+    // has been removed as of ESAPI 2.6.0.0. See GitHub Security Advisory
     // https://github.com/ESAPI/esapi-java-legacy/security/advisories/GHSA-r68h-jhhj-9jvm
     // and the referenced ESAPI Security Bulletin mentioned therein.
     @Test

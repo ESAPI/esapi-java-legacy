@@ -132,16 +132,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jmh>1.37</version.jmh>
         <version.findsecbugs>2.0.0-M3</version.findsecbugs>
-        <version.fluido>2.0.0-M11</version.fluido>
+        <version.fluido>2.0.0-M11</version.fluido>  <!-- 2.0.0 fails on 'mvn site', but this works. -->
         <version.powermock>2.0.9</version.powermock>
         <version.spotbugs>4.8.6</version.spotbugs>
-        <version.spotbugs.maven>4.8.6.4</version.spotbugs.maven>
-        <version.surefire>3.5.1</version.surefire>
+        <version.spotbugs.maven>4.8.6.6</version.spotbugs.maven>
+        <version.surefire>3.5.2</version.surefire>
         <project.java.target>1.8</project.java.target>
             <!-- TODO: Be sure to update. Should be date of previous official release -->
             <!-- Exact date in the form 'yyyy-dd-yy 00:00:00' should be used. You can find the previous release date -->
             <!-- in the previous release notes file under the 'documentation/' directory. -->
-        <date.prev_release>2024-05-30 00:00:00</date.prev_release>
+        <date.prev_release>2024-10-08 00:00:00</date.prev_release>
     </properties>
 
     <dependencies>
@@ -243,7 +243,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.7.6</version>
+            <version>1.7.7</version>
             <exclusions>
                 <!-- excluded because we directly import newer version below. -->
                 <exclusion>
@@ -740,6 +740,9 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
+                <!-- Version 11.x is the latest, but 10.0.4 is the latest that we can use beccause 11.x has a breaking
+                     change that requires Java 11 or later and our mimimal JDK is Java 8.
+                -->
                 <version>10.0.4</version>
                 <configuration>
                     <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
@@ -949,7 +952,7 @@
                     <plugin>
                         <groupId>org.eclipse.transformer</groupId>
                         <artifactId>transformer-maven-plugin</artifactId>
-                        <version>0.5.0</version>
+                        <version>0.5.0</version>    <!-- 1.0.0 is available, but requires newer JDK than ESAPI minimum. -->
                         <extensions>true</extensions>
                         <configuration>
                             <rules>
