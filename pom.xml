@@ -132,7 +132,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.jmh>1.37</version.jmh>
         <version.findsecbugs>2.0.0-M3</version.findsecbugs>
-        <version.fluido>2.0.0</version.fluido>
+        <version.fluido>2.0.0-M11</version.fluido>  <!-- 2.0.0 fails on 'mvn site', but this works. -->
         <version.powermock>2.0.9</version.powermock>
         <version.spotbugs>4.8.6</version.spotbugs>
         <version.spotbugs.maven>4.8.6.6</version.spotbugs.maven>
