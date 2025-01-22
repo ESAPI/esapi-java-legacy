@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.Vector;
 import java.util.Arrays;
 
-import org.apache.commons.collections4.iterators.ArrayListIterator;
-
 public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
     protected Method delegateMethod;
     protected Object delegateInstance;
@@ -66,10 +64,9 @@ public class DelegatingACR extends BaseACR<DynaBeanACRParameter, Object[]> {
         if (parameterClassNames == null) {
             return new Class[0];
         }
-        Vector<Class> classes = new Vector<Class>();
-        Iterator<String> classNames = new ArrayListIterator(parameterClassNames);
-        while(classNames.hasNext()) {
-            classes.add(getClass(classNames.next(), "parameter"));
+        Vector<Class> classes = new Vector<>();
+        for (String className : parameterClassNames) {
+            classes.add(getClass(className, "parameter"));
         }
         return classes.toArray(new Class[classes.size()]);
     }
