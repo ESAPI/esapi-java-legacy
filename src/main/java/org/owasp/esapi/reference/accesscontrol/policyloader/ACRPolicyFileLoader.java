@@ -3,8 +3,13 @@ package org.owasp.esapi.reference.accesscontrol.policyloader;
 import java.io.File;
 import java.util.Collection;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultConversionHandler;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.convert.ListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AccessControlException;
@@ -18,7 +23,17 @@ final public class ACRPolicyFileLoader {
         File file = ESAPI.securityConfiguration().getResourceFile("ESAPI-AccessControlPolicy.xml");
         try
         {
-            config = new XMLConfiguration(file);
+            FileBasedConfigurationBuilder<XMLConfiguration> builder =
+                    new FileBasedConfigurationBuilder<>(XMLConfiguration.class)
+                            .configure(new Parameters().xml().setFile(file));
+
+            // Preserve compatibility for getStringArray in ACRParameterLoaderHelper
+            ListDelimiterHandler handler = new DefaultListDelimiterHandler(',');
+            DefaultConversionHandler conversionHandler = new DefaultConversionHandler();
+            conversionHandler.setListDelimiterHandler(handler);
+            builder.getConfiguration().setConversionHandler(conversionHandler);
+
+            config = builder.getConfiguration();
         }
         catch(ConfigurationException cex)
         {
