@@ -243,7 +243,7 @@
         <dependency>
             <groupId>org.owasp.antisamy</groupId>
             <artifactId>antisamy</artifactId>
-            <version>1.7.7</version>
+            <version>1.7.8</version>
             <exclusions>
                 <!-- excluded because we directly import newer version below. -->
                 <exclusion>
