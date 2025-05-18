@@ -98,24 +98,19 @@ None known, other than the remaining open issues on GitHub.
 
 -----------------------------------------------------------------------------
 
-* Minor updates to README.md file with respect to version information.
+* Changes since last release ${PREV_VERSION} and ${VERSION}, i.e., changes between ${PREV_RELEASE_DATE} and ${YYYY_MM_DD_RELEASE_DATE}).
 
------------------------------------------------------------------------------
+    Note: I am no longer going to provide the 'Developer Activity Report' that I used to this manually create in tabluar form. This is in part because I use to use 'mvn site' to assist with its creation, but neither the 'Developer Activiity' nor 'File Activity' sections of the 'mvn site' output is currently working.
 
-Developer Activity Report (Changes between release ${PREV_VERSION} and ${VERSION}, i.e., between ${PREV_RELEASE_DATE} and ${YYYY_MM_DD_RELEASE_DATE})
-Generated manually (this time) -- all errors are the fault of kwwall and his inability to do simple arithmetic.
+          That said, I don't care as this was always a major PITA and I think it had dubious value to start with.
 
-@@@@
-@@@@ This section needs to be manually updated.
-@@@@
-Developer       Total       Total Number        # Merged
-(GitHub ID)     commits   of Files Changed        PRs
-========================================================
-jeremiahjstacey  8              6               1
-dependabot       1              1               1
-kwwall           7              8               0
-========================================================
-                                    Total PRs:  2
+          Therefore, I am replacing it to a stock GitHub tag comparison of the current and previous release, which I can automate.
+
+    Please see,
+
+        https://github.com/ESAPI/esapi-java-legacy/compare/esapi-${PREVIOUS_VERSION}...esapi-${VERSION}
+
+    for details. It contains all the information that the previous 'Developer Activity Reports' did and then some.
 
 -----------------------------------------------------------------------------
 
