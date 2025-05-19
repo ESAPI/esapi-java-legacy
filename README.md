@@ -30,7 +30,7 @@ specific Jakarta version of ESAPI, in Maven, you would specify your ESAPI depend
 <dependency>
     <groupId>org.owasp.esapi</groupId>
     <artifactId>esapi</artifactId>
-    <version>2.6.0.0</version>  <!-- Preferably the latest version, but > 2.5.3.0 -->
+    <version>2.6.1.0</version>  <!-- Preferably the latest version, but > 2.5.3.0 -->
     <classifier>jakarta</classifier>
 </dependency>
 ```
@@ -105,7 +105,7 @@ link to the specific release notes.
   the ESAPI GitHub Discussion https://github.com/ESAPI/esapi-java-legacy/discussions/841.
 
 # Locating ESAPI Jar files
-The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.6.0.0.
+The [latest ESAPI release](https://github.com/ESAPI/esapi-java-legacy/releases/latest) is 2.6.1.0.
 All the *regular* ESAPI jars, with the exception of the ESAPI configuration
 jar (i.e., esapi-2.#.#.#-configuration.jar) and its associated detached
 GPG signature, are available from Maven Central. The ESAPI configuration
