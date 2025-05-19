@@ -748,6 +748,14 @@
                 <!-- Version 12.x is the latest, but 10.0.4 is the latest that we can use beccause 11.x has a breaking
                      change that requires Java 11 or later and our mimimal JDK is Java 8.
                 -->
+                <-- Note: As of 2025-05-18, I (kwwall) unable to get:
+                        $ mvn -B dependency:tree
+                    to work with OpenJDK 8 even though this same version of the Dependency Check plugin worked the previous
+                    ESAPI release last November. I do not have time presently to track the reason for this down, but will
+                    try to follow up with the OWASP Depencency Check team. In the meantime, I thought I would mention it
+                    in case someone else tried it and ran into the problem. It is non-essential though, since I also use
+                    GHAS Dependabot and Snyk SCA tools to monitor unpatched vulnerabilities in ESAPI dependencies.
+                -->                
                 <version>10.0.4</version>
                 <configuration>
                     <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
