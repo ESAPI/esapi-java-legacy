@@ -1,5 +1,5 @@
 Release notes for ESAPI 2.6.1.0
-    Release date: 2025-05-18
+    Release date: 2025-05-19
     Project leaders:
         -Kevin W. Wall <kevin.w.wall@gmail.com>
         -Matt Seil <matt.seil@owasp.org>
@@ -93,7 +93,7 @@ None known, other than the remaining open issues on GitHub.
 
 -----------------------------------------------------------------------------
 
-* Changes since last release 2.6.0.0 and 2.6.1.0, i.e., changes between 2025-11-25 and 2025-05-18.
+* Changes since last release 2.6.0.0 and 2.6.1.0, i.e., changes between 2025-11-25 and 2025-05-19.
 
     Note: I am no longer going to provide the 'Developer Activity Report' that I used to this manually create in tabluar form. This is in part because I use to use 'mvn site' to assist with its creation, but neither the 'Developer Activiity' nor 'File Activity' sections of the 'mvn site' output is currently working.
 
