@@ -141,7 +141,7 @@
             <!-- TODO: Be sure to update. Should be date of previous official release -->
             <!-- Exact date in the form 'yyyy-dd-yy 00:00:00' should be used. You can find the previous release date -->
             <!-- in the previous release notes file under the 'documentation/' directory. -->
-        <date.prev_release>2024-11-25 00:00:00</date.prev_release>
+        <date.prev_release>2025-05-19 00:00:00</date.prev_release>
     </properties>
 
     <dependencies>
@@ -478,7 +478,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.4.1</version>
+                <version>3.5.0</version>
             </plugin>
 
             <plugin>
