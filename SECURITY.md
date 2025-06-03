@@ -12,8 +12,8 @@ but if it is anything but trivial, we would charge a TBD consulting fee.
 
 | Version | Supported          |
 | ------- | ------------------ |
-| 2.6.0.0 (latest) | :white_check_mark: |
-| 2.1.0.1-2.5.5.0 | :x:, upgrade to latest release |
+| 2.6.2.0 (latest) | :white_check_mark: |
+| 2.1.0.1-2.6.1.0 | :x:, upgrade to latest release |
 | <= 1.4.x  | :x:, no longer supported AT ALL |
 
 ## Reporting a Vulnerability
