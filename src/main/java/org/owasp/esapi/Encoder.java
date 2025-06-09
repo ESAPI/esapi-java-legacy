@@ -96,7 +96,7 @@ import org.owasp.esapi.errors.EncodingException;
  * stores some untrusted data item such as an email address from a user. A
  * developer thinks "let's output encode this and store the encoded data in
  * the database, thus making the untrusted data safe to use all the time, thus
-* saving all of us developers all the encoding troubles later on". On the surface,
+ * saving all of us developers all the encoding troubles later on". On the surface,
  * that sounds like a reasonable approach. The problem is how to know what
  * output encoding to use, not only for now, but for all possible <i>future</i>
  * uses? It might be that the current application code base is only using it in
@@ -147,10 +147,28 @@ import org.owasp.esapi.errors.EncodingException;
  * target="_blank" rel="noopener noreferrer">ESAPI Encoder JUnittest cases</a> for ideas.
  * If you are really ambitious, an excellent resource for XSS attack patterns is
  * <a href="https://beefproject.com/" target="_blank" rel="noopener noreferrer">BeEF - The Browser Exploitation Framework Project</a>.
+ * </li><li><b>A final note on {@code Encoder} implementation details:</b>
+ * Most of the {@code Encoder} methods make extensive use of ESAPI's {@link org.owasp.esapi.codecs.Codec}
+ * classes under-the-hood. These {@code Codec} classes are intended for use for encoding and decoding
+ * input based on some particular context or specification.  While the OWASP team
+ * over the years have made every effort to be cautious--often going to extremes
+ * to make "safe harbor" decisions on harmful inputs other similar encoders assume are already safe
+ * (we did this to in order to protect the client's users from buggy browsers that don't adhere
+ * to the W3C HTML specications)&em;the various {@code Codec} implemtations can offer
+ * NO GUARANTEE of safety of the content being encoded or decoded. Therefore,
+ * it is highly advised to practice a security-in-depth approach for everything you do.
+ * By following that advise, you will minimize the impact and/or likelihood of any
+ * vulnerabilities from bugs in the ESAPI code or accidental misuse of the ESAPI
+ * library on your part. In particular, whenever there are cases where cients use
+ * any of these {@link org.owasp.esapi.codecs.Codec} classes drectly, it is highly
+ * recommended to perform canonicalization followed by strict input valiation both
+ * prior to encoding and after decoding to protect your application from input-based
+ * attacks.
  * </li>
  * </ul>
- *
+ * </p>
  * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html">OWASP Cross-Site Scripting Prevention Cheat Sheet</a>
+ * @see org.owasp.esapi.Validator
  * @see <a href="https://owasp.org/www-project-proactive-controls/v3/en/c4-encode-escape-data">OWASP Proactive Controls: C4: Encode and Escape Data</a>
  * @see <a href="https://www.onwebsecurity.com/security/properly-encoding-and-escaping-for-the-web.html" target="_blank" rel="noopener noreferrer">Properly encoding and escaping for the web</a>
  * @author Jeff Williams (jeff.williams .at. owasp.org)
@@ -215,7 +233,7 @@ public interface Encoder {
      * <ul><li>Perverse but legal variants of escaping schemes</li>
      * <li>Multiple escaping (%2526 or &#x26;lt;)</li>
      * <li>Mixed escaping (%26lt;)</li>
-     * <li>Nested escaping (%%316 or &%6ct;)</li>
+     * <li>Nested escaping (%%316 or &amp;%6ct;)</li>
      * <li>All combinations of multiple, mixed, and nested encoding/escaping (%2&#x35;3c or &#x2526gt;)</li></ul>
      * <p>
      * Using canonicalize is simple. The default is just...
@@ -395,25 +413,69 @@ public interface Encoder {
 
     /**
      * Encode input for use in a SQL query, according to the selected codec
-     * (appropriate codecs include the MySQLCodec and OracleCodec).
-     *
-     * This method is not recommended. The use of the {@code PreparedStatement}
-     * interface is the preferred approach. However, if for some reason
-     * this is impossible, then this method is provided as a weaker
-     * alternative.
-     *
-     * The best approach is to make sure any single-quotes are double-quoted.
-     * Another possible approach is to use the {escape} syntax described in the
-     * JDBC specification in section 1.5.6.
-     *
+     * (appropriate codecs include the {@link org.owasp.esapi.codecs.MySQLCodec}
+     * and {@link org.owasp.esapi.codecs.OracleCodec}), but see
+     * "<b>SECURITY WARNING</b>" below before using.
+     * <p>
+     * The this method attempts to ensure make sure any single-quotes are double-quoted
+     * (i.e., as '', not double-quotes, as in &quot;). Another possible approach
+     * is to use the {escape} syntax described in the JDBC specification in section 1.5.6.
      * However, this syntax does not work with all drivers, and requires
      * modification of all queries.
-     *
+     * </p><p>
+     * <b>SECURITY WARNING:</b> This method is <u>NOT</u> recommended. The use of the {@code PreparedStatement}
+     * interface is the preferred approach. However, if for some reason
+     * this is impossible, then this method is provided as significantly weaker
+     * alternative. In particular, it should be noted that if all you do to
+     * address potential SQL Injection attacks is to use this method to escape
+     * parameters, you <i>will</i> fail miserably. According to the
+     * <a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">
+     * OWASP SQL Injection Prevention Cheat Sheet</a>, these are the primary
+     * defenses against SQL Injection (as of June 2025):
+     * <ul>
+     * <li>Option 1: Use of Prepared Statements (with Parameterized Queries)</li>
+     * <li>Option 2: Use of Properly Constructed Stored Procedures</li>
+     * <li>Option 3: Allow-list Input Validation</li>
+     * <li>Option 4: STRONGLY DISCOURAGED: Escaping All User Supplied Input</li>
+     * </ul>
+     * </p><p>
+     * According to "Option 4" (which is what this method implements), that OWASP Cheat Sheet
+     * states:
+     * <blockquote
+     * cite="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html#defense-option-4-strongly-discouraged-escaping-all-user-supplied-input">
+     * In this approach, the developer will escape all user input
+     * before putting it in a query. It is very database specific
+     * in its implementation. This methodology is frail compared
+     * to other defenses, and <b>we <i>CANNOT</i> guarantee that this option
+     * will prevent all SQL injections in all situations.</b>
+     * </blockquote>
+     * (Emphasis ours.)
+     * </p><p>
+     * Note you could give yourself a slightly better chance at success if prior to
+     * escaping by this method, you first canonicalize the input and run it through
+     * some strong allow-list validation. We will not provide anymore details than
+     * that, lest we encourage its misuse; however, it should be noted that resorting
+     * to use this method--especially by itself--should rarely, if ever, used. It
+     * is intended as a last ditch, emergency, Hail Mary effort. (To be honest, you'd
+     * likely have more success setting up a WAF such as
+     * <a href="https://modsecurity.org/">OWASP ModSecurity</a> and
+     * <a href="https://owasp.org/www-project-modsecurity-core-rule-set/">OWASP CRS</a>
+     * if you need a temporary emergency SQLi defense shield, but using {@code PreparedStatement}
+     * is still your best option if you have the time and resources.
+     * </p><p>
+     * <b>Note to AppSec / Security Auditor teams:</b> If see this method being used in
+     * application code, the risk of an exploitable SQLi vulnerability is still high. We
+     * stress the importance of the first two Options discussed in the
+     * <a href="https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html">
+     * OWASP SQL Injection Prevention Cheat Sheet</a>. If you allow this, we recommend only
+     * doing so for a limited time duration and in the meantime creating some sort of security
+     * exception ticket to track it.
+     * </p>
      * @see <a href="https://download.oracle.com/otn-pub/jcp/jdbc-4_2-mrel2-spec/jdbc4.2-fr-spec.pdf">JDBC Specification</a>
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html">java.sql.PreparedStatement</a>
      *
      * @param codec
-     *      a Codec that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
+     *      a {@link org.owasp.esapi.codecs.Codec} that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
      * @param input
      *      the text to encode for SQL
      *
@@ -526,7 +588,7 @@ public interface Encoder {
      * For more information, refer to <a
      * href="http://www.ibm.com/developerworks/xml/library/x-xpathinjection.html">this
      * article</a> which specifies the following list of characters as the most
-     * dangerous: ^&"*';<>(). <a
+     * dangerous: ^ & " * ' ; < > ( ) . <a
      * href="http://www.packetstormsecurity.org/papers/bypass/Blind_XPath_Injection_20040518.pdf">This
      * paper</a> suggests disallowing ' and " in queries.
      *

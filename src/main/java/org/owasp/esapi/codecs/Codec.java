@@ -22,6 +22,17 @@ package org.owasp.esapi.codecs;
  * and canonicalization.  The design of these codecs allows for character-by-character decoding, which is
  * necessary to detect double-encoding and the use of multiple encoding schemes, both of which are techniques
  * used by attackers to bypass validation and bury encoded attacks in data.
+ * </p><p>
+ * Other than the interfaces, very few of these concrete classes are intended to be used directly.
+ * Rather, most of them are used through implementations of the {@link org.owasp.esapi.Encoder}
+ * interface. While the OWASP team over the years have made every effort to be extra cautious, the
+ * various {@code Codec} implemtations can offer NO GUARANTEE of safety if the client is
+ * using these {@code Codec} classes <i>directly</i>. Therefore, if the client is using
+ * these classes directly, it is highly advised to practice security-in-depth
+ * and also perform canonicalization, followed by strict input valiation, both
+ * prior to encoding and after decoding, to protect your application from input-based
+ * attacks.
+ * </p>
  *
  * @author Jeff Williams (jeff.williams .at. aspectsecurity.com) <a
  *         href="http://www.aspectsecurity.com">Aspect Security</a>
@@ -30,6 +41,7 @@ package org.owasp.esapi.codecs;
  * @author Matt Seil (mseil .at. owasp.org)
  * @since June 1, 2017
  * @see org.owasp.esapi.Encoder
+ * @see org.owasp.esapi.Validator
  */
 public interface Codec<T> {
     /**
