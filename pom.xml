@@ -643,7 +643,7 @@
                 <version>3.11.2</version>
                <configuration>
                  <source>8</source>
-                 <doclint>none</doclint>
+                 <doclint>none</doclint>    <!-- none, missing, simple, or all -->
                </configuration>
                <!-- generate esapi-VERSION.javadoc.jar -->
                <executions>
