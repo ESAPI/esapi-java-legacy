@@ -157,7 +157,7 @@ import org.owasp.esapi.errors.EncodingException;
  * to the W3C HTML specications)&em;the various {@code Codec} implemtations can offer
  * NO GUARANTEE of safety of the content being encoded or decoded. Therefore,
  * it is highly advised to practice a security-in-depth approach for everything you do.
- * By following that advise, you will minimize the impact and/or likelihood of any
+ * By following that advice, you will minimize the impact and/or likelihood of any
  * vulnerabilities from bugs in the ESAPI code or accidental misuse of the ESAPI
  * library on your part. In particular, whenever there are cases where cients use
  * any of these {@link org.owasp.esapi.codecs.Codec} classes drectly, it is highly

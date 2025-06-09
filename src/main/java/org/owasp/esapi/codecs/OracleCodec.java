@@ -20,11 +20,11 @@ package org.owasp.esapi.codecs;
 /**
  * Implementation of the {@link org.owasp.esapi.codecs.Codec} interface for Oracle DB strings. 
  * This function will only protect you from SQLi in limited situations.
- * To improve your changces of success, you made also need to do some
+ * To improve your chances of success, you made also need to do some
  * additional canonicalization and input validation first. Before using this class,
- * pleaes be sure to read the "SECURITY WARNING" in
+ * please be sure to read the "SECURITY WARNING" in
  * {@link org.owasp.esapi.Encoder#encodeForSQL}
- * before using this particular {@link org.owasp.esapi.codecs.Codec} and raising your hope of find
+ * before using this particular {@link org.owasp.esapi.codecs.Codec} and raising your hope of finding
  * a silver bullet to kill all the SQLi werewolves.
  *
  * @see <a href="http://oraqa.com/2006/03/20/how-to-escape-single-quotes-in-strings/">how-to-escape-single-quotes-in-strings</a>

@@ -20,11 +20,11 @@ package org.owasp.esapi.codecs;
 /**
  * Codec implementation which can be used to escape string literals in MySQL.
  * This function will only protect you from SQLi in limited situations.
- * To improve your changces of success, you made also need to do some
+ * To improve your chances of success, you made also need to do some
  * additional canonicalization and input validation first. Before using this class,
- * pleaes be sure to read the "SECURITY WARNING" in
+ * please be sure to read the "SECURITY WARNING" in
  * {@link org.owasp.esapi.Encoder#encodeForSQL}
- * before using this particular {@link org.owasp.esapi.codecs.Codec} and raising your hope of find
+ * before using this particular {@link org.owasp.esapi.codecs.Codec} and raising your hope of finding
  * a silver bullet to kill all the SQLi werewolves.
  * </p><p>
  * This implementation accepts 2 {@code org.owasp.esapi.codes.MySQLCodec.Mode}s as identified
