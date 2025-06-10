@@ -26,10 +26,10 @@ package org.owasp.esapi.codecs;
  * Other than the interfaces, very few of these concrete classes are intended to be used directly.
  * Rather, most of them are used through implementations of the {@link org.owasp.esapi.Encoder}
  * interface. While the OWASP team over the years have made every effort to be extra cautious, the
- * various {@code Codec} implemtations can offer NO GUARANTEE of safety if the client is
+ * various {@code Codec} implementations can offer NO GUARANTEE of safety if the client is
  * using these {@code Codec} classes <i>directly</i>. Therefore, if the client is using
  * these classes directly, it is highly advised to practice security-in-depth
- * and also perform canonicalization, followed by strict input valiation, both
+ * and also perform canonicalization, followed by strict input validation, both
  * prior to encoding and after decoding, to protect your application from input-based
  * attacks.
  * </p>
