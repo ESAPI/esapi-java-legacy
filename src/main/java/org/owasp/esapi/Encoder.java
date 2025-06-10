@@ -470,9 +470,19 @@ public interface Encoder {
      * OWASP SQL Injection Prevention Cheat Sheet</a>. If you allow this, we recommend only
      * doing so for a limited time duration and in the meantime creating some sort of security
      * exception ticket to track it.
+     * </p><p>
+     * <b>IMPORTANT NOTE:</b> If you really do insist enabling leg cannon mode and use
+     * this method, then you <i>MUST<i> follow these instructions. Failure to do so will
+     * result in a {@link org.owasp.esapi.errors.NotConfiguredByDefaultException} being
+     * thrown when you try to call it. Thus to make it work, you need to add the implementation
+     * method corresponding to this interace (defined in the property "<b>ESAPI.Encoder</b>"
+     * (wihch defaults to "org.owasp.esapi.reference.DefaultEncoder") in your "<b>ESAPI.properties</b>" file,
+     * to the ESAPI property "<b>ESAPI.dangerouslyAllowUnsafeMethods.methodNames</b>". See
+     * the Security Bulletin #13 document referenced below for additional details.
      * </p>
      * @see <a href="https://download.oracle.com/otn-pub/jcp/jdbc-4_2-mrel2-spec/jdbc4.2-fr-spec.pdf">JDBC Specification</a>
      * @see <a href="https://docs.oracle.com/javase/8/docs/api/java/sql/PreparedStatement.html">java.sql.PreparedStatement</a>
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin13.pdf">ESAPI Security Bulletin #13</a>
      *
      * @param codec
      *      a {@link org.owasp.esapi.codecs.Codec} that declares which database 'input' is being encoded for (ie. MySQL, Oracle, etc.)
