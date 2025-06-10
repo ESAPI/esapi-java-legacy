@@ -160,7 +160,7 @@ import org.owasp.esapi.errors.EncodingException;
  * By following that advice, you will minimize the impact and/or likelihood of any
  * vulnerabilities from bugs in the ESAPI code or accidental misuse of the ESAPI
  * library on your part. In particular, whenever there are cases where cients use
- * any of these {@link org.owasp.esapi.codecs.Codec} classes drectly, it is highly
+ * any of these {@link org.owasp.esapi.codecs.Codec} classes directly, it is highly
  * recommended to perform canonicalization followed by strict input valiation both
  * prior to encoding and after decoding to protect your application from input-based
  * attacks.
@@ -425,7 +425,7 @@ public interface Encoder {
      * </p><p>
      * <b>SECURITY WARNING:</b> This method is <u>NOT</u> recommended. The use of the {@code PreparedStatement}
      * interface is the preferred approach. However, if for some reason
-     * this is impossible, then this method is provided as significantly weaker
+     * this is impossible, then this method is provided as a significantly weaker
      * alternative. In particular, it should be noted that if all you do to
      * address potential SQL Injection attacks is to use this method to escape
      * parameters, you <i>will</i> fail miserably. According to the
