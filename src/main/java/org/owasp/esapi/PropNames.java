@@ -87,6 +87,8 @@ public final class PropNames {
     public static final String ADDITIONAL_ALLOWED_CIPHER_MODES                                                  = "Encryptor.cipher_modes.additional_allowed";
     public static final String KDF_PRF_ALG                                                                      = "Encryptor.KDF.PRF";
     public static final String PRINT_PROPERTIES_WHEN_LOADED                                                     = "ESAPI.printProperties";
+    public static final String ACCEPTED_UNSAFE_METHOD_NAMES                                                     = "ESAPI.dangerouslyAllowUnsafeMethods.methodNames";
+    public static final String ACCEPTED_UNSAFE_METHODS_JUSTIFICATION                                            = "ESAPI.dangerouslyAllowUnsafeMethods.justification";
 
     public static final String WORKING_DIRECTORY                                                                = "Executor.WorkingDirectory";
     public static final String APPROVED_EXECUTABLES                                                             = "Executor.ApprovedExecutables";
@@ -129,7 +131,7 @@ public final class PropNames {
     public static final String DISCARD_LOGSPECIAL                                                               = "org.owasp.esapi.logSpecial.discard";
 
     /*
-     * Implementation Keys
+     * Implementation Keys for the various major ESAPI components.
      */
     public static final String LOG_IMPLEMENTATION                                                               = "ESAPI.Logger";
     public static final String AUTHENTICATION_IMPLEMENTATION                                                    = "ESAPI.Authenticator";
