@@ -2,10 +2,11 @@ package org.owasp.esapi.errors;
 
 /**
  * A {@code NotConfiguredByDefaultException} should be thrown when a method that
- * is disabled by default is invoked,
+ * is disabled by default is invoked.
  * </p><p>
- * See the ESAPI properties "ESAPI.enableLegCannonModeAndGetMyAssFired.methodNames" and
- * "ESAPI,enableLegCannonModeAndGetMyAssFired,justification" in the
+
+ * See the ESAPI properties "<b>ESAPI.dangerouslyAllowUnsafeMethods.methodNames</b>"
+ * and "<b>ESAPI.dangerouslyAllowUnsafeMethods.justification</b>" in the
  * <b>ESAPI.properties</b> file for additional details.
  * </p>
  */
