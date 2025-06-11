@@ -19,9 +19,16 @@ package org.owasp.esapi.codecs;
 
 /**
  * Codec implementation which can be used to escape string literals in MySQL.
- * </br>
- * Implementation accepts 2 Modes as identified by the OWASP Recommended
- * escaping strategies:
+ * This function will only protect you from SQLi in limited situations.
+ * To improve your chances of success, you made also need to do some
+ * additional canonicalization and input validation first. Before using this class,
+ * please be sure to read the "SECURITY WARNING" in
+ * {@link org.owasp.esapi.Encoder#encodeForSQL}
+ * before using this particular {@link org.owasp.esapi.codecs.Codec} and raising your hope of finding
+ * a silver bullet to kill all the SQLi werewolves.
+ * </p><p>
+ * This implementation accepts 2 {@code org.owasp.esapi.codes.MySQLCodec.Mode}s as identified
+ * by the OWASP recommended escaping strategies:
  * <ul>
  * <li><b>ANSI</b> <br>
  * Simply encode all ' (single tick) characters with '' (two single ticks)</li>
@@ -29,19 +36,19 @@ package org.owasp.esapi.codecs;
  * <li><b>Standard</b>
  *
  * <pre>
- *   NUL (0x00) --> \0  [This is a zero, not the letter O]
- *   BS  (0x08) --> \b
- *   TAB (0x09) --> \t
- *   LF  (0x0a) --> \n
- *   CR  (0x0d) --> \r
- *   SUB (0x1a) --> \Z
- *   "   (0x22) --> \"
- *   %   (0x25) --> \%
- *   '   (0x27) --> \'
- *   \   (0x5c) --> \\
- *   _   (0x5f) --> \_
+ *   NUL (0x00) --&gt; \0  [This is a zero, not the letter O]
+ *   BS  (0x08) --&gt; \b
+ *   TAB (0x09) --&gt; \t
+ *   LF  (0x0a) --&gt; \n
+ *   CR  (0x0d) --&gt; \r
+ *   SUB (0x1a) --&gt; \Z
+ *   "   (0x22) --&gt; \"
+ *   %   (0x25) --&gt; \%
+ *   '   (0x27) --&gt; \'
+ *   \   (0x5c) --&gt; \\
+ *   _   (0x5f) --&gt; \_
  *   <br>
- *   all other non-alphanumeric characters with ASCII values less than 256  --> \c
+ *   all other non-alphanumeric characters with ASCII values less than 256 --&gt; \c
  *   where 'c' is the original non-alphanumeric character.
  * </pre>
  *

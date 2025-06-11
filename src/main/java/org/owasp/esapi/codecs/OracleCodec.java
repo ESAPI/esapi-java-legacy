@@ -18,10 +18,14 @@ package org.owasp.esapi.codecs;
 
 
 /**
- * Implementation of the Codec interface for Oracle strings. This function will only protect you from SQLi in the case of user data
- * bring placed within an Oracle quoted string such as:
- *
- * select * from table where user_name='  USERDATA    ';
+ * Implementation of the {@link org.owasp.esapi.codecs.Codec} interface for Oracle DB strings. 
+ * This function will only protect you from SQLi in limited situations.
+ * To improve your chances of success, you made also need to do some
+ * additional canonicalization and input validation first. Before using this class,
+ * please be sure to read the "SECURITY WARNING" in
+ * {@link org.owasp.esapi.Encoder#encodeForSQL}
+ * before using this particular {@link org.owasp.esapi.codecs.Codec} and raising your hope of finding
+ * a silver bullet to kill all the SQLi werewolves.
  *
  * @see <a href="http://oraqa.com/2006/03/20/how-to-escape-single-quotes-in-strings/">how-to-escape-single-quotes-in-strings</a>
  *
