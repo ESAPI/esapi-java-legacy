@@ -265,7 +265,7 @@ public final class ESAPI {
      *         otherwise {@code false} is returned.
      */
     public static boolean isMethodExplicityEnabled(String fullyQualifiedMethodName) {
-        if ( fullyQualifiedMethodName != null && fullyQualifiedMethodName.trim().isEmpty() ) {
+        if ( fullyQualifiedMethodName == null || fullyQualifiedMethodName.trim().isEmpty() ) {
             throw new IllegalArgumentException("Program error: fullyQualifiedMethodName parameter cannot be null or empty");
         }
         String desiredMethodName = fullyQualifiedMethodName.trim();
@@ -286,10 +286,6 @@ public final class ESAPI {
             return false;   // Property not found at all.
         }
 
-        if ( enabledMethods == null || enabledMethods.trim().isEmpty() ) {
-            // TODO: Log something here? Maybe at DEBUG level?
-            return false; // No methods in the list, so no match possible.
-        }
 
         // Split it up by ',' and then filter it by finding the first on that
         // matches the desired method name passed in as the method parameter.
@@ -298,11 +294,6 @@ public final class ESAPI {
                                   .filter(methodName -> methodName.trim().equals( desiredMethodName ) )
                                   .findFirst()
                                   .orElse("");
-
-        if ( result.isEmpty() ) {
-            return false;   // No match, so method not enabled
-        } else {
-            return true;    // Method found, thus enabled
-        }
+        return !result.isEmpty();
     }
 }
