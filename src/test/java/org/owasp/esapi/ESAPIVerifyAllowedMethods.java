@@ -1,7 +1,10 @@
 package org.owasp.esapi;
 
+import org.bouncycastle.crypto.modes.CBCModeCipher;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.owasp.esapi.errors.ConfigurationException;
 
 
 public class ESAPIVerifyAllowedMethods {
@@ -45,6 +48,21 @@ public class ESAPIVerifyAllowedMethods {
 	@Test 
 	public void verifyDefinedRestrictionIsCaught() {
 		Assert.assertTrue(ESAPI.isMethodExplicityEnabled("org.owasp.esapi.reference.DefaultEncoder.encodeForSQL"));
+	}
+	
+	@Test 
+	public void testMissingPropertyReturnsFalse() {
+		try {
+		SecurityConfiguration mockConfig = Mockito.mock(SecurityConfiguration.class);
+		Mockito.when(mockConfig.getStringProp("ESAPI.dangerouslyAllowUnsafeMethods.methodNames")).thenThrow(ConfigurationException.class);
+		ESAPI.override(mockConfig);
+		
+		Assert.assertFalse(ESAPI.isMethodExplicityEnabled("org.owasp.esapi.thisValueDoesNotMatter"));
+		Mockito.verify(mockConfig, Mockito.times(1)).getStringProp("ESAPI.dangerouslyAllowUnsafeMethods.methodNames");
+		} finally {
+			ESAPI.override(null);
+		}
+		
 	}
 	
 }
