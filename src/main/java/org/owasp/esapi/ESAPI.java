@@ -16,10 +16,13 @@
  */
 package org.owasp.esapi;
 
+import java.util.Arrays;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.owasp.esapi.util.ObjFactory;
+import org.owasp.esapi.errors.ConfigurationException;
 
 /**
  * ESAPI locator class is provided to make it easy to gain access to the current ESAPI classes in use.
@@ -93,16 +96,18 @@ public final class ESAPI {
     }
 
     /**
-     * The ESAPI Encoder is primarily used to provide <i>output</i> encoding to
+     * The ESAPI {@code Encoder} is primarily used to provide <i>output</i> encoding to
      * prevent Cross-Site Scripting (XSS).
-     * @return the current ESAPI Encoder object being used to encode and decode data for this application.
+     * @return the current ESAPI {@code Encoder} object being used to encode and decode data for this application.
      */
     public static Encoder encoder() {
         return ObjFactory.make( securityConfiguration().getEncoderImplementation(), "Encoder" );
     }
 
     /**
-     * @return the current ESAPI Encryptor object being used to encrypt and decrypt data for this application.
+     * ESAPI {@code Encryptor} provides a set of methods for performing common encryption, random number, and
+     * hashing operations.
+     * @return the current ESAPI {@code Encryptor} object being used to encrypt and decrypt data for this application.
      */
     public static Encryptor encryptor() {
         return ObjFactory.make( securityConfiguration().getEncryptionImplementation(), "Encryptor" );
@@ -220,5 +225,75 @@ public final class ESAPI {
      */
     public static void override( SecurityConfiguration config ) {
         overrideConfig = config;
+    }
+
+    // KWW - OPEN ISSUE: I don't like placing this here, but it's convenient and I
+    //       don't really know a better place for it and would rather not create
+    //       a whole new utility class just to use it.
+    /**
+     * Determine if a given fully qualified (ESAPI) method name has been explicitly
+     * enabled in the <b>ESAPI.properties</b>'s file via the property name
+     * <b>ESAPI.dangerouslyAllowUnsafeMethods.methodNames</b>. Note that there
+     * is no real reason for an ESAPI client to use this, It is intended for
+     * interal use,
+     * </p><p>
+     * The reason this method exists is because certain (other) ESAPI method names
+     * are considered "unsafe" and therefore should be used with extra caution.
+     * These "unsafe" methods may include methods that are:
+     * <ul>
+     * <li>Deprecated and thus no longer suggested for long term use.</li>
+     * <li>Methods where the programming contract is not in itself sufficient to ensure safety alone
+     * and developers are expected to take addional actions on their own to secure their application.</li>
+     * <li>Methods that are using some unpatched transitive dependency that we haven't firmly
+     * established grounds for it not being exploitable in the manner that ESAPI uses it.</li>
+     * <li>Methods whose reference implementations are not scalable to the enterprise level.</li>
+     * </ul>
+     * <i>Public</i> methods that are not in that list for the above ESAPI property
+     * are generally are considered enabled and okay to use unless their Javadoc
+     * indicates otherwise.
+     * </p><p>
+     * Note that this method is intended primarilly for internal ESAPI use and if we were
+     * using Java Modules (in JDK 9 and later), this method would not be exported.
+     * </p><p>
+     * For further details, please see the ESAPI GitHub wiki article,
+     * <a href="https://github.com/ESAPI/esapi-java-legacy/wiki/Reducing-the-ESAPI-Library's-Attack-Surface">"Reducing the ESAPI Library's Attack Surface"</a>.
+     * @param fullyQualifiedMethodName A fully qualified ESAPI class name (so, should start
+     *              "org.owasp.esapi.") followed by the method name (but without
+     *              parenthesis or any parameter signature information.
+     * @return {@code true} if the parameter {@code fullyQualifiedMethodName} is in the comma-separated
+     *         list of values in the ESAPI property <b>ESAPI.dangerouslyAllowUnsafeMethods.methodNames</b>,
+     *         otherwise {@code false} is returned.
+     */
+    public static boolean isMethodExplicityEnabled(String fullyQualifiedMethodName) {
+        if ( fullyQualifiedMethodName == null || fullyQualifiedMethodName.trim().isEmpty() ) {
+            throw new IllegalArgumentException("Program error: fullyQualifiedMethodName parameter cannot be null or empty");
+        }
+        String desiredMethodName = fullyQualifiedMethodName.trim();
+            // This regex is too liberal to be anything more than just a trivial
+            // sanity test to protect against typos.
+        if ( !desiredMethodName.matches("^org\\.owasp\\.esapi\\.(\\p{Alnum}|\\.)*$") ) {
+            throw new IllegalArgumentException("Program error: fullyQualifiedMethodName must start with " +
+                                               "'org.owasp.esapi.' and be a valid method name.");
+        }
+
+        String enabledMethods = null;
+        try {
+            // Need to do this w/in a try/catch because if the property is not
+            // found, getStringProp will throw a ConfigurationException rather
+            // than returning a null.
+            enabledMethods = securityConfiguration().getStringProp("ESAPI.dangerouslyAllowUnsafeMethods.methodNames");
+        } catch( ConfigurationException cex ) {
+            return false;   // Property not found at all.
+        }
+
+
+        // Split it up by ',' and then filter it by finding the first on that
+        // matches the desired method name passed in as the method parameter.
+        // If no matches, return the empty string.
+        String result = Arrays.stream( enabledMethods.trim().split(",") )
+                                  .filter(methodName -> methodName.trim().equals( desiredMethodName ) )
+                                  .findFirst()
+                                  .orElse("");
+        return !result.isEmpty();
     }
 }

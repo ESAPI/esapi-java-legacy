@@ -472,7 +472,7 @@ public interface Encoder {
      * exception ticket to track it.
      * </p><p>
      * <b>IMPORTANT NOTE:</b> If you really do insist enabling leg cannon mode and use
-     * this method, then you <i>MUST<i> follow these instructions. Failure to do so will
+     * this method, then you <i>MUST</i> follow these instructions. Failure to do so will
      * result in a {@link org.owasp.esapi.errors.NotConfiguredByDefaultException} being
      * thrown when you try to call it. Thus to make it work, you need to add the implementation
      * method corresponding to this interace (defined in the property "<b>ESAPI.Encoder</b>"
