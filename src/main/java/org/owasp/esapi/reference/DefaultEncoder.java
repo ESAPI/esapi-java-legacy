@@ -343,7 +343,7 @@ public class DefaultEncoder implements Encoder {
         // This will throw if this method is not explicitly enabled in ESAPI.properties.
         ensureDangerousMethodExplicitlyEnabled( DefaultEncoder.class.getName() + ".encodeForSQL",
                                                 "<default>",
-                                                "see CVE-2025-????? and ESAPI Security Bulletin #13 for details" );
+                                                "see CVE-2025-5878 and ESAPI Security Bulletin #13 for details" );
 
         if( input == null ) {
             return null;
