@@ -43,29 +43,59 @@ import org.owasp.esapi.configuration.EsapiPropertyManager;
 import org.owasp.esapi.errors.ConfigurationException;
 
 /**
- * The reference {@code SecurityConfiguration} manages all the settings used by the ESAPI in a single place. In this reference
- * implementation, resources can be put in several locations, which are searched in the following order:
+ * Thse reference implementation class for {@code SecurityConfiguration} manages all the settings used by the ESAPI
+ * in a single place. In this reference implementation, resources can be put in several locations, which are
+ * searched in the following order:
  * <p>
- * 1) Inside a directory set with a call to SecurityConfiguration.setResourceDirectory( "C:\temp\resources" ).
- * <p>
- * 2) Inside the System.getProperty( "org.owasp.esapi.resources" ) directory.
+ * <ol>
+ * <li>
+ * Inside a directory set with a call to SecurityConfiguration.setResourceDirectory( "C:\temp\resources" ).
+ * </p><p>
+ * <b>CAUTION:</b> Generally this technique should be avoided if you are
+ * using ESAPI in a resusable library, as it makes it very difficult for an
+ * application using your library to use its own version of
+ * <b>ESAPI.properties</b>.
+ * </p><p>
+ * The only exception might be if you are writing a wrapper library for ESAPI
+ * and wish to provide a set of ESAPI properties that the application cannot <i>accidentally</i>
+ * change. However, selecting this option won't intentionally prevent changing <b>ESAPI.properties</b>
+ * unless you are signing the jar * and somehow forcing the verifiction of its digital signature at
+ * runtime. That's because it's easy enough to unjar your library, edit the <b>ESAPI.properties</b>
+ * file and then re-jar the library.
+ * </p><p>
+ * This option was probably more intended for use by web applications by embedding
+ * them as resources in .war or .ear files, possibly with the intent of
+ * dissauding operations staff from making "improvements", a practice which
+ * makes much less--if any--sense in the era of DevOps and DevSecOps.
+ * </p>
+ * </li>
+ * <li>
+ * Inside the {@code System.getProperty( "org.owasp.esapi.resources" )} directory.
  * You can set this on the java command line as follows (for example):
  * <pre>
- *         java -Dorg.owasp.esapi.resources="C:\temp\resources"
+ *
+ *         java -Dorg.owasp.esapi.resources="C:\apps\myApp\resources"
  * </pre>
  * You may have to add this to the start-up script that starts your web server. For example, for Tomcat,
  * in the "catalina" script that starts Tomcat, you can set the JAVA_OPTS variable to the {@code -D} string above.
- * <p>
- * 3) Inside the {@code System.getProperty( "user.home" ) + "/.esapi"} directory (supported for backward compatibility) or
+ * </li>
+ * <li>
+ * Inside the {@code System.getProperty( "user.home" ) + "/.esapi"} directory (supported for backward compatibility) or
  * inside the {@code System.getProperty( "user.home" ) + "/esapi"} directory.
- * <p>
- * 4) The first ".esapi" or "esapi" directory on the classpath. (The former for backward compatibility.)
- * <p>
- * Once the Configuration is initialized with a resource directory, you can edit it to set things like master
- * keys and passwords, logging locations, error thresholds, and allowed file extensions.
- * <p>
- * WARNING: Do not forget to update ESAPI.properties to change the master key and other security critical settings.
- * <p>
+ * </li>
+ * <li>
+ * The first ".esapi" or "esapi" directory on the classpath. (The former for backward compatibility.)
+ * </li>
+ * </ol>
+ * </p><p>
+ * Once the ESAPI configuration is initialized with a resource directory, you can edit it to set things like master
+ * keys and passwords, logging locations, error thresholds, and allowed file extensions. (But see the above cautionary
+ * note if you are using ESAPI in a reusable library.)
+ * </p><p>
+ * <b>WARNING:</b> Do not forget to update ESAPI.properties to change the master key and other security critical settings
+ * as well as reviewing changes in the <code>esapi-&lt;<i>vers</i>-configuration.jar</code> for differences
+ * with your current version to see if any important properties were added or removed.
+ * </p><p>
  * <b>DEPRECATION WARNING</b>: All of the variables of the type '{@code public static final String}'
  * are now declared and defined in the {@code org.owasp.esapi.PropNames}. These public fields
  * representing property names and values in <i>this</i> class <i>will</i> be eventually deleted and

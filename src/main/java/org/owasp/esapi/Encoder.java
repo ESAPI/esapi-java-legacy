@@ -490,8 +490,14 @@ public interface Encoder {
      *      the text to encode for SQL
      *
      * @return input encoded for use in SQL
+     * @see <a href="https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin13.pdf">
+     *              ESAPI Security Bulletin #13</a>
+     * @deprecated  This class is considered dangerous and not easily made safe and thus under strong
+     *              consideration to be removed within 1 years time after the 2.7.0.0 release. Please
+     *              see the referenced ESAPI Security Bulletin #13 for further details.
      */
-    String encodeForSQL(Codec codec, String input);
+     @Deprecated
+     String encodeForSQL(Codec codec, String input);
 
     /**
      * Encode for an operating system command shell according to the selected codec (appropriate codecs include the WindowsCodec and UnixCodec).
