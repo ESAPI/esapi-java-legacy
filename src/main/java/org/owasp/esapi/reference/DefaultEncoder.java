@@ -337,7 +337,12 @@ public class DefaultEncoder implements Encoder {
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated  This method is considered dangerous and not easily made safe and thus under strong
+     *              consideration to be removed within 1 years time after the 2.7.0.0 release. Please
+     *              see the referenced ESAPI Security Bulletin #13 for further details.
      */
+    @Deprecated
     public String encodeForSQL(Codec codec, String input) {
 
         // This will throw if this method is not explicitly enabled in ESAPI.properties.
