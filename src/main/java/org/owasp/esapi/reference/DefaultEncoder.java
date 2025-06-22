@@ -329,7 +329,7 @@ public class DefaultEncoder implements Encoder {
             if ( justification == null || justification.trim().isEmpty() ) {
                 justification = "None";
             }
-            logger.warning( Logger.EVENT_FAILURE, auditMsg + " Provided justification: " + justification );
+            logger.warning( Logger.SECURITY_FAILURE, auditMsg + " Provided justification: " + justification );
         }
         return;
     }
