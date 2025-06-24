@@ -15,8 +15,7 @@
 
 package org.owasp.esapi.logging.appender;
 
-// Uncomment and use once ESAPI supports Java 8 as the minimal baseline.
-// import java.util.function.Supplier;
+import java.util.function.Supplier;
 
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.User;
@@ -25,7 +24,7 @@ import org.owasp.esapi.User;
  * Supplier which can provide a String representing the client-side connection
  * information.
  */
-public class UserInfoSupplier   // implements Supplier<String>
+public class UserInfoSupplier   implements Supplier<String>
 {
     /** Default UserName string if the Authenticated user is null.*/
     private static final String DEFAULT_USERNAME = "#ANONYMOUS#";
