@@ -45,6 +45,11 @@ import org.owasp.esapi.codecs.XMLEntityCodec;
 import org.owasp.esapi.codecs.JSONCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
+import org.owasp.esapi.errors.ConfigurationException;
+import org.owasp.esapi.errors.NotConfiguredByDefaultException;
+
+import static org.owasp.esapi.PropNames.ACCEPTED_UNSAFE_METHOD_NAMES;
+import static  org.owasp.esapi.PropNames.ACCEPTED_UNSAFE_METHODS_JUSTIFICATION;
 
 
 /**
@@ -271,11 +276,80 @@ public class DefaultEncoder implements Encoder {
         return vbScriptCodec.encode(IMMUNE_VBSCRIPT, input);
     }
 
+    ///////////////////////////////////////////////////////////////////////
+    // TODO - Move this method to some utility class (where?) when we
+    //        are ready to use it on other methods than just encodeForSQL.
+    //
+    //        At that time, also move the method ESAPI.isMethodExplicityEnabled
+    //        to the same utility class.
+    /**
+     * Utility class to throw {@code NotConfiguredByDefaultException} if the
+     * specified method name is not enabled by default.
+     *
+     * @param fullyQualifiedMethodName is the method name that we are checkig if
+     *                                 enabled in ESAPI.properties.
+     * @param customAuditMsg is a audit message to log and use in exceptions. If
+     *                       this value passed in is {@code null} or the string
+     *                       "&lt;default&gt;", then a canned message is used to
+     *                       compose the error message.
+     * @param seeAlso is a string that provides additional reference for context
+     *                such as a CVE ID, GHAS Security Advisory, or ESAPI Security Bulletin.
+     * @throws NotConfiguredByDefaultException if the specified method name is
+     *                not listed in the property <b>ESAPI.dangerouslyAllowUnsafeMethods.methodNames</b>
+     *                in the <b>ESAPI.properties</b> file.
+     */
+    private void ensureDangerousMethodExplicitlyEnabled(String fullyQualifiedMethodName,
+                                                        String customAuditMsg,
+                                                        String seeAlso) {
+
+        String auditMsg = null;
+        if ( customAuditMsg == null || customAuditMsg.equalsIgnoreCase("<default>") ) {
+            // Special case. Compose an audit message from a canned template.
+            // TODO: Null / empty check for 'seeAlso'.
+            auditMsg = "SIEM ALERT: Method '" + fullyQualifiedMethodName + "' has been invoked despite having credible " +
+                       "security concerns; for additional details, see " + seeAlso + ".";
+        } else {
+            auditMsg = customAuditMsg;  // Use the custom audit message
+        }
+ 
+        if ( ! ESAPI.isMethodExplicityEnabled( fullyQualifiedMethodName ) ) {
+            throw new NotConfiguredByDefaultException( "Method not explicitly enabled in property " +
+                                                        ACCEPTED_UNSAFE_METHOD_NAMES + "; " + auditMsg );
+        } else {
+            String justification = null;
+            try {
+                // This throws a ConfigurationException (rather than returning null if
+                // the property name is not found so we need to handle that.
+                justification = ESAPI.securityConfiguration().getStringProp( ACCEPTED_UNSAFE_METHODS_JUSTIFICATION );
+            } catch ( ConfigurationException cex ) {
+                logger.debug( Logger.EVENT_FAILURE, "Property " + ACCEPTED_UNSAFE_METHODS_JUSTIFICATION + " not found.");
+                justification = "None";
+            }
+
+            if ( justification == null || justification.trim().isEmpty() ) {
+                justification = "None";
+            }
+            logger.warning( Logger.SECURITY_FAILURE, auditMsg + " Provided justification: " + justification );
+        }
+        return;
+    }
+
 
     /**
      * {@inheritDoc}
+     *
+     * @deprecated  This method is considered dangerous and not easily made safe and thus under strong
+     *              consideration to be removed within 1 years time after the 2.7.0.0 release. Please
+     *              see the referenced ESAPI Security Bulletin #13 for further details.
      */
+    @Deprecated
     public String encodeForSQL(Codec codec, String input) {
+
+        // This will throw if this method is not explicitly enabled in ESAPI.properties.
+        ensureDangerousMethodExplicitlyEnabled( DefaultEncoder.class.getName() + ".encodeForSQL",
+                                                "<default>",
+                                                "see CVE-2025-5878 and ESAPI Security Bulletin #13 for details" );
+
         if( input == null ) {
             return null;
         }

@@ -63,7 +63,13 @@ package org.owasp.esapi.codecs;
  * <a href= "https://dev.mysql.com/doc/refman/8.0/en/string-literals.html">MySQL 8.0 String Literals</a>
  * <a href= "https://www.owasp.org/index.php/SQL_Injection_Prevention_Cheat_Sheet#MySQL_Escaping">OWASP
  *      SQL_Injection_Prevention_Cheat_Sheet#MySQL_Escaping</a>
+ * @see <a href="https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin13.pdf">
+ *              ESAPI Security Bulletin #13</a>
+ * @deprecated  This class is considered dangerous and not easily made safe and thus under strong
+ *              consideration to be removed within 1 years time after the 2.7.0.0 release. Please
+ *              see the referenced ESAPI Security Bulletin #13 for further details.
  */
+@Deprecated
 public class MySQLCodec extends AbstractCharacterCodec {
     /**
      * Specifies the SQL Mode the target MySQL Server is running with. For details about MySQL Server Modes

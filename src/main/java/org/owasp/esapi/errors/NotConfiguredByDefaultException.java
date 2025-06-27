@@ -13,20 +13,22 @@ package org.owasp.esapi.errors;
 public class NotConfiguredByDefaultException extends ConfigurationException {
 
     protected static final long serialVersionUID = 1L;
+    private static final String defaultMsg = "Unknown unsafe ESAPI method invoked without being explicitly allowed. " +
+                                             "Check exception stack trace for method name.";
 
     public NotConfiguredByDefaultException(Exception e) {
         super(e);
     }
 
     public NotConfiguredByDefaultException(String s) {
-        super(s);
+        super( (s == null || s.trim().isEmpty()) ? defaultMsg : s);
     }
 
     public NotConfiguredByDefaultException(String s, Throwable cause) {
-        super(s, cause);
+        super( (s == null || s.trim().isEmpty()) ? defaultMsg : s, cause);
     }
 
     public NotConfiguredByDefaultException(Throwable cause) {
-        super(cause);
+        super(defaultMsg, cause);
     }
 }

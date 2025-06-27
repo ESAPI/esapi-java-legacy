@@ -15,8 +15,7 @@
 
 package org.owasp.esapi.logging.appender;
 
-// Uncomment and use once ESAPI supports Java 8 as the minimal baseline.
-// import java.util.function.Supplier;
+import java.util.function.Supplier;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -26,7 +25,7 @@ import org.owasp.esapi.ESAPI;
  * Supplier which can provide a String representing the server-side connection
  * information.
  */
-public class ServerInfoSupplier     // implements Supplier<String>
+public class ServerInfoSupplier     implements Supplier<String>
 {
     /** Whether to log the server connection info. */
     private boolean logServerIP = true;

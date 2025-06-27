@@ -26,7 +26,13 @@ package org.owasp.esapi.codecs;
  * @author Sivasankar Tanakala (stanakal@TRS.NYC.NY.US)
  * @since October 26, 2010
  * @see org.owasp.esapi.Encoder
+ * @see <a href="https://github.com/ESAPI/esapi-java-legacy/blob/develop/documentation/ESAPI-security-bulletin13.pdf">
+ *              ESAPI Security Bulletin #13</a>
+ * @deprecated  This class is considered dangerous and not easily made safe and thus under strong
+ *              consideration to be removed within 1 years time after the 2.7.0.0 release. Please
+ *              see the referenced ESAPI Security Bulletin #13 for further details.
  */
+@Deprecated
 public class DB2Codec extends AbstractCharacterCodec {
 
     public String encodeCharacter(char[] immune, Character c) {
