@@ -1,0 +1,15 @@
+Release notes for ESAPI 2.7.1.0-RC1
+    Release date: 2025-30-09
+    Project leaders:
+        -Kevin W. Wall <kevin.w.wall@gmail.com>
+        -Matt Seil <matt.seil@owasp.org>
+
+Previous release: ESAPI 2.7.0.0, 2025-25-06
+
+
+Executive Summary: Important Things to Note for this Release
+------------------------------------------------------------
+This Release Candidate is being used to verify the migration to OSSRH artifact hosting as a part of GitHub issue#891.
+
+This version contains no significant behavioral updates from the 2.7.0.0 release.  
+Keep an eye out for the formal 2.7.0.1 release planned before the end of 2025
