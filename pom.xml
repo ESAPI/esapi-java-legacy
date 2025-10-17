@@ -431,7 +431,7 @@
               <version>0.9.0</version>
               <extensions>true</extensions>
               <configuration>
-                <deploymentName>${project.name}</deploymentName>
+                <deploymentName>${project.name}-${project.version}</deploymentName>
                 <publishingServerId>central</publishingServerId>
               </configuration>
             </plugin>
