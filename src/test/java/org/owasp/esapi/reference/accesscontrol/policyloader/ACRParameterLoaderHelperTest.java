@@ -29,6 +29,10 @@ public class ACRParameterLoaderHelperTest {
        randomTestKey = String.format(ACRParameterLoaderHelper.DEFAULT_KEY_FORMAT, randomRuleIndex, randomParameterIndex);
    }
    
+   @Test (expected = IllegalArgumentException.class)
+   public void testUnsupportedTypeThrowsException() throws Exception {
+       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "Foo_to_the_Bar");
+   }
    
    @Test
    public void testStringParam_lowercaseType() throws Exception {
