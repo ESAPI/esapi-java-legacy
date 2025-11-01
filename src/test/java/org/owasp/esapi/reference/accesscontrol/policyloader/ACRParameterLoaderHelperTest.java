@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 public class ACRParameterLoaderHelperTest {
-   private static String DEFAULT_KEY_FORMAT = "AccessControlRules.AccessControlRule(%s).Parameters.Parameter(%s)[@value]";
+   
    
    XMLConfiguration config = Mockito.spy(XMLConfiguration.class);
    
@@ -26,7 +26,7 @@ public class ACRParameterLoaderHelperTest {
        // Assembling a unique key each test verifies that the delegate calls are getting the expected values from the test calls.
        randomRuleIndex = Math.abs(new Random().nextInt() % 100);
        randomParameterIndex = Math.abs(new Random().nextInt() % 100);
-       randomTestKey = String.format(DEFAULT_KEY_FORMAT, randomRuleIndex, randomParameterIndex);
+       randomTestKey = String.format(ACRParameterLoaderHelper.DEFAULT_KEY_FORMAT, randomRuleIndex, randomParameterIndex);
    }
    
    
@@ -121,13 +121,12 @@ public class ACRParameterLoaderHelperTest {
    
    @Test
    public void testTimeParam_lowercaseType() throws Exception {
-       String atime = new java.text.SimpleDateFormat("h:mm a").format(new Date());
+       String atime = new java.text.SimpleDateFormat(ACRParameterLoaderHelper.TIME_FORMAT).format(new Date());
        Mockito.doReturn(atime).when(config).getString(eq(randomTestKey));
        ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "time".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
    }
    
-   // ------------
    
    @Test
    public void testStringParam_uppercaseType() throws Exception {
@@ -220,7 +219,7 @@ public class ACRParameterLoaderHelperTest {
    
    @Test
    public void testTimeParam_uppercaseType() throws Exception {
-       String atime = new java.text.SimpleDateFormat("h:mm a").format(new Date());
+       String atime = new java.text.SimpleDateFormat(ACRParameterLoaderHelper.TIME_FORMAT).format(new Date());
        Mockito.doReturn(atime).when(config).getString(eq(randomTestKey));
        ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "time".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
