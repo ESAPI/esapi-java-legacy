@@ -1,5 +1,6 @@
 package org.owasp.esapi.reference.accesscontrol.policyloader;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 
 import java.math.BigDecimal;
@@ -8,9 +9,11 @@ import java.util.Date;
 import java.util.Random;
 
 import org.apache.commons.configuration.XMLConfiguration;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+
 
 public class ACRParameterLoaderHelperTest {
    
@@ -37,65 +40,74 @@ public class ACRParameterLoaderHelperTest {
    @Test
    public void testStringParam_lowercaseType() throws Exception {
        Mockito.doReturn("unused").when(config).getString(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "string".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "string".toLowerCase());
        
        // I don't really care what the response is here; 
        // I care that the delegate class was called as expected with the generated string key.
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
+       Assert.assertEquals(String.class, response.getClass());
+       Assert.assertEquals("unused", response);
    }
    
    @Test
    public void testStringArrayParam_lowercaseType() throws Exception {
        Mockito.doReturn(new String[0]).when(config).getStringArray(eq(randomTestKey));
        // Mockito.when(config.getStringArray(eq(randomTestKey))).thenReturn();
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "stringarray".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "stringarray".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getStringArray(randomTestKey);
+       Assert.assertEquals(String[].class, response.getClass());       
    }
    
    @Test
    public void testBooleanParam_lowercaseType() throws Exception {
        Mockito.doReturn(Boolean.TRUE).when(config).getBoolean(eq(randomTestKey));
        // Mockito.when(config.getBoolean(eq(randomTestKey))).thenReturn(Boolean.TRUE);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "boolean".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "boolean".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getBoolean(randomTestKey);
+       Assert.assertEquals(Boolean.class, response.getClass());
    }
    
    @Test
    public void testByteParam_lowercaseType() throws Exception {
        Mockito.doReturn( (byte)0 ).when(config).getByte( eq(randomTestKey) );
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "byte".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "byte".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getByte(randomTestKey);
+       Assert.assertEquals(Byte.class, response.getClass());
    }
    
    @Test
    public void testIntParam_lowercaseType() throws Exception {
        Mockito.doReturn(0).when(config).getInt(eq(randomTestKey));
        // Mockito.when(config.getInt(eq(randomTestKey))).thenReturn(0);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "int".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "int".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getInt(randomTestKey);
+       Assert.assertEquals(Integer.class, response.getClass());
    }
    
    @Test
    public void testLongParam_lowercaseType() throws Exception {
        Mockito.doReturn(0L).when(config).getLong(eq(randomTestKey));
        // Mockito.when(config.getLong(eq(randomTestKey))).thenReturn(0L);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "long".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "long".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getLong(randomTestKey);
+       Assert.assertEquals(Long.class, response.getClass());
    }
    
    @Test
    public void testFloatParam_lowercaseType() throws Exception {
        Mockito.doReturn((float) 0).when(config).getFloat(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "float".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "float".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getFloat(randomTestKey);
+       Assert.assertEquals(Float.class, response.getClass());
    }
    
    @Test
    public void testDoubleParam_lowercaseType() throws Exception {
        Mockito.doReturn(0d).when(config).getDouble(eq(randomTestKey));
        // Mockito.when(config.getDouble(eq(randomTestKey))).thenReturn(0d);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "double".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "double".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getDouble(randomTestKey);
+       Assert.assertEquals(Double.class, response.getClass());
    }
    
    
@@ -103,97 +115,111 @@ public class ACRParameterLoaderHelperTest {
    public void testBigDecimalParam_lowercaseType() throws Exception {
        Mockito.doReturn(new BigDecimal(0)).when(config).getBigDecimal(eq(randomTestKey));
        // Mockito.when(config.getBigDecimal(eq(randomTestKey))).thenReturn();
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "bigdecimal".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "bigdecimal".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getBigDecimal(randomTestKey);
+       Assert.assertEquals(BigDecimal.class, response.getClass());
    }
    
    @Test
    public void testBigIntegerParam_lowercaseType() throws Exception {
        Mockito.doReturn(new BigInteger("0")).when(config).getBigInteger(eq(randomTestKey));
        // Mockito.when(config.getBigInteger(eq(randomTestKey))).thenReturn();
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "biginteger".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "biginteger".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getBigInteger(randomTestKey);
+       Assert.assertEquals(BigInteger.class, response.getClass());
    }
    
    @Test
    public void testDateParam_lowercaseType() throws Exception {
        String adate = java.text.DateFormat.getDateInstance().format(new Date());
        Mockito.doReturn(adate).when(config).getString(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "date".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "date".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
+       Assert.assertEquals(Date.class, response.getClass());
    }
    
    @Test
    public void testTimeParam_lowercaseType() throws Exception {
        String atime = new java.text.SimpleDateFormat(ACRParameterLoaderHelper.TIME_FORMAT).format(new Date());
        Mockito.doReturn(atime).when(config).getString(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "time".toLowerCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "time".toLowerCase());
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
+       Assert.assertEquals(Date.class, response.getClass());
    }
+   
    
    
    @Test
    public void testStringParam_uppercaseType() throws Exception {
        Mockito.doReturn("unused").when(config).getString(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "string".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "string".toUpperCase());
        
        // I don't really care what the response is here; 
        // I care that the delegate class was called as expected with the generated string key.
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
+       Assert.assertEquals(String.class, response.getClass());
+       Assert.assertEquals("unused", response);
    }
    
    @Test
    public void testStringArrayParam_uppercaseType() throws Exception {
        Mockito.doReturn(new String[0]).when(config).getStringArray(eq(randomTestKey));
        // Mockito.when(config.getStringArray(eq(randomTestKey))).thenReturn();
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "stringarray".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "stringarray".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getStringArray(randomTestKey);
+       Assert.assertEquals(String[].class, response.getClass());       
    }
    
    @Test
    public void testBooleanParam_uppercaseType() throws Exception {
        Mockito.doReturn(Boolean.TRUE).when(config).getBoolean(eq(randomTestKey));
        // Mockito.when(config.getBoolean(eq(randomTestKey))).thenReturn(Boolean.TRUE);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "boolean".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "boolean".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getBoolean(randomTestKey);
+       Assert.assertEquals(Boolean.class, response.getClass());
    }
    
    @Test
    public void testByteParam_uppercaseType() throws Exception {
        Mockito.doReturn( (byte)0 ).when(config).getByte( eq(randomTestKey) );
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "byte".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "byte".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getByte(randomTestKey);
+       Assert.assertEquals(Byte.class, response.getClass());
    }
    
    @Test
    public void testIntParam_uppercaseType() throws Exception {
        Mockito.doReturn(0).when(config).getInt(eq(randomTestKey));
        // Mockito.when(config.getInt(eq(randomTestKey))).thenReturn(0);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "int".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "int".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getInt(randomTestKey);
+       Assert.assertEquals(Integer.class, response.getClass());
    }
    
    @Test
    public void testLongParam_uppercaseType() throws Exception {
        Mockito.doReturn(0L).when(config).getLong(eq(randomTestKey));
        // Mockito.when(config.getLong(eq(randomTestKey))).thenReturn(0L);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "long".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "long".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getLong(randomTestKey);
+       Assert.assertEquals(Long.class, response.getClass());
    }
    
    @Test
    public void testFloatParam_uppercaseType() throws Exception {
        Mockito.doReturn((float) 0).when(config).getFloat(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "float".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "float".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getFloat(randomTestKey);
+       Assert.assertEquals(Float.class, response.getClass());
    }
    
    @Test
    public void testDoubleParam_uppercaseType() throws Exception {
        Mockito.doReturn(0d).when(config).getDouble(eq(randomTestKey));
        // Mockito.when(config.getDouble(eq(randomTestKey))).thenReturn(0d);
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "double".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "double".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getDouble(randomTestKey);
+       Assert.assertEquals(Double.class, response.getClass());
    }
    
    
@@ -201,32 +227,36 @@ public class ACRParameterLoaderHelperTest {
    public void testBigDecimalParam_uppercaseType() throws Exception {
        Mockito.doReturn(new BigDecimal(0)).when(config).getBigDecimal(eq(randomTestKey));
        // Mockito.when(config.getBigDecimal(eq(randomTestKey))).thenReturn();
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "bigdecimal".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "bigdecimal".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getBigDecimal(randomTestKey);
+       Assert.assertEquals(BigDecimal.class, response.getClass());
    }
    
    @Test
    public void testBigIntegerParam_uppercaseType() throws Exception {
        Mockito.doReturn(new BigInteger("0")).when(config).getBigInteger(eq(randomTestKey));
        // Mockito.when(config.getBigInteger(eq(randomTestKey))).thenReturn();
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "biginteger".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "biginteger".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getBigInteger(randomTestKey);
+       Assert.assertEquals(BigInteger.class, response.getClass());
    }
    
    @Test
    public void testDateParam_uppercaseType() throws Exception {
        String adate = java.text.DateFormat.getDateInstance().format(new Date());
        Mockito.doReturn(adate).when(config).getString(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "date".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "date".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
+       Assert.assertEquals(Date.class, response.getClass());
    }
    
    @Test
    public void testTimeParam_uppercaseType() throws Exception {
        String atime = new java.text.SimpleDateFormat(ACRParameterLoaderHelper.TIME_FORMAT).format(new Date());
        Mockito.doReturn(atime).when(config).getString(eq(randomTestKey));
-       ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "time".toUpperCase());
+       Object response = ACRParameterLoaderHelper.getParameterValue(config, randomRuleIndex, randomParameterIndex, "time".toUpperCase());
        Mockito.verify(config, Mockito.times(1)).getString(randomTestKey);
+       Assert.assertEquals(Date.class, response.getClass());
    }
     
 }
