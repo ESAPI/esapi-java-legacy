@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidURIValidator implements ConstraintValidator<ValidURI, String>{
@@ -22,7 +22,7 @@ public class ValidURIValidator implements ConstraintValidator<ValidURI, String>{
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         //isValidURI has no method signature that accepts a ValidationErrorList
         //ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidURI(context, input, allowNull);
+        boolean valid = ESAPI.validator().isValidURI(context, input, allowNull);
         
         /*
         if(!valid){

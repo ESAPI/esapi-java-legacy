@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidSafeHTMLValidator implements ConstraintValidator<ValidSafeHTML, String>{
@@ -23,7 +23,7 @@ public class ValidSafeHTMLValidator implements ConstraintValidator<ValidSafeHTML
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidSafeHTML(context, input, maxLength, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidSafeHTML(context, input, maxLength, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

@@ -7,7 +7,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidDateValidator implements ConstraintValidator<ValidDate, String>{
@@ -31,7 +31,7 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, String
         DateFormat dateFormat = DateFormat.getDateInstance(dateStyle, locale);
 
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidDate(context, input, dateFormat, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidDate(context, input, dateFormat, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

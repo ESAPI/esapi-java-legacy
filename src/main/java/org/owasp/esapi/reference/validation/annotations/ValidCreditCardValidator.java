@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidCreditCardValidator implements ConstraintValidator<ValidCreditCard, String>{
@@ -21,7 +21,7 @@ public class ValidCreditCardValidator implements ConstraintValidator<ValidCredit
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidCreditCard(context, input, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidCreditCard(context, input, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

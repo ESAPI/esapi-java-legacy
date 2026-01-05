@@ -6,7 +6,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidDirectoryPathValidator implements ConstraintValidator<ValidDirectoryPath, String>{
@@ -26,7 +26,7 @@ public class ValidDirectoryPathValidator implements ConstraintValidator<ValidDir
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
         File parent = new File(parentString);
-        boolean valid = DefaultValidator.getInstance().isValidDirectoryPath(context, input, parent, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidDirectoryPath(context, input, parent, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

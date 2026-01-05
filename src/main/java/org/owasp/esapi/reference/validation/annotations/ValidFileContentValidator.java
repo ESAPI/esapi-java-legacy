@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidFileContentValidator implements ConstraintValidator<ValidFileContent, byte[]>{
@@ -23,7 +23,7 @@ public class ValidFileContentValidator implements ConstraintValidator<ValidFileC
     @Override
     public boolean isValid(byte[] input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidFileContent(context, input, maxBytes, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidFileContent(context, input, maxBytes, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

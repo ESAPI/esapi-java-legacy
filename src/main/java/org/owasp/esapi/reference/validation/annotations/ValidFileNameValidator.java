@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidFileNameValidator implements ConstraintValidator<ValidFileName, String>{
@@ -29,10 +29,10 @@ public class ValidFileNameValidator implements ConstraintValidator<ValidFileName
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid;
         if(allowedExtensions.length == 0){
-            valid = DefaultValidator.getInstance().isValidFileName(context, input, allowNull, errorList);
+            valid = ESAPI.validator().isValidFileName(context, input, allowNull, errorList);
         } else {
             List<String> allowedExtensionsList = new ArrayList<>(Arrays.asList(allowedExtensions));
-            valid = DefaultValidator.getInstance().isValidFileName(context, input, allowedExtensionsList, allowNull, errorList);
+            valid = ESAPI.validator().isValidFileName(context, input, allowedExtensionsList, allowNull, errorList);
         }
         
         if(!valid){

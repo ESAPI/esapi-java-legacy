@@ -7,7 +7,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidListItemValidator implements ConstraintValidator<ValidListItem, String>{
@@ -25,7 +25,7 @@ public class ValidListItemValidator implements ConstraintValidator<ValidListItem
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
         List<String> list = Arrays.asList(listArray);
-        boolean valid = DefaultValidator.getInstance().isValidListItem(context, input, list, errorList);
+        boolean valid = ESAPI.validator().isValidListItem(context, input, list, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

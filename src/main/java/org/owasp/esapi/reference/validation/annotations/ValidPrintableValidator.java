@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidPrintableValidator implements ConstraintValidator<ValidPrintable, char[]>{
@@ -23,7 +23,7 @@ public class ValidPrintableValidator implements ConstraintValidator<ValidPrintab
     @Override
     public boolean isValid(char[] input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidPrintable(context, input, maxLength, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidPrintable(context, input, maxLength, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

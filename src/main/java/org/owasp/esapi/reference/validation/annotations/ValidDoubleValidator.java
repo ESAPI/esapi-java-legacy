@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidDoubleValidator implements ConstraintValidator<ValidDouble, String>{
@@ -25,7 +25,7 @@ public class ValidDoubleValidator implements ConstraintValidator<ValidDouble, St
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = DefaultValidator.getInstance().isValidDouble(context, input, minValue, maxValue, allowNull, errorList);
+        boolean valid = ESAPI.validator().isValidDouble(context, input, minValue, maxValue, allowNull, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);

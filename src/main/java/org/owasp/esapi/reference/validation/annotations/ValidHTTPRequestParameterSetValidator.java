@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 import org.owasp.esapi.ValidationErrorList;
-import org.owasp.esapi.reference.DefaultValidator;
+import org.owasp.esapi.ESAPI;
 
 
 public class ValidHTTPRequestParameterSetValidator implements ConstraintValidator<ValidHTTPRequestParameterSet, HttpServletRequest>{
@@ -30,7 +30,7 @@ public class ValidHTTPRequestParameterSetValidator implements ConstraintValidato
         ValidationErrorList errorList = new ValidationErrorList();
         Set<String> requiredNamesSet = new HashSet<>(Arrays.asList(requiredNames));
         Set<String> optionalNamesSet = new HashSet<>(Arrays.asList(optionalNames));
-        boolean valid = DefaultValidator.getInstance().isValidHTTPRequestParameterSet(context, input, requiredNamesSet, optionalNamesSet, errorList);
+        boolean valid = ESAPI.validator().isValidHTTPRequestParameterSet(context, input, requiredNamesSet, optionalNamesSet, errorList);
         
         if(!valid){
             ValidationUtil.addViolatons(errorList, constraintValidatorContext);
