@@ -10,8 +10,12 @@ public class ValidationUtil {
     private ValidationUtil(){}
 
     public static void addViolatons(ValidationErrorList errorList, ConstraintValidatorContext constraintValidatorContext){
+        constraintValidatorContext.disableDefaultConstraintViolation();
         for (ValidationException vex : errorList.errors()) {
-            String errorMessage = vex.getLogMessage();
+            String errorMessage = vex.getUserMessage();
+            if (errorMessage == null || errorMessage.isEmpty()) {
+                errorMessage = constraintValidatorContext.getDefaultConstraintMessageTemplate();
+            }
             constraintValidatorContext.buildConstraintViolationWithTemplate(errorMessage).addConstraintViolation();
         }
     }

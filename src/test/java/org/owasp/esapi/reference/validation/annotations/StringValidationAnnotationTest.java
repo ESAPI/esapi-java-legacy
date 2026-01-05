@@ -41,14 +41,14 @@ public class StringValidationAnnotationTest extends TestCase {
     public void testInvalidStringType(){
         Person p = new Person(invalidStringType);
         Set<ConstraintViolation<Person>> violations = validator.validate(p);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
     }
 
     @Test
     public void testInvalidStringLength(){
         Person p = new Person(invalidStringLength);
         Set<ConstraintViolation<Person>> violations = validator.validate(p);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
     }
 
     @Test
@@ -58,7 +58,7 @@ public class StringValidationAnnotationTest extends TestCase {
         people.add(p);
         Department d = new Department(people);
         Set<ConstraintViolation<Department>> violations = validator.validate(d);
-        assertEquals(2, violations.size());
+        assertEquals(1, violations.size());
     }
 }
 
