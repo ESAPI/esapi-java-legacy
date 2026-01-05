@@ -22,7 +22,7 @@ import javax.validation.Payload;
 @Documented
 public @interface ValidURI {
  
-    String message() default "";
+    String message() default "Invalid URI";
  
     Class<?>[] groups() default {};
     

@@ -27,11 +27,14 @@ public class ValidURIValidator implements ConstraintValidator<ValidURI, String>{
         //ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidURI(context, input, allowNull);
         
-        /*
-        if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+        if (!valid) {
+            constraintValidatorContext.disableDefaultConstraintViolation();
+            String message = constraintValidatorContext.getDefaultConstraintMessageTemplate();
+            if (message == null || message.isEmpty()) {
+                message = "Invalid URI";
+            }
+            constraintValidatorContext.buildConstraintViolationWithTemplate(message).addConstraintViolation();
         }
-        */
         
         return valid;
     }
