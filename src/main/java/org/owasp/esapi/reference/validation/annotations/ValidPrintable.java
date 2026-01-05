@@ -18,7 +18,7 @@ import javax.validation.Payload;
 
 @Target({METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE})
 @Retention(RUNTIME)
-@Constraint(validatedBy = ValidPrintableValidator.class)
+@Constraint(validatedBy = {ValidPrintableValidator.class, ValidPrintableStringValidator.class})
 @Documented
 public @interface ValidPrintable {
  
