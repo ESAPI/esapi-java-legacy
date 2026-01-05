@@ -30,7 +30,7 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, String
         if (input == null) {
             return true;
         }
-        Locale locale = new Locale(localeString);
+        Locale locale = toLocale(localeString);
         DateFormat dateFormat = DateFormat.getDateInstance(dateStyle, locale);
 
         ValidationErrorList errorList = new ValidationErrorList();
@@ -41,5 +41,17 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, String
         }
         
         return valid;
+    }
+
+    private static Locale toLocale(String localeValue) {
+        if (localeValue == null) {
+            return Locale.getDefault();
+        }
+        String normalized = localeValue.trim();
+        if (normalized.isEmpty()) {
+            return Locale.getDefault();
+        }
+        Locale locale = Locale.forLanguageTag(normalized.replace('_', '-'));
+        return Locale.ROOT.equals(locale) ? Locale.getDefault() : locale;
     }
 }
