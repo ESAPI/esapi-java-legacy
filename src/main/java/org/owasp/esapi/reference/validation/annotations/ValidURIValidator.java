@@ -20,6 +20,9 @@ public class ValidURIValidator implements ConstraintValidator<ValidURI, String>{
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         //isValidURI has no method signature that accepts a ValidationErrorList
         //ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidURI(context, input, allowNull);

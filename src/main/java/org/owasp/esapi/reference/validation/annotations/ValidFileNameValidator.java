@@ -26,6 +26,9 @@ public class ValidFileNameValidator implements ConstraintValidator<ValidFileName
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid;
         if(allowedExtensions.length == 0){

@@ -22,6 +22,9 @@ public class ValidPrintableValidator implements ConstraintValidator<ValidPrintab
  
     @Override
     public boolean isValid(char[] input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidPrintable(context, input, maxLength, allowNull, errorList);
         

@@ -24,6 +24,9 @@ public class ValidDirectoryPathValidator implements ConstraintValidator<ValidDir
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         File parent = new File(parentString);
         boolean valid = ESAPI.validator().isValidDirectoryPath(context, input, parent, allowNull, errorList);

@@ -17,16 +17,24 @@ public class ValidHTTPRequestParameterSetValidator implements ConstraintValidato
     private String context;
     private String[] requiredNames;
     private String[] optionalNames;
+    private boolean allowNull;
 
     @Override
     public void initialize(ValidHTTPRequestParameterSet validHTTPRequestParameters) {
         context = validHTTPRequestParameters.context();
         requiredNames = validHTTPRequestParameters.requiredNames();
         optionalNames = validHTTPRequestParameters.optionalNames();
+        allowNull = validHTTPRequestParameters.allowNull();
     }
  
     @Override
     public boolean isValid(HttpServletRequest input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
+        if (allowNull && input.getParameterMap().isEmpty()) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         Set<String> requiredNamesSet = new HashSet<>(Arrays.asList(requiredNames));
         Set<String> optionalNamesSet = new HashSet<>(Arrays.asList(optionalNames));

@@ -26,6 +26,9 @@ public class ValidStringValidator implements ConstraintValidator<ValidString, St
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidInput(context, input, type, maxLength, allowNull, canonicalize, errorList);
         

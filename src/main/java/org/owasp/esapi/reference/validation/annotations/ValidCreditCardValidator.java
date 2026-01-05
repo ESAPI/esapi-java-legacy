@@ -20,6 +20,9 @@ public class ValidCreditCardValidator implements ConstraintValidator<ValidCredit
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidCreditCard(context, input, allowNull, errorList);
         

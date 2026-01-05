@@ -14,15 +14,23 @@ public class ValidListItemValidator implements ConstraintValidator<ValidListItem
      
     private String context;
     private String[] listArray;
+    private boolean allowNull;
 
     @Override
     public void initialize(ValidListItem validListItem) {
         context = validListItem.context();
         listArray = validListItem.list();
+        allowNull = validListItem.allowNull();
     }
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
+        if (allowNull && input.isEmpty()) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         List<String> list = Arrays.asList(listArray);
         boolean valid = ESAPI.validator().isValidListItem(context, input, list, errorList);

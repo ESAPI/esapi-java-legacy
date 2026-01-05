@@ -22,6 +22,9 @@ public class ValidSafeHTMLValidator implements ConstraintValidator<ValidSafeHTML
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidSafeHTML(context, input, maxLength, allowNull, errorList);
         

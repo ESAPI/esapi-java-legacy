@@ -24,6 +24,9 @@ public class ValidDoubleValidator implements ConstraintValidator<ValidDouble, St
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidDouble(context, input, minValue, maxValue, allowNull, errorList);
         

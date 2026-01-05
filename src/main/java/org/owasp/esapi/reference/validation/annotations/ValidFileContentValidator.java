@@ -22,6 +22,9 @@ public class ValidFileContentValidator implements ConstraintValidator<ValidFileC
  
     @Override
     public boolean isValid(byte[] input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         ValidationErrorList errorList = new ValidationErrorList();
         boolean valid = ESAPI.validator().isValidFileContent(context, input, maxBytes, allowNull, errorList);
         

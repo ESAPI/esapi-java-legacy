@@ -27,6 +27,9 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, String
  
     @Override
     public boolean isValid(String input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
         Locale locale = new Locale(localeString);
         DateFormat dateFormat = DateFormat.getDateInstance(dateStyle, locale);
 
