@@ -36,7 +36,7 @@ public class ValidListItemValidator implements ConstraintValidator<ValidListItem
         boolean valid = ESAPI.validator().isValidListItem(context, input, list, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

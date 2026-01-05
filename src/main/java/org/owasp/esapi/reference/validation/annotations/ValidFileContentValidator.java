@@ -29,7 +29,7 @@ public class ValidFileContentValidator implements ConstraintValidator<ValidFileC
         boolean valid = ESAPI.validator().isValidFileContent(context, input, maxBytes, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

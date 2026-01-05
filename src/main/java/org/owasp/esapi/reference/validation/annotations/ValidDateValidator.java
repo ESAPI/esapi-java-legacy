@@ -37,7 +37,7 @@ public class ValidDateValidator implements ConstraintValidator<ValidDate, String
         boolean valid = ESAPI.validator().isValidDate(context, input, dateFormat, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

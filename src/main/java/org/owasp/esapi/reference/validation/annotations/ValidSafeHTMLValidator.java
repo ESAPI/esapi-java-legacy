@@ -29,7 +29,7 @@ public class ValidSafeHTMLValidator implements ConstraintValidator<ValidSafeHTML
         boolean valid = ESAPI.validator().isValidSafeHTML(context, input, maxLength, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

@@ -29,7 +29,7 @@ public class ValidPrintableStringValidator implements ConstraintValidator<ValidP
         boolean valid = ESAPI.validator().isValidPrintable(context, input, maxLength, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

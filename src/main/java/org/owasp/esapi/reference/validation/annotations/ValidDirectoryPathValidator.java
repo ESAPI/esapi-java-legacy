@@ -32,7 +32,7 @@ public class ValidDirectoryPathValidator implements ConstraintValidator<ValidDir
         boolean valid = ESAPI.validator().isValidDirectoryPath(context, input, parent, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

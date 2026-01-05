@@ -27,7 +27,7 @@ public class ValidRedirectLocationValidator implements ConstraintValidator<Valid
         boolean valid = ESAPI.validator().isValidRedirectLocation(context, input, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

@@ -38,7 +38,7 @@ public class ValidFileUploadValidator implements ConstraintValidator<ValidFileUp
         boolean valid = ESAPI.validator().isValidFileUpload(context, directoryPath, fileName, parent, input, maxBytes, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

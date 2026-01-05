@@ -9,7 +9,7 @@ public class ValidationUtil {
 
     private ValidationUtil(){}
 
-    public static void addViolatons(ValidationErrorList errorList, ConstraintValidatorContext constraintValidatorContext){
+    public static void addViolations(ValidationErrorList errorList, ConstraintValidatorContext constraintValidatorContext){
         constraintValidatorContext.disableDefaultConstraintViolation();
         for (ValidationException vex : errorList.errors()) {
             String errorMessage = vex.getUserMessage();

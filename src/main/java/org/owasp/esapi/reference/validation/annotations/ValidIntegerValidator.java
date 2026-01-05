@@ -31,7 +31,7 @@ public class ValidIntegerValidator implements ConstraintValidator<ValidInteger, 
         boolean valid = ESAPI.validator().isValidInteger(context, input, minValue, maxValue, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

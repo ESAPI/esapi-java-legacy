@@ -39,7 +39,7 @@ public class ValidFileNameValidator implements ConstraintValidator<ValidFileName
         }
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

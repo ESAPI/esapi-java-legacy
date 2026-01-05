@@ -31,7 +31,7 @@ public class ValidDoubleValidator implements ConstraintValidator<ValidDouble, St
         boolean valid = ESAPI.validator().isValidDouble(context, input, minValue, maxValue, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

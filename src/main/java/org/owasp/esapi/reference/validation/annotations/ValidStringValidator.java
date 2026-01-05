@@ -33,7 +33,7 @@ public class ValidStringValidator implements ConstraintValidator<ValidString, St
         boolean valid = ESAPI.validator().isValidInput(context, input, type, maxLength, allowNull, canonicalize, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

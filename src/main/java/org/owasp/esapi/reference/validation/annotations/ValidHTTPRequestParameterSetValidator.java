@@ -41,7 +41,7 @@ public class ValidHTTPRequestParameterSetValidator implements ConstraintValidato
         boolean valid = ESAPI.validator().isValidHTTPRequestParameterSet(context, input, requiredNamesSet, optionalNamesSet, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;

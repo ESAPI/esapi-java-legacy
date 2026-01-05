@@ -27,7 +27,7 @@ public class ValidCreditCardValidator implements ConstraintValidator<ValidCredit
         boolean valid = ESAPI.validator().isValidCreditCard(context, input, allowNull, errorList);
         
         if(!valid){
-            ValidationUtil.addViolatons(errorList, constraintValidatorContext);
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
         }
         
         return valid;
