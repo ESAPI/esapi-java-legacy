@@ -5,12 +5,15 @@ import static org.owasp.esapi.PropNames.DISABLE_INTRUSION_DETECTION;
 
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
+import javax.validation.Valid;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
@@ -190,6 +193,33 @@ public class ValidationAnnotationsTest {
         assertViolations(bean, 0);
         bean.value = "javascript:alert(1)";
         assertViolations(bean, 1);
+    }
+
+    @Test
+    public void testValidString() {
+        Person person = new Person("John");
+        assertViolations(person, 0);
+    }
+
+    @Test
+    public void testInvalidStringType() {
+        Person person = new Person("John<script>");
+        assertViolations(person, 1);
+    }
+
+    @Test
+    public void testInvalidStringLength() {
+        Person person = new Person("John John John John John John John");
+        assertViolations(person, 1);
+    }
+
+    @Test
+    public void testInvalidStringCascading() {
+        Person person = new Person("John John John John John John John");
+        List<Person> people = new ArrayList<>();
+        people.add(person);
+        Department department = new Department(people);
+        assertViolations(department, 1);
     }
 
     @Test
@@ -379,6 +409,24 @@ public class ValidationAnnotationsTest {
 
         UriBean(String value) {
             this.value = value;
+        }
+    }
+
+    private static class Person {
+        @ValidString(context = "name", type = "SafeString", maxLength = 32, allowNull = false)
+        private String name;
+
+        Person(String name) {
+            this.name = name;
+        }
+    }
+
+    private static class Department {
+        @Valid
+        private List<Person> people;
+
+        Department(List<Person> people) {
+            this.people = people;
         }
     }
 
