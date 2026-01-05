@@ -26,7 +26,8 @@ public class ValidSafeHTMLValidator implements ConstraintValidator<ValidSafeHTML
             return true;
         }
         ValidationErrorList errorList = new ValidationErrorList();
-        boolean valid = ESAPI.validator().isValidSafeHTML(context, input, maxLength, allowNull, errorList);
+        ESAPI.validator().getValidSafeHTML(context, input, maxLength, allowNull, errorList);
+        boolean valid = errorList.isEmpty();
         
         if(!valid){
             ValidationUtil.addViolations(errorList, constraintValidatorContext);
