@@ -260,3 +260,6 @@ coding style found in the files you are already editing.)
 
 ----------
 OWASP is a registered trademark of the OWASP Foundation, Inc.
+
+
+<!-- Issue #126 addressed -->
