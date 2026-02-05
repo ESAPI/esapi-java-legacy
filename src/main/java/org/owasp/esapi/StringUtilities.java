@@ -39,6 +39,9 @@ public class StringUtilities {
      * @return the stripped value
      */
     public static String stripControls( String input ) {
+        if ( input == null ) {
+            return null;
+        }
         StringBuilder sb = new StringBuilder();
         for ( int i=0; i<input.length(); i++ ) {
             char c = input.charAt( i );
