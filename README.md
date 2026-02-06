@@ -150,7 +150,7 @@ add
 ```xml
     <classifier>jakarta</classifier>
 ```
-and include whatever jakara.servlet:jakarta.servlet-api version you are using with
+and include whatever jakarta.servlet:jakarta.servlet-api version you are using with
 ```xml
     <scope>provided</scope>
 ```
