@@ -98,4 +98,11 @@ public class StringUtilitiesTest extends TestCase {
         assertEquals( "     ", StringUtilities.stripControls( "     " ) );
         assertEquals( null, StringUtilities.stripControls( null ) );
     }
+
+    public void testIsEmpty() {
+        assertTrue(StringUtilities.isEmpty(null));
+        assertTrue(StringUtilities.isEmpty(""));
+        assertFalse(StringUtilities.isEmpty(" "));
+        assertFalse(StringUtilities.isEmpty("foo"));
+    }
 }
