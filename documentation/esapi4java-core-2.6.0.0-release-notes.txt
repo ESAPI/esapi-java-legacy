@@ -1,9 +1,8 @@
 Release notes for ESAPI 2.6.0.0
     Release date: 2024-11-25
     Project leaders:
-        -Kevin W. Wall <kevin.w.wall@gmail.com>
-        -Matt Seil <matt.seil@owasp.org>
-
+        -Montell Lanard Lumpkin 
+lumpkinmontell8@gmail.com
 Previous release: ESAPI 2.5.5.0, 2024-10-08
 
 
