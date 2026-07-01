@@ -105,27 +105,62 @@ public class ValidatorTest {
         Validator instance = ESAPI.validator();
         ValidationErrorList errors = new ValidationErrorList();
 
+        // Validator.CreditCard=^(\\d{4}[- ]?){3}\\d{4}$
+        // These have correct check digit
         assertTrue(instance.isValidCreditCard("cctest1", "1234 9876 0000 0008", false));
-        assertTrue(instance.isValidCreditCard("cctest2", "1234987600000008", false));
-        assertFalse(instance.isValidCreditCard("cctest3", "12349876000000081", false));
-        assertFalse(instance.isValidCreditCard("cctest4", "4417 1234 5678 9112", false));
+        assertTrue(instance.isValidCreditCard("cctest2", "1234-9876-0000-0008", false));
+        assertTrue(instance.isValidCreditCard("cctest3", "1234987600000008", false));
+        assertTrue(instance.isValidCreditCard("cctest4", "12349876 00000008", false));
+        assertTrue(instance.isValidCreditCard("cctest5", "12349876-00000008", false));
+        assertTrue(instance.isValidCreditCard("cctest6", "1234 98760000 0008", false));
+        assertTrue(instance.isValidCreditCard("cctest7", "1234-98760000-0008", false));
 
-        instance.getValidCreditCard("cctest5", "1234 9876 0000 0008", false, errors);
+        // A curve ball... use a tab and non-breaking space
+        assertFalse(instance.isValidCreditCard("cctest8", "1234\t9876\t0000\t0008", false));
+        assertFalse(instance.isValidCreditCard("cctest9", "1234\u00A09876\u00A00000\u00A00008", false));
+
+        // 1234987600000008 dec is 0x46336F5333408 hex
+        assertFalse(instance.isValidCreditCard("cctest10", "46336F5333408", false));
+        assertFalse(instance.isValidCreditCard("cctest11", "0x46336F5333408", false));
+
+        // And other negative tests, like extra digits, wrong separators and bad checksum
+        assertFalse(instance.isValidCreditCard("cctest12", "1234*9876*0000*0008", false));
+        assertFalse(instance.isValidCreditCard("cctest13", "1234/9876/0000/0008", false));
+        assertFalse(instance.isValidCreditCard("cctest14", "12349876000000081", false));
+        assertFalse(instance.isValidCreditCard("cctest15", "4417 1234 5678 9112", false));
+
+        try {
+            // Verify canonicalization
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest16", "1234987600000008", false));
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest17", "1234 9876 0000 0008", false));
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest18", "1234-9876-0000-0008", false));
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest19", "12349876 00000008", false));
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest20", "12349876-00000008", false));
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest21", "1234 98760000 0008", false));
+            assertEquals("1234987600000008", instance.getValidCreditCard("cctest22", "1234-98760000-0008", false));
+        }
+        catch (ValidationException e) {
+            fail("Verify canonicalization");
+        }
+
+        // Check error lists
+        instance.getValidCreditCard("cctest23", "1234 9876 0000 0008", false, errors);
         assertEquals(0, errors.size());
-        instance.getValidCreditCard("cctest6", "1234987600000008", false, errors);
+        instance.getValidCreditCard("cctest24", "1234987600000008", false, errors);
         assertEquals(0, errors.size());
-        instance.getValidCreditCard("cctest7", "12349876000000081", false, errors);
+        instance.getValidCreditCard("cctest25", "12349876000000081", false, errors);
         assertEquals(1, errors.size());
-        instance.getValidCreditCard("cctest8", "4417 1234 5678 9112", false, errors);
+        instance.getValidCreditCard("cctest26", "4417 1234 5678 9112", false, errors);
         assertEquals(2, errors.size());
 
-        assertTrue(instance.isValidCreditCard("cctest1", "1234 9876 0000 0008", false, errors));
+        // Check error lists
+        assertTrue(instance.isValidCreditCard("cctest27", "1234 9876 0000 0008", false, errors));
         assertEquals(2, errors.size());
-        assertTrue(instance.isValidCreditCard("cctest2", "1234987600000008", false, errors));
+        assertTrue(instance.isValidCreditCard("cctest28", "1234987600000008", false, errors));
         assertEquals(2, errors.size());
-        assertFalse(instance.isValidCreditCard("cctest3", "12349876000000081", false, errors));
+        assertFalse(instance.isValidCreditCard("cctest29", "12349876000000081", false, errors));
         assertEquals(3, errors.size());
-        assertFalse(instance.isValidCreditCard("cctest4", "4417 1234 5678 9112", false, errors));
+        assertFalse(instance.isValidCreditCard("cctest30", "4417 1234 5678 9112", false, errors));
         assertEquals(4, errors.size());
     }
 

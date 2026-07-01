@@ -382,6 +382,12 @@ public interface Validator {
     /**
      * Returns a canonicalized and validated credit card number as a String.
      * <p>
+     * Valid input is four groups of four decimal digits. Each group can be separated by an optional space or hyphen.
+     * Validation is performed using a regular expression. Validation includes the Checksum Digit using the Luhn
+     * Algorithm, but <i>does not</i> include validating the Bank Identification Number (BIN) or the Account
+     * Identifier. Examples of valid input are {@code 1234 9876 0000 0008}, {@code 1234-9876-0000-0008} and
+     * {@code 1234987600000008}. Canonicalized output is {@code 1234987600000008}.
+     * </p><p>
      * Invalid input will generate a descriptive ValidationException,
      * and input that is clearly an attack will generate a descriptive IntrusionException.
      *
