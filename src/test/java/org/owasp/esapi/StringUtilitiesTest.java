@@ -87,4 +87,22 @@ public class StringUtilitiesTest extends TestCase {
         assertEquals( "   Test   ", StringUtilities.replaceNull( "   Test   ", "Replaced" ) );
         assertEquals( "Replaced", StringUtilities.replaceNull( "     NULL ", "Replaced" ) );
     }
+
+    public void testStripControls() {
+        // valid characters are preserved
+        assertEquals( "\u0021abc\u007e", StringUtilities.stripControls( "\u0021abc\u007e" ) );
+        // control characters become spaces
+        assertEquals( " a b c ", StringUtilities.stripControls( "\u0000a\u0020b\u007fc\uffff" ) );
+        // blank strings are preserved
+        assertEquals( "", StringUtilities.stripControls( "" ) );
+        assertEquals( "     ", StringUtilities.stripControls( "     " ) );
+        assertEquals( null, StringUtilities.stripControls( null ) );
+    }
+
+    public void testIsEmpty() {
+        assertTrue(StringUtilities.isEmpty(null));
+        assertTrue(StringUtilities.isEmpty(""));
+        assertFalse(StringUtilities.isEmpty(" "));
+        assertFalse(StringUtilities.isEmpty("foo"));
+    }
 }
