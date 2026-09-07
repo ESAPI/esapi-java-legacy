@@ -239,10 +239,9 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
     String getUsernameParameterName();
 
     /**
-     * Gets the encryption algorithm used by ESAPI to protect data. This is
-     * mostly used for compatibility with ESAPI 1.4; ESAPI 2.0 prefers to
-     * use "cipher transformation" since it supports multiple cipher modes
-     * and padding schemes.
+     * Gets the encryption algorithm used by ESAPI to protect data.
+     * ESAPI 2.x prefers to use "cipher transformation" since it supports
+     * multiple cipher modes and padding schemes.
      *
      * @return the current encryption algorithm
      * @deprecated Use SecurityConfiguration.getStringProp("appropriate_esapi_prop_name") instead.
@@ -271,8 +270,8 @@ public interface SecurityConfiguration extends EsapiPropertyLoader {
      * </p><p>
      * Examples are:
      * <pre>
-     *         "AES/ECB/NoPadding"        // Default for ESAPI Java 1.4 (insecure)
-     *         "AES/CBC/PKCS5Padding"    // Default for ESAPI Java 2.0
+     *         "AES/ECB/NoPadding"        // Insecure; do not use
+     *         "AES/CBC/PKCS5Padding"    // Default for ESAPI 2.x
      *         "DESede/OFB32/PKCS5Padding"
      * </pre>
      * <b>NOTE:</b> Occasionally, in cryptographic literature, you may also
