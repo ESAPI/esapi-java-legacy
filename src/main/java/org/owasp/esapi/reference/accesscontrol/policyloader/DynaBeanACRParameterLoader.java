@@ -1,6 +1,6 @@
 package org.owasp.esapi.reference.accesscontrol.policyloader;
 
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.reference.accesscontrol.DynaBeanACRParameter;

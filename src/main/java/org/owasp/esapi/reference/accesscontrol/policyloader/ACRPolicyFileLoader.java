@@ -3,8 +3,12 @@ package org.owasp.esapi.reference.accesscontrol.policyloader;
 import java.io.File;
 import java.util.Collection;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultConversionHandler;
+import org.apache.commons.configuration2.convert.LegacyListDelimiterHandler;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.XMLConfiguration;
 import org.owasp.esapi.ESAPI;
 import org.owasp.esapi.Logger;
 import org.owasp.esapi.errors.AccessControlException;
@@ -15,15 +19,22 @@ final public class ACRPolicyFileLoader {
     public PolicyDTO load() throws AccessControlException {
         PolicyDTO policyDTO = new PolicyDTO();
         XMLConfiguration config;
-        File file = ESAPI.securityConfiguration().getResourceFile("ESAPI-AccessControlPolicy.xml");
+        final String configFileName = "ESAPI-AccessControlPolicy.xml";
+        File file = ESAPI.securityConfiguration().getResourceFile(configFileName);
         try
         {
-            config = new XMLConfiguration(file);
+            final DefaultConversionHandler conversionHandler = new DefaultConversionHandler();
+            conversionHandler.setListDelimiterHandler(new LegacyListDelimiterHandler(','));
+            config = new FileBasedConfigurationBuilder<>(XMLConfiguration.class)
+                    .configure(new Parameters().xml()
+                            .setConversionHandler(conversionHandler)
+                            .setFile(file)
+                            .setFileName(configFileName)).getConfiguration();
         }
         catch(ConfigurationException cex)
         {
             if(file == null) {
-                throw new AccessControlException("Unable to load configuration file for the following: " + "ESAPI-AccessControlPolicy.xml", "", cex);
+                throw new AccessControlException("Unable to load configuration file for the following: " + configFileName, "", cex);
             }
             throw new AccessControlException("Unable to load configuration file from the following location: " + file.getAbsolutePath(), "", cex);
         }
