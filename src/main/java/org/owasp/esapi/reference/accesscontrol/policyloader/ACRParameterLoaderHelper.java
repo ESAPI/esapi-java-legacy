@@ -4,9 +4,14 @@ import org.apache.commons.configuration.XMLConfiguration;
 
 final public class ACRParameterLoaderHelper {
 
+    protected static String DEFAULT_KEY_FORMAT = "AccessControlRules.AccessControlRule(%s).Parameters.Parameter(%s)[@value]";
+    protected static String TIME_FORMAT = "h:mm a";
+    
+    
+    private ACRParameterLoaderHelper() { /* NO-OP Utility Ctr.*/ }
+    
     public static Object getParameterValue(XMLConfiguration config, int currentRule, int currentParameter, String parameterType) throws Exception {
-        String key = "AccessControlRules.AccessControlRule(" +
-            currentRule + ").Parameters.Parameter(" + currentParameter + ")[@value]";
+        String key = String.format(DEFAULT_KEY_FORMAT,  currentRule, currentParameter);
         Object parameterValue;
         if("String".equalsIgnoreCase(parameterType)) {
             parameterValue = config.getString(key);
@@ -31,7 +36,7 @@ final public class ACRParameterLoaderHelper {
         } else if("Date".equalsIgnoreCase(parameterType)){
             parameterValue = java.text.DateFormat.getDateInstance().parse(config.getString(key));
         } else if("Time".equalsIgnoreCase(parameterType)){
-            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("h:mm a");
+            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat(TIME_FORMAT);
             parameterValue = sdf.parseObject(config.getString(key));
 //            parameterValue = java.text.DateFormat.getTimeInstance().parse(config.getString(key));
         }
