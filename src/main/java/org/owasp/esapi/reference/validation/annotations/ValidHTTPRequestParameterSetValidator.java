@@ -1,0 +1,49 @@
+package org.owasp.esapi.reference.validation.annotations;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import org.owasp.esapi.ValidationErrorList;
+import org.owasp.esapi.ESAPI;
+
+
+public class ValidHTTPRequestParameterSetValidator implements ConstraintValidator<ValidHTTPRequestParameterSet, HttpServletRequest>{
+     
+    private String context;
+    private String[] requiredNames;
+    private String[] optionalNames;
+    private boolean allowNull;
+
+    @Override
+    public void initialize(ValidHTTPRequestParameterSet validHTTPRequestParameters) {
+        context = validHTTPRequestParameters.context();
+        requiredNames = validHTTPRequestParameters.requiredNames();
+        optionalNames = validHTTPRequestParameters.optionalNames();
+        allowNull = validHTTPRequestParameters.allowNull();
+    }
+ 
+    @Override
+    public boolean isValid(HttpServletRequest input, ConstraintValidatorContext constraintValidatorContext) {
+        if (input == null) {
+            return true;
+        }
+        if (allowNull && input.getParameterMap().isEmpty()) {
+            return true;
+        }
+        ValidationErrorList errorList = new ValidationErrorList();
+        Set<String> requiredNamesSet = new HashSet<>(Arrays.asList(requiredNames));
+        Set<String> optionalNamesSet = new HashSet<>(Arrays.asList(optionalNames));
+        boolean valid = ESAPI.validator().isValidHTTPRequestParameterSet(context, input, requiredNamesSet, optionalNamesSet, errorList);
+        
+        if(!valid){
+            ValidationUtil.addViolations(errorList, constraintValidatorContext);
+        }
+        
+        return valid;
+    }
+}
