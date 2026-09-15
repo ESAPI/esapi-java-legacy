@@ -10,7 +10,13 @@ import java.util.regex.Pattern;
  * String mutation utility which can be used to replace all occurrences of a
  * defined regular expression with a marker string, and also restore the
  * original string content.
- *
+ * <p>
+ * The default marker is random per instance, so content captured by one
+ * instance can only be restored by that same instance. If captured content is
+ * persisted outside the JVM (for example, written to a file between sessions)
+ * and restored by a new instance, call {@link #setReplacementMarker(String)}
+ * with the same fixed marker on both instances. Note that a fixed marker
+ * brings back the collision this random default prevents.
  */
 public class EncodingPatternPreservation {
     /** Pattern that is used to identify which content should be replaced. */
