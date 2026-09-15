@@ -2,6 +2,7 @@ package org.owasp.esapi.codecs.ref;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -9,15 +10,44 @@ import java.util.regex.Pattern;
  * String mutation utility which can be used to replace all occurrences of a
  * defined regular expression with a marker string, and also restore the
  * original string content.
- *
+ * <p>
+ * The default marker is random per instance, so content captured by one
+ * instance can only be restored by that same instance. If captured content is
+ * persisted outside the JVM (for example, written to a file between sessions)
+ * and restored by a new instance, call {@link #setReplacementMarker(String)}
+ * with the same fixed marker on both instances. Note that a fixed marker
+ * brings back the collision this random default prevents.
  */
 public class EncodingPatternPreservation {
-    /** Default replacement marker. */
-    private static final String REPLACEMENT_MARKER = EncodingPatternPreservation.class.getSimpleName();
     /** Pattern that is used to identify which content should be replaced. */
     private final Pattern noEncodeContent;
-    /** The Marker used to replace found Pattern references. */
-    private String replacementMarker = REPLACEMENT_MARKER;
+    /**
+     * The Marker used to replace found Pattern references. Defaults to a
+     * per-instance random value so that input content cannot collide with it;
+     * see {@link #captureAndReplaceMatches(String)}.
+     */
+    private String replacementMarker = defaultReplacementMarker();
+
+    /**
+     * Builds an unpredictable default marker. Using a fixed, publicly-known
+     * marker (e.g. this class's simple name) would let an attacker embed that
+     * literal string in the input ahead of real matched content; since
+     * {@link #restoreOriginalContent(String)} replaces markers in encounter
+     * order via {@code replaceFirst}, that attacker-supplied marker would be
+     * replaced first, desynchronizing every subsequent restoration.
+     * <p>
+     * The marker is kept purely alphanumeric (no hyphens) because callers
+     * such as {@link org.owasp.esapi.codecs.CSSCodec} run an encoding pass
+     * over the marker before it is restored; a hyphen would itself be
+     * escaped by that pass, breaking the exact-match lookup in
+     * {@link #restoreOriginalContent(String)}.
+     *
+     * @return A marker string that is not derivable from public information.
+     */
+    private static String defaultReplacementMarker() {
+        return EncodingPatternPreservation.class.getSimpleName()
+                + UUID.randomUUID().toString().replace("-", "");
+    }
 
     /**
      * The ordered-list of elements that were replaced in the last call to
