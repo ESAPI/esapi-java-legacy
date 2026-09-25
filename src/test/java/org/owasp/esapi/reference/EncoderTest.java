@@ -18,11 +18,15 @@ package org.owasp.esapi.reference;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.junit.Ignore;
 import org.owasp.esapi.ESAPI;
@@ -41,6 +45,8 @@ import org.owasp.esapi.codecs.WindowsCodec;
 import org.owasp.esapi.errors.EncodingException;
 import org.owasp.esapi.errors.IntrusionException;
 import org.owasp.esapi.Randomizer;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 
 import junit.framework.Test;
@@ -712,6 +718,63 @@ public class EncoderTest extends TestCase {
         System.out.println("encodeFormXMLAttributePound");
         Encoder instance = ESAPI.encoder();
         assertEquals("&#xa3;", instance.encodeForXMLAttribute("\u00A3"));
+    }
+
+    /**
+     * Mirrors https://github.com/OWASP/owasp-java-encoder/issues/136 (HTML half).
+     * An HTML5 parser remaps the numeric reference {@code &#133;} (U+0085, NEL) to
+     * U+2026 (HORIZONTAL ELLIPSIS) via the windows-1252 table, so NEL must never be
+     * emitted as that reference. ESAPI replaces every C1 control, NEL included,
+     * with U+FFFD.
+     */
+    public void testEncodeForHTMLNELIsNotEmittedAsWindows1252Reference() {
+        System.out.println("encodeForHTMLNELIsNotEmittedAsWindows1252Reference");
+        Encoder instance = ESAPI.encoder();
+        String input = "x\u0085y";
+
+        String attr = instance.encodeForHTMLAttribute(input);
+        assertEquals("x&#xfffd;y", attr);
+        assertFalse(attr.contains("&#133;"));
+        assertFalse(attr.contains("&#x85;"));
+
+        String content = instance.encodeForHTML(input);
+        assertEquals("x&#xfffd;y", content);
+        assertFalse(content.contains("&#133;"));
+
+        // NEL is treated the same as its C1 neighbours, not singled out.
+        assertEquals(instance.encodeForHTMLAttribute("x\u0084y"), attr);
+        assertEquals(instance.encodeForHTMLAttribute("x\u0086y"), attr);
+    }
+
+    /**
+     * Mirrors https://github.com/OWASP/owasp-java-encoder/issues/136 (XML 1.1 half).
+     * XML 1.1 section 2.11 normalises raw U+0085 (NEL) and U+2028 (LINE SEPARATOR)
+     * to LF on input, and attribute-value normalisation then turns that LF into a
+     * space. Only the character references survive a parse, so both must be
+     * encoded, and the output must round-trip through a real XML 1.1 parser.
+     */
+    public void testEncodeForXMLNELAndLineSeparatorRoundTripInXml11() throws Exception {
+        System.out.println("encodeForXMLNELAndLineSeparatorRoundTripInXml11");
+        Encoder instance = ESAPI.encoder();
+
+        assertEquals("x&#x85;y", instance.encodeForXML("x\u0085y"));
+        assertEquals("x&#x2028;y", instance.encodeForXML("x\u2028y"));
+        assertEquals("x&#x85;y", instance.encodeForXMLAttribute("x\u0085y"));
+        assertEquals("x&#x2028;y", instance.encodeForXMLAttribute("x\u2028y"));
+
+        String input = "a\u0085b\u2028c";
+        String xml = "<?xml version=\"1.1\"?><r a=\"" + instance.encodeForXMLAttribute(input) + "\">"
+                + instance.encodeForXML(input) + "</r>";
+
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        Element root = dbf.newDocumentBuilder()
+                .parse(new InputSource(new StringReader(xml)))
+                .getDocumentElement();
+
+        assertEquals(input, root.getTextContent());
+        assertEquals(input, root.getAttribute("a"));
     }
 
     /**
