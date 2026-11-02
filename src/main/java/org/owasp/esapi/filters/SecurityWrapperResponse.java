@@ -491,10 +491,16 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
      * linear white space with a single SP before interpreting the field value
      * or forwarding the message downstream."
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
-     * @param name
-     * @param value
+     * <p>
+     * As in the Servlet specification, a {@code null} name is ignored and a
+     * {@code null} value removes the header.
+     * @param name the header name; if {@code null}, nothing is done
+     * @param value the header value; if {@code null}, the header is removed
      */
     public void setHeader(String name, String value) {
+        if (name == null) {
+            return;
+        }
         SecurityConfiguration sc = ESAPI.securityConfiguration();
         String strippedName = StringUtilities.stripControls(name);
         String strippedValue = StringUtilities.stripControls(value);
@@ -504,6 +510,13 @@ public class SecurityWrapperResponse extends HttpServletResponseWrapper implemen
             safeName = ESAPI.validator().getValidInput("setHeader", strippedName, "HTTPHeaderName", sc.getIntProp("HttpUtilities.MaxHeaderNameSize"), false);
         } catch (ValidationException e) {
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set invalid header NAME denied: HTTPHeaderName:"+ name, e);
+        }
+
+        if (value == null) {
+            if (StringUtilities.notNullOrEmpty(safeName, true)) {
+                getHttpServletResponse().setHeader(safeName, null);
+            }
+            return;
         }
 
         try {

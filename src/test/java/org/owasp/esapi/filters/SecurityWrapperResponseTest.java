@@ -76,6 +76,36 @@ public class SecurityWrapperResponseTest {
     }
 
     @Test
+    public void testSetHeaderNullValueRemovesHeader() throws Exception {
+        PowerMockito.when(mockValidator.getValidInput(anyString(), ArgumentMatchers.eq(goodHeaderName),
+                ArgumentMatchers.eq(HEADER_NAME_CONTEXT),
+                ArgumentMatchers.eq(SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH),
+                ArgumentMatchers.eq(false))).thenReturn(goodHeaderName);
+
+        PowerMockito.when(mockSecConfig.getIntProp(SEC_CTX_MAX_HEADER_NAME_SIZE_ATTR)).thenReturn(
+                SecurityWrapperRequestTest.SECURITY_CONFIGURATION_TEST_LENGTH);
+
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.setHeader(goodHeaderName, null);
+
+        verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.isNull(), ArgumentMatchers.eq(HEADER_VALUE_CONTEXT), ArgumentMatchers.anyInt(), ArgumentMatchers.anyBoolean());
+        verify(mockResponse, times(1)).setHeader(goodHeaderName, null);
+        verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));
+    }
+
+    @Test
+    public void testSetHeaderNullNameIsIgnored() throws Exception {
+        SecurityWrapperResponse response = new SecurityWrapperResponse(mockResponse);
+
+        response.setHeader(null, goodHeaderValue);
+
+        verify(mockValidator, times(0)).getValidInput(anyString(), ArgumentMatchers.any(), anyString(), ArgumentMatchers.anyInt(), ArgumentMatchers.anyBoolean());
+        verify(mockResponse, times(0)).setHeader(ArgumentMatchers.any(), ArgumentMatchers.any());
+        verify(mockLogger, times(0)).warning(ArgumentMatchers.any(org.owasp.esapi.Logger.EventType.class), anyString(), ArgumentMatchers.any(Exception.class));
+    }
+
+    @Test
     public void testSetHeaderHappyPath() throws Exception {
         String validateNameResponse = goodHeaderName;
         String validateValueResponse = goodHeaderValue;
