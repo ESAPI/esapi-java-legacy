@@ -30,8 +30,8 @@ import java.util.Map;
 /**
  * The HTTPUtilities interface is a collection of methods that provide additional security related to HTTP requests,
  * responses, sessions, cookies, headers, and logging.
- * </p><p>
- * <b>Note:</b> This most of the methods in this interface NOT compatible with the Jakarta Servlet API Spec 5.0 or later, which
+ * <p>
+ * <b>Note:</b> Most of the methods in this interface are NOT compatible with the Jakarta Servlet API Spec 5.0 or later, which
  * uses the jakarta.servlet package namespace rather than the javax.servlet package namespace. For further details,
  * please see the GitHub Discussion issue
  * <a href="https://github.com/ESAPI/esapi-java-legacy/discussions/768">Add support for Jakarta Servlet API Specification #768</a>.
@@ -53,7 +53,7 @@ public interface HTTPUtilities
     int COOKIE = 2;
 
     /**
-     * Calls addCookie with the *current* request.
+     * Calls addCookie with the *current* response.
      *
      * @param cookie The cookie to add
      *
@@ -63,8 +63,11 @@ public interface HTTPUtilities
 
     /**
      * Add a cookie to the response after ensuring that there are no encoded or
-     * illegal characters in the name and name and value. This method also sets
-     * the secure and HttpOnly flags on the cookie.
+     * illegal characters in the name and value. This method also sets
+     * the secure and HttpOnly flags on the cookie when the ESAPI properties
+     * <b>HttpUtilities.ForceSecureCookies</b> and <b>HttpUtilities.ForceHttpOnlyCookies</b>
+     * are set. If the name or value fails validation, the cookie is not added and
+     * a warning is logged; no exception is thrown.
      *
      * @param response The HTTP response to add the cookie to
      * @param cookie The cookie to add
@@ -76,12 +79,16 @@ public interface HTTPUtilities
      * This method should be used on all URLs to be put into all links and forms the application generates.
      *
      * @param href the URL to which the CSRF token will be appended
-     * @return the updated URL with the CSRF token parameter added
+     * @return the updated URL with the CSRF token parameter added, or {@code href} unchanged
+     *         if the current user is anonymous
      */
     String addCSRFToken(String href);
 
     /**
-     * Calls addHeader with the *current* request.
+     * Calls addHeader with the *current* response.
+     *
+     * @param name the name of the header to add
+     * @param value the value of the header to add
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -89,19 +96,25 @@ public interface HTTPUtilities
 
     /**
      * Add a header to the response after ensuring that there are no encoded or
-     * illegal characters in the name and name and value. This implementation
+     * illegal characters in the name and value. This implementation
      * follows the following recommendation: "A recipient MAY replace any linear
      * white space with a single SP before interpreting the field value or
      * forwarding the message downstream."
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+     * If the name or value fails validation, the header is not added and a
+     * warning is logged; no exception is thrown.
      *
-     * @param name
-     * @param value
+     * @param response the HTTP response to add the header to
+     * @param name the name of the header to add
+     * @param value the value of the header to add
      */
     void addHeader(HttpServletResponse response, String name, String value);
 
     /**
      * Calls assertSecureRequest with the *current* request.
+     *
+     * @throws AccessControlException if the current request does not use both SSL and POST
+     *
      * @see HTTPUtilities#assertSecureRequest(HttpServletRequest)
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -109,6 +122,9 @@ public interface HTTPUtilities
 
     /**
      * Calls assertSecureChannel with the *current* request.
+     *
+     * @throws AccessControlException if the current request does not use SSL
+     *
      * @see HTTPUtilities#assertSecureChannel(HttpServletRequest)
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -119,8 +135,9 @@ public interface HTTPUtilities
      * in the querystring from being sniffed, logged, bookmarked, included in referer header, etc...
      * This method should be called for any request that contains sensitive data from a web form.
      *
-     * @param request
-     * @throws AccessControlException if security constraints are not met
+     * @param request the HTTP request to check
+     * @throws AccessControlException if security constraints are not met. The reference implementation
+     *         throws it if the request is {@code null}, its URL does not start with "https", or its method is not POST
      */
     void assertSecureRequest(HttpServletRequest request) throws AccessControlException;
 
@@ -130,13 +147,17 @@ public interface HTTPUtilities
      * that contains sensitive data from a web form or will result in sensitive data in the
      * response page.
      *
-     * @param request
-     * @throws AccessControlException if security constraints are not met
+     * @param request the HTTP request to check
+     * @throws AccessControlException if security constraints are not met. The reference implementation
+     *         throws it if the request is {@code null} or its URL does not start with "https"
      */
     void assertSecureChannel(HttpServletRequest request) throws AccessControlException;
 
     /**
      * Calls changeSessionIdentifier with the *current* request.
+     *
+     * @return the new HttpSession with a changed id
+     * @throws AuthenticationException if the session identifier cannot be changed
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -148,9 +169,9 @@ public interface HTTPUtilities
      * existing session contents. Care should be taken to use this only when the existing session does not contain
      * hazardous contents.
      *
-     * @param request
+     * @param request the HTTP request whose session should be replaced
      * @return the new HttpSession with a changed id
-     * @throws AuthenticationException the exception
+     * @throws AuthenticationException if the session identifier cannot be changed
      */
     HttpSession changeSessionIdentifier(HttpServletRequest request) throws AuthenticationException;
 
@@ -167,6 +188,7 @@ public interface HTTPUtilities
      *
      * @param encrypted hidden field value to decrypt
      * @return decrypted hidden field value stored as a String
+     * @throws IntrusionException if the value does not decrypt properly
      */
     String decryptHiddenField(String encrypted);
 
@@ -175,12 +197,15 @@ public interface HTTPUtilities
      *
      * @param encrypted the encrypted querystring to decrypt
      * @return a Map object containing the decrypted querystring
-     * @throws EncryptionException
+     * @throws EncryptionException if the querystring cannot be decrypted
      */
     Map<String, String> decryptQueryString(String encrypted) throws EncryptionException;
 
     /**
      * Calls decryptStateFromCookie with the *current* request.
+     *
+     * @return a map containing the decrypted cookie state value
+     * @throws EncryptionException if the cookie value cannot be decrypted
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -189,9 +214,10 @@ public interface HTTPUtilities
     /**
      * Retrieves a map of data from a cookie encrypted with encryptStateInCookie().
      *
-     * @param request
-     * @return a map containing the decrypted cookie state value
-     * @throws EncryptionException
+     * @param request the HTTP request containing the {@link #ESAPI_STATE} cookie
+     * @return a map containing the decrypted cookie state value, an empty map if there is
+     *         no such cookie, or {@code null} if the cookie value fails validation
+     * @throws EncryptionException if the cookie value cannot be decrypted
      */
     Map<String, String> decryptStateFromCookie(HttpServletRequest request) throws EncryptionException;
 
@@ -200,7 +226,7 @@ public interface HTTPUtilities
      *
      * @param value the cleartext value of the hidden field
      * @return the encrypted value of the hidden field
-     * @throws EncryptionException
+     * @throws EncryptionException if the value cannot be encrypted
      */
     String encryptHiddenField(String value) throws EncryptionException;
 
@@ -209,12 +235,16 @@ public interface HTTPUtilities
      *
      * @param query the querystring to encrypt
      * @return encrypted querystring stored as a String
-     * @throws EncryptionException
+     * @throws EncryptionException if the querystring cannot be encrypted
      */
     String encryptQueryString(String query) throws EncryptionException;
 
     /**
      * Calls encryptStateInCookie with the *current* response.
+     *
+     * @param cleartext the map of data to encrypt and store
+     * @throws EncryptionException if the data cannot be encrypted or the encrypted
+     *         value is longer than {@link #MAX_COOKIE_LEN}
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -225,20 +255,21 @@ public interface HTTPUtilities
      * place to store state information, as it does not expose it to the user at all.
      * If there is a requirement not to use sessions, or the data should be stored
      * across sessions (for a long time), the use of encrypted cookies is an effective
-     * way to prevent the exposure.
+     * way to prevent the exposure. The data is stored in the {@link #ESAPI_STATE} cookie.
      *
-     * @param response
-     * @param cleartext
-     * @throws EncryptionException
+     * @param response the HTTP response to add the cookie to
+     * @param cleartext the map of data to encrypt and store
+     * @throws EncryptionException if the data cannot be encrypted or the encrypted
+     *         value is longer than {@link #MAX_COOKIE_LEN}
      */
     void encryptStateInCookie(HttpServletResponse response, Map<String, String> cleartext) throws EncryptionException;
 
     /**
-     * Calls getCookie with the *current* response.
+     * Calls getCookie with the *current* request.
      *
      * @param name The cookie to get
-     * @return the requested cookie value
-     * @throws ValidationException
+     * @return the requested cookie value, or {@code null} if there is no such cookie
+     * @throws ValidationException if the cookie value fails validation
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -250,10 +281,10 @@ public interface HTTPUtilities
      * general type defined in ESAPI.properties. This should not be considered a replacement for
      * more specific validation.
      *
-     * @param request
+     * @param request the HTTP request to read the cookie from
      * @param name The cookie to get
-     * @return the requested cookie value
-     * @throws ValidationException
+     * @return the requested cookie value, or {@code null} if there is no such cookie
+     * @throws ValidationException if the cookie value fails validation
      */
     String getCookie(HttpServletRequest request, String name) throws ValidationException;
 
@@ -267,14 +298,14 @@ public interface HTTPUtilities
     /**
      * Retrieves the current HttpServletRequest
      *
-     * @return the current request
+     * @return the current request, or {@code null} if none has been set
      */
     HttpServletRequest getCurrentRequest();
 
     /**
      * Retrieves the current HttpServletResponse
      *
-     * @return the current response
+     * @return the current response, or {@code null} if none has been set
      */
     HttpServletResponse getCurrentResponse();
 
@@ -302,7 +333,8 @@ public interface HTTPUtilities
      * Call {@code getFileUploads} with the specified request, specified upload directory, and default allowed file extensions
      *
      * @param request The applicable HTTP request
-     * @param finalDir The destination directory to leave the uploaded file(s) in.
+     * @param finalDir The destination directory to leave the uploaded file(s) in. If {@code null},
+     *                 the default upload directory is used.
      *
      * @return List of new File objects from upload
      * @throws ValidationException if the file fails validation
@@ -315,20 +347,21 @@ public interface HTTPUtilities
      * is safe before making a permanent copy on the local filesystem. Checks should include length and content checks,
      * possibly virus checking, and path and name checks. Refer to the file checking methods in Validator for more
      * information. <b>Important Note:</b> The ESAPI reference implementation (i.e.,
-     * {@code org.owasp.esapi.referenceDefaultHTTPUtilities} only does some of these things listed above and some of those
+     * {@code org.owasp.esapi.reference.DefaultHTTPUtilities}) only does some of these things listed above and some of those
      * are limited to which {@code getFileUploads} method is called and how you've set your relevant ESAPI properties
      * in your <b>ESAPI.properties</b> file.
-     * <p/><p>
-     * This method uses {@link HTTPUtilities#getCurrentRequest()} to obtain the
+     * <p>
+     * The no-argument {@code getFileUploads()} uses {@link HTTPUtilities#getCurrentRequest()} to obtain the
      * {@link javax.servlet.http.HttpServletRequest HttpServletRequest}
      * object. If the ESAPI property <b>HttpUtilities.FileUploadAllowAnonymousUser</b> is set to {@code false} (the
      * default is {@code true}), then {@code getFileUploads} will call {@code ESAPI.authenticator().getCurrentUser()}
      * to check if the user is authenticated. If that property is set to {@code false} and a call to that function returns
      * an anonymous (i.e., unauthenticated) user, then the file upload is blocked.
-     * <p/><p>
+     * <p>
      * ESAPI properties relevant to this and the other {@code getFileUploads} methods referenced in this table. The
      * last 2 properties are new since release 2.5.2.0:
      * <table border="1">
+     *   <caption>ESAPI properties used by getFileUploads</caption>
      *   <tr>
      *     <th>ESAPI Property Name</th>
      *     <th>ESAPI.properties Default</th>
@@ -349,7 +382,7 @@ public interface HTTPUtilities
      *   </tr>
      *   <tr>
      *     <td>HttpUtilities.ApprovedUploadExtensions</td>
-     *     <td>.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.rtf,.txt,.jpg,.pn</td>
+     *     <td>.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.rtf,.txt,.jpg,.png</td>
      *     <td>.pdf,.txt,.jpg,.png</td>
      *     <td>Comma separated allowed list of file suffixes that may be uploaded.</td>
      *   </tr>
@@ -372,12 +405,12 @@ public interface HTTPUtilities
      *     <td>Controls whether anonymous (i.e., unauthenticated) users may upload files.</td>
      *   </tr>
      * </table>
-     * <p/><p>
+     * <p>
      * As alluded to above, it is important to note that these {@code getFileUploads} methods do not do
-     * everything to keey your application and environment secure. Some of the more obvious omissions are the
+     * everything to keep your application and environment secure. Some of the more obvious omissions are the
      * absence of examining the actual file content to determine the actual file type or running some AV scan
-     * on the uploaded files. You have to add that functionality to you if you want or need that. Some
-     * resource that you may find useful are:
+     * on the uploaded files. You have to add that functionality yourself if you want or need that. Some
+     * resources that you may find useful are:
      * <ul>
      *   <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html">OWASP File Upload Cheat Sheet</a></li>
      *   <li><a href="https://cheatsheetseries.owasp.org/cheatsheets/Denial_of_Service_Cheat_Sheet.html">OWASP Denial of Service Cheat Sheet</a></li>
@@ -385,7 +418,8 @@ public interface HTTPUtilities
      * </ul>
      *
      * @param request The applicable HTTP request
-     * @param destinationDir The destination directory to leave the uploaded file in.
+     * @param destinationDir The destination directory to leave the uploaded file in. If {@code null},
+     *                       the default upload directory is used.
      * @param allowedExtensions Permitted file suffixes. (Yes, this is a weak check. Use Apache Tika if you
      *                          want something more.)
      * @return List of new {@code File} objects from upload
@@ -399,6 +433,10 @@ public interface HTTPUtilities
     /**
      * Calls getHeader with the *current* request.
      *
+     * @param name the name of the header to get
+     * @return the requested header value
+     * @throws ValidationException if the header is missing or its value fails validation
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     String getHeader(String name) throws ValidationException;
@@ -409,14 +447,19 @@ public interface HTTPUtilities
      * general type defined in ESAPI.properties. This should not be considered a replacement for
      * more specific validation.
      *
-     * @param request
-     * @param name
+     * @param request the HTTP request to read the header from
+     * @param name the name of the header to get
      * @return the requested header value
+     * @throws ValidationException if the header is missing or its value fails validation
      */
     String getHeader(HttpServletRequest request, String name) throws ValidationException;
 
     /**
      * Calls getParameter with the *current* request.
+     *
+     * @param name the name of the parameter to get
+     * @return the requested parameter value, or {@code null} if there is no such parameter
+     * @throws ValidationException if the parameter value fails validation
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -428,9 +471,10 @@ public interface HTTPUtilities
      * general type defined in ESAPI.properties. This should not be considered a replacement for
      * more specific validation.
      *
-     * @param request
-     * @param name
-     * @return the requested parameter value
+     * @param request the HTTP request to read the parameter from
+     * @param name the name of the parameter to get
+     * @return the requested parameter value, or {@code null} if there is no such parameter
+     * @throws ValidationException if the parameter value fails validation
      */
     String getParameter(HttpServletRequest request, String name) throws ValidationException;
 
@@ -445,13 +489,15 @@ public interface HTTPUtilities
      * Kill all cookies received in the last request from the browser. Note that new cookies set by the application in
      * this response may not be killed by this method.
      *
-     * @param request
-     * @param response
+     * @param request the HTTP request containing the cookies to kill
+     * @param response the HTTP response to add the expired cookies to
      */
     void killAllCookies(HttpServletRequest request, HttpServletResponse response);
 
     /**
      * Calls killCookie with the *current* request and response.
+     *
+     * @param name the name of the cookie to kill
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -461,14 +507,15 @@ public interface HTTPUtilities
      * Kills the specified cookie by setting a new cookie that expires immediately. Note that this
      * method does not delete new cookies that are being set by the application for this response.
      *
-     * @param request
-     * @param name
-     * @param response
+     * @param request the HTTP request containing the cookie to kill
+     * @param response the HTTP response to add the expired cookie to
+     * @param name the name of the cookie to kill
      */
     void killCookie(HttpServletRequest request, HttpServletResponse response, String name);
 
     /**
-     * Calls logHTTPRequest with the *current* request and logger.
+     * Calls logHTTPRequest with the *current* request and the HTTPUtilities logger,
+     * without obfuscating any parameters.
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -478,9 +525,9 @@ public interface HTTPUtilities
      * Format the Source IP address, URL, URL parameters, and all form
      * parameters into a string suitable for the log file. Be careful not
      * to log sensitive information, and consider masking with the
-     * logHTTPRequest( List parameterNamesToObfuscate ) method.
+     * {@link #logHTTPRequest(HttpServletRequest, Logger, List)} method.
      *
-     * @param request
+     * @param request The HTTP request to log
      * @param logger the logger to write the request to
      */
     void logHTTPRequest(HttpServletRequest request, Logger logger);
@@ -504,6 +551,11 @@ public interface HTTPUtilities
     /**
      * Calls sendForward with the *current* request and response.
      *
+     * @param location the URL to forward to, including parameters
+     * @throws AccessControlException if the forward location is not allowed
+     * @throws ServletException if the target resource throws this exception
+     * @throws IOException if the target resource throws this exception
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void sendForward(String location) throws AccessControlException, ServletException, IOException;
@@ -514,12 +566,12 @@ public interface HTTPUtilities
      * based access control check. This method ensures that you can only forward to non-publicly
      * accessible resources.
      *
-     * @param request
-     * @param response
+     * @param request the current HTTP request
+     * @param response the current HTTP response
      * @param location the URL to forward to, including parameters
-     * @throws AccessControlException
-     * @throws ServletException
-     * @throws IOException
+     * @throws AccessControlException if the forward location is not allowed
+     * @throws ServletException if the target resource throws this exception
+     * @throws IOException if the target resource throws this exception
      */
     void sendForward(HttpServletRequest request, HttpServletResponse response, String location) throws AccessControlException, ServletException, IOException;
 
@@ -527,26 +579,30 @@ public interface HTTPUtilities
     /**
      * Calls sendRedirect with the *current* response.
      *
+     * @param location the URL to redirect to
+     * @throws AccessControlException if the redirect location is not allowed
+     * @throws IOException if an input or output exception occurs
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void sendRedirect(String location) throws AccessControlException, IOException;
 
 
     /**
-     * This method performs a forward to any resource located inside the WEB-INF directory. Forwarding to
-     * publicly accessible resources can be dangerous, as the request will have already passed the URL
-     * based access control check. This method ensures that you can only forward to non-publicly
-     * accessible resources.
+     * Redirects the client to the specified location after checking that it is a safe redirect
+     * location. The reference implementation uses {@link Validator#isValidRedirectLocation(String, String, boolean)},
+     * which checks the location against the <b>Validator.Redirect</b> pattern in ESAPI.properties.
+     * Unvalidated redirects can be used in phishing attacks.
      *
-     * @param response
-     * @param location the URL to forward to, including parameters
-     * @throws AccessControlException
-     * @throws IOException
+     * @param response the HTTP response to send the redirect with
+     * @param location the URL to redirect to
+     * @throws AccessControlException if the redirect location is not allowed
+     * @throws IOException if an input or output exception occurs
      */
     void sendRedirect(HttpServletResponse response, String location) throws AccessControlException, IOException;
 
     /**
-     * Calls setContentType with the *current* request and response.
+     * Calls setContentType with the *current* response.
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -557,13 +613,14 @@ public interface HTTPUtilities
      * the ways in which the input data can be represented. This prevents
      * malicious users from using encoding and multi-byte escape sequences to
      * bypass input validation routines.
-     * <p/>
+     * <p>
      * Implementations of this method should set the content type header to a safe value for your environment.
      * The default is text/html; charset=UTF-8 character encoding, which is the default in early
-     * versions of HTML and HTTP. See RFC 2047 (http://ds.internic.net/rfc/rfc2045.txt) for more
+     * versions of HTML and HTTP. See RFC 2045 (https://www.rfc-editor.org/rfc/rfc2045) for more
      * information about character encoding and MIME.
-     * <p/>
-     * The DefaultHTTPUtilities reference implementation sets the content type as specified.
+     * <p>
+     * The DefaultHTTPUtilities reference implementation sets the content type specified by the
+     * ESAPI property <b>HttpUtilities.ResponseContentType</b>.
      *
      * @param response The servlet response to set the content type for.
      */
@@ -582,19 +639,25 @@ public interface HTTPUtilities
     /**
      * Calls setHeader with the *current* response.
      *
+     * @param name the name of the header to set
+     * @param value the value of the header to set
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void setHeader(String name, String value);
 
     /**
-     * Add a header to the response after ensuring that there are no encoded or
+     * Set a header in the response after ensuring that there are no encoded or
      * illegal characters in the name and value. "A recipient MAY replace any
      * linear white space with a single SP before interpreting the field value
      * or forwarding the message downstream."
      * http://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+     * If the name or value fails validation, the header is not set and a
+     * warning is logged; no exception is thrown.
      *
-     * @param name
-     * @param value
+     * @param response the HTTP response to set the header in
+     * @param name the name of the header to set
+     * @param value the value of the header to set
      */
     void setHeader(HttpServletResponse response, String name, String value);
 
@@ -612,14 +675,13 @@ public interface HTTPUtilities
      * call for any HTTP responses that contain any sensitive data that should not be cached within the browser or any
      * intermediate proxies or caches. Implementations should set headers for the expected browsers. The safest approach
      * is to set all relevant headers to their most restrictive setting. These include:
-     * <p/>
      * <PRE>
      * Cache-Control: no-store<BR>
      * Cache-Control: no-cache<BR>
      * Cache-Control: must-revalidate<BR>
      * Expires: -1<BR>
      * </PRE>
-     * <p/>
+     * <p>
      * Note that the header "pragma: no-cache" is intended only for use in HTTP requests, not HTTP responses. However, Microsoft has chosen to
      * directly violate the standards, so we need to include that header here. For more information, please refer to the relevant standards:
      * <UL>
@@ -633,15 +695,21 @@ public interface HTTPUtilities
      * <LI><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Preferences/Mozilla_networking_preferences">Mozilla</a>
      * </UL>
      *
-     * @param response
+     * @param response the HTTP response to set the headers in
      */
     void setNoCacheHeaders(HttpServletResponse response);
 
     /**
-     * Calls setNoCacheHeaders with the *current* response.
+     * Calls setRememberToken with the *current* request and response.
      *
      * ~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
      * company's stated security policies.
+     *
+     * @param password the user's password
+     * @param maxAge the length of time that the token should be valid for in relative seconds
+     * @param domain the domain to restrict the token to or null
+     * @param path the path to restrict the token to or null
+     * @return encrypted "Remember Me" token stored as a String, or {@code null} if it could not be created
      *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
@@ -649,7 +717,17 @@ public interface HTTPUtilities
     String setRememberToken(String password, int maxAge, String domain, String path);
 
     /**
+     * Set a cookie containing the current User's remember me token for automatic authentication.
+     * Unlike the deprecated variants, the token contains only the user's account name, not the password.
+     * Any old remember me cookie is destroyed first.
      *
+     * @param request the current HTTP request
+     * @param response the HTTP response to add the cookie to
+     * @param maxAge the length of time that the token should be valid for in relative seconds
+     * @param domain the domain to restrict the token to or null
+     * @param path the path to restrict the token to or null
+     * @return {@code null} if the token could not be created. Note that the reference implementation
+     *         returns an empty string, not the token, on success.
      */
     String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path);
 
@@ -658,27 +736,27 @@ public interface HTTPUtilities
      * Set a cookie containing the current User's remember me token for automatic authentication. The use of remember me tokens
      * is generally not recommended, but this method will help do it as safely as possible. The user interface should strongly warn
      * the user that this should only be enabled on computers where no other users will have access.
-     * <p/>
+     * <p>
      * Implementations should save the user's remember me data in an encrypted cookie and send it to the user.
      * Any old remember me cookie should be destroyed first. Setting this cookie should keep the user
      * logged in until the maxAge passes, the password is changed, or the cookie is deleted.
      * If the cookie exists for the current user, it should automatically be used by ESAPI to
      * log the user in, if the data is valid and not expired.
-     * <p/>
+     * <p>
      * The ESAPI reference implementation, DefaultHTTPUtilities.setRememberToken() implements all these suggestions.
-     * <p/>
+     * <p>
      * The username can be retrieved with: User username = ESAPI.authenticator().getCurrentUser();
      *
      *~DEPRECATED~  Per Kevin Wall, storing passwords with reversible encryption is contrary to *many*
      * company's stated security policies.
      *
-     * @param request
+     * @param request the current HTTP request
+     * @param response the HTTP response to add the cookie to
      * @param password the user's password
-     * @param response
      * @param maxAge the length of time that the token should be valid for in relative seconds
      * @param domain the domain to restrict the token to or null
      * @param path the path to restrict the token to or null
-     * @return encrypted "Remember Me" token stored as a String
+     * @return encrypted "Remember Me" token stored as a String, or {@code null} if it could not be created
      */
     @Deprecated
     String setRememberToken(HttpServletRequest request, HttpServletResponse response, String password, int maxAge, String domain, String path);
@@ -687,15 +765,18 @@ public interface HTTPUtilities
     /**
      * Calls verifyCSRFToken with the *current* request.
      *
+     * @throws IntrusionException if CSRF token is missing or incorrect
+     *
      * @see HTTPUtilities#setCurrentHTTP(HttpServletRequest, HttpServletResponse)
      */
     void verifyCSRFToken();
 
     /**
      * Checks the CSRF token in the URL (see User.getCSRFToken()) against the user's CSRF token and
-     * throws an IntrusionException if it is missing.
+     * throws an IntrusionException if it is missing or incorrect. The token is read from the
+     * {@link #CSRF_TOKEN_NAME} request parameter.
      *
-     * @param request
+     * @param request the HTTP request to check
      * @throws IntrusionException if CSRF token is missing or incorrect
      */
     void verifyCSRFToken(HttpServletRequest request) throws IntrusionException;
@@ -705,25 +786,29 @@ public interface HTTPUtilities
     * object referenced by the passed in key is not of the implied type, a ClassCastException
     * will be thrown to the calling code.
     *
+    * @param    <T>
+    *           The expected type of the attribute
     * @param    key
     *           The key that references the session attribute
-    * @return   The requested object.
+    * @return   The requested object, or {@code null} if there is no session or no such attribute.
     * @see      HTTPUtilities#getSessionAttribute(javax.servlet.http.HttpSession, String)
     */
     <T> T getSessionAttribute( String key );
 
     /**
      * Gets a typed attribute from the passed in session. This method has the same
-     * responsibility as {link #getSessionAttribute(String} however it only references
+     * responsibility as {@link #getSessionAttribute(String)} however it only references
      * the passed in session and thus performs slightly better since it does not need
      * to return to the Thread to get the {@link HttpSession} associated with the current
      * thread.
      *
+     * @param <T>
+     *          The expected type of the attribute
      * @param session
      *          The session to retrieve the attribute from
      * @param key
      *          The key that references the requested object
-     * @return  The requested object
+     * @return  The requested object, or {@code null} if there is no such attribute
      */
     <T> T getSessionAttribute( HttpSession session, String key );
 
@@ -732,8 +817,9 @@ public interface HTTPUtilities
      * with the caller thread. If the attribute on the request is not of the implied
      * type, a ClassCastException will be thrown back to the caller.
      *
+     * @param <T> The expected type of the attribute
      * @param key The key that references the request attribute.
-     * @return The requested object
+     * @return The requested object, or {@code null} if there is no such attribute
      */
     <T> T getRequestAttribute( String key );
 
@@ -742,9 +828,10 @@ public interface HTTPUtilities
      * with the passed in request. If the attribute on the request is not of the implied
      * type, a ClassCastException will be thrown back to the caller.
      *
+     * @param <T> The expected type of the attribute
      * @param request The request to retrieve the attribute from
      * @param key The key that references the request attribute.
-     * @return The requested object
+     * @return The requested object, or {@code null} if there is no such attribute
      */
     <T> T getRequestAttribute( HttpServletRequest request, String key );
 }
