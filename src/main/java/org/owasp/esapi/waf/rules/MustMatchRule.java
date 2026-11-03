@@ -103,7 +103,7 @@ public class MustMatchRule extends Rule {
 
                     if ( target.contains("*") || target.contains("?") ) {
 
-                        target = target.replaceAll("*", ".*");
+                        target = target.replaceAll("\\*", ".*");
                         Pattern p = Pattern.compile(target);
 
                         Enumeration e = request.getParameterNames();
@@ -120,6 +120,8 @@ public class MustMatchRule extends Rule {
                             }
                         }
 
+                        return new DoNothingAction();
+
                     } else {
 
                         String s = request.getParameter(target);
@@ -128,6 +130,8 @@ public class MustMatchRule extends Rule {
                             log(request, "MustMatch rule failed (operator="+operator+"), value='" + value + "', input='" + s + "', parameter='"+target+"'");
                             return new DefaultAction();
                         }
+
+                        return new DoNothingAction();
 
                     }
                 }
@@ -160,7 +164,7 @@ public class MustMatchRule extends Rule {
 
                     if ( target.contains("*") || target.contains("?") ) {
 
-                        target = target.replaceAll("*", ".*");
+                        target = target.replaceAll("\\*", ".*");
                         Pattern p = Pattern.compile(target);
 
                         Enumeration e = request.getHeaderNames();
