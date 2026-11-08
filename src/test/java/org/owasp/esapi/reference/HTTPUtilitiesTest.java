@@ -643,20 +643,23 @@ public class HTTPUtilitiesTest extends TestCase
 
         int maxAge = ( 60 * 60 * 24 * 14 );
 
-        ESAPI.httpUtilities().setRememberToken( request, response, maxAge, "domain", "/" );
+        String token = ESAPI.httpUtilities().setRememberToken( request, response, maxAge, "domain", "/" );
 
         Field field = response.getClass().getDeclaredField("cookies");
         field.setAccessible(true);
         @SuppressWarnings("unchecked")
         List<Cookie> cookies = (List<Cookie>) field.get(response);
+        // The first cookie with this name is the one killCookie() adds, so keep the last one.
         Cookie cookie = null;
         for(Cookie c: cookies){
             if(c.getName().equals(HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME)){
                 cookie = c;
-                break;
             }
         }
         assertEquals(HTTPUtilities.REMEMBER_TOKEN_COOKIE_NAME, cookie.getName());
+        assertNotNull(token);
+        assertFalse(token.isEmpty());
+        assertEquals(cookie.getValue(), token);
     }
 
     public void testGetSessionAttribute() throws Exception {

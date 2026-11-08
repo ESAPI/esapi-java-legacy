@@ -1016,7 +1016,6 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
 
 
     public String setRememberToken(HttpServletRequest request, HttpServletResponse response, int maxAge, String domain, String path){
-        String rval = "";
         User user = ESAPI.authenticator().getCurrentUser();
 
         try{
@@ -1039,13 +1038,11 @@ public class DefaultHTTPUtilities implements org.owasp.esapi.HTTPUtilities {
             cookie.setSecure(forceSecureCookies);
             response.addCookie( cookie );
             logger.info(Logger.SECURITY_SUCCESS, "Enabled remember me token for " + user.getAccountName() );
+            return cryptToken;
         } catch( IntegrityException e){
             logger.warning(Logger.SECURITY_FAILURE, "Attempt to set remember me token failed for " + user.getAccountName(), e );
             return null;
         }
-
-
-        return rval;
     }
 
     /**
