@@ -244,7 +244,7 @@ public class HTMLValidationRule extends StringValidationRule {
             List<String> errors = test.getErrorMessages();
             if ( !errors.isEmpty() ) {
                 if ( legacyHtmlValidation() ) {        // See GitHub issues 509 and 521
-                    LOGGER.info(Logger.SECURITY_FAILURE, "Cleaned up invalid HTML input: " + errors );
+                    LOGGER.info(Logger.SECURITY_FAILURE, "Cleaned up invalid HTML input: context=" + context + " errors=" + errors );
                 } else {
                     throw new ValidationException( context + ": Invalid HTML input", "Invalid HTML input does not follow rules in antisamy-esapi.xml: context=" + context + " errors=" + errors.toString());
                 }

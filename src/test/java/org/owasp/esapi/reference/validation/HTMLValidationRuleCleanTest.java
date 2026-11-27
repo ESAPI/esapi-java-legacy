@@ -28,6 +28,11 @@ import org.owasp.esapi.filters.SecurityWrapperRequest;
 import org.owasp.esapi.reference.validation.HTMLValidationRule;
 import static org.owasp.esapi.PropNames.VALIDATOR_HTML_VALIDATION_ACTION;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+
 import org.junit.Test;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -404,5 +409,40 @@ public class HTMLValidationRuleCleanTest {
         String expectEmpty = "";
         String output = instance.getValidSafeHTML("escaping IE conditional comment", input, 250, true);
         assertEquals(expectEmpty, output);  // Expect AntiSamy to return empty string here.
+    }
+
+    // Test for GitHub issue 793: the context should be logged when invalid
+    // HTML input is cleaned up rather than rejected.
+    @Test
+    public void testCleanedUpInputLogsContext() throws Exception {
+        final List<String> messages = new ArrayList<>();
+        Handler handler = new Handler() {
+            @Override
+            public void publish(LogRecord record) {
+                messages.add(record.getMessage());
+            }
+            @Override
+            public void flush() {
+            }
+            @Override
+            public void close() {
+            }
+        };
+        java.util.logging.Logger javaLogger = java.util.logging.Logger.getLogger("HTMLValidationRule");
+        javaLogger.addHandler(handler);
+        try {
+            HTMLValidationRule rule = new HTMLValidationRule("logContextTest");
+            rule.getValid("myContextName", "Test. <script>alert(document.cookie)</script>");
+        } finally {
+            javaLogger.removeHandler(handler);
+        }
+
+        boolean found = false;
+        for (String message : messages) {
+            if (message.contains("Cleaned up invalid HTML input") && message.contains("context=myContextName")) {
+                found = true;
+            }
+        }
+        assertTrue("Expected the context in the log message, got: " + messages, found);
     }
 }
