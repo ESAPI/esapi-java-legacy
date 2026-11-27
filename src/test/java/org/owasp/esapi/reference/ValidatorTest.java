@@ -953,6 +953,29 @@ public class ValidatorTest {
     }
 
     @Test
+    public void testSafeReadLineLineTerminators() throws Exception {
+        Validator instance = ESAPI.validator();
+        byte[] bytes = "one\r\ntwo\nthree\rfour\r\n\r\nsix".getBytes(PREFERRED_ENCODING);
+        ByteArrayInputStream s = new ByteArrayInputStream(bytes);
+        assertEquals("one", instance.safeReadLine(s, 20));
+        assertEquals("two", instance.safeReadLine(s, 20));
+        assertEquals("three", instance.safeReadLine(s, 20));
+        assertEquals("four", instance.safeReadLine(s, 20));
+        assertEquals("", instance.safeReadLine(s, 20));
+        assertEquals("six", instance.safeReadLine(s, 20));
+        assertNull(instance.safeReadLine(s, 20));
+
+        // Same lines as BufferedReader.readLine()
+        BufferedReader br = new BufferedReader(new InputStreamReader(new ByteArrayInputStream(bytes), PREFERRED_ENCODING));
+        ByteArrayInputStream t = new ByteArrayInputStream(bytes);
+        String expected;
+        while ((expected = br.readLine()) != null) {
+            assertEquals(expected, instance.safeReadLine(t, 20));
+        }
+        assertNull(instance.safeReadLine(t, 20));
+    }
+
+    @Test
     public void testIssue82_SafeString_Bad_Regex() {
         Validator instance = ESAPI.validator();
         try {

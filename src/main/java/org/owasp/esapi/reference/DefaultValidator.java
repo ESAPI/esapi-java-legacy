@@ -1260,7 +1260,11 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
      * {@inheritDoc}
      * <p>
      * This implementation reads until a newline or the specified number of
-     * characters.
+     * characters. A line may end with LF, CR, or CRLF. A CRLF pair is only
+     * consumed as one terminator when the stream supports
+     * {@link InputStream#mark(int)}, and doing so moves the stream's mark.
+     * Wrap the stream in a {@link java.io.BufferedInputStream} if it does not
+     * support marks.
      */
     @Override
     public String safeReadLine(InputStream in, int max) throws ValidationException {
@@ -1281,7 +1285,18 @@ public class DefaultValidator implements org.owasp.esapi.Validator {
                     }
                     break;
                 }
-                if (c == '\n' || c == '\r') {
+                if (c == '\n') {
+                    break;
+                }
+                if (c == '\r') {
+                    // Treat CRLF as one line terminator. Without this, the LF is
+                    // left in the stream and the next call returns an empty line.
+                    if (in.markSupported()) {
+                        in.mark(1);
+                        if (in.read() != '\n') {
+                            in.reset();
+                        }
+                    }
                     break;
                 }
                 count++;
